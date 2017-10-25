@@ -1,0 +1,26 @@
+.wc_dhl_error,
+.wc_dhl_delete #dhl_delete_label {
+	color: #a00;
+}
+
+span.wc_dhl_delete,
+span.wc_dhl_error {
+	float:right;
+}
+
+.dhl_connection_succeeded {
+	color: #008000;
+	margin-left: 10px;
+	margin-top: 10px;
+}
+
+.dhl_connection_error {
+	color: #a00;
+	margin-left: 10px;
+	margin-top: 10px;
+}
+
+#dhl_label_created {
+	width:7%;
+	/*text-align:center*/
+}

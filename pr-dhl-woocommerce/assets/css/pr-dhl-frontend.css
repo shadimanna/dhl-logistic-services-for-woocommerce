@@ -1,0 +1,178 @@
+.dhl-co-tr {
+  border: 0;
+  border-left: 1px solid #FFCC00;
+  border-right: 1px solid #FFCC00;
+}
+
+.dhl-co-tr.dhl-co-tr-first,
+.dhl-co-tr.dhl-co-tr-last {
+  border-top: 1px solid #FFCC00;
+  border-bottom: 1px solid #FFCC00;
+}
+
+.dhl-co-tr.dhl-co-tr-last {
+  border-top: 0;
+  height: 5px;
+  width: 100%;
+}
+
+.dhl-co-tr.dhl-co-tr-first td,
+.dhl-co-tr.dhl-co-tr-last td {
+  padding: 0;
+  max-height: 0;
+  border-color: #FFCC00;
+}
+
+tr.dhl-co-tr.dhl-co-tr-fist > td:last-child {
+  width: 50%;
+}
+
+img.dhl-co-logo {
+  /*padding: 0 5px;*/
+  max-height: 100px;
+  max-width: 35%;
+  margin: 10px;
+  background: #FFCC00;
+}
+
+.dhl-co-tr th,
+.dhl-co-tr th:first-child,
+.dhl-co-tr td {
+  padding: 5px 15px;
+}
+
+.dhl-co-tr td:first-child {
+  padding-left: 15px;
+}
+
+.dhl-co-tr td:last-child {
+  padding-right: 15px;
+}
+
+.dhl-co-tr hr {
+  margin-bottom: 1em;
+}
+
+.dhl-pt {
+  padding-top: 20px !important;
+}
+
+tr.dhl-co-tr.dhl-co-tr-fist > td {
+  border-top: 1px solid #FFCC00;
+  padding: 0;
+}
+
+ul.dhl-co-times {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin: 0;
+}
+
+ul.dhl-co-preffered-time {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+ul.dhl-co-times > li,
+ul.dhl-co-preffered-time > li {
+  display: inline-block;
+  margin: 0 5px;
+  text-align: center;
+}
+
+ul.dhl-co-times > li {
+  flex-grow: 1;
+  flex-basis: 0;
+}
+
+ul.dhl-co-preffered-time > li:first-child {
+  margin-left: 0;
+}
+
+ul.dhl-co-preffered-time > li:last-child {
+  margin-right: 0;
+}
+
+ul.dhl-co-times > li {
+  border-top: 10px solid #ccc;
+}
+
+ul.dhl-co-times input,
+ul.dhl-co-preffered-time input {
+  /*visibility: hidden;*/
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  position: absolute;
+}
+
+ul.dhl-co-times label,
+ul.dhl-co-preffered-time label {
+  position: relative;
+  display: block;
+  padding: 15px 25px;
+  font-size: 1em;
+  font-weight: normal;
+  background: #ecf5f2;
+  cursor: pointer;
+}
+
+ul.dhl-co-times label {
+  padding: 15px 5px;
+}
+
+ul.dhl-co-times input[type=radio]:checked ~ label,
+ul.dhl-co-preffered-time input[type=radio]:checked ~ label {
+  background: #FFCC00;
+}
+
+ul.dhl-co-times input[type=radio]:active ~ label,
+ul.dhl-co-preffered-time input[type=radio]:active ~ label {
+  background: #eee;
+}
+
+ul.dhl-preferred-location {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+ul.dhl-preferred-location li {
+  display: inline-block;
+  padding-right: 15px;
+}
+
+ul.dhl-preferred-location li:last-child {
+  padding-right: 0;
+}
+
+ul.dhl-preferred-location li input,
+ul.dhl-preferred-location li label {
+  display: inline-block;
+}
+
+@media only screen and (max-width: 600px) {
+  ul.dhl-co-times > li {
+    min-width: 30%;
+    width: 30%;
+  }
+}
+
+#pr_dhl_preferred_location::placeholder,
+#pr_dhl_preferred_neighbour_name::placeholder,
+#pr_dhl_preferred_neighbour_address::placeholder {
+  color: #999;
+}
+
+.dhl-tooltip {
+  display: inline-block;
+  background: #ffcc00;
+  border-radius: 50%;
+  height: 1.5em;
+  width: 1.5em;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+}
