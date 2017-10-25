@@ -94,10 +94,9 @@ class PR_DHL_Front_End_Paket {
 		wp_enqueue_style( 'pr-dhl-checkout-frontend', PR_DHL_PLUGIN_DIR_URL . '/assets/css/pr-dhl-frontend.css', array(), PR_DHL_VERSION );
 
 		// jquery UI for tool tip
-		wp_register_script( 'pr-dhl-jq-ui', PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-jquery-ui.min.js', array( 'jquery' ), '1.12.1', true );
-		wp_enqueue_script( 'pr-dhl-jq-ui' );
-
-		wp_enqueue_style( 'pr-dhl-jquery-ui-style', PR_DHL_PLUGIN_DIR_URL . '/assets/css/jquery-ui.css', array(), '1.12.1' );
+		wp_enqueue_style( 'pr-dhl-jquery-ui-style', PR_DHL_PLUGIN_DIR_URL . '/assets/css/jquery-ui-tooltip.css', array(), '1.0' );
+		wp_enqueue_script( 'jquery-effects-core' );
+		wp_enqueue_script( 'jquery-ui-tooltip' );
 	}
 	
 	public function custom_woocommerce_locate_template( $template, $template_name, $template_path ) {
