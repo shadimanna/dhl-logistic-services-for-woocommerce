@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: DHL Logistic Services for WooCommerce\n"
-"POT-Creation-Date: 2017-10-04 16:17+0300\n"
-"PO-Revision-Date: 2017-10-25 18:03+0300\n"
+"POT-Creation-Date: 2017-10-25 21:19+0300\n"
+"PO-Revision-Date: 2017-10-25 21:22+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -26,35 +26,37 @@ msgid "Generate Label"
 msgstr "Lebel erstellen"
 
 #: includes/abstract-pr-dhl-wc-order.php:29
-msgid "Print Label"
-msgstr "Label drucken"
+#, fuzzy
+#| msgid "Delete Label"
+msgid "Download Label"
+msgstr "Bezeichnung löschen"
 
-#: includes/abstract-pr-dhl-wc-order.php:58
+#: includes/abstract-pr-dhl-wc-order.php:57
 msgid "DHL Label & Tracking"
 msgstr "DHL-Label & Tracking"
 
-#: includes/abstract-pr-dhl-wc-order.php:69
+#: includes/abstract-pr-dhl-wc-order.php:107
 msgid "Delete Label"
 msgstr "Bezeichnung löschen"
 
-#: includes/abstract-pr-dhl-wc-order.php:144
+#: includes/abstract-pr-dhl-wc-order.php:145
 msgid "DHL service selected:"
 msgstr "Ausgewähltes DHL Produkt:"
 
-#: includes/abstract-pr-dhl-wc-order.php:155
+#: includes/abstract-pr-dhl-wc-order.php:156
 #, php-format
 msgid "Estimated shipment weight (%s) based on items ordered: "
 msgstr ""
 "Voraussichtlichtes Gewicht (%s) der Sendung auf Basis der bestellten "
 "Produkte:"
 
-#: includes/abstract-pr-dhl-wc-order.php:177
+#: includes/abstract-pr-dhl-wc-order.php:179
 #, fuzzy
 msgid "There are no DHL services available for the destination country!"
 msgstr "Für das Bestimmungsland gibt es keine DHL-Services!"
 
-#: includes/abstract-pr-dhl-wc-order.php:237
-#: includes/abstract-pr-dhl-wc-order.php:267
+#: includes/abstract-pr-dhl-wc-order.php:239
+#: includes/abstract-pr-dhl-wc-order.php:269
 #, fuzzy
 msgid ""
 "Your DHL label is ready to download, click the \"Download Label\" button "
@@ -63,7 +65,7 @@ msgstr ""
 "Ihr DHL-Label ist bereit zum download, klicken oben auf die Schaltfläche "
 "\"Download-Label\" \""
 
-#: includes/abstract-pr-dhl-wc-order.php:305
+#: includes/abstract-pr-dhl-wc-order.php:310
 #: includes/class-pr-dhl-wc-order-ecomm.php:93
 #: includes/class-pr-dhl-wc-order-paket.php:209
 #, fuzzy, php-format
@@ -173,7 +175,6 @@ msgid "Pickup Account Number"
 msgstr "Pickup Kontonummer"
 
 #: includes/class-pr-dhl-wc-method-ecomm.php:139
-#: includes/class-pr-dhl-wc-method-paket.php:158
 #, fuzzy
 msgid ""
 "The pickup account number (10 digits - numerical) will be provided by your "
@@ -230,7 +231,6 @@ msgstr ""
 "jederzeit ändern dies in jedem einzelnen Auftrag danach)"
 
 #: includes/class-pr-dhl-wc-method-ecomm.php:183
-#, fuzzy
 msgid "Package Prefix"
 msgstr "Paket-Präfix"
 
@@ -281,7 +281,7 @@ msgid ""
 "authentication."
 msgstr ""
 "Bitte tragen Sie hier Ihre Zugangsdaten zum DHL Geschäftskundenportal ein, "
-"um die API Verbindung herzustellen"
+"um die API Verbindung herzustellen."
 
 #: includes/class-pr-dhl-wc-method-ecomm.php:219
 msgid "Client Id"
@@ -341,7 +341,6 @@ msgstr ""
 "Produktion eingeben!"
 
 #: includes/class-pr-dhl-wc-method-ecomm.php:246
-#, fuzzy
 msgid ""
 "Press the button for testing the connection against our DHL eCommerce "
 "Gateways (depending on the selected environment this test is being done "
@@ -374,18 +373,17 @@ msgstr ""
 "Problemen und ist %shier%s zu finden."
 
 #: includes/class-pr-dhl-wc-method-ecomm.php:342
-#: includes/class-pr-dhl-wc-method-paket.php:599
-#, fuzzy
+#: includes/class-pr-dhl-wc-method-paket.php:581
 msgid "Pickup Account Number: "
-msgstr "Pickup Kontonummer:"
+msgstr "Pickup Kontonummer: "
 
 #: includes/class-pr-dhl-wc-method-ecomm.php:364
-#: includes/class-pr-dhl-wc-method-paket.php:621
+#: includes/class-pr-dhl-wc-method-paket.php:603
 msgid "Distribution Center: "
 msgstr "Vertriebszentrum"
 
 #: includes/class-pr-dhl-wc-method-paket.php:27
-#: includes/class-pr-dhl-wc-method-paket.php:551
+#: includes/class-pr-dhl-wc-method-paket.php:533
 #: includes/pr-dhl-api/class-pr-dhl-api-paket.php:63
 msgid "DHL Paket"
 msgstr "DHL Paket"
@@ -411,6 +409,15 @@ msgstr "DHL Paket Versand-Methode nicht geladen-"
 #: includes/class-pr-dhl-wc-method-paket.php:156
 msgid "Account Number (EKP)"
 msgstr "Kundennummer (EKP)"
+
+#: includes/class-pr-dhl-wc-method-paket.php:158
+#, fuzzy
+msgid ""
+"The account number (10 digits - numerical) will be provided by your local "
+"DHL sales organization."
+msgstr ""
+"Die pickup-Kontonummer (10-stellig - numerische) erhalten Sie von Ihrem "
+"lokalen DHL Verkaufsorganisation und sagt uns, wo Ihre Sendungen abholen."
 
 #: includes/class-pr-dhl-wc-method-paket.php:165
 msgid "Participation Number"
@@ -481,10 +488,9 @@ msgid ""
 "authentication."
 msgstr ""
 "Bitte tragen Sie hier Ihre Zugangsdaten zum DHL Geschäftskundenportal ein, "
-"um die API Verbindung herzustellen"
+"um die API Verbindung herzustellen."
 
 #: includes/class-pr-dhl-wc-method-paket.php:231
-#, fuzzy
 msgid "Username"
 msgstr "Benutzername"
 
@@ -494,7 +500,6 @@ msgid "Enter DHL Paket username."
 msgstr "DHL Paket-Benutzernamen eingeben."
 
 #: includes/class-pr-dhl-wc-method-paket.php:238
-#, fuzzy
 msgid "Password"
 msgstr "Passwort"
 
@@ -504,7 +509,6 @@ msgid "Enter DHL Paket password."
 msgstr "DHL Paket-Passwort eingeben."
 
 #: includes/class-pr-dhl-wc-method-paket.php:258
-#, fuzzy
 msgid ""
 "Press the button for testing the connection against our DHL Paket Gateways "
 "(depending on the selected environment this test is being done against the "
@@ -738,7 +742,7 @@ msgstr "Land"
 
 #: includes/class-pr-dhl-wc-method-paket.php:418
 msgid "Enter Shipper County."
-msgstr "Absender-Land"
+msgstr "Absender-Land."
 
 #: includes/class-pr-dhl-wc-method-paket.php:423
 msgid "Postcode"
@@ -762,7 +766,7 @@ msgstr "E-Mail"
 
 #: includes/class-pr-dhl-wc-method-paket.php:439
 msgid "Enter Email."
-msgstr "Email eintragen"
+msgstr "Email eintragen."
 
 #: includes/class-pr-dhl-wc-method-paket.php:444
 msgid "Bank Details"
@@ -778,69 +782,47 @@ msgstr ""
 msgid "Account Owner"
 msgstr "Konto Inhaber"
 
-#: includes/class-pr-dhl-wc-method-paket.php:451
-msgid "Enter Bank Account Owner."
-msgstr "Geben Sie Bankkonto Besitzer."
-
-#: includes/class-pr-dhl-wc-method-paket.php:456
+#: includes/class-pr-dhl-wc-method-paket.php:453
 msgid "Bank Name"
 msgstr "Name der Bank"
 
-#: includes/class-pr-dhl-wc-method-paket.php:458
-msgid "Enter Bank Name."
-msgstr "Namen der Bank eingeben"
-
-#: includes/class-pr-dhl-wc-method-paket.php:463
+#: includes/class-pr-dhl-wc-method-paket.php:457
 msgid "IBAN"
 msgstr "IBAN"
 
-#: includes/class-pr-dhl-wc-method-paket.php:465
-msgid "Enter Account IBAN."
-msgstr "Geben Sie Konto IBAN."
-
-#: includes/class-pr-dhl-wc-method-paket.php:470
+#: includes/class-pr-dhl-wc-method-paket.php:461
 msgid "BIC"
 msgstr "BIC"
 
-#: includes/class-pr-dhl-wc-method-paket.php:472
-msgid "Enter Bank BIC."
-msgstr "Geben Sie Bank BIC."
-
-#: includes/class-pr-dhl-wc-method-paket.php:477
+#: includes/class-pr-dhl-wc-method-paket.php:465
 msgid "Payment Reference"
 msgstr "Zahlungsreferenz"
 
-#: includes/class-pr-dhl-wc-method-paket.php:479
-#: includes/class-pr-dhl-wc-method-paket.php:487
-msgid "Account referece to customer profile."
-msgstr "Konto ein Kundenprofil."
-
-#: includes/class-pr-dhl-wc-method-paket.php:485
+#: includes/class-pr-dhl-wc-method-paket.php:470
 msgid "Payment Reference 2"
 msgstr "Zahlungsreferenz"
 
-#: includes/class-pr-dhl-wc-method-paket.php:493
+#: includes/class-pr-dhl-wc-method-paket.php:475
 msgid "Add COD Fee"
 msgstr "Nachnahme-Gebühr"
 
-#: includes/class-pr-dhl-wc-method-paket.php:495
+#: includes/class-pr-dhl-wc-method-paket.php:477
 #, fuzzy
 msgid "Add €2 fee for users using COD."
 msgstr "Fügen Sie 2 € Gebühr für Benutzer mit COD."
 
-#: includes/class-pr-dhl-wc-method-paket.php:548
+#: includes/class-pr-dhl-wc-method-paket.php:530
 msgid "Method Title"
 msgstr "Name der Methode"
 
-#: includes/class-pr-dhl-wc-method-paket.php:550
+#: includes/class-pr-dhl-wc-method-paket.php:532
 #, fuzzy
 msgid "This controls the title which the user sees during checkout."
 msgstr "Der Titel, den der Benutzer während der Bezahlung sieht."
 
 #: includes/class-pr-dhl-wc-order-ecomm.php:67
-#, fuzzy
 msgid "Package description for customs (50 characters max): "
-msgstr "Paket-Beschreibung für den Zoll (max. 50 Zeichen):"
+msgstr "Paket-Beschreibung für den Zoll (max. 50 Zeichen): "
 
 #: includes/class-pr-dhl-wc-order-ecomm.php:222
 #, fuzzy
@@ -909,9 +891,9 @@ msgid "Show all DHL label statuses"
 msgstr "Zeige alle DHL-Label-Status"
 
 #: includes/class-pr-dhl-wc-order-paket.php:45
-#: includes/pr-dhl-api/class-pr-dhl-api-paket.php:174
-#: includes/pr-dhl-api/class-pr-dhl-api-paket.php:187
-#: includes/pr-dhl-api/class-pr-dhl-api-paket.php:207
+#: includes/pr-dhl-api/class-pr-dhl-api-paket.php:175
+#: includes/pr-dhl-api/class-pr-dhl-api-paket.php:188
+#: includes/pr-dhl-api/class-pr-dhl-api-paket.php:208
 msgid "none"
 msgstr "keiner"
 
@@ -937,7 +919,7 @@ msgstr "Aufgaben:"
 
 #: includes/class-pr-dhl-wc-order-paket.php:109
 msgid "Visual Age Check:"
-msgstr "Alterssichtprüfung"
+msgstr "Alterssichtprüfung:"
 
 #: includes/class-pr-dhl-wc-order-paket.php:118
 msgid "Email Notification:"
@@ -994,7 +976,6 @@ msgstr ""
 "Luftverkehr."
 
 #: includes/class-pr-dhl-wc-product-ecomm.php:57
-#, fuzzy
 msgid "Export Description (DHL)"
 msgstr "Export-Beschreibung (DHL)"
 
@@ -1055,31 +1036,31 @@ msgstr "Ort"
 msgid "Neighbor"
 msgstr "Nachbar(in)"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:275
+#: includes/front-end/class-pr-dhl-front-end-paket.php:278
 #, fuzzy
 msgid "DHL Preferred Day & Time"
 msgstr "DHL bevorzugt Tag & Zeit"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:282
+#: includes/front-end/class-pr-dhl-front-end-paket.php:285
 #, fuzzy
 msgid "DHL Preferred Time"
 msgstr "BEVORZUGTE ZEIT"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:289
+#: includes/front-end/class-pr-dhl-front-end-paket.php:292
 #, fuzzy
 msgid "DHL Preferred Day"
 msgstr "DHL lieber Tag"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:297
+#: includes/front-end/class-pr-dhl-front-end-paket.php:300
 #, fuzzy
 msgid "DHL COD fee"
 msgstr "DHL Nachnahmegebühr"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:369
+#: includes/front-end/class-pr-dhl-front-end-paket.php:332
 msgid "Please enter the preferred location."
 msgstr "Bitte vervollständigen Sie die Angaben zu ihrem Wunschort."
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:374
+#: includes/front-end/class-pr-dhl-front-end-paket.php:337
 msgid "Please enter the preferred neighbor name and address."
 msgstr "Bitte vervollständigen Sie die Angaben zu ihrem Wunschnachbarn."
 
@@ -1120,12 +1101,10 @@ msgid "The value must be a number"
 msgstr "Wert muss eine Zahl sein"
 
 #: includes/pr-dhl-api/abstract-pr-dhl-api.php:57
-#, fuzzy
 msgid "Delivery Duty Unpaid"
 msgstr "Lieferung unverzollt"
 
 #: includes/pr-dhl-api/abstract-pr-dhl-api.php:58
-#, fuzzy
 msgid "Delivery Duty Paid"
 msgstr "Lieferung verzollt"
 
@@ -1158,219 +1137,161 @@ msgstr ""
 
 #: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:28
 #, fuzzy
-msgid "DHL GM Business Priority"
-msgstr "DHL-GM-Geschäftspriorität"
+msgid "DHL GlobalMail Packet Standard"
+msgstr "GM-Paket Standard"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:29
 #, fuzzy
-msgid "DHL GM Business Standard"
-msgstr "DHL GM Business Standard"
+msgid "DHL GlobalMail Packet Priority"
+msgstr "GM Paket Priorität Manifest"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:30
 #, fuzzy
-msgid "DHL GM Packet Plus"
+msgid "DHL GlobalMail Packet Plus"
 msgstr "DHL-GM-Paket Plus"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:31
-#, fuzzy
-msgid "DHL GM Parcel Direct Express"
-msgstr "DHL GM Parcel Direct Express"
-
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:32
+#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:57
 #, fuzzy
 msgid "DHL Parcel International Standard"
 msgstr "DHL Paket International Standard"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:33
+#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:32
+#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:58
 #, fuzzy
 msgid "DHL Parcel International Direct"
 msgstr "DHL Paket International direkt"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:34
+#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:33
 #, fuzzy
-msgid "DHL Parcel International Direct Standard"
-msgstr "DHL Paket International direkte Standard"
-
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:35
-#, fuzzy
-msgid "DHL Parcel International Direct Priority"
-msgstr "DHL Paket International direkte Priorität"
-
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:50
-#, fuzzy
-msgid "GM Packet Plus Standard"
-msgstr "GM-Paket Plus Standard"
-
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:51
-#, fuzzy
-msgid "GM Packet Plus Priority Manifest"
-msgstr "GM-Paket Plus Priorität Manifest"
+msgid "DHL Parcel International Expedited"
+msgstr "Parcel International Express-direkt"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:52
 #, fuzzy
-msgid "GM Packet Standard"
-msgstr "GM-Paket Standard"
+msgid "DHL GM Packet Economy"
+msgstr "GM Paket Wirtschaft"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:53
 #, fuzzy
-msgid "GM Packet Economy"
-msgstr "GM Paket Wirtschaft"
+msgid "DHL GM Packet Standard"
+msgstr "GM-Paket Standard"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:54
 #, fuzzy
-msgid "GM Packet Priority Manifest"
+msgid "DHL GM Packet Priority Manifest"
 msgstr "GM Paket Priorität Manifest"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:55
 #, fuzzy
-msgid "Parcel International Direct"
-msgstr "Parcel International direkt"
+msgid "DHL GM Packet Plus Standard"
+msgstr "GM-Paket Plus Standard"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:56
 #, fuzzy
-msgid "Parcel International Standard"
-msgstr "Internationaler Standard Paket"
+msgid "DHL GM Packet Plus Priority Manifest"
+msgstr "GM-Paket Plus Priorität Manifest"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:57
+#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:59
 #, fuzzy
-msgid "Parcel International Direct Expedited"
+msgid "DHL Parcel International Direct Expedited"
 msgstr "Parcel International Express-direkt"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:102
-#, fuzzy
-msgid "DHL SM Flats Expedited"
-msgstr "DHL-SM-Wohnungen beschleunigt"
-
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:103
-#, fuzzy
-msgid "DHL SM Flats Ground"
-msgstr "DHL-SM-Wohnungen-Boden"
-
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:104
+#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:106
 #, fuzzy
 msgid "DHL SM BPM Expedited"
 msgstr "DHL-SM-BPM beschleunigt"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:105
+#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:107
 #, fuzzy
 msgid "DHL SM BPM Ground"
 msgstr "DHL-SM BPM-Boden"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:106
+#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:108
 #, fuzzy
 msgid "DHL SM Parcel Plus Expedited"
 msgstr "DHL-SM-Paket Plus beschleunigten"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:107
+#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:109
 #, fuzzy
 msgid "DHL SM Parcel Plus Ground"
 msgstr "DHL-SM-Paket Plus Boden"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:108
+#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:110
 #, fuzzy
 msgid "DHL SM Parcel Expedited"
 msgstr "DHL-SM-Paket Express"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:109
+#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:111
 #, fuzzy
 msgid "DHL SM Parcel Ground"
 msgstr "DHL Paket SM Boden"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:110
+#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:112
 #, fuzzy
 msgid "DHL SM Parcel Expedited Max"
 msgstr "SM Paket DHL Express-Max"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:111
-#, fuzzy
-msgid "DHL SM Media Mail Ground"
-msgstr "DHL SM Media Mail Boden"
-
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:112
-#, fuzzy
-msgid "DHL SM Media Mail Expedited"
-msgstr "DHL SM Media Mail Express"
-
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:113
-#, fuzzy
-msgid "DHL Parcel Metro Sameday"
-msgstr "DHL Paket Metro Sameday"
-
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:114
-#, fuzzy
-msgid "DHL Parcel return Light"
-msgstr "DHL Paket zurück Licht"
-
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:115
-#, fuzzy
-msgid "DHL Parcel return Plus"
-msgstr "DHL Paket Plus Rendite"
-
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:116
-#, fuzzy
-msgid "DHL Parcel return Ground"
-msgstr "DHL Paket zurück Boden"
-
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:121
+#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:123
 #, fuzzy
 msgid "DHL Parcel Domestic"
 msgstr "DHL Paket Inland"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:123
+#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:125
 #, fuzzy
 msgid "DHL Parcel Domestic Expedited"
 msgstr "DHL Paket Inland Express"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:167
+#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:169
 #, fuzzy
 msgid "Lithium Metal Contained in Equipment"
 msgstr "Lithiummetall im Gerät enthaltenen"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:168
+#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:170
 #, fuzzy
 msgid "Lithium-Ion Contained in Equipment"
 msgstr "Lithium-Ionen im Gerät enthaltenen"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:172
+#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:174
 #, fuzzy
 msgid "Primary Contained in Equipment"
 msgstr "Grundschule im Gerät enthaltenen"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:173
+#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:175
 #, fuzzy
 msgid "Primary Packed with Equipment"
 msgstr "Grundschule mit Ausrüstungen verpackt"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:174
+#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:176
 #, fuzzy
 msgid "Primary Stand-Alone"
 msgstr "Stand-alone-Grundschule"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:175
+#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:177
 #, fuzzy
 msgid "Secondary Contained in Equipment"
 msgstr "In den Geräten enthaltenen weiterführenden"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:176
+#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:178
 #, fuzzy
 msgid "Secondary Packed with Equipment"
 msgstr "Sekundäre mit Ausrüstungen verpackt"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:177
+#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:179
 #, fuzzy
 msgid "Secondary Stand-Alone"
 msgstr "Stand-alone-sekundär"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:178
+#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:180
 #, fuzzy
 msgid "ORM-D (US domestic)"
 msgstr "ORM-D (US-Inland)"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:179
+#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:181
 msgid "Small Quantity Provision (US domestic)"
 msgstr "Kleine Menge Bestimmung (US-Inland)"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:180
+#: includes/pr-dhl-api/class-pr-dhl-api-ecomm.php:182
 #, fuzzy
 msgid "Limited quantities (destination Canada)"
 msgstr "Begrenzte Mengen (Ziel Kanada)"
@@ -1416,50 +1337,49 @@ msgstr "DHL Paket Österreich"
 msgid "sun"
 msgstr "So"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-paket.php:197
-#, fuzzy
+#: includes/pr-dhl-api/class-pr-dhl-api-paket.php:198
 msgid "Delivery Duty Paid (excl. VAT )"
 msgstr "Lieferung verzollt (exkl. MwSt.)"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-paket.php:198
+#: includes/pr-dhl-api/class-pr-dhl-api-paket.php:199
 #, fuzzy
 msgid "Delivery Duty Paid (excl. Duties, taxes and VAT)"
 msgstr "Delivery Duty Paid (exkl. Zölle, Steuern und Mehrwertsteuer)"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-paket.php:208
+#: includes/pr-dhl-api/class-pr-dhl-api-paket.php:209
 msgid "Minimum age of 16"
 msgstr "Mindestalter 16"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-paket.php:209
+#: includes/pr-dhl-api/class-pr-dhl-api-paket.php:210
 msgid "Minimum age of 18"
 msgstr "Mindestalter 18"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:58
-#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:152
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:59
+#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:153
 #, fuzzy
 msgid "DHL Label could not be deleted!"
 msgstr "DHL-Label konnte nicht gelöscht werden!"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:99
-#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:165
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:100
+#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:166
 #, fuzzy
 msgid "Invalid file path!"
 msgstr "Ungültige Datei!"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:106
-#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:174
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:107
+#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:175
 #, fuzzy
 msgid "DHL Label file cannot be saved!"
 msgstr "DHL-Label-Datei kann nicht gespeichert werden!"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:116
-#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:184
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:117
+#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:185
 #, fuzzy
 msgid "Please, provide the username in the DHL shipping settings"
 msgstr "Bitte geben Sie den Benutzernamen in der DHL Versand-Einstellungen"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:120
-#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:188
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:121
+#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:189
 #, fuzzy
 msgid ""
 "Please, provide the password for the username in the DHL shipping settings"
@@ -1467,83 +1387,83 @@ msgstr ""
 "Bitte geben Sie das Kennwort für den Benutzernamen in den DHL-Versand-"
 "Einstellungen"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:125
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:126
 #, fuzzy
 msgid "Please, provide a pickup account in the DHL shipping settings"
 msgstr "Bitte geben Sie eine pickup-Konto in der DHL Versand-Einstellungen"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:129
-#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:197
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:130
+#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:198
 #, fuzzy
 msgid "Please, provide a distribution center in the DHL shipping settings"
 msgstr "Bitte geben Sie ein Verteilzentrum in der DHL Versand-Einstellungen"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:137
-#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:201
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:138
+#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:202
 #, fuzzy
 msgid "DHL \"Product\" is empty!"
 msgstr "DHL \"Produkt\" ist leer!"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:141
-#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:205
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:142
+#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:206
 msgid "Shop \"Order ID\" is empty!"
 msgstr "Shop \"Order ID\" ist leer!"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:145
-#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:209
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:146
+#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:210
 msgid "Shop \"Weight Units of Measure\" is empty!"
 msgstr "Shop \"Gewicht Maßeinheiten\" ist leer!"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:149
-#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:213
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:150
+#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:214
 msgid "Order \"Weight\" is empty!"
 msgstr "\"Gewicht\" ist leer!"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:164
-#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:228
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:165
+#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:229
 msgid "Shop \"Currency\" is empty!"
 msgstr "Shop \"Währung\" ist leer!"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:169
-#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:233
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:170
+#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:234
 #, fuzzy
 msgid "Shipping \"Address 1\" is empty!"
 msgstr "Lieferadresse \"1\" ist leer!"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:173
-#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:237
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:174
+#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:238
 #, fuzzy
 msgid "Shipping \"City\" is empty!"
 msgstr "Versand \"City\" ist leer!"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:177
-#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:241
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:178
+#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:242
 #, fuzzy
 msgid "Shipping \"Country\" is empty!"
 msgstr "Versand \"Country\" ist leer!"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:87
+#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:88
 #, fuzzy, php-format
 msgid "Could not create label - %s"
 msgstr "Label - konnte nicht erstellt werden: %s"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:132
+#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:133
 #, fuzzy, php-format
 msgid "Could not delete label - %s"
 msgstr "Label - konnte nicht gelöscht werden: %s"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:193
+#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:194
 #, fuzzy
 msgid "Please, provide an account in the DHL shipping settings"
 msgstr "Bitte geben Sie ein Konto in der DHL Versand-Einstellungen"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:274
+#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:275
 #, fuzzy, php-format
 msgid "Only %s ordered items can be processed, your order has %s"
 msgstr ""
 "Nur %s bestellten Artikel verarbeitet werden können, Ihre Bestellung hat %s"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:451
+#: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:437
 #, fuzzy
 msgid "Could not create account number - no product number."
 msgstr "Kontonummer - keine Produktnummer konnte nicht erstellt werden."
@@ -1567,18 +1487,17 @@ msgid "Country not supported"
 msgstr "Land nicht unterstützt"
 
 #: pr-dhl-woocommerce.php:416
-#, fuzzy
 msgid "Connection Successful!"
-msgstr "Testverbindung ist erfolgreich."
+msgstr "Testverbindung ist erfolgreich!"
 
 #: pr-dhl-woocommerce.php:428
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "Connected Failed: %s Make sure to save the settings before testing the "
 "connection. "
 msgstr ""
 "Verbindung fehlgeschlagen: %s achten Sie auf die Einstellungen zu speichern, "
-"bevor Sie die Verbindung testen."
+"bevor Sie die Verbindung testen. "
 
 #: pr-dhl-woocommerce.php:499
 msgid "mon"
@@ -1710,16 +1629,14 @@ msgid ""
 "a surcharge of %s incl. VAT"
 msgstr ""
 "* Bei einer Buchung von Wunschtag und Wunschzeit in Kombination féillt ein "
-"Aufpreis in Héhe von %s inkl. MwSt. an."
+"Aufpreis in Héhe von %s inkl. MwSt. an. "
 
 #: templates/dhl-handover/body.php:19 templates/dhl-handover/body.php:124
 #: templates/dhl-handover/head.php:12
-#, fuzzy
 msgid "Print"
-msgstr "drucken"
+msgstr "Drucken"
 
 #: templates/dhl-handover/body.php:24
-#, fuzzy
 msgid "Handover Note"
 msgstr "Handover-Hinweis"
 
@@ -1735,7 +1652,7 @@ msgstr "Pick-up-Name"
 
 #: templates/dhl-handover/body.php:44
 msgid "Account No"
-msgstr "Konto-Nr. "
+msgstr "Konto-Nr."
 
 #: templates/dhl-handover/body.php:56 templates/dhl-handover/body.php:59
 msgid "Shipping Service(s)"
@@ -1762,7 +1679,6 @@ msgid "Weight (%s)"
 msgstr "Gewicht (%s)"
 
 #: templates/dhl-handover/body.php:81
-#, fuzzy
 msgid "No. of Receptacles"
 msgstr "Nein. der Behälter"
 
@@ -1777,7 +1693,6 @@ msgid "Drop-Off"
 msgstr "Rückgabeort"
 
 #: templates/dhl-handover/body.php:93
-#, fuzzy
 msgid "Pick-Up"
 msgstr "Pick-up"
 
@@ -1825,9 +1740,8 @@ msgid "https://github.com/"
 msgstr "https://github.com/"
 
 #. Description of the plugin/theme
-#, fuzzy
 msgid "WooCommerce integration for DHL eCommerce and Paket."
-msgstr "WooCommerce Integration DHL-Logistik-Dienstleistungen"
+msgstr "WooCommerce Integration DHL-Logistik-Dienstleistungen."
 
 #. Author of the plugin/theme
 msgid "DHL"
@@ -1837,6 +1751,84 @@ msgstr "DHL"
 #, fuzzy
 msgid "http://dhl.com/"
 msgstr "http://DHL.com/"
+
+#~ msgid "Print Label"
+#~ msgstr "Label drucken"
+
+#~ msgid "Enter Bank Account Owner."
+#~ msgstr "Geben Sie Bankkonto Besitzer."
+
+#~ msgid "Enter Bank Name."
+#~ msgstr "Namen der Bank eingeben"
+
+#~ msgid "Enter Account IBAN."
+#~ msgstr "Geben Sie Konto IBAN."
+
+#~ msgid "Enter Bank BIC."
+#~ msgstr "Geben Sie Bank BIC."
+
+#~ msgid "Account referece to customer profile."
+#~ msgstr "Konto ein Kundenprofil."
+
+#, fuzzy
+#~ msgid "DHL GM Business Priority"
+#~ msgstr "DHL-GM-Geschäftspriorität"
+
+#, fuzzy
+#~ msgid "DHL GM Business Standard"
+#~ msgstr "DHL GM Business Standard"
+
+#, fuzzy
+#~ msgid "DHL GM Parcel Direct Express"
+#~ msgstr "DHL GM Parcel Direct Express"
+
+#, fuzzy
+#~ msgid "DHL Parcel International Direct Standard"
+#~ msgstr "DHL Paket International direkte Standard"
+
+#, fuzzy
+#~ msgid "DHL Parcel International Direct Priority"
+#~ msgstr "DHL Paket International direkte Priorität"
+
+#, fuzzy
+#~ msgid "Parcel International Direct"
+#~ msgstr "Parcel International direkt"
+
+#, fuzzy
+#~ msgid "Parcel International Standard"
+#~ msgstr "Internationaler Standard Paket"
+
+#, fuzzy
+#~ msgid "DHL SM Flats Expedited"
+#~ msgstr "DHL-SM-Wohnungen beschleunigt"
+
+#, fuzzy
+#~ msgid "DHL SM Flats Ground"
+#~ msgstr "DHL-SM-Wohnungen-Boden"
+
+#, fuzzy
+#~ msgid "DHL SM Media Mail Ground"
+#~ msgstr "DHL SM Media Mail Boden"
+
+#, fuzzy
+#~ msgid "DHL SM Media Mail Expedited"
+#~ msgstr "DHL SM Media Mail Express"
+
+#, fuzzy
+#~ msgid "DHL Parcel Metro Sameday"
+#~ msgstr "DHL Paket Metro Sameday"
+
+#, fuzzy
+#~ msgid "DHL Parcel return Light"
+#~ msgstr "DHL Paket zurück Licht"
+
+#, fuzzy
+#~ msgid "DHL Parcel return Plus"
+#~ msgstr "DHL Paket Plus Rendite"
+
+#, fuzzy
+#~ msgid "DHL Parcel return Ground"
+#~ msgstr "DHL Paket zurück Boden"
 
 #~ msgid "Enter Shipper State."
 #~ msgstr "Geben Sie Absender Bundesland."
