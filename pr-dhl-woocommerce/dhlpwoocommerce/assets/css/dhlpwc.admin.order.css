@@ -1,0 +1,78 @@
+.dhlpwc_notice { color: #0a0; margin-bottom:0 }
+.dhlpwc_warning { color: #a00; margin-bottom:0 }
+.dhlpwc_error { color: #a00; margin-bottom:0 }
+
+.dhlpwc-meta-loader {
+    visibility: hidden;
+    position: relative;
+    overflow:hidden;
+    margin:-10px -12px -12px;
+    height:30px;
+
+    filter: brightness(60%) sepia(1) saturate(9) hue-rotate(151deg);
+}
+
+#dhlpwc-label[metabox_busy="true"] .dhlpwc-meta-loader { visibility: visible; }
+
+.dhlpwc-order-metabox-form-parceltypes {
+    position: relative;
+}
+.dhlpwc-order-metabox-form-parceltypes .widefat {
+    position: absolute;
+    top: -2.4em;
+}
+.dhlpwc-order-metabox-form-parceltypes .widefat .order_actions.column-order_actions {
+    width:100%
+}
+
+.dhlpwc-meta-loader img {
+    position: absolute;
+    width: 100%;
+    height:5px;
+    padding:0;
+    margin:0;
+    bottom: 0;
+}
+
+.order_actions .dhlpwc_admin_action_button {
+    display: inline-block;
+    text-indent: -9999px;
+    position: relative;
+    padding: 0 !important;
+    height: 2em;
+    width: 2em;
+}
+
+.order_actions .dhlpwc_admin_action_button::after {
+    font-family: Dashicons;
+    speak: none;
+    font-weight: 400;
+    font-variant: normal;
+    text-transform: none;
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    text-indent: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    content: "\f133";
+    line-height: 1.85;
+}
+
+.order_actions .dhlpwc_admin_action_button.dhlpwc_action_create::after { content: "\f133";}
+.order_actions .dhlpwc_admin_action_button.dhlpwc_action_download::after { content: "\f316";}
+.order_actions .dhlpwc_admin_action_button.dhlpwc_action_follow_tt::after { content: "\f504";}
+.order_actions .dhlpwc_admin_action_button.dhlpwc_action_delete::after { content: "\f182"; }
+.order_actions .dhlpwc_admin_action_button.dhlpwc_action_refresh::after { content: "\f531"; }
+
+.widefat .column-order_actions a.button.dhlpwc_action_refresh {
+    float:right;
+}
+
+ul.order-meta-options {
+    margin: 0;
+    list-style-type: none;
+}

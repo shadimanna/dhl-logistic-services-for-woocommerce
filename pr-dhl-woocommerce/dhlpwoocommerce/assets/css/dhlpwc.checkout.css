@@ -1,0 +1,76 @@
+.dhlpwc_notice { color: #0a0; margin-bottom:0 }
+.dhlpwc_warning { color: #a00; margin-bottom:0 }
+.dhlpwc_error { color: #a00; margin-bottom:0 }
+
+/* Parcelshop title check */
+#dhlpwc-ship-to-parcelshop-address {
+    position:relative;
+}
+
+#dhlpwc-ship-to-parcelshop-address label {
+    font-weight:300;
+}
+
+#dhlpwc-ship-to-parcelshop-address .woocommerce-form__input-checkbox {
+    position:absolute;
+    top:50%;
+    right:0;
+    -webkit-transform:translateY(-50%);
+    -ms-transform:translateY(-50%);
+    transform:translateY(-50%);
+    margin-right:0
+}
+
+/* General parcelshop form */
+.dhlpwc-checkout-subsection {
+    position: relative;
+    padding-bottom:20px;
+    display:none;
+}
+
+.dhlpwc-checkout-subsection input {
+    width:100%;
+}
+
+/* Parcelshop info box */
+#dhlpwc-parcelshop-info {
+    position: absolute;
+    background-color: white;
+    z-index:1;
+    width:100%;
+    padding: 8px;
+    margin: 0;
+    opacity: 0;
+}
+
+#dhlpwc-parcelshop-info-address {
+    position: relative;
+    float:left;
+    width:60%;
+    font-size: smaller;
+}
+
+#dhlpwc-parcelshop-info-time-table {
+    position: relative;
+    float:right;
+    width:40%;
+    font-size: small;
+}
+
+#dhlpwc-parcelshop-info-time-table table {
+    margin: 0;
+}
+
+#dhlpwc-parcelshop-info-time-day {
+    font-weight:bold;
+}
+
+#dhlpwc-parcelshop-info-time-table table td {
+    padding: 0;
+}
+
+#dhlpwc-parcelshop-map {
+    width: 100%;
+    height: 400px;
+    background-color: grey;
+}

@@ -79,8 +79,6 @@ class PR_DHL_WC {
 		$this->define_constants();
 		$this->includes();
 		$this->init_hooks();
-		// create classes
-		// $this->init();
 	}
 
 	/**
@@ -149,10 +147,11 @@ class PR_DHL_WC {
 	}
 
 	public function init_hooks() {
+
 		add_action( 'init', array( $this, 'init' ), 0 );
 		add_action( 'init', array( $this, 'load_textdomain' ) );
-		add_action( 'admin_notices', array( $this, 'environment_check' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'dhl_theme_enqueue_styles') );		
+		
+		add_action( 'admin_enqueue_scripts', array( $this, 'dhl_theme_enqueue_styles') );	
 
 		add_action( 'woocommerce_shipping_init', array( $this, 'includes' ) );
 		add_filter( 'woocommerce_shipping_methods', array( $this, 'add_shipping_method' ) );
@@ -168,10 +167,22 @@ class PR_DHL_WC {
 	public function init() {
 		// error_log('main plugin init');
 		// Checks if WooCommerce is installed.
-		if ( class_exists( 'WC_Shipping_Method' ) ) {			
 
-			$this->get_pr_dhl_wc_product();
-			$this->get_pr_dhl_wc_order();
+		if ( class_exists( 'WC_Shipping_Method' ) ) {			
+			
+			$base_country_code = $this->get_base_country();
+			// error_log($base_country_code);
+
+			// If NL selected, load DHL Parcel plugin.
+			if ( $base_country_code == 'NL' ) {
+				include( 'dhlpwoocommerce/dhlpwoocommerce.php' );
+			} else {
+
+				add_action( 'admin_notices', array( $this, 'environment_check' ) );
+
+				$this->get_pr_dhl_wc_product();
+				$this->get_pr_dhl_wc_order();
+			}
 
 		} else {
 			// Throw an admin error informing the user this plugin needs WooCommerce to function
