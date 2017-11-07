@@ -217,7 +217,7 @@ class PR_DHL_WC {
 	}
 
 	public function get_pr_dhl_wc_product() {
-
+		
 		if ( ! isset( $this->shipping_dhl_product ) ){
 			try {
 				$dhl_obj = $this->get_dhl_factory();
@@ -402,6 +402,7 @@ class PR_DHL_WC {
 	}
 
 	public function test_dhl_connection_callback() {
+		check_ajax_referer( 'pr-dhl-test-con', 'test_con_nonce' );
 		// error_log('test_dhl_connection_callback');
 		try {
 
