@@ -227,6 +227,10 @@ abstract class PR_DHL_WC_Order {
 
 			// Gather args for DHL API call
 			$args = $this->get_label_args( $order_id, $dhl_label_args );
+
+			// Allow third parties to modify the args to the DHL APIs
+			$args = apply_filters('pr_shipping_dhl_label_args', $args, $order_id );
+
 			error_log(print_r($args,true));
 			$dhl_obj = PR_DHL()->get_dhl_factory();
 			$label_tracking_info = $dhl_obj->get_dhl_label( $args );
@@ -241,6 +245,8 @@ abstract class PR_DHL_WC_Order {
 				'label_url' => $label_url,
 				'tracking_note'	  => $tracking_note
 				) );
+
+			do_action( 'pr_shipping_dhl_label_created', $order_id );
 
 		} catch ( Exception $e ) {
 
