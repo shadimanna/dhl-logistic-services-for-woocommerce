@@ -516,16 +516,27 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 			$dhl_products = array();
 			$items_qty = sizeof($order_ids);
 
-			foreach ($order_ids as $order_id) {
-				$dhl_label_items = $this->get_dhl_label_items( $order_id );
-				error_log(print_r($dhl_label_items,true));
-				// Add all weights
-				$total_weight += $dhl_label_items['pr_dhl_weight'];
-
+			try {
+				
 				// Get list of all DHL products and change key to name
 				$dhl_obj = PR_DHL()->get_dhl_factory();
 				$dhl_product_list = $dhl_obj->get_dhl_products_domestic() + $dhl_obj->get_dhl_products_international();
-				error_log(print_r($dhl_product_list,true));
+				// error_log(print_r($dhl_product_list,true));
+			} catch (Exception $e) {
+				die( sprintf( __( 'Cannot generate handover %s', 'pr-shipping-dhl' ), $e->getMessage() ) );
+			}
+
+			foreach ($order_ids as $order_id) {
+				$dhl_label_items = $this->get_dhl_label_items( $order_id );
+
+				if ( empty( $dhl_label_items ) ) {
+					continue;
+				}
+				
+				// error_log(print_r($dhl_label_items,true));
+				// Add all weights
+				$total_weight += $dhl_label_items['pr_dhl_weight'];
+
 				$dhl_label_product = $dhl_product_list[ $dhl_label_items['pr_dhl_product'] ];
 
 				array_push( $dhl_products, $dhl_label_product );
