@@ -541,7 +541,7 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 
 				array_push( $dhl_products, $dhl_label_product );
 			}
-			
+			error_log(print_r($dhl_products,true));
 			// There should a unique list of products listed not one for each order!
 			$dhl_products = array_unique($dhl_products);
 
@@ -552,6 +552,8 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
  				'total_weight' => $total_weight,
  				'dhl_products' => $dhl_products
 			);
+
+			$args = apply_filters( 'pr_shipping_dhl_handover_args', $args, $order_ids );
 
 			$this->print_document( $args );
 
