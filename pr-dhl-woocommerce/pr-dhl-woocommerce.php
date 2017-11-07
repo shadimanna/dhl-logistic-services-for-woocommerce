@@ -391,6 +391,7 @@ class PR_DHL_WC {
 	}
 
 	public function test_dhl_connection_callback() {
+		check_ajax_referer( 'pr-dhl-test-con', 'test_con_nonce' );
 		// error_log('test_dhl_connection_callback');
 		try {
 

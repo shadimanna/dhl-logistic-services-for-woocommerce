@@ -21,7 +21,8 @@ function dhlTestConnection(btn_id) {
   }).appendTo(loaderContainer);
 
   var data = {
-    'action': 'test_dhl_connection'
+    'action': 'test_dhl_connection',
+    'test_con_nonce': dhl_test_con_obj.test_con_nonce
   };
 
   // We can also pass the url value separately from ajaxurl for front end AJAX implementations
