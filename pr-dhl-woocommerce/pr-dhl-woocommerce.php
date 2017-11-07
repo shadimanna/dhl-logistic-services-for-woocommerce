@@ -6,6 +6,8 @@
  * Author: DHL
  * Author URI: http://dhl.com/
  * Version: 1.0
+ * WC requires at least: 2.6.14
+ * WC tested up to: 3.2.3
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -217,7 +219,7 @@ class PR_DHL_WC {
 	}
 
 	public function get_pr_dhl_wc_product() {
-		
+
 		if ( ! isset( $this->shipping_dhl_product ) ){
 			try {
 				$dhl_obj = $this->get_dhl_factory();
