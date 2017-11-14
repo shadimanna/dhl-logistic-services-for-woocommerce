@@ -329,11 +329,11 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 	    foreach ($array as $k => $v) { 
 	        if (is_array($v)) { 
 	            $array[$k] = $this->walk_recursive_remove($v); 
-	        } else {
-	            if ( empty( $v ) ) { 
-	                unset($array[$k]); 
-	            } 
 	        } 
+
+            if ( empty( $v ) ) { 
+                unset($array[$k]); 
+            } 
 	    }
 	    return $array; 
 	} 

@@ -69,6 +69,9 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			$response_body = $soap_client->createShipmentOrder($soap_request);
 
+			error_log($soap_client->__getLastRequest());
+			// echo "REQUEST:\n" . $client->__getLastRequest() . "\n";
+
 			PR_DHL()->log_msg( 'Response Body: ' . print_r( $response_body, true ) );
 		
 /*
@@ -254,8 +257,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 											'state' => '',
 											'phone' => ' '
 											),
-								'order_details' =>
-									array( 'cod_value' => 0	) 
 						);
 
 		$args['shipping_address'] = wp_parse_args( $args['shipping_address'], $default_args['shipping_address'] );
@@ -333,7 +334,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 													'name' => 'PreferredNeighbour' ,
 													'type' => 'details'),
 								'preferred_day' => array(
-													'name' => 'PreferredDay ' ,
+													'name' => 'PreferredDay' ,
 													'type' => 'details'),
 								'personally' => array(
 													'name' => 'Personally'
@@ -361,7 +362,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			$services = array();
 			foreach ($services_map as $key => $value) {
 
-				if ( isset( $this->args['order_details'][ $key ] ) ) {
+				if ( ! empty( $this->args['order_details'][ $key ] ) ) {
 
 					if ( $this->args['order_details'][ $key ] == 'no' ) {
 						continue;
@@ -460,10 +461,10 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 													array( 
 														'weightInKG' => $this->args['order_details']['weight']
 														),
+												'Service' => $services,
+												'Notification' => $notification_email,
+												'BankData' => $bank_data,
 											),
-										'Service' => $services,
-										'Notification' => $notification_email,
-										'BankData' => $bank_data,
 										'Shipper' =>
 											array(
 												'Name' =>
@@ -559,7 +560,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			// Unset/remove any items that are empty strings or 0, even if required!
 			$this->body_request = $this->walk_recursive_remove( $dhl_label_body );
-			
+			error_log(print_r($this->body_request, true));
 			// Ensure Export Document is set before adding additional fee
 			if( isset( $this->body_request['ShipmentOrder']['Shipment']['ExportDocument'] ) ) {
 				// Additional fees, required and 0 so place after check
@@ -598,11 +599,12 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 	    foreach ($array as $k => $v) { 
 	        if (is_array($v)) { 
 	            $array[$k] = $this->walk_recursive_remove($v); 
-	        } else {
-	            if ( empty( $v ) ) { 
-	                unset($array[$k]); 
-	            } 
 	        } 
+            
+            if ( empty( $v ) ) { 
+                unset($array[$k]); 
+            } 
+	        
 	    }
 	    return $array; 
 	} 
