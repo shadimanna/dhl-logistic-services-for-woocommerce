@@ -24,7 +24,7 @@ function dhlTestConnection(btn_id) {
     'action': 'test_dhl_connection',
     'test_con_nonce': dhl_test_con_obj.test_con_nonce
   };
-
+  
   // We can also pass the url value separately from ajaxurl for front end AJAX implementations
   $.post(dhl_test_con_obj.ajax_url, data, function(response) {
     btn.attr('disabled', false);
