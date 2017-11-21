@@ -25,7 +25,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
 		// $dhl_label_items = $this->get_dhl_label_items( $order_id );
 
-		// error_log(print_r($dhl_label_items,true));
 		// Get saved package description, otherwise generate the text based on settings
 		// if( ! empty( $dhl_label_items['shipping_dhl_description'] ) ) {
 		// 	$selected_dhl_desc = $dhl_label_items['shipping_dhl_description'];
@@ -295,7 +294,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$args['dhl_settings'][ 'shipper_country' ] = PR_DHL()->get_base_country();
 		$args['dhl_settings'][ 'participation' ] = $shipping_dhl_settings[ 'dhl_participation_' . $dhl_label_args['pr_dhl_product'] ];
 
-		error_log(print_r($args,true));
 		return $args;
 	}
 

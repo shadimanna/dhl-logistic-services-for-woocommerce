@@ -110,7 +110,6 @@ abstract class PR_DHL_WC_Order {
 
 		// Get tracking info if it exists
 		$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
-		// error_log(print_r($label_tracking_info,true));
 		// Check whether the label has already been created or not
 		if( empty( $label_tracking_info ) ) {
 			$is_disabled = '';
@@ -129,7 +128,6 @@ abstract class PR_DHL_WC_Order {
 			'print_button' => $print_button
 		);
 
-		// error_log(print_r($dhl_label_data,true));
 
 		echo '<div id="shipment-dhl-label-form">';
 
@@ -194,16 +192,12 @@ abstract class PR_DHL_WC_Order {
 
 		// $meta_box_ids += $additional_meta_box_ids;
 		$meta_box_ids = array_merge( $meta_box_ids, $additional_meta_box_ids );
-		error_log(print_r($meta_box_ids,true));
-		error_log(print_r($_POST,true));
 		foreach ($meta_box_ids as $key => $value) {
 			// Save value if it exists
-			// error_log($_POST[ $value ]);
 			if ( isset( $_POST[ $value ] ) ) {
 				$args[ $value ]	 = wc_clean( $_POST[ $value ] );
 			}
 		}		
-		// error_log(print_r($args, true));
 
 		$this->save_dhl_label_items( $post_id, $args );
 
@@ -231,7 +225,6 @@ abstract class PR_DHL_WC_Order {
 			// Allow third parties to modify the args to the DHL APIs
 			$args = apply_filters('pr_shipping_dhl_label_args', $args, $order_id );
 
-			error_log(print_r($args,true));
 			$dhl_obj = PR_DHL()->get_dhl_factory();
 			$label_tracking_info = $dhl_obj->get_dhl_label( $args );
 
@@ -257,7 +250,6 @@ abstract class PR_DHL_WC_Order {
 	}
 
 	public function delete_label_ajax( ) {
-		// error_log('delete label ajaz');
 		check_ajax_referer( 'create-dhl-label', 'pr_dhl_label_nonce' );
 		$order_id = wc_clean( $_POST[ 'order_id' ] );
 
@@ -457,9 +449,7 @@ abstract class PR_DHL_WC_Order {
 
 		// Get address related information 
 		$billing_address = $order->get_address( );
-		// error_log(print_r($billing_address, true));
 		$shipping_address = $order->get_address( 'shipping' );
-		// error_log(print_r($shipping_address, true));
 
 		// If shipping phone number doesn't exist, try to get billing phone number
 		if( ! isset( $shipping_address['phone'] ) && isset( $billing_address['phone'] ) ) {

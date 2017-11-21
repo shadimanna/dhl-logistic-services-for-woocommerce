@@ -14,7 +14,6 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 
 	public function __construct( $country_code ) {
 		$this->country_code = $country_code;
-		// error_log('DHL eComm');
 		try {
 			$this->dhl_label = new PR_DHL_API_SOAP_Label( );
 		} catch (Exception $e) {
@@ -84,11 +83,20 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 	}
 
 	public function get_dhl_preferred_days( $cutoff_time = '12:00', $exclude_working_days = array() ) {
+		$day_of_week_arr = array(
+		            '1' => __('Mon', 'pr-shipping-dhl'), 
+		            '2' => __('Tue', 'pr-shipping-dhl'), 
+		            '3' => __('Wed', 'pr-shipping-dhl'),
+		            '4' => __('Thu', 'pr-shipping-dhl'),
+		            '5' => __('Fri', 'pr-shipping-dhl'),
+		            '6' => __('Sat', 'pr-shipping-dhl'),
+		            '7' => __('Sun', 'pr-shipping-dhl')
+		        );
+
 		// Always exclude Sunday
 		$exclude_sun = array( 'Sun' => __('sun', 'pr-shipping-dhl') );
 		$exclude_working_days += $exclude_sun;
 		$day_counter = 0;
-		// error_log(print_r($exclude_working_days,true));
 
 		// Get existing timezone to reset afterwards
 		$current_timzone = date_default_timezone_get();
@@ -96,76 +104,62 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		date_default_timezone_set('Europe/Berlin');
 
 		// Get existing time locale
-		$current_locale = setlocale(LC_TIME, 0);
-		// error_log($current_locale);
+		// $current_locale = setlocale(LC_TIME, 0);
 		// Set time locale based on WP locale setting (Settings->General)
-		$wp_locale = get_locale();
-		setlocale(LC_TIME, $wp_locale);
+		// $wp_locale = get_locale();
+		// setlocale(LC_TIME, $wp_locale);
 		// setlocale(LC_TIME, 'de_DE', 'deu_deu', 'de_DE.utf8', 'German', 'deu/ger', 'de_DE@euro', 'de', 'ge');
 		
 		$tz_obj = new DateTimeZone( 'Europe/Berlin' );
 		$today = new DateTime("now", $tz_obj);	// Should the order date be passed as a variable?
-		// error_log(print_r($today,true));
 		$today_de_timestamp = $today->getTimestamp();
 
 		$week_day = $today->format('D');
 		$week_date = $today->format('Y-m-d');
 		$week_time = $today->format('H:i');
-		// error_log($week_time);
 
 		// Compare week day with key since key includes capital letter in beginning and will work for English AND German!
 		// Check if today is a working day...
 		if ( ( ! array_key_exists($week_day, $exclude_working_days) ) && ( ! in_array($week_date, $this->de_national_holidays) ) ) {
 			// ... and check if after cutoff time if today is a transfer day
 			if( $today_de_timestamp >= strtotime( $cutoff_time ) ) {
-				// error_log('after cutoff');
 				// If the cut off time has been passed, then add a day
 				$today->add( new DateInterval('P1D') ); // Add 1 day
 				$week_day = $today->format('D');
 				$week_date = $today->format('Y-m-d');
-				// error_log($week_date);
 
 				$day_counter++;
 
-				// error_log('next day');
 			}
 		}
-		// error_log($day_counter);
-		// error_log($week_day);
-		// error_log($week_date);
 
 		// Make sure the next transfer days are working days
 		while ( array_key_exists($week_day, $exclude_working_days) || in_array($week_date, $this->de_national_holidays) ) {
-			// error_log('get next working transfer day');
 			$today->add( new DateInterval('P1D') ); // Add 1 day
 			$week_day = $today->format('D');
 			$week_date = $today->format('Y-m-d');
 
 			$day_counter++;
 		}
-		// error_log($day_counter);
 
 		$preferred_days = array();
 		while( sizeof( $preferred_days ) < ( self::DHL_PAKET_DISPLAY_DAYS + self::DHL_PAKET_REMOVE_DAYS ) ) {
 
 			// NEED TO TEST WITH DE TRANSLATION FOR DISPLAY!
-			// $week_day = strtolower( date('D', strtotime("+$day_counter days") ) );
-			$week_day = strftime('%a', strtotime("+$day_counter days") );
+			$day_of_week = strtolower( date('N', strtotime("+$day_counter days") ) );
+			$week_day = strtolower( date('D', strtotime("+$day_counter days") ) );
+			// $week_day = strftime('%a', strtotime("+$day_counter days") );
 			$week_date = date('Y-m-d', strtotime("+$day_counter days") );
-			error_log($week_day);
-			// error_log($week_date);
-			// error_log($week_day_num);
 			
 			// Do not deliver on Sunday or holiday!
 			if ( ! array_key_exists($week_day, $exclude_sun) && ! in_array($week_date, $this->de_national_holidays) ) {
 
 				// $week_day_num = date('j', strtotime("+$day_counter days") );
-				$preferred_days[ $week_date ] = $week_day;
+				$preferred_days[ $week_date ] = $day_of_week_arr[ $day_of_week ];
 			}			
 			
 			$day_counter++;
 		}
-		// error_log(print_r($preferred_days,true));
 		// Remove first 2 working days, since cannot deliver right away
 		for ($i=0; $i < self::DHL_PAKET_REMOVE_DAYS; $i++) { 
 			array_shift( $preferred_days );
@@ -175,11 +169,10 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		array_unshift( $preferred_days, __('none', 'pr-shipping-dhl') );
 
 		// Reset time locael
-		setlocale(LC_TIME, $current_locale);
+		// setlocale(LC_TIME, $current_locale);
 		// Reset timezone to not affect any other plugins
 		date_default_timezone_set($current_timzone);
 
-		// error_log(print_r($preferred_days, true));
 		return $preferred_days;
 	}
 

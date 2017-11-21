@@ -15,25 +15,6 @@ try {
 if( ! $dhl_obj->is_dhl_paket() ) {
   return;
 }
-
-// error_log(print_r($pr_dhl_preferred_time_selected, true));
-/*
-You decide when and where you want to receive your parcels with the recipient services of DHL.
-Please choose your preferred delivery option:
- 
-Preferred day: Delivery at your preferred day
-Tooltip: Choose one of the displayed days as your preferred day for your parcel delivery. Other days are not possible due to delivery processes.
- 
-Preferred time: Delivery during your preferred time slot
-Tooltip: Indicate a preferred time, which suits you best for your parcel delivery by choosing one of the displayed time windows.
- 
-Preferred location: Delivery to your preferred drop-off location
-Tooltip: Choose a weather-protected and non-visible place on your property, where we can deposit the parcel in your absence.
- 
-Preferred neighbor: Delivery to a neighbor of your choice
-Tooltip: Determine a person in your immediate neighborhood whom we can hand out your parcel. This person should live in the same building, directly opposite or next door.
-*/
-
 ?>
 
 <tr class="dhl-co-tr dhl-co-tr-fist">

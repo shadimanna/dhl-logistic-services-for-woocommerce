@@ -21,7 +21,6 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 	 * Init and hook in the integration.
 	 */
 	public function __construct( $instance_id = 0 ) {
-		// error_log('create WC_Shipping_DHL_Method');
 		$this->id = 'pr_dhl_ecomm';
 		$this->instance_id = absint( $instance_id );
 		$this->method_title = __( 'DHL eCommerce', 'pr-shipping-dhl' );
@@ -45,11 +44,9 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 		$this->init_form_fields();
 		$this->init_settings();
 
-		// add_action( 'admin_notices', array( $this, 'environment_check' ) );
 		add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_scripts' ) );
 
-		// add_action( 'wp_ajax_test_dhl_connection', array( $this, 'test_dhl_connection_callback' ) );		
 	}
 
 	public function load_admin_scripts( $hook ) {
@@ -83,19 +80,6 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 		<?php
 		return ob_get_clean();
 	}
-
-	/**
-	 * Check if the user has enabled the plugin functionality, but hasn't provided an api key
-	 **/
-	/*
-	public function environment_check() {
-		// Try to get the DHL object...if exception if thrown display to user, mainly to check country support.
-		try {
-			$dhl_obj = PR_DHL()->get_dhl_factory();
-		} catch (Exception $e) {
-			echo $this->get_message(  $e->getMessage() );
-		}
-	}*/
 
 	/**
 	 * Initialize integration settings form fields.
@@ -301,34 +285,6 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 		<?php
 		return ob_get_clean();
 	}
-
-	/*
-	public function test_dhl_connection_callback() {
-		
-		try {
-
-			$dhl_class = $this->get_dhl_factory();
-			$connection = $dhl_class->dhl_test_connection();
-
-			$connection_msg = __('Connection Successful!', 'pr-shipping-dhl');
-			$this->log_msg( $connection_msg );
-
-			wp_send_json( array( 
-				'connection_success' 	=> $connection_msg,
-				'button_txt'			=> PR_DHL_BUTTON_TEST_CONNECTION
-				) );
-
-		} catch (Exception $e) {
-			$this->log_msg($e->getMessage());
-
-			wp_send_json( array( 
-				'connection_error' => __('Connected Failed: ', 'pr-shipping-dhl') . $e->getMessage(),
-				'button_txt'			=> PR_DHL_BUTTON_TEST_CONNECTION
-				 ) );
-		}
-
-		wp_die();
-	}*/
 
 	/**
 	 * Validate the API key

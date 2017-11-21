@@ -20,8 +20,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		try {
 
 			parent::__construct( );
-			// Set Endpoint
-			// $this->set_endpoint( '/shipping/v1/label' );
 
 		} catch (Exception $e) {
 			throw $e;
@@ -63,35 +61,20 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 		try {
 			$soap_client = $this->get_access_token( $args['dhl_settings']['api_user'], $args['dhl_settings']['api_pwd'] );
-			// error_log(print_r($soap_client,true));
-			// error_log(print_r($soap_request,true));
 			PR_DHL()->log_msg( '"createShipmentOrder" called with: ' . print_r( $soap_request, true ) );
 
 			$response_body = $soap_client->createShipmentOrder($soap_request);
 
-			error_log($soap_client->__getLastRequest());
-			// echo "REQUEST:\n" . $client->__getLastRequest() . "\n";
-
 			PR_DHL()->log_msg( 'Response Body: ' . print_r( $response_body, true ) );
 		
-/*
-			$soap_request =	array(
-								'majorRelease' => '2',
-								'minorRelease' => '2'
-					);
-			$response_body = $soap_client->getVersion($soap_request);*/
 		} catch (Exception $e) {
-			// error_log('soap label exception');
 			throw $e;
 		}
-
-		error_log(print_r($response_body,true));
 
 		if( $response_body->Status->statusCode != 0 ) {
 			throw new Exception( sprintf( __('Could not create label - %s', 'pr-shipping-dhl'), $response_body->Status->statusMessage ) );
 		} else {
 			// Give the server 1 second to create the PDF before downloading it
-			// wp_schedule_single_event(time() + 1, 'custom_function');
 			sleep(1);
 
 			$tracking_number = isset( $response_body->CreationState->LabelData->shipmentNumber ) ? $response_body->CreationState->LabelData->shipmentNumber : '';
@@ -115,22 +98,13 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				);
 
 		try {
+
 			$soap_client = $this->get_access_token( $args['api_user'], $args['api_pwd'] );
-			error_log(print_r($soap_client,true));
-			error_log(print_r($soap_request,true));
 			$response_body = $soap_client->deleteShipmentOrder( $soap_request );
-/*
-			$soap_request =	array(
-								'majorRelease' => '2',
-								'minorRelease' => '2'
-					);
-			$response_body = $soap_client->getVersion($soap_request);*/
+
 		} catch (Exception $e) {
-			error_log('soap label exception');
 			throw $e;
 		}
-
-		error_log(print_r($response_body,true));
 
 		if( $response_body->Status->statusCode != 0 ) {
 			throw new Exception( sprintf( __('Could not delete label - %s', 'pr-shipping-dhl'), $response_body->Status->statusMessage ) );
@@ -314,7 +288,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 	
 
 	protected function set_message() {
-		// error_log('set message');
 		if( !empty( $this->args ) ) {
 			// Set date related functions to German time
 			// date_default_timezone_set('Europe/Berlin');
@@ -540,7 +513,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 									'netWeightInKG' => round( floatval( $item['item_weight'] ), 2 ),
 									'customsValue' => round( floatval( $item['item_value'] ), 2 ),
 								);
-					// error_log(print_r($json_item,true));
 					// $customsDetails = $json_item;
 					array_push($customsDetails, $json_item);
 				}
@@ -560,14 +532,12 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			// Unset/remove any items that are empty strings or 0, even if required!
 			$this->body_request = $this->walk_recursive_remove( $dhl_label_body );
-			error_log(print_r($this->body_request, true));
 			// Ensure Export Document is set before adding additional fee
 			if( isset( $this->body_request['ShipmentOrder']['Shipment']['ExportDocument'] ) ) {
 				// Additional fees, required and 0 so place after check
 				$this->body_request['ShipmentOrder']['Shipment']['ExportDocument']['additionalFee'] = 0;
 			}
 
-			// error_log(print_r($this->dhl_label_body,true));
 			return $this->body_request;
 			// $this->body_request = json_encode($dhl_label_body, JSON_PRETTY_PRINT);
 		}
@@ -575,8 +545,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 	}
 	
 	private function maybe_convert_weight( $weight, $UoM ) {
-		// error_log($weight);
-		// error_log($UoM);
 		switch ( $UoM ) {
 			case 'g':
 				$weight = $weight / 1000;
@@ -590,7 +558,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			default:
 				break;
 		}
-		// error_log($weight);
 		return $weight;
 	}
 

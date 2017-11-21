@@ -9,7 +9,6 @@ class PR_DHL_API_Ecomm extends PR_DHL_API {
 
 	public function __construct( $country_code ) {
 		$this->country_code = $country_code;
-		// error_log('DHL eComm');
 		try {
 			$this->dhl_label = new PR_DHL_API_REST_Label(  );
 		} catch (Exception $e) {
