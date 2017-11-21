@@ -60,7 +60,6 @@ class PR_DHL_Front_End_Paket {
 	}
 
 	public function dhl_add_meta_tags() {
-		// error_log('meta output');
 		echo '<meta name="58vffw8g4r9_t3e38g4og588915" content="Yes">';
 	}
 
@@ -100,7 +99,6 @@ class PR_DHL_Front_End_Paket {
 	}
 	
 	public function custom_woocommerce_locate_template( $template, $template_name, $template_path ) {
-	 // error_log('custom_woocommerce_locate_template');
 	  global $woocommerce;
 	 
 	  $_template = $template;
@@ -133,12 +131,9 @@ class PR_DHL_Front_End_Paket {
 	}
 
 	public function add_preferred_fields( ) {
-		// error_log('woocommerce_checkout_update_order_review');
 		// woocommerce_form_field('pr_dhl_paket_preferred_location');
-		// error_log(print_r(WC()->session, true));
 		$chosen_shipping_methods = WC()->session->get( 'chosen_shipping_methods' );
 		$chosen_payment_method = WC()->session->get( 'chosen_payment_method' );
-		// error_log(print_r($chosen_payment_method,true));
 
 		// WC 3.0 comaptibilty
 		if ( defined( 'WOOCOMMERCE_VERSION' ) && version_compare( WOOCOMMERCE_VERSION, '3.0', '>=' ) ) {
@@ -147,10 +142,7 @@ class PR_DHL_Front_End_Paket {
 			$customer_country = WC()->customer->get_country();
 		}
 
-		// error_log($customer_country);
 		$base_country_code = PR_DHL()->get_base_country();
-
-		// error_log($base_country_code);
 
 		$display_preferred = false;
 		// Preferred options are only for Germany customers
@@ -174,7 +166,6 @@ class PR_DHL_Front_End_Paket {
 				}
 
 				$wc_methods_dhl = $shipping_dhl_settings['dhl_shipping_methods'];
-				// error_log(print_r($wc_methods_dhl,true));
 				if( isset( $chosen_shipping_methods ) ) {
 
 					if( is_array( $chosen_shipping_methods ) ) {
@@ -199,13 +190,10 @@ class PR_DHL_Front_End_Paket {
 				}
 
 				$wc_payment_dhl = $shipping_dhl_settings['dhl_payment_gateway'];
-				// error_log(print_r($wc_payment_dhl,true));
 				if( isset( $chosen_payment_method ) && ! empty( $wc_payment_dhl) ) {
-					// error_log('chose payment method is set');
 					if( is_array( $chosen_payment_method ) ) {
 
 						foreach ($chosen_payment_method as $key => $value) {
-							// error_log($value);
 							// $ship_method_slug = $this->get_shipping_method_slug( $value );
 
 							if ( in_array( $value, $wc_payment_dhl ) ) {
@@ -214,7 +202,6 @@ class PR_DHL_Front_End_Paket {
 						}
 					} else {
 						// $ship_method_slug = $this->get_shipping_method_slug( $chosen_payment_method );
-						// error_log('is not array');
 						if ( in_array( $chosen_payment_method, $wc_payment_dhl ) ) {
 							return;
 						}
@@ -227,8 +214,6 @@ class PR_DHL_Front_End_Paket {
 		}
 
 		if( $display_preferred == true ) {
-			// error_log('display preferred');
-			// error_log(print_r($_POST['post_data'],true));
 			$template_args = array();
 			if ( isset( $_POST['post_data'] ) ) {
 				parse_str( $_POST['post_data'], $post_data );
@@ -240,7 +225,6 @@ class PR_DHL_Front_End_Paket {
 					}
 				}
 
-				// error_log(print_r($template_args,true));
 			}			
 
 			wc_get_template( 'checkout/dhl-preferred-services.php', $template_args, '', PR_DHL_PLUGIN_DIR_PATH . '/templates/' );
@@ -253,8 +237,6 @@ class PR_DHL_Front_End_Paket {
 			return;
 		}
 
-		// error_log('add_cart_fees');
-		// error_log(print_r($_POST,true));
 
 		// POST information is either in a query string-like variable called 'post_data'...
 		if ( isset( $_POST['post_data'] ) ) {
@@ -262,7 +244,6 @@ class PR_DHL_Front_End_Paket {
 		} else {
 			$post_data = $_POST; // ... else it is in the POST variable itself
 		}
-		// error_log(print_r($post_data, true));
 		
 		try {
 			
@@ -274,28 +255,24 @@ class PR_DHL_Front_End_Paket {
 
 			if( ! empty( $post_data['pr_dhl_preferred_time'] ) && ! empty( $post_data['pr_dhl_preferred_day'] ) ) {
 				if( ! empty( $shipping_dhl_settings['dhl_preferred_day_time_cost'] ) ) {
-					// error_log('time and day fee');
 					$cart->add_fee( __('DHL Preferred Day & Time', 'pr-shipping-dhl'), $shipping_dhl_settings['dhl_preferred_day_time_cost'] );
 				}
 
 			} elseif ( ! empty( $post_data['pr_dhl_preferred_time'] ) ) {
 				
 				if( ! empty( $shipping_dhl_settings['dhl_preferred_time_cost'] ) ) {
-					// error_log('time fee');
 					$cart->add_fee( __('DHL Preferred Time', 'pr-shipping-dhl'), $shipping_dhl_settings['dhl_preferred_time_cost'] );
 				}
 
 			} elseif ( ! empty( $post_data['pr_dhl_preferred_day'] ) ) {
 				
 				if( ! empty( $shipping_dhl_settings['dhl_preferred_day_cost'] ) ) {
-					// error_log('day fee');
 					$cart->add_fee( __('DHL Preferred Day', 'pr-shipping-dhl'), $shipping_dhl_settings['dhl_preferred_day_cost'] );
 				}
 
 			}
 
 			if( ! empty( $shipping_dhl_settings['dhl_cod_fee'] ) && $shipping_dhl_settings['dhl_cod_fee'] == 'yes' && $post_data['payment_method'] == 'cod' ) {
-				// error_log('day fee');
 				// Add €2 fee to COD usage (Euro is being assumed as currency)
 				$cart->add_fee( __('DHL COD fee', 'pr-shipping-dhl'), 2 );
 			}
@@ -306,11 +283,7 @@ class PR_DHL_Front_End_Paket {
 	}
 
 	public function process_dhl_preferred_fields( $order_id, $posted ) {
-		// error_log(print_r($posted,true));
 		// save the posted preferences to the order so can be used when generating label
-		error_log('process_dhl_preferred_fields');
-		// error_log(print_r($_POST,true));
-		// error_log(print_r($posted,true));
 		
 		if ( ! isset( $_POST ) ) {
 			return;
@@ -321,8 +294,6 @@ class PR_DHL_Front_End_Paket {
 				$dhl_label_options[ $key ] = wc_clean( $_POST[ $key ] );
 			}
 		}
-		error_log(print_r($dhl_label_options,true));
-		// error_log(print_r(PR_DHL(),true));
 		if ( isset( $dhl_label_options ) ) {
 
 			if ( isset( $dhl_label_options['pr_dhl_preferred_location_neighbor'] ) ) {
@@ -358,14 +329,10 @@ class PR_DHL_Front_End_Paket {
 	}
 
 	public function display_dhl_preferred_free_services_values( $total_rows, $order ) {
-		// error_log('display_dhl_preferred_free_services_values');
-		// error_log(print_r($total_rows,true));
-		// error_log(print_r($order,true));
 
 		// Might need to change for WC 3.0
 		$order_id = $order->get_order_number(); // WHAT HAPPENS WHEN SEQUENCIAL ORDER ID PLUGIN IS INSTALLED?
 		// global $order;
-		// error_log($order_id);
 		$dhl_label_options = PR_DHL()->get_pr_dhl_wc_order()->get_dhl_label_items( $order_id );
 		
 		try {
@@ -390,7 +357,6 @@ class PR_DHL_Front_End_Paket {
 					
 				}
 			}
-			// error_log(print_r($new_rows,true));
 			if ( ! empty( $new_rows ) ) {
 				// Instert before payment method
 				$insert_before = array_search( 'payment_method', array_keys( $total_rows ) );
@@ -399,7 +365,6 @@ class PR_DHL_Front_End_Paket {
 				if( empty( $insert_before ) ) {
 					$insert_before = array_search( 'order_total', array_keys( $total_rows ) );
 				}
-				// error_log($insert_before);
 				if ( empty( $insert_before ) ) {
 					$total_rows += $new_rows;
 				} else {
@@ -407,7 +372,6 @@ class PR_DHL_Front_End_Paket {
 				}
 
 			}
-			// error_log(print_r($total_rows,true));
 
 		} catch (Exception $e) {
 			// do nothing

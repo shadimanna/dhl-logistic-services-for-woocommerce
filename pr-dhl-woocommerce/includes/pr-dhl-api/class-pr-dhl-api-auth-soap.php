@@ -82,7 +82,6 @@ class PR_DHL_API_Auth_SOAP {
 			);
 
 		} catch ( Exception $e ) {
-			error_log('exception request access token');
 			throw $e;
 		}
 		

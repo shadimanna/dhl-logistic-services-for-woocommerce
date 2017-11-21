@@ -155,16 +155,13 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 	protected function get_package_description( $order_id ) {
 		$shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
 		$dhl_desc_default = $shipping_dhl_settings['dhl_desc_default'];
-		// error_log($dhl_desc_default);
 		$order = wc_get_order( $order_id );
 		$ordered_items = $order->get_items();
 
 		$desc_array = array();
 		foreach ($ordered_items as $key => $item) {
 			$product_id = $item['product_id'];
-			// error_log($product_id);
 			$product = wc_get_product( $product_id );
-			// error_log(print_r($product,true));
 
 			switch ($dhl_desc_default) {
 				case 'product_cat':
@@ -172,14 +169,12 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 					foreach ($product_terms as $key => $product_term) {
 						array_push( $desc_array, $product_term->name );
 					}
-					// error_log(print_r($desc_array,true));
 					break;
 				case 'product_tag':
 					$product_terms = get_the_terms( $product_id, 'product_tag' );
 					foreach ($product_terms as $key => $product_term) {
 						array_push( $desc_array, $product_term->name );
 					}
-					// error_log(print_r($desc_array,true));
 					break;
 				case 'product_name':
 					array_push( $desc_array, $product->get_title() );
@@ -193,7 +188,6 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 
 		// Make sure there are no duplicate taxonomies
 		$desc_array = array_unique($desc_array);
-		// error_log(print_r($desc_array,true));
 		$desc_text = implode(', ', $desc_array);
 		$desc_text = substr( $desc_text, 0, 50 );
 		
@@ -407,7 +401,6 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 					// Ensure the selected orders have a label created, otherwise don't create handover
 					foreach ( $order_ids as $order_id ) {
 						$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
-						// error_log(print_r($label_tracking_info,true));
 						if( empty( $label_tracking_info ) ) {
 							$message = __( 'One or more orders do not have a DHL label created, please ensure all DHL labels are created for each order before creating a handoff document.', 'pr-shipping-dhl' );
 							$is_error = 1;
@@ -506,7 +499,6 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 				die( __( 'The DHL handover is not valid, please regenerate anothor one!', 'pr-shipping-dhl' ) );
 			}
 
-			// error_log(print_r($order_ids,true));
 			// Since this is not a transient, we delete it manually.
 			delete_option( "pr_dhl_handover_order_ids_{$order_ids_hash}" );
 
@@ -521,7 +513,6 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 				// Get list of all DHL products and change key to name
 				$dhl_obj = PR_DHL()->get_dhl_factory();
 				$dhl_product_list = $dhl_obj->get_dhl_products_domestic() + $dhl_obj->get_dhl_products_international();
-				// error_log(print_r($dhl_product_list,true));
 			} catch (Exception $e) {
 				die( sprintf( __( 'Cannot generate handover %s', 'pr-shipping-dhl' ), $e->getMessage() ) );
 			}
@@ -533,7 +524,6 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 					continue;
 				}
 				
-				// error_log(print_r($dhl_label_items,true));
 				// Add all weights
 				$total_weight += $dhl_label_items['pr_dhl_weight'];
 
@@ -541,11 +531,9 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 
 				array_push( $dhl_products, $dhl_label_product );
 			}
-			error_log(print_r($dhl_products,true));
 			// There should a unique list of products listed not one for each order!
 			$dhl_products = array_unique($dhl_products);
 
-			// error_log($handover_id);
 			$args =  array(
  				'handover_id' => $handover_id,
  				'items_qty' => $items_qty,

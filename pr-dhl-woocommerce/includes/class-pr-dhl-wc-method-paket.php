@@ -21,7 +21,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 	 * Init and hook in the integration.
 	 */
 	public function __construct( $instance_id = 0 ) {
-		// error_log('create WC_Shipping_DHL_Method');
 		$this->id = 'pr_dhl_paket';
 		$this->instance_id = absint( $instance_id );
 		$this->method_title = __( 'DHL Paket', 'pr-shipping-dhl' );
@@ -51,32 +50,19 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 			// INSTEAD OF OVERRIDING THE INSTANCE FIELDS HERE, CHANGE THE DEFAULT NAME TO "DHL PAKET" AND ATTACHED PREFERRED OPTIONS!!!
 			// $this->init_instance_form_fields();
-			// error_log(print_r($this->instance_form_fields,true));
 			// $this->instance_form_fields['title']['default'] = __('DHL Paket', 'pr-shipping-dhl');
-			// error_log(print_r($this->instance_form_fields,true));
 
 			$this->init_form_fields();
 			$this->init_settings();
 
 			// $this->title = $this->get_option( 'title' );
-			// error_log($this->get_option( 'title' ));
 			
 		} catch (Exception $e) {
 			PR_DHL()->log_msg( __('DHL Paket Shipping Method not loaded - ', 'pr-shipping-dhl') . $e->getMessage() );
 		}
 
-		// add_action( 'admin_notices', array( $this, 'environment_check' ) );
 		add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_scripts' ) );
-		
-		// add_action( 'woocommerce_flat_rate_shipping_add_rate', array($this,'add_another_custom_flat_rate'), 10, 2 );
-		// add_action( 'woocommerce_review_order_after_shipping', array( $this, 'add_preferred_fields' ) );
-		// add_action( 'woocommerce_checkout_update_order_review', array( $this, 'add_preferred_field' ), 20, 1 );
-		// add_action( 'woocommerce_update_order_review_fragments', array( $this, 'add_preferred_field_ret' ), 20, 1 );
-		// woocommerce_after_shipping_rate - to display after rates
-		// woocommerce_review_order_before_payment - display before payment
-		// add_action( 'wp_ajax_test_dhl_connection', array( $this, 'test_dhl_connection_callback' ) );	
-
 		
 	}
 
@@ -113,25 +99,11 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 	}
 
 	/**
-	 * Check if the user has enabled the plugin functionality, but hasn't provided an api key
-	 **/
-	/*
-	public function environment_check() {
-		// Try to get the DHL object...if exception if thrown display to user, mainly to check country support.
-		try {
-			$dhl_obj = PR_DHL()->get_dhl_factory();
-		} catch (Exception $e) {
-			echo $this->get_message(  $e->getMessage() );
-		}
-	}*/
-
-	/**
 	 * Initialize integration settings form fields.
 	 *
 	 * @return void
 	 */
 	public function init_form_fields() {
-		// error_log('init_form_fields');
 		$wc_shipping_methods = WC()->shipping->get_shipping_methods();
 		$wc_shipping_titles = wp_list_pluck($wc_shipping_methods, 'method_title', 'id');
 		
@@ -529,7 +501,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 	}
 
 	public function init_instance_form_fields() {
-		// error_log('init_instance_form_fields');
 		$this->instance_form_fields = array(
 			'title'            => array(
 				'title'           => __( 'Method Title', 'pr-shipping-dhl' ),
@@ -540,34 +511,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			)
 		);
 	}
-
-	/*
-	public function test_temp_dhl_connection_callback() {
-		
-		try {
-
-			$dhl_class = $this->get_dhl_factory();
-			$connection = $dhl_class->dhl_test_connection();
-
-			$connection_msg = __('Connection Successful!', 'pr-shipping-dhl');
-			$this->log_msg( $connection_msg );
-
-			wp_send_json( array( 
-				'connection_success' 	=> $connection_msg,
-				'button_txt'			=> PR_DHL_BUTTON_TEST_CONNECTION
-				) );
-
-		} catch (Exception $e) {
-			$this->log_msg($e->getMessage());
-
-			wp_send_json( array( 
-				'connection_error' => __('Connected Failed: ', 'pr-shipping-dhl') . $e->getMessage(),
-				'button_txt'			=> PR_DHL_BUTTON_TEST_CONNECTION
-				 ) );
-		}
-
-		wp_die();
-	}*/
 
 	/**
 	 * Validate the API key
@@ -610,42 +553,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		}
 
 		return $value;
-	}
-
-	public function add_another_custom_flat_rate( $method, $rate ) {
-		error_log('calc shipping');
-		// $rate = array(
-		// 	'id' => $this->id,
-		// 	'label' => $this->title,
-		// 	'cost' => '10.99',
-		// 	'calc_tax' => 'per_item'
-		// );
-		// error_log(print_r($method,true));
-		$new_rate          = $rate;
-		$new_rate['id']    .= ':' . 'custom_rate_name'; // Append a custom ID.
-		$new_rate['label'] = 'Rushed Shipping'; // Rename to 'Rushed Shipping'.
-		$new_rate['cost']  += 2; // Add $2 to the cost.
-		
-		// error_log(print_r($new_rate,true));
-		// Register the rate
-		$method->add_rate( $new_rate );
-	}
-
-	public function add_preferred_fields( $posted_date ) {
-		error_log('woocommerce_checkout_update_order_review');
-	?>
-		<tr class="">
-			<th>DHL label</th>
-			<td>yo oyo</td>
-		</tr>
-	<?php
-	}
-
-	public function add_preferred_field_ret( $posted_date ) {
-		error_log('woocommerce_checkout_update_order_review retyr');
-		return 'nada';
-		// woocommerce_form_field(
-			// 'pr_dhl_paket_preferred_location');
 	}
 
 }

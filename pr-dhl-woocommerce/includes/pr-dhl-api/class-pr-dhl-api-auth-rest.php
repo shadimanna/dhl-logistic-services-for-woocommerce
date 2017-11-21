@@ -103,8 +103,6 @@ class PR_DHL_API_Auth_REST {
 		
 		if( ! empty( $expires_in ) ) {
 			// $token_expires = time() + $expires_in;
-			error_log('set transient');
-			error_log($expires_in);
 			set_transient( '_dhl_auth_token_rest', $access_token, $expires_in ); 
 			PR_DHL()->log_msg( 'Set Transient - Access Token: ' . $access_token );
 		}
@@ -145,9 +143,6 @@ class PR_DHL_API_Auth_REST {
 		$this->client_id = $client_id;
 		$this->client_secret = $client_secret;
 
-		error_log($this->client_id);
-		error_log($this->client_secret);
-
 		if( empty( $this->client_id ) || empty( $this->client_secret ) ) {
 			throw new Exception( __('The "Cliend Id" or "Client Secret" is empty.','pr-shipping-dhl' ) );
 		}
@@ -184,11 +179,6 @@ class PR_DHL_API_Auth_REST {
 	}
 
 	public function is_key_match( $client_id, $client_secret ) {
-		error_log($this->client_id);
-		error_log($client_id);
-		error_log($this->client_secret);
-		error_log($client_secret);
-
 		if( ( $this->client_id == $client_id ) && ($this->client_secret == $client_secret) ) {
 			return true;
 		} else {

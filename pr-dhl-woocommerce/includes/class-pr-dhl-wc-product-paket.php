@@ -37,7 +37,6 @@ class PR_DHL_WC_Product_Paket extends PR_DHL_WC_Product {
 	}
 
 	public function save_additional_product_settings( $post_id ) {
-		error_log(print_r($_POST,true));
 		 
 		// If the same day checkbox is set then it is 'yes', if it is not set (i.e. not sent via $_POST), then it is 'no' unchecked!
 		if ( isset( $_POST['_dhl_no_same_day_transfer'] ) ) {
