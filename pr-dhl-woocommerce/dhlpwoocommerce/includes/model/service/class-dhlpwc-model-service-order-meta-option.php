@@ -41,6 +41,17 @@ class DHLPWC_Model_Service_Order_Meta_Option extends DHLPWC_Model_Core_Singleton
         );
     }
 
+    public function get_keys($order_id)
+    {
+        $options_data = $this->get_all($order_id);
+        $options = array();
+        foreach($options_data as $option_data) {
+            $option = new DHLPWC_Model_Meta_Order_Option_Preference($option_data);
+            $options[] = $option->key;
+        }
+        return $options;
+    }
+
 }
 
 endif;

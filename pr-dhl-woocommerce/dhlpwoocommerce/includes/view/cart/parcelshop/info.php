@@ -11,11 +11,12 @@
         <strong><?php echo $name ?></strong><br/>
         <?php echo $address->street ?> <?php echo $address->number ?><br/>
         <?php echo $address->postal_code ?> <?php echo $address->city ?><br/>
+        <?php echo $address->country_code ?><br/>
     <?php else : ?>
-        Parcelshop:
+        <?php _e('DHL ServicePoint', 'dhlpwc'); ?>
         <strong><?php echo $name ?></strong><br/>
         <?php echo $address->street ?> <?php echo $address->number ?>,
-        <?php echo $address->postal_code ?> <?php echo $address->city ?>
+        <?php echo $address->postal_code ?> <?php echo $address->city ?>, <?php echo $address->country_code ?>
     <?php endif ?>
 </div>
 

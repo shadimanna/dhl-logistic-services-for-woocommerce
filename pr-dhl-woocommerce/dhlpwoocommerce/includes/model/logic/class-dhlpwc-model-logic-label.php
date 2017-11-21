@@ -12,7 +12,8 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
     public function prepare_data($order_id, $options = array())
     {
         $order = wc_get_order($order_id);
-        $receiver_address = $order->get_address();
+        $receiver_address = $order->get_address('shipping') ?: $order->get_address();
+        $business = isset($options['to_business']) && $options['to_business'] ? true : false;
 
         $service = DHLPWC_Model_Service_Settings::instance();
         $shipper_address = $service->get_default_address()->to_array();
@@ -25,8 +26,8 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
             'label_id'        => (string)new DHLPWC_Model_UUID(),
             'order_reference' => (string)$order_id,
             'parcel_type_key' => isset($options['label_size']) ? $options['label_size'] : 'SMALL',
-            'receiver'        => $this->prepare_address_data($receiver_address),
-            'shipper'         => $this->prepare_address_data($shipper_address),
+            'receiver'        => $this->prepare_address_data($receiver_address, $business),
+            'shipper'         => $this->prepare_address_data($shipper_address, true),
             'account_id'      => $this->get_account_id(),
             'options'         => $request_options,
             'piece_number'    => 1,
@@ -89,7 +90,7 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
         return true;
     }
 
-    protected function prepare_address_data($address)
+    protected function prepare_address_data($address, $business = false)
     {
         $address = $this->prepare_street_address($address);
 
@@ -105,7 +106,7 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
                 'city'         => $address['city'],
                 'street'       => $address['street'],
                 'number'       => $address['number'],
-                'is_business'  => false,
+                'is_business'  => $business,
                 'addition'     => '',
             ),
             'email'         => $address['email'],

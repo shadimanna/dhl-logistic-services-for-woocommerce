@@ -13,6 +13,12 @@ class DHLPWC_Model_Service_Settings extends DHLPWC_Model_Core_Singleton_Abstract
         return $shipping_methods['dhlpwc']->settings['account_id'];
     }
 
+    public function get_api_organization()
+    {
+        $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
+        return $shipping_methods['dhlpwc']->settings['organization_id'];
+    }
+
     public function get_api_user()
     {
         $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
@@ -53,11 +59,6 @@ class DHLPWC_Model_Service_Settings extends DHLPWC_Model_Core_Singleton_Abstract
     public function get_price_home()
     {
         return $this->get_price('home');
-    }
-
-    public function get_price_signed()
-    {
-        return $this->get_price('signed');
     }
 
     public function get_price_no_neighbour()

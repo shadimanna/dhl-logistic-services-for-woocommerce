@@ -15,31 +15,19 @@ jQuery(document).ready(function($) {
             if ($(this).parent().attr('class') != 'dhlpwc-stylishselect-select') {
                 $(this).wrap('<div class="dhlpwc-stylishselect-select"></div>');
             } else {
-                // Remove existing stylishselect
-                $(this).siblings('.dhlpwc-stylishselect').eq(0).remove();
                 $(this).siblings('.dhlpwc-stylishselect-options').eq(0).remove();
             }
-
-            // Insert a styled div to sit over the top of the hidden select element
-            $(this).after('<div class="dhlpwc-stylishselect"></div>');
-
-            // Cache the styled div
-            var stylishselect = $(this).next('div.dhlpwc-stylishselect');
-
-            // Show the first select option in the styled div
-            //$styledSelect.text($this.children('option').eq(0).text());
-            stylishselect.text($.trim($(this).children('option').eq(0).text().split('|')[0]));
 
             // Insert an unordered list after the styled div and also cache the list
             var list = $('<ul />', {
                 'class': 'dhlpwc-stylishselect-options'
-            }).insertAfter(stylishselect);
+            }).insertAfter($(this));
 
             // Insert a list item into the unordered list for each select option
             for (var i = 0; i < numberOfOptions; i++) {
                 var formattedString = '';
                 var stringArray = $(this).children('option').eq(i).text().split('|');
-                stringArray[0] = $.trim(stringArray[0]).bold();
+                stringArray[0] = '<h3>'  + $.trim(stringArray[0]) + '</h3>';
                 stringArray.forEach(function(stringPart) {
                     formattedString += $.trim(stringPart) + "<br/>\n";
                 });
@@ -52,15 +40,6 @@ jQuery(document).ready(function($) {
             // Cache the list items
             var listItems = list.children('li');
 
-            // Show the unordered list when the styled div is clicked (also hides it if the div is clicked again)
-            stylishselect.click(function (e) {
-                e.stopPropagation();
-                $('div.dhlpwc-stylishselect.active').each(function() {
-                    $(this).removeClass('active').next('ul.dhlpwc-stylishselect-options').hide();
-                });
-                $(this).toggleClass('active').next('ul.dhlpwc-stylishselect-options').toggle();
-            });
-
             // Hides the unordered list when a list item is clicked and updates the styled div to show the selected list item
             // Updates the select element to have the value of the equivalent option
             listItems.click(function (e) {
@@ -68,28 +47,32 @@ jQuery(document).ready(function($) {
 
                 select_element.val($(this).attr('rel'));
                 select_element.trigger('change');
-                list.hide();
 
                 $(document.body).trigger('dhlpwc:select_parcelshop', [select_element.val()]);
             });
 
-            // Hides the unordered list when clicking outside of it
-            $(document.body).click(function () {
-                stylishselect.removeClass('active');
-                list.hide();
-            });
-
         });
 
-    });
+    }).on('dhlpwc:select_parcelshop', function(e, parcelshop_id) {
+        var listItems = $('.dhlpwc-stylishselect-options').children('li');
+        listItems.each(function() {
+           $(this).removeClass('dhlpwc-active');
+        });
 
-    $(document.body).on('dhlpwc:display_parcelshop_stylishselect', function(e, parcelshop_id) {
+        var chosenItem = $('.dhlpwc-stylishselect-options').find('li[rel=' + parcelshop_id + ']');
+        chosenItem.addClass('dhlpwc-active');
+        $('.dhlpwc-stylishselect-options').animate({
+            scrollTop: chosenItem.position().top - $('.dhlpwc-stylishselect-options li:first').position().top
+        });
+
+    }).on('dhlpwc:display_parcelshop_stylishselect', function(e, parcelshop_id) {
         me = $(dhlpwc_stylishselect.identifier);
         stylishselect = me.next('div.dhlpwc-stylishselect');
 
         // Search parcelshop_id text
         var parcelshop_info = $('ul.dhlpwc-stylishselect-options').find("li[rel='" + parcelshop_id + "']");
         stylishselect.text(parcelshop_info[0].innerText.split('\n')[0]).removeClass('active');
+
     });
 
 });

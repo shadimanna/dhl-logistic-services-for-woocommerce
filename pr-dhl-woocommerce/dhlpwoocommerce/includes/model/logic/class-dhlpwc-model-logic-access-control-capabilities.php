@@ -32,12 +32,15 @@ class DHLPWC_Model_Logic_Access_Control_Capabilities extends DHLPWC_Model_Core_S
     {
         $order_id = is_array($check) && isset($check['order_id']) ? $check['order_id'] : null;
         $options = is_array($check) && isset($check['options']) && is_array($check['options']) ? $check['options'] : array();
+        $to_business = is_array($check) && isset($check['to_business']) ? $check['to_business'] : false;
 
-        $data = $order_id ? $this->get_capability_check($order_id) : $this->get_default_capability_check();
+        if (!$order_id) {
+            return false;
+        }
+
+        $data = $this->get_capability_check($order_id, $to_business);
 
         if ($options && is_array($options) && !empty($options)) {
-            // TODO temp hack: if you want to send multiple, the API expects multiple option keys as querystring. This is somewhat impossible to do with default PHP and WordPress. For now, it's best to assume this should be fixed in the API and we only send 1 option for now.
-            $options = array(reset($options));
             $data->option = implode(',', $options);
         }
 
@@ -53,19 +56,11 @@ class DHLPWC_Model_Logic_Access_Control_Capabilities extends DHLPWC_Model_Core_S
         return $capabilities;
     }
 
-    protected function get_default_capability_check()
-    {
-        $data = new DHLPWC_Model_API_Data_Capability_Check();
-        $data->from_country = 'NL';
-        $data->to_country = 'NL';
-
-        return $data;
-    }
-
-    protected function get_capability_check($order_id)
+    protected function get_capability_check($order_id, $to_business)
     {
         $order = wc_get_order($order_id);
-        $receiver_address = new DHLPWC_Model_Meta_Address($order->get_address());
+        $receiver_address_data = $order->get_address('shipping') ?: $order->get_address();
+        $receiver_address = new DHLPWC_Model_Meta_Address($receiver_address_data);
 
         $service = DHLPWC_Model_Service_Settings::instance();
         $shipper_address = $service->get_default_address();
@@ -73,13 +68,13 @@ class DHLPWC_Model_Logic_Access_Control_Capabilities extends DHLPWC_Model_Core_S
         $data = new DHLPWC_Model_API_Data_Capability_Check();
         $data->from_country = $shipper_address->country;
         $data->to_country = $receiver_address->country;
-        $data->to_business = false ? 'true' : 'false'; // TODO temporary do not send to business
+        $data->to_business = $to_business ? 'true' : 'false';
         $data->return_product = null; // TODO
         //$data->parcel_type =
         //$data->option =
         $data->to_postal_code = $receiver_address->postcode;
-        $data->account_number = null; // TODO
-        $data->organisation_id = null; // TODO
+        $data->account_number = $service->get_api_account();
+        $data->organisation_id = $service->get_api_organization();
 
         return $data;
     }

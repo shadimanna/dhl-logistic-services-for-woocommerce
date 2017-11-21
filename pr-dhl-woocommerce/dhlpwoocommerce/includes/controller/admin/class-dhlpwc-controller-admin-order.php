@@ -27,7 +27,7 @@ class DHLPWC_Controller_Admin_Order
         $offset = (integer)array_search("order_total", array_keys($columns));
 
         return array_slice($columns, 0, ++$offset, true) +
-            array('dhlpwc_label_created' => __('DHL Label', 'dhlpwc')) +
+            array('dhlpwc_label_created' => __('DHL label info', 'dhlpwc')) +
             array_slice($columns, $offset, null, true);
     }
 
@@ -45,20 +45,21 @@ class DHLPWC_Controller_Admin_Order
                     }
 
                     $view->render(array(
-                        'label_size' => $label['label_size'],
-                        'tracker_code' => $label['tracker_code'],
+                        'label_size'        => $label['label_size'],
+                        'label_description' => __(sprintf('PARCELTYPE_%s', $label['label_size']), 'dhlpwc'),
+                        'tracker_code'      => $label['tracker_code'],
                     ));
                 }
                 break;
             case 'shipping_address':
-                $this->parcelshop_info(null, true);
+                $this->parcelshop_info(new WC_Order(get_the_ID()), true);
                 break;
         }
     }
 
 
     /**
-     * Parcelshop information screen for an order.
+     * DHL ServicePoint information screen for an order.
      * Note: we're not using $order, but wanted to add the $compact var, WooCommerce automatically passes the order when hooked
      * into 'woocommerce_admin_order_data_after_shipping_address'
      *
@@ -72,11 +73,18 @@ class DHLPWC_Controller_Admin_Order
 
         if ($parcelshop_meta) {
             $service = new DHLPWC_Model_Service_Checkout();
-            $parcelshop = $service->get_parcelshop($parcelshop_meta['input']);
+            /** @var WC_Order $order */
+            $parcelshop = $service->get_parcelshop($parcelshop_meta['input'], $order->get_shipping_country());
 
-            $view = new DHLPWC_Template('checkout.parcelshop.info');
+            if (!$parcelshop || !isset($parcelshop->name) || !isset($parcelshop->address)) {
+                $view = new DHLPWC_Template('unavailable');
+                $view->render();
+                return;
+            }
+
+            $view = new DHLPWC_Template('cart.parcelshop.info');
             $view->render(array(
-                'warning' => __('Send to DHL Parcelshop', 'dhlpwc'),
+                'warning' => __('Send to DHL ServicePoint', 'dhlpwc'),
                 'name' => $parcelshop->name,
                 'address' => $parcelshop->address,
                 'compact' => $compact
@@ -88,7 +96,7 @@ class DHLPWC_Controller_Admin_Order
     {
         $screen = get_current_screen();
         if ($screen->base == 'post' && $screen->post_type == 'shop_order') {
-            wp_enqueue_style('dhlpwc-admin-order-style', DHLPWC_PLUGIN_URL . 'assets/css/dhlpwc.admin.order.css');
+            wp_enqueue_style('dhlpwc-admin-order-style', DHLPWC_PLUGIN_URL . 'assets/css/dhlpwc.admin.css');
         }
     }
 

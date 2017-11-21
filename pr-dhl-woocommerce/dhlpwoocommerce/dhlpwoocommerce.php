@@ -1,12 +1,10 @@
 <?php
 /*
 Plugin Name: DHL Parcel for WooCommmerce (BETA)
-Plugin URI: http://www.google.com
-Text Domain: dhlpwc
-Domain Path: /languages
+Plugin URI: https://www.dhlparcel.nl
 Description: This is the official DHL Parcel for WooCommerce plugin, currently in BETA.
-Author: Shin Ho
-Version: 0.1.0-beta
+Author: DHL Parcel
+Version: 0.2.0-beta
 */
 
 if (!defined('ABSPATH')) { exit; }
@@ -24,15 +22,8 @@ class DHLPWC
         }
     }
 
-    protected function load_textdomain()
-    {
-        load_plugin_textdomain('dhlpwc', false, dirname(plugin_basename(__FILE__)) . '/languages');
-    }
-
     public function init()
     {
-        // Load text domain manually
-        $this->load_textdomain();
 
         // Autoloader
         include_once('includes/class-dhlpwc-autoloader.php');
@@ -51,14 +42,16 @@ class DHLPWC
         // This controller will not be encapsulated in an availability check, due to it providing screens
         // necessary to enable the plugin and setting up the plugin.
         new DHLPWC_Controller_Settings();
+        new DHLPWC_Controller_Admin_Settings();
 
         $service = DHLPWC_Model_Service_Access_Control::instance();
+
         if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_API)) {
             new DHLPWC_Controller_Admin_Order_Metabox();
             new DHLPWC_Controller_Admin_Order();
 
             new DHLPWC_Controller_Checkout();
-            new DHLPWC_Controller_Checkout_Options();
+            new DHLPWC_Controller_Cart();
         }
     }
 

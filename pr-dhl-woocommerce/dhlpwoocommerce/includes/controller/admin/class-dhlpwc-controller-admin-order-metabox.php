@@ -33,12 +33,13 @@ class DHLPWC_Controller_Admin_Order_Metabox
      */
     public function create_label()
     {
-        $post_id = $_POST['post_id'];
-        $label_size = $_POST['label_size'];
-        $label_options = isset($_POST['label_options']) && is_array($_POST['label_options']) ? $_POST['label_options'] : array();
+        $post_id = wc_clean($_POST['post_id']);
+        $label_size = wc_clean($_POST['label_size']);
+        $label_options = isset($_POST['label_options']) && is_array($_POST['label_options']) ? wc_clean($_POST['label_options']) : array();
+        $to_business = (isset($_POST['to_business']) && wc_clean($_POST['to_business']) == 'yes') ? true : false;
 
         $service = new DHLPWC_Model_Service_Label();
-        $success = $service->create($post_id, $label_size, $label_options);
+        $success = $service->create($post_id, $label_size, $label_options, $to_business);
 
         // Set Flash message
         $messages = DHLPWC_Model_Core_Flash_Message::instance();
@@ -66,8 +67,8 @@ class DHLPWC_Controller_Admin_Order_Metabox
      */
     public function delete_label()
     {
-        $post_id = $_POST['post_id'];
-        $label_id = $_POST['label_id'];
+        $post_id = wc_clean($_POST['post_id']);
+        $label_id = wc_clean($_POST['label_id']);
 
         $service = new DHLPWC_Model_Service_Label();
         $service->delete($post_id, $label_id);
@@ -86,8 +87,10 @@ class DHLPWC_Controller_Admin_Order_Metabox
 
     public function refresh_label()
     {
-        $post_id = $_POST['post_id'];
-        $label_options = isset($_POST['label_options']) && is_array($_POST['label_options']) ? $_POST['label_options'] : array();
+        $post_id = wc_clean($_POST['post_id']);
+
+        $label_options = isset($_POST['label_options']) && is_array($_POST['label_options']) ? wc_clean($_POST['label_options']) : array();
+        $to_business = isset($_POST['to_business']) && wc_clean($_POST['to_business']) == 'yes' ? true : false;
 
         // Set Flash message
         $messages = DHLPWC_Model_Core_Flash_Message::instance();
@@ -96,7 +99,7 @@ class DHLPWC_Controller_Admin_Order_Metabox
         // Send JSON response
         $json_response = new DHLPWC_Model_Response_JSON();
         $json_response->set_data(array(
-            'view' => $this->parceltype_content($post_id, $label_options)
+            'view' => $this->parceltype_content($post_id, $label_options, $to_business)
         ));
         wp_send_json($json_response->to_array(), 200);
     }
@@ -125,18 +128,26 @@ class DHLPWC_Controller_Admin_Order_Metabox
      */
     public function content_view($order_id)
     {
+        $order_id = intval($order_id);
+
         $label_view = '';
 
         $service = new DHLPWC_Model_Service_Order_Meta();
         $labels = $service->get_labels($order_id);
 
-        foreach($labels as $label) {
-            $view = new DHLPWC_Template('order.meta.label');
-            $label_view .= $view->render(array(
-                'label_size' => $label['label_size'],//'SMALL',
-                'tracker_code' => $label['tracker_code'], //'JVGLLPLDLD2345678',
-                'actions' => $this->get_label_actions($label, $order_id),
-            ), false);
+        if (!empty($labels)) {
+            foreach ($labels as $label) {
+                $view = new DHLPWC_Template('order.meta.label');
+                $label_view .= $view->render(array(
+                    'label_size'        => $label['label_size'],
+                    'label_description' => __(sprintf('PARCELTYPE_%s', $label['label_size']), 'dhlpwc'),
+                    'tracker_code'      => $label['tracker_code'],
+                    'actions'           => $this->get_label_actions($label, $order_id),
+                ), false);
+            }
+        } else {
+            $view = new DHLPWC_Template('order.meta.no-label');
+            $label_view .= $view->render(array(), false);
         }
 
         $view = new DHLPWC_Template('order.meta.label-wrapper');
@@ -146,22 +157,15 @@ class DHLPWC_Controller_Admin_Order_Metabox
 
         $meta_view .= '<hr/>';
 
-        // TODO temp, currently we only support 1 option type. So this is only for Parcelshop vs Door delivery.
-        $service = new DHLPWC_Model_Service_Order_Meta_Option();
-        $parcelshop_id = $service->get_option_preference($order_id, DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS);
-        if ($parcelshop_id) {
-            $options = array('PS');
-        } else {
-            $options = array('DOOR');
-        }
-
-        $parceltype_content = $this->parceltype_content($order_id, $options);
-        $view = new DHLPWC_Template('order.meta.form.parceltype-wrapper');
-        $parceltype_view = $view->render(array(
-            'content' => $parceltype_content,
-            'actions' => $this->get_refresh_action(),
+        // Generate to business option
+        $service = DHLPWC_Model_Service_Access_Control::instance();
+        $to_business = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DEFAULT_TO_BUSINESS);
+        $view = new DHLPWC_Template('order.meta.form.to-business');
+        $to_business_view = $view->render(array(
+            'checked' => $to_business,
         ), false);
 
+        // Generate options
         $service = DHLPWC_Model_Service_Label_Option::instance();
         $options = $service->get_selectable_options($order_id);
         $option_view = '';
@@ -170,10 +174,22 @@ class DHLPWC_Controller_Admin_Order_Metabox
             $option_view .= $view->render($option, false);
         }
 
+        // Generate parceltypes (with requested options)
+        $service = DHLPWC_Model_Service_Order_Meta_Option::instance();
+        $options = $service->get_keys($order_id);
+
+        $parceltype_content = $this->parceltype_content($order_id, $options, $to_business);
+        $view = new DHLPWC_Template('order.meta.form.parceltype-wrapper');
+        $parceltype_view = $view->render(array(
+            'content' => $parceltype_content,
+            'actions' => $this->get_refresh_action($order_id),
+        ), false);
+
         $view = new DHLPWC_Template('order.meta');
         $meta_view .= $view->render(array(
-            'parcel_types' => trim($parceltype_view),
+            'to_business' => $to_business_view,
             'options' => trim($option_view),
+            'parcel_types' => trim($parceltype_view),
         ), false);
 
         $messages = DHLPWC_Model_Core_Flash_Message::instance();
@@ -190,24 +206,37 @@ class DHLPWC_Controller_Admin_Order_Metabox
         ), false);
     }
 
-    public function parceltype_content($order_id, $options)
+    public function parceltype_content($order_id, $options, $to_business)
     {
         $view = new DHLPWC_Template('order.meta.form.parceltype-headline');
+        $option_texts = $options;
+        array_walk($option_texts, function(&$value, &$key) {
+            $value = __(sprintf('OPTION_%s', $value), 'dhlpwc');
+        });
+
         $parceltype_view = $view->render(array(
-            'message' => sprintf(__('%s', 'dhlpwc'), implode(' - ', $options)),
+            'message' => implode(' - ', $option_texts),
         ), false);
 
         $service = DHLPWC_Model_Service_Access_Control::instance();
         $parceltypes = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CAPABILITY_PARCELTYPE, array(
             'order_id' => $order_id,
-            'options' => $options
+            'options' => $options,
+            'to_business' => $to_business,
         ));
 
-        foreach($parceltypes as $parceltype) {
-            $view = new DHLPWC_Template('order.meta.form.parceltype');
-            $parceltype_view .= $view->render(array(
-                'parceltype' => $parceltype,
-            ), false);
+        if (!empty($parceltypes)) {
+            foreach ($parceltypes as $parceltype) {
+                $view = new DHLPWC_Template('order.meta.form.parceltype');
+                $parceltype_view .= $view->render(array(
+                    'parceltype' => $parceltype,
+                    'description' => __(sprintf('PARCELTYPE_%s', $parceltype->key), 'dhlpwc'),
+                ), false);
+
+            }
+        } else {
+            $view = new DHLPWC_Template('order.meta.form.no-parceltype');
+            $parceltype_view .= $view->render(array(), false);
         }
 
         return $parceltype_view;
@@ -279,7 +308,7 @@ class DHLPWC_Controller_Admin_Order_Metabox
 
     public function load_styles()
     {
-        wp_enqueue_style('dhlpwc-admin-order-style', DHLPWC_PLUGIN_URL . 'assets/css/dhlpwc.admin.order.css');
+        wp_enqueue_style('dhlpwc-admin-order-style', DHLPWC_PLUGIN_URL . 'assets/css/dhlpwc.admin.css');
     }
 
     public function load_scripts()
@@ -287,7 +316,7 @@ class DHLPWC_Controller_Admin_Order_Metabox
         $screen = get_current_screen();
         if ($screen->base == 'post' && $screen->post_type == 'shop_order') {
             wp_enqueue_script( 'dhlpwc-metabox-action', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.metabox.js', array('jquery'));
-            wp_localize_script( 'dhlpwc-metabox-action', 'metabox_object', array(
+            wp_localize_script( 'dhlpwc-metabox-action', 'dhlpwc_metabox_object', array(
                 'post_id' => get_the_ID()
             ));
         }

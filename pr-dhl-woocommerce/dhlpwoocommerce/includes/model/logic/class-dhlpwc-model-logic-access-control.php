@@ -26,6 +26,23 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         return true;
     }
 
+    public function check_application_country()
+    {
+        $country_code = wc_get_base_location();
+
+        if (!in_array($country_code['country'], array(
+            'NL',
+            'BE',
+            'LU',
+            'PT',
+            'ES',
+        ))) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function check_account()
     {
         $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
@@ -149,11 +166,6 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         return $this->check_option('home');
     }
 
-    public function check_enable_signed()
-    {
-        return $this->check_option('signed');
-    }
-
     public function check_enable_no_neighbour()
     {
         return $this->check_option('no_neighbour');
@@ -198,6 +210,25 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         }
 
         return $shipping_methods['dhlpwc']->settings['debug_url'];
+    }
+
+    public function check_default_send_to_business()
+    {
+        $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
+
+        if (!isset($shipping_methods['dhlpwc'])) {
+            return false;
+        }
+
+        if (!isset($shipping_methods['dhlpwc']->settings['default_send_to_business'])) {
+            return false;
+        }
+
+        if ($shipping_methods['dhlpwc']->settings['default_send_to_business'] != 'yes') {
+            return false;
+        }
+
+        return true;
     }
 
 }

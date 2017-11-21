@@ -17,12 +17,15 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
 
     protected $auth_api = 'authenticate/api-key';
     protected $refresh_api = 'authenticate/refresh-token';
-    protected $client;
 
     protected $access_token;
     protected $access_token_expiration;
     protected $refresh_token;
     protected $refresh_token_expiration;
+
+    /* Experimental */
+    protected $accounts = array();
+    protected $organization_id;
 
     protected $available_methods = [
         self::POST,
@@ -167,6 +170,63 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
         $this->access_token_expiration = $response['accessTokenExpiration'];
         $this->refresh_token = $response['refreshToken'];
         $this->refresh_token_expiration = $response['refreshTokenExpiration'];
+    }
+
+    public function test_authenticate($user_id, $key)
+    {
+        $response = $this->post($this->auth_api, array(
+            'userId' => $user_id,
+            'key' => $key,
+        ));
+        if (!isset($response['accessToken'])) {
+            return false;
+        }
+
+        /* Experimental */
+        if (isset($response['organizationId'])) {
+            $this->organization_id = $response['organizationId'];
+        } else {
+            $this->organization_id = $this->parse_token($response['accessToken'], 'organizationId');
+        }
+
+        if (isset($response['accounts'])) {
+            $this->accounts = $response['accounts'];
+        } else {
+            $this->accounts = $this->parse_token($response['accessToken'], 'accounts');
+        }
+
+        return array(
+            'accounts' => $this->accounts,
+            'organization_id' => $this->organization_id,
+        );
+    }
+
+    protected function parse_token($token, $key)
+    {
+        // Retrieve middle part
+        $token_parts = explode('.', $token);
+        if (count($token_parts) < 2) {
+            return false;
+        }
+
+        // Base64 decode
+        $json_data = base64_decode($token_parts[1]);
+        if (!$json_data) {
+            return false;
+        }
+
+        // Json decode
+        $data = json_decode($json_data, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return false;
+        }
+
+        // Find key
+        if (!isset($data[$key])) {
+            return false;
+        }
+
+        return $data[$key];
     }
 
 }

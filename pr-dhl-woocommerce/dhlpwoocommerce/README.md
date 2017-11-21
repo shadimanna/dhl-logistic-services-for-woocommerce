@@ -1,9 +1,9 @@
 #DHL Parcel plugin for WooCommerce
 
-V0.0.1
+V0.2.0
 
 ## Features
 
 - Webshop owners can create DHL labels.
 - Customers can view their Track & Trace status on their account page.
-- Customers can select Parcelshop locations to deliver to.
+- Customers can select DHL ServicePoint locations to deliver to.

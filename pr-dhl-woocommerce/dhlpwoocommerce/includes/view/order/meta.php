@@ -1,13 +1,15 @@
 <?php if (!defined('ABSPATH')) { exit; } ?>
 <h3><?php echo __('Create a new label', 'dhlpwc') ?></h3>
+<?php if (isset($to_business)) : ?>
+    <?php echo $to_business ?><br/>
+<?php endif ?>
 <?php if (isset($options)) : ?>
-    <strong><?php echo __('Shipment options', 'dhlpwc') ?></strong><br/>
-    <small><?php echo __('Customer preferences are automatically checked', 'dhlpwc') ?></small><br/>
+    <strong><?php echo __('Shipment option', 'dhlpwc') ?></strong><br/>
+    <small><?php echo __('Recipient preference is automatically selected.', 'dhlpwc') ?></small><br/>
     <?php echo $options ?><br/>
 <?php endif ?>
 <?php if (isset($parcel_types)) : ?>
-    <strong><?php echo __('Size', 'dhlpwc') ?></strong><br/>
-    <small><?php echo __('Create a label for a specific package size', 'dhlpwc') ?></small>
+    <small><?php echo __('Size and weight', 'dhlpwc') ?></small>
     <?php echo $parcel_types ?><br/>
 <?php else : ?>
     <?php echo __("Can't load parcel types", 'dhlpwc') ?>

@@ -12,9 +12,10 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
     const ACCESS_API = 'api';
     const ACCESS_COLUMN_INFO = 'column_info';
 
+    const ACCESS_DEFAULT_TO_BUSINESS = 'default_to_business';
+
     const ACCESS_OPTION_FREE = 'option_free';
     const ACCESS_OPTION_HOME = 'option_home';
-    const ACCESS_OPTION_SIGNED = 'option_signed';
     const ACCESS_OPTION_NO_NEIGHBOUR = 'option_no_neighbour';
     const ACCESS_OPTION_EVENING = 'option_evening';
     const ACCESS_OPTION_PARCELSHOP = 'option_parcelshop';
@@ -37,6 +38,9 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
                 if (!$logic->check_enabled()) {
                     return false;
                 }
+                if (!$logic->check_application_country()) {
+                    return false;
+                }
                 if (!$logic->check_account()) {
                     return false;
                 }
@@ -48,66 +52,42 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
                     return false;
                 }
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
-                if (!$logic->check_default_shipping_address()) {
-                    return false;
-                }
-                return true;
+                return $logic->check_default_shipping_address();
                 break;
 
             case self::ACCESS_COLUMN_INFO:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
-                if (!$logic->check_column_info()) {
-                    return false;
-                }
-                return true;
+                return $logic->check_column_info();
+                break;
+
+            case self::ACCESS_DEFAULT_TO_BUSINESS:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_default_send_to_business();
                 break;
 
             case self::ACCESS_OPTION_FREE:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
-                if (!$logic->check_enable_free()) {
-                    return false;
-                }
-                return true;
+                return $logic->check_enable_free();
                 break;
 
             case self::ACCESS_OPTION_HOME:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
-                if (!$logic->check_enable_home()) {
-                    return false;
-                }
-                return true;
-                break;
-
-            case self::ACCESS_OPTION_SIGNED:
-                $logic = DHLPWC_Model_Logic_Access_Control::instance();
-                if (!$logic->check_enable_signed()) {
-                    return false;
-                }
-                return true;
+                return $logic->check_enable_home();
                 break;
 
             case self::ACCESS_OPTION_NO_NEIGHBOUR:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
-                if (!$logic->check_enable_no_neighbour()) {
-                    return false;
-                }
-                return true;
+                return $logic->check_enable_no_neighbour();
                 break;
 
             case self::ACCESS_OPTION_EVENING:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
-                if (!$logic->check_enable_evening()) {
-                    return false;
-                }
-                return true;
+                return $logic->check_enable_evening();
                 break;
 
             case self::ACCESS_OPTION_PARCELSHOP:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
-                if (!$logic->check_enable_parcelshop()) {
-                    return false;
-                }
-                return true;
+                return $logic->check_enable_parcelshop();
                 break;
 
             case self::ACCESS_CAPABILITY_PARCELTYPE:
