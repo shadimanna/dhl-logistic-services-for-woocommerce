@@ -77,12 +77,9 @@ class PR_DHL_WC {
 	public function __construct() {
 		// add_action( 'init', array( $this, 'init' ) );
 		// add_action( 'plugins_loaded', array( $this, 'init' ) );
-		// error_log('constructor called');
 		$this->define_constants();
 		$this->includes();
 		$this->init_hooks();
-		// create classes
-		// $this->init();
 	}
 
 	/**
@@ -95,12 +92,9 @@ class PR_DHL_WC {
 	 * @return PR DHL - Main instance.
 	 */
 	public static function instance() {
-		// error_log('instance');
 		if ( is_null( self::$_instance ) ) {
-			// error_log('self null');
 			self::$_instance = new self();
 		}
-		// error_log(print_r(self::$_instance,true));
 		return self::$_instance;
 	}
 
@@ -129,14 +123,15 @@ class PR_DHL_WC {
 		$this->define( 'PR_DHL_ECOMM_TRACKING_URL', 'https://webtrack.dhlglobalmail.com/?trackingnumber=' );
 
 		// DHL Paket
-		$this->define( 'PR_DHL_CIG_USR', '' );
-		$this->define( 'PR_DHL_CIG_PWD', '' );
+		$this->define( 'PR_DHL_CIG_USR', 'dhl_woocommerce_plugin_1' );
+		$this->define( 'PR_DHL_CIG_PWD', 'rlUxXgDR59Qk9cpnAUx2qNxozYvA6T' );
 		$this->define( 'PR_DHL_CIG_AUTH', 'https://cig.dhl.de/services/production/soap' );
 
 		$this->define( 'PR_DHL_CIG_USR_QA', 'shadim' );
 		$this->define( 'PR_DHL_CIG_PWD_QA', 'm6jvtj{U)zH;\']' );
 		$this->define( 'PR_DHL_CIG_AUTH_QA', 'https://cig.dhl.de/services/sandbox/soap' );
 
+		$this->define( 'PR_DHL_PAKET_TRACKING_URL', 'https://nolp.dhl.de/nextt-online-public/report_popup.jsp?idc=' );
 	}
 	
 	/**
@@ -168,7 +163,6 @@ class PR_DHL_WC {
 	* Initialize the plugin.
 	*/
 	public function init() {
-		// error_log('main plugin init');
 		// Checks if WooCommerce is installed.
 		if ( class_exists( 'WC_Shipping_Method' ) ) {			
 
@@ -180,7 +174,6 @@ class PR_DHL_WC {
 			add_action( 'admin_notices', array( $this, 'notice_wc_required' ) );
 		}
 
-		// error_log(print_r($this,true));
 	}
 	
 	public function get_pr_dhl_wc_order() {
@@ -190,7 +183,6 @@ class PR_DHL_WC {
 				$dhl_obj = $this->get_dhl_factory();
 				
 				if( $dhl_obj->is_dhl_paket() ) {
-					// error_log('Paket Order Class');
 					$this->shipping_dhl_order = new PR_DHL_WC_Order_Paket();
 					$this->shipping_dhl_frontend = new PR_DHL_Front_End_Paket();
 				} elseif( $dhl_obj->is_dhl_ecomm() ) {
@@ -198,7 +190,6 @@ class PR_DHL_WC {
 				}
 				
 			} catch (Exception $e) {
-				// error_log('init exception');
 				// THIS IS THE WRONT ERROR, IT IS JUST FOR TESTING, ADD A BETTER ONE!
 				add_action( 'admin_notices', array( $this, 'notice_wc_required' ) );
 			}
@@ -220,7 +211,6 @@ class PR_DHL_WC {
 				}
 				
 			} catch (Exception $e) {
-				// error_log('init exception');
 				// THIS IS THE WRONT ERROR, IT IS JUST FOR TESTING, ADD A BETTER ONE!
 				add_action( 'admin_notices', array( $this, 'notice_wc_required' ) );
 			}
@@ -265,17 +255,14 @@ class PR_DHL_WC {
 	 * Add a new integration to WooCommerce.
 	 */
 	public function add_shipping_method( $shipping_method ) {
-		// error_log('add_shipping_method');
 		// Check country somehow
 		try {
 			$dhl_obj = $this->get_dhl_factory();
 			
 			if( $dhl_obj->is_dhl_paket() ) {
-				// error_log('Paket Ship Method');
 				$pr_dhl_ship_meth = 'PR_DHL_WC_Method_Paket';
 				$shipping_method['pr_dhl_paket'] = $pr_dhl_ship_meth;
 			} elseif( $dhl_obj->is_dhl_ecomm() ) {
-				// error_log('eComm Ship Method');
 				$pr_dhl_ship_meth = 'PR_DHL_WC_Method_Ecomm';
 				$shipping_method['pr_dhl_ecomm'] = $pr_dhl_ship_meth;
 			}
@@ -379,7 +366,6 @@ class PR_DHL_WC {
 			$dhl_obj = $this->get_dhl_factory();
 			
 			if( $dhl_obj->is_dhl_paket() ) {
-				// error_log('woocommerce_pr_dhl_paket_settings');
 				$dhl_settings = get_option('woocommerce_pr_dhl_paket_settings');
 			} elseif( $dhl_obj->is_dhl_ecomm() ) {
 				$dhl_settings = get_option('woocommerce_pr_dhl_ecomm_settings');
@@ -394,12 +380,9 @@ class PR_DHL_WC {
 
 	public function test_dhl_connection_callback() {
 		check_ajax_referer( 'pr-dhl-test-con', 'test_con_nonce' );
-		// error_log('test_dhl_connection_callback');
 		try {
 
 			$shipping_dhl_settings = $this->get_shipping_dhl_settings();
-			// error_log($shipping_dhl_settings['dhl_api_user']);
-			// error_log($shipping_dhl_settings['dhl_api_pwd']);
 			
 			$dhl_obj = $this->get_dhl_factory();
 
@@ -523,13 +506,10 @@ class PR_DHL_WC {
 	}
 
 	public function payment_gateways( $payment_gateways ) {
-		// error_log('payment_gateways');
-		// error_log(print_r($payment_gateways,true));
 		foreach ($payment_gateways as $key => $value) {
 			$gateway = new $value;
 			// array_push( $this->payment_gateway_titles, $gateway->get_method_title() );
 			$this->payment_gateway_titles[ $gateway->id ] = $gateway->get_method_title();
-			// error_log($value);
 		}
 
 		return $payment_gateways;
