@@ -1,32 +1,75 @@
-=== Plugin Name ===
-Contributors: DHL, shadim
+=== DHL for WooCommerce ===
+Contributors: DHL, shadim, utzfu
 Donate link: 
-Tags: 
+Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL Parcel Benelux, DHL Parcel Spain, DHL Parcel Portugal, DHL Paket Germany, DHL Parcel Iberia, WooCommerce, Woocom, Woo Commerce, Shipping, shiping, label creation, label printing, shipping rates, 
 Requires at least: 4.1
 Tested up to: 4.8.2
 Stable tag: 4.5.2
 License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-DHL plugin for WooCommerce allows you to automate all your business' billing. Send custom invoices and manage your online store!
+The official DHL for WooCommerce plugin - allows you to automate your e-commerce order process. Covering shipping services from DHL eCommerce (globally), DHL Paket (Germany and Austria), DHL Parcel (Benelux and Iberia) and soon DHL Express (globally).
 
 == Description ==
 
-DHL plugin for WooCommerce allows you to automate all your business’ billing. Send custom invoices and manage your online store quickly and easily!
+Here it is - DHL`s official  extension for WooCommerce on WordPress. If you are managing your orders via a WooCommerce store on WordPress and you are looking for a convenient way to manage your national and international shipments with either DHL eCommerce (globally in the below listed countries) or DHL Paket (see the table attached on availabilities )- this is what you need. 
+
+Even better, you now have a more convenient way to retrieve shipping products, print labels and provide tracking information to your customers with the DHL Shipping for WooCommerce extension. 
+
+== Features ==
+
+1. **Print DHL labels** Fast and easy label creation of your national and international orders with DHL Paket and DHL eCommerce
+1. **Create Auto tracking codes** Automatically receive a tracking code for each label you create (if tracking is available for the selected product) 
+1. **Create Handover Notes** conveniently for a smooth and reliable manifesting process in-line with your specific regional requirements for DHL eCommerce 
+1. Use **additional delivery services** as e.g. the visual check of age available via the API of DHL Paket or Cash on delivery by DHL eCommerce in selected countries. 
+1. Offer **Preferred Delivery Options** to your customers via DHL Paket “Wunschzustellung” enabling your customers to select the preferred time and location of delivery. If the customer enters his home address and chooses a preferred location or preferred neighbor, the parcel can also be delivered in his absence. 
+1. Get an **integrated location finder** with all delivery addresses of DHL Packstations, parcelshops and post offices in your WooCommerce web shop -  automatically transmitted to the delivery address. 
+1. **Customize  names and rates** Enable/disable or edit the names of services and set up the handling costs for each DHL shipping service 
+1. **Delete or reprint labels** in case your printer experienced any issues.  
+1. Experience **premium support**, timely compatibility updates and bug fixes. 
 
 
-== Installation ==
+== Availability of DHL Shipping Products by Sender Country == 
 
-Follow the steps listed below to install the DHL plugin for Woocomerce
+DHL shipping products range from small light weight packets with milestone tracking to delivery duty paid parcels with end to end tracking and a range of delivery times from same day delivery to 14 day delivery depending on your sender country and shipment destinations. 
+To find the DHL shipping product that best suits your needs, please see the available DHL products and services within the DHL for WooCommerce plugin as shown [here](https://www.logistics.dhl/content/dam/dhl/local/global/dhl-ecommerce/images/text-generic-1592x896/g0-integration-3pv-wooocommerce-00.web.796.448.jpg "Global DHL service coverage within WooCommerce").
 
-1. Download the plugin and upload it to your website
-2. Go to your Wordpress dashboard and, on the left side, click on “Plugins”
-3. Click on “Upload plugin” and look for it in your downloads (it is a .zip file)
+**Please note:** Based on your sender country and shipping preference, different access credentials for DHL Paket, DHL Parcel Benelux, DHL Parcel Iberia and DHL eCommerce are required for configuration. 
 
-== Frequently Asked Questions ==
+== Prerequisits & Download ==
 
+1. WordPress installation is up and running and WooCommerce plugin is installed too?
+1. Please check, if the required DHL service is available geographically in your sender country as shown [here](https://www.logistics.dhl/content/dam/dhl/local/global/dhl-ecommerce/images/text-generic-1592x896/g0-integration-3pv-wooocommerce-00.web.796.448.jpg "Global DHL service coverage within WooCommerce"). 
+1. In case you can use DHL where you want it, please sent us your company name and customer account number via integration@dhl.com and we will provide you back with credentials for this plugin. 
+1. You are not yet a customer? Go for it and sign up [here](http://www.dhl.com/signup-wooCommerce "Get a quote and become a DHL customer"). 
+1. Download our DHL for WooCommerce Plugin from this page [here](http://www.dhl.com/download-wooCommerce "Download the DHL for WooCommerce plugin") install and configure as described below
+
+== Installation & Configuration ==
+
+1. Upload the downloaded plugin files to your `/wp-content/plugins/DHL-for-WooCommerce` directory, or install the plugin through the WordPress plugins screen directly.
+1. Activate the plugin through the 'Plugins' screen in WordPress
+1. Use the Settings->Plugin Name screen to configure the plugin
+1. For DHL eCommerce, please have your customer account number, your distribution center used, as well as your client-ID and client-Secret ready 
+1. For DHL Paket, please XXX
+1. FOR DHL Parcel Benelux, pelase XXX
+1. For DHL Parcel Iberia, please XXX
+
+Since the DHL for WooCommerce plugin offers you a lot of different integrations into the complex world of the DHL group, please find some more detailed instructions on how to set up your store on the page [DHL/WooCommerce](http://www.dhl.com/wooCommerce "All About DHL for WooCommerce") and let us know if you need any support.
+
+== FAQs & Support ==
+
+Do you have more questions? For a detailed list of frequently asked questions please check our consolidated [FAQs](http://www.dhl.com/faqs "Frequently asked questions on DHL for WooCommerce")  or check out our [integration page ](http://www.dhl.com/Integration "Integrate with the world of DHL") with alternative integration options. 
+
+More detailed instructions on how to set up your store and configure it are consolidated on on the page [DHL/WooCommerce](http://www.dhl.com/wooCommerce "All About DHL for WooCommerce")
+
+In case you could not find what you were looking for in our FAQs and the detailed overview page on WooCommerce, please let us know via Integration@dhl.com, so we can help you with your request and add your question to our FAQs, thanks!
 
 == Screenshots ==
+
+1. screenshot-1.(png|jpg|jpeg|gif)
+1. screenshot-2.(png|jpg|jpeg|gif)
+1. screenshot-3.(png|jpg|jpeg|gif)
+1. screenshot-4.(png|jpg|jpeg|gif)
 
 
 == Changelog ==
@@ -38,3 +81,4 @@ Follow the steps listed below to install the DHL plugin for Woocomerce
 
 = 1.0 =
 * First public release
+
