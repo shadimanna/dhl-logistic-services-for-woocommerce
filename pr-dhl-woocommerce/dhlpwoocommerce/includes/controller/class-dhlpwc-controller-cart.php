@@ -230,6 +230,8 @@ class DHLPWC_Controller_Cart
                 case 'dhlpwc-parcelshop':
                     list($parcelshop_id, $country) = WC()->session->get('dhlpwc_parcelshop_passive_sync');
                     $country = $country ?: wc_get_base_location();
+                    $country = isset($country['country']) ? $country['country'] : $country;
+
                     $countries = new WC_Countries();
 
                     $service = new DHLPWC_Model_Service_Checkout();
@@ -288,6 +290,7 @@ class DHLPWC_Controller_Cart
 
     public function load_scripts()
     {
+        $select_woo_active = $this->version_check('3.2');
 
         if (is_cart() || is_checkout()) {
             wp_enqueue_script( 'dhlpwc-checkout-parcelshop-map-script', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.parcelshop.map.js', array('jquery'));
@@ -296,8 +299,8 @@ class DHLPWC_Controller_Cart
                 'dhlpwc_frontend_ps_map',
                 array(
                     'ajax_url' => admin_url('admin-ajax.php'),
-                    'image_mini' => DHLPWC_PLUGIN_URL . 'assets/images/marker/dhl_marker_mini_aa.png',
-                    'image_droplet' => DHLPWC_PLUGIN_URL . 'assets/images/marker/dhl_marker_mini_aa_droplet.png',
+                    'image_mini' => DHLPWC_PLUGIN_URL . 'assets/images/marker/dhlpwc_marker_active.png',
+                    'image_droplet' => DHLPWC_PLUGIN_URL . 'assets/images/marker/dhlpwc_marker_neutral.png',
                     'info_loader_view' => (new DHLPWC_Template('cart.parcelshop.info-loader'))->render(array(), false),
                 )
             );
@@ -311,7 +314,12 @@ class DHLPWC_Controller_Cart
                 )
             );
 
-            wp_enqueue_script( 'dhlpwc-checkout-parcelshop-select-script', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.parcelshop.select.js', array('jquery', 'select2'));
+            $dependencies = array('jquery');
+            if ($select_woo_active) {
+                $dependencies[] = 'selectWoo';
+            }
+
+            wp_enqueue_script( 'dhlpwc-checkout-parcelshop-select-script', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.parcelshop.select.js', $dependencies);
             wp_localize_script(
                 'dhlpwc-checkout-parcelshop-select-script',
                 'dhlpwc_frontend_select',
@@ -321,6 +329,7 @@ class DHLPWC_Controller_Cart
                     'search_loader_image' => includes_url('images/wpspin.gif'),
                     'search_default_text' => __('Search', 'dhlpwc'),
                     'confirm_default_text' => __('OK', 'dhlpwc'),
+                    'select_woo_active' => $select_woo_active ? 'true' : 'false',
                 )
             );
 
@@ -328,6 +337,17 @@ class DHLPWC_Controller_Cart
             $google_api_key = 'AIzaSyAV9qJVXDBnVHWwU01bjHO3wJCUxffYZyw';
             wp_enqueue_script( 'dhlpwc-checkout-map-script', '//maps.googleapis.com/maps/api/js?key='.$google_api_key.'&callback=dhlpwc_parcelshop_maps_loaded_callback', array('jquery'), null, true);
         }
+    }
+
+    protected function version_check($version = '3.2')
+    {
+        if (class_exists('WooCommerce')) {
+            global $woocommerce;
+            if (version_compare($woocommerce->version, $version, ">=")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public function load_styles()

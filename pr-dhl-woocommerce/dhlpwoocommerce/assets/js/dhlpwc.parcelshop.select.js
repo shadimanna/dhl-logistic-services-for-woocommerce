@@ -67,7 +67,6 @@ jQuery(document).ready(function($) {
 
     }).on('dhlpwc:hide_parcelshop_selection_modal', function(e) {
         $('div.dhlpwc-modal').hide();
-        $(document.body).trigger('dhlpwc:hide_parcelshop_map_section');
 
     }).on('dhlpwc:select_parcelshop', function(e, parcelshop_id) {
         var country = $('#dhlpwc-parcelshop-option-country-select').val();
@@ -159,8 +158,11 @@ jQuery(document).ready(function($) {
     // Preload modal, since it's loaded dynamically (hidden DOM defaults)
     $(document.body).trigger('dhlpwc:load_parcelshop_selection_modal');
 
-    $('#dhlpwc-parcelshop-option-country-select').select2();
-    // Also add an observer to auto-set select2 if it's no longer a select2 element.
-    $(document.body).trigger('dhlpwc:add_parcelshop_select_observer');
+    // Prettify select2 is selectWoo is active
+    if (dhlpwc_frontend_select.select_woo_active == 'true') {
+        $('#dhlpwc-parcelshop-option-country-select').select2();
+        // Also add an observer to auto-set select2 if it's no longer a select2 element.
+        $(document.body).trigger('dhlpwc:add_parcelshop_select_observer');
+    }
 
 });

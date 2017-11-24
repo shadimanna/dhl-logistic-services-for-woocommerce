@@ -1,6 +1,6 @@
 #DHL Parcel plugin for WooCommerce
 
-V0.2.0
+V0.2.1
 
 ## Features
 

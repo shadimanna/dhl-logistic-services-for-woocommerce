@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: DHL\n"
-"POT-Creation-Date: 2017-11-17 14:18+0100\n"
+"POT-Creation-Date: 2017-11-24 15:58+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -91,20 +91,20 @@ msgstr "Bedrijfscode gevonden. Kies om te gebruiken."
 msgid "%1$s | %2$s %3$s | %4$s %5$s | Distance: %6$s %7$s"
 msgstr "%1$s | %2$s %3$s | %4$s %5$s | Afstand: %6$s %7$s"
 
-#: includes/controller/class-dhlpwc-controller-cart.php:258
+#: includes/controller/class-dhlpwc-controller-cart.php:260
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:243
 msgid "Postcode"
 msgstr "Postcode"
 
-#: includes/controller/class-dhlpwc-controller-cart.php:266
+#: includes/controller/class-dhlpwc-controller-cart.php:268
 msgid "Select DHL ServicePoint"
 msgstr "Kies een DHL ServicePoint"
 
-#: includes/controller/class-dhlpwc-controller-cart.php:322
+#: includes/controller/class-dhlpwc-controller-cart.php:330
 msgid "Search"
 msgstr "Zoek"
 
-#: includes/controller/class-dhlpwc-controller-cart.php:323
+#: includes/controller/class-dhlpwc-controller-cart.php:331
 msgid "OK"
 msgstr "OK"
 
@@ -250,16 +250,19 @@ msgid "Free shipping over"
 msgstr "Gratis verzending bij een bestelling vanaf"
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:146
-msgid "VAT percentage"
-msgstr "Btw-percentage"
+msgid "VAT percentage assistance"
+msgstr "Btw-percentage ondersteuning"
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:148
 msgid ""
-"Enter the VAT rate for your shipping costs. If your costs are excluding VAT, "
-"please enter '0'."
+"If VAT is added to your shipping costs, but you wish to enter the total "
+"costs here, then use this assistance calculation by entering the VAT "
+"percentage. If your costs are excluded from VAT, please enter '0'."
 msgstr ""
-"Vul hier het btw-percentage in voor uw verzendkosten. Zijn uw verzendkosten "
-"exclusief btw, vul hier dan '0' in."
+"Wanneer btw bij de verzendkosten wordt toegevoegd, maar de totale kosten "
+"worden hier ingevuld, gebruik dan de ondersteunende berekening door de btw-"
+"percentage in te vullen. Zijn de verzendkosten echter exclusief btw, vul dan "
+"'0' in."
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:153
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:317
@@ -586,6 +589,13 @@ msgstr "Same day"
 #: languages/dhlpwc.php:48
 msgid "OPTION_S"
 msgstr "Saturday"
+
+#~ msgid ""
+#~ "Enter the VAT rate for your shipping costs. If your costs are excluding "
+#~ "VAT, please enter '0'."
+#~ msgstr ""
+#~ "Vul hier het btw-percentage in voor uw verzendkosten. Zijn uw "
+#~ "verzendkosten exclusief btw, vul hier dan '0' in."
 
 #, fuzzy
 #~| msgid "DHL ServicePoint"

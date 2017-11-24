@@ -143,10 +143,10 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
             ),
 
             'price_tax_assistance' => array(
-                'title'       => __('VAT percentage', 'dhlpwc'),
+                'title'       => __('VAT percentage assistance', 'dhlpwc'),
                 'type'        => 'decimal',
-                'description' => __("Enter the VAT rate for your shipping costs. If your costs are excluding VAT, please enter '0'.", 'dhlpwc'),
-                'default'     => '21',
+                'description' => __("If VAT is added to your shipping costs, but you wish to enter the total costs here, then use this assistance calculation by entering the VAT percentage. If your costs are excluded from VAT, please enter '0'.", 'dhlpwc'),
+                'default'     => '0',
             ),
 
             'enable_option_home' => array(
