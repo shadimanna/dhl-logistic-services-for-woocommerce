@@ -33,7 +33,7 @@ class DHLPWC_Translations
         __('OPTION_BOUW');
         __('OPTION_REFERENCE2');
         __('OPTION_EXW');
-        __('OPTION_EA'),
+        __('OPTION_EA');
         __('OPTION_EVE');
         __('OPTION_RECAP');
         __('OPTION_COD_CHECK');
