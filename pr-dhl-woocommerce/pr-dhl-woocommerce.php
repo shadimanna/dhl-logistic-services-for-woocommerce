@@ -171,7 +171,7 @@ class PR_DHL_WC {
 			$base_country_code = $this->get_base_country();
 
 			// If NL selected, load DHL Parcel plugin.
-			$dhl_parcel_countries = array( 'NL', 'BE', 'LU','PT','ES' );
+			$dhl_parcel_countries = array( 'NL', 'BE', 'LU' );
 
 			if ( in_array( $base_country_code, $dhl_parcel_countries ) ) {
 				include( 'dhlpwoocommerce/dhlpwoocommerce.php' );
