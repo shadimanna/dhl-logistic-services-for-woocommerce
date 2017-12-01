@@ -4,7 +4,7 @@ Plugin Name: DHL Parcel for WooCommmerce (BETA)
 Plugin URI: https://www.dhlparcel.nl
 Description: This is the official DHL Parcel for WooCommerce plugin, currently in BETA.
 Author: DHL Parcel
-Version: 0.2.0-beta
+Version: 0.2.1-beta
 */
 
 if (!defined('ABSPATH')) { exit; }

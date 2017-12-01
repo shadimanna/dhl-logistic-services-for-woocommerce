@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-11-17 14:18+0100\n"
+"POT-Creation-Date: 2017-11-24 15:58+0100\n"
 "PO-Revision-Date: 2017-10-06 12:50+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -96,20 +96,20 @@ msgstr ""
 msgid "%1$s | %2$s %3$s | %4$s %5$s | Distance: %6$s %7$s"
 msgstr ""
 
-#: includes/controller/class-dhlpwc-controller-cart.php:258
+#: includes/controller/class-dhlpwc-controller-cart.php:260
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:243
 msgid "Postcode"
 msgstr ""
 
-#: includes/controller/class-dhlpwc-controller-cart.php:266
+#: includes/controller/class-dhlpwc-controller-cart.php:268
 msgid "Select DHL ServicePoint"
 msgstr ""
 
-#: includes/controller/class-dhlpwc-controller-cart.php:322
+#: includes/controller/class-dhlpwc-controller-cart.php:330
 msgid "Search"
 msgstr ""
 
-#: includes/controller/class-dhlpwc-controller-cart.php:323
+#: includes/controller/class-dhlpwc-controller-cart.php:331
 msgid "OK"
 msgstr ""
 
@@ -242,13 +242,14 @@ msgid "Free shipping over"
 msgstr ""
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:146
-msgid "VAT percentage"
+msgid "VAT percentage assistance"
 msgstr ""
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:148
 msgid ""
-"Enter the VAT rate for your shipping costs. If your costs are excluding "
-"VAT, please enter '0'."
+"If VAT is added to your shipping costs, but you wish to enter the total "
+"costs here, then use this assistance calculation by entering the VAT "
+"percentage. If your costs are excluded from VAT, please enter '0'."
 msgstr ""
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:153

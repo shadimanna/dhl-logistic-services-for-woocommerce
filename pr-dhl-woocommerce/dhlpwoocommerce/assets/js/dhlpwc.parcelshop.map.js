@@ -28,25 +28,25 @@ jQuery(document).ready(function($) {
 
         dhlpwc_marker_image = {
             url: dhlpwc_frontend_ps_map.image_mini,
-            size: new google.maps.Size(34,50),
+            size: new google.maps.Size(37,50),
             origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(17, 50)
+            anchor: new google.maps.Point(18, 50)
         };
 
         dhlpwc_marker_image_shape = {
-            coord: [17,50, 2,24, 3,8, 7,5, 17,2, 28,5, 32,8, 33,24],
+            coord: [18,50, 2,24, 3,8, 7,5, 18,2, 29,5, 33,8, 34,24],
             type: 'poly'
         };
 
         dhlpwc_marker_droplet_image = {
             url: dhlpwc_frontend_ps_map.image_droplet,
-            size: new google.maps.Size(17,25),
+            size: new google.maps.Size(19,25),
             origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(8, 25)
+            anchor: new google.maps.Point(9, 25)
         };
 
         dhlpwc_marker_droplet_image_shape = {
-            coord: [8,25, 0,14, 0,5, 7,0, 10,0, 17,5, 17,14, 9,25],
+            coord: [9,25, 0,14, 0,5, 7,0, 11,0, 18,5, 18,14, 10,25],
             type: 'poly'
         };
 
