@@ -165,7 +165,6 @@ class PR_DHL_WC {
 	*/
 	public function init() {
 		// Checks if WooCommerce is installed.
-
 		if ( class_exists( 'WC_Shipping_Method' ) ) {			
 			
 			$base_country_code = $this->get_base_country();
@@ -191,7 +190,6 @@ class PR_DHL_WC {
 	}
 	
 	public function get_pr_dhl_wc_order() {
-
 		if ( ! isset( $this->shipping_dhl_order ) ){
 			try {
 				$dhl_obj = $this->get_dhl_factory();
@@ -204,8 +202,7 @@ class PR_DHL_WC {
 				}
 				
 			} catch (Exception $e) {
-				// THIS IS THE WRONT ERROR, IT IS JUST FOR TESTING, ADD A BETTER ONE!
-				add_action( 'admin_notices', array( $this, 'notice_wc_required' ) );
+				add_action( 'admin_notices', array( $this, 'environment_check' ) );
 			}
 		}
 
@@ -213,7 +210,6 @@ class PR_DHL_WC {
 	}
 
 	public function get_pr_dhl_wc_product() {
-
 		if ( ! isset( $this->shipping_dhl_product ) ){
 			try {
 				$dhl_obj = $this->get_dhl_factory();
@@ -225,8 +221,7 @@ class PR_DHL_WC {
 				}
 				
 			} catch (Exception $e) {
-				// THIS IS THE WRONT ERROR, IT IS JUST FOR TESTING, ADD A BETTER ONE!
-				add_action( 'admin_notices', array( $this, 'notice_wc_required' ) );
+				add_action( 'admin_notices', array( $this, 'environment_check' ) );
 			}
 		}
 
