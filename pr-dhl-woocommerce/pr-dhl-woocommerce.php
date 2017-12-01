@@ -190,8 +190,7 @@ class PR_DHL_WC {
 				}
 				
 			} catch (Exception $e) {
-				// THIS IS THE WRONT ERROR, IT IS JUST FOR TESTING, ADD A BETTER ONE!
-				add_action( 'admin_notices', array( $this, 'notice_wc_required' ) );
+				add_action( 'admin_notices', array( $this, 'environment_check' ) );
 			}
 		}
 
@@ -211,8 +210,7 @@ class PR_DHL_WC {
 				}
 				
 			} catch (Exception $e) {
-				// THIS IS THE WRONT ERROR, IT IS JUST FOR TESTING, ADD A BETTER ONE!
-				add_action( 'admin_notices', array( $this, 'notice_wc_required' ) );
+				add_action( 'admin_notices', array( $this, 'environment_check' ) );
 			}
 		}
 
