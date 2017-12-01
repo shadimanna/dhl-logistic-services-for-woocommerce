@@ -1,7 +1,7 @@
 === DHL for WooCommerce ===
 Contributors: DHL, shadim, utzfu
 Donate link: 
-Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL Parcel Benelux, DHL Parcel Spain, DHL Parcel Portugal, DHL Paket Germany, DHL Parcel Iberia, WooCommerce, Woocom, Woo Commerce, Shipping, shiping, label creation, label printing, shipping rates, DHL Paket
+Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL Parcel Benelux, DHL Parcel Luxembourg, DHL Paket Germany, WooCommerce, Woocom, Woo Commerce, Shipping, shiping, label creation, label printing, shipping rates, DHL Paket
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 4.8.2
@@ -9,11 +9,11 @@ Stable tag: 4.5.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-The official DHL for WooCommerce plugin allows you to automate your e-commerce order process. Covering shipping services from DHL eCommerce (globally), DHL Paket (Germany and Austria), DHL Parcel (Benelux and Iberia) and soon DHL Express (globally).
+The official DHL for WooCommerce plugin allows you to automate your e-commerce order process. Covering shipping services from DHL eCommerce (globally), DHL Paket (Germany and Austria), DHL Parcel (Benelux) and soon DHL Express (globally).
 
 == Description ==
 
-Here it is - DHL`s official  extension for WooCommerce on WordPress. If you are managing your orders via a WooCommerce store on WordPress and you are looking for a convenient way to manage your national and international shipments with either DHL eCommerce (globally in the below listed countries) or DHL Paket (see the table attached on availabilities )- this is what you need. 
+Here it is - DHL`s official  extension for WooCommerce on WordPress. If you are managing your orders via a WooCommerce store on WordPress and you are looking for a convenient way to manage your national and international shipments with either DHL eCommerce or DHL Paket (see the table attached on availabilities )- this is what you need. 
 
 Even better, you now have a more convenient way to retrieve shipping products, print labels and provide tracking information to your customers with the DHL Shipping for WooCommerce extension. 
 
@@ -34,15 +34,15 @@ Even better, you now have a more convenient way to retrieve shipping products, p
 DHL shipping products range from small light weight packets with milestone tracking to delivery duty paid parcels with end to end tracking and a range of delivery times from same day delivery to 14 day delivery depending on your sender country and shipment destinations. 
 To find the DHL shipping product that best suits your needs, please see the available DHL products and services within the DHL for WooCommerce plugin as shown [here](https://www.logistics.dhl/content/dam/dhl/local/global/dhl-ecommerce/images/text-generic-1592x896/g0-integration-3pv-wooocommerce-00.web.796.448.jpg "Global DHL service coverage within WooCommerce").
 
-**Please note:** Based on your sender country and shipping preference, different access credentials for DHL Paket, DHL Parcel Benelux, DHL Parcel Iberia and DHL eCommerce are required for configuration. 
+**Please note:** Based on your sender country and shipping preference, different access credentials for DHL Paket, DHL Parcel Benelux and DHL eCommerce are required for configuration. 
 
 == Prerequisits & Download ==
 
 1. WordPress installation is up and running and WooCommerce plugin is installed too?
-1. Please check, if the required DHL service is available geographically in your sender country as shown [here](https://ps.w.org/dhl-for-woocommerce/assets/screenshot-4.png?rev=1777042 "Global DHL service coverage within WooCommerce"). 
+1. Please check, if the required DHL service is available geographically in your sender country as shown [here](https://ps.w.org/dhl-for-woocommerce/assets/screenshot-4.png "Global DHL service coverage within WooCommerce"). 
 1. In case you can use DHL where you want it, please sent us your company name and customer account number via integration@dhl.com and we will provide you back with credentials for this plugin. 
-1. You are not yet a customer? Go for it and sign up for DHL eCommerce [here](http://www.dhl.com/signup-wooCommerce "Get a quote and become a DHL Ecommerce customer"), for DHL Paket [here](https://www.dhl.de/en/geschaeftskunden/paket/kunde-werden/angebot-dhl-geschaeftskunden-online.html "Get a quote and become a DHL Paket customer") and for DHL Parcel Europe [here](http://www.XXXXXXXXX "Get a quote and become a DHL Parcel Europe customer"). 
-1. Download our DHL for WooCommerce Plugin from this page [here](http://www.dhl.com/download-wooCommerce "Download the DHL for WooCommerce plugin") install and configure as described below
+1. You are not yet a customer? Go for it and sign up for DHL eCommerce [here](http://www.dhl.com/signup-wooCommerce "Get a quote and become a DHL Ecommerce customer"), for DHL Paket [here](https://www.dhl.de/en/geschaeftskunden/paket/kunde-werden/angebot-dhl-geschaeftskunden-online.html "Get a quote and become a DHL Paket customer"), for DHL Parcel Netherlands [here](https://www.dhlparcel.nl/en/get-quote "Get a quote and become a DHL Parcel NL customer") and for DHL Parcel Belgium [here](https://www.dhlparcel.be/nl/offerte-aanvragen "Get a quote and become a DHL Parcel Belgium customer"). 
+1. Download our DHL for WooCommerce Plugin from the [here](http://www.dhl.com/download-wooCommerce "Download the DHL for WooCommerce plugin") install and configure as described below
 
 == Installation & Configuration ==
 
@@ -64,19 +64,17 @@ More detailed instructions on how to set up your store and configure it are cons
 
 In case you could not find what you were looking for in our FAQs and the detailed instruction page on DHL, please get individual support by the respective DHL Business unit, so we can help you with your request and add your question to our FAQs, thanks!
 
-* [DHL Parcel Belgium](mailto:cimparcel@dhl.com "Get in touch with DHL Parcel Belgium")
-* [DHL eCommerce](mailto:Integration@dhl.com "Get in touch with DHL eCommerce")
-* [DHL Paket Germany](mailto:Shopsoftware@deutschepost.de "Get in touch with DHL Parcel Belgium")
-* [DHL Parcel Netherlands](mailto:cimparcel@dhl.com "Get in touch with DHL Parcel Netherlands")
-* [DHL Parcel Portugal](mailto:directparcel.portugal@dhl.com "Get in touch with DHL Parcel Portugal")
-* [DHL Parcel Spain](mailto:clientesparcel.spain@dhl.com  "Get in touch with DHL Parcel Spain")
+* Get **DHL Parcel Belgium & Netherlands ** support via [cimparcel@dhl.com](mailto:cimparcel@dhl.com)
+* Get **DHL eCommerce** support via [Integration@dhl.com](mailto:integration@dhl.com)
+* Get **DHL Paket Germany** support via [Shopsoftware@deutschepost.de](mailto:Shopsoftware@deutschepost.de)
+
 
 == Screenshots ==
 
+1. screenshot-4.(png|jpg|jpeg|gif)
 1. screenshot-1.(png|jpg|jpeg|gif)
 1. screenshot-2.(png|jpg|jpeg|gif)
 1. screenshot-3.(png|jpg|jpeg|gif)
-1. screenshot-4.(png|jpg|jpeg|gif)
 
 
 == Changelog ==
