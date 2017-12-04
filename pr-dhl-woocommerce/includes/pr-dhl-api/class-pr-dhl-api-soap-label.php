@@ -470,8 +470,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 													array(
 														'name2' => $this->args['shipping_address']['company'],
 														'streetName' => $this->args['shipping_address']['address_1'],
-														'streetNumber' => '00',
-														'addressAddition' => $this->args['shipping_address']['address_2'],
+														'streetNumber' => $this->args['shipping_address']['address_2'],
+														// 'addressAddition' => $this->args['shipping_address']['address_2'],
 														'zip' => $this->args['shipping_address']['postcode'],
 														'city' => $this->args['shipping_address']['city'],
 														'Origin' =>
