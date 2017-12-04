@@ -76,7 +76,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 	    					'ajax_url' => admin_url( 'admin-ajax.php' ),
 	    					'test_con_nonce' => wp_create_nonce( 'pr-dhl-test-con' ) 
 	    				);
-	    
+
 		// wp_enqueue_style( 'wc-shipment-dhl-label-css', PR_DHL_PLUGIN_DIR_URL . '/assets/css/pr-dhl-admin.css' );		
 		wp_enqueue_script( 'wc-shipment-dhl-testcon-js', PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-test-connection.js', array('jquery'), PR_DHL_VERSION );
 		// in JavaScript, object properties are accessed as ajax_object.ajax_url, ajax_object.we_value
