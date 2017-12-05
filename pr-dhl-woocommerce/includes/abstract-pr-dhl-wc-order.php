@@ -381,7 +381,10 @@ abstract class PR_DHL_WC_Order {
 				$product = wc_get_product( $item['product_id'] );
 			}
 			
-			$total_weight += ( $item['qty'] * $product->get_weight() );
+			$product_weight = $product->get_weight();
+			if( $product_weight ) {
+				$total_weight += ( $item['qty'] * $product_weight );
+			}
 		}
 
 		return $total_weight;

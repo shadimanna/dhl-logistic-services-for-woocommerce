@@ -149,6 +149,7 @@ class PR_DHL_WC {
 
 		add_action( 'init', array( $this, 'init' ), 0 );
 		add_action( 'init', array( $this, 'load_textdomain' ) );
+		add_action( 'init', array( $this, 'set_payment_gateways' ) );
 		
 		add_action( 'admin_enqueue_scripts', array( $this, 'dhl_theme_enqueue_styles') );	
 
@@ -156,9 +157,7 @@ class PR_DHL_WC {
 		add_filter( 'woocommerce_shipping_methods', array( $this, 'add_shipping_method' ) );
 		// Test connection
 		add_action( 'wp_ajax_test_dhl_connection', array( $this, 'test_dhl_connection_callback' ) );
-		add_filter( 'woocommerce_payment_gateways', array( $this, 'payment_gateways' ) );
 	}
-
 
 	/**
 	* Initialize the plugin.
@@ -514,14 +513,12 @@ class PR_DHL_WC {
 		return $dhl_obj->get_dhl_preferred_days( $cutoff_time, $exclusion_work_day );
 	}
 
-	public function payment_gateways( $payment_gateways ) {
-		foreach ($payment_gateways as $key => $value) {
-			$gateway = new $value;
-			// array_push( $this->payment_gateway_titles, $gateway->get_method_title() );
-			$this->payment_gateway_titles[ $gateway->id ] = $gateway->get_method_title();
-		}
+	public function set_payment_gateways() {
+		$wc_payment_gateways = WC()->payment_gateways()->payment_gateways();
 
-		return $payment_gateways;
+		foreach ($wc_payment_gateways as $key => $gateway) {
+			$this->payment_gateway_titles[ $key ] = $gateway->get_method_title();
+		}
 	}
 
 	public function get_payment_gateways( ) {

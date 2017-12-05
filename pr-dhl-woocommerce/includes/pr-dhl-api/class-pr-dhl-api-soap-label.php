@@ -234,7 +234,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 						);
 
 		$args['shipping_address'] = wp_parse_args( $args['shipping_address'], $default_args['shipping_address'] );
-		$args['order_details'] = wp_parse_args( $args['order_details'], $default_args['order_details'] );
+		// $args['order_details'] = wp_parse_args( $args['order_details'], $default_args['order_details'] );
 
 		$default_args_item = array( 
 									'item_description' => '',
@@ -244,11 +244,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 									'hs_code' => '',
 									'qty' => 1
 									);
-
-		// TEST THIS
-		if ( sizeof($args['items']) > self::DHL_MAX_ITEMS ) {
-			throw new Exception( sprintf( __('Only %s ordered items can be processed, your order has %s', 'pr-shipping-dhl'), self::DHL_MAX_ITEMS, sizeof($args['items']) ) );
-		}
 
 		foreach ($args['items'] as $key => $item) {
 			
@@ -495,6 +490,11 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			// If international shipment add export information
 			if( ! $this->is_local_shipment() ) {
 
+				// TEST THIS
+				if ( sizeof($this->args['items']) > self::DHL_MAX_ITEMS ) {
+					throw new Exception( sprintf( __('Only %s ordered items can be processed, your order has %s', 'pr-shipping-dhl'), self::DHL_MAX_ITEMS, sizeof($args['items']) ) );
+				}
+				
 				$customsDetails = array();
 
 				$item_description = '';
