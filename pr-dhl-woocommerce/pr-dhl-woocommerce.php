@@ -32,7 +32,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "1.0.0";
+	private $version = "1.0.1";
 
 	/**
 	 * Instance to call certain functions globally within the plugin

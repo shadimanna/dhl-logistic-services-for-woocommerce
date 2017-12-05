@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 4.8.2
-Stable tag: 4.5.2
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,10 +79,19 @@ In case you could not find what you were looking for in our FAQs and the detaile
 
 == Changelog ==
 
+= 1.0.1 =
+* Bug fix - DHL Paket: Fix duplicate payment details in thank you page and email
+* Bug fix - DHL Paket : Max items limit of 6 should only be for international shipments
+* Warning fix - DHL Paket: Order details does not exist for DHL Paket
+* Warning fix: If weight not numeric will throw a warning
+
 = 1.0 =
 * First public release
 
 == Upgrade Notice ==
+
+= 1.0.1 =
+* Bug fixes, please upgrade
 
 = 1.0 =
 * First public release
