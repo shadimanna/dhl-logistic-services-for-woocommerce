@@ -5,7 +5,7 @@
  * Description: WooCommerce integration for DHL eCommerce, DHL Paket and DHL Parcel Europe (Benelux and Iberia)
  * Author: DHL
  * Author URI: http://dhl.com/woocommerce
- * Version: 1.0
+ * Version: 1.0.1
  * WC requires at least: 2.6.14
  * WC tested up to: 3.2.3
  *
@@ -32,7 +32,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "1.0.0";
+	private $version = "1.0.1";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -146,18 +146,18 @@ class PR_DHL_WC {
 	}
 
 	public function init_hooks() {
+
 		add_action( 'init', array( $this, 'init' ), 0 );
 		add_action( 'init', array( $this, 'load_textdomain' ) );
-		add_action( 'admin_notices', array( $this, 'environment_check' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'dhl_theme_enqueue_styles') );		
+		add_action( 'init', array( $this, 'set_payment_gateways' ) );
+		
+		add_action( 'admin_enqueue_scripts', array( $this, 'dhl_theme_enqueue_styles') );	
 
 		add_action( 'woocommerce_shipping_init', array( $this, 'includes' ) );
 		add_filter( 'woocommerce_shipping_methods', array( $this, 'add_shipping_method' ) );
 		// Test connection
 		add_action( 'wp_ajax_test_dhl_connection', array( $this, 'test_dhl_connection_callback' ) );
-		add_filter( 'woocommerce_payment_gateways', array( $this, 'payment_gateways' ) );
 	}
-
 
 	/**
 	* Initialize the plugin.
@@ -165,9 +165,21 @@ class PR_DHL_WC {
 	public function init() {
 		// Checks if WooCommerce is installed.
 		if ( class_exists( 'WC_Shipping_Method' ) ) {			
+			
+			$base_country_code = $this->get_base_country();
 
-			$this->get_pr_dhl_wc_product();
-			$this->get_pr_dhl_wc_order();
+			// If NL selected, load DHL Parcel plugin.
+			$dhl_parcel_countries = array( 'NL', 'BE', 'LU' );
+
+			if ( in_array( $base_country_code, $dhl_parcel_countries ) ) {
+				include( 'dhlpwoocommerce/dhlpwoocommerce.php' );
+			} else {
+
+				add_action( 'admin_notices', array( $this, 'environment_check' ) );
+
+				$this->get_pr_dhl_wc_product();
+				$this->get_pr_dhl_wc_order();
+			}
 
 		} else {
 			// Throw an admin error informing the user this plugin needs WooCommerce to function
@@ -177,7 +189,6 @@ class PR_DHL_WC {
 	}
 	
 	public function get_pr_dhl_wc_order() {
-
 		if ( ! isset( $this->shipping_dhl_order ) ){
 			try {
 				$dhl_obj = $this->get_dhl_factory();
@@ -198,7 +209,6 @@ class PR_DHL_WC {
 	}
 
 	public function get_pr_dhl_wc_product() {
-
 		if ( ! isset( $this->shipping_dhl_product ) ){
 			try {
 				$dhl_obj = $this->get_dhl_factory();
@@ -503,14 +513,12 @@ class PR_DHL_WC {
 		return $dhl_obj->get_dhl_preferred_days( $cutoff_time, $exclusion_work_day );
 	}
 
-	public function payment_gateways( $payment_gateways ) {
-		foreach ($payment_gateways as $key => $value) {
-			$gateway = new $value;
-			// array_push( $this->payment_gateway_titles, $gateway->get_method_title() );
-			$this->payment_gateway_titles[ $gateway->id ] = $gateway->get_method_title();
-		}
+	public function set_payment_gateways() {
+		$wc_payment_gateways = WC()->payment_gateways()->payment_gateways();
 
-		return $payment_gateways;
+		foreach ($wc_payment_gateways as $key => $gateway) {
+			$this->payment_gateway_titles[ $key ] = $gateway->get_method_title();
+		}
 	}
 
 	public function get_payment_gateways( ) {

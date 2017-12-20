@@ -1,0 +1,16 @@
+<phpunit
+	bootstrap="tests/bootstrap.php"
+	backupGlobals="false"
+	colors="true"
+	convertErrorsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true"
+	verbose="true"
+	syntaxCheck="true"
+	>
+	<testsuites>
+		<testsuite name="DHL Plugin for WooCommerce">
+			<directory suffix=".php">./tests/</directory>
+		</testsuite>
+	</testsuites>
+</phpunit>

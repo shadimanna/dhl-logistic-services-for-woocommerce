@@ -1,0 +1,239 @@
+.dhlpwc_notice { color: #0a0; margin-bottom:0 }
+.dhlpwc_warning { color: #a00; margin-bottom:0 }
+.dhlpwc_error { color: #a00; margin-bottom:0 }
+
+.dhlpwc-meta-loader {
+    visibility: hidden;
+    position: relative;
+    overflow:hidden;
+    margin:-10px -12px -12px;
+    height:30px;
+
+    filter: brightness(60%) sepia(1) saturate(9) hue-rotate(151deg);
+}
+
+#dhlpwc-label[metabox_busy="true"] .dhlpwc-meta-loader { visibility: visible; }
+
+.dhlpwc-order-metabox-form-parceltypes {
+    position: relative;
+}
+.dhlpwc-order-metabox-form-parceltypes .widefat {
+    position: absolute;
+    top: -2.4em;
+}
+.dhlpwc-order-metabox-form-parceltypes .widefat .order_actions.column-order_actions {
+    width:100%
+}
+
+.dhlpwc-meta-loader img {
+    position: absolute;
+    width: 100%;
+    height:5px;
+    padding:0;
+    margin:0;
+    bottom: 0;
+}
+
+.order_actions .dhlpwc_admin_action_button {
+    display: inline-block;
+    text-indent: -9999px;
+    position: relative;
+    padding: 0 !important;
+    height: 2em;
+    width: 2em;
+}
+
+.order_actions .dhlpwc_admin_action_button::after {
+    font-family: Dashicons;
+    speak: none;
+    font-weight: 400;
+    font-variant: normal;
+    text-transform: none;
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    text-indent: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    content: "\f133";
+    line-height: 1.85;
+}
+
+.order_actions .dhlpwc_admin_action_button.dhlpwc_action_create::after { content: "\f133";}
+.order_actions .dhlpwc_admin_action_button.dhlpwc_action_download::after { content: "\f316";}
+.order_actions .dhlpwc_admin_action_button.dhlpwc_action_follow_tt::after { content: "\f504";}
+.order_actions .dhlpwc_admin_action_button.dhlpwc_action_delete::after { content: "\f182"; }
+.order_actions .dhlpwc_admin_action_button.dhlpwc_action_refresh::after { content: "\f531"; }
+
+.widefat .column-order_actions a.button.dhlpwc_action_refresh {
+    float:right;
+}
+
+ul.order-meta-options {
+    margin: 0;
+    list-style-type: none;
+}
+
+.woocommerce table.form-table select#woocommerce_dhlpwc_default_receiver_type,
+.woocommerce table.form-table select#woocommerce_dhlpwc_country {
+    padding: 2px;
+}
+
+/* Settings */
+input#woocommerce_dhlpwc_test_connection {
+    width: 200px;
+}
+input#woocommerce_dhlpwc_test_connection.dhlpwc_button_success {
+    background-color: #10fe6f;
+}
+input#woocommerce_dhlpwc_test_connection.dhlpwc_button_fail {
+    background-color: #ed1b26;
+}
+
+#dhlpwc_shipping_method_settings {
+    position: relative;
+    padding-left: 220px;
+}
+
+#dhlpwc_shipping_method_settings:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+#dhlpwc_shipping_method_settings > table {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: inherit;
+    display: none;
+    margin-right: -240px;
+    /*border: solid 3px #ffffff;*/
+    padding: 0 20px;
+    /*background-color: #ffffff;*/
+    border-top: solid 5px #ffffff;
+    border-bottom: solid 5px #ffffff;
+}
+
+#dhlpwc_shipping_method_settings > h3,
+#dhlpwc_shipping_method_settings > p {
+    float: left;
+    width: 182px;
+    clear: left;
+    display: inline-block;
+    padding-right: 10px;
+    padding-left: 8px;
+    cursor: pointer;
+    margin-left: -220px;
+}
+
+#dhlpwc_shipping_method_settings > h3.dhlpwc-highlight,
+#dhlpwc_shipping_method_settings > h3.dhlpwc-active,
+#dhlpwc_shipping_method_settings > p.dhlpwc-highlight,
+#dhlpwc_shipping_method_settings > p.dhlpwc-active {
+    background-color: #ffffff;
+    padding-left: 8px;
+}
+
+#dhlpwc_shipping_method_settings > h3 {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 15px;
+    padding-bottom:5px;
+    border-top: solid 5px #ffffff;
+}
+
+#dhlpwc_shipping_method_settings > p {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-bottom: 15px;
+    /*border-bottom: solid 5px #ffffff;*/
+}
+
+#dhlpwc_shipping_method_settings > p.dhlpwc-highlight,
+#dhlpwc_shipping_method_settings > p.dhlpwc-active {
+    /*border-bottom: solid 5px #ffffff;*/
+}
+
+.woocommerce table.form-table input#woocommerce_dhlpwc_price_tax_assistance {
+    width: 80px;
+}
+
+/* Currency input */
+.woocommerce table.form-table .dhlpwc-currency-wrap {
+    position: relative;
+    width: 150px;
+}
+
+.woocommerce table.form-table .dhlpwc-currency-wrap > i {
+    position: absolute;
+    display: block;
+    transform: translate(0, -50%);
+    top: 50%;
+    pointer-events: none;
+    width: 25px;
+    text-align: center;
+    font-style: normal;
+}
+
+.woocommerce table.form-table .dhlpwc-currency-wrap > input.dhlpwc-price-input {
+    padding-left: 25px;
+    padding-right: 10px;
+    width:150px;
+    text-align: right;
+}
+
+.woocommerce table.form-table .dhlpwc-currency-pos-left > i,
+.woocommerce table.form-table .dhlpwc-currency-pos-left_space > i {
+    border-right: solid 1px lightgrey;
+}
+
+.woocommerce table.form-table .dhlpwc-currency-pos-right > i,
+.woocommerce table.form-table .dhlpwc-currency-pos-right_space > i {
+    right: 4px;
+    border-left: solid 1px lightgrey;
+}
+
+.woocommerce table.form-table .dhlpwc-currency-pos-right > input.dhlpwc-price-input,
+.woocommerce table.form-table .dhlpwc-currency-pos-right_space > input.dhlpwc-price-input {
+    padding-left: 10px;
+    padding-right: 36px;
+}
+
+div.dhlpwc_settings_suggestion_info {
+    font-size:smaller;
+    padding:5px;
+}
+
+div.dhlpwc_settings_suggestion_accounts,
+div.dhlpwc_settings_suggestion_organization {
+    display: inline-block;
+    color: #444;
+    border: 1px solid #CCC;
+    background: #FFF;
+    box-shadow: 0 0 5px -1px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    vertical-align: middle;
+    padding: 3px 10px;
+    text-align: center;
+    margin-right: 10px;
+
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+}
+
+div.dhlpwc_settings_suggestion_accounts:hover,
+div.dhlpwc_settings_suggestion_organization:hover {
+    color:red;
+    box-shadow: 0 0 5px -1px rgba(0,0,0,0.6);
+}
+
+div.dhlpwc_settings_suggestion_accounts:active,
+div.dhlpwc_settings_suggestion_organization:active {
+    background: #ff0;
+}

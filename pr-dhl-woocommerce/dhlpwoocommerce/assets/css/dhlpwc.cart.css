@@ -1,0 +1,200 @@
+.dhlpwc_notice { color: #0a0; margin-bottom:0 }
+.dhlpwc_warning { color: #a00; margin-bottom:0 }
+.dhlpwc_error { color: #a00; margin-bottom:0 }
+
+.dhlpwc-checkout-subsection input {
+    width:100%;
+}
+
+.dhlpwc-checkout-modal .dhlpwc-checkout-subsection {
+    float:left;
+    margin: 0;
+    padding: 15px;
+}
+
+.dhlpwc-modal-logo {
+    float: left;
+    width: 112px;
+    margin: 0;
+    display: block;
+    box-sizing: border-box;
+    padding-top: 18px;
+}
+
+.dhlpwc-modal-logo img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    vertical-align: middle;
+}
+
+.dhlpwc-checkout-subsection-side {
+    float:left;
+    width: 34%;
+    background-color: #fff;
+}
+
+.dhlpwc-checkout-subsection-sub-side {
+    visibility: hidden;
+}
+
+.dhlpwc-checkout-subsection-map {
+    float:right;
+    width: 65%;
+    visibility: hidden;
+}
+
+p#dhlpwc_parcelshop_postcode_field {
+    padding: 5px 15px 0;
+}
+
+p#dhlpwc_parcelshop_select_field {
+    padding: 0 0 0 15px;
+    margin: 0;
+    height: 55%;
+    height: 55vh;
+}
+
+p#dhlpwc_parcelshop_select_field .dhlpwc-stylishselect-select {
+    margin-left: -15px;
+}
+
+
+p#dhlpwc_parcelshop_postcode_field label:after,
+p#dhlpwc_parcelshop_postcode_field button:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+button#dhlpwc_parcelshop_postcode_search_button {
+    margin-left: 15px;
+    float:right;
+    width:30%;
+    white-space: nowrap;
+    overflow-x: hidden;
+    background-color: #d40511;
+    color: #fff;
+    padding: 0;
+    height: 35px;
+    font-weight: normal;
+}
+
+button#dhlpwc_parcelshop_postcode_search_button.dhlpwc-searching {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    border: 2px solid #d40511;
+    background-color: #f7f7f7;
+}
+
+button#dhlpwc_parcelshop_postcode_search_button img {
+    margin: auto; /* center */
+}
+
+button#dhlpwc_parcelshop_postcode_confirm_button {
+    width:100%;
+}
+
+#dhlpwc_parcelshop_postcode {
+    width: 60%;
+    box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+    padding-left: 15px;
+    height: 35px;
+
+    font-weight: lighter;
+}
+
+/* Parcelshop info box */
+#dhlpwc-parcelshop-info {
+    position: absolute;
+    background-color: white;
+    z-index:1;
+    width:100%;
+    padding: 8px;
+    margin: 0;
+    opacity: 0;
+}
+
+.dhlpwc-map-info-loader {
+    padding: 25px 0 15px;
+    margin-left:20px;
+}
+
+#dhlpwc-parcelshop-info-address {
+    position: relative;
+    font-size: smaller;
+}
+
+#dhlpwc-parcelshop-info-time-table {
+    position: relative;
+    font-size: smaller;
+
+    padding-top: 20px;
+}
+
+#dhlpwc-parcelshop-info-time-table table tbody tr td {
+    background-color: transparent;
+}
+
+#dhlpwc-parcelshop-info-time-table table {
+    margin: 0;
+}
+
+#dhlpwc-parcelshop-info-time-day {
+    font-weight:bold;
+}
+
+#dhlpwc-parcelshop-info-time-table table td {
+    padding: 0;
+}
+
+#dhlpwc-parcelshop-map {
+    width: 100%;
+    height: 500px; /* fallback */
+    height: 70vh;
+    background-color: grey;
+}
+
+/** Parcelshop cart option **/
+.dhlpwc-shipping-method-parcelshop-option span.dhlpwc-parcelshop-option-message {
+    display: inline-block;
+    width: 100%;
+}
+
+.dhlpwc-shipping-method-parcelshop-option:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+input.dhlpwc-parcelshop-option-change {
+    padding: 2px 20px;
+    display: block;
+    float:left;
+    width:30%;
+}
+
+.dhlpwc-parcelshop-option-country-select-container {
+    float:right;
+    width: 65%;
+}
+
+.woocommerce-checkout-review-order input.dhlpwc-parcelshop-option-change {
+    width: auto;
+    margin-bottom: 7px;
+}
+.woocommerce-checkout-review-order input.dhlpwc-parcelshop-option-change:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+.woocommerce-checkout-review-order .dhlpwc-parcelshop-option-country-select-container {
+    float:left;
+    width:100%;
+}
+
+p#dhlpwc-parcelshop-option-country-select_field {
+    margin-bottom: 0;
+}

@@ -1,0 +1,52 @@
+/* Custom styled input box */
+.dhlpwc-stylishselect-hidden-select {
+    display:none;
+}
+
+.dhlpwc-stylishselect-select {
+    cursor:pointer;
+    display:block;
+    position:relative;
+    font:semi-condensed 15px/21px Arial, Sans-Serif;
+    color:black;
+    border:none;
+    border-top: 2px solid #d6d6d6;
+}
+
+.dhlpwc-stylishselect-options {
+    position:relative;
+    top:100%;
+    right:0;
+    left:0;
+    margin:0 0;
+    padding:0 0;
+    list-style:none;
+    border:none;
+    background-color:white;
+    height:50vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.dhlpwc-stylishselect-options li {
+    margin:0 0;
+    padding:15px 20px;
+    border-bottom: 1px solid #d6d6d6;
+}
+
+.dhlpwc-stylishselect-options li:hover {
+    background-color:#eaeaea;
+}
+
+.dhlpwc-stylishselect-options li h3 {
+    display:inline-block;
+    font-size: 18px;
+    padding: 0;
+    margin-bottom: 4px;
+    font-weight: bold;
+}
+
+.dhlpwc-stylishselect-options li:hover h3,
+.dhlpwc-stylishselect-options li.dhlpwc-active h3 {
+    color: #d30511;
+}

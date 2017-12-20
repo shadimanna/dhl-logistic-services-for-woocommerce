@@ -1,0 +1,18 @@
+{
+    "name": "dhl/dhlpwoocommerce",
+    "description": "A shipment plugin for woocommerce. Beautifully.",
+    "type": "wordpress-plugin",
+    "require": {
+        "composer/installers": "~1.0"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "*",
+        "wp-coding-standards/wpcs": "0.10.0",
+        "phpunit/phpunit": "6.2.3"
+    },
+    "scripts": {
+        "test": "phpunit --colors=always",
+        "test-coverage": "phpunit --coverage-clover clover.xml",
+        "cs-check": "\"vendor/bin/phpcs\" --config-set installed_paths vendor/wp-coding-standards/wpcs && \"vendor/bin/phpcs\""
+    }
+}
