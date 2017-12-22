@@ -172,7 +172,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		}
 
 		if ( empty( $args['dhl_settings']['participation'] )) {
-			throw new Exception( __('Please, provide a distribution center in the DHL shipping settings', 'pr-shipping-dhl') );
+			throw new Exception( __('Please, provide a participation number for the shipping method in the DHL shipping settings', 'pr-shipping-dhl') );
 		}
 
 		if ( empty( $args['order_details']['dhl_product'] )) {
