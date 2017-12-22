@@ -219,6 +219,23 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			throw new Exception( __('Shipping "Country" is empty!', 'pr-shipping-dhl') );
 		}
 
+		// If address 2 missing, set last piece of an address to be address 2
+		if ( empty( $args['shipping_address']['address_2'] )) {
+			// Break address into pieces			
+			$address_exploded = explode(' ', $args['shipping_address']['address_1']);
+			// Get last piece, assuming it is street number 
+			$last_index = sizeof($address_exploded);
+
+			// Set last index as street number
+			$args['shipping_address']['address_2'] = $address_exploded[ $last_index - 1 ];
+
+			// Unset it in address 1
+			unset( $address_exploded[ $last_index - 1 ] );
+
+			// Set address 1 without street number
+			$args['shipping_address']['address_1'] = implode(' ', $address_exploded );
+		}
+
 		// Add default values for required fields that might not be passed e.g. phone
 		$default_args = array( 'shipping_address' => 
 									array( 'name' => '',

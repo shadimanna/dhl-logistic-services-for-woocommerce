@@ -377,7 +377,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			),
 			'dhl_shipper_address_no' => array(
 				'title'             => __( 'Street Address Number', 'pr-shipping-dhl' ),
-				'type'              => 'number',
+				'type'              => 'text',
 				'description'       => __( 'Enter Shipper Street Address Number.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 				'default'           => ''
