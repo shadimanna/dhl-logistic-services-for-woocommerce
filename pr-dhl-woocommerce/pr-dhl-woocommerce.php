@@ -5,7 +5,7 @@
  * Description: WooCommerce integration for DHL eCommerce, DHL Paket and DHL Parcel Europe (Benelux and Iberia)
  * Author: DHL
  * Author URI: http://dhl.com/woocommerce
- * Version: 1.0.2
+ * Version: 1.0.3
  * WC requires at least: 2.6.14
  * WC tested up to: 3.2.3
  *
@@ -32,7 +32,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "1.0.2";
+	private $version = "1.0.3";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -77,10 +77,8 @@ class PR_DHL_WC {
 	public function __construct() {
 		// add_action( 'init', array( $this, 'init' ) );
 		// add_action( 'plugins_loaded', array( $this, 'init' ) );
-		$this->define_constants();
-		$this->includes();
-		$this->init_hooks();
-	}
+        add_action( 'init', array( $this, 'load_plugin' ), 0 );
+    }
 
 	/**
 	 * Main WooCommerce Shipping DHL Instance.
@@ -145,24 +143,10 @@ class PR_DHL_WC {
 		include_once( 'includes/abstract-pr-dhl-wc-product.php' );
 	}
 
-	public function init_hooks() {
-
-		add_action( 'init', array( $this, 'init' ), 0 );
-		add_action( 'init', array( $this, 'load_textdomain' ) );
-		add_action( 'init', array( $this, 'set_payment_gateways' ) );
-		
-		add_action( 'admin_enqueue_scripts', array( $this, 'dhl_theme_enqueue_styles') );	
-
-		add_action( 'woocommerce_shipping_init', array( $this, 'includes' ) );
-		add_filter( 'woocommerce_shipping_methods', array( $this, 'add_shipping_method' ) );
-		// Test connection
-		add_action( 'wp_ajax_test_dhl_connection', array( $this, 'test_dhl_connection_callback' ) );
-	}
-
 	/**
-	* Initialize the plugin.
+	* Determine which plugin to load.
 	*/
-	public function init() {
+	public function load_plugin() {
 		// Checks if WooCommerce is installed.
 		if ( class_exists( 'WC_Shipping_Method' ) ) {			
 			
@@ -174,11 +158,9 @@ class PR_DHL_WC {
 			if ( in_array( $base_country_code, $dhl_parcel_countries ) ) {
 				include( 'dhlpwoocommerce/dhlpwoocommerce.php' );
 			} else {
-
-				add_action( 'admin_notices', array( $this, 'environment_check' ) );
-
-				$this->get_pr_dhl_wc_product();
-				$this->get_pr_dhl_wc_order();
+                $this->define_constants();
+                $this->includes();
+			    $this->init_hooks();
 			}
 
 		} else {
@@ -187,6 +169,29 @@ class PR_DHL_WC {
 		}
 
 	}
+
+    /**
+     * Initialize the plugin.
+     */
+    public function init() {
+        add_action( 'admin_notices', array( $this, 'environment_check' ) );
+
+        $this->get_pr_dhl_wc_product();
+        $this->get_pr_dhl_wc_order();
+    }
+
+    public function init_hooks() {
+        add_action( 'init', array( $this, 'init' ), 0 );
+        add_action( 'init', array( $this, 'load_textdomain' ) );
+        add_action( 'init', array( $this, 'set_payment_gateways' ) );
+
+        add_action( 'admin_enqueue_scripts', array( $this, 'dhl_theme_enqueue_styles') );
+
+        add_action( 'woocommerce_shipping_init', array( $this, 'includes' ) );
+        add_filter( 'woocommerce_shipping_methods', array( $this, 'add_shipping_method' ) );
+        // Test connection
+        add_action( 'wp_ajax_test_dhl_connection', array( $this, 'test_dhl_connection_callback' ) );
+    }
 	
 	public function get_pr_dhl_wc_order() {
 		if ( ! isset( $this->shipping_dhl_order ) ){

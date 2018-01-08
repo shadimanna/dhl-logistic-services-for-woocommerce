@@ -79,6 +79,9 @@ In case you could not find what you were looking for in our FAQs and the detaile
 
 == Changelog ==
 
+= 1.0.3 =
+* Bug fix - DHL Parcel: Excess resource loading caused errors and incompatibilities. Moved the loading logic to an earlier state.
+
 = 1.0.2 =
 * Bug fix - DHL Paket: Fix "streetNumber" SOAP error, by assuming that the last part of "Address 1" is the street number and sending separately
 * Bug fix - DHL Paket: Allow characters in "Street Address Number" in DHL Paket settings panel 
@@ -93,6 +96,9 @@ In case you could not find what you were looking for in our FAQs and the detaile
 * First public release
 
 == Upgrade Notice ==
+
+= 1.0.3 =
+* Payment incompatibilities fixed for DHL Parcel users, please upgrade
 
 = 1.0.2 =
 * Bug fixes, please upgrade
