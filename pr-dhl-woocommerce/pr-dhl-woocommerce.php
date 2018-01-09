@@ -532,10 +532,10 @@ class PR_DHL_WC {
 
 }
 
-$PR_DHL_WC = new PR_DHL_WC( __FILE__ );
-
 endif;
 
 function PR_DHL() {
 	return PR_DHL_WC::instance();
 }
+
+$PR_DHL_WC = PR_DHL();
