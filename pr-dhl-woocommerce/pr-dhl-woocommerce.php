@@ -181,7 +181,7 @@ class PR_DHL_WC {
     }
 
     public function init_hooks() {
-        add_action( 'init', array( $this, 'init' ), 0 );
+        add_action( 'init', array( $this, 'init' ), 1 );
         add_action( 'init', array( $this, 'load_textdomain' ) );
         add_action( 'init', array( $this, 'set_payment_gateways' ) );
 
