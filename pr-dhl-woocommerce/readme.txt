@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 4.8.2
-Stable tag: 1.0.2
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,6 +79,9 @@ In case you could not find what you were looking for in our FAQs and the detaile
 
 == Changelog ==
 
+= 1.0.4 =
+* Create label metabox not displaying bug fix
+
 = 1.0.3 =
 * Bug fix - DHL Parcel: Excess resource loading caused errors and incompatibilities. Moved the loading logic to an earlier state.
 
@@ -96,6 +99,9 @@ In case you could not find what you were looking for in our FAQs and the detaile
 * First public release
 
 == Upgrade Notice ==
+
+= 1.0.4 =
+* Create label metabox not displaying bug fix, please upgrade
 
 = 1.0.3 =
 * Payment incompatibilities fixed for DHL Parcel users, please upgrade
