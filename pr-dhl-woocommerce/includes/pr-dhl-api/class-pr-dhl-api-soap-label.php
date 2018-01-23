@@ -16,6 +16,9 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 	private $args = array();
 
+	// 'LI', 'CH', 'NO'
+	protected $eu_iso2 = array( 'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'RO', 'SI', 'SK', 'ES', 'SE', 'GB');
+
 	public function __construct( ) {
 		try {
 
@@ -289,9 +292,10 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		$this->query_string = http_build_query($dhl_label_query_string);
 	}
 
-	protected function is_local_shipment() {
-
-		if ( ! empty( $this->args['dhl_settings'][ 'shipper_country' ] ) && ! empty( $this->args['shipping_address']['country'] ) && ( $this->args['dhl_settings'][ 'shipper_country' ] == $this->args['shipping_address']['country'] ) ) {
+	protected function is_european_shipment() {
+		
+		// if ( ! empty( $this->args['dhl_settings'][ 'shipper_country' ] ) && ! empty( $this->args['shipping_address']['country'] ) && ( $this->args['dhl_settings'][ 'shipper_country' ] == $this->args['shipping_address']['country'] ) ) {
+		if ( ! empty( $this->args['shipping_address']['country'] ) && in_array( $this->args['shipping_address']['country'], $this->eu_iso2 ) ) {
 			return true;
 		} else {
 			return false;
@@ -300,7 +304,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 	
 
 	protected function set_message() {
-		if( !empty( $this->args ) ) {
+		if( ! empty( $this->args ) ) {
 			// Set date related functions to German time
 			// date_default_timezone_set('Europe/Berlin');
 
@@ -376,7 +380,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			// EMAIL NOTIFCATION
 			$notification_email = array();
-			if ( $this->args['order_details'][ 'email_notification' ] == 'yes' ) {
+			if ( isset( $this->args['order_details'][ 'email_notification' ] ) && $this->args['order_details'][ 'email_notification' ] == 'yes' ) {
 				$notification_email['recipientEmailAddress'] = $this->args['shipping_address']['email'];
 			}
 
@@ -505,7 +509,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				);
 
 			// If international shipment add export information
-			if( ! $this->is_local_shipment() ) {
+			if( ! $this->is_european_shipment() ) {
 
 				// TEST THIS
 				if ( sizeof($this->args['items']) > self::DHL_MAX_ITEMS ) {
