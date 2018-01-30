@@ -4,17 +4,17 @@ defined( 'ABSPATH' ) or exit;
 $logo_url = PR_DHL_PLUGIN_DIR_URL . '/assets/img/dhl-official.png';
 
 try {
-
   $shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
   $dhl_obj = PR_DHL()->get_dhl_factory();
-
 } catch (Exception $e) {
     return;
 }
 
-if( ! $dhl_obj->is_dhl_paket() ) {
-  return;
-}
+// Make sure at least one preferred service is enabled
+if( ( isset( $shipping_dhl_settings['dhl_preferred_day'] ) && ( $shipping_dhl_settings['dhl_preferred_day'] == 'yes' ) ) || 
+    ( isset( $shipping_dhl_settings['dhl_preferred_time'] ) && ( $shipping_dhl_settings['dhl_preferred_time'] == 'yes' ) ) ||
+    ( isset( $shipping_dhl_settings['dhl_preferred_location'] ) && ( $shipping_dhl_settings['dhl_preferred_location'] == 'yes' ) ) ||
+    ( isset( $shipping_dhl_settings['dhl_preferred_neighbour'] ) && ( $shipping_dhl_settings['dhl_preferred_neighbour'] == 'yes' ) ) ) {
 ?>
 
 <tr class="dhl-co-tr dhl-co-tr-fist">
@@ -128,17 +128,10 @@ Please choose your preferred delivery option.', 'pr-shipping-dhl'); ?></td>
   if( isset( $shipping_dhl_settings['dhl_preferred_location'] ) && isset( $shipping_dhl_settings['dhl_preferred_neighbour'] ) && $shipping_dhl_settings['dhl_preferred_location'] == 'yes' && $shipping_dhl_settings['dhl_preferred_neighbour'] == 'yes') {
 
     if ( empty( $pr_dhl_preferred_location_neighbor_selected ) ) {
-                $pr_dhl_preferred_location_neighbor_selected = 'preferred_none';
+                $pr_dhl_preferred_location_neighbor_selected = '0';
               }
   ?>  
 
-<!--     <tr class="dhl-co-tr">
-      <td colspan="2"><?php _e('Indicate a preferred time, which suits you best for your parcel delivery by choosing one of the displayed time windows.', 'pr-shipping-dhl'); ?></td>
-    </tr>
- -->    <!-- <tr class="">
-      <th><?php _e('Preferred Location or Neighbor (DHL)', 'pr-shipping-dhl'); ?></th>
-      <td><select name="preferred_location_neighbor"><option value="location"><?php _e('Location', 'pr-shipping-dhl'); ?></option><option value="location"><?php _e('Neighbor', 'pr-shipping-dhl'); ?></option></select></td>
-    </tr> -->
     <tr class="dhl-co-tr">
       <th class="dhl-pt"><?php _e('Preferred location or neighbor', 'pr-shipping-dhl'); ?></th>
       <td class="dhl-pt">
@@ -148,8 +141,8 @@ Please choose your preferred delivery option.', 'pr-shipping-dhl'); ?></td>
               type="radio"
               name="pr_dhl_preferred_location_neighbor"
               data-index="0" id="preferred_location_neighbor_0"
-              value="preferred_none"
-              class="" <?php if( !empty($pr_dhl_preferred_location_neighbor_selected) && $pr_dhl_preferred_location_neighbor_selected == 'preferred_none' ) { echo 'checked="checked"'; } ?> >
+              value="0"
+              class="" <?php if( $pr_dhl_preferred_location_neighbor_selected == '0' ) { echo 'checked="checked"'; } ?> >
             <label for="preferred_location_neighbor_0"><?php _e('None', 'pr-shipping-dhl'); ?></label>
           </li>
           <li>
@@ -216,3 +209,4 @@ Please choose your preferred delivery option.', 'pr-shipping-dhl'); ?></td>
 <tr class="dhl-co-tr dhl-co-tr-last">
   <td colspan="2"></td>
 </tr>
+<?php } ?>

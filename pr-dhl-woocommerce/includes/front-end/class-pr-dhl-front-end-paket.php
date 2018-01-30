@@ -43,8 +43,6 @@ class PR_DHL_Front_End_Paket {
 	}
 
 	public function init_hooks() {
-		// add_filter( 'woocommerce_locate_template', array( $this, 'custom_woocommerce_locate_template'), 10, 3 );
-
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_styles_scripts' ) );
 		// Add DHL meta tag
 		add_action( 'wp_head', array( $this, 'dhl_add_meta_tags') );
@@ -53,10 +51,6 @@ class PR_DHL_Front_End_Paket {
 		add_action( 'woocommerce_cart_calculate_fees', array( $this, 'add_cart_fees' ) );
 		add_action( 'woocommerce_checkout_order_processed', array( $this, 'process_dhl_preferred_fields' ), 10, 2 );
 		add_filter( 'woocommerce_get_order_item_totals', array( $this, 'display_dhl_preferred_free_services_values' ), 10, 2 );
-		
-		// add_action( 'woocommerce_checkout_update_order_meta', 'my_custom_checkout_field_update_order_meta' );
-		// add_action( 'woocommerce_admin_order_data_after_billing_address', 'my_custom_checkout_field_display_admin_order_meta', 10, 1 );
-
 	}
 
 	public function dhl_add_meta_tags() {
@@ -98,37 +92,6 @@ class PR_DHL_Front_End_Paket {
 		wp_enqueue_script( 'jquery-ui-tooltip' );
 	}
 	
-	public function custom_woocommerce_locate_template( $template, $template_name, $template_path ) {
-	  global $woocommerce;
-	 
-	  $_template = $template;
-	 
-	  if ( !$template_path ) $template_path = $woocommerce->template_url;
-	 
-	  $plugin_path  = PR_DHL_PLUGIN_DIR_PATH . '/templates/';
-	 
-	  // Look within passed path within the theme
-	  $template = locate_template(
-	    array(
-	      $template_path . $template_name,
-	      $template_name
-	    )
-	  );
-	 
-	  // Modification: Get the template from this plugin, if it exists
-	  if ( file_exists( $plugin_path . $template_name ) ) {
-	    $template = $plugin_path . $template_name;
-	  }
-	 
-	  // Use default template if no other exists
-	  if ( !$template ) {
-	    $template = $_template;
-	  }
-	 
-	  // Return what we found
-	  return $template;
-	 
-	}
 
 	public function add_preferred_fields( ) {
 		// woocommerce_form_field('pr_dhl_paket_preferred_location');
