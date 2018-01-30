@@ -24,12 +24,12 @@ class PR_DHL_API_Ecomm extends PR_DHL_API {
 		$country_code = $this->country_code;
 
 		$americas_int =  array( 
-								'PKD' => __('DHL GlobalMail Packet Standard', 'pr-shipping-dhl'),
-								'PKY' => __('DHL GlobalMail Packet Priority', 'pr-shipping-dhl'),
-								'PKT' => __('DHL GlobalMail Packet Plus', 'pr-shipping-dhl'),
+								// 'PKD' => __('DHL GlobalMail Packet Standard', 'pr-shipping-dhl'),
+								'PKY' => __('DHL Packet International', 'pr-shipping-dhl'),
+								// 'PKT' => __('DHL GlobalMail Packet Plus', 'pr-shipping-dhl'),
 								'PLY' => __('DHL Parcel International Standard', 'pr-shipping-dhl'),
 								'PLT' => __('DHL Parcel International Direct', 'pr-shipping-dhl'),
-								'PLX' => __('DHL Parcel International Expedited', 'pr-shipping-dhl'),
+								// 'PLX' => __('DHL Parcel International Expedited', 'pr-shipping-dhl'),
 								/*'PID' => __('DHL Parcel International Direct Standard', 'pr-shipping-dhl'),
 								'BMY' => __('DHL GobalMail Business Priority', 'pr-shipping-dhl'),
 								'BMD' => __('DHL GobalMail Business Standard', 'pr-shipping-dhl'),
@@ -48,11 +48,11 @@ class PR_DHL_API_Ecomm extends PR_DHL_API {
 								);
 
 		$asia_int = array(  
-							'PKG' => __('DHL GM Packet Economy', 'pr-shipping-dhl'),
-							'PKD' => __('DHL GM Packet Standard', 'pr-shipping-dhl'),
-							'PKM' => __('DHL GM Packet Priority Manifest', 'pr-shipping-dhl'),
-							'PPS' => __('DHL GM Packet Plus Standard', 'pr-shipping-dhl'),
-							'PPM' => __('DHL GM Packet Plus Priority Manifest', 'pr-shipping-dhl'),
+							'PKG' => __('DHL Packet International Economy', 'pr-shipping-dhl'),
+							'PKD' => __('DHL Packet International Standard', 'pr-shipping-dhl'),
+							'PKM' => __('DHL Packet International Priority Manifest', 'pr-shipping-dhl'),
+							'PPS' => __('DHL Packet Plus International Standard', 'pr-shipping-dhl'),
+							'PPM' => __('DHL Packet Plus International Priority Manifest', 'pr-shipping-dhl'),
 							'PLD' => __('DHL Parcel International Standard', 'pr-shipping-dhl'),
 							'PLT' => __('DHL Parcel International Direct', 'pr-shipping-dhl'),
 							'PLE' => __('DHL Parcel International Direct Expedited', 'pr-shipping-dhl')
