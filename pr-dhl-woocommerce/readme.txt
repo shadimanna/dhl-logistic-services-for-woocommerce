@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 4.8.2
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,6 +79,11 @@ In case you could not find what you were looking for in our FAQs and the detaile
 
 == Changelog ==
 
+= 1.0.6 =
+* Enhancement - DHL Paket: Remove "preferred_none" on thank you page
+* Enhancement - DHL Paket: Do not display DHL table in checkout page, if ALL preferred services are disabled
+* Enhancement - DHL eCommerce: Rename interational products
+
 = 1.0.5 =
 * DHL Paket - Do not require export information for shipping within the European Union
 
@@ -102,6 +107,9 @@ In case you could not find what you were looking for in our FAQs and the detaile
 * First public release
 
 == Upgrade Notice ==
+
+= 1.0.6 =
+* Enhancement, please upgrade
 
 = 1.0.5 =
 * Enhancement, please upgrade
