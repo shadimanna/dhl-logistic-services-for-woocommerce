@@ -149,6 +149,10 @@ abstract class PR_DHL_API_REST {
 		return $this->token_bearer;
 	}
 
+	public function delete_access_token( ) {
+		$this->dhl_rest_auth->delete_access_token();
+	}
+
 	public function post_request( $client_id, $client_secret ) {
 		$this->set_header( $this->get_access_token( $client_id, $client_secret ) );
 

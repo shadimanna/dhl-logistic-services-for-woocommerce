@@ -44,6 +44,10 @@ abstract class PR_DHL_API {
 		return $this->dhl_label->dhl_validate_field( $key, $value );
 	}
 
+	public function dhl_reset_connection( ) {
+		return;
+	}
+
 	public function get_dhl_preferred_day( $cutoff_time, $working_days ) {
 		return array();
 	}

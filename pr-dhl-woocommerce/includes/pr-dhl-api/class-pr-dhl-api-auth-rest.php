@@ -91,7 +91,7 @@ class PR_DHL_API_Auth_REST {
 		return $this->access_token;
 	}
 
-	protected function delete_access_token() {
+	public function delete_access_token() {
 		PR_DHL()->log_msg( 'Delete Transient - Access Token' );
 		delete_transient( '_dhl_auth_token_rest' );
 	}

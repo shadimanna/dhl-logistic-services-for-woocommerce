@@ -26,14 +26,7 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 		$this->method_title = __( 'DHL eCommerce', 'pr-shipping-dhl' );
 		$this->method_description = sprintf( __( 'To start creating DHL eCommerce shipping labels and return back a DHL Tracking number to your customers, please fill in your user credentials as shown in your contracts provided by DHL. Not yet a customer? Please get a quote %shere%s or find out more on how to set up this plugin and get some more support %shere%s.', 'pr-shipping-dhl' ), '<a href="https://www.logistics.dhl/us-en/ecommerce/contact-ecommerce/contact-ecommerce-business.html?LN=EN&SFL=WooCommerce" target="_blank">', '</a>', '<a href="https://www.logistics.dhl/us-en/ecommerce/integration/integration_channels/3pvs/WooCommerce.html" target="_blank">', '</a>' );
 
-		// $this->supports           = array(
-		// 	// 'shipping-zones', // support shipping zones shipping method...removed for now
-		// 	'instance-settings',
-		// 	'settings',
-		// );
-
 		$this->init();
-		// add_action( 'init', array( $this, 'init' ) );
 	}
 
 	/**
@@ -60,9 +53,7 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
     					'test_con_nonce' => wp_create_nonce( 'pr-dhl-test-con' ) 
     				);
 
-		// wp_enqueue_style( 'wc-shipment-dhl-label-css', PR_DHL_PLUGIN_DIR_URL . '/assets/css/pr-dhl-admin.css' );		
 		wp_enqueue_script( 'wc-shipment-dhl-testcon-js', PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-test-connection.js', array('jquery'), PR_DHL_VERSION );
-		// in JavaScript, object properties are accessed as ajax_object.ajax_url, ajax_object.we_value
 		wp_localize_script( 'wc-shipment-dhl-testcon-js', 'dhl_test_con_obj', $test_con_data );
 	}
 
@@ -327,6 +318,26 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 		}
 
 		return $value;
+	}
+
+	/**
+	 * Processes and saves options.
+	 * If there is an error thrown, will continue to save and validate fields, but will leave the erroring field out.
+	 */
+	public function process_admin_options() {
+		
+		try {
+			
+			$dhl_obj = PR_DHL()->get_dhl_factory();
+			$dhl_obj->dhl_reset_connection();
+
+		} catch (Exception $e) {
+
+			echo $this->get_message( __('Could not reset connection: ', 'pr-shipping-dhl') . $e->getMessage() );
+			throw $e;
+		}
+
+		return parent::process_admin_options();
 	}
 }
 

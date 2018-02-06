@@ -20,6 +20,10 @@ class PR_DHL_API_Ecomm extends PR_DHL_API {
 		return true;
 	}
 	
+	public function dhl_reset_connection( ) {
+		return $this->dhl_label->delete_access_token( );
+	}
+
 	public function get_dhl_products_international() {
 		$country_code = $this->country_code;
 

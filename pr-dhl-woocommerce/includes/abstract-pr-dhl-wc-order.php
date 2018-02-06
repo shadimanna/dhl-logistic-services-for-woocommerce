@@ -41,9 +41,9 @@ abstract class PR_DHL_WC_Order {
 
 		// Prevent data being copied to subscriptions
 		if ( null !== $subs_version && version_compare( $subs_version, '2.0.0', '>=' ) ) {
-			add_filter( 'wcs_renewal_order_meta_query', array( $this, 'woocommerce_subscriptions_renewal_order_meta_query' ), 10, 4 );
+			add_filter( 'wcs_renewal_order_meta_query', array( $this, 'woocommerce_subscriptions_renewal_order_meta_query' ), 10 );
 		} else {
-			add_filter( 'woocommerce_subscriptions_renewal_order_meta_query', array( $this, 'woocommerce_subscriptions_renewal_order_meta_query' ), 10, 4 );
+			add_filter( 'woocommerce_subscriptions_renewal_order_meta_query', array( $this, 'woocommerce_subscriptions_renewal_order_meta_query' ), 10 );
 		}
 
 	}
@@ -584,7 +584,7 @@ abstract class PR_DHL_WC_Order {
 	/**
 	 * Prevents data being copied to subscription renewals
 	 */
-	public function woocommerce_subscriptions_renewal_order_meta_query( $order_meta_query, $original_order_id, $renewal_order_id, $new_order_role ) {
+	public function woocommerce_subscriptions_renewal_order_meta_query( $order_meta_query ) {
 		$order_meta_query .= " AND `meta_key` NOT IN ( '_pr_shipment_dhl_label_tracking' )";
 
 		return $order_meta_query;
