@@ -287,7 +287,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		foreach ($setting_ids as $value) {
 			$api_key = str_replace('dhl_', '', $value);
 			if ( isset( $shipping_dhl_settings[ $value ] ) ) {
-				$args['dhl_settings'][ $api_key ] = $shipping_dhl_settings[ $value ];
+				$args['dhl_settings'][ $api_key ] = htmlspecialchars_decode( $shipping_dhl_settings[ $value ] );
 			}
 		}
 		
