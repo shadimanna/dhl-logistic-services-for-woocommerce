@@ -204,7 +204,12 @@ abstract class PR_DHL_API_REST {
 				throw new Exception( __('503 - Service Unavailable', 'pr-shipping-dhl') );
 				break;
 			default:
-				$error_message = str_replace('/', ' / ', $response_body->message);
+				if ( empty($response_body->message) ) {
+					$error_message = 'POST error or timeout';
+				} else {
+					$error_message = str_replace('/', ' / ', $response_body->message);
+				}
+
 				throw new Exception( $response_code .' - ' . $error_message );
 				break;
 		}
