@@ -7,6 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class PR_DHL_API_REST {
 
+	const WP_POST_TIMEOUT = 10;
+
 	/**
 	 * The request endpoint
 	 *
@@ -169,7 +171,9 @@ abstract class PR_DHL_API_REST {
 		$wp_dhl_rest_response = wp_remote_post(
 		    $wp_request_url,
 		    array( 'headers' => $wp_request_headers,
-		    		'body' => $wp_request_body )
+		    		'body' => $wp_request_body,
+		    		'timeout' => self::WP_POST_TIMEOUT
+		    	)
 		);
 
 		$response_code = wp_remote_retrieve_response_code( $wp_dhl_rest_response );
@@ -189,6 +193,9 @@ abstract class PR_DHL_API_REST {
 				break;
 			case '401':
 				throw new Exception( __('401 - Unauthorized Access - Invalid token or Authentication Header parameter', 'pr-shipping-dhl') );
+				break;
+			case '408':
+				throw new Exception( __('408 - Request Timeout', 'pr-shipping-dhl') );
 				break;
 			case '429':
 				throw new Exception( __('429 - Too many requests in given amount of time', 'pr-shipping-dhl') );
