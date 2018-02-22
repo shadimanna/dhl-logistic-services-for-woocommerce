@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class PR_DHL_API_REST {
 
-	const WP_POST_TIMEOUT = 10;
+	const WP_POST_TIMEOUT = 30;
 
 	/**
 	 * The request endpoint
@@ -205,7 +205,7 @@ abstract class PR_DHL_API_REST {
 				break;
 			default:
 				if ( empty($response_body->message) ) {
-					$error_message = 'POST error or timeout';
+					$error_message = 'POST error or timeout occured. Please try again later.';
 				} else {
 					$error_message = str_replace('/', ' / ', $response_body->message);
 				}
