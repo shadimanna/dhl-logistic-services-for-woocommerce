@@ -205,10 +205,12 @@ abstract class PR_DHL_API_REST {
 				break;
 			default:
 				if ( empty($response_body->message) ) {
-					$error_message = 'POST error or timeout occured. Please try again later.';
+					$error_message = __('POST error or timeout occured. Please try again later.', 'pr-shipping-dhl');
 				} else {
 					$error_message = str_replace('/', ' / ', $response_body->message);
 				}
+				
+				PR_DHL()->log_msg( 'POST Error: ' . $response_code . ' - ' . $error_message );
 
 				throw new Exception( $response_code .' - ' . $error_message );
 				break;
