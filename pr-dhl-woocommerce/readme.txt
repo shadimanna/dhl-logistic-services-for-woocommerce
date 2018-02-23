@@ -80,7 +80,7 @@ In case you could not find what you were looking for in our FAQs and the detaile
 == Changelog ==
 
 = 1.0.9 =
-* Enhancement - DHL eCommerce: increase POST timeout to 10 seconds instead of 5
+* Enhancement - DHL eCommerce: increase POST timeout to 30 seconds instead of 5
 
 = 1.0.8 =
 * Bug fix - DHL Paket: Fix special field e.g. &amp in ship address
