@@ -411,7 +411,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 									);
 
 				foreach ($bank_data_map as $key => $value) {
-					# code...
+					
 					if( isset( $this->args['dhl_settings'][ $key ] ) ) {
 						$bank_data[ $value ] = $this->args['dhl_settings'][ $key ];
 					}
@@ -503,10 +503,15 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 														)
 											)											
 									)
-								// 'labelResponseType' => 'B64'
+								// 'labelResponseType' => 'B64' - IT WORKS
 
 						)
 				);
+
+			// Is codeable set here since it's at a high level in the message
+			if ( isset($this->args['order_details']['is_codeable']) && ($this->args['order_details']['is_codeable'] == 'yes') ) {
+				$dhl_label_body['ShipmentOrder']['PrintOnlyIfCodeable'] = array( 'active' => 1 );
+			}
 
 			// If international shipment add export information
 			if( ! $this->is_european_shipment() ) {

@@ -176,13 +176,23 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				'value'       		=> isset( $dhl_label_items['pr_dhl_bulky_goods'] ) ? $dhl_label_items['pr_dhl_bulky_goods'] : '',
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
-			/*
+
 			woocommerce_wp_checkbox( array(
+				'id'          		=> 'pr_dhl_is_codeable',
+				'label'       		=> __( 'Print Only If Codeable: ', 'pr-shipping-dhl' ),
+				'placeholder' 		=> '',
+				'description'		=> '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_is_codeable'] ) ? $dhl_label_items['pr_dhl_is_codeable'] : '',
+				'custom_attributes'	=> array( $is_disabled => $is_disabled )
+			) );
+			/*
+			woocommerce_wp_select( array(
 				'id'          		=> 'pr_dhl_identcheck',
-				'label'       		=> __( 'IdentCheck: ', 'pr-shipping-dhl' ),
+				'label'       		=> __( 'Identity Check: ', 'pr-shipping-dhl' ),
 				'placeholder' 		=> '',
 				'description'		=> '',
 				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck'] ) ? $dhl_label_items['pr_dhl_identcheck'] : '',
+				'options'			=> $identity_options,
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );*/
 		}
@@ -196,7 +206,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	 */
 	public function get_additional_meta_ids( ) {
 
-		return array( 'pr_dhl_preferred_day', 'pr_dhl_preferred_time', 'pr_dhl_preferred_location', 'pr_dhl_preferred_neighbor', 'pr_dhl_duties', 'pr_dhl_age_visual', 'pr_dhl_email_notification', 'pr_dhl_additional_insurance', 'pr_dhl_personally', 'pr_dhl_no_neighbor', 'pr_dhl_named_person', 'pr_dhl_premium', 'pr_dhl_bulky_goods'/*, 'pr_dhl_identcheck'*/ );
+		return array( 'pr_dhl_preferred_day', 'pr_dhl_preferred_time', 'pr_dhl_preferred_location', 'pr_dhl_preferred_neighbor', 'pr_dhl_duties', 'pr_dhl_age_visual', 'pr_dhl_email_notification', 'pr_dhl_additional_insurance', 'pr_dhl_personally', 'pr_dhl_no_neighbor', 'pr_dhl_named_person', 'pr_dhl_premium', 'pr_dhl_bulky_goods', 'pr_dhl_is_codeable'/*, 'pr_dhl_identcheck'*/ );
 
 	}
 
