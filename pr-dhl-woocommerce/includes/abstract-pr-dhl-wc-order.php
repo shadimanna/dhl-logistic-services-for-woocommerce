@@ -16,10 +16,18 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 abstract class PR_DHL_WC_Order {
 	
+	protected $id = '';
+	protected $title = '';
+
 	/**
 	 * Init and hook in the integration.
 	 */
-	public function __construct( ) {
+	public function __construct() {
+		// error_log('order contrutor');
+		// error_log(__CLASS__);
+		$this->id = 'woocommerce-shipment-dhl-label';
+		$this->title = __( 'DHL Label & Tracking', 'pr-shipping-dhl' );
+
 		$this->define_constants();
 		$this->init_hooks();
 	}
@@ -33,10 +41,6 @@ abstract class PR_DHL_WC_Order {
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ), 20 );
 		add_action( 'woocommerce_process_shop_order_meta', array( $this, 'save_meta_box' ), 0, 2 );
 
-		// Order page metabox actions
-		add_action( 'wp_ajax_wc_shipment_dhl_gen_label', array( $this, 'save_meta_box_ajax' ) );
-		add_action( 'wp_ajax_wc_shipment_dhl_delete_label', array( $this, 'delete_label_ajax' ) );		
-
 		$subs_version = class_exists( 'WC_Subscriptions' ) && ! empty( WC_Subscriptions::$version ) ? WC_Subscriptions::$version : null;
 
 		// Prevent data being copied to subscriptions
@@ -48,13 +52,23 @@ abstract class PR_DHL_WC_Order {
 
 	}
 
+	public function get_dhl_obj() {
+		return PR_DHL()->get_dhl_factory();
+	}
+
+	public function get_shipping_dhl_settings() {
+		return PR_DHL()->get_shipping_dhl_settings();
+	}
+
 	/**
 	 * Add the meta box for shipment info on the order page
 	 *
 	 * @access public
 	 */
 	public function add_meta_box() {
-		add_meta_box( 'woocommerce-shipment-dhl-label', __( 'DHL Label & Tracking', 'pr-shipping-dhl' ), array( $this, 'meta_box' ), 'shop_order', 'side', 'high' );
+		error_log($this->id);
+		error_log($this->title);
+		add_meta_box( $this->id, $this->title, array( $this, 'meta_box' ), 'shop_order', 'side', 'high' );
 	}
 
 	/**
@@ -80,7 +94,7 @@ abstract class PR_DHL_WC_Order {
 		if( ! empty( $dhl_label_items['pr_dhl_product'] ) ) {
 			$selected_dhl_product = $dhl_label_items['pr_dhl_product'];
 		} else {
-			$shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
+			$shipping_dhl_settings = $this->get_shipping_dhl_settings();
 
 			if( $this->is_shipping_domestic( $order_id ) ) {
 				$selected_dhl_product = $shipping_dhl_settings['dhl_default_product_dom'];
@@ -91,7 +105,7 @@ abstract class PR_DHL_WC_Order {
 
 		// Get the list of domestic and international DHL services
 		try {		
-			$dhl_obj = PR_DHL()->get_dhl_factory();
+			$dhl_obj = $this->get_dhl_obj();
 
 			if( $this->is_shipping_domestic( $order_id ) ) {
 				$dhl_product_list = $dhl_obj->get_dhl_products_domestic();
@@ -104,9 +118,9 @@ abstract class PR_DHL_WC_Order {
 			echo '<p class="wc_dhl_error">' . $e->getMessage() . '</p>';
 		}
 		
-		$delete_label = '<span class="wc_dhl_delete"><a href="#" id="dhl_delete_label">' . __('Delete Label', 'pr-shipping-dhl') . '</a></span>';
+		$delete_label = '<span class="wc_dhl_delete"><a href="#" class="dhl_delete_label">' . __('Delete Label', 'pr-shipping-dhl') . '</a></span>';
 
-		$main_button = '<button id="dhl-label-button" class="button button-primary button-save-form">' . PR_DHL_BUTTON_LABEL_GEN . '</button>';
+		$main_button = '<button class="dhl-label-button button button-primary button-save-form">' . PR_DHL_BUTTON_LABEL_GEN . '</button>';
 
 		// Get tracking info if it exists
 		$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
@@ -114,12 +128,12 @@ abstract class PR_DHL_WC_Order {
 		if( empty( $label_tracking_info ) ) {
 			$is_disabled = '';
 			
-			$print_button = '<a href="#" id="dhl-label-print" class="button button-primary" download>' .PR_DHL_BUTTON_LABEL_PRINT . '</a>';
+			$print_button = '<a href="#" class="dhl-label-print button button-primary" download>' .PR_DHL_BUTTON_LABEL_PRINT . '</a>';
 
 		} else {
 			$is_disabled = 'disabled';
 
-			$print_button = '<a href="'. $label_tracking_info['label_url'] .'" id="dhl-label-print" class="button button-primary" download>' .PR_DHL_BUTTON_LABEL_PRINT . '</a>';
+			$print_button = '<a href="'. $label_tracking_info['label_url'] .'" class=" dhl-label-print button button-primary" download>' .PR_DHL_BUTTON_LABEL_PRINT . '</a>';
 		}
 
 		$dhl_label_data = array(
@@ -129,7 +143,7 @@ abstract class PR_DHL_WC_Order {
 		);
 
 
-		echo '<div id="shipment-dhl-label-form">';
+		echo '<div class="shipment-dhl-label-form">';
 
 		if( !empty( $dhl_product_list ) ) {
 			
@@ -139,7 +153,8 @@ abstract class PR_DHL_WC_Order {
 			) );
 
 			woocommerce_wp_select ( array(
-				'id'          		=> 'pr_dhl_product',
+				'id'	          	=> 'pr_dhl_product',
+				'name'          	=> 'pr_dhl_product',
 				'label'       		=> __( 'DHL service selected:', 'pr-shipping-dhl' ),
 				'description'		=> '',
 				'value'       		=> $selected_dhl_product,
@@ -150,7 +165,8 @@ abstract class PR_DHL_WC_Order {
 			$weight_units = get_option( 'woocommerce_weight_unit' );
 			// Get weight UoM and add in label
 			woocommerce_wp_text_input( array(
-				'id'          		=> 'pr_dhl_weight',
+				'id'	          	=> 'pr_dhl_weight',
+				'name'          	=> 'pr_dhl_weight',
 				'label'       		=> sprintf( __( 'Estimated shipment weight (%s) based on items ordered: ', 'pr-shipping-dhl' ), $weight_units),
 				'placeholder' 		=> '',
 				'description'		=> '',
@@ -210,7 +226,8 @@ abstract class PR_DHL_WC_Order {
 	 *
 	 * Function for saving tracking items
 	 */
-	public function save_meta_box_ajax( ) {
+	public function save_meta_box_ajax() {
+		error_log('save_meta_box_ajax');
 		check_ajax_referer( 'create-dhl-label', 'pr_dhl_label_nonce' );
 		$order_id = wc_clean( $_POST[ 'order_id' ] );
 
@@ -225,7 +242,7 @@ abstract class PR_DHL_WC_Order {
 			// Allow third parties to modify the args to the DHL APIs
 			$args = apply_filters('pr_shipping_dhl_label_args', $args, $order_id );
 
-			$dhl_obj = PR_DHL()->get_dhl_factory();
+			$dhl_obj = $this->get_dhl_obj();
 			$label_tracking_info = $dhl_obj->get_dhl_label( $args );
 
 			$this->save_dhl_label_tracking( $order_id, $label_tracking_info );
@@ -256,7 +273,7 @@ abstract class PR_DHL_WC_Order {
 		try {
 
 			$args = $this->delete_label_args( $order_id );
-			$dhl_obj = PR_DHL()->get_dhl_factory();
+			$dhl_obj = $this->get_dhl_obj();
 			
 			$dhl_obj->delete_dhl_label( $args );
 			$this->delete_dhl_label_tracking( $order_id );
@@ -305,7 +322,7 @@ abstract class PR_DHL_WC_Order {
 			return '';
 		}
 
-		$tracking_note = sprintf( __( '<label>DHL Tracking Number: </label><a href="%s%s" target="_blank">%s</a>', 'my-text-domain' ), PR_DHL_ECOMM_TRACKING_URL, $tracking_num, $tracking_num);
+		$tracking_note = sprintf( __( '<label>DHL Tracking Number: </label><a href="%s%s" target="_blank">%s</a>', 'pr-shipping-dhl' ), PR_DHL_ECOMM_TRACKING_URL, $tracking_num, $tracking_num);
 		
 		return $tracking_note;
 	}

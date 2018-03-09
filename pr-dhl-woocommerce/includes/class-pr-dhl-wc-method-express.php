@@ -13,18 +13,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author   Shadi Manna
  */
 
-if ( ! class_exists( 'PR_DHL_WC_Method_Ecomm' ) ) :
+if ( ! class_exists( 'PR_DHL_WC_Method_Express' ) ) :
 
-class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
+class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 
 	/**
 	 * Init and hook in the integration.
 	 */
 	public function __construct( $instance_id = 0 ) {
-		$this->id = 'pr_dhl_ecomm';
+		$this->id = 'pr_dhl_express';
 		$this->instance_id = absint( $instance_id );
-		$this->method_title = __( 'DHL eCommerce', 'pr-shipping-dhl' );
-		$this->method_description = sprintf( __( 'To start creating DHL eCommerce shipping labels and return back a DHL Tracking number to your customers, please fill in your user credentials as shown in your contracts provided by DHL. Not yet a customer? Please get a quote %shere%s or find out more on how to set up this plugin and get some more support %shere%s.', 'pr-shipping-dhl' ), '<a href="https://www.logistics.dhl/us-en/ecommerce/contact-ecommerce/contact-ecommerce-business.html?LN=EN&SFL=WooCommerce" target="_blank">', '</a>', '<a href="https://www.logistics.dhl/us-en/ecommerce/integration/integration_channels/3pvs/WooCommerce.html" target="_blank">', '</a>' );
+		$this->method_title = __( 'DHL Express', 'pr-shipping-dhl' );
+		$this->method_description = sprintf( __( 'To start creating DHL Express shipping labels and return back a DHL Tracking number to your customers, please fill in your user credentials as shown in your contracts provided by DHL. Not yet a customer? Please get a quote %shere%s or find out more on how to set up this plugin and get some more support %shere%s.', 'pr-shipping-dhl' ), '<a href="https://www.logistics.dhl/us-en/ecommerce/contact-ecommerce/contact-ecommerce-business.html?LN=EN&SFL=WooCommerce" target="_blank">', '</a>', '<a href="https://www.logistics.dhl/us-en/ecommerce/integration/integration_channels/3pvs/WooCommerce.html" target="_blank">', '</a>' );
 
 		$this->init();
 	}
@@ -81,15 +81,6 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 
 		$log_path = PR_DHL()->get_log_url();
 
-		$select_dhl_product = array( '0' => __( '- Select DHL Product -', 'pr-shipping-dhl' ) );
-
-		$select_dhl_desc_default = array( 
-				'product_cat' => __('Product Categories', 'pr-shipping-dhl'), 
-				'product_tag' => __('Product Tags', 'pr-shipping-dhl'), 
-				'product_name' => __('Product Name', 'pr-shipping-dhl'), 
-				'product_export' => __('Product Export Description', 'pr-shipping-dhl')
-		);
-
 		try {
 			
 			$dhl_obj = PR_DHL()->get_dhl_factory();
@@ -107,19 +98,13 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 				'description'     => __( 'Please configure your shipping parameters underneath.', 'pr-shipping-dhl' ),
 				'class'			  => '',
 			),
-			'dhl_pickup_name' => array(
-				'title'             => __( 'Pickup Account Name', 'pr-shipping-dhl' ),
-				'type'              => 'text',
-				'description'       => __( 'The pickup account name will be provided by your local DHL sales organization and tells us where to pick up your shipments.', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
-				'default'           => ''
-			),'dhl_pickup' => array(
-				'title'             => __( 'Pickup Account Number', 'pr-shipping-dhl' ),
+			'dhl_account_num' => array(
+				'title'             => __( 'Account Number', 'pr-shipping-dhl' ),
 				'type'              => 'text',
 				'description'       => __( 'The pickup account number (10 digits - numerical) will be provided by your local DHL sales organization and tells us where to pick up your shipments.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 				'default'           => '',
-				'placeholder'		=> '0000500000'
+				// 'placeholder'		=> '0000500000'
 			),
 			'dhl_distribution' => array(
 				'title'             => __( 'Distribution Center', 'pr-shipping-dhl' ),
@@ -138,7 +123,7 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 				'dhl_default_product_int' => array(
 					'title'             => __( 'International Default Service', 'pr-shipping-dhl' ),
 					'type'              => 'select',
-					'description'       => __( 'Please select your default DHL eCommerce shipping service for cross-border shippments that you want to offer to your customers (you can always change this within each individual order afterwards).', 'pr-shipping-dhl' ),
+					'description'       => __( 'Please select your default DHL Express shipping service for cross-border shippments that you want to offer to your customers (you can always change this within each individual order afterwards).', 'pr-shipping-dhl' ),
 					'desc_tip'          => true,
 					'options'           => $select_dhl_product_int
 				)
@@ -151,7 +136,7 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 				'dhl_default_product_dom' => array(
 					'title'             => __( 'Domestic Default Service', 'pr-shipping-dhl' ),
 					'type'              => 'select',
-					'description'       => __( 'Please select your default DHL eCommerce shipping service for domestic shippments that you want to offer to your customers (you can always change this within each individual order afterwards)', 'pr-shipping-dhl' ),
+					'description'       => __( 'Please select your default DHL Express shipping service for domestic shippments that you want to offer to your customers (you can always change this within each individual order afterwards)', 'pr-shipping-dhl' ),
 					'desc_tip'          => true,
 					'options'           => $select_dhl_product_dom
 				)
@@ -167,13 +152,6 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 				'default'           => '',
 				'placeholder'		=> '',
 				'custom_attributes'	=> array( 'maxlength' => '5' )
-			),
-			'dhl_desc_default' => array(
-				'title'             => __( 'Package Description', 'pr-shipping-dhl' ),
-				'type'              => 'select',
-				'description'       => __( 'Prefill the package description with one of the options.', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
-				'options'           => $select_dhl_desc_default
 			),
 			'dhl_label_format' => array(
 				'title'             => __( 'Label Format', 'pr-shipping-dhl' ),
@@ -192,20 +170,19 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 			'dhl_api'           => array(
 				'title'           => __( 'API Settings', 'pr-shipping-dhl' ),
 				'type'            => 'title',
-				'description'     => __( 'Please configure your access towards the DHL eCommerce APIs by means of authentication.', 'pr-shipping-dhl' ),
-				'class'			  => '',
+				'description'     => __( 'Please configure your access towards the DHL Paket APIs by means of authentication.', 'pr-shipping-dhl' ),
 			),
-			'dhl_api_key' => array(
-				'title'             => __( 'Client Id', 'pr-shipping-dhl' ),
+			'dhl_api_user' => array(
+				'title'             => __( 'Username', 'pr-shipping-dhl' ),
 				'type'              => 'text',
-				'description'       => __( 'The client ID (a 36 digits alphanumerical string made from 5 blocks) is required for authentication and is provided to you within your contract.', 'pr-shipping-dhl' ),
+				'description'       => __( 'Enter DHL Paket username.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 				'default'           => ''
 			),
-			'dhl_api_secret' => array(
-				'title'             => __( 'Client Secret', 'pr-shipping-dhl' ),
-				'type'              => 'text',
-				'description'       => __( 'The client secret (also a 36 digits alphanumerical string made from 5 blocks) is required for authentication (together with the client ID) and creates the tokens needed to ensure secure access. It is part of your contract provided by your DHL sales partner.', 'pr-shipping-dhl' ),
+			'dhl_api_pwd' => array(
+				'title'             => __( 'Password', 'pr-shipping-dhl' ),
+				'type'              => 'password',
+				'description'       => __( 'Enter DHL Paket password.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 				'default'           => ''
 			),
@@ -221,9 +198,9 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 				'title'             => PR_DHL_BUTTON_TEST_CONNECTION,
 				'type'              => 'button',
 				'custom_attributes' => array(
-					'onclick' => "dhlTestConnection('#woocommerce_pr_dhl_ecomm_dhl_customize_button');",
+					'onclick' => "dhlTestConnection('#woocommerce_pr_dhl_express_dhl_customize_button');",
 				),
-				'description'       => __( 'Press the button for testing the connection against our DHL eCommerce Gateways (depending on the selected environment this test is being done against the Sandbox or the Production Environment).', 'pr-shipping-dhl' ),
+				'description'       => __( 'Press the button for testing the connection against our DHL Express Gateways (depending on the selected environment this test is being done against the Sandbox or the Production Environment).', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 			),
 			'dhl_debug' => array(
@@ -232,6 +209,49 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 				'label'             => __( 'Enable logging', 'pr-shipping-dhl' ),
 				'default'           => 'yes',
 				'description'       => sprintf( __( 'A log file containing the communication to the DHL server will be maintained if this option is checked. This can be used in case of technical issues and can be found %shere%s.', 'pr-shipping-dhl' ), '<a href="' . $log_path . '" target = "_blank">', '</a>' )
+			),
+		);
+
+		$this->form_fields += array(
+			'dhl_shipper'           => array(
+				'title'           => __( 'Shipper Address', 'pr-shipping-dhl' ),
+				'type'            => 'title',
+				'description'     => __( 'Enter Shipper Address below.', 'pr-shipping-dhl' ),
+			),
+			'dhl_shipper_address' => array(
+				'title'             => __( 'Street Address 1', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'Enter Shipper Street Address.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
+			),
+			'dhl_shipper_address2' => array(
+				'title'             => __( 'Street Address 2', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'Enter Shipper Street Address Number.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
+			),
+			'dhl_shipper_address_city' => array(
+				'title'             => __( 'City', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'Enter Shipper City.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
+			),
+			'dhl_shipper_address_state' => array(
+				'title'             => __( 'State', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'Enter Shipper County.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
+			),
+			'dhl_shipper_address_zip' => array(
+				'title'             => __( 'Postcode', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'Enter Shipper Postcode.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
 			),
 		);
 	}
@@ -281,6 +301,7 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 	 * Validate the API key
 	 * @see validate_settings_fields()
 	 */
+	/*
 	public function validate_dhl_pickup_field( $key ) {
 		$value = wc_clean( $_POST[ $this->plugin_id . $this->id . '_' . $key ] );
 
@@ -297,12 +318,13 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 		}
 
 		return $value;
-	}
+	}*/
 
 	/**
 	 * Validate the API secret
 	 * @see validate_settings_fields()
 	 */
+	/*
 	public function validate_dhl_distribution_field( $key ) {
 		$value = wc_clean( $_POST[ $this->plugin_id . $this->id . '_' . $key ] );
 		
@@ -318,12 +340,13 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 		}
 
 		return $value;
-	}
+	}*/
 
 	/**
 	 * Processes and saves options.
 	 * If there is an error thrown, will continue to save and validate fields, but will leave the erroring field out.
 	 */
+	/*
 	public function process_admin_options() {
 		
 		try {
@@ -338,6 +361,120 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 		}
 
 		return parent::process_admin_options();
+	}*/
+
+	public function calculate_shipping( $package = array() ) {
+		error_log(print_r($package,true));
+
+		
+
+		$args = $this->get_rates_args();
+		$args['receiver'] = $package['destination'];
+
+		error_log(print_r($args,true));
+		try {
+			$dhl_express = PR_DHL()->get_dhl_factory( true );
+			$dhl_rates = $dhl_express->get_dhl_rates( $args );
+
+			foreach ($dhl_rates as $key => $dhl_rate) {
+				$dhl_title = $dhl_rate->Charges->Charge[0]->ChargeType;
+				$rate = array(
+					'id' 	=> $this->get_rate_id() . '_' . sanitize_title($dhl_title),
+					// 'id' 	=> $this->get_rate_id(),
+					'label'   => $dhl_title,
+					'cost'    => $dhl_rate->TotalNet->Amount,
+					'package' => $package,
+				);
+
+				$this->add_rate( $rate );
+			}
+			error_log(print_r($dhl_rates,true));
+
+		} catch (Exception $e) {
+			error_log('calc ship exception');
+			error_log($e->getMessage());
+			// throw new Exception($e->getMessage());
+		}
+
+/*
+		// Check if free shipping, otherwise claculate based on weight and evaluate formulas
+		if( $this->is_free_shipping( $package ) ) {
+
+			$rate[ 'taxes' ] = false;
+			$this->add_rate( $rate );
+
+		} else {
+			$cart_weight = WC()->cart->get_cart_contents_weight();
+			$weight_costs = $this->get_option( 'cost_weight', array() );
+			// Set tax status based on selection otherwise always taxed
+			$this->tax_status = $this->get_option( 'tax_status' );
+
+			if ( $weight_costs ) {
+				foreach ( $weight_costs as $weight_cost ) {
+
+					// If empty ignore field and continue, otherwise check if equal or greater than
+					if ( empty( $weight_cost['ss_min_weight'] ) || ( $cart_weight >= $weight_cost['ss_min_weight'] ) ) {
+						// IF empty ignore field and contine, otherwise check if less than
+						if ( empty( $weight_cost['ss_max_weight'] ) || ( $cart_weight < $weight_cost['ss_max_weight'] ) ) {
+							// If cost NOT empty add a fee
+							if ( ! empty( $weight_cost['ss_cost_weight'] ) ) {
+
+								$rate['cost'] = $this->evaluate_cost( $weight_cost['ss_cost_weight'], array(
+									'qty'  => $this->get_package_item_qty( $package ),
+									'cost' => $package['contents_cost'],
+								) );
+
+								$this->add_rate( $rate );
+							}		
+						}
+					}
+				}
+			}
+		}*/
+
+		/**
+		 * Developers can add additional rates based on this one via this action
+		 *
+		 * This example shows how you can add an extra rate based on this flat rate via custom function:
+		 *
+		 * 		add_action( 'woocommerce_smart_send_shipping_shipping_add_rate', 'add_another_custom_rate', 10, 2 );
+		 *
+		 * 		function add_another_custom_rate( $method, $rate ) {
+		 * 			$new_rate          = $rate;
+		 * 			$new_rate['id']    .= ':' . 'custom_rate_name'; // Append a custom ID.
+		 * 			$new_rate['label'] = 'Rushed Shipping'; // Rename to 'Rushed Shipping'.
+		 * 			$new_rate['cost']  += 2; // Add $2 to the cost.
+		 *
+		 * 			// Add it to WC.
+		 * 			$method->add_rate( $new_rate );
+		 * 		}.
+		 */
+		// do_action( 'woocommerce_' . $this->id . '_shipping_add_rate', $this, $rate );
+	}
+
+	protected function get_rates_args()	{
+
+		// $args['dhl_settings']['api_user'] = $this->get_option( 'dhl_api_user' );
+		// $args['dhl_settings']['api_pwd'] = $this->get_option( 'dhl_api_pwd' );
+		// $args['dhl_settings']['account_num'] = $this->get_option( 'dhl_account_num' );
+		
+		// Method settings
+		$setting_ids = array( 'dhl_api_user','dhl_api_pwd', 'dhl_account_num', 'dhl_shipper_address','dhl_shipper_address2', 'dhl_shipper_address_city', 'dhl_shipper_address_state', 'dhl_shipper_address_zip' );
+
+		foreach ($setting_ids as $value) {
+			$api_key = str_replace('dhl_', '', $value);
+			$setting_value = $this->get_option( $value );
+			if ( isset( $setting_value ) ) {
+				$args['dhl_settings'][ $api_key ] = htmlspecialchars_decode( $setting_value );
+			}
+		}
+
+		$args['dhl_settings'][ 'shipper_country' ] = PR_DHL()->get_base_country();
+
+		// Receiver address
+
+
+		return $args;
 	}
 }
 

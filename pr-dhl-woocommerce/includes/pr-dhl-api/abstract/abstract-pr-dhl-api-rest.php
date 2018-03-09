@@ -5,7 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 } // Exit if accessed directly
 
 
-abstract class PR_DHL_API_REST {
+abstract class PR_DHL_API_REST implements PR_DHL_API_Base {
+	const WP_POST_TIMEOUT = 10;
 
 	/**
 	 * The request endpoint
@@ -66,13 +67,21 @@ abstract class PR_DHL_API_REST {
 
 		try {
 
-			$this->dhl_rest_auth = PR_DHL_API_Auth_REST::get_instance( );
+			$this->dhl_rest_auth = PR_DHL_API_Model_Auth_REST::get_instance( );
 
 		} catch (Exception $e) {
 			throw $e;
 		}
 	}
 
+	public function dhl_test_connection( $client_id, $client_secret ) {
+		return $this->get_access_token( $client_id, $client_secret );
+	}
+
+	public function dhl_validate_field( $key, $value ) {
+		$this->validate_field( $key, $value );
+	}
+	
 	/**
 	 * Method to set id
 	 *
@@ -169,7 +178,9 @@ abstract class PR_DHL_API_REST {
 		$wp_dhl_rest_response = wp_remote_post(
 		    $wp_request_url,
 		    array( 'headers' => $wp_request_headers,
-		    		'body' => $wp_request_body )
+		    		'body' => $wp_request_body,
+		    		'timeout' => self::WP_POST_TIMEOUT
+		    	)
 		);
 
 		$response_code = wp_remote_retrieve_response_code( $wp_dhl_rest_response );
@@ -189,6 +200,9 @@ abstract class PR_DHL_API_REST {
 				break;
 			case '401':
 				throw new Exception( __('401 - Unauthorized Access - Invalid token or Authentication Header parameter', 'pr-shipping-dhl') );
+				break;
+			case '408':
+				throw new Exception( __('408 - Request Timeout', 'pr-shipping-dhl') );
 				break;
 			case '429':
 				throw new Exception( __('429 - Too many requests in given amount of time', 'pr-shipping-dhl') );

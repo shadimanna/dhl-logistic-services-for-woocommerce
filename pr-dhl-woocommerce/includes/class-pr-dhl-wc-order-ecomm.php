@@ -16,17 +16,14 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Ecomm' ) ) :
 
 class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 	
-	/**
-	 * Init and hook in the integration.
-	 */
-	public function __construct( ) {
-		$this->define_constants();
-		$this->init_hooks();
-	}
 
 	public function init_hooks() {
 		parent::init_hooks();
 
+		// Order page metabox actions
+		add_action( 'wp_ajax_wc_shipment_dhl_gen_label', array( $this, 'save_meta_box_ajax' ) );
+		add_action( 'wp_ajax_wc_shipment_dhl_delete_label', array( $this, 'delete_label_ajax' ) );	
+		
 		// add 'Label Created' orders page column header
 		add_filter( 'manage_edit-shop_order_columns', array( $this, 'add_order_label_column_header' ), 30 );
 

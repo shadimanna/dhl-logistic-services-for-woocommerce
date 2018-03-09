@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 } // Exit if accessed directly
 
 
-abstract class PR_DHL_API_SOAP {
+abstract class PR_DHL_API_SOAP_WSSE implements PR_DHL_API_Base {
 
 	/**
 	 * The request endpoint
@@ -66,11 +66,20 @@ abstract class PR_DHL_API_SOAP {
 
 		try {
 
-			$this->dhl_soap_auth = PR_DHL_API_Auth_SOAP::get_instance( );
+			$this->dhl_soap_auth = PR_DHL_API_Model_Auth_SOAP_WSSE::get_instance( );
+			// error_log(print_r($this->dhl_soap_auth,true));
 
 		} catch (Exception $e) {
 			throw $e;
 		}
+	}
+
+	public function dhl_test_connection( $client_id, $client_secret ) {
+		return $this->get_access_token( $client_id, $client_secret );
+	}
+
+	public function dhl_validate_field( $key, $value ) {
+		$this->validate_field( $key, $value );
 	}
 
 	/**

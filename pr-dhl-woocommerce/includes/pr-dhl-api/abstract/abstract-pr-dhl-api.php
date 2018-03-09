@@ -7,6 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class PR_DHL_API {
 
 	protected $dhl_label;
+	
+	protected $dhl_rate;
 
 	protected $country_code;
 
@@ -26,6 +28,10 @@ abstract class PR_DHL_API {
 
 	public function delete_dhl_label( $label_url ) {
 		return $this->dhl_label->delete_dhl_label( $label_url );
+	}
+
+	public function get_dhl_rates( $args ) {
+		return $this->dhl_rate->get_dhl_rates( $args );
 	}
 
 	abstract public function get_dhl_products_international();

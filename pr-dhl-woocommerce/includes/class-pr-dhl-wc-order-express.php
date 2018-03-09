@@ -5,25 +5,43 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * WooCommerce DHL Shipping Order.
+ * WooCommerce DHL Shipping Order Express.
  *
- * @package  PR_DHL_WC_Order
+ * @package  PR_DHL_WC_Order_Express
  * @category Shipping
  * @author   Shadi Manna
  */
 
-if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
+if ( ! class_exists( 'PR_DHL_WC_Order_Express' ) ) :
 
-class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
+class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 	
+	/**
+	 * Init and hook in the integration, parent will automatically be called
+	 */
+	public function __construct( ) {
+		parent::__construct();
+
+		$this->id = 'woocommerce-shipment-dhl-label-express';
+		$this->title = __( 'DHL Express Label & Tracking', 'pr-shipping-dhl' );
+	}
+
 	public function init_hooks() {
 		parent::init_hooks();
 
 		// Order page metabox actions
-		add_action( 'wp_ajax_wc_shipment_dhl_gen_label', array( $this, 'save_meta_box_ajax' ) );
-		add_action( 'wp_ajax_wc_shipment_dhl_delete_label', array( $this, 'delete_label_ajax' ) );	
+		add_action( 'wp_ajax_wc_shipment_dhl_gen_label_express', array( $this, 'save_meta_box_ajax' ) );
+		add_action( 'wp_ajax_wc_shipment_dhl_delete_label_express', array( $this, 'delete_label_ajax' ) );	
 	}
-	
+
+	public function get_dhl_obj() {
+		return PR_DHL()->get_dhl_factory( true );
+	}
+
+	public function get_shipping_dhl_settings() {
+		return PR_DHL()->get_shipping_dhl_settings( true );
+	}
+
 	public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
 		// $dhl_label_items = $this->get_dhl_label_items( $order_id );
 
@@ -197,9 +215,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	 * Function for saving tracking items
 	 */
 	public function get_additional_meta_ids( ) {
-
-		return array( 'pr_dhl_preferred_day', 'pr_dhl_preferred_time', 'pr_dhl_preferred_location', 'pr_dhl_preferred_neighbor', 'pr_dhl_duties', 'pr_dhl_age_visual', 'pr_dhl_email_notification', 'pr_dhl_additional_insurance', 'pr_dhl_personally', 'pr_dhl_no_neighbor', 'pr_dhl_named_person', 'pr_dhl_premium', 'pr_dhl_bulky_goods'/*, 'pr_dhl_identcheck'*/ );
-
+		return array();
 	}
 
 	protected function get_tracking_link( $tracking_num ) {
@@ -221,7 +237,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	 * @return void
 	 */
 	public function save_dhl_label_tracking( $order_id, $tracking_items ) {
-		update_post_meta( $order_id, '_pr_shipment_dhl_label_tracking', $tracking_items );
+		update_post_meta( $order_id, '_pr_shipment_dhl_express_label_tracking', $tracking_items );
 	}
 
 	/*
@@ -232,7 +248,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	 * @return tracking items
 	 */
 	public function get_dhl_label_tracking( $order_id ) {
-		return get_post_meta( $order_id, '_pr_shipment_dhl_label_tracking', true );
+		return get_post_meta( $order_id, '_pr_shipment_dhl_express_label_tracking', true );
 	}
 
 	/**
@@ -243,7 +259,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	 * @return void
 	 */
 	public function delete_dhl_label_tracking( $order_id ) {
-		delete_post_meta( $order_id, '_pr_shipment_dhl_label_tracking' );
+		delete_post_meta( $order_id, '_pr_shipment_dhl_express_label_tracking' );
 	}
 
 	/**
@@ -255,7 +271,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	 * @return void
 	 */
 	public function save_dhl_label_items( $order_id, $tracking_items ) {
-		update_post_meta( $order_id, '_pr_shipment_dhl_label_items', $tracking_items );
+		update_post_meta( $order_id, '_pr_shipment_dhl_express_label_items', $tracking_items );
 	}
 
 	/*
@@ -266,7 +282,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	 * @return label items
 	 */
 	public function get_dhl_label_items( $order_id ) {
-		return get_post_meta( $order_id, '_pr_shipment_dhl_label_items', true );
+		return get_post_meta( $order_id, '_pr_shipment_dhl_express_label_items', true );
 	}
 
 	protected function get_label_args_settings( $order_id, $dhl_label_args ) {
@@ -282,7 +298,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		}
 
 		// Get settings
-		$shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
+		$shipping_dhl_settings = $this->get_shipping_dhl_settings();
 
 		$setting_ids = array( 'dhl_api_user','dhl_api_pwd', 'dhl_account_num', 'dhl_shipper_name', 'dhl_shipper_company', 'dhl_shipper_address','dhl_shipper_address_no', 'dhl_shipper_address_city', 'dhl_shipper_address_state', 'dhl_shipper_address_zip', 'dhl_shipper_phone', 'dhl_shipper_email', 'dhl_bank_holder', 'dhl_bank_name', 'dhl_bank_iban', 'dhl_bank_bic', 'dhl_bank_ref', 'dhl_bank_ref_2', 'dhl_cod_fee' );
 
@@ -294,7 +310,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		}
 		
 		$args['dhl_settings'][ 'shipper_country' ] = PR_DHL()->get_base_country();
-		$args['dhl_settings'][ 'participation' ] = $shipping_dhl_settings[ 'dhl_participation_' . $dhl_label_args['pr_dhl_product'] ];
+		// $args['dhl_settings'][ 'participation' ] = $shipping_dhl_settings[ 'dhl_participation_' . $dhl_label_args['pr_dhl_product'] ];
 
 		return $args;
 	}
@@ -302,7 +318,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	protected function delete_label_args( $order_id ) {
 		$args = $this->get_dhl_label_tracking( $order_id );
 
-		$shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
+		$shipping_dhl_settings = $this->get_shipping_dhl_settings();
 
 		$args['api_user'] = $shipping_dhl_settings['dhl_api_user'];
 		$args['api_pwd'] = $shipping_dhl_settings['dhl_api_pwd'];

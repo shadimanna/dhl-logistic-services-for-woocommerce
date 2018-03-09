@@ -5,12 +5,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 } // Exit if accessed directly
 
 
-class PR_DHL_API_Ecomm extends PR_DHL_API {
+class PR_DHL_API_Controller_Ecomm extends PR_DHL_API {
 
 	public function __construct( $country_code ) {
 		$this->country_code = $country_code;
 		try {
-			$this->dhl_label = new PR_DHL_API_REST_Label(  );
+			$this->dhl_label = new PR_DHL_API_Model_REST_Label(  );
 		} catch (Exception $e) {
 			throw $e;	
 		}

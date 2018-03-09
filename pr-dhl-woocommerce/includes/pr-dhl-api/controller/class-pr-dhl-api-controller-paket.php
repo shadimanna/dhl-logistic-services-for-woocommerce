@@ -4,8 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } // Exit if accessed directly
 
-
-class PR_DHL_API_Paket extends PR_DHL_API {
+class PR_DHL_API_Controller_Paket extends PR_DHL_API {
 
 	const DHL_PAKET_DISPLAY_DAYS = 5;
 	const DHL_PAKET_REMOVE_DAYS = 2;
@@ -15,7 +14,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 	public function __construct( $country_code ) {
 		$this->country_code = $country_code;
 		try {
-			$this->dhl_label = new PR_DHL_API_SOAP_Label( );
+			$this->dhl_label = new PR_DHL_API_Model_SOAP_Label( );
 		} catch (Exception $e) {
 			throw $e;	
 		}

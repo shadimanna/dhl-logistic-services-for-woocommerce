@@ -6,29 +6,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
 // Singleton API connection class
-class PR_DHL_API_Auth_SOAP {
+abstract class PR_DHL_API_Auth_SOAP {
 
 
 	/**
 	 * define Auth API endpoint
 	 */
-	const PR_DHL_WSDL_LINK = 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/2.2/geschaeftskundenversand-api-2.2.wsdl';
-	const PR_DHL_HEADER_LINK = 'http://dhl.de/webservice/cisbase';
+	// const PR_DHL_WSDL_LINK = 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/2.2/geschaeftskundenversand-api-2.2.wsdl';
+	// const PR_DHL_HEADER_LINK = 'http://dhl.de/webservice/cisbase';
+	// protected $pr_dhl_wsdl_link = '';
+	/**
+	 * @var string
+	 */
+	// private $client_id;
 
 	/**
 	 * @var string
 	 */
-	private $client_id;
+	// private $client_secret;
 
 	/**
-	 * @var string
+	 * @var PR_DHL_API_Auth_SOAP
 	 */
-	private $client_secret;
-
-	/**
-	 * @var Quipu_Api_Connection
-	 */
-	private static $_instance; //The single instance
+	// private static $_instance; //The single instance
+	private static $_instances; // The instances array
 	
 
 	/**
@@ -44,15 +45,24 @@ class PR_DHL_API_Auth_SOAP {
 
 	public static function get_instance( ) {
 
+		$class = get_called_class();
+		// error_log($class);
+        if ( ! isset(self::$_instances[$class] ) ) {
+            self::$_instances[$class] = new static();
+        }
+        return self::$_instances[$class];
+
+        /*
 		if( (! self::$_instance ) ) { 
 			self::$_instance = new self( );
 		}
 
 		return self::$_instance;
+		*/
 	}
 
 	public function get_access_token( $client_id, $client_secret ) {
-		
+		// error_log('get access token');
 		$this->client_id = $client_id;
 		$this->client_secret = $client_secret;
 
@@ -70,33 +80,39 @@ class PR_DHL_API_Auth_SOAP {
 		try {
 			
 			$api_cred = PR_DHL()->get_api_url();
+			// error_log(print_r($api_cred,true));
+			$soap_variables = $this->get_soap_variables( $api_cred );
+			// error_log(print_r($soap_variables,true));
+			
+			$soap_wsdl = $this->get_soap_wsdl();
+			// error_log(print_r($soap_wsdl,true));
 
-			$soap_client = new SoapClient( self::PR_DHL_WSDL_LINK,
-			array( 	
-					'login' => $api_cred['user'],
-					'password' => $api_cred['password'],
-					'location' => $api_cred['auth_url'],
-					'soap_version' => SOAP_1_1,
-					'trace' => true
-					)
-			);
+			$soap_client = new SoapClient( $soap_wsdl, $soap_variables );
+
+	        $soap_auth_header = $this->get_soap_header( $client_id, $client_secret );
+			// error_log(print_r($soap_auth_header,true));
+	        
+	        $soap_client->__setSoapHeaders( $soap_auth_header );
+			// error_log(print_r($soap_client,true));
+			
+			return $soap_client;
 
 		} catch ( Exception $e ) {
 			throw $e;
 		}
 		
-		$soap_authentication = array(
-            'user' => $this->client_id,
-            'signature' => $this->client_secret,
-			'type' => 0
-        );
-        
-        $soap_auth_header = new SoapHeader( self::PR_DHL_HEADER_LINK, 'Authentification', $soap_authentication );
-        
-        $soap_client->__setSoapHeaders( $soap_auth_header );
 		
-		return $soap_client;
 	}
+
+	protected function get_soap_variables( $api_cred )	{
+		return array( 	
+					'trace' => true
+				);
+	}
+
+	abstract protected function get_soap_header( $client_id, $client_secret );
+	
+	abstract protected function get_soap_wsdl();
 /*
 	public function is_key_match( $client_id, $client_secret ) {
 

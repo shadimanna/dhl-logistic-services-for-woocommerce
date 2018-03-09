@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 4.9.2
-Stable tag: 1.0.8
+Stable tag: 1.0.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,6 +79,9 @@ In case you could not find what you were looking for in our FAQs and the detaile
 
 == Changelog ==
 
+= 1.0.9 =
+* Enhancement - DHL eCommerce: increase POST timeout to 10 seconds instead of 5
+
 = 1.0.8 =
 * Bug fix - DHL Paket: Fix special field e.g. &amp in ship address
 
@@ -114,6 +117,9 @@ In case you could not find what you were looking for in our FAQs and the detaile
 * First public release
 
 == Upgrade Notice ==
+
+= 1.0.9 =
+* Enhancement, please upgrade
 
 = 1.0.8 =
 * Bug fixes, please upgrade

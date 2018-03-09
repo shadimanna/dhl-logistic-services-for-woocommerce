@@ -5,7 +5,7 @@
  * Description: WooCommerce integration for DHL eCommerce, DHL Paket and DHL Parcel Europe (Benelux and Iberia)
  * Author: DHL
  * Author URI: http://dhl.com/woocommerce
- * Version: 1.0.8
+ * Version: 1.0.9
  * WC requires at least: 2.6.14
  * WC tested up to: 3.3
  *
@@ -32,7 +32,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "1.0.6";
+	private $version = "1.0.9";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -204,6 +204,10 @@ class PR_DHL_WC {
 				} elseif( $dhl_obj->is_dhl_ecomm() ) {
 					$this->shipping_dhl_order = new PR_DHL_WC_Order_Ecomm();
 				}
+
+				$dhl_obj_express = $this->get_dhl_factory( true );
+
+				$this->shipping_dhl_order_express = new PR_DHL_WC_Order_Express();
 				
 			} catch (Exception $e) {
 				add_action( 'admin_notices', array( $this, 'environment_check' ) );
@@ -280,6 +284,7 @@ class PR_DHL_WC {
 				$shipping_method['pr_dhl_ecomm'] = $pr_dhl_ship_meth;
 			}
 
+			$shipping_method['pr_dhl_express'] = 'PR_DHL_WC_Method_Express';
 		} catch (Exception $e) {
 			// do nothing
 		}
@@ -318,7 +323,7 @@ class PR_DHL_WC {
 	/**
 	 * Create a DHL object from the factory based on country.
 	 */
-	public function get_dhl_factory() {
+	public function get_dhl_factory( $is_express = false ) {
 
 		$base_country_code = $this->get_base_country();
 		// $shipping_dhl_settings = $this->get_shipping_dhl_settings();
@@ -326,7 +331,12 @@ class PR_DHL_WC {
 		// $client_secret = isset( $shipping_dhl_settings['dhl_api_secret'] ) ? $shipping_dhl_settings['dhl_api_secret'] : '';
 		
 		try {	
-			$dhl_obj = PR_DHL_API_Factory::make_dhl( $base_country_code );		
+
+			if( $is_express ) {
+				$dhl_obj = PR_DHL_API_Controller_Factory::make_dhl_express( $base_country_code );		
+			} else {
+				$dhl_obj = PR_DHL_API_Controller_Factory::make_dhl( $base_country_code );		
+			}
 		} catch (Exception $e) {
 			throw $e;
 		}
@@ -372,16 +382,21 @@ class PR_DHL_WC {
 		}
 	}
 
-	public function get_shipping_dhl_settings( ) {
+	public function get_shipping_dhl_settings( $is_express = false ) {
 		$dhl_settings = array();
 
 		try {
-			$dhl_obj = $this->get_dhl_factory();
-			
-			if( $dhl_obj->is_dhl_paket() ) {
-				$dhl_settings = get_option('woocommerce_pr_dhl_paket_settings');
-			} elseif( $dhl_obj->is_dhl_ecomm() ) {
-				$dhl_settings = get_option('woocommerce_pr_dhl_ecomm_settings');
+
+			$dhl_obj = $this->get_dhl_factory( $is_express );
+
+			if ( $is_express ) {			
+				$dhl_settings = get_option('woocommerce_pr_dhl_express_settings');
+			} else {
+				if( $dhl_obj->is_dhl_paket() ) {
+					$dhl_settings = get_option('woocommerce_pr_dhl_paket_settings');
+				} elseif( $dhl_obj->is_dhl_ecomm() ) {
+					$dhl_settings = get_option('woocommerce_pr_dhl_ecomm_settings');
+				}
 			}
 
 		} catch (Exception $e) {

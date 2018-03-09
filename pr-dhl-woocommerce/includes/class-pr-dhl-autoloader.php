@@ -60,6 +60,14 @@ class PR_DHL_Autoloader {
 
 		if ( strpos( $class, 'pr_dhl_api' ) === 0 ) {
 			$path = $this->include_path . 'pr-dhl-api/';
+			
+			if ( strpos( $class, 'model' ) !== false ) {
+				$path .= 'model/';
+			}
+
+			if ( strpos( $class, 'controller' ) !== false ) {
+				$path .= 'controller/';
+			}
 		}
 
 		if ( strpos( $class, 'front_end' ) !== false ) {

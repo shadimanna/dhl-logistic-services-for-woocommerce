@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
 // Singleton API connection class
-class PR_DHL_API_Auth_REST {
+class PR_DHL_API_Model_Auth_REST {
 
 
 	/**

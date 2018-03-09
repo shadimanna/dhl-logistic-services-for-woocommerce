@@ -1,5 +1,5 @@
 .wc_dhl_error,
-.wc_dhl_delete #dhl_delete_label {
+.wc_dhl_delete .dhl_delete_label {
 	color: #a00;
 }
 
@@ -20,7 +20,7 @@ span.wc_dhl_error {
 	margin-top: 10px;
 }
 
-#dhl_label_created {
+.dhl_label_created {
 	width:7%;
 	/*text-align:center*/
 }

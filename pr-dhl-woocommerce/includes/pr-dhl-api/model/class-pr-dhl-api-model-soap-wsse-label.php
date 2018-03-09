@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 } // Exit if accessed directly
 
 
-class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label {
+class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements PR_DHL_API_Label {
 
 	const DHL_LABEL_FORMAT = 'PDF';
 	const DHL_LABEL_SIZE = '4x6'; // must be lowercase 'x'
@@ -27,14 +27,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		} catch (Exception $e) {
 			throw $e;
 		}
-	}
-
-	public function dhl_test_connection( $client_id, $client_secret ) {
-		return $this->get_access_token( $client_id, $client_secret );
-	}
-
-	public function dhl_validate_field( $key, $value ) {
-		$this->validate_field( $key, $value );
 	}
 
 	protected function validate_field( $key, $value ) {
@@ -66,11 +58,14 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			$soap_client = $this->get_access_token( $args['dhl_settings']['api_user'], $args['dhl_settings']['api_pwd'] );
 			PR_DHL()->log_msg( '"createShipmentOrder" called with: ' . print_r( $soap_request, true ) );
 
-			$response_body = $soap_client->createShipmentOrder($soap_request);
+			$response_body = $soap_client->getRateRequest($soap_request);
+			error_log(print_r($soap_client->__getLastRequest(),true));
 
 			PR_DHL()->log_msg( 'Response Body: ' . print_r( $response_body, true ) );
 		
 		} catch (Exception $e) {
+			error_log('get dhl label Exception');
+			error_log(print_r($soap_client->__getLastRequest(),true));
 			throw $e;
 		}
 
@@ -160,6 +155,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 	protected function set_arguments( $args ) {
 		// Validate set args
+		error_log(print_r($args,true));
 		
 		if ( empty( $args['dhl_settings']['api_user'] ) ) {
 			throw new Exception( __('Please, provide the username in the DHL shipping settings', 'pr-shipping-dhl' ) );
@@ -172,10 +168,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		// Validate order details
 		if ( empty( $args['dhl_settings']['account_num'] ) ) {
 			throw new Exception( __('Please, provide an account in the DHL shipping settings', 'pr-shipping-dhl' ) );
-		}
-
-		if ( empty( $args['dhl_settings']['participation'] )) {
-			throw new Exception( __('Please, provide a participation number for the shipping method in the DHL shipping settings', 'pr-shipping-dhl') );
 		}
 
 		if ( empty( $args['order_details']['dhl_product'] )) {
@@ -416,15 +408,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 						$bank_data[ $value ] = $this->args['dhl_settings'][ $key ];
 					}
 				}
-			}
-
-			// create account number
-			$product_number = preg_match('!\d+!', $this->args['order_details']['dhl_product'], $matches );
-
-			if( $product_number ) {
-				$account_number = $this->args['dhl_settings']['account_num'] . $matches[0] . $this->args['dhl_settings']['participation'];
-			} else {
-				throw new Exception( __('Could not create account number - no product number.', 'pr-shipping-dhl') );				
 			}
 
 			$this->args['order_details']['weight'] = $this->maybe_convert_weight( $this->args['order_details']['weight'], $this->args['order_details']['weightUom'] );

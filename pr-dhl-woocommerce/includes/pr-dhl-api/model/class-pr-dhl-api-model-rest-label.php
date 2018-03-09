@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 } // Exit if accessed directly
 
 
-class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label {
+class PR_DHL_API_Model_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label {
 
 	private $dhl_label_format = 'PDF';
 
@@ -59,14 +59,6 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 				throw new Exception( __('DHL Label could not be deleted!', 'pr-shipping-dhl' ) );
 			}
 		}
-	}
-
-	public function dhl_test_connection( $client_id, $client_secret ) {
-		return $this->get_access_token( $client_id, $client_secret );
-	}
-
-	public function dhl_validate_field( $key, $value ) {
-		$this->validate_field( $key, $value );
 	}
 
 	protected function validate_field( $key, $value ) {
