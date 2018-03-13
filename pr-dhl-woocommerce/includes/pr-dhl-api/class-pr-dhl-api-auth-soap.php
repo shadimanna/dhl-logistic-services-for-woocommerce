@@ -61,7 +61,6 @@ class PR_DHL_API_Auth_SOAP {
 		}
 
 		PR_DHL()->log_msg( 'Authorize User - Client ID: ' . $this->client_id );
-		PR_DHL()->log_msg( 'Authorize User - Client Secret: ' . $this->client_secret );
 		
 		if ( ! class_exists( 'SoapClient' ) || ! class_exists( 'SoapHeader' ) ) {
 			throw new Exception( __( 'This plugin requires the <a href="http://php.net/manual/en/class.soapclient.php">SOAP</a> support on your server/hosting to function.', 'pr-shipping-dhl' ) );
