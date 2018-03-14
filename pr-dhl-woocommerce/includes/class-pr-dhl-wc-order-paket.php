@@ -35,6 +35,8 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 		$base_country_code = PR_DHL()->get_base_country();
 		
+		echo '<hr/>';
+
 		// Preferred options for Germany only
 		if( ( $base_country_code == 'DE' ) && ( $this->is_shipping_domestic( $order_id ) ) ) {
 			$preferred_days = PR_DHL()->get_dhl_preferred_days();
@@ -185,16 +187,68 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				'value'       		=> isset( $dhl_label_items['pr_dhl_is_codeable'] ) ? $dhl_label_items['pr_dhl_is_codeable'] : '',
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
-			/*
-			woocommerce_wp_select( array(
+			
+			echo '<hr/>';
+
+			woocommerce_wp_checkbox( array(
 				'id'          		=> 'pr_dhl_identcheck',
 				'label'       		=> __( 'Identity Check: ', 'pr-shipping-dhl' ),
 				'placeholder' 		=> '',
 				'description'		=> '',
 				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck'] ) ? $dhl_label_items['pr_dhl_identcheck'] : '',
-				'options'			=> $identity_options,
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
-			) );*/
+			) );
+
+			woocommerce_wp_text_input( array(
+				'id'          		=> 'pr_dhl_identcheck_fname',
+				'label'       		=> __( 'Identity Check - First Name: ', 'pr-shipping-dhl' ),
+				'placeholder' 		=> '',
+				'description'		=> '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_fname'] ) ? $dhl_label_items['pr_dhl_identcheck_fname'] : '',
+				'custom_attributes'	=> array( $is_disabled => $is_disabled )
+			) );
+
+			woocommerce_wp_text_input( array(
+				'id'          		=> 'pr_dhl_identcheck_lname',
+				'label'       		=> __( 'Identity Check - Last Name: ', 'pr-shipping-dhl' ),
+				'placeholder' 		=> '',
+				'description'		=> '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_lname'] ) ? $dhl_label_items['pr_dhl_identcheck_lname'] : '',
+				'custom_attributes'	=> array( $is_disabled => $is_disabled )
+			) );
+
+			woocommerce_wp_text_input( array(
+				'id'          		=> 'pr_dhl_identcheck_dob',
+				'label'       		=> __( 'Identity Check - Date of Birth: ', 'pr-shipping-dhl' ),
+				'placeholder' 		=> '',
+				'description'		=> '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_dob'] ) ? $dhl_label_items['pr_dhl_identcheck_dob'] : '',
+				'custom_attributes'	=> array( $is_disabled => $is_disabled ),
+				'class'				=> 'short date-picker'
+			) );
+
+			woocommerce_wp_text_input( array(
+				'id'          		=> 'pr_dhl_identcheck_age',
+				'label'       		=> __( 'Identity Check - Minimum Age: ', 'pr-shipping-dhl' ),
+				'placeholder' 		=> '',
+				'description'		=> '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_age'] ) ? $dhl_label_items['pr_dhl_identcheck_age'] : '',
+				'custom_attributes'	=> array( $is_disabled => $is_disabled ),
+				'type'				=> 'number'
+			) );
+
+			echo '<hr/>';
+
+			woocommerce_wp_checkbox( array(
+				'id'          		=> 'pr_dhl_return_address',
+				'label'       		=> __( 'Return Address: ', 'pr-shipping-dhl' ),
+				'placeholder' 		=> '',
+				'description'		=> '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_return_address'] ) ? $dhl_label_items['pr_dhl_return_address'] : '',
+				'custom_attributes'	=> array( $is_disabled => $is_disabled )
+			) );
+
+			echo '<hr/>';
 		}
 
 	}
@@ -205,9 +259,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	 * Function for saving tracking items
 	 */
 	public function get_additional_meta_ids( ) {
-
-		return array( 'pr_dhl_preferred_day', 'pr_dhl_preferred_time', 'pr_dhl_preferred_location', 'pr_dhl_preferred_neighbor', 'pr_dhl_duties', 'pr_dhl_age_visual', 'pr_dhl_email_notification', 'pr_dhl_additional_insurance', 'pr_dhl_personally', 'pr_dhl_no_neighbor', 'pr_dhl_named_person', 'pr_dhl_premium', 'pr_dhl_bulky_goods', 'pr_dhl_is_codeable'/*, 'pr_dhl_identcheck'*/ );
-
+		return array( 'pr_dhl_preferred_day', 'pr_dhl_preferred_time', 'pr_dhl_preferred_location', 'pr_dhl_preferred_neighbor', 'pr_dhl_duties', 'pr_dhl_age_visual', 'pr_dhl_email_notification', 'pr_dhl_additional_insurance', 'pr_dhl_personally', 'pr_dhl_no_neighbor', 'pr_dhl_named_person', 'pr_dhl_premium', 'pr_dhl_bulky_goods', 'pr_dhl_is_codeable', 'pr_dhl_identcheck', 'pr_dhl_identcheck_fname', 'pr_dhl_identcheck_lname', 'pr_dhl_identcheck_dob', 'pr_dhl_identcheck_age', 'pr_dhl_return_address' );
 	}
 
 	protected function get_tracking_link( $tracking_num ) {
@@ -292,7 +344,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		// Get settings
 		$shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
 
-		$setting_ids = array( 'dhl_api_user','dhl_api_pwd', 'dhl_account_num', 'dhl_shipper_name', 'dhl_shipper_company', 'dhl_shipper_address','dhl_shipper_address_no', 'dhl_shipper_address_city', 'dhl_shipper_address_state', 'dhl_shipper_address_zip', 'dhl_shipper_phone', 'dhl_shipper_email', 'dhl_bank_holder', 'dhl_bank_name', 'dhl_bank_iban', 'dhl_bank_bic', 'dhl_bank_ref', 'dhl_bank_ref_2', 'dhl_cod_fee' );
+		$setting_ids = array( 'dhl_api_user','dhl_api_pwd', 'dhl_account_num', 'dhl_shipper_name', 'dhl_shipper_company', 'dhl_shipper_address','dhl_shipper_address_no', 'dhl_shipper_address_city', 'dhl_shipper_address_state', 'dhl_shipper_address_zip', 'dhl_shipper_phone', 'dhl_shipper_email','dhl_return_name', 'dhl_return_company', 'dhl_return_address','dhl_return_address_no', 'dhl_return_address_city', 'dhl_return_address_state', 'dhl_return_address_zip', 'dhl_return_phone', 'dhl_return_email', 'dhl_bank_holder', 'dhl_bank_name', 'dhl_bank_iban', 'dhl_bank_bic', 'dhl_bank_ref', 'dhl_bank_ref_2', 'dhl_cod_fee' );
 
 		foreach ($setting_ids as $value) {
 			$api_key = str_replace('dhl_', '', $value);
@@ -302,6 +354,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		}
 		
 		$args['dhl_settings'][ 'shipper_country' ] = PR_DHL()->get_base_country();
+		$args['dhl_settings'][ 'return_country' ] = PR_DHL()->get_base_country();
 		$args['dhl_settings'][ 'participation' ] = $shipping_dhl_settings[ 'dhl_participation_' . $dhl_label_args['pr_dhl_product'] ];
 
 		return $args;

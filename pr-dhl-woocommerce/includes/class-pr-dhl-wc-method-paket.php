@@ -417,6 +417,74 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'desc_tip'          => true,
 				'default'           => ''
 			),
+			'dhl_return'           => array(
+				'title'           => __( 'Return Address', 'pr-shipping-dhl' ),
+				'type'            => 'title',
+				'description'     => __( 'Enter Return Address below.', 'pr-shipping-dhl' ),
+			),
+			'dhl_return_name' => array(
+				'title'             => __( 'Name', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'Enter Return Name.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
+			),
+			'dhl_return_company' => array(
+				'title'             => __( 'Company', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'Enter Return Company.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
+			),
+			'dhl_return_address' => array(
+				'title'             => __( 'Street Address', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'Enter Return Street Address.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
+			),
+			'dhl_return_address_no' => array(
+				'title'             => __( 'Street Address Number', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'Enter Return Street Address Number.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
+			),
+			'dhl_return_address_city' => array(
+				'title'             => __( 'City', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'Enter Return City.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
+			),
+			'dhl_return_address_state' => array(
+				'title'             => __( 'State', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'Enter Return County.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
+			),
+			'dhl_return_address_zip' => array(
+				'title'             => __( 'Postcode', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'Enter Return Postcode.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
+			),
+			'dhl_return_phone' => array(
+				'title'             => __( 'Phone Number', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'Enter Phone Number.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
+			),
+			'dhl_return_email' => array(
+				'title'             => __( 'Email', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'Enter Email.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
+			),
 			'dhl_bank'           => array(
 				'title'           => __( 'Bank Details', 'pr-shipping-dhl' ),
 				'type'            => 'title',

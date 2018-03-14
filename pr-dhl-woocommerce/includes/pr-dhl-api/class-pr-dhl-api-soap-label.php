@@ -7,12 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label {
 
-	const DHL_LABEL_FORMAT = 'PDF';
-	const DHL_LABEL_SIZE = '4x6'; // must be lowercase 'x'
-	const DHL_PAGE_SIZE = 'A4';
-	const DHL_LAYOUT = '1x1';
-	const DHL_AUTO_CLOSE = '1';
-	const DHL_MAX_ITEMS = '6';
+	const DHL_RETURN_PARTICIPATION = '07';
 
 	private $args = array();
 
@@ -178,8 +173,59 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			throw new Exception( __('Please, provide a participation number for the shipping method in the DHL shipping settings', 'pr-shipping-dhl') );
 		}
 
+		if ( empty( $args['dhl_settings']['shipper_name'] )) {
+			throw new Exception( __('Please, provide a shipper name in the DHL shipping settings', 'pr-shipping-dhl') );
+		}
+
+		if ( empty( $args['dhl_settings']['shipper_address'] )) {
+			throw new Exception( __('Please, provide a shipper address in the DHL shipping settings', 'pr-shipping-dhl') );
+		}
+
+		if ( empty( $args['dhl_settings']['shipper_address_no'] )) {
+			throw new Exception( __('Please, provide a shipper address number in the DHL shipping settings', 'pr-shipping-dhl') );
+		}
+
+		if ( empty( $args['dhl_settings']['shipper_address_city'] )) {
+			throw new Exception( __('Please, provide a shipper city in the DHL shipping settings', 'pr-shipping-dhl') );
+		}
+
+		if ( empty( $args['dhl_settings']['shipper_address_zip'] )) {
+			throw new Exception( __('Please, provide a shipper postcode in the DHL shipping settings', 'pr-shipping-dhl') );
+		}
+
+		// Order details
 		if ( empty( $args['order_details']['dhl_product'] )) {
 			throw new Exception( __('DHL "Product" is empty!', 'pr-shipping-dhl') );
+		}
+
+		// return receiver
+		if ( isset( $args['order_details']['return_address'] ) && ( $args['order_details']['return_address'] == 'yes' ) ) {
+
+			error_log($args['order_details']['dhl_product']);
+			if ( ( $args['order_details']['dhl_product'] != 'V01PAK' ) && ( $args['order_details']['dhl_product'] != 'V01PRIO' ) && ( $args['order_details']['dhl_product'] != 'V86PARCEL' ) && ( $args['order_details']['dhl_product'] != 'V55PAK' ) ){
+				
+				throw new Exception( __('Returns are not supported by this DHL Service.', 'pr-shipping-dhl') );
+			}
+			
+			if ( empty( $args['dhl_settings']['return_name'] )) {
+				throw new Exception( __('Please, provide a return name in the DHL shipping settings', 'pr-shipping-dhl') );
+			}
+
+			if ( empty( $args['dhl_settings']['return_address'] )) {
+				throw new Exception( __('Please, provide a return address in the DHL shipping settings', 'pr-shipping-dhl') );
+			}
+
+			if ( empty( $args['dhl_settings']['return_address_no'] )) {
+				throw new Exception( __('Please, provide a return address number in the DHL shipping settings', 'pr-shipping-dhl') );
+			}
+
+			if ( empty( $args['dhl_settings']['return_address_city'] )) {
+				throw new Exception( __('Please, provide a return city in the DHL shipping settings', 'pr-shipping-dhl') );
+			}
+
+			if ( empty( $args['dhl_settings']['return_address_zip'] )) {
+				throw new Exception( __('Please, provide a return postcode in the DHL shipping settings', 'pr-shipping-dhl') );
+			}	
 		}
 
 		if ( empty( $args['order_details']['order_id'] )) {
@@ -192,6 +238,12 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 		if ( empty( $args['order_details']['weight'] )) {
 			throw new Exception( __('Order "Weight" is empty!', 'pr-shipping-dhl') );
+		}
+
+		if ( isset( $args['order_details']['identcheck'] ) && ( $args['order_details']['identcheck'] == 'yes' ) ) {
+			if ( empty( $args['order_details']['identcheck_fname'] ) || empty( $args['order_details']['identcheck_lname'] ) || empty( $args['order_details']['identcheck_dob'] ) || empty( $args['order_details']['identcheck_age'] ) ) {
+				throw new Exception( __('All "Identity Check" values must be entered.', 'pr-shipping-dhl') );
+			}
 		}
 
 		// Validate weight
@@ -245,8 +297,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 											'company' => '',
 											'address_2' => '',
 											'email' => '',
-											// 'idNumber' => '',
-											// 'idType' => '',
 											'postcode' => '',
 											'state' => '',
 											'phone' => ' '
@@ -254,7 +304,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 						);
 
 		$args['shipping_address'] = wp_parse_args( $args['shipping_address'], $default_args['shipping_address'] );
-		// $args['order_details'] = wp_parse_args( $args['order_details'], $default_args['order_details'] );
 
 		$default_args_item = array( 
 									'item_description' => '',
@@ -282,14 +331,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 	}
 
 	protected function set_query_string() {
-		$dhl_label_query_string = 
-			array( 'format' => self::DHL_LABEL_FORMAT,
-					'labelSize' => self::DHL_LABEL_SIZE,
-					'pageSize' => self::DHL_PAGE_SIZE,
-					'layout' => self::DHL_LAYOUT,
-					'autoClose' => self::DHL_AUTO_CLOSE );
-		
-		$this->query_string = http_build_query($dhl_label_query_string);
+		return '';
 	}
 
 	protected function is_european_shipment() {
@@ -366,6 +408,12 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 						switch ( $key ) {
 							case 'additional_insurance':
 								$services[ $value['name'] ]['insuranceAmount'] = $this->args['order_details']['total_value'];
+								break;	
+							case 'identcheck':
+								$services[ $value['name'] ]['Ident']['surname'] = $this->args['order_details']['identcheck_fname'];
+								$services[ $value['name'] ]['Ident']['givenName'] = $this->args['order_details']['identcheck_lname'];
+								$services[ $value['name'] ]['Ident']['dateOfBirth'] = $this->args['order_details']['identcheck_dob'];
+								$services[ $value['name'] ]['Ident']['minimumAge'] = $this->args['order_details']['identcheck_age'];
 								break;							
 						}
 
@@ -423,6 +471,12 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			if( $product_number ) {
 				$account_number = $this->args['dhl_settings']['account_num'] . $matches[0] . $this->args['dhl_settings']['participation'];
+				
+				if ( isset( $this->args['order_details']['return_address'] ) && ( $this->args['order_details']['return_address'] == 'yes' ) ) {
+			
+					$return_account_number = $this->args['dhl_settings']['account_num'] . $matches[0] . self::DHL_RETURN_PARTICIPATION;
+				}
+
 			} else {
 				throw new Exception( __('Could not create account number - no product number.', 'pr-shipping-dhl') );				
 			}
@@ -445,6 +499,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 											array( 
 												'product' => $this->args['order_details']['dhl_product'],
 												'accountNumber' => $account_number,
+												'accountNumber' => $account_number,
+												'returnShipmentAccountNumber' => $return_account_number,
 												'shipmentDate' => date('Y-m-d'),
 												'ShipmentItem' => 
 													array( 
@@ -467,10 +523,10 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 														'streetNumber' => intval($this->args['dhl_settings']['shipper_address_no']),
 														'zip' => $this->args['dhl_settings']['shipper_address_zip'],
 														'city' => $this->args['dhl_settings']['shipper_address_city'],
-														'state' => $this->args['dhl_settings']['shipper_address_state'],
 														'Origin' =>
 															array(
 																'countryISOCode' => $this->args['dhl_settings'][ 'shipper_country' ],
+																'state' => $this->args['dhl_settings']['shipper_address_state'],
 															)
 														),
 												'Communication' =>
@@ -507,6 +563,34 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 						)
 				);
+			// error_log($this->args['order_details']['return_address']);
+			if ( isset( $this->args['order_details']['return_address'] ) && ( $this->args['order_details']['return_address'] == 'yes' ) ) {
+				$dhl_label_body['ShipmentOrder']['Shipment']['ReturnReceiver'] = array(
+												'Name' =>
+													array(
+														'name1' => $this->args['dhl_settings']['return_name'],
+														'name2' => $this->args['dhl_settings']['return_company']
+														),
+												'Address' =>
+													array(
+														'streetName' => $this->args['dhl_settings']['return_address'],
+														'streetNumber' => intval($this->args['dhl_settings']['return_address_no']),
+														'zip' => $this->args['dhl_settings']['return_address_zip'],
+														'city' => $this->args['dhl_settings']['return_address_city'],
+														'Origin' =>
+															array(
+																'countryISOCode' => $this->args['dhl_settings'][ 'return_country' ],
+																'state' => $this->args['dhl_settings']['return_address_state'],
+															)
+														),
+												'Communication' =>
+													array(
+														'phone' => $this->args['dhl_settings']['return_phone'],
+														'email' => $this->args['dhl_settings']['return_email']
+														)
+											);
+				// error_log(print_r($this->dhl_label_body['ShipmentOrder']['Shipment']['ReturnReceiver'],true));
+			}
 
 			// Is codeable set here since it's at a high level in the message
 			if ( isset($this->args['order_details']['is_codeable']) && ($this->args['order_details']['is_codeable'] == 'yes') ) {
