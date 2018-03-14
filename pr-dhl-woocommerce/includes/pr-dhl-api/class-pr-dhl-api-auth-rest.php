@@ -148,7 +148,6 @@ class PR_DHL_API_Auth_REST {
 		}
 
 		PR_DHL()->log_msg( 'Authorize User - Client ID: ' . $this->client_id );
-		PR_DHL()->log_msg( 'Authorize User - Client Secret: ' . $this->client_secret );
 		
 		$wp_request_headers = array( 'Authorization' => 'Basic ' . base64_encode( $this->client_id . ':' . $this->client_secret )
 		);
