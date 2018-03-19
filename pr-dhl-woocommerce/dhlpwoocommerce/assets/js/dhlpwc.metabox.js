@@ -53,7 +53,7 @@ jQuery(document).ready(function($) {
 
         var data = {
             'action': 'dhlpwc_label_delete',
-            post_id: $(this).attr('post-id'),
+            post_id: $(this).data('post-id'),
             label_id: $(this).attr('label-id')
         };
 

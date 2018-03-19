@@ -204,7 +204,7 @@ jQuery(document).ready(function($) {
 
         $('#dhlpwc-parcelshop-info').animate({opacity: 0});
 
-        $.post(dhlpwc_frontend_select.ajax_url, data, function(response) {
+        $.post(dhlpwc_frontend_ps_map.ajax_url, data, function(response) {
             try {
                 view =  response.data.view;
             } catch(error) {
