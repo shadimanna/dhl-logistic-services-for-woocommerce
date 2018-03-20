@@ -55,23 +55,30 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
     {
         $this->form_fields = array(
             // Enable plugin
-            'plugin_settings'           => array(
+            'plugin_settings'              => array(
                 'title'       => __('Plugin Settings', 'dhlpwc'),
                 'type'        => 'title',
                 'description' => __('Enable features of this plugin.', 'dhlpwc'),
             ),
-            'enable_all'                => array(
+            'enable_all'                   => array(
                 'title'       => __('Enable plugin', 'dhlpwc'),
                 'type'        => 'checkbox',
                 'label'       => __('Enable', 'dhlpwc'),
                 'description' => __("Disabling this turns all of the plugin's features off.", 'dhlpwc'),
                 'default'     => 'yes',
             ),
-            'enable_column_info'        => array(
+            'enable_column_info'           => array(
                 'title'       => __('DHL label info', 'dhlpwc'),
                 'type'        => 'checkbox',
                 'label'       => __('Show', 'dhlpwc'),
                 'description' => __("Add shipping information in an additional column in your order overview.", 'dhlpwc'),
+                'default'     => 'yes',
+            ),
+            'enable_track_trace_component' => array(
+                'title'       => __('Track & Trace component', 'dhlpwc'),
+                'type'        => 'checkbox',
+                'label'       => __('Show', 'dhlpwc'),
+                'description' => __("Customers can see a Track & Trace component in the order summary.", 'dhlpwc'),
                 'default'     => 'yes',
             ),
 
@@ -283,15 +290,21 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                 'description' => __('Settings for developers.', 'dhlpwc'),
             ),
             'enable_debug'                      => array(
-                'title'       => __('Report problems', 'dhlpwc'),
+                'title'       => __('Enable reporting', 'dhlpwc'),
                 'type'        => 'checkbox',
                 'label'       => __('Enable', 'dhlpwc'),
-                'description' => __('Problems in the plugin with be automatically shared with the developers.', 'dhlpwc'),
+                'description' => __('Allow the debug options below.', 'dhlpwc'),
+            ),
+            'enable_debug_mail'                 => array(
+                'title'       => __('Report by mail', 'dhlpwc'),
+                'type'        => 'checkbox',
+                'label'       => __('Enable', 'dhlpwc'),
+                'description' => __('Problems with the DHL API are automatically reported to the plugin developers.', 'dhlpwc'),
             ),
             'debug_url'                         => array(
-                'title'       => __('Debug URL', 'dhlpwc'),
+                'title'       => __('Report with custom URL', 'dhlpwc'),
                 'type'        => 'text',
-                'description' => __("Debug URL used by developers. Improper usage can cause errors on the website, so it's recommended to be left empty.", 'dhlpwc'),
+                'description' => __("Debug URL used by developers. Please contact support if active monitoring is required and for the correct value. Will not be used if left empty.", 'dhlpwc'),
             ),
 
         );

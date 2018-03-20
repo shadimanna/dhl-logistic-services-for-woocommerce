@@ -9,17 +9,17 @@ class DHLPWC_Controller_Checkout
 
     public function __construct()
     {
+        add_filter('woocommerce_validate_postcode', array($this, 'validate_postcode'), 10, 3);
+        add_action('woocommerce_checkout_update_order_meta', array($this, 'add_option_meta'), 10, 2);
+
         $service = DHLPWC_Model_Service_Access_Control::instance();
         if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_OPTION_PARCELSHOP)) {
-            add_filter( 'woocommerce_validate_postcode', array($this, 'validate_postcode'), 10, 3);
-
             add_action('woocommerce_after_checkout_validation', array($this, 'validate_parcelshop_selection'), 10, 2);
-            add_action('woocommerce_checkout_update_order_meta', array($this, 'add_option_meta'), 10, 2);
         }
     }
 
     /**
-     * Add The Netherlands to the postcode check (missing in default WooCommerce)
+     * Add The Netherlands, Belgium and Luxembourg to the postcode check (missing in default WooCommerce)
      *
      * @param $valid
      * @param $postcode
@@ -30,7 +30,10 @@ class DHLPWC_Controller_Checkout
     {
         switch ($country) {
             case 'NL' :
-                $valid = (bool) preg_match( '/^[0-9]{4}\s?[a-z|A-Z]{2}$/', $postcode );
+            case 'BE' :
+            case 'LU' :
+                $service = DHLPWC_Model_Service_Postcode::instance();
+                $valid = $service->validate($postcode, $country);
                 break;
         }
         return $valid;

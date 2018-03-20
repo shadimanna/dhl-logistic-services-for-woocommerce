@@ -54,20 +54,28 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
     public function post($endpoint, $params = null)
     {
         $params = $params ? json_encode($params) : null;
-        $request = $this->request(self::POST, $endpoint, $params);
-        if (!$request) {
-            return false;
-        }
-        return json_decode($request['body'], true);
+        $response = $this->request(self::POST, $endpoint, $params);
+        return $this->parse_response($response, $endpoint, $params);
     }
 
     public function get($endpoint, $params = null)
     {
-        $request = $this->request(self::GET, $endpoint, $params);
-        if (!$request) {
+        $response = $this->request(self::GET, $endpoint, $params);
+        return $this->parse_response($response, $endpoint, $params);
+    }
+
+    protected function parse_response($response, $endpoint = null, $params = null)
+    {
+        if (!$response || !is_array($response) || !array_key_exists('body', $response)) {
+            // Something unexpected happened. Send debug mail if enabled
+            $service = DHLPWC_Model_Service_Access_Control::instance();
+            if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DEBUG_MAIL)) {
+                $service = DHLPWC_Model_Service_Debug::instance();
+                $service->mail($this->error_id, $this->error_message, $endpoint, $params);
+            }
             return false;
         }
-        return json_decode($request['body'], true);
+        return json_decode($response['body'], true);
     }
 
     protected function request($method, $endpoint, $params = null, $retry = false)
@@ -101,12 +109,14 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
             $request = $this->request($method, $endpoint, $params, true);
         }
 
-        // TODO error handling
-
         if ($request['response']['code'] >= 200 && $request['response']['code'] < 300) {
-            // TODO check if JSON
-            $this->is_error = false;
-            return $request;
+            if (array_key_exists('body', $request)) {
+                json_decode($request['body'], true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $this->is_error = false;
+                    return $request;
+                }
+            }
         }
 
         if (isset($request['body'])) {

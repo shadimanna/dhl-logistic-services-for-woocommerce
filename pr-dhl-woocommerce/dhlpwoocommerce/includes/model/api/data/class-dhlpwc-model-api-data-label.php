@@ -21,6 +21,7 @@ class DHLPWC_Model_API_Data_Label extends DHLPWC_Model_API_Data_Abstract
     public $options;
     public $piece_number;
     public $quantity;
+    public $application;
 
 }
 

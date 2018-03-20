@@ -137,6 +137,25 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         return true;
     }
 
+    public function check_track_trace_component()
+    {
+        $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
+
+        if (!isset($shipping_methods['dhlpwc'])) {
+            return false;
+        }
+
+        if (!isset($shipping_methods['dhlpwc']->settings['enable_track_trace_component'])) {
+            return false;
+        }
+
+        if ($shipping_methods['dhlpwc']->settings['enable_track_trace_component'] != 'yes') {
+            return false;
+        }
+
+        return true;
+    }
+
     protected function check_option($enable_option_string)
     {
         $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
@@ -210,6 +229,29 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         }
 
         return $shipping_methods['dhlpwc']->settings['debug_url'];
+    }
+
+    public function check_debug_mail()
+    {
+        $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
+
+        if (!isset($shipping_methods['dhlpwc'])) {
+            return false;
+        }
+
+        if (!isset($shipping_methods['dhlpwc']->settings['enable_debug'])) {
+            return false;
+        }
+
+        if ($shipping_methods['dhlpwc']->settings['enable_debug'] != 'yes') {
+            return false;
+        }
+
+        if ($shipping_methods['dhlpwc']->settings['enable_debug_mail'] != 'yes') {
+            return false;
+        }
+
+        return true;
     }
 
     public function check_default_send_to_business()
