@@ -32,6 +32,7 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
             'options'         => $request_options,
             'piece_number'    => 1,
             'quantity'        => 1,
+            'application'     => $this->version_string(),
         ));
 
         return $label;
@@ -70,6 +71,13 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
         unlink($path);
     }
 
+    protected function version_string()
+    {
+        $wp_version = get_bloginfo('version');
+        $application_string = sprintf('WordPress:%1$s', $wp_version);
+        return substr($application_string, 0, 16);
+    }
+
     protected function validate_pdf_file($path)
     {
         $upload_dir = wp_upload_dir();
@@ -102,7 +110,7 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
             ),
             'address'       => array(
                 'country_code' => $address['country'],
-                'postal_code'  => $address['postcode'],
+                'postal_code'  => WC_Validation::format_postcode($address['postcode'], $address['country']),
                 'city'         => $address['city'],
                 'street'       => $address['street'],
                 'number'       => $address['number'],
