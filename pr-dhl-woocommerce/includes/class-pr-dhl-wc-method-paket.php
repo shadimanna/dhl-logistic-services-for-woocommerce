@@ -176,28 +176,40 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'type'              => 'select',
 				'description'       => __( 'Please select your default DHL Paket shipping service for cross-border shippments that you want to offer to your customers (you can always change this within each individual order afterwards).', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
-				'options'           => $select_dhl_product_int
+				'options'           => $select_dhl_product_int,
+				'class'          => 'wc-enhanced-select',
 			),	
 			'dhl_default_product_dom' => array(
 				'title'             => __( 'Domestic Default Service', 'pr-shipping-dhl' ),
 				'type'              => 'select',
 				'description'       => __( 'Please select your default DHL Paket shipping service for domestic shippments that you want to offer to your customers (you can always change this within each individual order afterwards)', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
-				'options'           => $select_dhl_product_dom
+				'options'           => $select_dhl_product_dom,
+				'class'          => 'wc-enhanced-select',
 			),
 			'dhl_shipping_methods' => array(
 				'title'             => __( 'Shipping Methods', 'pr-shipping-dhl' ),
 				'type'              => 'multiselect',
 				'description'       => __( 'Select the Shipping Methods to display the enabled DHL Paket preferred services. You can press "ctrl" to select multiple options or click on a selected option to deselect it.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
-				'options'           => $wc_shipping_titles
+				'options'           => $wc_shipping_titles,
+				'class'          => 'wc-enhanced-select',
 			),
 			'dhl_payment_gateway' => array(
 				'title'             => __( 'Exclude Payment Gateways', 'pr-shipping-dhl' ),
 				'type'              => 'multiselect',
 				'description'       => __( 'Select the Payment Gateways to hide the enabled DHL Paket preferred services. You can press "ctrl" to select multiple options or click on a selected option to deselect it.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
-				'options'           => $payment_gateway_titles
+				'options'           => $payment_gateway_titles,
+				'class'          => 'wc-enhanced-select',
+			),
+			'dhl_note_type' => array(
+				'title'             => __( 'Order Note Type', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Customer Note', 'pr-shipping-dhl' ),
+				'default'           => 'yes',
+				'description'       => __( 'Please, tick here if you want the order note type to be a "customer note" that emails the customer or a "private note" that does not. The order note is used to add the shipping tracking number.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
 			),
 			'dhl_api'           => array(
 				'title'           => __( 'API Settings', 'pr-shipping-dhl' ),
