@@ -235,7 +235,7 @@ class PR_DHL_Front_End_Paket {
 
 			}
 
-			if( ! empty( $shipping_dhl_settings['dhl_cod_fee'] ) && $shipping_dhl_settings['dhl_cod_fee'] == 'yes' && $post_data['payment_method'] == 'cod' ) {
+			if( ! empty( $shipping_dhl_settings['dhl_cod_fee'] ) && $shipping_dhl_settings['dhl_cod_fee'] == 'yes' && isset( $post_data['payment_method'] ) && $post_data['payment_method'] == 'cod' ) {
 				// Add €2 fee to COD usage (Euro is being assumed as currency)
 				$cart->add_fee( __('DHL COD fee', 'pr-shipping-dhl'), 2 );
 			}

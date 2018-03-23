@@ -238,15 +238,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'description'       => __( 'Please, tick here if you want to test the plug-in installation against the DHL Sandbox Environment. Labels generated via Sandbox cannot be used for shipping and you need to enter your client ID and client secret for the Sandbox environment instead of the ones for production!', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 			),
-			'dhl_customize_button' => array(
-				'title'             => PR_DHL_BUTTON_TEST_CONNECTION,
-				'type'              => 'button',
-				'custom_attributes' => array(
-					'onclick' => "dhlTestConnection('#woocommerce_pr_dhl_paket_dhl_customize_button');",
-				),
-				'description'       => __( 'Press the button for testing the connection against our DHL Paket Gateways (depending on the selected environment this test is being done against the Sandbox or the Production Environment). Ensure settings are saved before pressing "Test Connection".', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
-			),
 			'dhl_debug' => array(
 				'title'             => __( 'Debug Log', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
