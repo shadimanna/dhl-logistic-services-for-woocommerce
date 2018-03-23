@@ -387,7 +387,7 @@ abstract class PR_DHL_WC_Order {
 			}
 		}
 
-		return $total_weight;
+		return apply_filters('pr_shipping_dhl_order_weight', $total_weight, $order_id );
 	}
 
 	protected function is_shipping_domestic( $order_id ) {   	 

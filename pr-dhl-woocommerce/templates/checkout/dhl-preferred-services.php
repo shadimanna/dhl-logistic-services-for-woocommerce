@@ -200,9 +200,13 @@ Please choose your preferred delivery option.', 'pr-shipping-dhl'); ?></td>
 ?>
 <tr class="dhl-co-tr">
   <td colspan="2">
-    <?php echo sprintf(
-      __('* For a booking of preferred day and preferred time in combination there is a surcharge of %s incl. VAT', 'pr-shipping-dhl'), 
-      wc_price($shipping_dhl_settings['dhl_preferred_day_time_cost']));
+    <?php 
+      if( ( isset( $shipping_dhl_settings['dhl_preferred_day'] ) && ( $shipping_dhl_settings['dhl_preferred_day'] == 'yes' ) ) || 
+      ( isset( $shipping_dhl_settings['dhl_preferred_time'] ) && ( $shipping_dhl_settings['dhl_preferred_time'] == 'yes' ) ) ) {
+        echo sprintf(
+        __('* For a booking of preferred day and preferred time in combination there is a surcharge of %s incl. VAT', 'pr-shipping-dhl'), 
+        wc_price($shipping_dhl_settings['dhl_preferred_day_time_cost']));
+      }
     ?>
   </td>
 </tr>
