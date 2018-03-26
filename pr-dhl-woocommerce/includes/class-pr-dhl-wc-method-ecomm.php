@@ -24,7 +24,7 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 		$this->id = 'pr_dhl_ecomm';
 		$this->instance_id = absint( $instance_id );
 		$this->method_title = __( 'DHL eCommerce', 'pr-shipping-dhl' );
-		$this->method_description = sprintf( __( 'To start creating DHL eCommerce shipping labels and return back a DHL Tracking number to your customers, please fill in your user credentials as shown in your contracts provided by DHL. Not yet a customer? Please get a quote %shere%s or find out more on how to set up this plugin and get some more support %shere%s.', 'pr-shipping-dhl' ), '<a href="https://www.logistics.dhl/us-en/ecommerce/contact-ecommerce/contact-ecommerce-business.html?LN=EN&SFL=WooCommerce" target="_blank">', '</a>', '<a href="https://www.logistics.dhl/us-en/ecommerce/integration/integration_channels/3pvs/WooCommerce.html" target="_blank">', '</a>' );
+		$this->method_description = sprintf( __( 'To start creating DHL eCommerce shipping labels and return back a DHL Tracking number to your customers, please fill in your user credentials as shown in your contracts provided by DHL. Not yet a customer? Please get a quote %shere%s or find out more on how to set up this plugin and get some more support %shere%s.', 'pr-shipping-dhl' ), '<a href="https://www.logistics.dhl/global-en/home/our-divisions/ecommerce/integration/contact-ecommerce-integration-get-a-quote.html?cid=referrer_3pv-signup_woocommerce_ecommerce-integration&SFL=v_signup-woocommerce" target="_blank">', '</a>', '<a href="https://www.logistics.dhl/global-en/home/our-divisions/ecommerce/integration/integration-channels/third-party-solutions/woocommerce.html?cid=referrer_docu_woocommerce_ecommerce-integration&SFL=v_woocommerce" target="_blank">', '</a>' );
 
 		$this->init();
 	}
