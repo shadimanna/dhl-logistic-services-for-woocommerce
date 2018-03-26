@@ -500,7 +500,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 												'product' => $this->args['order_details']['dhl_product'],
 												'accountNumber' => $account_number,
 												'accountNumber' => $account_number,
-												'returnShipmentAccountNumber' => $return_account_number,
 												'shipmentDate' => date('Y-m-d'),
 												'ShipmentItem' => 
 													array( 
@@ -565,6 +564,9 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				);
 			// error_log($this->args['order_details']['return_address']);
 			if ( isset( $this->args['order_details']['return_address'] ) && ( $this->args['order_details']['return_address'] == 'yes' ) ) {
+
+				$dhl_label_body['ShipmentOrder']['Shipment']['ShipmentDetails']['returnShipmentAccountNumber'] = $return_account_number;
+
 				$dhl_label_body['ShipmentOrder']['Shipment']['ReturnReceiver'] = array(
 												'Name' =>
 													array(

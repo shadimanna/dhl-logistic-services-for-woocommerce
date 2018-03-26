@@ -46,6 +46,14 @@ abstract class PR_DHL_WC_Order {
 			add_filter( 'woocommerce_subscriptions_renewal_order_meta_query', array( $this, 'woocommerce_subscriptions_renewal_order_meta_query' ), 10 );
 		}
 
+		// add bulk actions to the Orders screen table bulk action drop-downs
+		add_action( 'admin_footer-edit.php', array( $this, 'add_order_bulk_actions' ) );
+
+		// process orders bulk actions
+		add_action( 'load-edit.php', array( $this, 'process_orders_bulk_actions' ) );
+
+		// display admin notices for bulk actions
+		add_action( 'admin_notices', array( $this, 'render_messages' ) );
 	}
 
 	/**
@@ -201,7 +209,7 @@ abstract class PR_DHL_WC_Order {
 
 		$this->save_dhl_label_items( $post_id, $args );
 
-		return $args;
+		// return $args;
 	}
 
 	abstract public function get_additional_meta_ids();
@@ -215,12 +223,12 @@ abstract class PR_DHL_WC_Order {
 		$order_id = wc_clean( $_POST[ 'order_id' ] );
 
 		// Save inputted data first
-		$dhl_label_args = $this->save_meta_box( $order_id );
+		$this->save_meta_box( $order_id );
 		
 		try {
 
 			// Gather args for DHL API call
-			$args = $this->get_label_args( $order_id, $dhl_label_args );
+			$args = $this->get_label_args( $order_id );
 
 			// Allow third parties to modify the args to the DHL APIs
 			$args = apply_filters('pr_shipping_dhl_label_args', $args, $order_id );
@@ -418,15 +426,18 @@ abstract class PR_DHL_WC_Order {
 	}
 
 	// This function gathers all of the data from WC to send to DHL API
-	protected function get_label_args( $order_id, $dhl_label_args ) {
+	protected function get_label_args( $order_id ) {
+
+		$dhl_label_items = $this->get_dhl_label_items( $order_id );
+
 		// Get settings from child implementation
-		$args = $this->get_label_args_settings( $order_id, $dhl_label_args );		
+		$args = $this->get_label_args_settings( $order_id, $dhl_label_items );		
 		
 		$order = wc_get_order( $order_id );
 		// Get DHL service product
-		$args['order_details']['dhl_product'] = $dhl_label_args['pr_dhl_product'];
-		// $args['order_details']['duties'] = $dhl_label_args['shipping_dhl_duties'];
-		$args['order_details']['weight'] = $dhl_label_args['pr_dhl_weight'];
+		$args['order_details']['dhl_product'] = $dhl_label_items['pr_dhl_product'];
+		// $args['order_details']['duties'] = $dhl_label_items['shipping_dhl_duties'];
+		$args['order_details']['weight'] = $dhl_label_items['pr_dhl_weight'];
 
 		// Get WC specific details; order id, currency, units of measure, COD amount (if COD used)
 		$args['order_details']['order_id'] = $order_id;
@@ -550,7 +561,7 @@ abstract class PR_DHL_WC_Order {
 		return $args;
 	}
 
-	abstract protected function get_label_args_settings( $order_id, $dhl_label_args );
+	abstract protected function get_label_args_settings( $order_id, $dhl_label_items );
 
 	protected function delete_label_args( $order_id ) {
 		return $this->get_dhl_label_tracking( $order_id );
@@ -589,6 +600,118 @@ abstract class PR_DHL_WC_Order {
 
 		return $order_meta_query;
 	}
+
+	/**
+	 * Bulk functions
+	 */
+	public function add_order_bulk_actions() {
+		global $post_type, $post_status;
+
+		if ( $post_type === 'shop_order' && $post_status !== 'trash' ) :
+
+			?>
+			<script type="text/javascript">
+				jQuery( document ).ready( function ( $ ) {
+					$( 'select[name^=action]' ).append(
+						<?php $index = count( $actions = $this->get_bulk_actions() ); ?>
+						<?php foreach ( $actions as $action => $name ) : ?>
+							$( '<option>' ).val( '<?php echo esc_js( $action ); ?>' ).text( '<?php echo esc_js( $name ); ?>' )
+							<?php --$index; ?>
+							<?php if ( $index ) { echo ','; } ?>
+						<?php endforeach; ?>
+					);
+				} );
+			</script>
+			<?php
+
+		endif;
+	}
+
+	public function process_orders_bulk_actions() {
+		global $typenow;
+
+		if ( 'shop_order' === $typenow ) {
+
+			// Get the bulk action
+			$wp_list_table = _get_list_table( 'WP_Posts_List_Table' );
+			$action        = $wp_list_table->current_action();
+			$order_ids     = array();
+
+			if ( ! $action || ! array_key_exists( $action, $this->get_bulk_actions() ) ) {
+				return;
+			}
+
+			// Make sure order IDs are submitted
+			if ( isset( $_REQUEST['post'] ) ) {
+				$order_ids = array_map( 'absint', $_REQUEST['post'] );
+			}
+
+			// Trigger an admin notice to have the user manually open a print window
+			$is_error = 0;
+			$orders_count = count( $order_ids );
+
+			if ( $orders_count < 1 ) {
+				$message = __( 'No orders selected for the DHL bulk action, please select orders before performing the DHL action.', 'pr-shipping-dhl' );
+				$is_error = 1;
+			} else {
+
+				$message = $this->validate_bulk_actions( $action, $order_ids );
+				if ( ! empty( $message ) ) {
+					$is_error = 1;
+				} else {
+					try {
+						$message = $this->process_bulk_actions( $action, $order_ids, $orders_count );
+					} catch (Exception $e) {
+						$is_error = 1;
+						$message = $e->getMessage();			
+					}
+				}
+			}
+
+			/* @see render_messages() */
+			update_option( '_pr_dhl_bulk_action_confirmation', array( get_current_user_id() => $message, 'is_error' => $is_error ) );
+
+ 		}
+	}
+	
+	public function render_messages( $current_screen = null ) {
+		if ( ! $current_screen instanceof WP_Screen ) {
+			$current_screen = get_current_screen();
+		}
+
+		if ( isset( $current_screen->id ) && in_array( $current_screen->id, array( 'shop_order', 'edit-shop_order' ), true ) ) {
+
+			$bulk_action_message_opt = get_option( '_pr_dhl_bulk_action_confirmation' );
+
+			if ( ( $bulk_action_message_opt ) && is_array( $bulk_action_message_opt ) ) {
+
+				$user_id = key( $bulk_action_message_opt );
+
+				if ( get_current_user_id() !== (int) $user_id ) {
+					return;
+				}
+
+				$message = wp_kses_post( current( $bulk_action_message_opt ) );
+				$is_error = wp_kses_post( next( $bulk_action_message_opt ) );
+				
+				if( $is_error ) {
+					echo '<div class="error"><ul><li>' . $message . '</li></ul></div>';
+				} else {
+					echo '<div id="wp-admin-message-handler-message"  class="updated"><ul><li><strong>' . $message . '</strong></li></ul></div>';
+				}
+
+				delete_option( '_pr_dhl_bulk_action_confirmation' );
+			}
+		}
+	}
+
+	abstract public function get_bulk_actions();
+	
+	public function validate_bulk_actions( $action, $order_ids ) {
+		return '';
+	}
+	
+	abstract public function process_bulk_actions( $action, $order_ids, $orders_count );
 }
 
 endif;

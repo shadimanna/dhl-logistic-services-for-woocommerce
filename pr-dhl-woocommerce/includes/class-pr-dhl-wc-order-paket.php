@@ -329,15 +329,15 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		return get_post_meta( $order_id, '_pr_shipment_dhl_label_items', true );
 	}
 
-	protected function get_label_args_settings( $order_id, $dhl_label_args ) {
+	protected function get_label_args_settings( $order_id, $dhl_label_items ) {
 
 		// Get services etc.
 		$meta_box_ids = $this->get_additional_meta_ids();
 		
 		foreach ($meta_box_ids as $value) {
 			$api_key = str_replace('pr_dhl_', '', $value);
-			if ( isset( $dhl_label_args[ $value ] ) ) {
-				$args['order_details'][ $api_key ] = $dhl_label_args[ $value ];
+			if ( isset( $dhl_label_items[ $value ] ) ) {
+				$args['order_details'][ $api_key ] = $dhl_label_items[ $value ];
 			}
 		}
 
@@ -355,7 +355,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		
 		$args['dhl_settings'][ 'shipper_country' ] = PR_DHL()->get_base_country();
 		$args['dhl_settings'][ 'return_country' ] = PR_DHL()->get_base_country();
-		$args['dhl_settings'][ 'participation' ] = $shipping_dhl_settings[ 'dhl_participation_' . $dhl_label_args['pr_dhl_product'] ];
+		$args['dhl_settings'][ 'participation' ] = $shipping_dhl_settings[ 'dhl_participation_' . $dhl_label_items['pr_dhl_product'] ];
 
 		return $args;
 	}
@@ -371,6 +371,55 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		return $args;
 	}
 
+	public function get_bulk_actions() {
+
+		$shop_manager_actions = array();
+
+		$shop_manager_actions = array(
+			'pr_dhl_create_labels'      => __( 'DHL Create Labels', 'pr-shipping-dhl' )
+		);
+
+		return $shop_manager_actions;
+	}
+
+	public function process_bulk_actions( $action, $order_ids, $orders_count ) {
+		$label_count = 0;
+		if ( 'pr_dhl_create_labels' === $action ) {
+			
+			foreach ( $order_ids as $order_id ) {
+				
+				// Create label if one has not been created before
+				if( empty( $this->get_dhl_label_tracking( $order_id ) ) ) {
+					try {
+						// Gather args for DHL API call
+						$args = $this->get_label_args( $order_id );
+
+						// Allow third parties to modify the args to the DHL APIs
+						$args = apply_filters('pr_shipping_dhl_label_args', $args, $order_id );
+
+						$dhl_obj = PR_DHL()->get_dhl_factory();
+						$label_tracking_info = $dhl_obj->get_dhl_label( $args );
+
+						$this->save_dhl_label_tracking( $order_id, $label_tracking_info );
+						$tracking_note = $this->get_tracking_link( $label_tracking_info['tracking_number'] );
+						// $label_url = $label_tracking_info['label_url'];
+
+						$order = wc_get_order( $order_id );
+						$order->add_order_note( $tracking_note, 1, true );
+						
+						++$label_count;
+
+					} catch (Exception $e) {
+						throw $e;
+					}
+				}
+			}
+
+			$message = sprintf( __( 'DHL label created for %1$s order(s).', 'pr-shipping-dhl' ), $label_count );
+		}
+
+		return $message;
+	}
 }
 
 endif;
