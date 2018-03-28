@@ -24,3 +24,33 @@ span.wc_dhl_error {
 	width:7%;
 	/*text-align:center*/
 }
+
+/* DHL Express products list styling */
+#dhl_express_products td {
+  vertical-align: middle;
+  padding: 4px 7px; }
+
+#dhl_express_products th {
+  padding: 9px 7px; 
+}
+
+#dhl_express_products th.sort {
+  width: 16px;
+  padding: 0 16px; 
+}
+
+#dhl_express_products td.sort {
+  cursor: move;
+  width: 16px;
+  padding: 0 16px;
+  cursor: move;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAHUlEQVQYV2O8f//+fwY8gJGgAny6QXKETRgEVgAAXxAVsa5Xr3QAAAAASUVORK5CYII=) no-repeat center; 
+}
+
+#dhl_express_products th.wide_text {
+  width: 40%;
+}
+
+#dhl_express_products th.short_text {
+  width: 10%;
+}

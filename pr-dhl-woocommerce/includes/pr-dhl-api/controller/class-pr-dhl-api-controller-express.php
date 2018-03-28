@@ -21,13 +21,13 @@ class PR_DHL_API_Controller_Express extends PR_DHL_API {
 		$country_code = $this->country_code;
 		
 		$germany_int =  array( 
-								'V53WPAK' => __('DHL Express International', 'pr-shipping-dhl'),
-								'V55PAK' => __('DHL Express Connect', 'pr-shipping-dhl')
+								'D' => __('EXPRESS WORLDWIDE', 'pr-shipping-dhl'),
+								'E' => __('EXPRESS 9:00', 'pr-shipping-dhl'),
 								);
 
 		$austria_int = array(  
 							'V87PARCEL' => __('DHL Express Connect', 'pr-shipping-dhl'),
-							'V82PARCEL' => __('DHL Express International', 'pr-shipping-dhl')
+							'V82PARCEL' => __('DHL Express International', 'pr-shipping-dhl'),
 							);
 
 		$dhl_prod_int = array();
@@ -51,9 +51,10 @@ class PR_DHL_API_Controller_Express extends PR_DHL_API {
 		$country_code = $this->country_code;
 
 		$germany_dom = array(  
-								'V01PAK' => __('DHL Express', 'pr-shipping-dhl'),
-								'V01PRIO' => __('DHL Express PRIO', 'pr-shipping-dhl'),
-								'V06PAK' => __('DHL Express Taggleich', 'pr-shipping-dhl')
+								'1' => __('DOMESTIC EXPRESS 12:00', 'pr-shipping-dhl'),
+								'G' => __('DOMESTIC ECONOMY SELECT', 'pr-shipping-dhl'),
+								'H' => __('ECONOMY SELECT', 'pr-shipping-dhl'),
+								'I' => __('DOMESTIC EXPRESS 9:00', 'pr-shipping-dhl'),
 								);
 
 		$austria_dom = array( 'V86PARCEL' => __('DHL Express Austria', 'pr-shipping-dhl') );

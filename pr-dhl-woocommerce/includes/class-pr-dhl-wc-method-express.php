@@ -24,8 +24,12 @@ class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 		$this->id = 'pr_dhl_express';
 		$this->instance_id = absint( $instance_id );
 		$this->method_title = __( 'DHL Express', 'pr-shipping-dhl' );
-		$this->method_description = sprintf( __( 'To start creating DHL Express shipping labels and return back a DHL Tracking number to your customers, please fill in your user credentials as shown in your contracts provided by DHL. Not yet a customer? Please get a quote %shere%s or find out more on how to set up this plugin and get some more support %shere%s.', 'pr-shipping-dhl' ), '<a href="https://www.logistics.dhl/us-en/ecommerce/contact-ecommerce/contact-ecommerce-business.html?LN=EN&SFL=WooCommerce" target="_blank">', '</a>', '<a href="https://www.logistics.dhl/us-en/ecommerce/integration/integration_channels/3pvs/WooCommerce.html" target="_blank">', '</a>' );
-
+		$this->method_description = __( 'Setup DHL Express rates and create DHL Express labels.', 'pr-shipping-dhl' );
+		$this->supports           = array(
+			'settings',
+			'shipping-zones', // support shipping zones shipping method
+			'instance-settings',
+		);
 		$this->init();
 	}
 
@@ -34,8 +38,12 @@ class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 	 */
 	private function init() {
 		// Load the settings.
+		$this->init_instance_form_fields();
 		$this->init_form_fields();
 		$this->init_settings();
+
+		// Set title so can be viewed in zone screen
+		$this->title = $this->get_option( 'title' );
 
 		add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_scripts' ) );
@@ -72,6 +80,37 @@ class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 		return ob_get_clean();
 	}
 
+	/**
+	 * Initialize integration settings form fields.
+	 *
+	 * @return void
+	 */
+	public function init_instance_form_fields() {
+		$this->instance_form_fields = array(
+			'title'            	=> array(
+				'title'           	=> __( 'Method Title', 'smart-send-shipping' ),
+				'type'            	=> 'text',
+				'description'     	=> __( 'This controls the title which the user sees during checkout.', 'smart-send-shipping' ),
+				'default'         	=> __( 'DHL Express', 'smart-send-shipping' ),
+				'desc_tip'        	=> true
+			),
+			'tax_status'		=> array(
+				'title' 			=> __( 'Tax status', 'smart-send-shipping' ),
+				'type'	 			=> 'select',
+				'class' 	        => 'wc-enhanced-select',
+				'description'     => __( 'This controls the title which the user sees during checkout.', 'smart-send-shipping' ),
+				'default' 			=> 'taxable',
+				'desc_tip'        	=> true,
+				'options'			=> array(
+					'taxable' 		=> __( 'Taxable', 'smart-send-shipping' ),
+					'none' 			=> _x( 'None', 'Tax status', 'smart-send-shipping' ),
+				)
+			),
+			'express_products' => array(
+				'type'        => 'express_products',
+			),
+		);
+	}
 	/**
 	 * Initialize integration settings form fields.
 	 *
@@ -297,6 +336,119 @@ class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 		return ob_get_clean();
 	}
 
+	/**
+	 * HTML for service option.
+	 *
+	 * @access public
+	 * @return string HTML string.
+	 */
+	public function generate_express_products_html() {
+		ob_start();
+		?>
+		<tr valign="top" id="service_options">
+			<th scope="row" class="titledesc"><?php _e( 'Services', 'woocommerce-shipping-ups' ); ?></th>
+			<td class="forminp">
+				<table id="dhl_express_products" class="widefat wc_input_table sortable" cellspacing="0">
+					<thead>
+						<th class="sort">&nbsp;</th>
+						<th class="short_text"><?php _e( 'Service Code', 'woocommerce-shipping-ups' ); ?></th>
+						<th class="wide_text"><?php _e( 'Name', 'woocommerce-shipping-ups' ); ?></th>
+						<th class="short_text"><?php _e( 'Enabled', 'woocommerce-shipping-ups' ); ?></th>
+						<th><?php echo sprintf( __( 'Price Adjustment (%s)', 'woocommerce-shipping-ups' ), get_woocommerce_currency_symbol() ); ?></th>
+						<th><?php _e( 'Price Adjustment (%)', 'woocommerce-shipping-ups' ); ?></th>
+					</thead>
+					<tfoot>
+					<?php //if ( 'PL' !== $this->origin_country && ! in_array( $this->origin_country, $this->eu_array ) ) : ?>
+						<tr>
+							<th colspan="6">
+								<small class="description"><?php //_e( '<strong>Domestic Rates</strong>: Next Day Air, 2nd Day Air, Ground, 3 Day Select, Next Day Air Saver, Next Day Air Early AM, 2nd Day Air AM', 'woocommerce-shipping-ups' ); ?></small><br/>
+								<small class="description"><?php //_e( '<strong>International Rates</strong>: Worldwide Express, Worldwide Expedited, Standard, Worldwide Express Plus, UPS Saver', 'woocommerce-shipping-ups' ); ?></small>
+							</th>
+						</tr>
+					<?php // endif ?>
+					</tfoot>
+					<tbody>
+						<?php
+						// $sort = 0;
+						// $ordered_services = array();
+						/*
+						if ( 'PL' === $this->origin_country ) {
+							$use_services = $this->polandservices;
+						} elseif ( in_array( $this->origin_country, $this->eu_array ) ) {
+							$use_services = $this->euservices;
+						} else {
+							$use_services = $this->services;
+						}
+						*/
+						$dhl_express = PR_DHL()->get_dhl_factory( true );
+						$use_services = $dhl_express->get_dhl_products_domestic();
+						$custom_services = $this->get_option('express_products');
+						error_log(print_r($custom_services,true));
+						/*
+						foreach ( $use_services as $code => $name ) {
+
+							if ( isset( $custom_services[ $code ]['order'] ) ) {
+								$sort = $custom_services[ $code ]['order'];
+							}
+
+							while ( isset( $ordered_services[ $sort ] ) ) {
+								$sort++;
+							}
+
+							$ordered_services[ $sort ] = array( $code, $name );
+
+							$sort++;
+						}
+
+						ksort( $ordered_services );*/
+
+						foreach ( $custom_services as $key => $value ) {
+							$code = $key;
+							$name = $use_services[ $key ];
+							?>
+							<tr>
+								<td class="sort"></td>
+								<td><strong><?php echo $code; ?></strong></td>
+								<td><input type="text" name="dhl_express_product[<?php echo $code; ?>][name]" placeholder="<?php echo $name; ?> (<?php echo $this->title; ?>)" value="<?php echo isset( $custom_services[ $code ]['name'] ) ? $custom_services[ $code ]['name'] : ''; ?>" size="50" /></td>
+								<td><input type="checkbox" name="dhl_express_product[<?php echo $code; ?>][enabled]" <?php checked( ( ! isset( $custom_services[ $code ]['enabled'] ) || ! empty( $custom_services[ $code ]['enabled'] ) ), true ); ?> /></td>
+								<td><input class="wc_input_price" type="text" name="dhl_express_product[<?php echo $code; ?>][adjustment]" placeholder="N/A" value="<?php echo isset( $custom_services[ $code ]['adjustment'] ) ? $custom_services[ $code ]['adjustment'] : ''; ?>" size="4" /></td>
+								<td><input class="wc_input_decimal" type="text" name="dhl_express_product[<?php echo $code; ?>][adjustment_percent]" placeholder="N/A" value="<?php echo isset( $custom_services[ $code ]['adjustment_percent'] ) ? $custom_services[ $code ]['adjustment_percent'] : ''; ?>" size="4" /></td>
+							</tr>
+							<?php
+						}
+						?>
+					</tbody>
+				</table>
+			</td>
+		</tr>
+		<?php
+		return ob_get_clean();
+	}
+
+	/**
+	 * Validate services option.
+	 *
+	 * @param mixed $key Option's key.
+	 *
+	 * @return mixed Validated value.
+	 */
+	public function validate_express_products_field( $key ) {
+		$services         = array();
+		$posted_services  = $_POST['dhl_express_product'];
+		error_log(print_r($posted_services,true));
+		foreach ( $posted_services as $code => $settings ) {
+
+			$services[ $code ] = array(
+				'name'               => wc_clean( $settings['name'] ),
+				'order'              => wc_clean( $settings['order'] ),
+				'enabled'            => isset( $settings['enabled'] ) ? true : false,
+				'adjustment'         => wc_clean( $settings['adjustment'] ),
+				'adjustment_percent' => str_replace( '%', '', wc_clean( $settings['adjustment_percent'] ) ),
+			);
+		}
+
+		return $services;
+	}
 	/**
 	 * Validate the API key
 	 * @see validate_settings_fields()

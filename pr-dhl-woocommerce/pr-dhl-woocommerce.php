@@ -185,7 +185,7 @@ class PR_DHL_WC {
         add_action( 'init', array( $this, 'load_textdomain' ) );
         add_action( 'init', array( $this, 'set_payment_gateways' ) );
 
-        add_action( 'admin_enqueue_scripts', array( $this, 'dhl_theme_enqueue_styles') );
+        add_action( 'admin_enqueue_scripts', array( $this, 'dhl_theme_enqueue_styles'), 20 );
 
         add_action( 'woocommerce_shipping_init', array( $this, 'includes' ) );
         add_filter( 'woocommerce_shipping_methods', array( $this, 'add_shipping_method' ) );
