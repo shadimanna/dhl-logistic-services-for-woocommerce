@@ -519,14 +519,18 @@ class PR_DHL_WC {
 	}
 
 	public function set_payment_gateways() {
-		$dhl_obj = $this->get_dhl_factory();
-				
-		if( $dhl_obj->is_dhl_paket() ) {
-			$wc_payment_gateways = WC()->payment_gateways()->payment_gateways();
+		try {
+			$dhl_obj = $this->get_dhl_factory();
+					
+			if( $dhl_obj->is_dhl_paket() ) {
+				$wc_payment_gateways = WC()->payment_gateways()->payment_gateways();
 
-			foreach ($wc_payment_gateways as $key => $gateway) {
-				$this->payment_gateway_titles[ $key ] = $gateway->get_method_title();
+				foreach ($wc_payment_gateways as $key => $gateway) {
+					$this->payment_gateway_titles[ $key ] = $gateway->get_method_title();
+				}
 			}
+		} catch (Exception $e) {
+			add_action( 'admin_notices', array( $this, 'environment_check' ) );
 		}
 	}
 

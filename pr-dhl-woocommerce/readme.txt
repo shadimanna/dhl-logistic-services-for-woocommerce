@@ -81,6 +81,7 @@ In case you could not find what you were looking for in our FAQs and the detaile
 
 = 1.0.13 =
 * Sending "email" field via DHL Paket API to support DHL AT
+* Bug fix - Exception handling for payment gateway check
 
 = 1.0.12 =
 * Bug fix - DHL Paket: Tooltip conflict with bootstrap tooltip
@@ -141,7 +142,7 @@ In case you could not find what you were looking for in our FAQs and the detaile
 == Upgrade Notice ==
 
 = 1.0.13 =
-* Enhancement, please upgrade
+* Bug fixes and enhancements, please upgrade
 
 = 1.0.12 =
 * Bug fixes and enhancements, please upgrade
