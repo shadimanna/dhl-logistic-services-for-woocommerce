@@ -5,7 +5,7 @@
  * Description: WooCommerce integration for DHL eCommerce, DHL Paket and DHL Parcel Europe (Benelux and Iberia)
  * Author: DHL
  * Author URI: http://dhl.com/woocommerce
- * Version: 1.0.11
+ * Version: 1.0.13
  * WC requires at least: 2.6.14
  * WC tested up to: 3.3
  *
@@ -32,7 +32,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "1.0.11";
+	private $version = "1.0.13";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -519,10 +519,18 @@ class PR_DHL_WC {
 	}
 
 	public function set_payment_gateways() {
-		$wc_payment_gateways = WC()->payment_gateways()->payment_gateways();
+		try {
+			$dhl_obj = $this->get_dhl_factory();
+					
+			if( $dhl_obj->is_dhl_paket() ) {
+				$wc_payment_gateways = WC()->payment_gateways()->payment_gateways();
 
-		foreach ($wc_payment_gateways as $key => $gateway) {
-			$this->payment_gateway_titles[ $key ] = $gateway->get_method_title();
+				foreach ($wc_payment_gateways as $key => $gateway) {
+					$this->payment_gateway_titles[ $key ] = $gateway->get_method_title();
+				}
+			}
+		} catch (Exception $e) {
+			add_action( 'admin_notices', array( $this, 'environment_check' ) );
 		}
 	}
 

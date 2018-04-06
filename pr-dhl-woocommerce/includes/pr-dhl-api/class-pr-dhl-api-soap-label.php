@@ -554,7 +554,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 												// 'Packstation' => array(),
 												'Communication' =>
 													array(
-														'phone' => $this->args['shipping_address']['phone'] //'+49 1525 9629550'
+														'phone' => $this->args['shipping_address']['phone'],
+														'email' => $this->args['shipping_address']['email']
 														)
 											)											
 									)

@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 4.9.2
-Stable tag: 1.0.11
+Stable tag: 1.0.13
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,6 +79,19 @@ In case you could not find what you were looking for in our FAQs and the detaile
 
 == Changelog ==
 
+= 1.0.13 =
+* Sending "email" field via DHL Paket API to support DHL AT
+* Bug fix - Exception handling for payment gateway check
+
+= 1.0.12 =
+* Bug fix - DHL Paket: Tooltip conflict with bootstrap tooltip
+* Bug fix - DHL Paket: Remove * text if preferred day and time not displayed in the frontend
+* Bug fix - DHL eCommerce: Fix conflict between 'PayPal Express' and plugin for DHL eCommerce merchants only
+* Bug fix - DHL eCommerce: Fix settings links
+* Warning fix: 'payment_method' array key warning
+* Enhancement: Add weight filter 'pr_shipping_dhl_order_weight'
+* Enhancement - DHL Paket: Remove 'Test Connection' button, since not accurate
+
 = 1.0.11 =
 * Bug fix - DHL Parcel: Fixed Dutch translation loading bug
 * Enhancement - DHL Parcel: Added track & trace component to account page, can be enabled in settings
@@ -127,6 +140,12 @@ In case you could not find what you were looking for in our FAQs and the detaile
 * First public release
 
 == Upgrade Notice ==
+
+= 1.0.13 =
+* Bug fixes and enhancements, please upgrade
+
+= 1.0.12 =
+* Bug fixes and enhancements, please upgrade
 
 = 1.0.11 =
 * Enhancement, please upgrade
