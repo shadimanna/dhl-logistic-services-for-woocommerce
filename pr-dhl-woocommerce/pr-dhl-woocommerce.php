@@ -424,7 +424,7 @@ class PR_DHL_WC {
 			$this->log_msg($e->getMessage());
 
 			wp_send_json( array( 
-				'connection_error' => sprintf( __('Connected Failed: %s Make sure to save the settings before testing the connection. ', 'pr-shipping-dhl'), $e->getMessage() ),
+				'connection_error' => sprintf( __('Connection Failed: %s Make sure to save the settings before testing the connection. ', 'pr-shipping-dhl'), $e->getMessage() ),
 				'button_txt'			=> PR_DHL_BUTTON_TEST_CONNECTION
 				 ) );
 		}

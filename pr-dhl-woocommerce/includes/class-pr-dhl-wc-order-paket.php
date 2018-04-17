@@ -37,6 +37,20 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		
 		echo '<hr/>';
 
+		if( ! $this->is_shipping_domestic( $order_id ) ) {
+
+			// Duties drop down
+			$duties_opt = $dhl_obj->get_dhl_duties();
+			woocommerce_wp_select( array(
+				'id'          		=> 'pr_dhl_duties',
+				'label'       		=> __( 'Duties:', 'pr-shipping-dhl' ),
+				'description'		=> '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_duties'] ) ? $dhl_label_items['pr_dhl_duties'] : '',
+				'options'			=> $duties_opt,
+				'custom_attributes'	=> array( $is_disabled => $is_disabled )
+			) );
+		}
+
 		// Preferred options for Germany only
 		if( ( $base_country_code == 'DE' ) && ( $this->is_shipping_domestic( $order_id ) ) ) {
 			$preferred_days = PR_DHL()->get_dhl_preferred_days();
@@ -86,20 +100,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 					'description'		=> '',
 					'value'       		=> $neighbor_info,
 					'custom_attributes'	=> array( $is_disabled => $is_disabled, 'maxlength' => '80' )
-				) );
-			}
-
-			if( ! $this->is_shipping_domestic( $order_id ) ) {
-
-				// Duties drop down
-				$duties_opt = $dhl_obj->get_dhl_duties();
-				woocommerce_wp_select( array(
-					'id'          		=> 'pr_dhl_duties',
-					'label'       		=> __( 'Duties:', 'pr-shipping-dhl' ),
-					'description'		=> '',
-					'value'       		=> isset( $dhl_label_items['pr_dhl_duties'] ) ? $dhl_label_items['pr_dhl_duties'] : '',
-					'options'			=> $duties_opt,
-					'custom_attributes'	=> array( $is_disabled => $is_disabled )
 				) );
 			}
 
@@ -239,17 +239,18 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 			echo '<hr/>';
 
-			woocommerce_wp_checkbox( array(
-				'id'          		=> 'pr_dhl_return_address',
-				'label'       		=> __( 'Return Address: ', 'pr-shipping-dhl' ),
-				'placeholder' 		=> '',
-				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_return_address'] ) ? $dhl_label_items['pr_dhl_return_address'] : '',
-				'custom_attributes'	=> array( $is_disabled => $is_disabled )
-			) );
-
-			echo '<hr/>';
 		}
+		
+		woocommerce_wp_checkbox( array(
+			'id'          		=> 'pr_dhl_return_address',
+			'label'       		=> __( 'Return Address: ', 'pr-shipping-dhl' ),
+			'placeholder' 		=> '',
+			'description'		=> '',
+			'value'       		=> isset( $dhl_label_items['pr_dhl_return_address'] ) ? $dhl_label_items['pr_dhl_return_address'] : '',
+			'custom_attributes'	=> array( $is_disabled => $is_disabled )
+		) );
+
+		echo '<hr/>';
 
 	}
 
@@ -415,7 +416,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				}
 			}
 
-			$message = sprintf( __( 'DHL label created for %1$s order(s).', 'pr-shipping-dhl' ), $label_count );
+			$message = sprintf( __( 'DHL label created for %1$s out of %2$s selected order(s).', 'pr-shipping-dhl' ), $label_count , sizeof($order_ids) );
 		}
 
 		return $message;

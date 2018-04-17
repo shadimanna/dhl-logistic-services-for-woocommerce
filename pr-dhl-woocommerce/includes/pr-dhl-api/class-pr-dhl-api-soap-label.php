@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label {
 
+	const DHL_MAX_ITEMS = '6';
 	const DHL_RETURN_PARTICIPATION = '07';
 
 	private $args = array();
@@ -62,6 +63,9 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			PR_DHL()->log_msg( '"createShipmentOrder" called with: ' . print_r( $soap_request, true ) );
 
 			$response_body = $soap_client->createShipmentOrder($soap_request);
+			error_log(print_r($soap_client->__getLastRequest(),true));
+			error_log(print_r($soap_client->__getLastResponse(),true));
+			error_log(print_r($response_body,true));
 
 			PR_DHL()->log_msg( 'Response Body: ' . print_r( $response_body, true ) );
 		
@@ -77,7 +81,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			$tracking_number = isset( $response_body->CreationState->LabelData->shipmentNumber ) ? $response_body->CreationState->LabelData->shipmentNumber : '';
 			
-			$label_url = $this->save_label_file( $response_body->CreationState->sequenceNumber, 'pdf', $response_body->CreationState->LabelData->labelUrl );
+			// $label_url = $this->save_label_file( $response_body->CreationState->sequenceNumber, 'pdf', $response_body->CreationState->LabelData->labelUrl );
+			$label_url = $this->save_label_file( $response_body->CreationState->sequenceNumber, 'pdf', $response_body->CreationState->LabelData->labelData );
 
 			$label_tracking_info = array( 'label_url' => $label_url, 'tracking_number' => $tracking_number );
 
@@ -141,9 +146,11 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			throw new Exception( __('Invalid file path!', 'pr-shipping-dhl' ) );
 		}
 
+		$label_data_decoded = $label_data;
 		// $label_data_decoded = base64_decode($label_data);
-		$label_data_decoded = file_get_contents( $label_data );
+		// $label_data_decoded = file_get_contents( $label_data );
 
+		// SOAP client decodes (base64) on its own so no need to do it here
 		$file_ret = file_put_contents( $label_path, $label_data_decoded );
 		
 		if( empty( $file_ret ) ) {
@@ -201,7 +208,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		// return receiver
 		if ( isset( $args['order_details']['return_address'] ) && ( $args['order_details']['return_address'] == 'yes' ) ) {
 
-			error_log($args['order_details']['dhl_product']);
 			if ( ( $args['order_details']['dhl_product'] != 'V01PAK' ) && ( $args['order_details']['dhl_product'] != 'V01PRIO' ) && ( $args['order_details']['dhl_product'] != 'V86PARCEL' ) && ( $args['order_details']['dhl_product'] != 'V55PAK' ) ){
 				
 				throw new Exception( __('Returns are not supported by this DHL Service.', 'pr-shipping-dhl') );
@@ -558,8 +564,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 														'email' => $this->args['shipping_address']['email']
 														)
 											)											
-									)
-								// 'labelResponseType' => 'B64' - IT WORKS
+									),
+								'labelResponseType' => 'B64'
 
 						)
 				);

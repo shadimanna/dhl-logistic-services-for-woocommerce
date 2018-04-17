@@ -54,7 +54,12 @@ class PR_DHL_Front_End_Paket {
 	}
 
 	public function dhl_add_meta_tags() {
-		echo '<meta name="58vffw8g4r9_t3e38g4og588915" content="Yes">';
+		$shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
+		
+		if( ( isset( $shipping_dhl_settings['dhl_preferred_day'] ) && ( $shipping_dhl_settings['dhl_preferred_day'] == 'yes' ) ) ||	( isset( $shipping_dhl_settings['dhl_preferred_time'] ) && ( $shipping_dhl_settings['dhl_preferred_time'] == 'yes' ) ) || ( isset( $shipping_dhl_settings['dhl_preferred_location'] ) && ( $shipping_dhl_settings['dhl_preferred_location'] == 'yes' ) ) ||	( isset( $shipping_dhl_settings['dhl_preferred_neighbour'] ) && ( $shipping_dhl_settings['dhl_preferred_neighbour'] == 'yes' ) ) ) {
+				
+				echo '<meta name="58vffw8g4r9_t3e38g4og588915" content="Yes">';
+		}
 	}
 
 	public function load_styles_scripts() {
