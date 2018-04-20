@@ -79,6 +79,9 @@ In case you could not find what you were looking for in our FAQs and the detaile
 
 == Changelog ==
 
+= 1.0.14 =
+* Enhancement: Send order currency instead of shop currency to support multi-currency plugins
+
 = 1.0.13 =
 * Sending "email" field via DHL Paket API to support DHL AT
 * Bug fix - Exception handling for payment gateway check
@@ -140,6 +143,9 @@ In case you could not find what you were looking for in our FAQs and the detaile
 * First public release
 
 == Upgrade Notice ==
+
+= 1.0.14 =
+* Enhancements, please upgrade
 
 = 1.0.13 =
 * Bug fixes and enhancements, please upgrade

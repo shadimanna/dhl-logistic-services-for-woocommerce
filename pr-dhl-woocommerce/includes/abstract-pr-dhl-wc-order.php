@@ -199,9 +199,11 @@ abstract class PR_DHL_WC_Order {
 			}
 		}		
 
-		$this->save_dhl_label_items( $post_id, $args );
+		if( $args ) {
+			$this->save_dhl_label_items( $post_id, $args );
+			return $args;
+		}
 
-		return $args;
 	}
 
 	abstract public function get_additional_meta_ids();
@@ -430,7 +432,8 @@ abstract class PR_DHL_WC_Order {
 
 		// Get WC specific details; order id, currency, units of measure, COD amount (if COD used)
 		$args['order_details']['order_id'] = $order_id;
-		$args['order_details']['currency'] = get_woocommerce_currency();
+		// $args['order_details']['currency'] = get_woocommerce_currency();
+		$args['order_details']['currency'] = $this->get_wc_currency( $order_id );
 		$weight_units = get_option( 'woocommerce_weight_unit' );
 		
 		switch ( $weight_units ) {
@@ -579,6 +582,18 @@ abstract class PR_DHL_WC_Order {
 		}
 
 		return $is_code;
+	}
+
+	protected function get_wc_currency( $order_id ) {
+		$order = wc_get_order( $order_id );
+		// WC 3.0 comaptibilty
+		if ( defined( 'WOOCOMMERCE_VERSION' ) && version_compare( WOOCOMMERCE_VERSION, '3.0', '>=' ) ) {
+			$order_currency = $order->get_currency();
+		}
+		else {
+			$order_currency = $order->get_order_currency();
+		}
+		return $order_currency;
 	}
 
 	/**

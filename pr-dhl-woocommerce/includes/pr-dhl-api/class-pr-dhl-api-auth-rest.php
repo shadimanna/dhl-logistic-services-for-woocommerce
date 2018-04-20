@@ -104,7 +104,7 @@ class PR_DHL_API_Auth_REST {
 		if( ! empty( $expires_in ) ) {
 			// $token_expires = time() + $expires_in;
 			set_transient( '_dhl_auth_token_rest', $access_token, $expires_in ); 
-			PR_DHL()->log_msg( 'Set Transient - Access Token: ' . $access_token );
+			PR_DHL()->log_msg( 'Set Transient - Access Token' );
 		}
 
 		$this->access_token = $access_token;
@@ -118,7 +118,7 @@ class PR_DHL_API_Auth_REST {
 		// if( $this->is_key_match($client_id, $client_secret) ) {
 			// TRANSIENT MIGHT BE BEING USED IF KEY AND SECRET ARE NEW, EDGE CASE SO MIGHT BE OK!
 			$transient_token = get_transient( '_dhl_auth_token_rest' );
-			PR_DHL()->log_msg( 'Get Transient - Access Token: ' . $transient_token );
+			PR_DHL()->log_msg( 'Get Transient - Access Token' );
 			$this->set_access_token( $transient_token );
 
 		// }
