@@ -165,7 +165,7 @@ abstract class PR_DHL_API_REST {
 		$wp_request_body = $this->get_message();
 
 		PR_DHL()->log_msg( 'POST URL: ' . $wp_request_url );
-		PR_DHL()->log_msg( 'POST Header: ' . print_r( $wp_request_headers, true ) );
+		// PR_DHL()->log_msg( 'POST Header: ' . print_r( $wp_request_headers, true ) );
 		PR_DHL()->log_msg( 'POST Body: ' . $wp_request_body );
 
 		$wp_dhl_rest_response = wp_remote_post(
