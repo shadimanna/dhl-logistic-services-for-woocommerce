@@ -122,7 +122,7 @@ class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 
 		try {
 			
-			$dhl_obj = PR_DHL()->get_dhl_factory();
+			$dhl_obj = PR_DHL()->get_dhl_factory(true);
 			$select_dhl_product_int = $dhl_obj->get_dhl_products_international();
 			$select_dhl_product_dom = $dhl_obj->get_dhl_products_domestic();
 
@@ -232,7 +232,7 @@ class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 				'default'           => 'no',
 				'description'       => __( 'Please, tick here if you want to test the plug-in installation against the DHL Sandbox Environment. Labels generated via Sandbox cannot be used for shipping and you need to enter your client ID and client secret for the Sandbox environment instead of the ones for production!', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
-			),
+			),/*
 			'dhl_customize_button' => array(
 				'title'             => PR_DHL_BUTTON_TEST_CONNECTION,
 				'type'              => 'button',
@@ -241,7 +241,7 @@ class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 				),
 				'description'       => __( 'Press the button for testing the connection against our DHL Express Gateways (depending on the selected environment this test is being done against the Sandbox or the Production Environment).', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
-			),
+			),*/
 			'dhl_debug' => array(
 				'title'             => __( 'Debug Log', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
@@ -382,37 +382,37 @@ class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 						*/
 						$dhl_express = PR_DHL()->get_dhl_factory( true );
 						$use_services = $dhl_express->get_dhl_products_domestic();
+						$use_services += $dhl_express->get_dhl_products_international();
+						// error_log(print_r($use_services,true));
+						
 						$custom_services = $this->get_option('express_products');
-						error_log(print_r($custom_services,true));
-						/*
+						// error_log(print_r($custom_services,true));
+						
+						// Loop through to add services that should be used in plugin
 						foreach ( $use_services as $code => $name ) {
 
-							if ( isset( $custom_services[ $code ]['order'] ) ) {
-								$sort = $custom_services[ $code ]['order'];
+							// If the service does not exists, add it to the end of the existing ones
+							if ( ! isset( $custom_services[ $code ] ) ) {
+								$custom_services[ $code ] = array();
 							}
-
-							while ( isset( $ordered_services[ $sort ] ) ) {
-								$sort++;
-							}
-
-							$ordered_services[ $sort ] = array( $code, $name );
-
-							$sort++;
 						}
 
-						ksort( $ordered_services );*/
+						// error_log(print_r($custom_services,true));
 
-						foreach ( $custom_services as $key => $value ) {
-							$code = $key;
-							$name = $use_services[ $key ];
+						foreach ( $custom_services as $code => $service ) {
+							// If a saved service is not in use anymore, do not display it
+							if ( !isset( $use_services[ $code ] ) ){
+								continue;
+							}
+
 							?>
 							<tr>
 								<td class="sort"></td>
 								<td><strong><?php echo $code; ?></strong></td>
-								<td><input type="text" name="dhl_express_product[<?php echo $code; ?>][name]" placeholder="<?php echo $name; ?> (<?php echo $this->title; ?>)" value="<?php echo isset( $custom_services[ $code ]['name'] ) ? $custom_services[ $code ]['name'] : ''; ?>" size="50" /></td>
-								<td><input type="checkbox" name="dhl_express_product[<?php echo $code; ?>][enabled]" <?php checked( ( ! isset( $custom_services[ $code ]['enabled'] ) || ! empty( $custom_services[ $code ]['enabled'] ) ), true ); ?> /></td>
-								<td><input class="wc_input_price" type="text" name="dhl_express_product[<?php echo $code; ?>][adjustment]" placeholder="N/A" value="<?php echo isset( $custom_services[ $code ]['adjustment'] ) ? $custom_services[ $code ]['adjustment'] : ''; ?>" size="4" /></td>
-								<td><input class="wc_input_decimal" type="text" name="dhl_express_product[<?php echo $code; ?>][adjustment_percent]" placeholder="N/A" value="<?php echo isset( $custom_services[ $code ]['adjustment_percent'] ) ? $custom_services[ $code ]['adjustment_percent'] : ''; ?>" size="4" /></td>
+								<td><input type="text" name="dhl_express_product[<?php echo $code; ?>][name]" placeholder="<?php echo $use_services[ $code ]; ?> (<?php echo $this->title; ?>)" value="<?php echo isset( $service['name'] ) ? $service['name'] : ''; ?>" size="50" /></td>
+								<td><input type="checkbox" name="dhl_express_product[<?php echo $code; ?>][enabled]" <?php checked( ( ! isset( $service['enabled'] ) || ! empty( $service['enabled'] ) ), true ); ?> /></td>
+								<td><input class="wc_input_price" type="text" name="dhl_express_product[<?php echo $code; ?>][adjustment]" placeholder="N/A" value="<?php echo isset( $service['adjustment'] ) ? $service['adjustment'] : ''; ?>" size="4" /></td>
+								<td><input class="wc_input_decimal" type="text" name="dhl_express_product[<?php echo $code; ?>][adjustment_percent]" placeholder="N/A" value="<?php echo isset( $service['adjustment_percent'] ) ? $custom_services[ $code ]['adjustment_percent'] : ''; ?>" size="4" /></td>
 							</tr>
 							<?php
 						}
@@ -440,7 +440,7 @@ class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 
 			$services[ $code ] = array(
 				'name'               => wc_clean( $settings['name'] ),
-				'order'              => wc_clean( $settings['order'] ),
+				// 'order'              => wc_clean( $settings['order'] ),
 				'enabled'            => isset( $settings['enabled'] ) ? true : false,
 				'adjustment'         => wc_clean( $settings['adjustment'] ),
 				'adjustment_percent' => str_replace( '%', '', wc_clean( $settings['adjustment_percent'] ) ),
@@ -516,10 +516,9 @@ class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 	}*/
 
 	public function calculate_shipping( $package = array() ) {
-		error_log(print_r($package,true));
-
-		
-
+		// error_log(print_r($package,true));
+		$express_products = $this->get_option( 'express_products' );
+		error_log(print_r($express_products,true));
 		$args = $this->get_rates_args();
 		$args['receiver'] = $package['destination'];
 
@@ -527,62 +526,55 @@ class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 		try {
 			$dhl_express = PR_DHL()->get_dhl_factory( true );
 			$dhl_rates = $dhl_express->get_dhl_rates( $args );
-
-			foreach ($dhl_rates as $key => $dhl_rate) {
-				$dhl_title = $dhl_rate->Charges->Charge[0]->ChargeType;
-				$rate = array(
-					'id' 	=> $this->get_rate_id() . '_' . sanitize_title($dhl_title),
-					// 'id' 	=> $this->get_rate_id(),
-					'label'   => $dhl_title,
-					'cost'    => $dhl_rate->TotalNet->Amount,
-					'package' => $package,
-				);
-
-				$this->add_rate( $rate );
-			}
 			error_log(print_r($dhl_rates,true));
+
+			foreach ($express_products as $express_key => $express_value) {
+
+				// Rate is enabled and returned from the API, then add rate
+				if( ! empty( $express_value['enabled'] ) && isset( $dhl_rates[ $express_key ] ) ) {
+
+					if( ! empty( $express_value['name'] ) ) {
+						$express_name = $express_value['name'];
+					} else {
+						$express_name = $this->format_dhl_method_name( $dhl_rates[ $express_key ]['name'] );
+					}
+
+					$express_name .= ' - ' . $this->format_dhl_method_time( $dhl_rates[ $express_key ]['delivery_time'] );
+
+					$express_amount = $dhl_rates[ $express_key ]['amount'];
+					// Cost adjustment %
+					if ( ! empty( $express_value['adjustment_percent'] ) ) {
+						$express_amount += ( $express_amount * ( floatval( $express_value['adjustment_percent'] ) / 100 ) );
+					}
+					// Cost adjustment
+					if( ! empty( $express_value['adjustment'] ) ) {
+						$express_amount += floatval( $express_value['adjustment'] );
+					}
+
+					// Sort
+					if ( isset( $express_value['order'] ) ) {
+						$sort = $express_value['order'];
+					} else {
+						$sort = 999;
+					}
+
+					$rate = array(
+						'id' 		=> $this->get_rate_id() . '_' . $express_key,
+						'label'   	=> $express_name,
+						'cost'   	=> $express_amount,
+						'sort'  	=> $sort,
+						'package' 	=> $package,
+					);
+
+					$this->add_rate( $rate ); // ADD FILTER BEFORE PASSING
+				}
+			}
 
 		} catch (Exception $e) {
 			error_log('calc ship exception');
 			error_log($e->getMessage());
 			// throw new Exception($e->getMessage());
 		}
-
-/*
-		// Check if free shipping, otherwise claculate based on weight and evaluate formulas
-		if( $this->is_free_shipping( $package ) ) {
-
-			$rate[ 'taxes' ] = false;
-			$this->add_rate( $rate );
-
-		} else {
-			$cart_weight = WC()->cart->get_cart_contents_weight();
-			$weight_costs = $this->get_option( 'cost_weight', array() );
-			// Set tax status based on selection otherwise always taxed
-			$this->tax_status = $this->get_option( 'tax_status' );
-
-			if ( $weight_costs ) {
-				foreach ( $weight_costs as $weight_cost ) {
-
-					// If empty ignore field and continue, otherwise check if equal or greater than
-					if ( empty( $weight_cost['ss_min_weight'] ) || ( $cart_weight >= $weight_cost['ss_min_weight'] ) ) {
-						// IF empty ignore field and contine, otherwise check if less than
-						if ( empty( $weight_cost['ss_max_weight'] ) || ( $cart_weight < $weight_cost['ss_max_weight'] ) ) {
-							// If cost NOT empty add a fee
-							if ( ! empty( $weight_cost['ss_cost_weight'] ) ) {
-
-								$rate['cost'] = $this->evaluate_cost( $weight_cost['ss_cost_weight'], array(
-									'qty'  => $this->get_package_item_qty( $package ),
-									'cost' => $package['contents_cost'],
-								) );
-
-								$this->add_rate( $rate );
-							}		
-						}
-					}
-				}
-			}
-		}*/
 
 		/**
 		 * Developers can add additional rates based on this one via this action
@@ -602,6 +594,16 @@ class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 		 * 		}.
 		 */
 		// do_action( 'woocommerce_' . $this->id . '_shipping_add_rate', $this, $rate );
+	}
+
+	protected function format_dhl_method_name( $name ) {
+		return ucwords( strtolower( $name ) );
+	}
+
+	protected function format_dhl_method_time( $date ) {
+		$wp_date_format = get_option('date_format');
+		$wp_time_format = get_option('time_format');
+		return date( $wp_date_format, strtotime( $date ) ) . ', ' . date( $wp_time_format, strtotime( $date ) );
 	}
 
 	protected function get_rates_args()	{

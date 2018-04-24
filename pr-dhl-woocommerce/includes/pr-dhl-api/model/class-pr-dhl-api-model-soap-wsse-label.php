@@ -7,13 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements PR_DHL_API_Label {
 
-	const DHL_LABEL_FORMAT = 'PDF';
-	const DHL_LABEL_SIZE = '4x6'; // must be lowercase 'x'
-	const DHL_PAGE_SIZE = 'A4';
-	const DHL_LAYOUT = '1x1';
-	const DHL_AUTO_CLOSE = '1';
-	const DHL_MAX_ITEMS = '6';
-
 	private $args = array();
 
 	// 'LI', 'CH', 'NO'
@@ -29,6 +22,7 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 		}
 	}
 
+/*
 	protected function validate_field( $key, $value ) {
 
 		try {
@@ -48,9 +42,11 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 		} catch (Exception $e) {
 			throw $e;
 		}
-	}
+	}*/
 
 	public function get_dhl_label( $args ) {
+		error_log('get_dhl_label');
+		error_log(print_r($args,true));
 		$this->set_arguments( $args );
 		$soap_request = $this->set_message();
 
@@ -58,31 +54,34 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 			$soap_client = $this->get_access_token( $args['dhl_settings']['api_user'], $args['dhl_settings']['api_pwd'] );
 			PR_DHL()->log_msg( '"createShipmentOrder" called with: ' . print_r( $soap_request, true ) );
 
-			$response_body = $soap_client->getRateRequest($soap_request);
-			error_log(print_r($soap_client->__getLastRequest(),true));
+			$response_body = $soap_client->createShipmentRequest($soap_request);
+			// error_log(print_r($soap_client->__getLastRequest(),true));
+			error_log(print_r($response_body,true));
 
 			PR_DHL()->log_msg( 'Response Body: ' . print_r( $response_body, true ) );
 		
+			if( ! empty( $response_body->Provider->Notification->code ) ) {
+				throw new Exception( $response_body->Provider->Notification->code . ' - ' . $response_body->Provider->Notification->Message );
+			}
+
+			return $this->get_returned_rates( $response_body->Provider->Service );
+
 		} catch (Exception $e) {
-			error_log('get dhl label Exception');
-			error_log(print_r($soap_client->__getLastRequest(),true));
+			// error_log('get dhl label Exception');
+			// error_log(print_r($soap_client->__getLastRequest(),true));
 			throw $e;
 		}
+	}
 
-		if( $response_body->Status->statusCode != 0 ) {
-			throw new Exception( sprintf( __('Could not create label - %s', 'pr-shipping-dhl'), $response_body->Status->statusMessage ) );
-		} else {
-			// Give the server 1 second to create the PDF before downloading it
-			sleep(1);
-
-			$tracking_number = isset( $response_body->CreationState->LabelData->shipmentNumber ) ? $response_body->CreationState->LabelData->shipmentNumber : '';
-			
-			$label_url = $this->save_label_file( $response_body->CreationState->sequenceNumber, 'pdf', $response_body->CreationState->LabelData->labelUrl );
-
-			$label_tracking_info = array( 'label_url' => $label_url, 'tracking_number' => $tracking_number );
-
-			return $label_tracking_info;
+	protected function get_returned_rates( $returned_rates ) {
+		$new_returned_rates = array();
+		foreach ($returned_rates as $key => $value) {
+			$new_returned_rates[ $value->type ]['name'] = $value->Charges->Charge[0]->ChargeType;
+			$new_returned_rates[ $value->type ]['amount'] = $value->TotalNet->Amount;
+			$new_returned_rates[ $value->type ]['delivery_time'] = $value->DeliveryTime;
 		}
+
+		return $new_returned_rates;
 	}
 
 	public function delete_dhl_label_call( $args ) {
@@ -92,13 +91,20 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 								'majorRelease' => '2',
 								'minorRelease' => '2'
 						),
-					'shipmentNumber' => $args['tracking_number']
+					'DeleteRequest' => 
+						array(
+							'PickupDate' => date('Y-m-d'), // use for testing, but needs to be REQUESTED SHIP DATE!
+							'PickupCountry' => 'US',
+							'DispatchConfirmationNumber' => '1111',
+							'RequestorName' => 'Shadi'
+						)
 				);
 
 		try {
 
 			$soap_client = $this->get_access_token( $args['api_user'], $args['api_pwd'] );
-			$response_body = $soap_client->deleteShipmentOrder( $soap_request );
+			error_log(print_r($soap_request,true));
+			$response_body = $soap_client->deleteShipmentRequest( $soap_request );
 
 		} catch (Exception $e) {
 			throw $e;
@@ -155,8 +161,6 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 
 	protected function set_arguments( $args ) {
 		// Validate set args
-		error_log(print_r($args,true));
-		
 		if ( empty( $args['dhl_settings']['api_user'] ) ) {
 			throw new Exception( __('Please, provide the username in the DHL shipping settings', 'pr-shipping-dhl' ) );
 		}
@@ -170,13 +174,6 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 			throw new Exception( __('Please, provide an account in the DHL shipping settings', 'pr-shipping-dhl' ) );
 		}
 
-		if ( empty( $args['order_details']['dhl_product'] )) {
-			throw new Exception( __('DHL "Product" is empty!', 'pr-shipping-dhl') );
-		}
-
-		if ( empty( $args['order_details']['order_id'] )) {
-			throw new Exception( __('Shop "Order ID" is empty!', 'pr-shipping-dhl') );
-		}
 
 		if ( empty( $args['order_details']['weightUom'] )) {
 			throw new Exception( __('Shop "Weight Units of Measure" is empty!', 'pr-shipping-dhl') );
@@ -298,119 +295,8 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 	protected function set_message() {
 		if( ! empty( $this->args ) ) {
 			// Set date related functions to German time
-			// date_default_timezone_set('Europe/Berlin');
 
-			// SERVICES DATA
-			$services_map = array(
-								'preferred_time' => array(
-													'name' => 'PreferredTime',
-													'type' => 'type'),
-								'age_visual' => array(
-													'name' => 'VisualCheckOfAge',
-													'type' => 'type'),
-								'preferred_location' => array(
-													'name' => 'PreferredLocation' ,
-													'type' => 'details'),
-								'preferred_neighbor' => array(
-													'name' => 'PreferredNeighbour' ,
-													'type' => 'details'),
-								'preferred_day' => array(
-													'name' => 'PreferredDay' ,
-													'type' => 'details'),
-								'personally' => array(
-													'name' => 'Personally'
-													),
-								'no_neighbor' => array(
-													'name' => 'NoNeighbourDelivery'
-													),
-								'named_person' => array(
-													'name' => 'NamedPersonOnly' ,
-													),
-								'premium' => array(
-													'name' => 'Premium'
-													),
-								'additional_insurance' => array(
-													'name' => 'AdditionalInsurance' 
-													),
-								'bulky_goods' => array(
-													'name' => 'BulkyGoods'
-													),
-								'identcheck' => array(
-													'name' => 'IdentCheck'
-													),
-								);
-
-			$services = array();
-			foreach ($services_map as $key => $value) {
-
-				if ( ! empty( $this->args['order_details'][ $key ] ) ) {
-
-					if ( $this->args['order_details'][ $key ] == 'no' ) {
-						continue;
-					}
-					
-					if ( $this->args['order_details'][ $key ] == 'yes' ) {
-
-						$services[ $value['name'] ] = array(
-							'active' => 1
-						);
-
-						switch ( $key ) {
-							case 'additional_insurance':
-								$services[ $value['name'] ]['insuranceAmount'] = $this->args['order_details']['total_value'];
-								break;							
-						}
-
-					} else {
-						$services[ $value['name'] ] = array(
-							'active' => 1,
-							$value['type'] => $this->args['order_details'][ $key ]
-						);
-					}
-				}				
-			}
-
-			// EMAIL NOTIFCATION
-			$notification_email = array();
-			if ( isset( $this->args['order_details'][ 'email_notification' ] ) && $this->args['order_details'][ 'email_notification' ] == 'yes' ) {
-				$notification_email['recipientEmailAddress'] = $this->args['shipping_address']['email'];
-			}
-
-			// COD DATA
-			$bank_data = array();
-			if( isset( $this->args['order_details']['cod_value'] ) ) {
-
-				$services[ 'CashOnDelivery' ] = array(
-							'active' => 1
-						);
-
-				// If the fee was added to the customer i.e. 'cod_fee' == 'yes', then do not add to merchange i.e. 'addFee' = 0
-				if( isset( $this->args['dhl_settings']['cod_fee'] ) && $this->args['dhl_settings']['cod_fee'] == 'yes' ) {
-					$services['CashOnDelivery']['addFee'] = 0;
-				} else {
-					$services['CashOnDelivery']['addFee'] = 1;
-				}
-
-				$services[ 'CashOnDelivery']['codAmount'] = $this->args['order_details']['cod_value']; 	
-
-				$bank_data_map = array(
-									'bank_holder' => 'accountOwner',
-									'bank_name' => 'bankName',
-									'bank_iban' => 'iban',
-									'bank_ref' => 'note1',
-									'bank_ref_2' => 'note2',
-									'bank_bic' => 'bic'
-									);
-
-				foreach ($bank_data_map as $key => $value) {
-					# code...
-					if( isset( $this->args['dhl_settings'][ $key ] ) ) {
-						$bank_data[ $value ] = $this->args['dhl_settings'][ $key ];
-					}
-				}
-			}
-
-			$this->args['order_details']['weight'] = $this->maybe_convert_weight( $this->args['order_details']['weight'], $this->args['order_details']['weightUom'] );
+			// $this->args['order_details']['weight'] = $this->maybe_convert_weight( $this->args['order_details']['weight'], $this->args['order_details']['weightUom'] );
 
 			$dhl_label_body = 
 				array(
@@ -419,164 +305,113 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 								'majorRelease' => '2',
 								'minorRelease' => '2'
 						),
-					'ShipmentOrder' => 
+					'RequestedShipment' => 
 						array (
-								'sequenceNumber' => $this->args['order_details']['order_id'],
-								'Shipment' => 
-									array( 
-										'ShipmentDetails' => 
-											array( 
-												'product' => $this->args['order_details']['dhl_product'],
-												'accountNumber' => $account_number,
-												'shipmentDate' => date('Y-m-d'),
-												'ShipmentItem' => 
-													array( 
-														'weightInKG' => $this->args['order_details']['weight']
-														),
-												'Service' => $services,
-												'Notification' => $notification_email,
-												'BankData' => $bank_data,
-											),
-										'Shipper' =>
+							'ShipmentInfo' => 
+								array (
+										'DropOffType' => 'REGULAR_PICKUP',
+										'ServiceType' => $this->args['order_details']['dhl_product'],
+										'Account' => $this->args['dhl_settings']['account_num'],
+										'Currency' => $this->args['order_details']['currency'],
+										'UnitOfMeasurement' => 'SI',
+										// 'Content' => 'NON_DOCUMENTS',
+										'SpecialServices' => 
 											array(
-												'Name' =>
+												'Service' =>
 													array(
-														'name1' => $this->args['dhl_settings']['shipper_name'],
-														'name2' => $this->args['dhl_settings']['shipper_company']
-														),
-												'Address' =>
-													array(
-														'streetName' => $this->args['dhl_settings']['shipper_address'],
-														'streetNumber' => intval($this->args['dhl_settings']['shipper_address_no']),
-														'zip' => $this->args['dhl_settings']['shipper_address_zip'],
-														'city' => $this->args['dhl_settings']['shipper_address_city'],
-														'state' => $this->args['dhl_settings']['shipper_address_state'],
-														'Origin' =>
-															array(
-																'countryISOCode' => $this->args['dhl_settings'][ 'shipper_country' ],
-															)
-														),
-												'Communication' =>
-													array(
-														'phone' => $this->args['dhl_settings']['shipper_phone'],
-														'email' => $this->args['dhl_settings']['shipper_email']
-														)
+														'ServiceType' => 'II',
+														'ServiceValue' => $this->args['order_details']['total_value'],
+														'CurrencyCode' => $this->args['order_details']['currency'],
+													),
 											),
-										'Receiver' =>
-											array(
-												'name1' => $this->args['shipping_address']['name'],
-												'Address' =>
-													array(
-														'name2' => $this->args['shipping_address']['company'],
-														'streetName' => $this->args['shipping_address']['address_1'],
-														'streetNumber' => $this->args['shipping_address']['address_2'],
-														// 'addressAddition' => $this->args['shipping_address']['address_2'],
-														'zip' => $this->args['shipping_address']['postcode'],
-														'city' => $this->args['shipping_address']['city'],
-														'Origin' =>
-															array(
-																'countryISOCode' => $this->args['shipping_address']['country'],
-																'state' => $this->args['shipping_address']['state']
-															)
-														),
-												// 'Packstation' => array(),
-												'Communication' =>
-													array(
-														'phone' => $this->args['shipping_address']['phone'] //'+49 1525 9629550'
-														)
-											)											
-									)
-								// 'labelResponseType' => 'B64'
-
-						)
-				);
+								),
+							'ShipTimestamp' => date('Y-m-d\TH:i:s\G\M\TP', time() + 60*60*24), // 2018-03-05T15:33:16GMT+01:00
+							'PaymentInfo' => 'DDP',
+							'Ship' => 
+								array( 
+									'Shipper' =>
+										array(
+											'Contact' =>
+												array(
+														'PersonName' => 'Shadi Manna', //$this->args['dhl_settings']['shipper_name'],
+														'CompanyName' => 'Progressus.io', //$this->args['dhl_settings']['shipper_company'],
+														'PhoneNumber' => '34666666666', //$this->args['dhl_settings']['shipper_phone'],
+														'EmailAddress' => $this->args['dhl_settings']['shipper_email'],
+													),
+											'Address' =>
+												array(
+														'StreetLines' => $this->args['dhl_settings']['shipper_address'],
+														'StreetLines2' => $this->args['dhl_settings']['shipper_address2'],
+														'City' => $this->args['dhl_settings']['shipper_address_city'],
+														'StateOrProvinceCode' => $this->args['dhl_settings']['shipper_address_state'],
+														'PostalCode' => $this->args['dhl_settings']['shipper_address_zip'],
+														'CountryCode' => $this->args['dhl_settings']['shipper_country']
+													),
+											),
+									'Recipient' =>
+										array(
+											'Contact' =>
+												array(
+														'PersonName' => $this->args['shipping_address']['name'],
+														'CompanyName' => $this->args['shipping_address']['company'],
+														'PhoneNumber' => $this->args['shipping_address']['phone'],
+														'EmailAddress' => $this->args['shipping_address']['email'],
+													),
+											'Address' =>
+												array(
+														'StreetLines' => $this->args['shipping_address']['address_1'],
+														'StreetLines2' => $this->args['shipping_address']['address_2'],
+														'City' => $this->args['shipping_address']['city'],
+														'StateOrProvinceCode' => $this->args['shipping_address']['state'],
+														'PostalCode' => $this->args['shipping_address']['postcode'],
+														'CountryCode' => $this->args['shipping_address']['country']
+												),
+										),						
+								),
+							'Packages' => 
+								array(
+									'RequestedPackages' =>
+										array(
+											'number' => 1,
+											'Weight' => 1, // CONVERT TO KG ALWAYS!
+											'Dimensions' =>
+												array(
+													'Length' =>  1, // CONVERT ALL TO CM ALWAYS!
+													'Width' =>  1,
+													'Height' =>  1,
+												),
+											'CustomerReferences' => 'IDK',
+										),
+								),
+						),
+					);
 
 			// If international shipment add export information
 			if( ! $this->is_european_shipment() ) {
 
-				// TEST THIS
-				if ( sizeof($this->args['items']) > self::DHL_MAX_ITEMS ) {
-					throw new Exception( sprintf( __('Only %s ordered items can be processed, your order has %s', 'pr-shipping-dhl'), self::DHL_MAX_ITEMS, sizeof($this->args['items']) ) );
-				}
-				
-				$customsDetails = array();
-
 				$item_description = '';
 				foreach ($this->args['items'] as $key => $item) {
-					// weightInKG is in KG needs to be changed if 'g' or 'lbs' etc.
-					$item['item_weight'] = $this->maybe_convert_weight( $item['item_weight'], $this->args['order_details']['weightUom'] );
-
 					$item_description .= ! empty( $item_description ) ? ', ' : '';
 					$item_description .= $item['item_description'];
-
-					$json_item = array(
-									'description' => substr( $item['item_description'], 0, 255 ),
-									'countryCodeOrigin' => $item['country_origin'],
-									'customsTariffNumber' => $item['hs_code'],
-									'amount' => intval( $item['qty'] ),
-									'netWeightInKG' => round( floatval( $item['item_weight'] ), 2 ),
-									'customsValue' => round( floatval( $item['item_value'] ), 2 ),
-								);
-					// $customsDetails = $json_item;
-					array_push($customsDetails, $json_item);
 				}
 
 				$item_description = substr( $item_description, 0, 255 );
+				$number_pieces = sizeof($this->args['items']);
 
-				$dhl_label_body['ShipmentOrder']['Shipment']['ExportDocument'] = 
+				$dhl_label_body['RequestedShipment']['InternationalDetail']['Commodities'] = 
 					array(
-						'invoiceNumber' => $this->args['order_details']['order_id'],
-						'exportType' => 'OTHER',
-						'exportTypeDescription' => $item_description,
-						'termsOfTrade' => $this->args['order_details']['duties'],
-						'placeOfCommital' => $this->args['shipping_address']['country'],
-						'ExportDocPosition' => $customsDetails
+						'NumberOfPieces' => $number_pieces,
+						'Description' => $item_description,
+						'CustomsValue' => $this->args['order_details']['total_value'],
 					);
 			}
 
+			error_log(print_r($dhl_label_body,true));
 			// Unset/remove any items that are empty strings or 0, even if required!
 			$this->body_request = $this->walk_recursive_remove( $dhl_label_body );
-			// Ensure Export Document is set before adding additional fee
-			if( isset( $this->body_request['ShipmentOrder']['Shipment']['ExportDocument'] ) ) {
-				// Additional fees, required and 0 so place after check
-				$this->body_request['ShipmentOrder']['Shipment']['ExportDocument']['additionalFee'] = 0;
-			}
 
 			return $this->body_request;
-			// $this->body_request = json_encode($dhl_label_body, JSON_PRETTY_PRINT);
 		}
 		
-	}
-	
-	private function maybe_convert_weight( $weight, $UoM ) {
-		switch ( $UoM ) {
-			case 'g':
-				$weight = $weight / 1000;
-				break;
-			case 'lb':
-				$weight = $weight / 2.2;
-				break;
-			case 'oz':
-				$weight = $weight / 35.274;
-				break;
-			default:
-				break;
-		}
-		return $weight;
-	}
-
-	// Unset/remove any items that are empty strings or 0
-	private function walk_recursive_remove( array $array ) { 
-	    foreach ($array as $k => $v) { 
-	        if (is_array($v)) { 
-	            $array[$k] = $this->walk_recursive_remove($v); 
-	        } 
-            
-            if ( empty( $v ) ) { 
-                unset($array[$k]); 
-            } 
-	        
-	    }
-	    return $array; 
-	} 
+	}	
 }

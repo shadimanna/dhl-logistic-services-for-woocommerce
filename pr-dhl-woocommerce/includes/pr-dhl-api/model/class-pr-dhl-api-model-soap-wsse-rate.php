@@ -7,13 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class PR_DHL_API_Model_SOAP_WSSE_Rate extends PR_DHL_API_SOAP_WSSE implements PR_DHL_API_Rate {
 
-	const DHL_LABEL_FORMAT = 'PDF';
-	const DHL_LABEL_SIZE = '4x6'; // must be lowercase 'x'
-	const DHL_PAGE_SIZE = 'A4';
-	const DHL_LAYOUT = '1x1';
-	const DHL_AUTO_CLOSE = '1';
-	const DHL_MAX_ITEMS = '6';
-
 	private $args = array();
 
 	// 'LI', 'CH', 'NO'
@@ -61,8 +54,8 @@ class PR_DHL_API_Model_SOAP_WSSE_Rate extends PR_DHL_API_SOAP_WSSE implements PR
 			PR_DHL()->log_msg( '"createShipmentOrder" called with: ' . print_r( $soap_request, true ) );
 
 			$response_body = $soap_client->getRateRequest($soap_request);
-			error_log(print_r($soap_client->__getLastRequest(),true));
-			error_log(print_r($response_body,true));
+			// error_log(print_r($soap_client->__getLastRequest(),true));
+			// error_log(print_r($response_body,true));
 
 			PR_DHL()->log_msg( 'Response Body: ' . print_r( $response_body, true ) );
 		
@@ -70,13 +63,24 @@ class PR_DHL_API_Model_SOAP_WSSE_Rate extends PR_DHL_API_SOAP_WSSE implements PR
 				throw new Exception( $response_body->Provider->Notification->code . ' - ' . $response_body->Provider->Notification->Message );
 			}
 
-			return $response_body->Provider->Service;
+			return $this->get_returned_rates( $response_body->Provider->Service );
 
 		} catch (Exception $e) {
 			// error_log('get dhl label Exception');
 			// error_log(print_r($soap_client->__getLastRequest(),true));
 			throw $e;
 		}
+	}
+
+	protected function get_returned_rates( $returned_rates ) {
+		$new_returned_rates = array();
+		foreach ($returned_rates as $key => $value) {
+			$new_returned_rates[ $value->type ]['name'] = $value->Charges->Charge[0]->ChargeType;
+			$new_returned_rates[ $value->type ]['amount'] = $value->TotalNet->Amount;
+			$new_returned_rates[ $value->type ]['delivery_time'] = $value->DeliveryTime;
+		}
+
+		return $new_returned_rates;
 	}
 
 	public function delete_dhl_label_call( $args ) {
@@ -321,20 +325,20 @@ class PR_DHL_API_Model_SOAP_WSSE_Rate extends PR_DHL_API_SOAP_WSSE implements PR
 									array(
 										'RequestedPackages' =>
 											array(
-												'number' =>  rand(1111111111,9999999999),
+												'number' =>  1,
 												'Weight' =>  
 													array(
-														'Value' => 1
+														'Value' => 1 // CONVERT TO KG ALWAYS!
 													),
 												'Dimensions' =>
 													array(
-														'Length' =>  1,
+														'Length' =>  1, // CONVERT ALL TO CM ALWAYS!
 														'Width' =>  1,
 														'Height' =>  1,
 													),
 											),
 									),
-								'ShipTimestamp' => gmdate('Y-m-d\TH:i:sTP'), // 2018-03-05T15:33:16GMT+01:00
+								'ShipTimestamp' => date('Y-m-d\TH:i:s\G\M\TP', time() + 60*60*24 ) , // 2018-03-05T15:33:16GMT+01:00
 								'UnitOfMeasurement' => 'SI',
 								'Content' => 'NON_DOCUMENTS',
 								'PaymentInfo' => 'DDP',
@@ -392,37 +396,5 @@ class PR_DHL_API_Model_SOAP_WSSE_Rate extends PR_DHL_API_SOAP_WSSE implements PR
 			return $this->body_request;
 		}
 		
-	}
-	
-	private function maybe_convert_weight( $weight, $UoM ) {
-		switch ( $UoM ) {
-			case 'g':
-				$weight = $weight / 1000;
-				break;
-			case 'lb':
-				$weight = $weight / 2.2;
-				break;
-			case 'oz':
-				$weight = $weight / 35.274;
-				break;
-			default:
-				break;
-		}
-		return $weight;
-	}
-
-	// Unset/remove any items that are empty strings or 0
-	private function walk_recursive_remove( array $array ) { 
-	    foreach ($array as $k => $v) { 
-	        if (is_array($v)) { 
-	            $array[$k] = $this->walk_recursive_remove($v); 
-	        } 
-            
-            if ( empty( $v ) ) { 
-                unset($array[$k]); 
-            } 
-	        
-	    }
-	    return $array; 
-	} 
+	}	
 }

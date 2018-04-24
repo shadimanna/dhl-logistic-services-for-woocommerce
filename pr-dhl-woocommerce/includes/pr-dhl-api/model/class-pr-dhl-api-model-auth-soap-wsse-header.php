@@ -10,7 +10,7 @@ class PR_DHL_API_Model_Auth_SOAP_WSSE_Header extends SoapHeader {
     private $wsu_ns = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd';
 
     function __construct($user, $pass) {
-        $created    = gmdate('Y-m-d\TH:i:s\Z');
+        $created    = date('Y-m-d\TH:i:s\Z');
         $nonce      = mt_rand();
         $passdigest = base64_encode(pack('H*', sha1(pack('H*', $nonce) . pack('a*', $created) . pack('a*', $pass))));
 

@@ -197,5 +197,55 @@ abstract class PR_DHL_API_SOAP_WSSE implements PR_DHL_API_Base {
 		}
 	}
 	
+	protected function maybe_convert_weight( $weight, $UoM ) {
+		switch ( $UoM ) {
+			case 'g':
+				$weight = $weight / 1000;
+				break;
+			case 'lb':
+				$weight = $weight / 2.2;
+				break;
+			case 'oz':
+				$weight = $weight / 35.274;
+				break;
+			default:
+				break;
+		}
+		return $weight;
+	}
+
+	protected function maybe_convert_dimension( $dimension, $UoM ) {
+		switch ( $UoM ) {
+			case 'm':
+				$dimension = $dimension  / 100;
+				break;
+			case 'mm':
+				$dimension = $dimension / .1;
+				break;
+			case 'in':
+				$dimension = $dimension / 2.54;
+			case 'yd':
+				$dimension = $dimension / 91.44;
+				break;
+			default:
+				break;
+		}
+		return $dimension;
+	}
+
+	// Unset/remove any items that are empty strings or 0
+	protected function walk_recursive_remove( array $array ) { 
+	    foreach ($array as $k => $v) { 
+	        if (is_array($v)) { 
+	            $array[$k] = $this->walk_recursive_remove($v); 
+	        } 
+            
+            if ( empty( $v ) ) { 
+                unset($array[$k]); 
+            } 
+	        
+	    }
+	    return $array; 
+	} 	
 	// abstract protected function parse_response( );
 }
