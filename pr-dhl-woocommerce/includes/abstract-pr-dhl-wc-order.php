@@ -199,7 +199,7 @@ abstract class PR_DHL_WC_Order {
 			}
 		}		
 
-		if( $args ) {
+		if( isset( $args ) ) {
 			$this->save_dhl_label_items( $post_id, $args );
 			return $args;
 		}
@@ -508,6 +508,9 @@ abstract class PR_DHL_WC_Order {
 		$args['items'] = array();
 		foreach ($ordered_items as $key => $item) {
 			$new_item['qty'] = $item['qty'];
+			// Get 1 item value not total items, based on ordered items in case currency is different that set product price
+			$new_item['item_value'] = ( $item['line_total'] / $item['qty'] );
+
 			$product = wc_get_product( $item['product_id'] );
 
 		    $country_value = get_post_meta( $item['product_id'], '_dhl_manufacture_country', true );
@@ -527,7 +530,7 @@ abstract class PR_DHL_WC_Order {
 				$product_variation = wc_get_product($item['variation_id']);
 				// Ensure id is string and not int
 				$new_item['sku'] = empty( $product_variation->get_sku() ) ? strval( $item['variation_id'] ) : $product_variation->get_sku();
-				$new_item['item_value'] = $product_variation->get_price();
+				// $new_item['item_value'] = $product_variation->get_price();
 				$new_item['item_weight'] = $product_variation->get_weight();
 
 				$product_attribute = wc_get_product_variation_attributes($item['variation_id']);
@@ -536,7 +539,7 @@ abstract class PR_DHL_WC_Order {
 			} else {
 				// Ensure id is string and not int
 				$new_item['sku'] = empty( $product->get_sku() ) ? strval( $item['product_id'] ) : $product->get_sku();
-				$new_item['item_value'] = $product->get_price();
+				// $new_item['item_value'] = $product->get_price();
 				$new_item['item_weight'] = $product->get_weight();
 			}
 

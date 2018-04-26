@@ -26,7 +26,7 @@ class PR_DHL_API_Auth_SOAP {
 	private $client_secret;
 
 	/**
-	 * @var Quipu_Api_Connection
+	 * @var PR_DHL_API_Auth_SOAP
 	 */
 	private static $_instance; //The single instance
 	
