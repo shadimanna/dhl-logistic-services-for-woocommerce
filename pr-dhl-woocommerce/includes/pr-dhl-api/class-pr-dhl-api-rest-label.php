@@ -300,7 +300,7 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 												array( 
 														'codAmount' => round( floatval( $this->args['order_details']['cod_value'] ), 2),
 														'currency' => $this->args['order_details']['currency'],
-														'declaredValue' => round( floatval( $this->args['order_details']['items_value'] ), 2),
+														'declaredValue' => round( floatval( $this->args['order_details']['total_value'] ), 2),
 														'dgCategory' => $this->args['order_details']['dangerous_goods'],
 														'dutiesPaid' => $shipper_duties,
 														'orderedProduct' => $this->args['order_details']['dhl_product'],
