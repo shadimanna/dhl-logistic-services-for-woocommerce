@@ -80,7 +80,7 @@ In case you could not find what you were looking for in our FAQs and the detaile
 == Changelog ==
 
 = 1.0.14 =
-* Enhancement: Send order currency instead of shop currency to support multi-currency plugins
+* Enhancement: Send order currency and price instead of shop currency and product price to support multi-currency plugins
 
 = 1.0.13 =
 * Sending "email" field via DHL Paket API to support DHL AT
