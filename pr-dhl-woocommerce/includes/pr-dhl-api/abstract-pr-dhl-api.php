@@ -6,7 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class PR_DHL_API {
 
-	protected $dhl_label;
+	protected $dhl_label = null;
+	protected $dhl_finder = null;
 
 	protected $country_code;
 
@@ -26,6 +27,14 @@ abstract class PR_DHL_API {
 
 	public function delete_dhl_label( $label_url ) {
 		return $this->dhl_label->delete_dhl_label( $label_url );
+	}
+
+	public function get_parcel_location( $args ) {
+		if ( $this->dhl_finder ) {
+			return $this->dhl_finder->get_parcel_location( $args );
+		} else {
+			throw new Exception( __('Parcel Finder not available', 'pr-shipping-dhl') );
+		}
 	}
 
 	abstract public function get_dhl_products_international();

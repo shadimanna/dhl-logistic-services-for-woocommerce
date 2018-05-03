@@ -128,6 +128,16 @@ class PR_DHL_Front_End_Paket {
 			try {
 
 				$shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
+				
+				if ( isset( $_POST['s_country'] ) && isset( $_POST['s_postcode'] ) ) {
+					$dhl_obj = PR_DHL()->get_dhl_factory();
+					$args['dhl_settings']['api_user'] = $shipping_dhl_settings['dhl_api_user'];
+					$args['dhl_settings']['api_pwd'] = $shipping_dhl_settings['dhl_api_pwd'];
+					$args['shipping_address']['country'] = $_POST['s_country'];
+					$args['shipping_address']['postcode'] = $_POST['s_postcode'];
+
+					$dhl_obj->get_parcel_location( $args );
+				}
 
 				if( ! isset( $shipping_dhl_settings ) || empty( $shipping_dhl_settings['dhl_shipping_methods'] ) ) {
 					return;

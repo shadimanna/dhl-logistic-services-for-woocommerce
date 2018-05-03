@@ -12,7 +12,6 @@ class PR_DHL_API_Auth_SOAP {
 	/**
 	 * define Auth API endpoint
 	 */
-	const PR_DHL_WSDL_LINK = 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/2.2/geschaeftskundenversand-api-2.2.wsdl';
 	const PR_DHL_HEADER_LINK = 'http://dhl.de/webservice/cisbase';
 
 	/**
@@ -26,29 +25,15 @@ class PR_DHL_API_Auth_SOAP {
 	private $client_secret;
 
 	/**
-	 * @var PR_DHL_API_Auth_SOAP
+	 * @var string
 	 */
-	private static $_instance; //The single instance
-	
+	private $wsdl_link;
 
 	/**
 	 * constructor.
 	 */
-	private function __construct( ) { }
-
-	// Magic method clone is empty to prevent duplication of connection
-	private function __clone() { }
-   	
-   	// Stopping unserialize of object
-	private function __wakeup() { }
-
-	public static function get_instance( ) {
-
-		if( (! self::$_instance ) ) { 
-			self::$_instance = new self( );
-		}
-
-		return self::$_instance;
+	public function __construct( $wsdl_link ) {
+		$this->wsdl_link = $wsdl_link;
 	}
 
 	public function get_access_token( $client_id, $client_secret ) {
@@ -70,7 +55,7 @@ class PR_DHL_API_Auth_SOAP {
 			
 			$api_cred = PR_DHL()->get_api_url();
 
-			$soap_client = new SoapClient( self::PR_DHL_WSDL_LINK,
+			$soap_client = new SoapClient( $this->wsdl_link,
 			array( 	
 					'login' => $api_cred['user'],
 					'password' => $api_cred['password'],
@@ -96,13 +81,4 @@ class PR_DHL_API_Auth_SOAP {
 		
 		return $soap_client;
 	}
-/*
-	public function is_key_match( $client_id, $client_secret ) {
-
-		if( ( $this->client_id == $client_id ) && ($this->client_secret == $client_secret) ) {
-			return true;
-		} else {
-			return false;
-		}
-	}*/
 }

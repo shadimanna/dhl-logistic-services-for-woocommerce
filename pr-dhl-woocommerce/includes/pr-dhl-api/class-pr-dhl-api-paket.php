@@ -16,6 +16,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		$this->country_code = $country_code;
 		try {
 			$this->dhl_label = new PR_DHL_API_SOAP_Label( );
+			$this->dhl_finder = new PR_DHL_API_SOAP_Finder( );
 		} catch (Exception $e) {
 			throw $e;	
 		}

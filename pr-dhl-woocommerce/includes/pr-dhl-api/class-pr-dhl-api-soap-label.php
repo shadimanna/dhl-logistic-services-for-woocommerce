@@ -7,18 +7,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label {
 
+	/**
+	 * WSDL definitions
+	 */
+	const PR_DHL_WSDL_LINK = 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/2.2/geschaeftskundenversand-api-2.2.wsdl';
+	
 	const DHL_MAX_ITEMS = '6';
 	const DHL_RETURN_PARTICIPATION = '07';
-
-	private $args = array();
-
-	// 'LI', 'CH', 'NO'
-	protected $eu_iso2 = array( 'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'RO', 'SI', 'SK', 'ES', 'SE', 'GB');
 
 	public function __construct( ) {
 		try {
 
-			parent::__construct( );
+			parent::__construct( self::PR_DHL_WSDL_LINK );
 
 		} catch (Exception $e) {
 			throw $e;
@@ -336,9 +336,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		$this->args = $args;
 	}
 
-	protected function set_query_string() {
-		return '';
-	}
 
 	protected function is_european_shipment() {
 		
@@ -662,36 +659,4 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		}
 		
 	}
-	
-	private function maybe_convert_weight( $weight, $UoM ) {
-		switch ( $UoM ) {
-			case 'g':
-				$weight = $weight / 1000;
-				break;
-			case 'lb':
-				$weight = $weight / 2.2;
-				break;
-			case 'oz':
-				$weight = $weight / 35.274;
-				break;
-			default:
-				break;
-		}
-		return $weight;
-	}
-
-	// Unset/remove any items that are empty strings or 0
-	private function walk_recursive_remove( array $array ) { 
-	    foreach ($array as $k => $v) { 
-	        if (is_array($v)) { 
-	            $array[$k] = $this->walk_recursive_remove($v); 
-	        } 
-            
-            if ( empty( $v ) ) { 
-                unset($array[$k]); 
-            } 
-	        
-	    }
-	    return $array; 
-	} 
 }
