@@ -35,9 +35,9 @@ class PR_DHL_API_SOAP_Finder extends PR_DHL_API_SOAP {
 			PR_DHL()->log_msg( '"getParcellocationByAddress" called with: ' . print_r( $soap_request, true ) );
 
 			$response_body = $soap_client->getParcellocationByAddress($soap_request);
-			error_log(print_r($soap_client->__getLastRequest(),true));
-			error_log(print_r($soap_client->__getLastResponse(),true));
-			error_log(print_r($response_body,true));
+			// error_log(print_r($soap_client->__getLastRequest(),true));
+			// error_log(print_r($soap_client->__getLastResponse(),true));
+			// error_log(print_r($response_body,true));
 
 			PR_DHL()->log_msg( 'Response Body: ' . print_r( $response_body, true ) );
 		
@@ -77,6 +77,8 @@ class PR_DHL_API_SOAP_Finder extends PR_DHL_API_SOAP {
 	protected function set_message() {
 		if( ! empty( $this->args ) ) {
 
+			$shipping_address = implode(' ', $this->args['shipping_address']);
+
 			$dhl_label_body = 
 				array(
 					'Version' =>
@@ -84,14 +86,8 @@ class PR_DHL_API_SOAP_Finder extends PR_DHL_API_SOAP {
 								'majorRelease' => '2',
 								'minorRelease' => '2'
 						),
-					'address' => 
-						array( 
-							'street' => $this->args['shipping_address']['address_1'],
-							'streetNo' => $this->args['shipping_address']['address_2'],
-							'zip' => $this->args['shipping_address']['postcode'],
-							'city' => $this->args['shipping_address']['city'],
-							'country' => $this->args['shipping_address']['country']
-						),
+					'address' => $shipping_address,
+					'countrycode' => $this->args['shipping_address']['country']
 				);
 
 			// Unset/remove any items that are empty strings or 0, even if required!

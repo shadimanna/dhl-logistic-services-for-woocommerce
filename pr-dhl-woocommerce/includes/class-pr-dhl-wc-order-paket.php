@@ -392,6 +392,13 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				// Create label if one has not been created before
 				if( empty( $this->get_dhl_label_tracking( $order_id ) ) ) {
 					try {
+
+						$dhl_label_items = $this->get_dhl_label_items( $order_id );
+
+						if( empty($dhl_label_items) ) {
+							$this->save_default_dhl_label_items( $order_id );
+						}
+
 						// Gather args for DHL API call
 						$args = $this->get_label_args( $order_id );
 

@@ -88,13 +88,7 @@ abstract class PR_DHL_WC_Order {
 		if( ! empty( $dhl_label_items['pr_dhl_product'] ) ) {
 			$selected_dhl_product = $dhl_label_items['pr_dhl_product'];
 		} else {
-			$shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
-
-			if( $this->is_shipping_domestic( $order_id ) ) {
-				$selected_dhl_product = $shipping_dhl_settings['dhl_default_product_dom'];
-			} else {
-				$selected_dhl_product = $shipping_dhl_settings['dhl_default_product_int'];
-			}
+			$selected_dhl_product = $this->get_default_dhl_product( $order_id );
 		}
 
 		// Get the list of domestic and international DHL services
@@ -374,6 +368,36 @@ abstract class PR_DHL_WC_Order {
 	 */
 	public function get_dhl_label_items( $order_id ) {
 		return get_post_meta( $order_id, '_pr_shipment_dhl_label_items', true );
+	}
+
+	protected function save_default_dhl_label_items( $order_id ) {
+		$dhl_label_items = $this->additional_default_dhl_label_items( $order_id );
+		// Set default weight
+		$dhl_label_items['pr_dhl_weight'] = $this->calculate_order_weight( $order_id );
+		// Set default DHL product
+		$dhl_label_items['pr_dhl_product'] = $this->get_default_dhl_product( $order_id );
+		// Save default items
+		$this->save_dhl_label_items( $order_id, $dhl_label_items );
+	}
+
+	/*
+	 * Used to override default label items in children e.g. ECOMMERCE DESCRIPTION FIELD!
+	 *
+	 * @param int  $order_id  Order ID
+	 *
+	 * @return default label items
+	 */
+	protected function additional_default_dhl_label_items( $order_id ) {
+		return array();
+	}
+
+	protected function get_default_dhl_product( $order_id ) {
+		$shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
+		if( $this->is_shipping_domestic( $order_id ) ) {
+			return $shipping_dhl_settings['dhl_default_product_dom'];
+		} else {
+			return $shipping_dhl_settings['dhl_default_product_int'];
+		}
 	}
 
 	protected function calculate_order_weight( $order_id ) {
