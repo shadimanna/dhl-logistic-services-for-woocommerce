@@ -44,12 +44,6 @@ class PR_DHL_API_SOAP_Finder extends PR_DHL_API_SOAP {
 		} catch (Exception $e) {
 			throw $e;
 		}
-
-		if( $response_body->Status->statusCode != 0 ) {
-			throw new Exception( sprintf( __('Could not create label - %s', 'pr-shipping-dhl'), $response_body->Status->statusMessage ) );
-		} else {
-			return $label_tracking_info;
-		}
 	}
 
 	protected function set_arguments( $args ) {
