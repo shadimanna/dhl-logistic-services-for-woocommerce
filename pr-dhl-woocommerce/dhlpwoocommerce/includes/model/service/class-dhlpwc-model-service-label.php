@@ -9,6 +9,9 @@ if (!class_exists('DHLPWC_Model_Service_Label')) :
  */
 class DHLPWC_Model_Service_Label extends DHLPWC_Model_Core_Singleton_Abstract
 {
+    const CREATE_ERROR = 'create';
+
+    protected $errors = array();
 
     /**
      * Create a label with data attached to order_id. Optionally, request a specific size
@@ -18,13 +21,37 @@ class DHLPWC_Model_Service_Label extends DHLPWC_Model_Core_Singleton_Abstract
      */
     public function create($order_id, $label_size = null, $label_options = array(), $to_business = false)
     {
+        $this->clear_error(self::CREATE_ERROR);
+
         $logic = DHLPWC_Model_Logic_Label::instance();
 
+        /** @var DHLPWC_Model_API_Data_Label $label_data */
         $label_data = $logic->prepare_data($order_id, array(
             'label_size' => $label_size,
             'label_options' => $label_options,
             'to_business' => $to_business,
         ));
+
+        // Cancel request if no street and housenumber are set
+        if (empty($label_data->shipper->address->street)) {
+            $this->set_error(self::CREATE_ERROR, __('Cannot parse street from shipper address.', 'dhlpwc'));
+            return false;
+        }
+
+        if (empty($label_data->shipper->address->number)) {
+            $this->set_error(self::CREATE_ERROR, __('Cannot parse housenumber from shipper address.', 'dhlpwc'));
+            return false;
+        }
+
+        if (empty($label_data->receiver->address->street)) {
+            $this->set_error(self::CREATE_ERROR, __('Cannot parse street from receiver address.', 'dhlpwc'));
+            return false;
+        }
+
+        if (empty($label_data->receiver->address->number)) {
+            $this->set_error(self::CREATE_ERROR, __('Cannot parse housenumber from receiver address.', 'dhlpwc'));
+            return false;
+        }
 
         $response = $logic->send_request($label_data);
         if (!$response) {
@@ -65,6 +92,27 @@ class DHLPWC_Model_Service_Label extends DHLPWC_Model_Core_Singleton_Abstract
             $logic = DHLPWC_Model_Logic_Label::instance();
             $logic->delete_pdf_file($label['pdf']['path']);
         }
+    }
+
+    protected function clear_error($key)
+    {
+        if (array_key_exists($key, $this->errors)) {
+            $this->errors[$key] = null;
+            unset($this->errors[$key]);
+        }
+    }
+
+    protected function set_error($key, $value)
+    {
+        $this->errors[$key] = $value;
+    }
+
+    public function get_error($key)
+    {
+        if (!array_key_exists($key, $this->errors)) {
+            return null;
+        }
+        return $this->errors[$key];
     }
 
 }

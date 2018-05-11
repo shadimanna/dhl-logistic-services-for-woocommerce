@@ -15,7 +15,9 @@ class DHLPWC_Model_API_Data_Label extends DHLPWC_Model_API_Data_Abstract
     public $label_id;
     public $order_reference;
     public $parcel_type_key;
+    /** @var DHLPWC_Model_API_Data_Label_Address $receiver */
     public $receiver;
+    /** @var DHLPWC_Model_API_Data_Label_Address $shipper */
     public $shipper;
     public $account_id;
     public $options;

@@ -74,11 +74,18 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                 'description' => __("Add shipping information in an additional column in your order overview.", 'dhlpwc'),
                 'default'     => 'yes',
             ),
+            'enable_track_trace_mail' => array(
+                'title'       => __('Track & trace in mail', 'dhlpwc'),
+                'type'        => 'checkbox',
+                'label'       => __('Enable', 'dhlpwc'),
+                'description' => __("Add track & trace information to the default WooCommerce completed order e-mail if available.", 'dhlpwc'),
+                'default'     => 'no',
+            ),
             'enable_track_trace_component' => array(
-                'title'       => __('Track & Trace component', 'dhlpwc'),
+                'title'       => __('Track & trace component', 'dhlpwc'),
                 'type'        => 'checkbox',
                 'label'       => __('Show', 'dhlpwc'),
-                'description' => __("Customers can see a Track & Trace component in the order summary.", 'dhlpwc'),
+                'description' => __("Customers can see a track & trace component in the order summary.", 'dhlpwc'),
                 'default'     => 'yes',
             ),
 

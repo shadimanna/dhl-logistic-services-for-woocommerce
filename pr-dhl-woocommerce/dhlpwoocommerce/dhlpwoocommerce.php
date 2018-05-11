@@ -53,6 +53,7 @@ class DHLPWC
             new DHLPWC_Controller_Checkout();
             new DHLPWC_Controller_Cart();
             new DHLPWC_Controller_Account();
+            new DHLPWC_Controller_Mail();
         }
     }
 

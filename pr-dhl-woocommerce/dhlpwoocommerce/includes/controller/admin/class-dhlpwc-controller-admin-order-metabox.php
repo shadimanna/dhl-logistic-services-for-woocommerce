@@ -38,7 +38,7 @@ class DHLPWC_Controller_Admin_Order_Metabox
         $label_options = isset($_POST['label_options']) && is_array($_POST['label_options']) ? wc_clean($_POST['label_options']) : array();
         $to_business = (isset($_POST['to_business']) && wc_clean($_POST['to_business']) == 'yes') ? true : false;
 
-        $service = new DHLPWC_Model_Service_Label();
+        $service = DHLPWC_Model_Service_Label::instance();
         $success = $service->create($post_id, $label_size, $label_options, $to_business);
 
         // Set Flash message
@@ -47,10 +47,15 @@ class DHLPWC_Controller_Admin_Order_Metabox
             $messages->add_notice(__('Label created.', 'dhlpwc'), 'dhlpwc_label_meta');
         } else {
             $messages->add_error(__('Label could not be created.', 'dhlpwc'), 'dhlpwc_label_meta');
-            // Attempt to retrieve last API error
-            $connector = DHLPWC_Model_API_Connector::instance();
-            if (isset($connector->error_id) && isset($connector->error_message)) {
-                $messages->add_error(sprintf(__('The API responded with [%1$s]: %2$s', 'dhlpwc'), $connector->error_id, $connector->error_message), 'dhlpwc_label_meta');
+            // Check if internal error
+            if ($error_message = $service->get_error(DHLPWC_Model_Service_Label::CREATE_ERROR)) {
+                $messages->add_error($error_message, 'dhlpwc_label_meta');
+            } else {
+                // Attempt to retrieve last API error
+                $connector = DHLPWC_Model_API_Connector::instance();
+                if (isset($connector->error_id) && isset($connector->error_message)) {
+                    $messages->add_error(sprintf(__('The API responded with [%1$s]: %2$s', 'dhlpwc'), $connector->error_id, $connector->error_message), 'dhlpwc_label_meta');
+                }
             }
         }
 
@@ -254,7 +259,7 @@ class DHLPWC_Controller_Admin_Order_Metabox
             ),
             array(
                 'url'    => 'https://www.dhlparcel.nl/nl/volg-uw-zending?tt='.$label['tracker_code'],
-                'name'   => __('Follow Track & Trace', 'dhlpwc'),
+                'name'   => __('Follow track & trace', 'dhlpwc'),
                 'action' => "dhlpwc_action_follow_tt",
             ),
             array(

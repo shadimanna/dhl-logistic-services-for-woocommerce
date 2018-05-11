@@ -25,6 +25,10 @@ class DHLPWC_Model_Service_Checkout extends DHLPWC_Model_Core_Singleton_Abstract
         $connector = DHLPWC_Model_API_Connector::instance();
 
         // TODO do country-based zip coded checks
+        if (!$postalcode) {
+            return array();
+        }
+
         // TODO whitelist countries
 //        $service = DHLPWC_Model_Service_Postcode::instance();
 //        $validation = $service->get_validation($country);
@@ -51,6 +55,10 @@ class DHLPWC_Model_Service_Checkout extends DHLPWC_Model_Core_Singleton_Abstract
 
     public function get_parcelshop($parcelshop_id, $country)
     {
+        if (!$parcelshop_id) {
+            return null;
+        }
+
         if (!$this->validate_country($country)) {
             return null;
         }
