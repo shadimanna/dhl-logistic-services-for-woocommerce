@@ -137,6 +137,25 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         return true;
     }
 
+    public function check_track_trace_mail()
+    {
+        $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
+
+        if (!isset($shipping_methods['dhlpwc'])) {
+            return false;
+        }
+
+        if (!isset($shipping_methods['dhlpwc']->settings['enable_track_trace_mail'])) {
+            return false;
+        }
+
+        if ($shipping_methods['dhlpwc']->settings['enable_track_trace_mail'] != 'yes') {
+            return false;
+        }
+
+        return true;
+    }
+
     public function check_track_trace_component()
     {
         $shipping_methods = WC_Shipping::instance()->load_shipping_methods();

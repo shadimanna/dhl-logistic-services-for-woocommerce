@@ -12,7 +12,9 @@ class DHLPWC_Model_API_Data_Label_Address extends DHLPWC_Model_API_Data_Abstract
         'address' => 'DHLPWC_Model_API_Data_Address',
     );
 
+    /** @var DHLPWC_Model_API_Data_Label_Address_Name $name */
     public $name;
+    /** @var DHLPWC_Model_API_Data_Address $address */
     public $address;
     public $email;
     public $phone_number;

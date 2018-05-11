@@ -28,6 +28,11 @@
             </p>
 
             <p>
+                <b>Error Code</b><br/>
+                <?php echo esc_attr($error_code) ?>
+            </p>
+
+            <p>
                 <b>Error Message</b><br/>
                 <?php echo esc_attr($error_message) ?>
             </p>

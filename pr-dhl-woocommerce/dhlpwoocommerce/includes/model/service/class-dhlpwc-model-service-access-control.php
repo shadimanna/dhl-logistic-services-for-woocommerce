@@ -11,6 +11,7 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
 
     const ACCESS_API = 'api';
     const ACCESS_COLUMN_INFO = 'column_info';
+    const ACCESS_TRACK_TRACE_MAIL = 'track_trace_mail';
     const ACCESS_TRACK_TRACE_COMPONENT = 'track_trace_component';
 
     const ACCESS_DEFAULT_TO_BUSINESS = 'default_to_business';
@@ -60,6 +61,11 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
             case self::ACCESS_COLUMN_INFO:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
                 return $logic->check_column_info();
+                break;
+
+            case self::ACCESS_TRACK_TRACE_MAIL:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_track_trace_mail();
                 break;
 
             case self::ACCESS_TRACK_TRACE_COMPONENT:

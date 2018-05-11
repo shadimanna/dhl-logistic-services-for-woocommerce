@@ -34,7 +34,6 @@ class DHLPWC_Controller_Account
     public function track_and_trace($wc_order)
     {
         /** @var WC_Order $wc_order **/
-
         $locale = str_replace('_', '-', get_locale());
 
         $service = DHLPWC_Model_Service_Postcode::instance();

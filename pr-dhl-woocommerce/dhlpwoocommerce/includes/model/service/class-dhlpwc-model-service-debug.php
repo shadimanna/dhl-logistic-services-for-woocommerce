@@ -7,8 +7,40 @@ if (!class_exists('DHLPWC_Model_Service_Debug')) :
 class DHLPWC_Model_Service_Debug extends DHLPWC_Model_Core_Singleton_Abstract
 {
 
-    public function mail($error_id, $error_message, $endpoint, $request)
+    // An array of endpoints to ignore. Each key is a string.
+    // Values is an array of error codes to ignore.
+    // For example, if the endpoint 'search-people/%query%' that returns 404 doesn't need to be reported (because it's common), add:
+    // 'search-people/' => array(404)
+    protected $exclude_endpoint_codes = array(
+        'parcel-shop-locations/' => array(404)
+    );
+
+    protected function is_excluded($endpoint, $error_code)
     {
+        if (!$endpoint) {
+            return false;
+        }
+
+        foreach ($this->exclude_endpoint_codes as $exclude_endpoint => $codes) {
+            // Check if endpoints starts as one of the excluded endpoints
+            if (substr($endpoint, 0, strlen($exclude_endpoint)) === $exclude_endpoint) {
+                if (in_array($error_code, $codes)) {
+                    return true;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function mail($error_id, $error_code, $error_message, $endpoint, $request)
+    {
+        if ($this->is_excluded($endpoint, $error_code)) {
+            return;
+        }
+
         $timestamp = current_time( 'timestamp', 1 );
         $title = 'ERROR: DHL for WooCommerce > ' . get_site_url() . ' > Endpoint:' . $endpoint . ' > (timestamp:' . $timestamp . ')';
 
@@ -29,6 +61,7 @@ class DHLPWC_Model_Service_Debug extends DHLPWC_Model_Core_Singleton_Abstract
             'title'          => $title,
             'site_url'       => get_site_url(),
             'error_id'       => $error_id,
+            'error_code'     => $error_code,
             'error_message'  => $error_message,
             'endpoint'       => $endpoint,
             'request'        => trim($request),

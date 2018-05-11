@@ -43,7 +43,7 @@ class DHLPWC_Translations
         __('OPTION_NBB');
         __('OPTION_ADD_RETURN_LABEL');
         __('OPTION_SSN');
-        __('OPTION_PERST_NOTE');
+        __('OPTION_PERS_NOTE');
         __('OPTION_SDD');
         __('OPTION_S');
     }

@@ -34,6 +34,7 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
 
     public $is_error = false;
     public $error_id = null;
+    public $error_code = null;
     public $error_message = null;
 
     public function __construct()
@@ -71,7 +72,7 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
             $service = DHLPWC_Model_Service_Access_Control::instance();
             if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DEBUG_MAIL)) {
                 $service = DHLPWC_Model_Service_Debug::instance();
-                $service->mail($this->error_id, $this->error_message, $endpoint, $params);
+                $service->mail($this->error_id, $this->error_code, $this->error_message, $endpoint, $params);
             }
             return false;
         }
@@ -83,6 +84,7 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
         // Assume there's always an error, until this method manages to return correctly and set the boolean to true.
         $this->is_error = true;
         $this->error_id = null;
+        $this->error_code = null;
         $this->error_message = null;
 
         $this->url = trailingslashit($this->url);
@@ -128,6 +130,8 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
                 }
             }
         }
+
+        $this->error_code = $request['response']['code'];
 
         return false;
     }

@@ -24,7 +24,7 @@ class DHLPWC_Model_Service_Track_Trace extends DHLPWC_Model_Core_Singleton_Abstr
         $labels = $service->get_labels($order_id);
 
         if (!$labels || !is_array($labels)) {
-            return;
+            return array();
         }
 
         $tracker_codes = array();
