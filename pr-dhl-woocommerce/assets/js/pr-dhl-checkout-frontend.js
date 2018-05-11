@@ -78,10 +78,133 @@ jQuery(function($) {
 // Load fancybox
 jQuery(document).ready(function($) {
 
+  // var marker;
+
+  function initParcelFinderMap() {
+    var uluru = {lat: -25.363, lng: 131.044};
+    var map = new google.maps.Map(document.getElementById('dhl_google_map'), {
+      zoom: 10,
+      center: uluru
+    });
+
+    /*
+      Title
+      Address
+      Opening hours
+      Select button
+    */
+    var contentString = '<div id="content">'+
+            '<div id="siteNotice">'+
+            '</div>'+
+            '<h1 id="firstHeading" class="firstHeading">Uluru</h1>'+
+            '<div id="bodyContent">'+
+            '<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
+            'sandstone rock formation in the southern part of the '+
+            'Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) '+
+            'south west of the nearest large town, Alice Springs; 450&#160;km '+
+            '(280&#160;mi) by road. Kata Tjuta and Uluru are the two major '+
+            'features of the Uluru - Kata Tjuta National Park. Uluru is '+
+            'sacred to the Pitjantjatjara and Yankunytjatjara, the '+
+            'Aboriginal people of the area. It has many springs, waterholes, '+
+            'rock caves and ancient paintings. Uluru is listed as a World '+
+            'Heritage Site.</p>'+
+            '<p>Attribution: Uluru, <a href="https://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">'+
+            'https://en.wikipedia.org/w/index.php?title=Uluru</a> '+
+            '(last visited June 22, 2009).</p>'+
+            '</div>'+
+            '</div>';
+
+    var infowindow = new google.maps.InfoWindow({
+          content: contentString,
+          maxWidth: 200
+        });
+
+    var marker = new google.maps.Marker({
+      position: uluru,
+      map: map,
+      title: 'DHL Parecel',
+      animation: google.maps.Animation.DROP,
+      icon: 'http://dhlplugin:8888/wp-content/uploads/2018/01/image-1.png'
+    });
+
+    marker.addListener('click', function() {
+      infowindow.open(map, marker);
+    });
+
+    // marker.addListener('click', toggleBounce);
+  }
+/*
+  function toggleBounce() {
+    if (marker.getAnimation() !== null) {
+      marker.setAnimation(null);
+    } else {
+      marker.setAnimation(google.maps.Animation.BOUNCE);
+    }
+  }
+*/
+  var wc_checkout_dhl_parcelfinder = {
+    init: function() {
+      // $( document.body ).on( 'click', 'a.showcoupon', this.show_coupon_form );
+      // $( document.body ).on( 'click', '.woocommerce-remove-coupon', this.remove_coupon );
+      $( 'form.checkout_dhl_parcel_finder' ).submit( this.submit );
+    },
+    submit: function() {
+      var $form = $( this );
+
+      if ( $form.is( '.processing' ) ) {
+        return false;
+      }
+
+      $form.addClass( 'processing' ).block({
+        message: null,
+        overlayCSS: {
+          background: '#fff',
+          opacity: 0.6
+        }
+      });
+
+      var data = {
+        action:             'wc_shipment_dhl_parcelfinder_search',
+        billing_postcode:   $form.find( 'input[name="dhl_billing_postcode"]' ).val(),
+        security:           $form.find( 'input[name="dhl_parcelfinder_nonce"]' ).val()
+      };
+
+      $.ajax({
+        type:   'POST',
+        url:    pr_dhl_checkout_frontend.ajax_url,
+        data:   data,
+        success:  function( code ) {
+          $( '.woocommerce-error, .woocommerce-message' ).remove();
+          $form.removeClass( 'processing' ).unblock();
+
+          if ( code ) {
+            // alert(code);
+            // $form.before( code );
+            // $form.slideUp();
+
+            // $( document.body ).trigger( 'update_checkout', { update_shipping_method: false } );
+          }
+        },
+        dataType: 'html'
+      });
+
+      return false;
+    }
+  };
+
+  initParcelFinderMap();
+
   /* This is basic - uses default settings */
+  $("a#dhl_parcel_finder").fancybox({
+    'autoDimensions' : false,
+    'width' : 800,
+    'height' : 800
+    });
   
-  $("a#dhl_parcel_finder").fancybox();
   
+  wc_checkout_dhl_parcelfinder.init();
+
+
   /* Using custom settings 
   
   $("a#inline").fancybox({

@@ -40,6 +40,7 @@ class PR_DHL_Front_End_Paket {
 								'preferred_neighbor' => __('Neighbor', 'pr-shipping-dhl')
 								);
 
+		$this->shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
 	}
 
 	public function init_hooks() {
@@ -47,7 +48,11 @@ class PR_DHL_Front_End_Paket {
 		// Add DHL meta tag
 		add_action( 'wp_head', array( $this, 'dhl_add_meta_tags') );
 
-		add_action( 'woocommerce_after_checkout_billing_form', array( $this, 'add_parcel_finder' ) );
+		add_action( 'woocommerce_after_checkout_billing_form', array( $this, 'add_parcel_finder_btn' ) );
+		add_action( 'woocommerce_after_checkout_form', array( $this, 'add_parcel_finder_form' ) );
+		add_action( 'wp_ajax_wc_shipment_dhl_parcelfinder_search', array( $this, 'call_parcel_finder' ) );
+		add_action( 'wp_ajax_nopriv_wc_shipment_dhl_parcelfinder_search', array( $this, 'call_parcel_finder' ) );
+
 		add_action( 'woocommerce_review_order_after_shipping', array( $this, 'add_preferred_fields' ) );
 		add_action( 'woocommerce_cart_calculate_fees', array( $this, 'add_cart_fees' ) );
 		add_action( 'woocommerce_checkout_order_processed', array( $this, 'process_dhl_preferred_fields' ), 10, 2 );
@@ -55,9 +60,8 @@ class PR_DHL_Front_End_Paket {
 	}
 
 	public function dhl_add_meta_tags() {
-		$shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
 		
-		if( ( isset( $shipping_dhl_settings['dhl_preferred_day'] ) && ( $shipping_dhl_settings['dhl_preferred_day'] == 'yes' ) ) ||	( isset( $shipping_dhl_settings['dhl_preferred_time'] ) && ( $shipping_dhl_settings['dhl_preferred_time'] == 'yes' ) ) || ( isset( $shipping_dhl_settings['dhl_preferred_location'] ) && ( $shipping_dhl_settings['dhl_preferred_location'] == 'yes' ) ) ||	( isset( $shipping_dhl_settings['dhl_preferred_neighbour'] ) && ( $shipping_dhl_settings['dhl_preferred_neighbour'] == 'yes' ) ) ) {
+		if( ( isset( $this->shipping_dhl_settings['dhl_preferred_day'] ) && ( $this->shipping_dhl_settings['dhl_preferred_day'] == 'yes' ) ) ||	( isset( $this->shipping_dhl_settings['dhl_preferred_time'] ) && ( $this->shipping_dhl_settings['dhl_preferred_time'] == 'yes' ) ) || ( isset( $this->shipping_dhl_settings['dhl_preferred_location'] ) && ( $this->shipping_dhl_settings['dhl_preferred_location'] == 'yes' ) ) ||	( isset( $this->shipping_dhl_settings['dhl_preferred_neighbour'] ) && ( $this->shipping_dhl_settings['dhl_preferred_neighbour'] == 'yes' ) ) ) {
 				
 				echo '<meta name="58vffw8g4r9_t3e38g4og588915" content="Yes">';
 		}
@@ -70,9 +74,8 @@ class PR_DHL_Front_End_Paket {
 		}
 
 		// $cod_settings = get_option('woocommerce_cod_settings');
-		$shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
 
-		if( ! empty( $shipping_dhl_settings['dhl_payment_gateway'] ) ) {
+		if( ! empty( $this->shipping_dhl_settings['dhl_payment_gateway'] ) ) {
 			$frontend_data = array(
 				'ajax_url'                  => admin_url( 'admin-ajax.php' ),
 				'cod_enabled'               => true
@@ -100,28 +103,30 @@ class PR_DHL_Front_End_Paket {
 		// Enqueue Fancybox
 		wp_enqueue_script( 'pr-dhl-fancybox-js', PR_DHL_PLUGIN_DIR_URL . '/assets/js/jquery.fancybox-1.3.4.pack.js', array('jquery') );
 		wp_enqueue_style( 'pr-dhl-fancybox-css', PR_DHL_PLUGIN_DIR_URL . '/assets/css/jquery.fancybox-1.3.4.css', array(), PR_DHL_VERSION );
+
+		// Enqueue Google Maps
+		// wp_enqueue_script( 'pr-dhl-google-maps', 'http://maps.googleapis.com/maps/api/js?libraries=places,geometry&callback=initParcelFinderMap&key=' . $this->shipping_dhl_settings['dhl_google_maps_api_key'] );
+		wp_enqueue_script( 'pr-dhl-google-maps', 'http://maps.googleapis.com/maps/api/js?key=' . $this->shipping_dhl_settings['dhl_google_maps_api_key'] );
 		
 	}
 	
-	public function add_parcel_finder() {
+	public function add_parcel_finder_btn() {
+		echo '<a id="dhl_parcel_finder" class="button" href="#dhl_parcel_finder_form">' . __('Parcel Finder', 'pr-shipping-dhl') . '</a>';
+	}
+
+	public function add_parcel_finder_form() {
 		$template_args = array();
-		$shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
+		
 				
 		if ( isset( $_POST['s_country'] ) && isset( $_POST['s_postcode'] ) ) {
-			// $dhl_obj = PR_DHL()->get_dhl_factory();
-			// $args['dhl_settings']['api_user'] = $shipping_dhl_settings['dhl_api_user'];
-			// $args['dhl_settings']['api_pwd'] = $shipping_dhl_settings['dhl_api_pwd'];
-			// $args['shipping_address']['country'] = $_POST['s_country'];
-			// $args['shipping_address']['postcode'] = $_POST['s_postcode'];
-
-			// $dhl_obj->get_parcel_location( $args );
-
-			$template_args['country'] = $_POST['s_country'];
-			$template_args['postcode'] = $_POST['s_postcode'];
+			$template_args['dhl_country'] = $_POST['s_country'];
+			$template_args['dhl_postcode'] = $_POST['s_postcode'];
 		}
+		// error_log(print_r($template_args,true));
 
 		wc_get_template( 'checkout/dhl-parcel-finder.php', $template_args, '', PR_DHL_PLUGIN_DIR_PATH . '/templates/' );
 	}
+
 	public function add_preferred_fields( ) {
 		// woocommerce_form_field('pr_dhl_paket_preferred_location');
 		$chosen_shipping_methods = WC()->session->get( 'chosen_shipping_methods' );
@@ -151,11 +156,11 @@ class PR_DHL_Front_End_Paket {
 			
 			try {
 
-				if( ! isset( $shipping_dhl_settings ) || empty( $shipping_dhl_settings['dhl_shipping_methods'] ) ) {
+				if( ! isset( $this->shipping_dhl_settings ) || empty( $this->shipping_dhl_settings['dhl_shipping_methods'] ) ) {
 					return;
 				}
 
-				$wc_methods_dhl = $shipping_dhl_settings['dhl_shipping_methods'];
+				$wc_methods_dhl = $this->shipping_dhl_settings['dhl_shipping_methods'];
 				if( isset( $chosen_shipping_methods ) ) {
 
 					if( is_array( $chosen_shipping_methods ) ) {
@@ -179,7 +184,7 @@ class PR_DHL_Front_End_Paket {
 					}
 				}
 
-				$wc_payment_dhl = $shipping_dhl_settings['dhl_payment_gateway'];
+				$wc_payment_dhl = $this->shipping_dhl_settings['dhl_payment_gateway'];
 				if( isset( $chosen_payment_method ) && ! empty( $wc_payment_dhl) ) {
 					if( is_array( $chosen_payment_method ) ) {
 
@@ -237,32 +242,30 @@ class PR_DHL_Front_End_Paket {
 		
 		try {
 			
-			$shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
-
-			if( ! isset( $shipping_dhl_settings ) ) {
+			if( ! isset( $this->shipping_dhl_settings ) ) {
 				return;
 			}
 
 			if( ! empty( $post_data['pr_dhl_preferred_time'] ) && ! empty( $post_data['pr_dhl_preferred_day'] ) ) {
-				if( ! empty( $shipping_dhl_settings['dhl_preferred_day_time_cost'] ) ) {
-					$cart->add_fee( __('DHL Preferred Day & Time', 'pr-shipping-dhl'), $shipping_dhl_settings['dhl_preferred_day_time_cost'] );
+				if( ! empty( $this->shipping_dhl_settings['dhl_preferred_day_time_cost'] ) ) {
+					$cart->add_fee( __('DHL Preferred Day & Time', 'pr-shipping-dhl'), $this->shipping_dhl_settings['dhl_preferred_day_time_cost'] );
 				}
 
 			} elseif ( ! empty( $post_data['pr_dhl_preferred_time'] ) ) {
 				
-				if( ! empty( $shipping_dhl_settings['dhl_preferred_time_cost'] ) ) {
-					$cart->add_fee( __('DHL Preferred Time', 'pr-shipping-dhl'), $shipping_dhl_settings['dhl_preferred_time_cost'] );
+				if( ! empty( $this->shipping_dhl_settings['dhl_preferred_time_cost'] ) ) {
+					$cart->add_fee( __('DHL Preferred Time', 'pr-shipping-dhl'), $this->shipping_dhl_settings['dhl_preferred_time_cost'] );
 				}
 
 			} elseif ( ! empty( $post_data['pr_dhl_preferred_day'] ) ) {
 				
-				if( ! empty( $shipping_dhl_settings['dhl_preferred_day_cost'] ) ) {
-					$cart->add_fee( __('DHL Preferred Day', 'pr-shipping-dhl'), $shipping_dhl_settings['dhl_preferred_day_cost'] );
+				if( ! empty( $this->shipping_dhl_settings['dhl_preferred_day_cost'] ) ) {
+					$cart->add_fee( __('DHL Preferred Day', 'pr-shipping-dhl'), $this->shipping_dhl_settings['dhl_preferred_day_cost'] );
 				}
 
 			}
 
-			if( ! empty( $shipping_dhl_settings['dhl_cod_fee'] ) && $shipping_dhl_settings['dhl_cod_fee'] == 'yes' && isset( $post_data['payment_method'] ) && $post_data['payment_method'] == 'cod' ) {
+			if( ! empty( $this->shipping_dhl_settings['dhl_cod_fee'] ) && $this->shipping_dhl_settings['dhl_cod_fee'] == 'yes' && isset( $post_data['payment_method'] ) && $post_data['payment_method'] == 'cod' ) {
 				// Add €2 fee to COD usage (Euro is being assumed as currency)
 				$cart->add_fee( __('DHL COD fee', 'pr-shipping-dhl'), 2 );
 			}
@@ -373,7 +376,34 @@ class PR_DHL_Front_End_Paket {
 	private function array_insert (&$array, $position, $insert_array) { 
 	  $first_array = array_splice ($array, 0, $position); 
 	  $array = array_merge ($first_array, $insert_array, $array); 
-	} 
+	}
+
+	public function call_parcel_finder() {
+		// error_log('call_parcel_finder');
+		check_ajax_referer( 'dhl_parcelfinder', 'security' );
+		// error_log(print_r($_POST,true));
+		$billing_postcode	 = wc_clean( $_POST[ 'billing_postcode' ] );
+
+		try {
+			$dhl_obj = PR_DHL()->get_dhl_factory();
+			$args['dhl_settings']['api_user'] = $this->shipping_dhl_settings['dhl_api_user'];
+			$args['dhl_settings']['api_pwd'] = $this->shipping_dhl_settings['dhl_api_pwd'];
+			$args['shipping_address']['country'] = 'DE';
+			$args['shipping_address']['postcode'] = $billing_postcode;
+
+			error_log(print_r($args,true));
+			$parcel_res = $dhl_obj->get_parcel_location( $args );		
+			// error_log(print_r($parcel_res,true));
+			
+			wp_send_json( array( 
+				'parcel_res' => $parcel_res,
+				// 'tracking_note'	  => $tracking_note
+				) );
+
+		} catch (Exception $e) {
+			wp_send_json( array( 'error' => $e->getMessage() ) );
+		}
+	}
 }
 
 endif;

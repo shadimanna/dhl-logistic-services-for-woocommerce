@@ -348,6 +348,18 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'description'       => __( 'Enabling this will display a front-end option for the user to select their preferred neighbour.', 'pr-shipping-dhl' ),
 					'desc_tip'          => true,
 				),
+				'dhl_google_maps'           => array(
+					'title'           => __( 'Google Maps', 'pr-shipping-dhl' ),
+					'type'            => 'title',
+					'description'     => __( 'Google Maps options.', 'pr-shipping-dhl' ),
+				),
+				'dhl_google_maps_api_key' => array(
+					'title'             => __( 'API Key', 'pr-shipping-dhl' ),
+					'type'              => 'text',
+					'description'       => sprintf( __( 'Get a free Google Maps API key %shere%s.', 'pr-shipping-dhl' ), '<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target = "_blank">', '</a>' ),
+					'desc_tip'          => false,
+					'class'				=> ''
+				),
 			);
 		}
 

@@ -41,6 +41,7 @@ class PR_DHL_API_SOAP_Finder extends PR_DHL_API_SOAP {
 
 			PR_DHL()->log_msg( 'Response Body: ' . print_r( $response_body, true ) );
 		
+			return $response_body;
 		} catch (Exception $e) {
 			throw $e;
 		}

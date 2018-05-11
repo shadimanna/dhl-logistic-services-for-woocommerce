@@ -14,9 +14,26 @@ try {
 
 ?>
 
-<a id="dhl_parcel_finder" class="button" href="#dhl_parcel_finder_form">Parcel Finder</a>
 <div style="display:none">
   <div id="dhl_parcel_finder_form">
     <!-- Create form and call via AJAX parcel finder API -->
+    <form class="checkout_dhl_parcel_finder" method="post">
+
+		<p class="form-row form-row-first">
+			<input type="text" name="dhl_billing_postcode" class="input-text" placeholder="<?php esc_attr_e( '51111', 'pr-shipping-dhl' ); ?>" id="dhl_billing_postcode" value="<?php echo isset($dhl_postcode) ? $dhl_postcode : ''; ?>" />
+		</p>
+		
+		<input type="hidden" name="dhl_parcelfinder_nonce" value="<?php echo wp_create_nonce('dhl_parcelfinder') ?>" />
+
+		<p class="form-row form-row-last">
+			<input type="submit" class="button" name="apply_parcel_finder" value="<?php esc_attr_e( 'Search', 'pr-shipping-dhl' ); ?>" />
+		</p>
+		
+
+		<div class="clear"></div>
+	</form>
+
+	<div id="dhl_google_map"></div>
+	
   </div>
 </div>
