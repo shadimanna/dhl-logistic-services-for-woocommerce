@@ -181,3 +181,8 @@ ul.dhl-preferred-location li label {
   width: 100%;
   height: 800px;
 }
+
+#dhl_parcel_finder_form .woocommerce-error {
+  padding: 1em;
+  width: 95%;
+}

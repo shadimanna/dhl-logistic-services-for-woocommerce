@@ -73,18 +73,17 @@ class PR_DHL_Front_End_Paket {
 			return;
 		}
 
-		// $cod_settings = get_option('woocommerce_cod_settings');
+		$frontend_data = array(
+			'ajax_url'			=> admin_url( 'admin-ajax.php' ),
+			'packstation_icon'	=> PR_DHL_PLUGIN_DIR_URL . '/assets/img/packstation.png',
+			'parcelshop_icon'	=> PR_DHL_PLUGIN_DIR_URL . '/assets/img/parcelshop.png',
+			'post_office_icon'	=> PR_DHL_PLUGIN_DIR_URL . '/assets/img/post_office.png',
+		);
 
 		if( ! empty( $this->shipping_dhl_settings['dhl_payment_gateway'] ) ) {
-			$frontend_data = array(
-				'ajax_url'                  => admin_url( 'admin-ajax.php' ),
-				'cod_enabled'               => true
-			); 
+			$frontend_data['cod_enabled'] = true; 
 		} else {
-			$frontend_data = array(
-				'ajax_url'                  => admin_url( 'admin-ajax.php' ),
-				'cod_enabled'               => false
-			); 
+			$frontend_data['cod_enabled'] = false; 
 		}
 
 
@@ -382,14 +381,14 @@ class PR_DHL_Front_End_Paket {
 		// error_log('call_parcel_finder');
 		check_ajax_referer( 'dhl_parcelfinder', 'security' );
 		// error_log(print_r($_POST,true));
-		$billing_postcode	 = wc_clean( $_POST[ 'billing_postcode' ] );
+		$gmap_postcode	 = wc_clean( $_POST[ 'gmap_postcode' ] );
 
 		try {
 			$dhl_obj = PR_DHL()->get_dhl_factory();
 			$args['dhl_settings']['api_user'] = $this->shipping_dhl_settings['dhl_api_user'];
 			$args['dhl_settings']['api_pwd'] = $this->shipping_dhl_settings['dhl_api_pwd'];
 			$args['shipping_address']['country'] = 'DE';
-			$args['shipping_address']['postcode'] = $billing_postcode;
+			$args['shipping_address']['postcode'] = $gmap_postcode;
 
 			error_log(print_r($args,true));
 			$parcel_res = $dhl_obj->get_parcel_location( $args );		
