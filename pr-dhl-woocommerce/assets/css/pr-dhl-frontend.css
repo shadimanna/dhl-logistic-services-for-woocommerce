@@ -186,3 +186,8 @@ ul.dhl-preferred-location li label {
   padding: 1em;
   width: 95%;
 }
+
+#dhl_parcel_finder_form .parcel_title {
+  padding-top: 0px;
+  margin-bottom: .5em;
+}

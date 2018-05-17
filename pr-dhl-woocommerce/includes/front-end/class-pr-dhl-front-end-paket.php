@@ -78,6 +78,19 @@ class PR_DHL_Front_End_Paket {
 			'packstation_icon'	=> PR_DHL_PLUGIN_DIR_URL . '/assets/img/packstation.png',
 			'parcelshop_icon'	=> PR_DHL_PLUGIN_DIR_URL . '/assets/img/parcelshop.png',
 			'post_office_icon'	=> PR_DHL_PLUGIN_DIR_URL . '/assets/img/post_office.png',
+			'opening_times'		=> __('Opening Times', 'pr-shipping-dhl'),
+			'monday'			=> __('Monday: ', 'pr-shipping-dhl'),
+			'tueday'			=> __('Tuesday: ', 'pr-shipping-dhl'),
+			'wednesday'			=> __('Wednesday: ', 'pr-shipping-dhl'),
+			'thrusday'			=> __('Thursday: ', 'pr-shipping-dhl'),
+			'friday'			=> __('Friday: ', 'pr-shipping-dhl'),
+			'satuday'			=> __('Saturday: ', 'pr-shipping-dhl'),
+			'sunday'			=> __('Sunday: ', 'pr-shipping-dhl'),
+			'services'			=> __('Services: ', 'pr-shipping-dhl'),
+			'yes'				=> __('Yes', 'pr-shipping-dhl'),
+			'no'				=> __('No', 'pr-shipping-dhl'),
+			'parking'			=> __('Parking: ', 'pr-shipping-dhl'),
+			'handicap'			=> __('Handicap Accessible: ', 'pr-shipping-dhl'),
 		);
 
 		if( ! empty( $this->shipping_dhl_settings['dhl_payment_gateway'] ) ) {
@@ -116,11 +129,11 @@ class PR_DHL_Front_End_Paket {
 	public function add_parcel_finder_form() {
 		$template_args = array();
 		
-				
+		/*	
 		if ( isset( $_POST['s_country'] ) && isset( $_POST['s_postcode'] ) ) {
 			$template_args['dhl_country'] = $_POST['s_country'];
 			$template_args['dhl_postcode'] = $_POST['s_postcode'];
-		}
+		}*/
 		// error_log(print_r($template_args,true));
 
 		wc_get_template( 'checkout/dhl-parcel-finder.php', $template_args, '', PR_DHL_PLUGIN_DIR_PATH . '/templates/' );
@@ -381,21 +394,63 @@ class PR_DHL_Front_End_Paket {
 		// error_log('call_parcel_finder');
 		check_ajax_referer( 'dhl_parcelfinder', 'security' );
 		// error_log(print_r($_POST,true));
-		$gmap_postcode	 = wc_clean( $_POST[ 'gmap_postcode' ] );
+		$parcelfinder_country	 = wc_clean( $_POST[ 'parcelfinder_country' ] );
+		$parcelfinder_postcode	 = wc_clean( $_POST[ 'parcelfinder_postcode' ] );
+		$parcelfinder_city	 = wc_clean( $_POST[ 'parcelfinder_city' ] );
+		$parcelfinder_address	 = wc_clean( $_POST[ 'parcelfinder_address' ] );
 
 		try {
 			$dhl_obj = PR_DHL()->get_dhl_factory();
 			$args['dhl_settings']['api_user'] = $this->shipping_dhl_settings['dhl_api_user'];
 			$args['dhl_settings']['api_pwd'] = $this->shipping_dhl_settings['dhl_api_pwd'];
-			$args['shipping_address']['country'] = 'DE';
-			$args['shipping_address']['postcode'] = $gmap_postcode;
+			$args['shipping_address']['address'] = $parcelfinder_address;
+			$args['shipping_address']['postcode'] = $parcelfinder_postcode;
+			$args['shipping_address']['city'] = $parcelfinder_city;
+			$args['shipping_address']['country'] = $parcelfinder_country;
 
-			error_log(print_r($args,true));
+			// error_log(print_r($args,true));
 			$parcel_res = $dhl_obj->get_parcel_location( $args );		
 			// error_log(print_r($parcel_res,true));
 			
+			if ( ! isset( $parcel_res->parcelLocation ) ) {
+				throw new Exception( __('No parcel shops found', 'pr-shipping-dhl') );
+			}
+			
+			$res_count = 0;
+			$parcel_res_filtered = array();
+			foreach ($parcel_res->parcelLocation as $key => $value) {
+				// error_log(print_r($value,true));
+				if( ( isset( $this->shipping_dhl_settings['dhl_display_packstation'] ) && 
+					( $this->shipping_dhl_settings['dhl_display_packstation'] == 'yes' ) && 
+					( $value->shopType == 'packStation' ) ) ||
+					( isset( $this->shipping_dhl_settings['dhl_display_parcelshop'] ) && 
+					( $this->shipping_dhl_settings['dhl_display_parcelshop'] == 'yes' ) && 
+					( $value->shopType == 'parcelShop' ) ) ||
+					( isset( $this->shipping_dhl_settings['dhl_display_post_office'] ) && 
+					( $this->shipping_dhl_settings['dhl_display_post_office'] == 'yes' ) && 
+					( $value->shopType == 'postOffice' ) ) ) {
+
+					if ($value->psfServicetypes) {
+						foreach ($value->psfServicetypes as $service_type) {
+							// Only display shops that accept parcels.
+							// WHAT ABOUT 'parcelpickup', NEED TO CHECK?
+							if( $service_type == 'parcelacceptance' ) {
+								array_push($parcel_res_filtered, $value);
+								$res_count++;
+							}
+						}
+					}
+				}
+				
+				if( $res_count == $this->shipping_dhl_settings['dhl_parcel_limit'] ) {
+					break;
+				}
+			}
+
+			// error_log(print_r($parcel_res_filtered,true));
+
 			wp_send_json( array( 
-				'parcel_res' => $parcel_res,
+				'parcel_res' => $parcel_res_filtered,
 				// 'tracking_note'	  => $tracking_note
 				) );
 

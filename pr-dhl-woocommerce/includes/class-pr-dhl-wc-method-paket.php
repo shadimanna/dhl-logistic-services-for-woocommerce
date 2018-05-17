@@ -348,10 +348,43 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'description'       => __( 'Enabling this will display a front-end option for the user to select their preferred neighbour.', 'pr-shipping-dhl' ),
 					'desc_tip'          => true,
 				),
-				'dhl_google_maps'           => array(
-					'title'           => __( 'Google Maps', 'pr-shipping-dhl' ),
+				'dhl_parcel_finder'           => array(
+					'title'           => __( 'Parcel Finder', 'pr-shipping-dhl' ),
 					'type'            => 'title',
-					'description'     => __( 'Google Maps options.', 'pr-shipping-dhl' ),
+					'description'     => __( 'Parcel Finder options.', 'pr-shipping-dhl' ),
+				),
+				'dhl_display_packstation' => array(
+					'title'             => __( 'Packstation', 'pr-shipping-dhl' ),
+					'type'              => 'checkbox',
+					'label'             => __( 'Enable Packstation', 'pr-shipping-dhl' ),
+					'default'           => 'yes',
+					'description'       => __( 'Enabling this will display Packstation locations on Google Maps when searching for drop off locations on the front-end.', 'pr-shipping-dhl' ),
+					'desc_tip'          => true,
+				),
+				'dhl_display_parcelshop' => array(
+					'title'             => __( 'Parcelshop', 'pr-shipping-dhl' ),
+					'type'              => 'checkbox',
+					'label'             => __( 'Enable Parcelshop', 'pr-shipping-dhl' ),
+					'default'           => 'yes',
+					'description'       => __( 'Enabling this will display Parcelshop locations on Google Maps when searching for drop off locations on the front-end.', 'pr-shipping-dhl' ),
+					'desc_tip'          => true,
+				),
+				'dhl_display_post_office' => array(
+					'title'             => __( 'Post Office', 'pr-shipping-dhl' ),
+					'type'              => 'checkbox',
+					'label'             => __( 'Enable Post Office', 'pr-shipping-dhl' ),
+					'default'           => 'yes',
+					'description'       => __( 'Enabling this will display Post Office locations on Google Maps when searching for drop off locations on the front-end.', 'pr-shipping-dhl' ),
+					'desc_tip'          => true,
+				),
+				'dhl_parcel_limit' => array(
+					'title'             => __( 'Limit Results', 'pr-shipping-dhl' ),
+					'type'              => 'number',
+					'description'       => __( 'Limit displayed results, from 0 to at most 50.', 'pr-shipping-dhl' ),
+					'desc_tip'          => true,
+					'class'				=> '',
+					'default'           => '20',
+					'custom_attributes'	=> array( 'min' => '0', 'max' => '50' )
 				),
 				'dhl_google_maps_api_key' => array(
 					'title'             => __( 'API Key', 'pr-shipping-dhl' ),
