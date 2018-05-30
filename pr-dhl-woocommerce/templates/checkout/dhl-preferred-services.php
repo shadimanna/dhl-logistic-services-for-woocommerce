@@ -10,11 +10,6 @@ try {
     return;
 }
 
-// Make sure at least one preferred service is enabled
-if( ( isset( $shipping_dhl_settings['dhl_preferred_day'] ) && ( $shipping_dhl_settings['dhl_preferred_day'] == 'yes' ) ) || 
-    ( isset( $shipping_dhl_settings['dhl_preferred_time'] ) && ( $shipping_dhl_settings['dhl_preferred_time'] == 'yes' ) ) ||
-    ( isset( $shipping_dhl_settings['dhl_preferred_location'] ) && ( $shipping_dhl_settings['dhl_preferred_location'] == 'yes' ) ) ||
-    ( isset( $shipping_dhl_settings['dhl_preferred_neighbour'] ) && ( $shipping_dhl_settings['dhl_preferred_neighbour'] == 'yes' ) ) ) {
 ?>
 
 <tr class="dhl-co-tr dhl-co-tr-fist">
@@ -213,4 +208,3 @@ Please choose your preferred delivery option.', 'pr-shipping-dhl'); ?></td>
 <tr class="dhl-co-tr dhl-co-tr-last">
   <td colspan="2"></td>
 </tr>
-<?php } ?>

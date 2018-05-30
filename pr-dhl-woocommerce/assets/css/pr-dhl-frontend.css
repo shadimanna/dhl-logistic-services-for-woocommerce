@@ -177,9 +177,38 @@ ul.dhl-preferred-location li label {
   cursor: pointer;
 }
 
+a#dhl_parcel_finder {
+  padding: .125rem;
+  border-radius: 3px;
+  background-clip: padding-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  font-size: .875rem;
+  background-color: #fff;
+  -webkit-font-smoothing: inherit;
+  display: inline-block;
+  position: relative;
+  font-weight: 700;
+  text-decoration: none;
+  text-align: left;
+  cursor: pointer;
+  border: 1px solid #dadae5;
+}
+
+#dhl_parcel_finder img {
+  width: 25%;
+  vertical-align: middle;
+}
+
 #dhl_google_map {
   width: 100%;
-  height: 800px;
+  height: 100%;
+}
+
+#dhl_parcel_finder_form {
+  width: 80%;
+  height: 80%;
 }
 
 #dhl_parcel_finder_form .woocommerce-error {
@@ -187,7 +216,37 @@ ul.dhl-preferred-location li label {
   width: 95%;
 }
 
-#dhl_parcel_finder_form .parcel_title {
+#dhl_parcel_finder_form .parcel-title {
   padding-top: 0px;
   margin-bottom: .5em;
+}
+
+
+#dhl_parcel_finder_form form .small-field {
+  width: 25%;
+  float: left;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  vertical-align: middle;
+}
+
+#dhl_parcel_finder_form form .large-field {
+  width: 45%;
+  float: left;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  vertical-align: middle;
+}
+
+#dhl_parcel_finder_form form .form-row label {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+#dhl_parcel_finder_form form .form-row .input-checkbox {
+  vertical-align: middle;
+}
+
+#dhl_parcel_finder_form .parcelshop-select-btn {
+  margin-top: 20px;
 }

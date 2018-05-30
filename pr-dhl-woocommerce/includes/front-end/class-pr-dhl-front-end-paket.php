@@ -19,10 +19,18 @@ class PR_DHL_Front_End_Paket {
 	private $preferred_services = array();
 	
 	private $preferred_location_neighbor = array();
+
+	private $pack_station_name = '';
+	private $parcel_shop_name = '';
+	private $post_office_name = '';
+
 	/**
 	 * Init and hook in the integration.
 	 */
 	public function __construct( ) {
+
+		$this->shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
+
 		// $this->define_constants();
 		$this->init_hooks();
 
@@ -39,32 +47,52 @@ class PR_DHL_Front_End_Paket {
 								'preferred_location' => __('Location', 'pr-shipping-dhl'),
 								'preferred_neighbor' => __('Neighbor', 'pr-shipping-dhl')
 								);
-
-		$this->shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
+		
+		$this->pack_station_name = __('Packstation ', 'pr-shipping-dhl');
+		$this->parcel_shop_name = __('Parcelshop ', 'pr-shipping-dhl');
+		$this->post_office_name = __('Post Office ', 'pr-shipping-dhl');
+			
 	}
 
 	public function init_hooks() {
+
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_styles_scripts' ) );
-		// Add DHL meta tag
-		add_action( 'wp_head', array( $this, 'dhl_add_meta_tags') );
 
-		add_action( 'woocommerce_after_checkout_billing_form', array( $this, 'add_parcel_finder_btn' ) );
-		add_action( 'woocommerce_after_checkout_form', array( $this, 'add_parcel_finder_form' ) );
-		add_action( 'wp_ajax_wc_shipment_dhl_parcelfinder_search', array( $this, 'call_parcel_finder' ) );
-		add_action( 'wp_ajax_nopriv_wc_shipment_dhl_parcelfinder_search', array( $this, 'call_parcel_finder' ) );
+		if( $this->is_preferredservice_enabled() || $this->is_parcelfinder_enabled() ) {
+			// Add DHL meta tag
+			add_action( 'wp_head', array( $this, 'dhl_add_meta_tags') );
+		}
 
-		add_action( 'woocommerce_review_order_after_shipping', array( $this, 'add_preferred_fields' ) );
-		add_action( 'woocommerce_cart_calculate_fees', array( $this, 'add_cart_fees' ) );
-		add_action( 'woocommerce_checkout_order_processed', array( $this, 'process_dhl_preferred_fields' ), 10, 2 );
-		add_filter( 'woocommerce_get_order_item_totals', array( $this, 'display_dhl_preferred_free_services_values' ), 10, 2 );
+		if( $this->is_preferredservice_enabled() ) {
+			add_action( 'woocommerce_review_order_after_shipping', array( $this, 'add_preferred_fields' ) );
+			add_action( 'woocommerce_cart_calculate_fees', array( $this, 'add_cart_fees' ) );
+			add_action( 'woocommerce_checkout_order_processed', array( $this, 'process_dhl_preferred_fields' ), 10, 2 );
+			add_filter( 'woocommerce_get_order_item_totals', array( $this, 'display_dhl_preferred_free_services_values' ), 10, 2 );
+		}
+
+		// Parcel finder hooks
+		if( $this->is_parcelfinder_enabled() ) {
+			add_action( 'woocommerce_after_checkout_billing_form', array( $this, 'add_parcel_finder_btn' ) );
+			add_action( 'woocommerce_after_checkout_form', array( $this, 'add_parcel_finder_form' ) );
+			
+			add_action( 'wp_ajax_wc_shipment_dhl_parcelfinder_search', array( $this, 'call_parcel_finder' ) );
+			add_action( 'wp_ajax_nopriv_wc_shipment_dhl_parcelfinder_search', array( $this, 'call_parcel_finder' ) );
+			
+			add_action( 'woocommerce_checkout_process', array( $this, 'validate_post_number' ) );
+		}
+	}
+
+	protected function is_preferredservice_enabled() {
+		
+		if( ( isset( $this->shipping_dhl_settings['dhl_preferred_day'] ) && ( $this->shipping_dhl_settings['dhl_preferred_day'] == 'yes' ) ) ||	( isset( $this->shipping_dhl_settings['dhl_preferred_time'] ) && ( $this->shipping_dhl_settings['dhl_preferred_time'] == 'yes' ) ) || ( isset( $this->shipping_dhl_settings['dhl_preferred_location'] ) && ( $this->shipping_dhl_settings['dhl_preferred_location'] == 'yes' ) ) ||	( isset( $this->shipping_dhl_settings['dhl_preferred_neighbour'] ) && ( $this->shipping_dhl_settings['dhl_preferred_neighbour'] == 'yes' ) ) ) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public function dhl_add_meta_tags() {
-		
-		if( ( isset( $this->shipping_dhl_settings['dhl_preferred_day'] ) && ( $this->shipping_dhl_settings['dhl_preferred_day'] == 'yes' ) ) ||	( isset( $this->shipping_dhl_settings['dhl_preferred_time'] ) && ( $this->shipping_dhl_settings['dhl_preferred_time'] == 'yes' ) ) || ( isset( $this->shipping_dhl_settings['dhl_preferred_location'] ) && ( $this->shipping_dhl_settings['dhl_preferred_location'] == 'yes' ) ) ||	( isset( $this->shipping_dhl_settings['dhl_preferred_neighbour'] ) && ( $this->shipping_dhl_settings['dhl_preferred_neighbour'] == 'yes' ) ) ) {
-				
-				echo '<meta name="58vffw8g4r9_t3e38g4og588915" content="Yes">';
-		}
+		echo '<meta name="58vffw8g4r9_t3e38g4og588915" content="Yes">';
 	}
 
 	public function load_styles_scripts() {
@@ -79,18 +107,24 @@ class PR_DHL_Front_End_Paket {
 			'parcelshop_icon'	=> PR_DHL_PLUGIN_DIR_URL . '/assets/img/parcelshop.png',
 			'post_office_icon'	=> PR_DHL_PLUGIN_DIR_URL . '/assets/img/post_office.png',
 			'opening_times'		=> __('Opening Times', 'pr-shipping-dhl'),
-			'monday'			=> __('Monday: ', 'pr-shipping-dhl'),
-			'tueday'			=> __('Tuesday: ', 'pr-shipping-dhl'),
-			'wednesday'			=> __('Wednesday: ', 'pr-shipping-dhl'),
-			'thrusday'			=> __('Thursday: ', 'pr-shipping-dhl'),
-			'friday'			=> __('Friday: ', 'pr-shipping-dhl'),
-			'satuday'			=> __('Saturday: ', 'pr-shipping-dhl'),
-			'sunday'			=> __('Sunday: ', 'pr-shipping-dhl'),
-			'services'			=> __('Services: ', 'pr-shipping-dhl'),
+			'monday'			=> __('Monday', 'pr-shipping-dhl'),
+			'tueday'			=> __('Tuesday', 'pr-shipping-dhl'),
+			'wednesday'			=> __('Wednesday', 'pr-shipping-dhl'),
+			'thrusday'			=> __('Thursday', 'pr-shipping-dhl'),
+			'friday'			=> __('Friday', 'pr-shipping-dhl'),
+			'satuday'			=> __('Saturday', 'pr-shipping-dhl'),
+			'sunday'			=> __('Sunday', 'pr-shipping-dhl'),
+			'services'			=> __('Services', 'pr-shipping-dhl'),
 			'yes'				=> __('Yes', 'pr-shipping-dhl'),
 			'no'				=> __('No', 'pr-shipping-dhl'),
-			'parking'			=> __('Parking: ', 'pr-shipping-dhl'),
-			'handicap'			=> __('Handicap Accessible: ', 'pr-shipping-dhl'),
+			'parking'			=> __('Parking', 'pr-shipping-dhl'),
+			'handicap'			=> __('Handicap Accessible', 'pr-shipping-dhl'),
+			'packstation'		=> $this->pack_station_name,
+			'parcelShop'		=> $this->parcel_shop_name,
+			'postoffice'		=> $this->post_office_name,
+			'select'			=> __('Select ', 'pr-shipping-dhl'),
+			'post_number'		=> __('Post Number ', 'pr-shipping-dhl'),
+			'post_number_tip'	=> __('<span class="dhl-tooltip" title="Indicate a preferred time, which suits you best for your parcel delivery by choosing one of the displayed time windows.">?</span>', 'pr-shipping-dhl'),
 		);
 
 		if( ! empty( $this->shipping_dhl_settings['dhl_payment_gateway'] ) ) {
@@ -100,45 +134,36 @@ class PR_DHL_Front_End_Paket {
 		}
 
 
-		// Register and load our styles and scripts
-		wp_register_script( 'pr-dhl-checkout-frontend', PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-checkout-frontend.js', array( 'jquery', 'wc-checkout' ), PR_DHL_VERSION, true );
-		wp_localize_script( 'pr-dhl-checkout-frontend', 'pr_dhl_checkout_frontend', $frontend_data);
-		wp_enqueue_script( 'pr-dhl-checkout-frontend' );
+		if( $this->is_preferredservice_enabled() || $this->is_parcelfinder_enabled() ) {
+			// Register and load our styles and scripts
+			wp_register_script( 'pr-dhl-checkout-frontend', PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-checkout-frontend.js', array( 'jquery', 'wc-checkout' ), PR_DHL_VERSION, true );
+			wp_localize_script( 'pr-dhl-checkout-frontend', 'pr_dhl_checkout_frontend', $frontend_data);
+			wp_enqueue_script( 'pr-dhl-checkout-frontend' );
 
-		wp_enqueue_style( 'pr-dhl-checkout-frontend', PR_DHL_PLUGIN_DIR_URL . '/assets/css/pr-dhl-frontend.css', array(), PR_DHL_VERSION );
+			wp_enqueue_style( 'pr-dhl-checkout-frontend', PR_DHL_PLUGIN_DIR_URL . '/assets/css/pr-dhl-frontend.css', array(), PR_DHL_VERSION );
+		}
 
-		// jquery UI for tool tip
-		wp_enqueue_style( 'pr-dhl-jquery-ui-style', PR_DHL_PLUGIN_DIR_URL . '/assets/css/jquery-ui-tooltip.css', array(), '1.0' );
-		wp_enqueue_script( 'jquery-effects-core' );
-		wp_enqueue_script( 'jquery-ui-tooltip' );
-		
-		// Enqueue Fancybox
-		wp_enqueue_script( 'pr-dhl-fancybox-js', PR_DHL_PLUGIN_DIR_URL . '/assets/js/jquery.fancybox-1.3.4.pack.js', array('jquery') );
-		wp_enqueue_style( 'pr-dhl-fancybox-css', PR_DHL_PLUGIN_DIR_URL . '/assets/css/jquery.fancybox-1.3.4.css', array(), PR_DHL_VERSION );
+		if( $this->is_preferredservice_enabled() ) {
+			// jquery UI for tool tip
+			wp_enqueue_style( 'pr-dhl-jquery-ui-style', PR_DHL_PLUGIN_DIR_URL . '/assets/css/jquery-ui-tooltip.css', array(), '1.0' );
+			wp_enqueue_script( 'jquery-effects-core' );
+			wp_enqueue_script( 'jquery-ui-tooltip' );
+		}
 
-		// Enqueue Google Maps
-		// wp_enqueue_script( 'pr-dhl-google-maps', 'http://maps.googleapis.com/maps/api/js?libraries=places,geometry&callback=initParcelFinderMap&key=' . $this->shipping_dhl_settings['dhl_google_maps_api_key'] );
-		wp_enqueue_script( 'pr-dhl-google-maps', 'http://maps.googleapis.com/maps/api/js?key=' . $this->shipping_dhl_settings['dhl_google_maps_api_key'] );
-		
+		if( $this->is_parcelfinder_enabled() ) {
+			// Enqueue Fancybox
+			// wp_enqueue_script( 'pr-dhl-fancybox-js', PR_DHL_PLUGIN_DIR_URL . '/assets/js/jquery.fancybox-1.3.4.pack.js', array('jquery') );
+			wp_enqueue_script( 'pr-dhl-fancybox-js', 'https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.js', array('jquery') );
+			// wp_enqueue_style( 'pr-dhl-fancybox-css', PR_DHL_PLUGIN_DIR_URL . '/assets/css/jquery.fancybox-1.3.4.css', array(), PR_DHL_VERSION );
+			wp_enqueue_style( 'pr-dhl-fancybox-css', 'https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.css', PR_DHL_VERSION );
+
+
+			// Enqueue Google Maps
+			// wp_enqueue_script( 'pr-dhl-google-maps', 'http://maps.googleapis.com/maps/api/js?libraries=places,geometry&callback=initParcelFinderMap&key=' . $this->shipping_dhl_settings['dhl_google_maps_api_key'] );
+			wp_enqueue_script( 'pr-dhl-google-maps', 'http://maps.googleapis.com/maps/api/js?key=' . $this->shipping_dhl_settings['dhl_google_maps_api_key'] );
+		}
 	}
 	
-	public function add_parcel_finder_btn() {
-		echo '<a id="dhl_parcel_finder" class="button" href="#dhl_parcel_finder_form">' . __('Parcel Finder', 'pr-shipping-dhl') . '</a>';
-	}
-
-	public function add_parcel_finder_form() {
-		$template_args = array();
-		
-		/*	
-		if ( isset( $_POST['s_country'] ) && isset( $_POST['s_postcode'] ) ) {
-			$template_args['dhl_country'] = $_POST['s_country'];
-			$template_args['dhl_postcode'] = $_POST['s_postcode'];
-		}*/
-		// error_log(print_r($template_args,true));
-
-		wc_get_template( 'checkout/dhl-parcel-finder.php', $template_args, '', PR_DHL_PLUGIN_DIR_PATH . '/templates/' );
-	}
-
 	public function add_preferred_fields( ) {
 		// woocommerce_form_field('pr_dhl_paket_preferred_location');
 		$chosen_shipping_methods = WC()->session->get( 'chosen_shipping_methods' );
@@ -390,14 +415,48 @@ class PR_DHL_Front_End_Paket {
 	  $array = array_merge ($first_array, $insert_array, $array); 
 	}
 
+	public function add_parcel_finder_btn() {
+		// echo '<a id="dhl_parcel_finder" class="button" href="#dhl_parcel_finder_form">' . __('Parcel Finder', 'pr-shipping-dhl') . '</a>';
+		$dhl_logo = PR_DHL_PLUGIN_DIR_URL . '/assets/img/dhl-official.png';
+		echo '<a data-fancybox id="dhl_parcel_finder" class="button" data-src="#dhl_parcel_finder_form" href="javascript:;"><img src="' . $dhl_logo .'" class="dhl-co-logo">' . __('Search Packingstation / Branch', 'pr-shipping-dhl') . '</a>';
+
+		// echo '<a id="dhl_parcel_finder_test" class="button" href="#dhl_parcel_finder_form_test">' . __('Parcel Finder TEST', 'pr-shipping-dhl') . '</a>';
+		// echo '<div id="dhl_parcel_finder_form_test">TEST TEST</div>';
+
+		// echo '<a id="dhl_parcel_finder" class="button" href="' . PR_DHL_PLUGIN_DIR_URL . '/templates/checkout/dhl-parcel-finder.php">' . __('Parcel Finder', 'pr-shipping-dhl') . '</a>';
+		
+	}
+
+	public function add_parcel_finder_form() {
+		$template_args = array();
+		
+		$template_args['packstation_img'] = PR_DHL_PLUGIN_DIR_URL . '/assets/img/packstation.png';
+		$template_args['parcelshop_img'] = PR_DHL_PLUGIN_DIR_URL . '/assets/img/parcelshop.png';
+		$template_args['post_office_img'] = PR_DHL_PLUGIN_DIR_URL . '/assets/img/post_office.png';
+
+		/*	
+		if ( isset( $_POST['s_country'] ) && isset( $_POST['s_postcode'] ) ) {
+			$template_args['dhl_country'] = $_POST['s_country'];
+			$template_args['dhl_postcode'] = $_POST['s_postcode'];
+		}*/
+		// error_log(print_r($this->shipping_dhl_settings,true));
+		// One of these store options is enabled then display
+		
+		// if ( $this->is_parcelfinder_enabled() ) {
+			wc_get_template( 'checkout/dhl-parcel-finder.php', $template_args, '', PR_DHL_PLUGIN_DIR_PATH . '/templates/' );
+		// }
+	}
+
 	public function call_parcel_finder() {
 		// error_log('call_parcel_finder');
 		check_ajax_referer( 'dhl_parcelfinder', 'security' );
-		// error_log(print_r($_POST,true));
+		error_log(print_r($_POST,true));
 		$parcelfinder_country	 = wc_clean( $_POST[ 'parcelfinder_country' ] );
 		$parcelfinder_postcode	 = wc_clean( $_POST[ 'parcelfinder_postcode' ] );
-		$parcelfinder_city	 = wc_clean( $_POST[ 'parcelfinder_city' ] );
+		$parcelfinder_city	 	 = wc_clean( $_POST[ 'parcelfinder_city' ] );
 		$parcelfinder_address	 = wc_clean( $_POST[ 'parcelfinder_address' ] );
+		$branch_filter	 		 = wc_clean( $_POST[ 'branch_filter' ] );
+		$postoffice_filter	 	 = wc_clean( $_POST[ 'postoffice_filter' ] );
 
 		try {
 			$dhl_obj = PR_DHL()->get_dhl_factory();
@@ -421,20 +480,31 @@ class PR_DHL_Front_End_Paket {
 			foreach ($parcel_res->parcelLocation as $key => $value) {
 				// error_log(print_r($value,true));
 				if( ( isset( $this->shipping_dhl_settings['dhl_display_packstation'] ) && 
-					( $this->shipping_dhl_settings['dhl_display_packstation'] == 'yes' ) && 
-					( $value->shopType == 'packStation' ) ) ||
+						( $this->shipping_dhl_settings['dhl_display_packstation'] == 'yes' ) && 
+						( $branch_filter == 'true' ) &&
+						( $value->shopType == 'packStation' ) ) ||
 					( isset( $this->shipping_dhl_settings['dhl_display_parcelshop'] ) && 
-					( $this->shipping_dhl_settings['dhl_display_parcelshop'] == 'yes' ) && 
-					( $value->shopType == 'parcelShop' ) ) ||
+						( $this->shipping_dhl_settings['dhl_display_parcelshop'] == 'yes' ) &&
+						( $branch_filter  == 'true' ) &&
+						( $value->shopType == 'parcelShop' ) ) ||
 					( isset( $this->shipping_dhl_settings['dhl_display_post_office'] ) && 
-					( $this->shipping_dhl_settings['dhl_display_post_office'] == 'yes' ) && 
-					( $value->shopType == 'postOffice' ) ) ) {
+						( $this->shipping_dhl_settings['dhl_display_post_office'] == 'yes' ) &&
+						( $postoffice_filter == 'true'  ) &&
+						( $value->shopType == 'postOffice' ) ) ) {
 
-					if ($value->psfServicetypes) {
-						foreach ($value->psfServicetypes as $service_type) {
-							// Only display shops that accept parcels.
-							// WHAT ABOUT 'parcelpickup', NEED TO CHECK?
-							if( $service_type == 'parcelacceptance' ) {
+					if ($value->psfServicetypes ) {
+						if( is_array( $value->psfServicetypes ) ) {
+							foreach ($value->psfServicetypes as $service_type) {
+								// Only display shops that accept parcels.
+								// Not needed 'parcelacceptance'
+								if( $service_type == 'parcelpickup' ) {
+									array_push($parcel_res_filtered, $value);
+									$res_count++;
+									break;
+								}
+							}
+						} else {
+							if( $value->psfServicetypes == 'parcelpickup' ) {
 								array_push($parcel_res_filtered, $value);
 								$res_count++;
 							}
@@ -448,6 +518,10 @@ class PR_DHL_Front_End_Paket {
 			}
 
 			// error_log(print_r($parcel_res_filtered,true));
+			if ( empty( $parcel_res_filtered ) ) {
+				throw new Exception( __('No Parcel Shops found. Ensure "Branch" or "Post Office" filter is checked ', 'pr-shipping-dhl') );
+				
+			}
 
 			wp_send_json( array( 
 				'parcel_res' => $parcel_res_filtered,
@@ -456,6 +530,50 @@ class PR_DHL_Front_End_Paket {
 
 		} catch (Exception $e) {
 			wp_send_json( array( 'error' => $e->getMessage() ) );
+		}
+	}
+
+	protected function is_parcelfinder_enabled() {
+
+		if( ( isset( $this->shipping_dhl_settings['dhl_display_packstation'] ) && 
+			( $this->shipping_dhl_settings['dhl_display_packstation'] == 'yes' ) ) ||
+			( isset( $this->shipping_dhl_settings['dhl_display_parcelshop'] ) && 
+			( $this->shipping_dhl_settings['dhl_display_parcelshop'] == 'yes' ) ) ||
+			( isset( $this->shipping_dhl_settings['dhl_display_post_office'] ) && 
+			( $this->shipping_dhl_settings['dhl_display_post_office'] == 'yes' ) ) ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public function validate_post_number($value='')	{
+		error_log(print_r($_POST,true));
+		$shipping_address_1 = wc_clean( $_POST['shipping_address_1'] );
+		$shipping_company = wc_clean( $_POST['shipping_company'] );
+		
+		$pos_ps = strpos( $shipping_address_1, $this->pack_station_name );
+		$pos_rs = strpos( $shipping_address_1, $this->parcel_shop_name );
+		$pos_po = strpos( $shipping_address_1, $this->post_office_name );
+		
+		if ($pos_ps !== false && empty( $shipping_company ) ) {
+			wc_add_notice( __( 'Post Number is mandatory for Packstation.', 'pr-shipping-dhl' ), 'error' );
+			return;
+		}
+
+		if ( ($pos_ps !== false ) || ($pos_rs !== false ) || ($pos_po !== false ) ) {
+
+			if( ! is_numeric( $shipping_company ) ) {
+				wc_add_notice( __( 'Post Number is must be a number.', 'pr-shipping-dhl' ), 'error' );
+				return;
+			}
+
+			$post_num_len = strlen( $shipping_company );
+			error_log($post_num_len);
+			if( $post_num_len < 6 || $post_num_len > 12 ) {
+				wc_add_notice( __( 'Post Number is must be a number between 6 and 12 digits.', 'pr-shipping-dhl' ), 'error' );
+				return;
+			}
 		}
 	}
 }
