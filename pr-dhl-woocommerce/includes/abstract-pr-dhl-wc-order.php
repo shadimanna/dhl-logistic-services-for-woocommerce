@@ -535,8 +535,15 @@ abstract class PR_DHL_WC_Order {
 			}
 		}
 
+		// Check if post number exists then send over
+		if( $shipping_dhl_postnum = get_post_meta( $order_id, '_shipping_dhl_postnum', true ) ) {
+			$shipping_address['dhl_postnum'] = $shipping_dhl_postnum;
+		}
+
 		$args['shipping_address'] = $shipping_address;
 
+		// error_log(print_r($args,true));
+		
 		// Get order item specific data
 		$ordered_items = $order->get_items( );
 		$args['items'] = array();

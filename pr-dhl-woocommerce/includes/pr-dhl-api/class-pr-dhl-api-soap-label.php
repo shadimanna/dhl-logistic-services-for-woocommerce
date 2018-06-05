@@ -15,6 +15,10 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 	const DHL_MAX_ITEMS = '6';
 	const DHL_RETURN_PARTICIPATION = '07';
 
+	private $pos_ps = false;
+	private $pos_rs = false;
+	private $pos_po = false;
+
 	public function __construct( ) {
 		try {
 
@@ -63,9 +67,9 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			PR_DHL()->log_msg( '"createShipmentOrder" called with: ' . print_r( $soap_request, true ) );
 
 			$response_body = $soap_client->createShipmentOrder($soap_request);
-			error_log(print_r($soap_client->__getLastRequest(),true));
-			error_log(print_r($soap_client->__getLastResponse(),true));
-			error_log(print_r($response_body,true));
+			// error_log(print_r($soap_client->__getLastRequest(),true));
+			// error_log(print_r($soap_client->__getLastResponse(),true));
+			// error_log(print_r($response_body,true));
 
 			PR_DHL()->log_msg( 'Response Body: ' . print_r( $response_body, true ) );
 		
@@ -267,11 +271,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			throw new Exception( __('Shop "Currency" is empty!', 'pr-shipping-dhl') );
 		}
 
-		// Validate shipping address
-		if ( empty( $args['shipping_address']['address_1'] )) {
-			throw new Exception( __('Shipping "Address 1" is empty!', 'pr-shipping-dhl') );
-		}
-
 		if ( empty( $args['shipping_address']['city'] )) {
 			throw new Exception( __('Shipping "City" is empty!', 'pr-shipping-dhl') );
 		}
@@ -279,22 +278,40 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		if ( empty( $args['shipping_address']['country'] )) {
 			throw new Exception( __('Shipping "Country" is empty!', 'pr-shipping-dhl') );
 		}
+		
+		// Validate shipping address
+		if ( empty( $args['shipping_address']['address_1'] )) {
+			throw new Exception( __('Shipping "Address 1" is empty!', 'pr-shipping-dhl') );
+		}
 
-		// If address 2 missing, set last piece of an address to be address 2
-		if ( empty( $args['shipping_address']['address_2'] )) {
-			// Break address into pieces			
-			$address_exploded = explode(' ', $args['shipping_address']['address_1']);
-			// Get last piece, assuming it is street number 
-			$last_index = sizeof($address_exploded);
 
-			// Set last index as street number
-			$args['shipping_address']['address_2'] = $address_exploded[ $last_index - 1 ];
+		$this->pos_ps = PR_DHL()->is_packstation( $args['shipping_address']['address_1'] );
+		$this->pos_rs = PR_DHL()->is_parcelshop( $args['shipping_address']['address_1'] );
+		$this->pos_po = PR_DHL()->is_post_office( $args['shipping_address']['address_1'] );
 
-			// Unset it in address 1
-			unset( $address_exploded[ $last_index - 1 ] );
+		// If Packstation, post number is mandatory
+		if ( $this->pos_ps && empty( $args['shipping_address']['dhl_postnum'] ) ) {
+			throw new Exception( __('Post Number is missing, it is mandatory for "Packstation" delivery.', 'pr-shipping-dhl') );
+		}
+		
+		// Check address 2 if no parcel shop is being selected
+		if ( ! $this->pos_ps && ! $this->pos_rs && ! $this->pos_po ) {
+			// If address 2 missing, set last piece of an address to be address 2
+			if ( empty( $args['shipping_address']['address_2'] )) {
+				// Break address into pieces			
+				$address_exploded = explode(' ', $args['shipping_address']['address_1']);
+				// Get last piece, assuming it is street number 
+				$last_index = sizeof($address_exploded);
 
-			// Set address 1 without street number
-			$args['shipping_address']['address_1'] = implode(' ', $address_exploded );
+				// Set last index as street number
+				$args['shipping_address']['address_2'] = $address_exploded[ $last_index - 1 ];
+
+				// Unset it in address 1
+				unset( $address_exploded[ $last_index - 1 ] );
+
+				// Set address 1 without street number
+				$args['shipping_address']['address_1'] = implode(' ', $address_exploded );
+			}
 		}
 
 		// Add default values for required fields that might not be passed e.g. phone
@@ -566,7 +583,47 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 						)
 				);
-			// error_log($this->args['order_details']['return_address']);
+
+
+			if ( $this->pos_ps || $this->pos_rs || $this->pos_po ) {
+
+				// Address is NOT needed if using a parcel shop
+				unset( $dhl_label_body['ShipmentOrder']['Shipment']['Receiver']['Address'] );
+
+				$parcel_shop = array('zip' => $this->args['shipping_address']['postcode'],
+										'city' => $this->args['shipping_address']['city'],
+										'Origin' =>
+											array(
+												'countryISOCode' => $this->args['shipping_address']['country'],
+												'state' => $this->args['shipping_address']['state']
+											)
+										);
+
+				if ( $this->pos_ps ) {
+					$parcel_shop['postNumber'] = $this->args['shipping_address']['dhl_postnum'];
+					$parcel_shop['packstationNumber'] = (int) filter_var($this->args['shipping_address']['address_1'], FILTER_SANITIZE_NUMBER_INT);
+
+					
+					$dhl_label_body['ShipmentOrder']['Shipment']['Receiver']['Packstation'] = $parcel_shop;
+				}
+
+				if ( $this->pos_rs ) {
+					// $parcel_shop['postNumber'] = $this->args['shipping_address']['dhl_postnum'];
+					$parcel_shop['parcelShopNumber'] = (int) filter_var($this->args['shipping_address']['address_1'], FILTER_SANITIZE_NUMBER_INT);
+
+					
+					$dhl_label_body['ShipmentOrder']['Shipment']['Receiver']['ParcelShop'] = $parcel_shop;
+				}
+
+				if ( $this->pos_po ) {
+					$parcel_shop['postNumber'] = $this->args['shipping_address']['dhl_postnum'];
+					$parcel_shop['postfilialNumber'] = (int) filter_var($this->args['shipping_address']['address_1'], FILTER_SANITIZE_NUMBER_INT);
+
+					
+					$dhl_label_body['ShipmentOrder']['Shipment']['Receiver']['Postfiliale'] = $parcel_shop;
+				}
+			}
+
 			if ( isset( $this->args['order_details']['return_address'] ) && ( $this->args['order_details']['return_address'] == 'yes' ) ) {
 
 				$dhl_label_body['ShipmentOrder']['Shipment']['ShipmentDetails']['returnShipmentAccountNumber'] = $return_account_number;

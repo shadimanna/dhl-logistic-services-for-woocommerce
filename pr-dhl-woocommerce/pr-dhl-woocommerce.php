@@ -130,6 +130,10 @@ class PR_DHL_WC {
 		$this->define( 'PR_DHL_CIG_AUTH_QA', 'https://cig.dhl.de/services/sandbox/soap' );
 
 		$this->define( 'PR_DHL_PAKET_TRACKING_URL', 'https://nolp.dhl.de/nextt-online-public/report_popup.jsp?idc=' );
+
+		$this->define( 'PR_DHL_PACKSTATION', __('Packstation ', 'pr-shipping-dhl') );
+		$this->define( 'PR_DHL_PARCELSHOP', __('Parcelshop ', 'pr-shipping-dhl') );
+		$this->define( 'PR_DHL_POST_OFFICE', __('Post Office ', 'pr-shipping-dhl') );
 	}
 	
 	/**
@@ -536,6 +540,36 @@ class PR_DHL_WC {
 
 	public function get_payment_gateways( ) {
 		return $this->payment_gateway_titles;
+	}
+
+	public function is_packstation( $string )	{
+		$pos_ps = strpos( $string, PR_DHL_PACKSTATION );
+
+		if( $pos_ps !== false ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public function is_parcelshop( $string )	{
+		$pos_ps = strpos( $string, PR_DHL_PARCELSHOP );
+
+		if( $pos_ps !== false ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public function is_post_office( $string )	{
+		$pos_ps = strpos( $string, PR_DHL_POST_OFFICE );
+
+		if( $pos_ps !== false ) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }

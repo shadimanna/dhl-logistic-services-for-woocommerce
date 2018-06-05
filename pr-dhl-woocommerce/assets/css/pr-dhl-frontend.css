@@ -177,6 +177,10 @@ ul.dhl-preferred-location li label {
   cursor: pointer;
 }
 
+.shipping-dhl-postnum {
+  display: none;
+}
+
 a#dhl_parcel_finder {
   padding: .125rem;
   border-radius: 3px;

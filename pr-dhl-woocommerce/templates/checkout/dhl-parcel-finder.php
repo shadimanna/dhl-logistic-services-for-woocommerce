@@ -14,7 +14,7 @@ try {
 <div style="display:none">
   <div id="dhl_parcel_finder_form">
     <!-- Create form and call via AJAX parcel finder API -->
-    <form class="checkout_dhl_parcel_finder" method="post">
+    <form id="checkout_dhl_parcel_finder" method="post">
 
 		<p class="form-row small-field">
 			<input type="text" name="dhl_parcelfinder_postcode" class="input-text" placeholder="<?php esc_attr_e( 'Post Code', 'pr-shipping-dhl' ); ?>" id="dhl_parcelfinder_postcode" />
