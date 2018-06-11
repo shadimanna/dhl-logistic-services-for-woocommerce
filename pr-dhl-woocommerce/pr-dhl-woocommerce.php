@@ -71,6 +71,14 @@ class PR_DHL_WC {
 
 	private $payment_gateway_titles = array();
 
+	protected $base_country_code = '';
+
+	// 'LI', 'CH', 'NO'
+	protected $eu_iso2 = array( 'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'RO', 'SI', 'SK', 'ES', 'SE', 'GB');
+
+	// These are all considered domestic by DHL
+	protected $us_territories = array( 'US', 'GU', 'AS', 'PR', 'UM', 'VI' );
+		
 	/**
 	* Construct the plugin.
 	*/
@@ -149,13 +157,12 @@ class PR_DHL_WC {
 	public function load_plugin() {
 		// Checks if WooCommerce is installed.
 		if ( class_exists( 'WC_Shipping_Method' ) ) {			
-			
-			$base_country_code = $this->get_base_country();
+			$this->base_country_code = $this->get_base_country();
 
 			// If NL selected, load DHL Parcel plugin.
 			$dhl_parcel_countries = array( 'NL', 'BE', 'LU' );
 
-			if ( in_array( $base_country_code, $dhl_parcel_countries ) ) {
+			if ( in_array( $this->base_country_code, $dhl_parcel_countries ) ) {
 				include( 'dhlpwoocommerce/dhlpwoocommerce.php' );
 			} else {
                 $this->define_constants();
@@ -325,7 +332,7 @@ class PR_DHL_WC {
 	 */
 	public function get_dhl_factory( $is_express = false ) {
 
-		$base_country_code = $this->get_base_country();
+		// $this->base_country_code = $this->get_base_country();
 		// $shipping_dhl_settings = $this->get_shipping_dhl_settings();
 		// $client_id = isset( $shipping_dhl_settings['dhl_api_key'] ) ? $shipping_dhl_settings['dhl_api_key'] : '';
 		// $client_secret = isset( $shipping_dhl_settings['dhl_api_secret'] ) ? $shipping_dhl_settings['dhl_api_secret'] : '';
@@ -333,9 +340,9 @@ class PR_DHL_WC {
 		try {	
 
 			if( $is_express ) {
-				$dhl_obj = PR_DHL_API_Controller_Factory::make_dhl_express( $base_country_code );		
+				$dhl_obj = PR_DHL_API_Controller_Factory::make_dhl_express( $this->base_country_code );		
 			} else {
-				$dhl_obj = PR_DHL_API_Controller_Factory::make_dhl( $base_country_code );		
+				$dhl_obj = PR_DHL_API_Controller_Factory::make_dhl( $this->base_country_code );		
 			}
 		} catch (Exception $e) {
 			throw $e;
@@ -543,6 +550,43 @@ class PR_DHL_WC {
 
 	public function get_payment_gateways( ) {
 		return $this->payment_gateway_titles;
+	}
+
+	public function is_shipping_domestic( $country_receiver ) {   	 
+		// $this->base_country_code = PR_DHL()->get_base_country();
+
+		// If base is US territory
+		if( in_array( $this->base_country_code, $this->us_territories ) ) {
+			
+			// ...and destination is US territory, then it is "domestic"
+			if( in_array( $country_receiver, $this->us_territories ) ) {
+				return true;
+			} else {
+				return false;
+			}
+
+		} elseif( $country_receiver == $this->base_country_code ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public function is_crossborder_shipment( $country_receiver ) {
+		
+		if ($this->is_shipping_domestic( $country_receiver )) {
+			return false;
+		}
+
+		if ( in_array( $this->base_country_code, $this->eu_iso2 ) ) {
+			if ( in_array( $country_receiver, $this->eu_iso2 ) ) {
+				return false;
+			} else {
+				return true;
+			}
+		} else {
+			return true;
+		}
 	}
 
 }

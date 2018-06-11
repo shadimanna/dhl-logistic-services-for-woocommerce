@@ -16,9 +16,6 @@ class PR_DHL_API_Model_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_
 
 	private $args = array();
 
-	// 'LI', 'CH', 'NO'
-	protected $eu_iso2 = array( 'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'RO', 'SI', 'SK', 'ES', 'SE', 'GB');
-
 	public function __construct( ) {
 		try {
 
@@ -284,18 +281,7 @@ class PR_DHL_API_Model_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_
 		
 		$this->query_string = http_build_query($dhl_label_query_string);
 	}
-
-	protected function is_european_shipment() {
-		
-		// if ( ! empty( $this->args['dhl_settings'][ 'shipper_country' ] ) && ! empty( $this->args['shipping_address']['country'] ) && ( $this->args['dhl_settings'][ 'shipper_country' ] == $this->args['shipping_address']['country'] ) ) {
-		if ( ! empty( $this->args['shipping_address']['country'] ) && in_array( $this->args['shipping_address']['country'], $this->eu_iso2 ) ) {
-			return true;
-		} else {
-			return false;
-		}
-	}
 	
-
 	protected function set_message() {
 		if( ! empty( $this->args ) ) {
 			// Set date related functions to German time
@@ -502,9 +488,8 @@ class PR_DHL_API_Model_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_
 				);
 
 			// If international shipment add export information
-			if( ! $this->is_european_shipment() ) {
+			if( PR_DHL_WC()->is_crossborder_shipment( $this->args['shipping_address']['country'] ) ) {
 
-				// TEST THIS
 				if ( sizeof($this->args['items']) > self::DHL_MAX_ITEMS ) {
 					throw new Exception( sprintf( __('Only %s ordered items can be processed, your order has %s', 'pr-shipping-dhl'), self::DHL_MAX_ITEMS, sizeof($this->args['items']) ) );
 				}

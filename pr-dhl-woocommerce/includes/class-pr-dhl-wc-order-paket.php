@@ -89,20 +89,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				) );
 			}
 
-			if( ! $this->is_shipping_domestic( $order_id ) ) {
-
-				// Duties drop down
-				$duties_opt = $dhl_obj->get_dhl_duties();
-				woocommerce_wp_select( array(
-					'id'          		=> 'pr_dhl_duties',
-					'label'       		=> __( 'Duties:', 'pr-shipping-dhl' ),
-					'description'		=> '',
-					'value'       		=> isset( $dhl_label_items['pr_dhl_duties'] ) ? $dhl_label_items['pr_dhl_duties'] : '',
-					'options'			=> $duties_opt,
-					'custom_attributes'	=> array( $is_disabled => $is_disabled )
-				) );
-			}
-
 			// Visual age, need 16 or 18, drop down
 			$visual_age = $dhl_obj->get_dhl_visual_age();
 			woocommerce_wp_select( array(
@@ -187,6 +173,21 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck'] ) ? $dhl_label_items['pr_dhl_identcheck'] : '',
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );*/
+		}
+
+		// TEST THIS
+		if( $this->is_crossborder_shipment( $order_id ) ) {
+
+			// Duties drop down
+			$duties_opt = $dhl_obj->get_dhl_duties();
+			woocommerce_wp_select( array(
+				'id'          		=> 'pr_dhl_duties',
+				'label'       		=> __( 'Duties:', 'pr-shipping-dhl' ),
+				'description'		=> '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_duties'] ) ? $dhl_label_items['pr_dhl_duties'] : '',
+				'options'			=> $duties_opt,
+				'custom_attributes'	=> array( $is_disabled => $is_disabled )
+			) );
 		}
 
 	}

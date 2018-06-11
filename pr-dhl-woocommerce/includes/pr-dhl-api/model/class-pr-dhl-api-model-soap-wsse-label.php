@@ -386,8 +386,8 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 						),
 					);
 
-			// If international shipment add export information
-			if( ! $this->is_european_shipment() ) {
+			// If shipper or receiver are outside of EU then add "cross-border" info 
+			if( PR_DHL_WC()->is_crossborder_shipment( $this->args['shipping_address']['country'] ) ) {
 
 				$item_description = '';
 				foreach ($this->args['items'] as $key => $item) {

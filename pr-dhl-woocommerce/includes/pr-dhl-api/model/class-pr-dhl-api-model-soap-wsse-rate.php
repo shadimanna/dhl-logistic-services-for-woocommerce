@@ -59,11 +59,23 @@ class PR_DHL_API_Model_SOAP_WSSE_Rate extends PR_DHL_API_SOAP_WSSE implements PR
 
 			PR_DHL()->log_msg( 'Response Body: ' . print_r( $response_body, true ) );
 		
+	
 			if( ! empty( $response_body->Provider->Notification->code ) ) {
 				throw new Exception( $response_body->Provider->Notification->code . ' - ' . $response_body->Provider->Notification->Message );
 			}
 
-			return $this->get_returned_rates( $response_body->Provider->Service );
+			if( is_array( $response_body->Provider->Notification ) ) {
+				if( ! empty( $response_body->Provider->Notification[0]->code ) ) {
+					throw new Exception( $response_body->Provider->Notification[0]->code . ' - ' . $response_body->Provider->Notification[0]->Message );
+				}
+			}				
+			
+
+			if( isset( $response_body->Provider->Service ) ) {
+				return $this->get_returned_rates( $response_body->Provider->Service );
+			} else {
+				throw new Exception( __('No services returned', 'pr-shipping-dhl') );
+			}
 
 		} catch (Exception $e) {
 			// error_log('get dhl label Exception');
@@ -345,50 +357,7 @@ class PR_DHL_API_Model_SOAP_WSSE_Rate extends PR_DHL_API_SOAP_WSSE implements PR
 								'Account' => $this->args['dhl_settings']['account_num'],
 						),
 				);
-/*
-			// If international shipment add export information
-			if( ! $this->is_european_shipment() ) {
 
-				// TEST THIS
-				if ( sizeof($this->args['items']) > self::DHL_MAX_ITEMS ) {
-					throw new Exception( sprintf( __('Only %s ordered items can be processed, your order has %s', 'pr-shipping-dhl'), self::DHL_MAX_ITEMS, sizeof($this->args['items']) ) );
-				}
-				
-				$customsDetails = array();
-
-				$item_description = '';
-				foreach ($this->args['items'] as $key => $item) {
-					// weightInKG is in KG needs to be changed if 'g' or 'lbs' etc.
-					$item['item_weight'] = $this->maybe_convert_weight( $item['item_weight'], $this->args['order_details']['weightUom'] );
-
-					$item_description .= ! empty( $item_description ) ? ', ' : '';
-					$item_description .= $item['item_description'];
-
-					$json_item = array(
-									'description' => substr( $item['item_description'], 0, 255 ),
-									'countryCodeOrigin' => $item['country_origin'],
-									'customsTariffNumber' => $item['hs_code'],
-									'amount' => intval( $item['qty'] ),
-									'netWeightInKG' => round( floatval( $item['item_weight'] ), 2 ),
-									'customsValue' => round( floatval( $item['item_value'] ), 2 ),
-								);
-					// $customsDetails = $json_item;
-					array_push($customsDetails, $json_item);
-				}
-
-				$item_description = substr( $item_description, 0, 255 );
-
-				$dhl_label_body['ShipmentOrder']['Shipment']['ExportDocument'] = 
-					array(
-						'invoiceNumber' => $this->args['order_details']['order_id'],
-						'exportType' => 'OTHER',
-						'exportTypeDescription' => $item_description,
-						'termsOfTrade' => $this->args['order_details']['duties'],
-						'placeOfCommital' => $this->args['shipping_address']['country'],
-						'ExportDocPosition' => $customsDetails
-					);
-			}
-*/
 			error_log(print_r($dhl_label_body,true));
 			// Unset/remove any items that are empty strings or 0, even if required!
 			$this->body_request = $this->walk_recursive_remove( $dhl_label_body );

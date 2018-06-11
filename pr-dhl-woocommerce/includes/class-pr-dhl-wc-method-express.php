@@ -383,10 +383,15 @@ class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 						$dhl_express = PR_DHL()->get_dhl_factory( true );
 						$use_services = $dhl_express->get_dhl_products_domestic();
 						$use_services += $dhl_express->get_dhl_products_international();
-						// error_log(print_r($use_services,true));
+						error_log(print_r($use_services,true));
 						
 						$custom_services = $this->get_option('express_products');
-						// error_log(print_r($custom_services,true));
+						error_log(print_r($custom_services,true));
+
+						// If the saved servics are empty, means first use of plugin
+						if( empty( $custom_services ) ) {
+							$custom_services = $use_services;
+						}
 						
 						// Loop through to add services that should be used in plugin
 						foreach ( $use_services as $code => $name ) {
@@ -539,7 +544,8 @@ class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 						$express_name = $this->format_dhl_method_name( $dhl_rates[ $express_key ]['name'] );
 					}
 
-					$express_name .= ' - ' . $this->format_dhl_method_time( $dhl_rates[ $express_key ]['delivery_time'] );
+					// Add filter to change text
+					$express_name .= sprintf( __( ' %s(Est. arrival: %s)%s', 'pr-shipping-dhl' ), '<span class="dhl-express-estinated-arrival">', $this->format_dhl_method_time( $dhl_rates[ $express_key ]['delivery_time'] ), '</span>' );
 
 					$express_amount = $dhl_rates[ $express_key ]['amount'];
 					// Cost adjustment %
@@ -558,12 +564,16 @@ class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 						$sort = 999;
 					}
 
+					// Suffix for "id" is needed to display multiple rates on the frontend...however it is not saved whereas the "meta_data" below is, so BOTH needed.
 					$rate = array(
-						'id' 		=> $this->get_rate_id() . '_' . $express_key,
+						'id' 		=> $this->get_rate_id( $express_key ), 
 						'label'   	=> $express_name,
 						'cost'   	=> $express_amount,
 						'sort'  	=> $sort,
 						'package' 	=> $package,
+						'meta_data' => array( 
+								'dhl_express_product_key' => $express_key, 
+							),
 					);
 
 					$this->add_rate( $rate ); // ADD FILTER BEFORE PASSING

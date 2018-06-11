@@ -408,26 +408,23 @@ abstract class PR_DHL_WC_Order {
 	}
 
 	protected function is_shipping_domestic( $order_id ) {   	 
-		$base_country_code = PR_DHL()->get_base_country();
-
 		$order = wc_get_order( $order_id );
 		$shipping_address = $order->get_address( 'shipping' );
 		$shipping_country = $shipping_address['country'];
 
-		// These are all considered domestic by DHL
-		$us_territories = array( 'US', 'GU', 'AS', 'PR', 'UM', 'VI' );
-		
-		// If base is US territory
-		if( in_array( $base_country_code, $us_territories ) ) {
-			
-			// ...and destination is US territory, then it is "domestic"
-			if( in_array( $shipping_country, $us_territories ) ) {
-				return true;
-			} else {
-				return false;
-			}
+		if( PR_DHL()->is_shipping_domestic( $shipping_country ) ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
-		} elseif( $shipping_country == $base_country_code ) {
+	protected function is_crossborder_shipment( $order_id ) {   	 
+		$order = wc_get_order( $order_id );
+		$shipping_address = $order->get_address( 'shipping' );
+		$shipping_country = $shipping_address['country'];
+
+		if( PR_DHL()->is_crossborder_shipment( $shipping_country ) ) {
 			return true;
 		} else {
 			return false;

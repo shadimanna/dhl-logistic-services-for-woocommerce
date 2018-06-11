@@ -49,7 +49,7 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 
 	public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
 
-		if( ! $this->is_shipping_domestic( $order_id ) ) {
+		if( $this->is_crossborder_shipment( $order_id ) ) {
 			
 			$dhl_label_items = $this->get_dhl_label_items( $order_id );
 			// Get saved package description, otherwise generate the text based on settings

@@ -53,14 +53,28 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 			'custom_attributes'	=> array( $is_disabled => $is_disabled )
 		) );
 
-		woocommerce_wp_select( array(
-			'id'          		=> 'pr_dhl_duties',
-			'label'       		=> __( 'Duties:', 'pr-shipping-dhl' ),
-			'description'		=> '',
-			'value'       		=> isset( $dhl_label_items['pr_dhl_duties'] ) ? $dhl_label_items['pr_dhl_duties'] : '',
-			'options'			=> array( 'DDU', 'DAP' ),
-			'custom_attributes'	=> array( $is_disabled => $is_disabled )
-		) );
+		if( $this->is_crossborder_shipment( $order_id ) ) {
+			$duties_opt = $dhl_obj->get_dhl_duties();
+			woocommerce_wp_select( array(
+				'id'          		=> 'pr_dhl_duties',
+				'label'       		=> __( 'Duties:', 'pr-shipping-dhl' ),
+				'description'		=> '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_duties'] ) ? $dhl_label_items['pr_dhl_duties'] : '',
+				'options'			=> $duties_opt,
+				'custom_attributes'	=> array( $is_disabled => $is_disabled )
+			) );
+
+			woocommerce_wp_text_input( array(
+					'id'	          	=> 'pr_dhl_invoice',
+					'name'          	=> 'pr_dhl_invoice',
+					'type'          	=> 'file',
+					'label'       		=>  __( 'Upload invoice: ', 'pr-shipping-dhl' ),
+					'placeholder' 		=> '',
+					'description'		=> '',
+					'custom_attributes'	=> array( $is_disabled => $is_disabled ),
+					'class'				=> ''
+				) );
+		}
 	}
 
 	/**

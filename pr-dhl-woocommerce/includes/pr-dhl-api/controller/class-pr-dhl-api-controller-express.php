@@ -21,9 +21,15 @@ class PR_DHL_API_Controller_Express extends PR_DHL_API {
 		$country_code = $this->country_code;
 		
 		$dhl_prod_int =  array( 
-								'H' => __('ECONOMY SELECT', 'pr-shipping-dhl'),
-								'P' => __('EXPRESS WORLDWIDE', 'pr-shipping-dhl'),
+								'E' => __('EXPRESS 9:00', 'pr-shipping-dhl'),
+								'K' => __('EXPRESS 9:00', 'pr-shipping-dhl'),
+								'M' => __('EXPRESS 10:30', 'pr-shipping-dhl'),
+								'T' => __('EXPRESS 12:00', 'pr-shipping-dhl'),
 								'Y' => __('EXPRESS 12:00', 'pr-shipping-dhl'),
+								'P' => __('EXPRESS WORLDWIDE', 'pr-shipping-dhl'),
+								'U' => __('EXPRESS WORLDWIDE', 'pr-shipping-dhl'),
+								'H' => __('ECONOMY SELECT', 'pr-shipping-dhl'),
+								'W' => __('ECONOMY SELECT', 'pr-shipping-dhl'),
 								);
 		/*
 		$austria_int = array(  
@@ -52,9 +58,11 @@ class PR_DHL_API_Controller_Express extends PR_DHL_API {
 		$country_code = $this->country_code;
 
 		$dhl_prod_dom = array(  
-								'1' => __('DOMESTIC EXPRESS 12:00', 'pr-shipping-dhl'),
-								'G' => __('DOMESTIC ECONOMY SELECT', 'pr-shipping-dhl'),
+								'N' => __('DOMESTIC EXPRESS', 'pr-shipping-dhl'),
 								'I' => __('DOMESTIC EXPRESS 9:00', 'pr-shipping-dhl'),
+								'1' => __('DOMESTIC EXPRESS 12:00', 'pr-shipping-dhl'),
+								'O' => __('DOMESTIC EXPRESS 10:30', 'pr-shipping-dhl'),
+								'G' => __('DOMESTIC ECONOMY SELECT', 'pr-shipping-dhl'),
 								);
 		/*
 		$austria_dom = array( 'V86PARCEL' => __('DHL Express Austria', 'pr-shipping-dhl') );
@@ -77,14 +85,10 @@ class PR_DHL_API_Controller_Express extends PR_DHL_API {
 	}
 
 	public function get_dhl_duties() {
-		$duties = parent::get_dhl_duties();
-
-		$duties_paket = array(
-					'DXV' => __('Delivery Duty Paid (excl. VAT )', 'pr-shipping-dhl'),
-					'DDX' => __('Delivery Duty Paid (excl. Duties, taxes and VAT)', 'pr-shipping-dhl')
+		$duties = array(
+					'DAP' => __('Delivery A... Paid', 'pr-shipping-dhl'),
+					'DDP' => __('Delivery Duty Paid', 'pr-shipping-dhl')
 					);
-		$duties += $duties_paket;
-
 		return $duties;
 	}
 }
