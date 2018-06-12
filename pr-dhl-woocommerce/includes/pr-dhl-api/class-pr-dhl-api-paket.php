@@ -30,9 +30,9 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		$country_code = $this->country_code;
 		
 		$germany_int =  array( 
-								'V53WPAK' => __('DHL Paket International', 'pr-shipping-dhl'),
+								'V55PAK' => __('DHL Paket Connect', 'pr-shipping-dhl'),
 								'V54EPAK' => __('DHL Europaket (B2B)', 'pr-shipping-dhl'),
-								'V55PAK' => __('DHL Paket Connect', 'pr-shipping-dhl')
+								'V53WPAK' => __('DHL Paket International', 'pr-shipping-dhl'),
 								);
 
 		$austria_int = array(  
@@ -62,7 +62,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		$germany_dom = array(  
 								'V01PAK' => __('DHL Paket', 'pr-shipping-dhl'),
 								'V01PRIO' => __('DHL Paket PRIO', 'pr-shipping-dhl'),
-								'V06PAK' => __('DHL Paket Taggleich', 'pr-shipping-dhl')
+								'V06PAK' => __('DHL Paket Taggleich', 'pr-shipping-dhl'),
 								);
 
 		$austria_dom = array( 'V86PARCEL' => __('DHL Paket Austria', 'pr-shipping-dhl') );

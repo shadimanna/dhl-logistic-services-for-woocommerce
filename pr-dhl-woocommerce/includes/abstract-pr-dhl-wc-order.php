@@ -16,12 +16,16 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 abstract class PR_DHL_WC_Order {
 	
+	protected $shipping_dhl_settings = array();
+
 	/**
 	 * Init and hook in the integration.
 	 */
 	public function __construct( ) {
 		$this->define_constants();
 		$this->init_hooks();
+
+		$this->shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
 	}
 
 	protected function define_constants() {
@@ -392,11 +396,11 @@ abstract class PR_DHL_WC_Order {
 	}
 
 	protected function get_default_dhl_product( $order_id ) {
-		$shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
+		// $this->shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
 		if( $this->is_shipping_domestic( $order_id ) ) {
-			return $shipping_dhl_settings['dhl_default_product_dom'];
+			return $this->shipping_dhl_settings['dhl_default_product_dom'];
 		} else {
-			return $shipping_dhl_settings['dhl_default_product_int'];
+			return $this->shipping_dhl_settings['dhl_default_product_int'];
 		}
 	}
 
@@ -505,7 +509,7 @@ abstract class PR_DHL_WC_Order {
 		$shipping_address['name'] = '';
 		if ( isset( $shipping_address['first_name'] ) ) {
 			$shipping_address['name'] = $shipping_address['first_name'];
-			unset( $shipping_address['first_name'] );
+			// unset( $shipping_address['first_name'] );
 		}
 
 		if ( isset( $shipping_address['last_name'] ) ) {
@@ -514,7 +518,7 @@ abstract class PR_DHL_WC_Order {
 			}
 
 			$shipping_address['name'] .= $shipping_address['last_name'];
-			unset( $shipping_address['last_name'] );
+			// unset( $shipping_address['last_name'] );
 		}
 		
 		// If not USA, then change state from ISO code to name
@@ -543,7 +547,7 @@ abstract class PR_DHL_WC_Order {
 		$args['shipping_address'] = $shipping_address;
 
 		// error_log(print_r($args,true));
-		
+
 		// Get order item specific data
 		$ordered_items = $order->get_items( );
 		$args['items'] = array();

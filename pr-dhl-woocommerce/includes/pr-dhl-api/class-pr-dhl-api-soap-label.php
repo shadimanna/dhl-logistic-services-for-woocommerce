@@ -251,7 +251,11 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		}
 
 		if ( isset( $args['order_details']['identcheck'] ) && ( $args['order_details']['identcheck'] == 'yes' ) ) {
-			if ( empty( $args['order_details']['identcheck_fname'] ) || empty( $args['order_details']['identcheck_lname'] ) || empty( $args['order_details']['identcheck_dob'] ) || empty( $args['order_details']['identcheck_age'] ) ) {
+			if ( empty( $args['shipping_address']['first_name'] ) || empty( $args['shipping_address']['last_name'] ) ) {
+				throw new Exception( __('First name and last name must be passed for "Identity Check".', 'pr-shipping-dhl') );
+			}
+
+			if ( empty( $args['order_details']['identcheck_dob'] ) || empty( $args['order_details']['identcheck_age'] ) ) {
 				throw new Exception( __('All "Identity Check" values must be entered.', 'pr-shipping-dhl') );
 			}
 		}
@@ -366,6 +370,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 	
 
 	protected function set_message() {
+		error_log(print_r($this->args,true));
 		if( ! empty( $this->args ) ) {
 			// Set date related functions to German time
 			// date_default_timezone_set('Europe/Berlin');
@@ -430,10 +435,10 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 								$services[ $value['name'] ]['insuranceAmount'] = $this->args['order_details']['total_value'];
 								break;	
 							case 'identcheck':
-								$services[ $value['name'] ]['Ident']['surname'] = $this->args['order_details']['identcheck_fname'];
-								$services[ $value['name'] ]['Ident']['givenName'] = $this->args['order_details']['identcheck_lname'];
+								$services[ $value['name'] ]['Ident']['surname'] = isset( $this->args['shipping_address']['first_name'] ) ? $this->args['shipping_address']['first_name'] : '';
+								$services[ $value['name'] ]['Ident']['givenName'] = isset( $this->args['shipping_address']['last_name'] ) ? $this->args['shipping_address']['last_name'] : '';
 								$services[ $value['name'] ]['Ident']['dateOfBirth'] = $this->args['order_details']['identcheck_dob'];
-								$services[ $value['name'] ]['Ident']['minimumAge'] = $this->args['order_details']['identcheck_age'];
+								$services[ $value['name'] ]['Ident']['minimumAge'] = filter_var($this->args['order_details']['identcheck_age'], FILTER_SANITIZE_NUMBER_INT);
 								break;							
 						}
 
@@ -601,15 +606,15 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 				if ( $this->pos_ps ) {
 					$parcel_shop['postNumber'] = $this->args['shipping_address']['dhl_postnum'];
-					$parcel_shop['packstationNumber'] = (int) filter_var($this->args['shipping_address']['address_1'], FILTER_SANITIZE_NUMBER_INT);
+					$parcel_shop['packstationNumber'] = filter_var($this->args['shipping_address']['address_1'], FILTER_SANITIZE_NUMBER_INT);
 
 					
 					$dhl_label_body['ShipmentOrder']['Shipment']['Receiver']['Packstation'] = $parcel_shop;
 				}
 
 				if ( $this->pos_rs ) {
-					// $parcel_shop['postNumber'] = $this->args['shipping_address']['dhl_postnum'];
-					$parcel_shop['parcelShopNumber'] = (int) filter_var($this->args['shipping_address']['address_1'], FILTER_SANITIZE_NUMBER_INT);
+					$parcel_shop['postNumber'] = $this->args['shipping_address']['dhl_postnum'];
+					$parcel_shop['parcelShopNumber'] = filter_var($this->args['shipping_address']['address_1'], FILTER_SANITIZE_NUMBER_INT);
 
 					
 					$dhl_label_body['ShipmentOrder']['Shipment']['Receiver']['ParcelShop'] = $parcel_shop;
@@ -617,7 +622,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 				if ( $this->pos_po ) {
 					$parcel_shop['postNumber'] = $this->args['shipping_address']['dhl_postnum'];
-					$parcel_shop['postfilialNumber'] = (int) filter_var($this->args['shipping_address']['address_1'], FILTER_SANITIZE_NUMBER_INT);
+					$parcel_shop['postfilialNumber'] = filter_var($this->args['shipping_address']['address_1'], FILTER_SANITIZE_NUMBER_INT);
 
 					
 					$dhl_label_body['ShipmentOrder']['Shipment']['Receiver']['Postfiliale'] = $parcel_shop;

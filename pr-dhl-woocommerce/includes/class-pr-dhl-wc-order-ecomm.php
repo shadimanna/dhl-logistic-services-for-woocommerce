@@ -146,8 +146,8 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 	}
 
 	protected function get_package_description( $order_id ) {
-		$shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
-		$dhl_desc_default = $shipping_dhl_settings['dhl_desc_default'];
+		// $this->shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
+		$dhl_desc_default = $this->shipping_dhl_settings['dhl_desc_default'];
 		$order = wc_get_order( $order_id );
 		$ordered_items = $order->get_items();
 
@@ -188,18 +188,18 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 	}
 
 	protected function get_label_args_settings( $order_id, $dhl_label_items ) {
-		$shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
+		// $this->shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
 
 		// Get DHL pickup and distribution center
-		$args['dhl_settings']['dhl_api_key'] = $shipping_dhl_settings['dhl_api_key'];
-		$args['dhl_settings']['dhl_api_secret'] = $shipping_dhl_settings['dhl_api_secret'];
-		$args['dhl_settings']['pickup'] = $shipping_dhl_settings['dhl_pickup'];
-		$args['dhl_settings']['distribution'] = $shipping_dhl_settings['dhl_distribution'];
+		$args['dhl_settings']['dhl_api_key'] = $this->shipping_dhl_settings['dhl_api_key'];
+		$args['dhl_settings']['dhl_api_secret'] = $this->shipping_dhl_settings['dhl_api_secret'];
+		$args['dhl_settings']['pickup'] = $this->shipping_dhl_settings['dhl_pickup'];
+		$args['dhl_settings']['distribution'] = $this->shipping_dhl_settings['dhl_distribution'];
 		$args['dhl_settings']['handover'] = $this->get_label_handover_num();
-		$args['dhl_settings']['label_format'] = $shipping_dhl_settings['dhl_label_format'];
+		$args['dhl_settings']['label_format'] = $this->shipping_dhl_settings['dhl_label_format'];
 
 		// Get package prefix
-		$args['order_details']['prefix'] = $shipping_dhl_settings['dhl_prefix'];
+		$args['order_details']['prefix'] = $this->shipping_dhl_settings['dhl_prefix'];
 
 		if ( ! empty( $dhl_label_items['pr_dhl_description'] ) ) {
 			$args['order_details']['description'] = $dhl_label_items['pr_dhl_description'];

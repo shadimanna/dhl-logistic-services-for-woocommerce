@@ -66,6 +66,7 @@ class PR_DHL_Front_End_Paket {
 		if( $this->is_preferredservice_enabled() ) {
 			add_action( 'woocommerce_review_order_after_shipping', array( $this, 'add_preferred_fields' ) );
 			add_action( 'woocommerce_cart_calculate_fees', array( $this, 'add_cart_fees' ) );
+			add_action( 'woocommerce_checkout_process', array( $this, 'verify_preferred_services_fields' ) );
 			add_action( 'woocommerce_checkout_order_processed', array( $this, 'process_dhl_preferred_fields' ), 10, 2 );
 			add_filter( 'woocommerce_get_order_item_totals', array( $this, 'display_dhl_preferred_free_services_values' ), 10, 2 );
 		}
@@ -176,7 +177,7 @@ class PR_DHL_Front_End_Paket {
 		}
 	}
 	
-	public function add_preferred_fields( ) {
+	protected function validate_extra_services_available( $check_day_transfer = false ) {
 		// woocommerce_form_field('pr_dhl_paket_preferred_location');
 		$chosen_shipping_methods = WC()->session->get( 'chosen_shipping_methods' );
 		$chosen_payment_method = WC()->session->get( 'chosen_payment_method' );
@@ -194,84 +195,97 @@ class PR_DHL_Front_End_Paket {
 		// Preferred options are only for Germany customers
 		if( $base_country_code == 'DE' && $customer_country == 'DE' ) {
 
-			foreach ( WC()->cart->get_cart() as $cart_item_key => $values ) {
-				$same_day_transfer = get_post_meta( $values['product_id'], '_dhl_no_same_day_transfer', true );
+			if ($check_day_transfer) {
+				foreach ( WC()->cart->get_cart() as $cart_item_key => $values ) {
+					$same_day_transfer = get_post_meta( $values['product_id'], '_dhl_no_same_day_transfer', true );
 
-				// If one of the products cannot be transferred same day then don't show preferred services
-				if ( $same_day_transfer == 'yes' ) {
-					return;
+					// If one of the products cannot be transferred same day then don't show preferred services
+					if ( $same_day_transfer == 'yes' ) {
+						return false;
+					}
 				}
 			}
 			
-			try {
 
-				if( ! isset( $this->shipping_dhl_settings ) || empty( $this->shipping_dhl_settings['dhl_shipping_methods'] ) ) {
-					return;
-				}
+			if( ! isset( $this->shipping_dhl_settings ) || empty( $this->shipping_dhl_settings['dhl_shipping_methods'] ) ) {
+				throw new Exception( __( 'No shipping method enabled.', 'pr-shipping-dhl' ));
+			}
 
-				$wc_methods_dhl = $this->shipping_dhl_settings['dhl_shipping_methods'];
-				if( isset( $chosen_shipping_methods ) ) {
+			$wc_methods_dhl = $this->shipping_dhl_settings['dhl_shipping_methods'];
+			if( isset( $chosen_shipping_methods ) ) {
 
-					if( is_array( $chosen_shipping_methods ) ) {
+				if( is_array( $chosen_shipping_methods ) ) {
 
-						foreach ($chosen_shipping_methods as $key => $value) {
+					foreach ($chosen_shipping_methods as $key => $value) {
 
-							$ship_method_slug = $this->get_shipping_method_slug( $value );
-
-							if ( in_array( $ship_method_slug, $wc_methods_dhl ) ) {
-
-								$display_preferred = true;
-								break;
-							}
-						}
-					} else {
-						$ship_method_slug = $this->get_shipping_method_slug( $chosen_shipping_methods );
+						$ship_method_slug = $this->get_shipping_method_slug( $value );
 
 						if ( in_array( $ship_method_slug, $wc_methods_dhl ) ) {
+
 							$display_preferred = true;
+							break;
 						}
 					}
-				}
+				} else {
+					$ship_method_slug = $this->get_shipping_method_slug( $chosen_shipping_methods );
 
-				$wc_payment_dhl = $this->shipping_dhl_settings['dhl_payment_gateway'];
-				if( isset( $chosen_payment_method ) && ! empty( $wc_payment_dhl) ) {
-					if( is_array( $chosen_payment_method ) ) {
-
-						foreach ($chosen_payment_method as $key => $value) {
-							// $ship_method_slug = $this->get_shipping_method_slug( $value );
-
-							if ( in_array( $value, $wc_payment_dhl ) ) {
-								return;
-							}
-						}
-					} else {
-						// $ship_method_slug = $this->get_shipping_method_slug( $chosen_payment_method );
-						if ( in_array( $chosen_payment_method, $wc_payment_dhl ) ) {
-							return;
-						}
+					if ( in_array( $ship_method_slug, $wc_methods_dhl ) ) {
+						$display_preferred = true;
 					}
 				}
-				
-			} catch (Exception $e) {
-				// do nothing
+			}
+
+			$wc_payment_dhl = $this->shipping_dhl_settings['dhl_payment_gateway'];
+			if( isset( $chosen_payment_method ) && ! empty( $wc_payment_dhl) ) {
+				if( is_array( $chosen_payment_method ) ) {
+
+					foreach ($chosen_payment_method as $key => $value) {
+						// $ship_method_slug = $this->get_shipping_method_slug( $value );
+
+						if ( in_array( $value, $wc_payment_dhl ) ) {
+							throw new Exception( __( 'Payment gateway excluded.', 'pr-shipping-dhl' ));
+						}
+					}
+				} else {
+					// $ship_method_slug = $this->get_shipping_method_slug( $chosen_payment_method );
+					if ( in_array( $chosen_payment_method, $wc_payment_dhl ) ) {
+						throw new Exception( __( 'Payment gateway excluded.', 'pr-shipping-dhl' ));
+					}
+				}
 			}
 		}
 
-		if( $display_preferred == true ) {
-			$template_args = array();
-			if ( isset( $_POST['post_data'] ) ) {
-				parse_str( $_POST['post_data'], $post_data );
+		// if reached here and not enabled then it's due to the selected shipping method not being set for DHL services
+		if (! $display_preferred ) {
+			throw new Exception( __( 'Not enabled for selected shipping method.', 'pr-shipping-dhl' ));
+		}
 
-				foreach ( $this->preferred_services as $key => $value) {
-					if ( isset( $post_data[ $key ] ) ) {
-						// array_push($template_args, $post_data[ $key ] );
-						$template_args[ $key . '_selected' ] = wc_clean( $post_data[ $key ] );
+		return $display_preferred;
+	}
+
+	public function add_preferred_fields( ) {
+		try {
+			
+			$display_preferred = $this->validate_extra_services_available( true );
+
+			if( $display_preferred == true ) {
+				$template_args = array();
+				if ( isset( $_POST['post_data'] ) ) {
+					parse_str( $_POST['post_data'], $post_data );
+
+					foreach ( $this->preferred_services as $key => $value) {
+						if ( isset( $post_data[ $key ] ) ) {
+							// array_push($template_args, $post_data[ $key ] );
+							$template_args[ $key . '_selected' ] = wc_clean( $post_data[ $key ] );
+						}
 					}
-				}
 
-			}			
+				}			
 
-			wc_get_template( 'checkout/dhl-preferred-services.php', $template_args, '', PR_DHL_PLUGIN_DIR_PATH . '/templates/' );
+				wc_get_template( 'checkout/dhl-preferred-services.php', $template_args, '', PR_DHL_PLUGIN_DIR_PATH . '/templates/' );
+			}
+		} catch (Exception $e) {
+			// do nothing
 		}
 	}
 
@@ -324,11 +338,11 @@ class PR_DHL_Front_End_Paket {
 		}
 	}
 
-	public function process_dhl_preferred_fields( $order_id, $posted ) {
+	public function verify_preferred_services_fields() {
 		// save the posted preferences to the order so can be used when generating label
-		
+		$dhl_label_options = array();
 		if ( ! isset( $_POST ) ) {
-			return;
+			return $dhl_label_options;
 		}
 
 		foreach ( $this->preferred_services as $key => $value) {
@@ -336,6 +350,7 @@ class PR_DHL_Front_End_Paket {
 				$dhl_label_options[ $key ] = wc_clean( $_POST[ $key ] );
 			}
 		}
+		
 		if ( isset( $dhl_label_options ) ) {
 
 			if ( isset( $dhl_label_options['pr_dhl_preferred_location_neighbor'] ) ) {
@@ -349,12 +364,19 @@ class PR_DHL_Front_End_Paket {
 
 					throw new Exception( __( 'Please enter the preferred neighbor name and address.', 'pr-shipping-dhl' ));
 				}
-
 			}
-
-			PR_DHL()->get_pr_dhl_wc_order()->save_dhl_label_items( $order_id, $dhl_label_options );
 		}
-		
+
+		return $dhl_label_options;
+	}
+
+	public function process_dhl_preferred_fields( $order_id, $posted ) {
+		// save the posted preferences to the order so can be used when generating label
+		$dhl_label_options = $this->verify_preferred_services_fields();
+
+		if( !empty($dhl_label_options)) {
+			PR_DHL()->get_pr_dhl_wc_order()->save_dhl_label_items( $order_id, $dhl_label_options );		
+		}
 	}
 
 	private function get_shipping_method_slug( $ship_method ) {
@@ -462,7 +484,7 @@ class PR_DHL_Front_End_Paket {
 	public function call_parcel_finder() {
 		// error_log('call_parcel_finder');
 		check_ajax_referer( 'dhl_parcelfinder', 'security' );
-		error_log(print_r($_POST,true));
+		// error_log(print_r($_POST,true));
 		$parcelfinder_country	 = wc_clean( $_POST[ 'parcelfinder_country' ] );
 		$parcelfinder_postcode	 = wc_clean( $_POST[ 'parcelfinder_postcode' ] );
 		$parcelfinder_city	 	 = wc_clean( $_POST[ 'parcelfinder_city' ] );
@@ -632,34 +654,46 @@ class PR_DHL_Front_End_Paket {
 	  return FALSE;
 	}
 
-	public function validate_post_number($value='')	{
-		error_log(print_r($_POST,true));
+	public function validate_post_number()	{
+		// error_log(print_r($_POST,true));
 		$shipping_address_1 = wc_clean( $_POST['shipping_address_1'] );
 		$shipping_dhl_postnum = wc_clean( $_POST['shipping_dhl_postnum'] );
 		
 		$pos_ps = PR_DHL()->is_packstation( $shipping_address_1 );
 		$pos_rs = PR_DHL()->is_parcelshop( $shipping_address_1 );
 		$pos_po = PR_DHL()->is_post_office( $shipping_address_1 );
+
+		// If post number is not empty and a shop type is selected, then validate entry
+		// SHOULD WE CHECK IF DROP DOWN IS SET TO "DHL Shop Address"?!
+		if ( $pos_ps || $pos_rs || $pos_po ) {
+			
+			// check shipping method and payment gateway first
+			try {
+				$this->validate_extra_services_available();
+			} catch (Exception $e) {
+				wc_add_notice( __( '"DHL Shop Address" cannot be used - ', 'pr-shipping-dhl' ) . $e->getMessage(), 'error' );
+				return;
+			}
+
+			if ( ! empty( $shipping_dhl_postnum ) ) {
+
+				if( ! is_numeric( $shipping_dhl_postnum ) ) {
+					wc_add_notice( __( 'Post Number must be a number.', 'pr-shipping-dhl' ), 'error' );
+					return;
+				}
+
+				$post_num_len = strlen( $shipping_dhl_postnum );
+				error_log($post_num_len);
+				if( $post_num_len < 6 || $post_num_len > 12 ) {
+					wc_add_notice( __( 'Post Number is must be a number between 6 and 12 digits.', 'pr-shipping-dhl' ), 'error' );
+					return;
+				}
+			}
+		}
 		
 		if ( $pos_ps && empty( $shipping_dhl_postnum ) ) {
 			wc_add_notice( __( 'Post Number is mandatory for Packstation.', 'pr-shipping-dhl' ), 'error' );
 			return;
-		}
-
-		// If post number is not empty and a shop type is selected, then validate entry
-		if ( ( $pos_ps || $pos_rs || $pos_po ) && ! empty( $shipping_dhl_postnum ) ) {
-
-			if( ! is_numeric( $shipping_dhl_postnum ) ) {
-				wc_add_notice( __( 'Post Number must be a number.', 'pr-shipping-dhl' ), 'error' );
-				return;
-			}
-
-			$post_num_len = strlen( $shipping_dhl_postnum );
-			error_log($post_num_len);
-			if( $post_num_len < 6 || $post_num_len > 12 ) {
-				wc_add_notice( __( 'Post Number is must be a number between 6 and 12 digits.', 'pr-shipping-dhl' ), 'error' );
-				return;
-			}
 		}
 	}
 

@@ -145,6 +145,17 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			),
 		);
 
+		foreach ($select_dhl_product_dom as $key => $value) {
+
+			$this->form_fields += array(
+				'dhl_participation_' . $key => array(
+					'title'             => $value,
+					'type'              => 'text',
+					// 'placeholder'		=> '01',
+					'custom_attributes'	=> array( 'maxlength' => '2' ),
+				)
+			);
+		}
 
 		foreach ($select_dhl_product_int as $key => $value) {
 
@@ -158,27 +169,19 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			);
 		}
 
-		foreach ($select_dhl_product_dom as $key => $value) {
-
-			$this->form_fields += array(
-				'dhl_participation_' . $key => array(
-					'title'             => $value,
-					'type'              => 'text',
-					// 'placeholder'		=> '01',
-					'custom_attributes'	=> array( 'maxlength' => '2' ),
-				)
-			);
-		}
 
 		$this->form_fields += array(
-			'dhl_default_product_int' => array(
-				'title'             => __( 'International Default Service', 'pr-shipping-dhl' ),
-				'type'              => 'select',
-				'description'       => __( 'Please select your default DHL Paket shipping service for cross-border shippments that you want to offer to your customers (you can always change this within each individual order afterwards).', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
-				'options'           => $select_dhl_product_int,
-				'class'          => 'wc-enhanced-select',
-			),	
+			'dhl_participation_return' => array(
+				'title'             => __('DHL Return Label', 'pr-shipping-dhl'),
+				'type'              => 'text',
+				// 'placeholder'		=> '01',
+				'custom_attributes'	=> array( 'maxlength' => '2' )
+			),
+			'dhl_general'     => array(
+				'title'           => __( 'General Settings', 'pr-shipping-dhl' ),
+				'type'            => 'title',
+				'description'     => __( 'Please configure the plugin general settings.', 'pr-shipping-dhl' ),
+			),
 			'dhl_default_product_dom' => array(
 				'title'             => __( 'Domestic Default Service', 'pr-shipping-dhl' ),
 				'type'              => 'select',
@@ -187,6 +190,14 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'options'           => $select_dhl_product_dom,
 				'class'          => 'wc-enhanced-select',
 			),
+			'dhl_default_product_int' => array(
+				'title'             => __( 'International Default Service', 'pr-shipping-dhl' ),
+				'type'              => 'select',
+				'description'       => __( 'Please select your default DHL Paket shipping service for cross-border shippments that you want to offer to your customers (you can always change this within each individual order afterwards).', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'options'           => $select_dhl_product_int,
+				'class'          => 'wc-enhanced-select',
+			),	
 			'dhl_shipping_methods' => array(
 				'title'             => __( 'Shipping Methods', 'pr-shipping-dhl' ),
 				'type'              => 'multiselect',
@@ -209,6 +220,14 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'label'             => __( 'Customer Note', 'pr-shipping-dhl' ),
 				'default'           => 'yes',
 				'description'       => __( 'Please, tick here if you want the order note type to be a "customer note" that emails the customer or a "private note" that does not. The order note is used to add the shipping tracking number.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
+			'dhl_default_print_codeable' => array(
+				'title'             => __( 'Print Only If Codeable default', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here if you want the "Print Only If Codeable" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 			),
 			'dhl_api'           => array(
@@ -242,7 +261,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'title'             => __( 'Debug Log', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
 				'label'             => __( 'Enable logging', 'pr-shipping-dhl' ),
-				'default'           => 'yes',
+				'default'           => 'no',
 				'description'       => sprintf( __( 'A log file containing the communication to the DHL server will be maintained if this option is checked. This can be used in case of technical issues and can be found %shere%s.', 'pr-shipping-dhl' ), '<a href="' . $log_path . '" target = "_blank">', '</a>' )
 			),
 		);
@@ -563,7 +582,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'title'             => __( 'Payment Reference 2', 'pr-shipping-dhl' ),
 				'type'              => 'text',
 				'custom_attributes'	=> array( 'maxlength' => '35' )
-			),
+			),/*
 			'dhl_cod_fee' => array(
 				'title'             => __( 'Add COD Fee', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
@@ -571,7 +590,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'desc_tip'          => true,
 				'default'           => '',
 				'custom_attributes'	=> array( 'maxlength' => '35' )
-			),
+			),*/
 		);
 	}
 
