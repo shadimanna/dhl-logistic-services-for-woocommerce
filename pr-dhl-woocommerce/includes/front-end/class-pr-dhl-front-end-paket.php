@@ -173,7 +173,7 @@ class PR_DHL_Front_End_Paket {
 
 			// Enqueue Google Maps
 			// wp_enqueue_script( 'pr-dhl-google-maps', 'http://maps.googleapis.com/maps/api/js?libraries=places,geometry&callback=initParcelFinderMap&key=' . $this->shipping_dhl_settings['dhl_google_maps_api_key'] );
-			wp_enqueue_script( 'pr-dhl-google-maps', 'http://maps.googleapis.com/maps/api/js?key=' . $this->shipping_dhl_settings['dhl_google_maps_api_key'] );
+			wp_enqueue_script( 'pr-dhl-google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . $this->shipping_dhl_settings['dhl_google_maps_api_key'] );
 		}
 	}
 	
@@ -683,7 +683,7 @@ class PR_DHL_Front_End_Paket {
 				}
 
 				$post_num_len = strlen( $shipping_dhl_postnum );
-				error_log($post_num_len);
+				// error_log($post_num_len);
 				if( $post_num_len < 6 || $post_num_len > 12 ) {
 					wc_add_notice( __( 'Post Number is must be a number between 6 and 12 digits.', 'pr-shipping-dhl' ), 'error' );
 					return;

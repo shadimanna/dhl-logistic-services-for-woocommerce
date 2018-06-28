@@ -9,10 +9,86 @@ jQuery( function( $ ) {
 
 			$( '#woocommerce-shipment-dhl-label' )
 				.on( 'click', 'a#dhl_delete_label', this.delete_dhl_label );
+
+			$( '#woocommerce-shipment-dhl-label' )
+				.on( 'change', '#pr_dhl_return_address_enabled', this.show_hide_return );
+			wc_shipment_dhl_label_items.show_hide_return();
+
+			$( '#woocommerce-shipment-dhl-label' )
+				.on( 'change', '#pr_dhl_identcheck', this.show_hide_ident );
+			wc_shipment_dhl_label_items.show_hide_ident();
+
+			$( '#woocommerce-shipment-dhl-label' )
+				.on( 'change', '#pr_dhl_product', this.validate_product_return );
 		},
 	
+		validate_product_return: function () {
+			// console.log(this);
+			var selected_product = $( '#pr_dhl_product' ).val();
+			// var is_checked = $(this).prop('checked');
+			// console.log(is_checked);
+
+			if( selected_product != 'V01PAK' && selected_product != 'V01PRIO' ) {
+				$('#pr_dhl_return_address_enabled').prop('checked', false).trigger('change');
+				$('#pr_dhl_return_address_enabled').prop('disabled', 'disabled');
+			} else {
+				$('#pr_dhl_return_address_enabled').removeAttr('disabled');
+			}
+
+		},
+
+		show_hide_return: function () {
+			// console.log(this);
+			var is_checked = $( '#pr_dhl_return_address_enabled' ).prop('checked');
+			// var is_checked = $(this).prop('checked');
+			// console.log(is_checked);
+
+			$( '#shipment-dhl-label-form' ).children().each( function () {
+			    // console.log($(this)); // "this" is the current element in the loop
+			    // console.log($(this).attr("class")); // "this" is the current element in the loop
+				
+				// If class exists, and is not 'pr_dhl_return_address_enabled' but is 'pr_dhl_return_' field
+			    if( ( $(this).attr("class") ) &&
+			    	( $(this).attr("class").indexOf('pr_dhl_return_address_enabled') == -1 ) &&
+			    	( $(this).attr("class").indexOf('pr_dhl_return') >= 0 ) 
+			    ) {
+			    	
+			    	if ( is_checked ) {
+			    		$(this).show();
+			    	} else {
+			    		$(this).hide();
+			    	}
+			    }
+			});
+		},
+	
+		show_hide_ident: function () {
+			// console.log(this);
+			var is_checked = $( '#pr_dhl_identcheck' ).prop('checked');
+			// var is_checked = $(this).prop('checked');
+			// console.log(is_checked);
+
+			$( '#shipment-dhl-label-form' ).children().each( function () {
+			    // console.log($(this)); // "this" is the current element in the loop
+			    // console.log($(this).attr("class")); // "this" is the current element in the loop
+				
+				// If class exists, and is not 'pr_dhl_return_address_enabled' but is 'pr_dhl_return_' field
+			    if( ( $(this).attr("class") ) &&
+			    	( $(this).attr("class").indexOf('pr_dhl_identcheck_field ') == -1 ) &&
+			    	( $(this).attr("class").indexOf('pr_dhl_identcheck') >= 0 ) 
+			    ) {
+			    	
+			    	if ( is_checked ) {
+			    		$(this).show();
+			    	} else {
+			    		$(this).hide();
+			    	}
+			    }
+			});
+		},
+
 		save_dhl_label: function () {
-			console.log(dhl_label_data);
+			// console.log(dhl_label_data);
 			// Remove any errors from last attempt to create label
 			$( '#shipment-dhl-label-form .wc_dhl_error' ).remove();
 
@@ -64,6 +140,7 @@ jQuery( function( $ ) {
 		    	});
 		    });
 			
+			// console.log(data);
 			$.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
 				$( '#shipment-dhl-label-form' ).unblock();
 				if ( response.error ) {
@@ -105,7 +182,7 @@ jQuery( function( $ ) {
 						var data = {
 							action:                   'woocommerce_add_order_note',
 							post_id:                  woocommerce_admin_meta_boxes.post_id,
-							note_type: 				  'customer',
+							note_type: 				  dhl_label_data.note_type,
 							note:					  response.tracking_note,
 							security:                 woocommerce_admin_meta_boxes.add_order_note_nonce
 						};

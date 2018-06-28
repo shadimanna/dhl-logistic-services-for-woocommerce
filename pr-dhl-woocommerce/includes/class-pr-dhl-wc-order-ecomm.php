@@ -88,63 +88,6 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 		return $tracking_note;
 	}
 
-	/**
-	 * Saves the tracking items array to post_meta.
-	 *
-	 * @param int   $order_id       Order ID
-	 * @param array $tracking_items List of tracking item
-	 *
-	 * @return void
-	 */
-	public function save_dhl_label_tracking( $order_id, $tracking_items ) {
-		update_post_meta( $order_id, '_pr_shipment_dhl_label_tracking', $tracking_items );
-	}
-
-	/*
-	 * Gets all tracking items fron the post meta array for an order
-	 *
-	 * @param int  $order_id  Order ID
-	 *
-	 * @return tracking items
-	 */
-	public function get_dhl_label_tracking( $order_id ) {
-		return get_post_meta( $order_id, '_pr_shipment_dhl_label_tracking', true );
-	}
-
-	/**
-	 * Delete the tracking items array to post_meta.
-	 *
-	 * @param int   $order_id       Order ID
-	 *
-	 * @return void
-	 */
-	public function delete_dhl_label_tracking( $order_id ) {
-		delete_post_meta( $order_id, '_pr_shipment_dhl_label_tracking' );
-	}
-
-	/**
-	 * Saves the label items array to post_meta.
-	 *
-	 * @param int   $order_id       Order ID
-	 * @param array $tracking_items List of tracking item
-	 *
-	 * @return void
-	 */
-	public function save_dhl_label_items( $order_id, $tracking_items ) {
-		update_post_meta( $order_id, '_pr_shipment_dhl_label_items', $tracking_items );
-	}
-
-	/*
-	 * Gets all label itesm fron the post meta array for an order
-	 *
-	 * @param int  $order_id  Order ID
-	 *
-	 * @return label items
-	 */
-	public function get_dhl_label_items( $order_id ) {
-		return get_post_meta( $order_id, '_pr_shipment_dhl_label_items', true );
-	}
-
 	protected function get_package_description( $order_id ) {
 		// $this->shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
 		$dhl_desc_default = $this->shipping_dhl_settings['dhl_desc_default'];
@@ -211,8 +154,10 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 			}			
 		}
 
-		
-		
+		$order = wc_get_order( $order_id );
+		if( $this->is_cod_payment_method( $order_id ) ) {
+			$args['order_details']['cod_value']	= $order->get_total();			
+		}		
 		
 		return $args;
 	}
@@ -236,6 +181,19 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 		$new_item['item_export'] = get_post_meta( $product_id, '_dhl_export_description', true );
 
 		return $new_item;
+	}
+
+	protected function save_default_dhl_label_items( $order_id ) {
+
+		$dhl_label_items = $this->get_dhl_label_items( $order_id );
+		
+		if( empty( $dhl_label_items['pr_dhl_description'] ) ) {
+			$dhl_label_items['pr_dhl_description'] = $this->get_package_description();
+		}
+
+		$this->save_dhl_label_items( $order_id, $dhl_label_items );
+
+		parent::save_default_dhl_label_items( $order_id );
 	}
 
 	// Used by label API to pass handover number

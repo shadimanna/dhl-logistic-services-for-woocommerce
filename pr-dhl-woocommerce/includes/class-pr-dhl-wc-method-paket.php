@@ -24,45 +24,21 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		$this->id = 'pr_dhl_paket';
 		$this->instance_id = absint( $instance_id );
 		$this->method_title = __( 'DHL Paket', 'pr-shipping-dhl' );
-		$this->method_description = sprintf( __( 'To start creating DHL Paket shipping labels and return back a DHL Tracking number to your customers, please fill in your user credentials as shown in your contracts provided by DHL. Not yet a customer? Please get a quote %shere%s', 'pr-shipping-dhl' ), '<a href="https://www.dhl.de/de/geschaeftskunden/paket/kunde-werden/angebot-dhl-geschaeftskunden-online.html" target="_blank">', '</a>' );
-		/*
-		$this->supports           = array(
-			// 'settings',
-			// 'shipping-zones', // support shipping zones shipping method...removed for now
-			// 'instance-settings',
-			// 'instance-settings-modal',
-			'shipping-zones',
-			'instance-settings',
-			'settings',
-		);*/
+		$this->method_description = sprintf( __( 'Below you will find all functions for controlling, preparing and processing your shipment with DHL Paket. Prerequisite is a valid DHL business customer contract. If you are not yet a DHL business customer, you can request a quote %shere%s.', 'pr-shipping-dhl' ), '<a href="https://www.dhl.de/de/geschaeftskunden/paket/kunde-werden/angebot-dhl-geschaeftskunden-online.html" target="_blank">', '</a>' );
 
 		$this->init();
-		// add_action( 'init', array( $this, 'init' ) );
 	}
 
 	/**
 	 * init function.
 	 */
 	public function init() {
-		// parent::init();
 		// Load the settings.
-		try {
-
-			// INSTEAD OF OVERRIDING THE INSTANCE FIELDS HERE, CHANGE THE DEFAULT NAME TO "DHL PAKET" AND ATTACHED PREFERRED OPTIONS!!!
-			// $this->init_instance_form_fields();
-			// $this->instance_form_fields['title']['default'] = __('DHL Paket', 'pr-shipping-dhl');
-
-			$this->init_form_fields();
-			$this->init_settings();
-
-			// $this->title = $this->get_option( 'title' );
-			
-		} catch (Exception $e) {
-			PR_DHL()->log_msg( __('DHL Paket Shipping Method not loaded - ', 'pr-shipping-dhl') . $e->getMessage() );
-		}
+		$this->init_form_fields();
+		$this->init_settings();
 
 		add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'process_admin_options' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_scripts' ) );
+		// add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_scripts' ) );
 		
 	}
 
@@ -132,16 +108,16 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			'dhl_account_num' => array(
 				'title'             => __( 'Account Number (EKP)', 'pr-shipping-dhl' ),
 				'type'              => 'text',
-				'description'       => __( 'The account number (10 digits - numerical) will be provided by your local DHL sales organization.', 'pr-shipping-dhl' ),
+				'description'       => __( 'Your DHL account number (10 digits - numerical), also called "EKP“. This will be provided by your local DHL sales organization.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 				'default'           => '',
 				'placeholder'		=> '1234567890',
 				'custom_attributes'	=> array( 'maxlength' => '10' )
 			),
 			'dhl_participation_title'     => array(
-				'title'           => __( 'Participation Number', 'pr-shipping-dhl' ),
+				'title'           => __( 'DHL Products and Participation Number', 'pr-shipping-dhl' ),
 				'type'            => 'title',
-				'description'     => __( 'The participation number (also referred to as "Partner ID" in the web service documentation) enables invoices to be subdivided according to location, seasonal business or different conditions. Participation = the last two characters of the accounting number for the referring product', 'pr-shipping-dhl' ),
+				'description'     => __( 'For each DHL product that you would like to use, please enter your participation number here. The participation number consists of the last two characters of the respective accounting number, which you will find in your DHL contract data (for example, 01).', 'pr-shipping-dhl' ),
 			),
 		);
 
@@ -151,7 +127,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'dhl_participation_' . $key => array(
 					'title'             => $value,
 					'type'              => 'text',
-					// 'placeholder'		=> '01',
+					'placeholder'		=> '',
 					'custom_attributes'	=> array( 'maxlength' => '2' ),
 				)
 			);
@@ -163,7 +139,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'dhl_participation_' . $key => array(
 					'title'             => $value,
 					'type'              => 'text',
-					// 'placeholder'		=> '01',
+					'placeholder'		=> '',
 					'custom_attributes'	=> array( 'maxlength' => '2' )
 				)
 			);
@@ -172,15 +148,15 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 		$this->form_fields += array(
 			'dhl_participation_return' => array(
-				'title'             => __('DHL Return Label', 'pr-shipping-dhl'),
+				'title'             => __('DHL Retoure', 'pr-shipping-dhl'),
 				'type'              => 'text',
-				// 'placeholder'		=> '01',
+				'placeholder'		=> '',
 				'custom_attributes'	=> array( 'maxlength' => '2' )
 			),
 			'dhl_general'     => array(
-				'title'           => __( 'General Settings', 'pr-shipping-dhl' ),
+				'title'           => __( 'Shipping Label Settings', 'pr-shipping-dhl' ),
 				'type'            => 'title',
-				'description'     => __( 'Please configure the plugin general settings.', 'pr-shipping-dhl' ),
+				'description'     => __( 'Please configure the shipping label settings.', 'pr-shipping-dhl' ),
 			),
 			'dhl_default_product_dom' => array(
 				'title'             => __( 'Domestic Default Service', 'pr-shipping-dhl' ),
@@ -198,21 +174,13 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'options'           => $select_dhl_product_int,
 				'class'          => 'wc-enhanced-select',
 			),	
-			'dhl_shipping_methods' => array(
-				'title'             => __( 'Shipping Methods', 'pr-shipping-dhl' ),
-				'type'              => 'multiselect',
-				'description'       => __( 'Select the Shipping Methods to display the enabled DHL Paket preferred services. You can press "ctrl" to select multiple options or click on a selected option to deselect it.', 'pr-shipping-dhl' ),
+			'dhl_default_print_codeable' => array(
+				'title'             => __( 'Print Only If Codeable default', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here if you want the "Print Only If Codeable" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
-				'options'           => $wc_shipping_titles,
-				'class'          => 'wc-enhanced-select',
-			),
-			'dhl_payment_gateway' => array(
-				'title'             => __( 'Exclude Payment Gateways', 'pr-shipping-dhl' ),
-				'type'              => 'multiselect',
-				'description'       => __( 'Select the Payment Gateways to hide the enabled DHL Paket preferred services. You can press "ctrl" to select multiple options or click on a selected option to deselect it.', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
-				'options'           => $payment_gateway_titles,
-				'class'          => 'wc-enhanced-select',
 			),
 			'dhl_note_type' => array(
 				'title'             => __( 'Order Note Type', 'pr-shipping-dhl' ),
@@ -220,14 +188,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'label'             => __( 'Customer Note', 'pr-shipping-dhl' ),
 				'default'           => 'yes',
 				'description'       => __( 'Please, tick here if you want the order note type to be a "customer note" that emails the customer or a "private note" that does not. The order note is used to add the shipping tracking number.', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
-			),
-			'dhl_default_print_codeable' => array(
-				'title'             => __( 'Print Only If Codeable default', 'pr-shipping-dhl' ),
-				'type'              => 'checkbox',
-				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
-				'default'           => 'no',
-				'description'       => __( 'Please, tick here if you want the "Print Only If Codeable" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 			),
 			'dhl_api'           => array(
@@ -238,17 +198,17 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			'dhl_api_user' => array(
 				'title'             => __( 'Username', 'pr-shipping-dhl' ),
 				'type'              => 'text',
-				'description'       => __( 'Enter DHL Paket username.', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
+				'description'       => sprintf( __( 'Your username for the DHL business customer portal. Please note the lower case and test your access data in advance at %shere%s.', 'pr-shipping-dhl' ), '<a href="' . PR_DHL_PAKET_BUSSINESS_PORTAL . '" target = "_blank">', '</a>' ),
+				'desc_tip'          => false,
 				'default'           => ''
 			),
 			'dhl_api_pwd' => array(
 				'title'             => __( 'Password', 'pr-shipping-dhl' ),
 				'type'              => 'password',
-				'description'       => __( 'Enter DHL Paket password.', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
+				'description'       => sprintf( __( 'Help text: Your password for the DHL business customer portal. Please note the new assignment of the password to 3 (Standard User) or 12 (System User) months and test your access data in advance at %shere%s', 'pr-shipping-dhl' ), '<a href="' . PR_DHL_PAKET_BUSSINESS_PORTAL . '" target = "_blank">', '</a>' ),
+				'desc_tip'          => false,
 				'default'           => ''
-			),
+			),/*
 			'dhl_sandbox' => array(
 				'title'             => __( 'Sandbox Mode', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
@@ -256,7 +216,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'default'           => 'no',
 				'description'       => __( 'Please, tick here if you want to test the plug-in installation against the DHL Sandbox Environment. Labels generated via Sandbox cannot be used for shipping and you need to enter your client ID and client secret for the Sandbox environment instead of the ones for production!', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
-			),
+			),*/
 			'dhl_debug' => array(
 				'title'             => __( 'Debug Log', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
@@ -366,6 +326,22 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'default'           => 'yes',
 					'description'       => __( 'Enabling this will display a front-end option for the user to select their preferred neighbour.', 'pr-shipping-dhl' ),
 					'desc_tip'          => true,
+				),
+				'dhl_shipping_methods' => array(
+					'title'             => __( 'Shipping Methods', 'pr-shipping-dhl' ),
+					'type'              => 'multiselect',
+					'description'       => __( 'Select the Shipping Methods to display the enabled DHL Paket preferred services. You can press "ctrl" to select multiple options or click on a selected option to deselect it.', 'pr-shipping-dhl' ),
+					'desc_tip'          => true,
+					'options'           => $wc_shipping_titles,
+					'class'          => 'wc-enhanced-select',
+				),
+				'dhl_payment_gateway' => array(
+					'title'             => __( 'Exclude Payment Gateways', 'pr-shipping-dhl' ),
+					'type'              => 'multiselect',
+					'description'       => __( 'Select the Payment Gateways to hide the enabled DHL Paket preferred services. You can press "ctrl" to select multiple options or click on a selected option to deselect it.', 'pr-shipping-dhl' ),
+					'desc_tip'          => true,
+					'options'           => $payment_gateway_titles,
+					'class'          => 'wc-enhanced-select',
 				),
 				'dhl_parcel_finder'           => array(
 					'title'           => __( 'Parcel Finder', 'pr-shipping-dhl' ),
@@ -572,7 +548,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			'dhl_bank_bic' => array(
 				'title'             => __( 'BIC', 'pr-shipping-dhl' ),
 				'default'           => ''
-			),
+			),/*
 			'dhl_bank_ref' => array(
 				'title'             => __( 'Payment Reference', 'pr-shipping-dhl' ),
 				'type'              => 'text',
@@ -582,7 +558,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'title'             => __( 'Payment Reference 2', 'pr-shipping-dhl' ),
 				'type'              => 'text',
 				'custom_attributes'	=> array( 'maxlength' => '35' )
-			),/*
+			),
 			'dhl_cod_fee' => array(
 				'title'             => __( 'Add COD Fee', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',

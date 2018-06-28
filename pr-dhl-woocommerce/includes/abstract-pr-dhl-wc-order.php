@@ -128,13 +128,6 @@ abstract class PR_DHL_WC_Order {
 			$print_button = '<a href="'. $label_tracking_info['label_url'] .'" id="dhl-label-print" class="button button-primary" download>' .PR_DHL_BUTTON_LABEL_PRINT . '</a>';
 		}
 
-		$dhl_label_data = array(
-			'main_button' => $main_button,
-			'delete_label' => $delete_label,
-			'print_button' => $print_button
-		);
-
-
 		echo '<div id="shipment-dhl-label-form">';
 
 		if( !empty( $dhl_product_list ) ) {
@@ -176,6 +169,13 @@ abstract class PR_DHL_WC_Order {
 				echo $delete_label;
 			}
 			
+			$dhl_label_data = array(
+				'main_button' => $main_button,
+				'delete_label' => $delete_label,
+				'print_button' => $print_button,
+				'note_type' => $this->get_note_type( $order_id ),
+			);
+
 			wp_enqueue_script( 'wc-shipment-dhl-label-js', PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl.js', array(), PR_DHL_VERSION );
 			wp_localize_script( 'wc-shipment-dhl-label-js', 'dhl_label_data', $dhl_label_data );
 			
@@ -374,25 +374,28 @@ abstract class PR_DHL_WC_Order {
 		return get_post_meta( $order_id, '_pr_shipment_dhl_label_items', true );
 	}
 
-	protected function save_default_dhl_label_items( $order_id ) {
-		$dhl_label_items = $this->additional_default_dhl_label_items( $order_id );
-		// Set default weight
-		$dhl_label_items['pr_dhl_weight'] = $this->calculate_order_weight( $order_id );
-		// Set default DHL product
-		$dhl_label_items['pr_dhl_product'] = $this->get_default_dhl_product( $order_id );
-		// Save default items
-		$this->save_dhl_label_items( $order_id, $dhl_label_items );
-	}
-
 	/*
-	 * Used to override default label items in children e.g. ECOMMERCE DESCRIPTION FIELD!
+	 * Save default fields, used by bulk create label
 	 *
 	 * @param int  $order_id  Order ID
 	 *
 	 * @return default label items
 	 */
-	protected function additional_default_dhl_label_items( $order_id ) {
-		return array();
+	protected function save_default_dhl_label_items( $order_id ) {
+		$dhl_label_items = $this->get_dhl_label_items( $order_id );
+
+		if( empty( $dhl_label_items['pr_dhl_weight'] ) ) {
+			// Set default weight
+			$dhl_label_items['pr_dhl_weight'] = $this->calculate_order_weight( $order_id );
+		}
+
+		if( empty( $dhl_label_items['pr_dhl_product'] ) ) {
+			// Set default DHL product
+			$dhl_label_items['pr_dhl_product'] = $this->get_default_dhl_product( $order_id );
+		}
+
+		// Save default items
+		$this->save_dhl_label_items( $order_id, $dhl_label_items );
 	}
 
 	protected function get_default_dhl_product( $order_id ) {
@@ -401,6 +404,15 @@ abstract class PR_DHL_WC_Order {
 			return $this->shipping_dhl_settings['dhl_default_product_dom'];
 		} else {
 			return $this->shipping_dhl_settings['dhl_default_product_int'];
+		}
+	}
+
+	protected function get_note_type( $order_id ) {
+		// $this->shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
+		if( isset( $this->shipping_dhl_settings['dhl_note_type'] ) && $this->shipping_dhl_settings['dhl_note_type'] == 'yes' ) {
+			return 'customer';
+		} else {
+			return 0;
 		}
 	}
 
@@ -481,10 +493,6 @@ abstract class PR_DHL_WC_Order {
 			default:
 				$args['order_details']['weightUom'] = $weight_units;
 				break;
-		}
-
-		if( $this->is_cod_payment_method( $order_id ) ) {
-			$args['order_details']['cod_value']	= $order->get_total();			
 		}
 		
 		$args['order_details']['total_value'] = $order->get_total();			

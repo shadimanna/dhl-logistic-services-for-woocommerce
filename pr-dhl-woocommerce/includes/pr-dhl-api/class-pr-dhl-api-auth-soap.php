@@ -45,7 +45,7 @@ class PR_DHL_API_Auth_SOAP {
 			throw new Exception( __('The "Username" or "Password" is empty.','pr-shipping-dhl' ) );
 		}
 
-		PR_DHL()->log_msg( 'Authorize User - Client ID: ' . $this->client_id );
+		// PR_DHL()->log_msg( 'Authorize User - Client ID: ' . $this->client_id );
 		
 		if ( ! class_exists( 'SoapClient' ) || ! class_exists( 'SoapHeader' ) ) {
 			throw new Exception( __( 'This plugin requires the <a href="http://php.net/manual/en/class.soapclient.php">SOAP</a> support on your server/hosting to function.', 'pr-shipping-dhl' ) );
@@ -54,7 +54,7 @@ class PR_DHL_API_Auth_SOAP {
 		try {
 			
 			$api_cred = PR_DHL()->get_api_url();
-
+			
 			$soap_client = new SoapClient( $this->wsdl_link,
 			array( 	
 					'login' => $api_cred['user'],
