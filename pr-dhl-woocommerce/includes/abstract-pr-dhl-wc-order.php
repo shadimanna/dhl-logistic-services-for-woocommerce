@@ -383,9 +383,11 @@ abstract class PR_DHL_WC_Order {
 				$product = wc_get_product( $item['product_id'] );
 			}
 			
-			$product_weight = $product->get_weight();
-			if( $product_weight ) {
-				$total_weight += ( $item['qty'] * $product_weight );
+			if ( $product ) {
+				$product_weight = $product->get_weight();
+				if( $product_weight ) {
+					$total_weight += ( $item['qty'] * $product_weight );
+				}
 			}
 		}
 
@@ -491,12 +493,16 @@ abstract class PR_DHL_WC_Order {
 			// If the state is empty, it was entered as free text
 			if ( ! empty($states) ) {
 				// Change the state to be the name and not the code
-				$shipping_address['state'] = $states[ $shipping_address['state'] ];
-				
-				// Remove anything in parentheses (e.g. TH)
-				$ind = strpos($shipping_address['state'], " (");
-				if( false !== $ind ) {
-					$shipping_address['state'] = substr( $shipping_address['state'], 0, $ind );
+
+				if( isset($shipping_address['state']) ) {
+
+					$shipping_address['state'] = $states[ $shipping_address['state'] ];
+					
+					// Remove anything in parentheses (e.g. TH)
+					$ind = strpos($shipping_address['state'], " (");
+					if( false !== $ind ) {
+						$shipping_address['state'] = substr( $shipping_address['state'], 0, $ind );
+					}
 				}
 			}
 		}

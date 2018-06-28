@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 4.9.2
-Stable tag: 1.0.14
+Stable tag: 1.0.16
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -78,6 +78,15 @@ In case you could not find what you were looking for in our FAQs and the detaile
 
 
 == Changelog ==
+
+= 1.0.16 =
+* Validation fix - Validate product exists before adding weight
+* Validation fix - Validate shipping address state exists before modifying it
+
+= 1.0.15 =
+* Bug fix - DHL Parcel: Removed empty ServicePoint API calls
+* Bug fix - DHL Parcel: Now properly returns a visible error when street + number cannot be parsed
+* Enhancement - DHL Parcel: Added optional track & trace information to WooCommerce order completion mail
 
 = 1.0.14 =
 * Enhancement: Send order currency and price instead of shop currency and product price to support multi-currency plugins
