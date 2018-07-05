@@ -144,15 +144,6 @@ class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 				'desc_tip'          => true,
 				'default'           => '',
 				// 'placeholder'		=> '0000500000'
-			),
-			'dhl_distribution' => array(
-				'title'             => __( 'Distribution Center', 'pr-shipping-dhl' ),
-				'type'              => 'text',
-				'description'       => __( 'Your distribution center is a 6 digit alphanumerical field (like USLAX1) indicating where we are processing your items and will be provided by your local DHL sales organization too.', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
-				'default'           => '',
-				'placeholder'		=> 'USLAX1',
-				'custom_attributes'	=> array( 'maxlength' => '6' )
 			)
 		);
 
@@ -183,29 +174,6 @@ class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 		}
 
 		$this->form_fields += array(
-			'dhl_prefix' => array(
-				'title'             => __( 'Package Prefix', 'pr-shipping-dhl' ),
-				'type'              => 'text',
-				'description'       => __( 'The package prefix is added to identify the package is coming from your shop. This value is limited to 5 charaters.', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
-				'default'           => '',
-				'placeholder'		=> '',
-				'custom_attributes'	=> array( 'maxlength' => '5' )
-			),
-			'dhl_label_format' => array(
-				'title'             => __( 'Label Format', 'pr-shipping-dhl' ),
-				'type'              => 'select',
-				'description'       => __( 'Select one of the formats to generate the label in.', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
-				'options'           => array( 'PDF' => 'PDF', 'PNG' => 'PNG', 'ZPL' => 'ZPL' )
-			),
-			'dhl_handover_type' => array(
-				'title'             => __( 'Handover', 'pr-shipping-dhl' ),
-				'type'              => 'select',
-				'description'       => __( 'Select whether to drop-off the packages to DHL or have them pick them up.', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
-				'options'           => array( 'dropoff' => 'Drop-Off', 'pickup' => 'Pick-Up')
-			),
 			'dhl_api'           => array(
 				'title'           => __( 'API Settings', 'pr-shipping-dhl' ),
 				'type'            => 'title',
