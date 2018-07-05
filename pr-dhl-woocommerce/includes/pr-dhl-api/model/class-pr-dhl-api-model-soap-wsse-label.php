@@ -60,11 +60,17 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 
 			PR_DHL()->log_msg( 'Response Body: ' . print_r( $response_body, true ) );
 		
-			if( ! empty( $response_body->Provider->Notification->code ) ) {
-				throw new Exception( $response_body->Provider->Notification->code . ' - ' . $response_body->Provider->Notification->Message );
+			if( ! empty( $response_body->Notification->code ) ) {
+				throw new Exception( $response_body->Notification->code . ' - ' . $response_body->Notification->Message );
 			}
 
-			return $this->get_returned_rates( $response_body->Provider->Service );
+			if( is_array( $response_body->Notification ) ) {
+				if( ! empty( $response_body->Notification[0]->code ) ) {
+					throw new Exception( $response_body->Notification[0]->code . ' - ' . $response_body->Notification[0]->Message );
+				}
+			}
+
+			return $this->get_returned_rates( $response_body->Service );
 
 		} catch (Exception $e) {
 			// error_log('get dhl label Exception');
@@ -190,9 +196,24 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 			throw new Exception( 'Weight - ' . $e->getMessage() );
 		}
 
-		// if ( empty( $args['order_details']['duties'] )) {
-		// 	throw new Exception( __('DHL "Duties" is empty!', 'pr-shipping-dhl') );
-		// }
+		if( ! PR_DHL()->is_shipping_domestic( $this->args['shipping_address']['country'] ) ) {
+			if( empty( $args['order_details']['declared_value'] ) ) {
+				throw new Exception( __('"Declared Value" is empty!', 'pr-shipping-dhl') );
+			}
+		}
+
+		if ( ! empty( $args['order_details']['additional_insurance'] ) && ( $args['order_details']['additional_insurance'] == 'yes') ) {
+			
+			if( empty( $args['order_details']['insured_value'] ) ) {
+				throw new Exception( __('"Insured Value" is empty!', 'pr-shipping-dhl') );
+			}
+
+			if( ! PR_DHL()->is_shipping_domestic( $this->args['shipping_address']['country'] ) ) {
+				if( $args['order_details']['declared_value'] != $args['order_details']['insured_value'] ) {
+					throw new Exception( __('"Declared Value" and "Insured Value" must be equal!', 'pr-shipping-dhl') );
+				}
+			}
+		}
 
 		if ( empty( $args['order_details']['currency'] )) {
 			throw new Exception( __('Shop "Currency" is empty!', 'pr-shipping-dhl') );
@@ -297,6 +318,38 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 			// Set date related functions to German time
 
 			// $this->args['order_details']['weight'] = $this->maybe_convert_weight( $this->args['order_details']['weight'], $this->args['order_details']['weightUom'] );
+			$special_services = array();
+			if ( ! empty( $this->args['order_details']['additional_insurance'] ) && ( $this->args['order_details']['additional_insurance'] == 'yes') ) {
+
+				$insurance_service = 
+					array(
+							'ServiceType' => 'II',
+							'ServiceValue' => $this->args['order_details']['insured_value'],
+							'CurrencyCode' => $this->args['order_details']['currency'],
+					);
+				
+				array_push($special_services, $insurance_service);
+			}
+
+			if ( ! empty( $this->args['order_details']['duties'] ) && ( $this->args['order_details']['duties'] == 'DDP') ) {
+
+				$duties_services = 
+					array(
+							'ServiceType' => 'DD',
+					);
+
+				array_push($special_services, $duties_services);
+			}
+
+			if ( ! empty( $this->args['order_details']['pr_dhl_paperless_trade'] ) && ( $this->args['order_details']['pr_dhl_paperless_trade'] == 'yes') ) {
+
+				$paperless_services = 
+					array(
+							'ServiceType' => 'WY',
+					);
+
+				array_push($special_services, $paperless_services);
+			}
 
 			$dhl_label_body = 
 				array(
@@ -315,27 +368,19 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 										'Currency' => $this->args['order_details']['currency'],
 										'UnitOfMeasurement' => 'SI',
 										// 'Content' => 'NON_DOCUMENTS',
-										'SpecialServices' => 
-											array(
-												'Service' =>
-													array(
-														'ServiceType' => 'II',
-														'ServiceValue' => $this->args['order_details']['total_value'],
-														'CurrencyCode' => $this->args['order_details']['currency'],
-													),
-											),
+										'SpecialServices' => array( 'Service' => $special_services ),
 								),
-							'ShipTimestamp' => date('Y-m-d\TH:i:s\G\M\TP', time() + 60*60*24), // 2018-03-05T15:33:16GMT+01:00
-							'PaymentInfo' => 'DDP',
+							'ShipTimestamp' => date('Y-m-d\TH:i:s\G\M\TP', strtotime( $this->args['order_details']['ship_date'] ) ), // 2018-03-05T15:33:16GMT+01:00
+							'PaymentInfo' => $this->args['order_details']['duties'],
 							'Ship' => 
 								array( 
 									'Shipper' =>
 										array(
 											'Contact' =>
 												array(
-														'PersonName' => 'Shadi Manna', //$this->args['dhl_settings']['shipper_name'],
-														'CompanyName' => 'Progressus.io', //$this->args['dhl_settings']['shipper_company'],
-														'PhoneNumber' => '34666666666', //$this->args['dhl_settings']['shipper_phone'],
+														'PersonName' => $this->args['dhl_settings']['shipper_name'],
+														'CompanyName' => $this->args['dhl_settings']['shipper_company'],
+														'PhoneNumber' => $this->args['dhl_settings']['shipper_phone'],
 														'EmailAddress' => $this->args['dhl_settings']['shipper_email'],
 													),
 											'Address' =>
@@ -386,8 +431,38 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 						),
 					);
 
+			if ( ! empty( $this->args['order_details']['pr_dhl_paperless_trade'] ) && ( $this->args['order_details']['pr_dhl_paperless_trade'] == 'yes') ) {
+
+				$dhl_label_body['RequestedShipment']['ShipmentInfo']['PaperlessTradeEnabled'] = 1;
+				// base64 invoice - jpg, png, pdf
+				// $dhl_label_body['RequestedShipment']['ShipmentInfo']['PaperlessTradeImage'] = 
+			}
+/*
+			if ( ! empty( $this->args['items'] ) ) {
+				
+				foreach ($this->args['items'] as $key => $item) {
+					// weightInKG is in KG needs to be changed if 'g' or 'lbs' etc.
+					$item['item_weight'] = $this->maybe_convert_weight( $item['item_weight'], $this->args['order_details']['weightUom'] );
+
+					$item_description .= ! empty( $item_description ) ? ', ' : '';
+					$item_description .= $item['item_description'];
+
+					$json_item = array(
+									'description' => substr( $item['item_description'], 0, 255 ),
+									'countryCodeOrigin' => $item['country_origin'],
+									'customsTariffNumber' => $item['hs_code'],
+									'amount' => intval( $item['qty'] ),
+									'netWeightInKG' => round( floatval( $item['item_weight'] ), 2 ),
+									'customsValue' => round( floatval( $item['item_value'] ), 2 ),
+								);
+					// $customsDetails = $json_item;
+					array_push($customsDetails, $json_item);
+				}
+			}*/
+
 			// If shipper or receiver are outside of EU then add "cross-border" info 
-			if( PR_DHL_WC()->is_crossborder_shipment( $this->args['shipping_address']['country'] ) ) {
+			// if( PR_DHL()->is_crossborder_shipment( $this->args['shipping_address']['country'] ) ) {
+			if( ! PR_DHL()->is_shipping_domestic( $this->args['shipping_address']['country'] ) ) {
 
 				$item_description = '';
 				foreach ($this->args['items'] as $key => $item) {

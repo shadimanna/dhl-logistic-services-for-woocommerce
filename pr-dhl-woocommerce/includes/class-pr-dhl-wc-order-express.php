@@ -31,7 +31,17 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 
 		// Order page metabox actions
 		add_action( 'wp_ajax_wc_shipment_dhl_gen_label_express', array( $this, 'save_meta_box_ajax' ) );
-		add_action( 'wp_ajax_wc_shipment_dhl_delete_label_express', array( $this, 'delete_label_ajax' ) );	
+		add_action( 'wp_ajax_wc_shipment_dhl_delete_label_express', array( $this, 'delete_label_ajax' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts'), 20 );
+	}
+
+	public function enqueue_scripts() {
+		wp_enqueue_script('media-upload');
+	    wp_enqueue_script('thickbox');
+	    wp_register_script('dhl-order-metabox-upload', PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-order-upload.js', array('jquery','media-upload','thickbox'));
+	    wp_enqueue_script('dhl-order-metabox-upload');
+
+	    wp_enqueue_style('thickbox');
 	}
 
 	public function get_dhl_obj() {
@@ -43,7 +53,18 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 	}
 
 	public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
-	
+		
+		$order = wc_get_order( $order_id );
+		woocommerce_wp_text_input( array(
+				'id'          		=> 'pr_dhl_ship_date',
+				'label'       		=> __( 'Ship Date: ', 'pr-shipping-dhl' ),
+				'placeholder' 		=> '',
+				'description'		=> '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_ship_date'] ) ? $dhl_label_items['pr_dhl_ship_date'] : date('Y-m-d'),
+				'custom_attributes'	=> array( $is_disabled => $is_disabled ),
+				'class'				=> 'short date-picker'
+		) );
+
 		woocommerce_wp_checkbox( array(
 			'id'          		=> 'pr_dhl_additional_insurance',
 			'label'       		=> __( 'Additional Insurance:', 'pr-shipping-dhl' ),
@@ -53,7 +74,27 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 			'custom_attributes'	=> array( $is_disabled => $is_disabled )
 		) );
 
+		woocommerce_wp_text_input( array(
+			'id'          		=> 'pr_dhl_insured_value',
+			'label'       		=> __( 'Insured Value: ', 'pr-shipping-dhl' ),
+			'placeholder' 		=> '',
+			'description'		=> '',
+			'value'       		=> isset( $dhl_label_items['pr_dhl_insured_value'] ) ? $dhl_label_items['pr_dhl_insured_value'] : $order->get_total(),
+			'custom_attributes'	=> array( $is_disabled => $is_disabled ),
+			'class'				=> 'wc_input_decimal'
+		) );
+
 		if( $this->is_crossborder_shipment( $order_id ) ) {
+			woocommerce_wp_text_input( array(
+				'id'          		=> 'pr_dhl_declared_value',
+				'label'       		=> __( 'Declared Value: ', 'pr-shipping-dhl' ),
+				'placeholder' 		=> '',
+				'description'		=> '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_declared_value'] ) ? $dhl_label_items['pr_dhl_declared_value'] : $order->get_total(),
+				'custom_attributes'	=> array( $is_disabled => $is_disabled ),
+				'class'				=> 'wc_input_decimal'
+			) );
+
 			$duties_opt = $dhl_obj->get_dhl_duties();
 			woocommerce_wp_select( array(
 				'id'          		=> 'pr_dhl_duties',
@@ -64,13 +105,28 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
 
+			woocommerce_wp_checkbox( array(
+				'id'          		=> 'pr_dhl_paperless_trade',
+				'label'       		=> __( 'Paperless Trade:', 'pr-shipping-dhl' ),
+				'placeholder' 		=> '',
+				'description'		=> '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_paperless_trade'] ) ? $dhl_label_items['pr_dhl_paperless_trade'] : '',
+				'custom_attributes'	=> array( $is_disabled => $is_disabled )
+			) );
+
+			// echo '<p>';
+			// echo '<input id="upload_image" type="text" size="36" name="upload_image" value="" />';
+			// echo '<input id="upload_image_button" type="button" value="Upload Image" />';
+			// echo '</p>';
+
+			$commercial_invoice = PR_DHL_PLUGIN_DIR_URL . '/assets/pdf/commercial_invoice.pdf';
 			woocommerce_wp_text_input( array(
 					'id'	          	=> 'pr_dhl_invoice',
 					'name'          	=> 'pr_dhl_invoice',
 					'type'          	=> 'file',
 					'label'       		=>  __( 'Upload invoice: ', 'pr-shipping-dhl' ),
 					'placeholder' 		=> '',
-					'description'		=> '',
+					'description'		=> sprintf( __('Download template commercial invoice %shere%s.', 'pr-shipping-dhl'), '<a href="' . $commercial_invoice . '" target="_blank">', '</a>'),
 					'custom_attributes'	=> array( $is_disabled => $is_disabled ),
 					'class'				=> ''
 				) );
@@ -83,7 +139,7 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 	 * Function for saving tracking items
 	 */
 	public function get_additional_meta_ids( ) {
-		return array();
+		return array('pr_dhl_ship_date', 'pr_dhl_additional_insurance', 'pr_dhl_insured_value', 'pr_dhl_declared_value','pr_dhl_duties', 'pr_dhl_paperless_trade', 'pr_dhl_invoice');
 	}
 
 	protected function get_tracking_link( $tracking_num ) {
@@ -168,7 +224,7 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 		// Get settings
 		$shipping_dhl_settings = $this->get_shipping_dhl_settings();
 
-		$setting_ids = array( 'dhl_api_user','dhl_api_pwd', 'dhl_account_num', 'dhl_shipper_name', 'dhl_shipper_company', 'dhl_shipper_address','dhl_shipper_address_no', 'dhl_shipper_address_city', 'dhl_shipper_address_state', 'dhl_shipper_address_zip', 'dhl_shipper_phone', 'dhl_shipper_email', 'dhl_bank_holder', 'dhl_bank_name', 'dhl_bank_iban', 'dhl_bank_bic', 'dhl_bank_ref', 'dhl_bank_ref_2', 'dhl_cod_fee' );
+		$setting_ids = array( 'dhl_api_user','dhl_api_pwd', 'dhl_account_num', 'dhl_shipper_name', 'dhl_shipper_company', 'dhl_shipper_address','dhl_shipper_address2', 'dhl_shipper_address_city', 'dhl_shipper_address_state', 'dhl_shipper_address_zip', 'dhl_shipper_phone', 'dhl_shipper_email', 'dhl_bank_holder', 'dhl_bank_name', 'dhl_bank_iban', 'dhl_bank_bic', 'dhl_bank_ref', 'dhl_bank_ref_2', 'dhl_cod_fee' );
 
 		foreach ($setting_ids as $value) {
 			$api_key = str_replace('dhl_', '', $value);

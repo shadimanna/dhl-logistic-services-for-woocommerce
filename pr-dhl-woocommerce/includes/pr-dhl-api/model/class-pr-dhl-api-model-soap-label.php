@@ -488,7 +488,7 @@ class PR_DHL_API_Model_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_
 				);
 
 			// If international shipment add export information
-			if( PR_DHL_WC()->is_crossborder_shipment( $this->args['shipping_address']['country'] ) ) {
+			if( PR_DHL()->is_crossborder_shipment( $this->args['shipping_address']['country'] ) ) {
 
 				if ( sizeof($this->args['items']) > self::DHL_MAX_ITEMS ) {
 					throw new Exception( sprintf( __('Only %s ordered items can be processed, your order has %s', 'pr-shipping-dhl'), self::DHL_MAX_ITEMS, sizeof($this->args['items']) ) );

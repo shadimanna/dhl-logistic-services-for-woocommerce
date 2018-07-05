@@ -257,6 +257,20 @@ class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 				'type'            => 'title',
 				'description'     => __( 'Enter Shipper Address below.', 'pr-shipping-dhl' ),
 			),
+			'dhl_shipper_name' => array(
+				'title'             => __( 'Name', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'Enter Shipper Name.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
+			),
+			'dhl_shipper_company' => array(
+				'title'             => __( 'Company', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'Enter Shipper Company.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
+			),
 			'dhl_shipper_address' => array(
 				'title'             => __( 'Street Address 1', 'pr-shipping-dhl' ),
 				'type'              => 'text',
@@ -289,6 +303,20 @@ class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 				'title'             => __( 'Postcode', 'pr-shipping-dhl' ),
 				'type'              => 'text',
 				'description'       => __( 'Enter Shipper Postcode.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
+			),
+			'dhl_shipper_phone' => array(
+				'title'             => __( 'Phone Number', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'Enter Phone Number.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
+			),
+			'dhl_shipper_email' => array(
+				'title'             => __( 'Email', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'Enter Email.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 				'default'           => ''
 			),
@@ -414,7 +442,7 @@ class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 							<tr>
 								<td class="sort"></td>
 								<td><strong><?php echo $code; ?></strong></td>
-								<td><input type="text" name="dhl_express_product[<?php echo $code; ?>][name]" placeholder="<?php echo $use_services[ $code ]; ?> (<?php echo $this->title; ?>)" value="<?php echo isset( $service['name'] ) ? $service['name'] : ''; ?>" size="50" /></td>
+								<td><input type="text" name="dhl_express_product[<?php echo $code; ?>][name]" placeholder="<?php echo $use_services[ $code ]; ?>" value="<?php echo isset( $service['name'] ) ? $service['name'] : ''; ?>" size="50" /></td>
 								<td><input type="checkbox" name="dhl_express_product[<?php echo $code; ?>][enabled]" <?php checked( ( ! isset( $service['enabled'] ) || ! empty( $service['enabled'] ) ), true ); ?> /></td>
 								<td><input class="wc_input_price" type="text" name="dhl_express_product[<?php echo $code; ?>][adjustment]" placeholder="N/A" value="<?php echo isset( $service['adjustment'] ) ? $service['adjustment'] : ''; ?>" size="4" /></td>
 								<td><input class="wc_input_decimal" type="text" name="dhl_express_product[<?php echo $code; ?>][adjustment_percent]" placeholder="N/A" value="<?php echo isset( $service['adjustment_percent'] ) ? $custom_services[ $code ]['adjustment_percent'] : ''; ?>" size="4" /></td>

@@ -83,6 +83,7 @@ jQuery( function( $ ) {
 		    	});
 		    });
 			
+			console.log(data);
 			$.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
 				$( form_id + ' .shipment-dhl-label-form' ).unblock();
 				if ( response.error ) {

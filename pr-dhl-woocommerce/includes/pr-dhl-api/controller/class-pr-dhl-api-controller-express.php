@@ -31,26 +31,6 @@ class PR_DHL_API_Controller_Express extends PR_DHL_API {
 								'H' => __('ECONOMY SELECT', 'pr-shipping-dhl'),
 								'W' => __('ECONOMY SELECT', 'pr-shipping-dhl'),
 								);
-		/*
-		$austria_int = array(  
-							'V87PARCEL' => __('DHL Express Connect', 'pr-shipping-dhl'),
-							'V82PARCEL' => __('DHL Express International', 'pr-shipping-dhl'),
-							);
-
-		$dhl_prod_int = array();
-
-		switch ($country_code) {
-			case 'DE':
-				$dhl_prod_int = $germany_int;
-				break;
-			case 'AT':
-				$dhl_prod_int = $austria_int;
-				break;
-			default:
-				$dhl_prod_int = $germany_int;
-				break;
-		}*/
-
 		return $dhl_prod_int;
 	}
 
@@ -64,29 +44,13 @@ class PR_DHL_API_Controller_Express extends PR_DHL_API {
 								'O' => __('DOMESTIC EXPRESS 10:30', 'pr-shipping-dhl'),
 								'G' => __('DOMESTIC ECONOMY SELECT', 'pr-shipping-dhl'),
 								);
-		/*
-		$austria_dom = array( 'V86PARCEL' => __('DHL Express Austria', 'pr-shipping-dhl') );
-
-		$dhl_prod_dom = array();
-
-		switch ($country_code) {
-			case 'DE':
-				$dhl_prod_dom = $germany_dom;
-				break;
-			case 'AT':
-				$dhl_prod_dom = $austria_dom;
-				break;
-			default:
-				$dhl_prod_dom = $germany_dom;
-				break;
-		}*/
-
+		
 		return $dhl_prod_dom;
 	}
 
 	public function get_dhl_duties() {
 		$duties = array(
-					'DAP' => __('Delivery A... Paid', 'pr-shipping-dhl'),
+					'DAP' => __('Delivery At Paid', 'pr-shipping-dhl'),
 					'DDP' => __('Delivery Duty Paid', 'pr-shipping-dhl')
 					);
 		return $duties;

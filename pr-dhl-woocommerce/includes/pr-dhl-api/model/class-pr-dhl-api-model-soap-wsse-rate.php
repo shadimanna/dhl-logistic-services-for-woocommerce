@@ -350,7 +350,9 @@ class PR_DHL_API_Model_SOAP_WSSE_Rate extends PR_DHL_API_SOAP_WSSE implements PR
 													),
 											),
 									),
-								'ShipTimestamp' => date('Y-m-d\TH:i:s\G\M\TP', time() + 60*60*24 ) , // 2018-03-05T15:33:16GMT+01:00
+								'NextBusinessDay' => 'Y',
+								// 'ShipTimestamp' => date('Y-m-d\TH:i:s\G\M\TP', time() + 60*60*24 ),
+								'ShipTimestamp' => date('Y-m-d\TH:i:s\G\M\TP', time() ), // 2018-03-05T15:33:16GMT+01:00
 								'UnitOfMeasurement' => 'SI',
 								'Content' => 'NON_DOCUMENTS',
 								'PaymentInfo' => 'DDP',
@@ -358,7 +360,7 @@ class PR_DHL_API_Model_SOAP_WSSE_Rate extends PR_DHL_API_SOAP_WSSE implements PR
 						),
 				);
 
-			error_log(print_r($dhl_label_body,true));
+			// error_log(print_r($dhl_label_body,true));
 			// Unset/remove any items that are empty strings or 0, even if required!
 			$this->body_request = $this->walk_recursive_remove( $dhl_label_body );
 
