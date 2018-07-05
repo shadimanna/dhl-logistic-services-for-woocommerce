@@ -188,7 +188,7 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 		$dhl_label_items = $this->get_dhl_label_items( $order_id );
 		
 		if( empty( $dhl_label_items['pr_dhl_description'] ) ) {
-			$dhl_label_items['pr_dhl_description'] = $this->get_package_description();
+			$dhl_label_items['pr_dhl_description'] = $this->get_package_description( $order_id );
 		}
 
 		$this->save_dhl_label_items( $order_id, $dhl_label_items );

@@ -463,8 +463,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 						$dhl_label_items = $this->get_dhl_label_items( $order_id );
 
-						$dhl_label_items = $this->get_dhl_label_items( $order_id );
-
 						// Gather args for DHL API call
 						$args = $this->get_label_args( $order_id );
 
@@ -473,7 +471,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 						$dhl_obj = PR_DHL()->get_dhl_factory();
 						$label_tracking_info = $dhl_obj->get_dhl_label( $args );
-						error_log(print_r($label_tracking_info,true));
+						// error_log(print_r($label_tracking_info,true));
 						$this->save_dhl_label_tracking( $order_id, $label_tracking_info );
 						$tracking_note = $this->get_tracking_link( $label_tracking_info['tracking_number'] );
 						// $label_url = $label_tracking_info['label_url'];

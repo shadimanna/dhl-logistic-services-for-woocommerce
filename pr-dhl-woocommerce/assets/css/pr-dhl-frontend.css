@@ -211,8 +211,8 @@ a#dhl_parcel_finder {
 }
 
 #dhl_parcel_finder_form {
-  width: 80%;
-  height: 80%;
+  width: 90%;
+  height: 90%;
 }
 
 #dhl_parcel_finder_form .woocommerce-error {
@@ -227,7 +227,7 @@ a#dhl_parcel_finder {
 
 
 #dhl_parcel_finder_form form .small-field {
-  width: 25%;
+  width: 10%;
   float: left;
   margin-right: 10px;
   margin-bottom: 10px;
@@ -235,7 +235,7 @@ a#dhl_parcel_finder {
 }
 
 #dhl_parcel_finder_form form .large-field {
-  width: 45%;
+  width: 20%;
   float: left;
   margin-right: 10px;
   margin-bottom: 10px;
@@ -253,4 +253,17 @@ a#dhl_parcel_finder {
 
 #dhl_parcel_finder_form .parcelshop-select-btn {
   margin-top: 20px;
+}
+
+#dhl_parcel_finder_form .parcel_subtitle {
+  font-size: 0.8125rem;
+  color: #767676;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 1.5em 0 0;
+}
+
+#dhl_parcel_finder_form .dhl_shop_img {
+  display: inline;
 }

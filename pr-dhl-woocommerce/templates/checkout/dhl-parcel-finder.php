@@ -29,19 +29,19 @@ try {
 			<input type="text" name="dhl_parcelfinder_address" class="input-text" placeholder="<?php esc_attr_e( 'Address', 'pr-shipping-dhl' ); ?>" id="dhl_parcelfinder_address" />
 		</p>
 		
-		<div class="clear"></div>
+		<!-- <div class="clear"></div> -->
 
-		<p class="form-row small-field">
+		<p class="form-row large-field">
 			<input type="checkbox" name="dhl_branch_filter" class="input-checkbox" id="dhl_branch_filter" value="1" checked />
-			<label for="dhl_branch_filter"><?php esc_attr_e( 'Branch', 'pr-shipping-dhl' ); ?></label>
-			<img src="<?php echo $packstation_img; ?>" alt="" class="packstation_img">
-			<img src="<?php echo $parcelshop_img; ?>" alt="" class="parcelshop_img">
+			<label for="dhl_branch_filter"><?php esc_attr_e( 'Packstation', 'pr-shipping-dhl' ); ?></label>
+			<img src="<?php echo $packstation_img; ?>" alt="" class="dhl_shop_img packstation_img">
 		</p>
 
-		<p class="form-row small-field">
+		<p class="form-row large-field">
 			<input type="checkbox" name="dhl_postoffice_filter" class="input-checkbox" placeholder="" id="dhl_postoffice_filter" value="1" checked />
-			<label for="dhl_postoffice_filter"><?php esc_attr_e( 'Post Office', 'pr-shipping-dhl' ); ?></label>
-			<img src="<?php echo $post_office_img; ?>" alt="" class="post_office_img">
+			<label for="dhl_postoffice_filter"><?php esc_attr_e( 'Branch', 'pr-shipping-dhl' ); ?></label>
+			<img src="<?php echo $parcelshop_img; ?>" alt="" class="dhl_shop_img parcelshop_img">
+			<img src="<?php echo $post_office_img; ?>" alt="" class="dhl_shop_img post_office_img">
 		</p>
 		
 		<p class="form-row small-field">

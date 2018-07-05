@@ -73,7 +73,8 @@ class PR_DHL_Front_End_Paket {
 
 		// Parcel finder hooks
 		if( $this->is_parcelfinder_enabled() ) {
-			add_action( 'woocommerce_after_checkout_billing_form', array( $this, 'add_parcel_finder_btn' ) );
+			// add_action( 'woocommerce_after_checkout_billing_form', array( $this, 'add_parcel_finder_btn' ) );
+			add_action( 'woocommerce_before_checkout_shipping_form', array( $this, 'add_parcel_finder_btn' ) );
 			add_action( 'woocommerce_after_checkout_form', array( $this, 'add_parcel_finder_form' ) );
 			
 			add_action( 'wp_ajax_wc_shipment_dhl_parcelfinder_search', array( $this, 'call_parcel_finder' ) );
@@ -81,6 +82,8 @@ class PR_DHL_Front_End_Paket {
 			
 			add_filter( 'woocommerce_checkout_fields', array( $this, 'add_postnum_field' ), 101 );
 			add_action( 'woocommerce_checkout_process', array( $this, 'validate_post_number' ) );
+			// add_action( 'woocommerce_process_checkout_field_shipping_dhl_postnum_ps', array( $this, 'validate_post_number_required' ) );
+
 			add_filter( 'woocommerce_order_formatted_shipping_address', array( $this, 'display_post_number' ), 10, 2 );
 			add_filter( 'woocommerce_localisation_address_formats', array( $this, 'set_format_post_number' ) );
 			add_filter( 'woocommerce_formatted_address_replacements', array( $this, 'add_format_post_number' ), 10, 2 );
@@ -138,6 +141,7 @@ class PR_DHL_Front_End_Paket {
 			'select'			=> __('Select ', 'pr-shipping-dhl'),
 			'post_number'		=> __('Post Number ', 'pr-shipping-dhl'),
 			'post_number_tip'	=> __('<span class="dhl-tooltip" title="Indicate a preferred time, which suits you best for your parcel delivery by choosing one of the displayed time windows.">?</span>', 'pr-shipping-dhl'),
+			'no_api_key'	=> sprintf( __('%sPlease insert an API Key to enable the display of locations in the frontend on a map.%s', 'pr-shipping-dhl'), '<div class="woocommerce-error">', '<div>'),
 		);
 
 		if( ! empty( $this->shipping_dhl_settings['dhl_payment_gateway'] ) ) {
@@ -452,7 +456,7 @@ class PR_DHL_Front_End_Paket {
 	public function add_parcel_finder_btn() {
 		// echo '<a id="dhl_parcel_finder" class="button" href="#dhl_parcel_finder_form">' . __('Parcel Finder', 'pr-shipping-dhl') . '</a>';
 		$dhl_logo = PR_DHL_PLUGIN_DIR_URL . '/assets/img/dhl-official.png';
-		echo '<a data-fancybox id="dhl_parcel_finder" class="button" data-src="#dhl_parcel_finder_form" href="javascript:;"><img src="' . $dhl_logo .'" class="dhl-co-logo">' . __('Search Packingstation / Branch', 'pr-shipping-dhl') . '</a>';
+		echo '<a data-fancybox id="dhl_parcel_finder" class="button" data-src="#dhl_parcel_finder_form" href="javascript:;"><img src="' . $dhl_logo .'" class="dhl-co-logo">' . __('Search Packstation / Branch', 'pr-shipping-dhl') . '</a>';
 
 		// echo '<a id="dhl_parcel_finder_test" class="button" href="#dhl_parcel_finder_form_test">' . __('Parcel Finder TEST', 'pr-shipping-dhl') . '</a>';
 		// echo '<div id="dhl_parcel_finder_form_test">TEST TEST</div>';
@@ -589,31 +593,38 @@ class PR_DHL_Front_End_Paket {
 					'type'         => 'select',
 					'class'        => array( 'shipping-dhl-address-type' ),
 					'clear'        => true,
-					'options'	   => array( 'normal' => __('Normal Address', 'pr-shipping-dhl'), 'shop' => __('DHL Shop Address', 'pr-shipping-dhl'),  )
-					// 'validate'     => array( 'phone' ),
-					// 'autocomplete' => 'tel',
+					'options'	   => array( 'normal' => __('Regular Address', 'pr-shipping-dhl'), 'dhl_packstation' => __('DHL Packstation', 'pr-shipping-dhl'), 'dhl_branch' => __('DHL Branch', 'pr-shipping-dhl') )
 				);
 
-		// $checkout_fields['shipping']['shipping_dhl_postnum'] = array(
-		$shipping_dhl_postnum = array(
-					'label'        => __( 'Post Number (*required for "Packstation")', 'pr-shipping-dhl' ),
+		$shipping_dhl_postnum_packstation = array(
+					'label'        => __( 'Post Number <span class="required">*</span>', 'pr-shipping-dhl' ),
 					'required'     => false,
-					'type'         => 'number',
+					'type'         => 'text',
 					'class'        => array( 'shipping-dhl-postnum' ),
 					'clear'        => true,
-					// 'validate'     => array( 'phone' ),
-					// 'autocomplete' => 'tel',
+				);
+
+		$shipping_dhl_postnum_branch = array(
+					'label'        => __( 'Post Number', 'pr-shipping-dhl' ),
+					'required'     => false,
+					'type'         => 'text',
+					'class'        => array( 'shipping-dhl-postnum' ),
+					'clear'        => true,
 				);
 
 		// error_log(print_r($checkout_fields,true));
-		// array_unshift( $checkout_fields['shipping'], $shipping_dhl_postnum );
 
 		if( $new_shipping_fields = $this->array_insert_before( 'shipping_first_name', $checkout_fields['shipping'], 'shipping_dhl_address_type', $shipping_dhl_address_type) ) {
 
 			$checkout_fields['shipping'] = $new_shipping_fields;
 		}
 		
-		if( $new_shipping_fields = $this->array_insert_before( 'shipping_address_1', $checkout_fields['shipping'], 'shipping_dhl_postnum', $shipping_dhl_postnum) ) {
+		if( $new_shipping_fields = $this->array_insert_before( 'shipping_address_1', $checkout_fields['shipping'], 'shipping_dhl_postnum_ps', $shipping_dhl_postnum_packstation) ) {
+
+			$checkout_fields['shipping'] = $new_shipping_fields;
+		}
+
+		if( $new_shipping_fields = $this->array_insert_before( 'shipping_address_1', $checkout_fields['shipping'], 'shipping_dhl_postnum_br', $shipping_dhl_postnum_branch) ) {
 
 			$checkout_fields['shipping'] = $new_shipping_fields;
 		}
@@ -655,45 +666,67 @@ class PR_DHL_Front_End_Paket {
 	}
 
 	public function validate_post_number()	{
-		// error_log(print_r($_POST,true));
+		error_log(print_r($_POST,true));
 		$shipping_address_1 = wc_clean( $_POST['shipping_address_1'] );
-		$shipping_dhl_postnum = wc_clean( $_POST['shipping_dhl_postnum'] );
+		$shipping_dhl_address_type = wc_clean( $_POST['shipping_dhl_address_type'] );
+		$shipping_dhl_postnum_ps = wc_clean( $_POST['shipping_dhl_postnum_ps'] );
+		$shipping_dhl_postnum_br = wc_clean( $_POST['shipping_dhl_postnum_br'] );
 		
 		$pos_ps = PR_DHL()->is_packstation( $shipping_address_1 );
 		$pos_rs = PR_DHL()->is_parcelshop( $shipping_address_1 );
 		$pos_po = PR_DHL()->is_post_office( $shipping_address_1 );
 
-		// If post number is not empty and a shop type is selected, then validate entry
-		// SHOULD WE CHECK IF DROP DOWN IS SET TO "DHL Shop Address"?!
-		if ( $pos_ps || $pos_rs || $pos_po ) {
-			
-			// check shipping method and payment gateway first
-			try {
-				$this->validate_extra_services_available();
-			} catch (Exception $e) {
-				wc_add_notice( __( '"DHL Shop Address" cannot be used - ', 'pr-shipping-dhl' ) . $e->getMessage(), 'error' );
+		$shipping_dhl_postnum = '';
+
+		// check shipping method and payment gateway first
+		try {
+			$this->validate_extra_services_available();
+		} catch (Exception $e) {
+			wc_add_notice( __( '"DHL Locations" cannot be used - ', 'pr-shipping-dhl' ) . $e->getMessage(), 'error' );
+			return;
+		}
+
+		if( $shipping_dhl_address_type == 'dhl_packstation' ) {
+
+			if( empty( $shipping_dhl_postnum_ps ) ) {
+				wc_add_notice( __( 'Post Number is mandatory for a Packstation location.', 'pr-shipping-dhl' ), 'error' );
+				return;
+			} else {
+				$shipping_dhl_postnum = $shipping_dhl_postnum_ps;
+			}
+
+			if ( ! $pos_ps ) {
+				wc_add_notice( sprintf( __( 'The text "%s" must be included in the address.', 'pr-shipping-dhl' ), PR_DHL_PACKSTATION ), 'error' );
 				return;
 			}
 
-			if ( ! empty( $shipping_dhl_postnum ) ) {
-
-				if( ! is_numeric( $shipping_dhl_postnum ) ) {
-					wc_add_notice( __( 'Post Number must be a number.', 'pr-shipping-dhl' ), 'error' );
-					return;
-				}
-
-				$post_num_len = strlen( $shipping_dhl_postnum );
-				// error_log($post_num_len);
-				if( $post_num_len < 6 || $post_num_len > 12 ) {
-					wc_add_notice( __( 'Post Number is must be a number between 6 and 12 digits.', 'pr-shipping-dhl' ), 'error' );
-					return;
-				}
+		} elseif( $shipping_dhl_address_type == 'dhl_branch' ) {
+			if ( ! $pos_rs ) {
+				wc_add_notice( sprintf( __( 'The text "%s" must be included in the address.', 'pr-shipping-dhl' ), PR_DHL_PARCELSHOP ), 'error' );
+				return;
 			}
+
+			if ( ! $pos_po ) {
+				wc_add_notice( sprintf( __( 'The text "%s" must be included in the address.', 'pr-shipping-dhl' ), PR_DHL_POST_OFFICE ), 'error' );
+				return;
+			}
+
+			$shipping_dhl_postnum = $shipping_dhl_postnum_br;
 		}
-		
-		if ( $pos_ps && empty( $shipping_dhl_postnum ) ) {
-			wc_add_notice( __( 'Post Number is mandatory for Packstation.', 'pr-shipping-dhl' ), 'error' );
-			return;
+
+		if ( ! empty( $shipping_dhl_postnum ) ) {
+
+			if( ! is_numeric( $shipping_dhl_postnum ) ) {
+				wc_add_notice( __( 'Post Number must be a number.', 'pr-shipping-dhl' ), 'error' );
+				return;
+			}
+
+			$post_num_len = strlen( $shipping_dhl_postnum );
+			// error_log($post_num_len);
+			if( $post_num_len < 6 || $post_num_len > 12 ) {
+				wc_add_notice( __( 'The post number you entered is not valid. Please correct the number.', 'pr-shipping-dhl' ), 'error' );
+				return;
+			}
 		}
 	}
 

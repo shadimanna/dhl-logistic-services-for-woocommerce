@@ -166,7 +166,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			throw new Exception( __('DHL Label file cannot be saved!', 'pr-shipping-dhl' ) );
 		}
 
-		return array( 'label_url' => $label_url, 'label_path' => $label_path) ;
+		return array( 'label_url' => $label_url, 'label_path' => $label_path);
 	}
 
 	protected function set_arguments( $args ) {

@@ -344,9 +344,9 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'class'          => 'wc-enhanced-select',
 				),
 				'dhl_parcel_finder'           => array(
-					'title'           => __( 'Parcel Finder', 'pr-shipping-dhl' ),
+					'title'           => __( 'Location Finder', 'pr-shipping-dhl' ),
 					'type'            => 'title',
-					'description'     => __( 'Parcel Finder options.', 'pr-shipping-dhl' ),
+					'description'     => __( 'Please define the parameters for the display of dhl locations in the shop frontend.', 'pr-shipping-dhl' ),
 				),
 				'dhl_display_packstation' => array(
 					'title'             => __( 'Packstation', 'pr-shipping-dhl' ),
@@ -379,12 +379,12 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'desc_tip'          => true,
 					'class'				=> '',
 					'default'           => '20',
-					'custom_attributes'	=> array( 'min' => '0', 'max' => '50' )
+					'custom_attributes'	=> array( 'min' => '1', 'max' => '50' )
 				),
 				'dhl_google_maps_api_key' => array(
 					'title'             => __( 'API Key', 'pr-shipping-dhl' ),
 					'type'              => 'text',
-					'description'       => sprintf( __( 'Get a free Google Maps API key %shere%s.', 'pr-shipping-dhl' ), '<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target = "_blank">', '</a>' ),
+					'description'       => sprintf( __( 'The Google Maps API Key is necassary to display a the DHL Locations on a google map.<br/>Get a free Google Maps API key %shere%s.', 'pr-shipping-dhl' ), '<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target = "_blank">', '</a>' ),
 					'desc_tip'          => false,
 					'class'				=> ''
 				),
