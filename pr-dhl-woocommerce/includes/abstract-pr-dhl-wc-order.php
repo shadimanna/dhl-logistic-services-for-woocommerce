@@ -16,10 +16,18 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 abstract class PR_DHL_WC_Order {
 	
+	protected $id = '';
+	protected $title = '';
+
 	/**
 	 * Init and hook in the integration.
 	 */
 	public function __construct( ) {
+		// error_log('order contrutor');
+		// error_log(__CLASS__);
+		$this->id = 'woocommerce-shipment-dhl-label';
+		$this->title = __( 'DHL Label & Tracking', 'pr-shipping-dhl' );
+
 		$this->define_constants();
 		$this->init_hooks();
 	}
@@ -33,10 +41,6 @@ abstract class PR_DHL_WC_Order {
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ), 20 );
 		add_action( 'woocommerce_process_shop_order_meta', array( $this, 'save_meta_box' ), 0, 2 );
 
-		// Order page metabox actions
-		add_action( 'wp_ajax_wc_shipment_dhl_gen_label', array( $this, 'save_meta_box_ajax' ) );
-		add_action( 'wp_ajax_wc_shipment_dhl_delete_label', array( $this, 'delete_label_ajax' ) );		
-
 		$subs_version = class_exists( 'WC_Subscriptions' ) && ! empty( WC_Subscriptions::$version ) ? WC_Subscriptions::$version : null;
 
 		// Prevent data being copied to subscriptions
@@ -48,13 +52,141 @@ abstract class PR_DHL_WC_Order {
 
 	}
 
+	public function get_dhl_obj() {
+		return PR_DHL()->get_dhl_factory();
+	}
+
+	public function get_shipping_dhl_settings() {
+		return PR_DHL()->get_shipping_dhl_settings();
+	}
+
 	/**
 	 * Add the meta box for shipment info on the order page
 	 *
 	 * @access public
 	 */
 	public function add_meta_box() {
-		add_meta_box( 'woocommerce-shipment-dhl-label', __( 'DHL Label & Tracking', 'pr-shipping-dhl' ), array( $this, 'meta_box' ), 'shop_order', 'side', 'high' );
+		error_log($this->id);
+		error_log($this->title);
+		add_meta_box( $this->id, $this->title, array( $this, 'meta_box' ), 'shop_order', 'side', 'high' );
+
+		// Create a new meta box for the DHL Invoice Uploader widget
+		add_meta_box( 'woocommerce-shipment-dhl-invoice-upload', 'DHL Invoice Upload', array( $this, 'invoice_upload' ), 'shop_order', 'side', 'high' );
+	}
+
+	/**
+	 * Renders the meta box content for the invoice uploader feature
+	 *
+	 * @access public
+	 */
+	public function invoice_upload() {
+
+		$commercial_invoice = PR_DHL_PLUGIN_DIR_URL . '/assets/pdf/commercial_invoice.pdf';
+		woocommerce_wp_text_input( array(
+				'id'	          	=> 'pr_dhl_invoice',
+				'name'          	=> 'pr_dhl_invoice',
+				'type'          	=> 'file',
+				'label'       		=>  __( 'Select an invoice to upload: ', 'pr-shipping-dhl' ),
+				'placeholder' 		=> '',
+				'description'		=> sprintf( __('Download a sample template for commercial invoice %shere%s.', 'pr-shipping-dhl'), '<a href="' . $commercial_invoice . '" target="_blank">', '</a>'),
+				'custom_attributes'	=> array( $is_disabled => $is_disabled ),
+				'class'				=> ''
+			) );
+
+		$main_button = '<button class="upload-invoice-button button button-primary button-upload-form">' . __('Upload', 'pr-shipping-dhl') . '</button><div class="dhl-invoice-upload-spinner-container"><div class="spinner"></div><div class="dhl-invoice-upload-message" style="font-size: 11px;">'.sprintf( __('Upload complete. Preview %shere%s.', 'pr-shipping-dhl'), '<a href="' . $commercial_invoice . '" target="_blank">', '</a>').'</div></div>';
+
+		echo $main_button;
+	}
+
+	/**
+	 * Validates and processes the submitted invoice for upload from an ajax request
+	 *
+	 * @access public
+	 */
+	public function upload_invoice_ajax() {
+
+	    $file = $_FILES[ 'file' ];
+	    $order_id = $_REQUEST[ 'order_id' ];
+	    $supported_types = [ 'image/png', 'image/jpg', 'image/jpeg', 'application/pdf' ];
+
+	    // Extract the actual mime content type of the uploaded file.
+	    $file_info = finfo_open( FILEINFO_MIME_TYPE );
+    	$uploaded_file_type = finfo_file( $file_info, $file[ 'tmp_name' ] );
+    	finfo_close( $file_info );
+
+    	// Check whether the user uploaded a supported file types for the invoice
+	    if ( in_array( $uploaded_file_type, $supported_types ) ) {
+	    	$info = pathinfo( $file[ 'name' ] );
+	    	$file_name = !empty( $info[ 'filename' ] ) ? $info[ 'filename' ] : explode( $file[ 'name' ], '.' )[0];
+	    	$extension = $info[ 'extension' ];
+
+	    	// If you want to change the new file name (uploaded name) format, you can do it here.
+	    	// Currently, it has the following format "order{ORDER_ID}_{FILENAME}_{TIME_IN_EPOCH_FORMAT}.{FILE_EXTENSION}".
+            $upload_file_name = 'order'.$order_id.'_'.$file_name.'_'.time();
+            if ( !empty( $extension ) ) {
+            	$upload_file_name .= '.'.$extension;
+            }
+
+            $upload_dir = wp_upload_dir();
+            if ( move_uploaded_file( $file[ 'tmp_name' ], $upload_dir[ 'path' ] . '/' . $upload_file_name ) ) {
+
+            	// Wrap some information that will be useful for others to consume and apply with their
+            	// own custom actions.
+                $uploaded_file[ 'orig_file_name' ] = $file[ 'name' ];
+                $uploaded_file[ 'size' ] = $file[ 'size' ];
+                $uploaded_file[ 'type' ] = $uploaded_file_type;
+                $uploaded_file[ 'upload_url' ] = $upload_dir[ 'url' ] . '/' . $upload_file_name;
+                $uploaded_file[ 'upload_path' ] = $upload_dir[ 'path' ] . '/' . $upload_file_name;
+                $uploaded_file[ 'upload_datetime' ] = date( 'Y-m-d H:i:s' );
+
+                $attachment = array(
+                    'guid'           => $uploaded_file[ 'upload_url' ],
+                    'post_mime_type' => $file[ 'type' ],
+                    'post_title'     => $upload_file_name,
+                    'post_content'   => '',
+                    'post_status'    => 'inherit'
+                );
+
+                // For now, our invoice will serve as a non-binding attachment... meaning, we're not setting its parent
+                // currently. But if you wish to bind this to a certain post type, you can add an additional 3rd parameter
+                // to the "wp_insert_attachment" API.
+                $uploaded_file[ 'attach_id' ] = wp_insert_attachment( $attachment , $uploaded_file[ 'upload_path' ] );
+                if ( 'application/pdf' !== $uploaded_file_type ) {
+	                require_once( ABSPATH . 'wp-admin/includes/image.php' );
+
+	                //Generate the metadata for the attachment, and update the database record.
+	                $attach_data = wp_generate_attachment_metadata( $uploaded_file[ 'attach_id' ] , $uploaded_file[ 'upload_path' ] );
+	                wp_update_attachment_metadata( $uploaded_file[ 'attach_id' ], $attach_data );
+	            } else {
+	            	// For non-image invoice we go straight to adding the meta data directly
+	            	add_post_meta( $uploaded_file[ 'attach_id' ], '_wp_attachment_metadata', $attach_data );
+	            }
+
+                // Let others do anything as they wish with the newly uploaded invoice
+                do_action( 'dhl_invoice_uploaded', $uploaded_file, $order_id );
+
+                // The action hook above will be enough if we're going to supply additional actions after
+                // a successful invoice upload. Nevertheless, we're returning the "upload_url" to the originator
+                // of the request (e.g. client) in case we want to have a preview of the uploaded document/invoice
+                // and present it to the user. 
+                $result = array(
+                	'code' => 'upload_complete',
+                	'upload_url' => $uploaded_file[ 'upload_url' ]
+                );
+            } else {
+            	$result = array(
+		        	'code' => 'upload_failed',
+		        	'error_message' => __( 'An error has occurred while processing your submitted invoice. Please kindly check your permission when uploading files to the server and try again.', 'pr-shipping-dhl' )
+		        );
+            }
+	    } else {
+	        $result = array(
+	        	'code' => 'unsupported_file_types',
+	        	'error_message' => __( 'Sorry, it appears that you have submitted an unsupported invoice file. Supported invoice file types are png, jpeg, jpg and pdf files.', 'pr-shipping-dhl' )
+	        );
+	    }
+
+	    wp_send_json( $result );
 	}
 
 	/**
@@ -80,7 +212,7 @@ abstract class PR_DHL_WC_Order {
 		if( ! empty( $dhl_label_items['pr_dhl_product'] ) ) {
 			$selected_dhl_product = $dhl_label_items['pr_dhl_product'];
 		} else {
-			$shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
+			$shipping_dhl_settings = $this->get_shipping_dhl_settings();
 
 			if( $this->is_shipping_domestic( $order_id ) ) {
 				$selected_dhl_product = $shipping_dhl_settings['dhl_default_product_dom'];
@@ -91,7 +223,7 @@ abstract class PR_DHL_WC_Order {
 
 		// Get the list of domestic and international DHL services
 		try {		
-			$dhl_obj = PR_DHL()->get_dhl_factory();
+			$dhl_obj = $this->get_dhl_obj();
 
 			if( $this->is_shipping_domestic( $order_id ) ) {
 				$dhl_product_list = $dhl_obj->get_dhl_products_domestic();
@@ -104,9 +236,9 @@ abstract class PR_DHL_WC_Order {
 			echo '<p class="wc_dhl_error">' . $e->getMessage() . '</p>';
 		}
 		
-		$delete_label = '<span class="wc_dhl_delete"><a href="#" id="dhl_delete_label">' . __('Delete Label', 'pr-shipping-dhl') . '</a></span>';
+		$delete_label = '<span class="wc_dhl_delete"><a href="#" class="dhl_delete_label">' . __('Delete Label', 'pr-shipping-dhl') . '</a></span>';
 
-		$main_button = '<button id="dhl-label-button" class="button button-primary button-save-form">' . PR_DHL_BUTTON_LABEL_GEN . '</button>';
+		$main_button = '<button class="dhl-label-button button button-primary button-save-form">' . PR_DHL_BUTTON_LABEL_GEN . '</button>';
 
 		// Get tracking info if it exists
 		$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
@@ -114,12 +246,12 @@ abstract class PR_DHL_WC_Order {
 		if( empty( $label_tracking_info ) ) {
 			$is_disabled = '';
 			
-			$print_button = '<a href="#" id="dhl-label-print" class="button button-primary" download>' .PR_DHL_BUTTON_LABEL_PRINT . '</a>';
+			$print_button = '<a href="#" class="dhl-label-print button button-primary" download>' .PR_DHL_BUTTON_LABEL_PRINT . '</a>';
 
 		} else {
 			$is_disabled = 'disabled';
 
-			$print_button = '<a href="'. $label_tracking_info['label_url'] .'" id="dhl-label-print" class="button button-primary" download>' .PR_DHL_BUTTON_LABEL_PRINT . '</a>';
+			$print_button = '<a href="'. $label_tracking_info['label_url'] .'" class=" dhl-label-print button button-primary" download>' .PR_DHL_BUTTON_LABEL_PRINT . '</a>';
 		}
 
 		$dhl_label_data = array(
@@ -129,7 +261,7 @@ abstract class PR_DHL_WC_Order {
 		);
 
 
-		echo '<div id="shipment-dhl-label-form">';
+		echo '<div class="shipment-dhl-label-form">';
 
 		if( !empty( $dhl_product_list ) ) {
 			
@@ -140,6 +272,7 @@ abstract class PR_DHL_WC_Order {
 
 			woocommerce_wp_select ( array(
 				'id'          		=> 'pr_dhl_product',
+				'name'          	=> 'pr_dhl_product',
 				'label'       		=> __( 'DHL service selected:', 'pr-shipping-dhl' ),
 				'description'		=> '',
 				'value'       		=> $selected_dhl_product,
@@ -151,6 +284,7 @@ abstract class PR_DHL_WC_Order {
 			// Get weight UoM and add in label
 			woocommerce_wp_text_input( array(
 				'id'          		=> 'pr_dhl_weight',
+				'name'          	=> 'pr_dhl_weight',
 				'label'       		=> sprintf( __( 'Estimated shipment weight (%s) based on items ordered: ', 'pr-shipping-dhl' ), $weight_units),
 				'placeholder' 		=> '',
 				'description'		=> '',
@@ -199,11 +333,9 @@ abstract class PR_DHL_WC_Order {
 			}
 		}		
 
-		if( isset( $args ) ) {
 			$this->save_dhl_label_items( $post_id, $args );
-			return $args;
-		}
 
+		return $args;
 	}
 
 	abstract public function get_additional_meta_ids();
@@ -213,6 +345,7 @@ abstract class PR_DHL_WC_Order {
 	 * Function for saving tracking items
 	 */
 	public function save_meta_box_ajax( ) {
+		error_log('save_meta_box_ajax');
 		check_ajax_referer( 'create-dhl-label', 'pr_dhl_label_nonce' );
 		$order_id = wc_clean( $_POST[ 'order_id' ] );
 
@@ -227,7 +360,7 @@ abstract class PR_DHL_WC_Order {
 			// Allow third parties to modify the args to the DHL APIs
 			$args = apply_filters('pr_shipping_dhl_label_args', $args, $order_id );
 
-			$dhl_obj = PR_DHL()->get_dhl_factory();
+			$dhl_obj = $this->get_dhl_obj();
 			$label_tracking_info = $dhl_obj->get_dhl_label( $args );
 
 			$this->save_dhl_label_tracking( $order_id, $label_tracking_info );
@@ -258,7 +391,7 @@ abstract class PR_DHL_WC_Order {
 		try {
 
 			$args = $this->delete_label_args( $order_id );
-			$dhl_obj = PR_DHL()->get_dhl_factory();
+			$dhl_obj = $this->get_dhl_obj();
 			
 			$dhl_obj->delete_dhl_label( $args );
 			$this->delete_dhl_label_tracking( $order_id );
@@ -307,7 +440,7 @@ abstract class PR_DHL_WC_Order {
 			return '';
 		}
 
-		$tracking_note = sprintf( __( '<label>DHL Tracking Number: </label><a href="%s%s" target="_blank">%s</a>', 'my-text-domain' ), PR_DHL_ECOMM_TRACKING_URL, $tracking_num, $tracking_num);
+		$tracking_note = sprintf( __( '<label>DHL Tracking Number: </label><a href="%s%s" target="_blank">%s</a>', 'pr-shipping-dhl' ), PR_DHL_ECOMM_TRACKING_URL, $tracking_num, $tracking_num);
 		
 		return $tracking_note;
 	}
@@ -383,38 +516,33 @@ abstract class PR_DHL_WC_Order {
 				$product = wc_get_product( $item['product_id'] );
 			}
 			
-			if ( $product ) {
 				$product_weight = $product->get_weight();
 				if( $product_weight ) {
 					$total_weight += ( $item['qty'] * $product_weight );
 				}
 			}
-		}
 
-		return apply_filters('pr_shipping_dhl_order_weight', $total_weight, $order_id );
+		return $total_weight;
 	}
 
 	protected function is_shipping_domestic( $order_id ) {   	 
-		$base_country_code = PR_DHL()->get_base_country();
-
 		$order = wc_get_order( $order_id );
 		$shipping_address = $order->get_address( 'shipping' );
 		$shipping_country = $shipping_address['country'];
 
-		// These are all considered domestic by DHL
-		$us_territories = array( 'US', 'GU', 'AS', 'PR', 'UM', 'VI' );
-		
-		// If base is US territory
-		if( in_array( $base_country_code, $us_territories ) ) {
-			
-			// ...and destination is US territory, then it is "domestic"
-			if( in_array( $shipping_country, $us_territories ) ) {
+		if( PR_DHL()->is_shipping_domestic( $shipping_country ) ) {
 				return true;
 			} else {
 				return false;
 			}
+	}
 
-		} elseif( $shipping_country == $base_country_code ) {
+	protected function is_crossborder_shipment( $order_id ) {   	 
+		$order = wc_get_order( $order_id );
+		$shipping_address = $order->get_address( 'shipping' );
+		$shipping_country = $shipping_address['country'];
+
+		if( PR_DHL()->is_crossborder_shipment( $shipping_country ) ) {
 			return true;
 		} else {
 			return false;
@@ -434,8 +562,7 @@ abstract class PR_DHL_WC_Order {
 
 		// Get WC specific details; order id, currency, units of measure, COD amount (if COD used)
 		$args['order_details']['order_id'] = $order_id;
-		// $args['order_details']['currency'] = get_woocommerce_currency();
-		$args['order_details']['currency'] = $this->get_wc_currency( $order_id );
+		$args['order_details']['currency'] = get_woocommerce_currency();
 		$weight_units = get_option( 'woocommerce_weight_unit' );
 		
 		switch ( $weight_units ) {
@@ -493,9 +620,6 @@ abstract class PR_DHL_WC_Order {
 			// If the state is empty, it was entered as free text
 			if ( ! empty($states) ) {
 				// Change the state to be the name and not the code
-
-				if( isset($shipping_address['state']) ) {
-
 					$shipping_address['state'] = $states[ $shipping_address['state'] ];
 					
 					// Remove anything in parentheses (e.g. TH)
@@ -505,7 +629,6 @@ abstract class PR_DHL_WC_Order {
 					}
 				}
 			}
-		}
 
 		$args['shipping_address'] = $shipping_address;
 
@@ -514,9 +637,6 @@ abstract class PR_DHL_WC_Order {
 		$args['items'] = array();
 		foreach ($ordered_items as $key => $item) {
 			$new_item['qty'] = $item['qty'];
-			// Get 1 item value not total items, based on ordered items in case currency is different that set product price
-			$new_item['item_value'] = ( $item['line_total'] / $item['qty'] );
-
 			$product = wc_get_product( $item['product_id'] );
 
 		    $country_value = get_post_meta( $item['product_id'], '_dhl_manufacture_country', true );
@@ -536,7 +656,7 @@ abstract class PR_DHL_WC_Order {
 				$product_variation = wc_get_product($item['variation_id']);
 				// Ensure id is string and not int
 				$new_item['sku'] = empty( $product_variation->get_sku() ) ? strval( $item['variation_id'] ) : $product_variation->get_sku();
-				// $new_item['item_value'] = $product_variation->get_price();
+				$new_item['item_value'] = $product_variation->get_price();
 				$new_item['item_weight'] = $product_variation->get_weight();
 
 				$product_attribute = wc_get_product_variation_attributes($item['variation_id']);
@@ -545,7 +665,7 @@ abstract class PR_DHL_WC_Order {
 			} else {
 				// Ensure id is string and not int
 				$new_item['sku'] = empty( $product->get_sku() ) ? strval( $item['product_id'] ) : $product->get_sku();
-				// $new_item['item_value'] = $product->get_price();
+				$new_item['item_value'] = $product->get_price();
 				$new_item['item_weight'] = $product->get_weight();
 			}
 
@@ -591,18 +711,6 @@ abstract class PR_DHL_WC_Order {
 		}
 
 		return $is_code;
-	}
-
-	protected function get_wc_currency( $order_id ) {
-		$order = wc_get_order( $order_id );
-		// WC 3.0 comaptibilty
-		if ( defined( 'WOOCOMMERCE_VERSION' ) && version_compare( WOOCOMMERCE_VERSION, '3.0', '>=' ) ) {
-			$order_currency = $order->get_currency();
-		}
-		else {
-			$order_currency = $order->get_order_currency();
-		}
-		return $order_currency;
 	}
 
 	/**
