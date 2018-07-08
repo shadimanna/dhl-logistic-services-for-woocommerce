@@ -33,6 +33,9 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 		add_action( 'wp_ajax_wc_shipment_dhl_gen_label_express', array( $this, 'save_meta_box_ajax' ) );
 		add_action( 'wp_ajax_wc_shipment_dhl_delete_label_express', array( $this, 'delete_label_ajax' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts'), 20 );
+
+		// Invoice upload ajax request handler
+		add_action( 'wp_ajax_wc_shipment_dhl_upload_invoice', array( $this, 'upload_invoice_ajax' ) );
 	}
 
 	public function enqueue_scripts() {
@@ -119,7 +122,7 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 			// echo '<input id="upload_image_button" type="button" value="Upload Image" />';
 			// echo '</p>';
 
-			$commercial_invoice = PR_DHL_PLUGIN_DIR_URL . '/assets/pdf/commercial_invoice.pdf';
+			/*$commercial_invoice = PR_DHL_PLUGIN_DIR_URL . '/assets/pdf/commercial_invoice.pdf';
 			woocommerce_wp_text_input( array(
 					'id'	          	=> 'pr_dhl_invoice',
 					'name'          	=> 'pr_dhl_invoice',
@@ -129,7 +132,7 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 					'description'		=> sprintf( __('Download template commercial invoice %shere%s.', 'pr-shipping-dhl'), '<a href="' . $commercial_invoice . '" target="_blank">', '</a>'),
 					'custom_attributes'	=> array( $is_disabled => $is_disabled ),
 					'class'				=> ''
-				) );
+				) );*/
 		}
 	}
 
