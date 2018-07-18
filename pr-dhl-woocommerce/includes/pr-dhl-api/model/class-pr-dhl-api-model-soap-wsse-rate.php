@@ -51,7 +51,7 @@ class PR_DHL_API_Model_SOAP_WSSE_Rate extends PR_DHL_API_SOAP_WSSE implements PR
 
 		try {
 			$soap_client = $this->get_access_token( $args['dhl_settings']['api_user'], $args['dhl_settings']['api_pwd'] );
-			PR_DHL()->log_msg( '"createShipmentOrder" called with: ' . print_r( $soap_request, true ) );
+			PR_DHL()->log_msg( '"getRateRequest" called with: ' . print_r( $soap_request, true ) );
 
 			$response_body = $soap_client->getRateRequest($soap_request);
 			// error_log(print_r($soap_client->__getLastRequest(),true));
@@ -80,6 +80,7 @@ class PR_DHL_API_Model_SOAP_WSSE_Rate extends PR_DHL_API_SOAP_WSSE implements PR
 		} catch (Exception $e) {
 			// error_log('get dhl label Exception');
 			// error_log(print_r($soap_client->__getLastRequest(),true));
+			PR_DHL()->log_msg( 'Exception Response: ' . print_r( $response_body, true ) );
 			throw $e;
 		}
 	}
@@ -354,7 +355,7 @@ class PR_DHL_API_Model_SOAP_WSSE_Rate extends PR_DHL_API_SOAP_WSSE implements PR
 								// 'ShipTimestamp' => date('Y-m-d\TH:i:s\G\M\TP', time() + 60*60*24 ),
 								'ShipTimestamp' => date('Y-m-d\TH:i:s\G\M\TP', time() ), // 2018-03-05T15:33:16GMT+01:00
 								'UnitOfMeasurement' => 'SI',
-								'Content' => 'NON_DOCUMENTS',
+								'Content' => 'NON_DOCUMENTS', // 'NON_DOCUMENTS' for non-EU and 'DOCUMENT' for EU packages!
 								'PaymentInfo' => 'DDP',
 								'Account' => $this->args['dhl_settings']['account_num'],
 						),
