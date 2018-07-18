@@ -16,7 +16,7 @@ jQuery( function( $ ) {
 			$( '#woocommerce-shipment-dhl-label-express' )
 				.on( 'click', 'a.dhl_delete_label', this.delete_dhl_label );
 
-			$( '#woocommerce-shipment-dhl-invoice-upload' )
+			$( '#woocommerce-shipment-dhl-label-express' )
 				.on( 'click', 'button.upload-invoice-button', this.upload_invoice );
 		},
 

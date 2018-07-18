@@ -326,12 +326,12 @@ class PR_DHL_API_Model_SOAP_WSSE_Rate extends PR_DHL_API_SOAP_WSSE implements PR
 											),
 										'Recipient' =>
 											array(
-													'StreetLines' => $this->args['receiver']['address'],
-													'StreetLines2' => $this->args['receiver']['address_2'],
-													'City' => $this->args['receiver']['city'],
-													'StateOrProvinceCode' => $this->args['receiver']['state'],
-													'PostalCode' => $this->args['receiver']['postcode'],
-													'CountryCode' => $this->args['receiver']['country']
+													'StreetLines' => $this->args['shipping_address']['address'],
+													'StreetLines2' => $this->args['shipping_address']['address_2'],
+													'City' => $this->args['shipping_address']['city'],
+													'StateOrProvinceCode' => $this->args['shipping_address']['state'],
+													'PostalCode' => $this->args['shipping_address']['postcode'],
+													'CountryCode' => $this->args['shipping_address']['country']
 											),									
 									),
 								'Packages' => 
@@ -355,11 +355,17 @@ class PR_DHL_API_Model_SOAP_WSSE_Rate extends PR_DHL_API_SOAP_WSSE implements PR
 								// 'ShipTimestamp' => date('Y-m-d\TH:i:s\G\M\TP', time() + 60*60*24 ),
 								'ShipTimestamp' => date('Y-m-d\TH:i:s\G\M\TP', time() ), // 2018-03-05T15:33:16GMT+01:00
 								'UnitOfMeasurement' => 'SI',
-								'Content' => 'NON_DOCUMENTS', // 'NON_DOCUMENTS' for non-EU and 'DOCUMENT' for EU packages!
+								// 'Content' => 'NON_DOCUMENTS', // 'NON_DOCUMENTS' for non-EU and 'DOCUMENT' for EU packages!
 								'PaymentInfo' => 'DDP',
 								'Account' => $this->args['dhl_settings']['account_num'],
 						),
 				);
+
+			if( PR_DHL()->is_crossborder_shipment( $this->args['shipping_address']['country'] ) ) {
+				$dhl_label_body['RequestedShipment']['Content'] = 'NON_DOCUMENTS';
+			} else {
+				$dhl_label_body['RequestedShipment']['Content'] = 'DOCUMENTS';
+			}
 
 			// error_log(print_r($dhl_label_body,true));
 			// Unset/remove any items that are empty strings or 0, even if required!

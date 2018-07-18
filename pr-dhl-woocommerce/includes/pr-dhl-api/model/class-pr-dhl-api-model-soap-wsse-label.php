@@ -196,7 +196,7 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 			throw new Exception( 'Weight - ' . $e->getMessage() );
 		}
 
-		if( ! PR_DHL()->is_shipping_domestic( $this->args['shipping_address']['country'] ) ) {
+		if( ! PR_DHL()->is_shipping_domestic( $args['shipping_address']['country'] ) ) {
 			if( empty( $args['order_details']['declared_value'] ) ) {
 				throw new Exception( __('"Declared Value" is empty!', 'pr-shipping-dhl') );
 			}
@@ -247,6 +247,17 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 
 			// Set address 1 without street number
 			$args['shipping_address']['address_1'] = implode(' ', $address_exploded );
+		}
+
+		if( empty( $args['order_details']['ship_date'] ) ) {
+			throw new Exception( __('The invoice file does not exist!', 'pr-shipping-dhl') );
+		}
+
+		if ( ! empty( $args['order_details']['paperless_trade'] ) && ( $args['order_details']['paperless_trade'] == 'yes') ) {
+
+			if ( !file_exists( $args['order_details']['invoice']) ) {
+				throw new Exception( __('The invoice file does not exist!', 'pr-shipping-dhl') );
+			}
 		}
 
 		// Add default values for required fields that might not be passed e.g. phone
@@ -341,7 +352,7 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 				array_push($special_services, $duties_services);
 			}
 
-			if ( ! empty( $this->args['order_details']['pr_dhl_paperless_trade'] ) && ( $this->args['order_details']['pr_dhl_paperless_trade'] == 'yes') ) {
+			if ( ! empty( $this->args['order_details']['paperless_trade'] ) && ( $this->args['order_details']['paperless_trade'] == 'yes') ) {
 
 				$paperless_services = 
 					array(
@@ -349,6 +360,20 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 					);
 
 				array_push($special_services, $paperless_services);
+			}
+
+			$special_services_arr = array();
+			if ( ! empty( $special_services )) {
+				$special_services_arr = array( 'Service' => $special_services );
+			}
+
+			$todays_date = date('Y-m-d', time() );
+			// If selected ship date is the same as today's date, use 'strtotime("+5 minutes")' to add time + 5 mins to ship date otherwise it will have '00:00' which is in the past!
+			if( $this->args['order_details']['ship_date'] == $todays_date ) {
+				// $ship_date = date('Y-m-d\TH:i:s\G\M\TP', time() );
+				$ship_date = date('Y-m-d\TH:i:s\G\M\TP', strtotime("+5 minutes") );
+			} else {
+				$ship_date = date('Y-m-d\TH:i:s\G\M\TP', strtotime( $this->args['order_details']['ship_date'] ) );
 			}
 
 			$dhl_label_body = 
@@ -367,10 +392,9 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 										'Account' => $this->args['dhl_settings']['account_num'],
 										'Currency' => $this->args['order_details']['currency'],
 										'UnitOfMeasurement' => 'SI',
-										// 'Content' => 'NON_DOCUMENTS',
-										'SpecialServices' => array( 'Service' => $special_services ),
+										'SpecialServices' => $special_services_arr,
 								),
-							'ShipTimestamp' => date('Y-m-d\TH:i:s\G\M\TP', strtotime( $this->args['order_details']['ship_date'] ) ), // 2018-03-05T15:33:16GMT+01:00
+							'ShipTimestamp' => $ship_date, // 2018-03-05T15:33:16GMT+01:00
 							'PaymentInfo' => $this->args['order_details']['duties'],
 							'Ship' => 
 								array( 
@@ -431,11 +455,14 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 						),
 					);
 
-			if ( ! empty( $this->args['order_details']['pr_dhl_paperless_trade'] ) && ( $this->args['order_details']['pr_dhl_paperless_trade'] == 'yes') ) {
+			if ( ! empty( $this->args['order_details']['paperless_trade'] ) && ( $this->args['order_details']['paperless_trade'] == 'yes') ) {
 
 				$dhl_label_body['RequestedShipment']['ShipmentInfo']['PaperlessTradeEnabled'] = 1;
+				
+				$file_contents = file_get_contents( $this->args['order_details']['invoice'] );
+
 				// base64 invoice - jpg, png, pdf
-				// $dhl_label_body['RequestedShipment']['ShipmentInfo']['PaperlessTradeImage'] = 
+				$dhl_label_body['RequestedShipment']['ShipmentInfo']['PaperlessTradeImage'] = base64_encode($file_contents);
 			}
 /*
 			if ( ! empty( $this->args['items'] ) ) {
@@ -463,6 +490,12 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 			// If shipper or receiver are outside of EU then add "cross-border" info 
 			// if( PR_DHL()->is_crossborder_shipment( $this->args['shipping_address']['country'] ) ) {
 			if( ! PR_DHL()->is_shipping_domestic( $this->args['shipping_address']['country'] ) ) {
+
+				if( PR_DHL()->is_crossborder_shipment( $this->args['shipping_address']['country'] ) ) {
+					$dhl_label_body['RequestedShipment']['InternationalDetail']['Content'] = 'NON_DOCUMENTS';
+				} else {
+					$dhl_label_body['RequestedShipment']['InternationalDetail']['Content'] = 'DOCUMENTS';
+				}
 
 				$item_description = '';
 				foreach ($this->args['items'] as $key => $item) {

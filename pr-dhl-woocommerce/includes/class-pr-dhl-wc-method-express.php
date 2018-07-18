@@ -521,7 +521,7 @@ class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 		$express_products = $this->get_option( 'express_products' );
 		error_log(print_r($express_products,true));
 		$args = $this->get_rates_args();
-		$args['receiver'] = $package['destination'];
+		$args['shipping_address'] = $package['destination'];
 
 		error_log(print_r($args,true));
 		try {
