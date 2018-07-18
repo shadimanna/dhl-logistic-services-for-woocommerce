@@ -54,3 +54,21 @@ span.wc_dhl_error {
 #dhl_express_products th.short_text {
   width: 10%;
 }
+
+input#pr_dhl_invoice {
+  margin-bottom: 10px !important;
+}
+
+.dhl-invoice-upload-spinner-container {
+  float: right;
+  width: 70%;
+}
+
+.dhl-invoice-upload-spinner-container > .spinner {
+  float: left;
+}
+
+.dhl-invoice-upload-message {
+  font-size: 11px;
+  display: none;
+}
