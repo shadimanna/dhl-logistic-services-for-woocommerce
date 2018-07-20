@@ -541,7 +541,8 @@ class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 					}
 
 					// Add filter to change text
-					$express_name .= sprintf( __( ' %s(Est. arrival: %s)%s', 'pr-shipping-dhl' ), '<span class="dhl-express-estinated-arrival">', $this->format_dhl_method_time( $dhl_rates[ $express_key ]['delivery_time'] ), '</span>' );
+					// $express_name .= sprintf( __( ' %s(Est. arrival: %s)%s', 'pr-shipping-dhl' ), '<span class="dhl-express-estinated-arrival">', $this->format_dhl_method_time( $dhl_rates[ $express_key ]['delivery_time'] ), '</span>' );
+					$express_name .= sprintf( __( ' (Est. arrival: %s)', 'pr-shipping-dhl' ), $this->format_dhl_method_time( $dhl_rates[ $express_key ]['delivery_time'] ) );
 
 					$express_amount = $dhl_rates[ $express_key ]['amount'];
 					// Cost adjustment %
@@ -572,12 +573,14 @@ class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 							),
 					);
 
-					$this->add_rate( $rate ); // ADD FILTER BEFORE PASSING
+					$rate = apply_filters( 'pr_shipping_dhl_express_add_rate', $rate );
+
+					$this->add_rate( $rate );
 				}
 			}
 
 		} catch (Exception $e) {
-			error_log('calc ship exception');
+			// error_log('calc ship exception');
 			error_log($e->getMessage());
 			// throw new Exception($e->getMessage());
 		}

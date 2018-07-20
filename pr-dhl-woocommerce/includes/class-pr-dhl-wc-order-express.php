@@ -36,6 +36,8 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 
 		// Invoice upload ajax request handler
 		add_action( 'wp_ajax_wc_shipment_dhl_upload_invoice', array( $this, 'upload_invoice_ajax' ) );
+
+		add_action( 'woocommerce_checkout_order_processed', array( $this, 'process_dhl_preferred_fields' ), 10, 2 );
 	}
 
 	public function enqueue_scripts() {
@@ -393,6 +395,9 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 	}
 
 	protected function delete_label_args( $order_id ) {
+		// $dhl_label_args = $this->get_dhl_label_items( $order_id );
+		// $args = $this->get_label_args( $order_id, $dhl_label_args );
+
 		$args = $this->get_dhl_label_tracking( $order_id );
 
 		$shipping_dhl_settings = $this->get_shipping_dhl_settings();
@@ -403,6 +408,23 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 		return $args;
 	}
 
+	public function process_dhl_preferred_fields( $order_id, $posted ) {
+		// save the posted preferences to the order so can be used when generating label
+		
+		// error_log($order_id);
+		// error_log(print_r($posted,true));
+
+		if (isset( $posted['shipping_method'] ) ) {
+			foreach ($posted['shipping_method'] as $key => $value) {
+				$shipping_method_arr = explode( ':', $value );
+				if( $shipping_method_arr && $shipping_method_arr[0] == 'pr_dhl_express' && isset( $shipping_method_arr[2] ) ) {
+
+					$dhl_label_options['pr_dhl_product'] = $shipping_method_arr[2];
+					$this->save_dhl_label_items( $order_id, $dhl_label_options );
+				}
+			}
+		}
+	}
 }
 
 endif;

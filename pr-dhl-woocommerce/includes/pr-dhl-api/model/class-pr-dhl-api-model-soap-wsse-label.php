@@ -70,7 +70,13 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 				}
 			}
 
-			return $this->get_returned_rates( $response_body->Service );
+			$tracking_number = isset( $response_body->PackagesResult->PackageResult->TrackingNumber ) ? $response_body->PackagesResult->PackageResult->TrackingNumber : '';
+			
+			$label_tracking_info = $this->save_label_file( $response_body->ShipmentIdentificationNumber, $response_body->LabelImage->LabelImageFormat, $response_body->LabelImage->GraphicImage );
+
+			$label_tracking_info['tracking_number'] = $tracking_number;
+
+			return $label_tracking_info;
 
 		} catch (Exception $e) {
 			// error_log('get dhl label Exception');
@@ -91,6 +97,7 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 	}
 
 	public function delete_dhl_label_call( $args ) {
+		error_log(print_r($args,true));
 		$soap_request =	array(
 					'Version' =>
 						array(
@@ -99,10 +106,10 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 						),
 					'DeleteRequest' => 
 						array(
-							'PickupDate' => date('Y-m-d'), // use for testing, but needs to be REQUESTED SHIP DATE!
-							'PickupCountry' => 'US',
+							'PickupDate' => $args['order_details']['pr_dhl_ship_date'],
+							'PickupCountry' => $args['dhl_settings']['shipper_country'],
 							'DispatchConfirmationNumber' => '1111',
-							'RequestorName' => 'Shadi'
+							'RequestorName' => $args['dhl_settings']['shipper_name']
 						)
 				);
 
@@ -111,8 +118,9 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 			$soap_client = $this->get_access_token( $args['api_user'], $args['api_pwd'] );
 			error_log(print_r($soap_request,true));
 			$response_body = $soap_client->deleteShipmentRequest( $soap_request );
-
+			error_log(print_r($soap_client->__getLastRequest(),true));
 		} catch (Exception $e) {
+			error_log(print_r($soap_client->__getLastRequest(),true));
 			throw $e;
 		}
 
@@ -123,16 +131,14 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 
 	public function delete_dhl_label( $args ) {
 		// Delete the label remotely first
+		/*
 		try {
 			$this->delete_dhl_label_call( $args );
 		} catch (Exception $e) {
 			throw $e;			
-		}
+		}*/
 
-		// Then delete file
-		$upload_path = wp_upload_dir();
-		$label_path = str_replace( $upload_path['url'], $upload_path['path'], $args['label_url'] );
-		
+		$label_path = $args['label_path'];
 		if( file_exists( $label_path ) ) {
 			$res = unlink( $label_path );
 			
@@ -145,24 +151,28 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 
 	protected function save_label_file( $order_id, $format, $label_data ) {
 		$label_name = 'dhl-label-' . $order_id . '.' . $format;
-		$upload_path = wp_upload_dir();
-		$label_path = $upload_path['path'] . '/'. $label_name;
-		$label_url = $upload_path['url'] . '/'. $label_name;
-
+		// $upload_path = wp_upload_dir();
+		// PR_DHL()->get_dhl_label_folder();
+		// $label_path = $upload_path['path'] . '/'. $label_name;
+		// $label_url = $upload_path['url'] . '/'. $label_name;
+		$label_path = PR_DHL()->get_dhl_label_folder_dir() . $label_name;
+		$label_url = PR_DHL()->get_dhl_label_folder_url() . $label_name;
 		if( validate_file($label_path) > 0 ) {
 			throw new Exception( __('Invalid file path!', 'pr-shipping-dhl' ) );
 		}
 
+		$label_data_decoded = $label_data;
 		// $label_data_decoded = base64_decode($label_data);
-		$label_data_decoded = file_get_contents( $label_data );
+		// $label_data_decoded = file_get_contents( $label_data );
 
+		// SOAP client decodes (base64) on its own so no need to do it here
 		$file_ret = file_put_contents( $label_path, $label_data_decoded );
 		
 		if( empty( $file_ret ) ) {
 			throw new Exception( __('DHL Label file cannot be saved!', 'pr-shipping-dhl' ) );
 		}
 
-		return $label_url;
+		return array( 'label_url' => $label_url, 'label_path' => $label_path);
 	}
 
 	protected function set_arguments( $args ) {
@@ -196,7 +206,7 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 			throw new Exception( 'Weight - ' . $e->getMessage() );
 		}
 
-		if( ! PR_DHL()->is_shipping_domestic( $args['shipping_address']['country'] ) ) {
+		if( PR_DHL()->is_crossborder_shipment( $args['shipping_address']['country'] ) ) {
 			if( empty( $args['order_details']['declared_value'] ) ) {
 				throw new Exception( __('"Declared Value" is empty!', 'pr-shipping-dhl') );
 			}
@@ -350,6 +360,8 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 					);
 
 				array_push($special_services, $duties_services);
+			} else {
+				$this->args['order_details']['duties'] = 'DAP';
 			}
 
 			if ( ! empty( $this->args['order_details']['paperless_trade'] ) && ( $this->args['order_details']['paperless_trade'] == 'yes') ) {

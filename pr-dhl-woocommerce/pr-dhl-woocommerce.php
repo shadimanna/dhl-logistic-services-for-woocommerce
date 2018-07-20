@@ -216,6 +216,8 @@ class PR_DHL_WC {
 
 				$this->shipping_dhl_order_express = new PR_DHL_WC_Order_Express();
 				
+				// Ensure DHL Labels folder exists
+				$this->dhl_label_folder_check();
 			} catch (Exception $e) {
 				add_action( 'admin_notices', array( $this, 'environment_check' ) );
 			}
@@ -589,6 +591,69 @@ class PR_DHL_WC {
 		}
 	}
 
+	/**
+     * Installation functions
+     *
+     * Create temporary folder and files. DHL labels will be stored here as required
+     *
+     * empty_pdf_task will delete them hourly
+     */
+    public function create_dhl_label_folder() {
+    	// error_log('create_dhl_label_folder');
+        // Install files and folders for uploading files and prevent hotlinking
+        $upload_dir =  wp_upload_dir();
+
+        // error_log(print_r($_SERVER,true));
+        $files = array(
+            array(
+                'base'      => $upload_dir['basedir'] . '/woocommerce_dhl_label',
+                'file'      => '.htaccess',
+                'content'   => "Order deny,allow\nDeny from all\nAllow from ". $_SERVER['SERVER_ADDR']
+                // 'content'   => 'deny from all'
+            ),
+            array(
+                'base'      => $upload_dir['basedir'] . '/woocommerce_dhl_label',
+                'file'      => 'index.html',
+                'content'   => ''
+            )
+        );
+
+        foreach ( $files as $file ) {
+
+            if ( wp_mkdir_p( $file['base'] ) && ! file_exists( trailingslashit( $file['base'] ) . $file['file'] ) ) {
+
+                if ( $file_handle = @fopen( trailingslashit( $file['base'] ) . $file['file'], 'w' ) ) {
+                    fwrite( $file_handle, $file['content'] );
+                    fclose( $file_handle );
+                }
+
+            }
+
+        }
+    }
+
+    public function dhl_label_folder_check() {
+        $upload_dir =  wp_upload_dir();
+        if ( !file_exists( $upload_dir['basedir'] . '/woocommerce_dhl_label/.htaccess' ) ) {
+            $this->create_dhl_label_folder();
+        }
+    }
+
+    public function get_dhl_label_folder_dir() {
+        $upload_dir =  wp_upload_dir();
+        if ( file_exists( $upload_dir['basedir'] . '/woocommerce_dhl_label/.htaccess' ) ) {
+            return $upload_dir['basedir'] . '/woocommerce_dhl_label/';
+        }
+        return '';
+    }
+
+    public function get_dhl_label_folder_url() {
+        $upload_dir =  wp_upload_dir();
+        if ( file_exists( $upload_dir['basedir'] . '/woocommerce_dhl_label/.htaccess' ) ) {
+            return $upload_dir['baseurl'] . '/woocommerce_dhl_label/';
+        }
+        return '';
+    }
 }
 
 endif;
