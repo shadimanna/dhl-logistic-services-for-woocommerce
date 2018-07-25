@@ -72,3 +72,26 @@ input#pr_dhl_invoice {
   font-size: 11px;
   display: none;
 }
+
+.dhl-total-packages #pr_dhl_total_packages {
+  width: 100px !important;
+}
+
+p.dhl-total-packages > label {
+  padding-bottom: 10px !important;
+} 
+
+.package_header_field,
+.package_item_field {
+  display: inline-block;
+  width: 45px !important;
+}
+
+.package_header_field.first,
+.package_item_field.first {
+  width: 55px !important;
+}
+
+.package_item input {
+  width: 40px !important;
+}
