@@ -373,6 +373,16 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 	protected function get_label_args_settings( $order_id, $dhl_label_items ) {
 
+		$order = wc_get_order( $order_id );
+		$billing_address = $order->get_address( );
+		$shipping_address = $order->get_address( 'shipping' );
+
+		$shipping_address_email = '';
+		// If shipping email doesn't exist, try to get billing email
+		if( ! isset( $shipping_address['email'] ) && isset( $billing_address['email'] ) ) {
+			$shipping_address_email = $billing_address['email'];
+		}
+
 		// Get services etc.
 		$meta_box_ids = $this->get_additional_meta_ids();
 		
@@ -386,12 +396,19 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		// Get settings
 		// $this->shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
 
-		$setting_ids = array( 'dhl_api_user','dhl_api_pwd', 'dhl_account_num', 'dhl_shipper_name', 'dhl_shipper_company', 'dhl_shipper_address','dhl_shipper_address_no', 'dhl_shipper_address_city', 'dhl_shipper_address_state', 'dhl_shipper_address_zip', 'dhl_shipper_phone', 'dhl_shipper_email', 'dhl_bank_holder', 'dhl_bank_name', 'dhl_bank_iban', 'dhl_bank_bic', 'dhl_participation_return' );
+		$setting_ids = array( 'dhl_api_user','dhl_api_pwd', 'dhl_account_num', 'dhl_shipper_name', 'dhl_shipper_company', 'dhl_shipper_address','dhl_shipper_address_no', 'dhl_shipper_address_city', 'dhl_shipper_address_state', 'dhl_shipper_address_zip', 'dhl_shipper_phone', 'dhl_shipper_email', 'dhl_bank_holder', 'dhl_bank_name', 'dhl_bank_iban', 'dhl_bank_bic', 'dhl_bank_ref', 'dhl_bank_ref_2', 'dhl_participation_return' );
 
 		foreach ($setting_ids as $value) {
 			$api_key = str_replace('dhl_', '', $value);
 			if ( isset( $this->shipping_dhl_settings[ $value ] ) ) {
 				$args['dhl_settings'][ $api_key ] = htmlspecialchars_decode( $this->shipping_dhl_settings[ $value ] );
+
+				if( stripos($value, 'bank_ref') !== false ) {
+
+					$args['dhl_settings'][ $api_key ] = str_replace( '{order_id}', $order_id, $args['dhl_settings'][ $api_key ] );
+					
+					$args['dhl_settings'][ $api_key ] = str_replace( '{email}', $shipping_address_email, $args['dhl_settings'][ $api_key ] );
+				}
 			}
 		}
 		

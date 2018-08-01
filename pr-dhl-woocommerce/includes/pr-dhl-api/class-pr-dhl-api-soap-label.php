@@ -483,8 +483,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 									'bank_holder' => 'accountOwner',
 									'bank_name' => 'bankName',
 									'bank_iban' => 'iban',
-									// 'bank_ref' => 'note1',
-									// 'bank_ref_2' => 'note2',
+									'bank_ref' => 'note1',
+									'bank_ref_2' => 'note2',
 									'bank_bic' => 'bic'
 									);
 
@@ -495,8 +495,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 					}
 				}
 
-				$bank_data['note1'] = $this->args['order_details']['order_id'];
-				$bank_data['note2'] = $this->args['shipping_address']['email'];
+				// $bank_data['note1'] = $this->args['order_details']['order_id'];
+				// $bank_data['note2'] = $this->args['shipping_address']['email'];
 			}
 
 			// create account number

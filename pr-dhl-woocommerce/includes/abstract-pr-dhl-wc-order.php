@@ -120,12 +120,12 @@ abstract class PR_DHL_WC_Order {
 		if( empty( $label_tracking_info ) ) {
 			$is_disabled = '';
 			
-			$print_button = '<a href="#" id="dhl-label-print" class="button button-primary" download>' .PR_DHL_BUTTON_LABEL_PRINT . '</a>';
+			$print_button = '<a href="#" id="dhl-label-print" class="button button-primary" download target="_blank">' . PR_DHL_BUTTON_LABEL_PRINT . '</a>';
 
 		} else {
 			$is_disabled = 'disabled';
 
-			$print_button = '<a href="'. $label_tracking_info['label_url'] .'" id="dhl-label-print" class="button button-primary" download>' .PR_DHL_BUTTON_LABEL_PRINT . '</a>';
+			$print_button = '<a href="'. $label_tracking_info['label_url'] .'" id="dhl-label-print" class="button button-primary" download target="_blank">' .PR_DHL_BUTTON_LABEL_PRINT . '</a>';
 		}
 
 		echo '<div id="shipment-dhl-label-form">';
@@ -364,7 +364,7 @@ abstract class PR_DHL_WC_Order {
 	}
 
 	/*
-	 * Gets all label itesm fron the post meta array for an order
+	 * Gets all label items fron the post meta array for an order
 	 *
 	 * @param int  $order_id  Order ID
 	 *
@@ -500,7 +500,7 @@ abstract class PR_DHL_WC_Order {
 		$args['order_details']['items_value'] = $order->get_subtotal();
 
 		// Get address related information 
-		$billing_address = $order->get_address( );
+		$billing_address = $order->get_address();
 		$shipping_address = $order->get_address( 'shipping' );
 
 		// If shipping phone number doesn't exist, try to get billing phone number

@@ -548,17 +548,23 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			'dhl_bank_bic' => array(
 				'title'             => __( 'BIC', 'pr-shipping-dhl' ),
 				'default'           => ''
-			),/*
+			),
 			'dhl_bank_ref' => array(
 				'title'             => __( 'Payment Reference', 'pr-shipping-dhl' ),
 				'type'              => 'text',
-				'custom_attributes'	=> array( 'maxlength' => '35' )
+				'custom_attributes'	=> array( 'maxlength' => '35' ),
+				'description'       => sprintf( __( 'Use "%s" to send the order id as a bank reference and "%s" to send the customer email. This text is limited to 35 characters.', 'pr-shipping-dhl' ), '{order_id}' , '{email}' ),
+				'desc_tip'          => true,
+				'default'           => '{order_id}'
 			),
 			'dhl_bank_ref_2' => array(
 				'title'             => __( 'Payment Reference 2', 'pr-shipping-dhl' ),
 				'type'              => 'text',
-				'custom_attributes'	=> array( 'maxlength' => '35' )
-			),
+				'custom_attributes'	=> array( 'maxlength' => '35' ),
+				'description'       => sprintf( __( 'Use "%s" to send the order id as a bank reference and "%s" to send the customer email. This text is limited to 35 characters.', 'pr-shipping-dhl' ), '{order_id}' , '{email}' ),
+				'desc_tip'          => true,
+				'default'           => '{email}'
+			),/*
 			'dhl_cod_fee' => array(
 				'title'             => __( 'Add COD Fee', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
