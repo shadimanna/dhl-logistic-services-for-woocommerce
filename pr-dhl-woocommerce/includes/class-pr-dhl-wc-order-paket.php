@@ -98,7 +98,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 				woocommerce_wp_text_input( array(
 						'id'          		=> 'pr_dhl_return_address',
-						'label'       		=> __( 'Address:', 'pr-shipping-dhl' ),
+						'label'       		=> __( 'Street Address:', 'pr-shipping-dhl' ),
 						'placeholder' 		=> '',
 						'description'		=> '',
 						'value'       		=> isset( $dhl_label_items['pr_dhl_return_address'] ) ? $dhl_label_items['pr_dhl_return_address'] : $this->shipping_dhl_settings['dhl_return_address'],
@@ -107,7 +107,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 				woocommerce_wp_text_input( array(
 						'id'          		=> 'pr_dhl_return_address_no',
-						'label'       		=> __( 'Address No.:', 'pr-shipping-dhl' ),
+						'label'       		=> __( 'Street Address Number:', 'pr-shipping-dhl' ),
 						'placeholder' 		=> '',
 						'description'		=> '',
 						'value'       		=> isset( $dhl_label_items['pr_dhl_return_address_no'] ) ? $dhl_label_items['pr_dhl_return_address_no'] : $this->shipping_dhl_settings['dhl_return_address_no'],
@@ -288,15 +288,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
 
-			woocommerce_wp_checkbox( array(
-				'id'          		=> 'pr_dhl_is_codeable',
-				'label'       		=> __( 'Print Only If Codeable: ', 'pr-shipping-dhl' ),
-				'placeholder' 		=> '',
-				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_is_codeable'] ) ? $dhl_label_items['pr_dhl_is_codeable'] : $this->get_default_dhl_print_codeable(),
-				'custom_attributes'	=> array( $is_disabled => $is_disabled )
-			) );
-			
 			echo '<hr/>';
 
 			woocommerce_wp_checkbox( array(
@@ -347,6 +338,15 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			) );
 
 			echo '<hr/>';
+
+			woocommerce_wp_checkbox( array(
+				'id'          		=> 'pr_dhl_is_codeable',
+				'label'       		=> __( 'Print Only If Codeable: ', 'pr-shipping-dhl' ),
+				'placeholder' 		=> '',
+				'description'		=> '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_is_codeable'] ) ? $dhl_label_items['pr_dhl_is_codeable'] : $this->get_default_dhl_print_codeable(),
+				'custom_attributes'	=> array( $is_disabled => $is_disabled )
+			) );
 
 		}
 		

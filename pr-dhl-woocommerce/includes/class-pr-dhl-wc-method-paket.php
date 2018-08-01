@@ -330,7 +330,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'dhl_shipping_methods' => array(
 					'title'             => __( 'Shipping Methods', 'pr-shipping-dhl' ),
 					'type'              => 'multiselect',
-					'description'       => __( 'Select the Shipping Methods to display the enabled DHL Paket preferred services. You can press "ctrl" to select multiple options or click on a selected option to deselect it.', 'pr-shipping-dhl' ),
+					'description'       => __( 'Select the Shipping Methods to display the enabled DHL Paket preferred services and Location Finder below. You can press "ctrl" to select multiple options or click on a selected option to deselect it.', 'pr-shipping-dhl' ),
 					'desc_tip'          => true,
 					'options'           => $wc_shipping_titles,
 					'class'          => 'wc-enhanced-select',
@@ -338,7 +338,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'dhl_payment_gateway' => array(
 					'title'             => __( 'Exclude Payment Gateways', 'pr-shipping-dhl' ),
 					'type'              => 'multiselect',
-					'description'       => __( 'Select the Payment Gateways to hide the enabled DHL Paket preferred services. You can press "ctrl" to select multiple options or click on a selected option to deselect it.', 'pr-shipping-dhl' ),
+					'description'       => __( 'Select the Payment Gateways to hide the enabled DHL Paket preferred services and Location Finder below. You can press "ctrl" to select multiple options or click on a selected option to deselect it.', 'pr-shipping-dhl' ),
 					'desc_tip'          => true,
 					'options'           => $payment_gateway_titles,
 					'class'          => 'wc-enhanced-select',
@@ -375,7 +375,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'dhl_parcel_limit' => array(
 					'title'             => __( 'Limit Results', 'pr-shipping-dhl' ),
 					'type'              => 'number',
-					'description'       => __( 'Limit displayed results, from 0 to at most 50.', 'pr-shipping-dhl' ),
+					'description'       => __( 'Limit displayed results, from 1 to at most 50.', 'pr-shipping-dhl' ),
 					'desc_tip'          => true,
 					'class'				=> '',
 					'default'           => '20',
@@ -384,7 +384,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'dhl_google_maps_api_key' => array(
 					'title'             => __( 'API Key', 'pr-shipping-dhl' ),
 					'type'              => 'text',
-					'description'       => sprintf( __( 'The Google Maps API Key is necassary to display a the DHL Locations on a google map.<br/>Get a free Google Maps API key %shere%s.', 'pr-shipping-dhl' ), '<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target = "_blank">', '</a>' ),
+					'description'       => sprintf( __( 'The Google Maps API Key is necassary to display the DHL Locations on a google map.<br/>Get a free Google Maps API key %shere%s.', 'pr-shipping-dhl' ), '<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target = "_blank">', '</a>' ),
 					'desc_tip'          => false,
 					'class'				=> ''
 				),

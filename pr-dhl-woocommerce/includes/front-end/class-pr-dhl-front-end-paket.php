@@ -331,11 +331,11 @@ class PR_DHL_Front_End_Paket {
 				}
 
 			}
-
+			/*
 			if( ! empty( $this->shipping_dhl_settings['dhl_cod_fee'] ) && $this->shipping_dhl_settings['dhl_cod_fee'] == 'yes' && isset( $post_data['payment_method'] ) && $post_data['payment_method'] == 'cod' ) {
 				// Add €2 fee to COD usage (Euro is being assumed as currency)
 				$cart->add_fee( __('DHL COD fee', 'pr-shipping-dhl'), 2 );
-			}
+			}*/
 			
 		} catch (Exception $e) {
 			// do nothing	
@@ -455,6 +455,8 @@ class PR_DHL_Front_End_Paket {
 
 	public function add_parcel_finder_btn() {
 		// echo '<a id="dhl_parcel_finder" class="button" href="#dhl_parcel_finder_form">' . __('Parcel Finder', 'pr-shipping-dhl') . '</a>';
+
+		// DISPLAY TEXT BASED ON WHAT IS ENABLED
 		$dhl_logo = PR_DHL_PLUGIN_DIR_URL . '/assets/img/dhl-official.png';
 		echo '<a data-fancybox id="dhl_parcel_finder" class="button" data-src="#dhl_parcel_finder_form" href="javascript:;"><img src="' . $dhl_logo .'" class="dhl-co-logo">' . __('Search Packstation / Branch', 'pr-shipping-dhl') . '</a>';
 

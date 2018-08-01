@@ -130,9 +130,9 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		}
 
 		// Then delete file
-		$upload_path = wp_upload_dir();
-		$label_path = str_replace( $upload_path['url'], $upload_path['path'], $args['label_url'] );
-		
+		// $upload_path = wp_upload_dir();
+		// $label_path = str_replace( $upload_path['url'], $upload_path['path'], $args['label_url'] );
+		$label_path = $args['label_path'];
 		if( file_exists( $label_path ) ) {
 			$res = unlink( $label_path );
 			
@@ -149,8 +149,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		// PR_DHL()->get_dhl_label_folder();
 		// $label_path = $upload_path['path'] . '/'. $label_name;
 		// $label_url = $upload_path['url'] . '/'. $label_name;
-		$label_path = $upload_path['basedir'] . '/woocommerce_dhl_label/'. $label_name;
-		$label_url = $upload_path['baseurl'] . '/woocommerce_dhl_label/'. $label_name;
+		$label_path = PR_DHL()->get_dhl_label_folder_dir() . $label_name;
+		$label_url = PR_DHL()->get_dhl_label_folder_url() . $label_name;
 		if( validate_file($label_path) > 0 ) {
 			throw new Exception( __('Invalid file path!', 'pr-shipping-dhl' ) );
 		}
