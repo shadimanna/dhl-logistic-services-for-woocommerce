@@ -71,14 +71,8 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 
 	}
 	
-	protected function get_tracking_link( $tracking_num ) {
-		if( empty( $tracking_num ) ) {
-			return '';
-		}
-
-		$tracking_note = sprintf( __( '<label>DHL Tracking Number: </label><a href="%s%s" target="_blank">%s</a>', 'my-text-domain' ), PR_DHL_ECOMM_TRACKING_URL, $tracking_num, $tracking_num);
-		
-		return $tracking_note;
+	protected function get_tracking_url() {
+		return PR_DHL_ECOMM_TRACKING_URL;
 	}
 
 	protected function get_package_description( $order_id ) {
@@ -182,6 +176,8 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 
 	protected function save_default_dhl_label_items( $order_id ) {
 
+		parent::save_default_dhl_label_items( $order_id );
+
 		$dhl_label_items = $this->get_dhl_label_items( $order_id );
 		
 		if( empty( $dhl_label_items['pr_dhl_description'] ) ) {
@@ -190,7 +186,6 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 
 		$this->save_dhl_label_items( $order_id, $dhl_label_items );
 
-		parent::save_default_dhl_label_items( $order_id );
 	}
 
 	// Used by label API to pass handover number

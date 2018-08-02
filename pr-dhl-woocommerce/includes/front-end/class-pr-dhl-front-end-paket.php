@@ -668,9 +668,12 @@ class PR_DHL_Front_End_Paket {
 	}
 
 	public function validate_post_number()	{
+		
+		// NEED TO CONFIRM WHETHER SENDING TO DIFFERENT ADDRESS TO BILLING FIRST!!!
+
 		error_log(print_r($_POST,true));
-		$shipping_address_1 = wc_clean( $_POST['shipping_address_1'] );
 		$shipping_dhl_address_type = wc_clean( $_POST['shipping_dhl_address_type'] );
+		$shipping_address_1 = wc_clean( $_POST['shipping_address_1'] );
 		$shipping_dhl_postnum_ps = wc_clean( $_POST['shipping_dhl_postnum_ps'] );
 		$shipping_dhl_postnum_br = wc_clean( $_POST['shipping_dhl_postnum_br'] );
 		
@@ -680,12 +683,14 @@ class PR_DHL_Front_End_Paket {
 
 		$shipping_dhl_postnum = '';
 
-		// check shipping method and payment gateway first
-		try {
-			$this->validate_extra_services_available();
-		} catch (Exception $e) {
-			wc_add_notice( __( '"DHL Locations" cannot be used - ', 'pr-shipping-dhl' ) . $e->getMessage(), 'error' );
-			return;
+		if( $shipping_dhl_address_type != 'normal' ) {
+			// check shipping method and payment gateway first
+			try {
+				$this->validate_extra_services_available();
+			} catch (Exception $e) {
+				wc_add_notice( __( '"DHL Locations" cannot be used - ', 'pr-shipping-dhl' ) . $e->getMessage(), 'error' );
+				return;
+			}
 		}
 
 		if( $shipping_dhl_address_type == 'dhl_packstation' ) {

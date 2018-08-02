@@ -142,6 +142,7 @@ jQuery( function( $ ) {
 			
 			// console.log(data);
 			$.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
+				console.log(response);
 				$( '#shipment-dhl-label-form' ).unblock();
 				if ( response.error ) {
 					$( '#shipment-dhl-label-form' ).append('<p class="wc_dhl_error">' + response.error + '</p>');
@@ -182,7 +183,7 @@ jQuery( function( $ ) {
 						var data = {
 							action:                   'woocommerce_add_order_note',
 							post_id:                  woocommerce_admin_meta_boxes.post_id,
-							note_type: 				  dhl_label_data.note_type,
+							note_type: 				  response.tracking_note_type,
 							note:					  response.tracking_note,
 							security:                 woocommerce_admin_meta_boxes.add_order_note_nonce
 						};

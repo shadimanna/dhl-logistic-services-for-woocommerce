@@ -182,12 +182,12 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'description'       => __( 'Please, tick here if you want the "Print Only If Codeable" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 			),
-			'dhl_note_type' => array(
-				'title'             => __( 'Order Note Type', 'pr-shipping-dhl' ),
+			'dhl_tracking_note' => array(
+				'title'             => __( 'Tracking Note', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
-				'label'             => __( 'Customer Note', 'pr-shipping-dhl' ),
-				'default'           => 'yes',
-				'description'       => __( 'Please, tick here if you want the order note type to be a "customer note" that emails the customer or a "private note" that does not. The order note is used to add the shipping tracking number.', 'pr-shipping-dhl' ),
+				'label'             => __( 'Make Private', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here to not send an email to the customer when the tracking number is added to the order.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 			),
 			'dhl_api'           => array(

@@ -361,14 +361,8 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		return array( 'pr_dhl_cod_value', 'pr_dhl_preferred_day', 'pr_dhl_preferred_time', 'pr_dhl_preferred_location', 'pr_dhl_preferred_neighbor', 'pr_dhl_duties', 'pr_dhl_age_visual', 'pr_dhl_email_notification', 'pr_dhl_additional_insurance', 'pr_dhl_personally', 'pr_dhl_no_neighbor', 'pr_dhl_named_person', 'pr_dhl_premium', 'pr_dhl_bulky_goods', 'pr_dhl_is_codeable', 'pr_dhl_identcheck', 'pr_dhl_identcheck_dob', 'pr_dhl_identcheck_age', 'pr_dhl_return_address_enabled', 'pr_dhl_return_name', 'pr_dhl_return_company', 'pr_dhl_return_address','pr_dhl_return_address_no', 'pr_dhl_return_address_city', 'pr_dhl_return_address_state', 'pr_dhl_return_address_zip', 'pr_dhl_return_phone', 'pr_dhl_return_email' );
 	}
 
-	protected function get_tracking_link( $tracking_num ) {
-		if( empty( $tracking_num ) ) {
-			return '';
-		}
-
-		$tracking_note = sprintf( __( '<label>DHL Tracking Number: </label><a href="%s%s" target="_blank">%s</a>', 'my-text-domain' ), PR_DHL_PAKET_TRACKING_URL, $tracking_num, $tracking_num);
-		
-		return $tracking_note;
+	protected function get_tracking_url() {
+		return PR_DHL_PAKET_TRACKING_URL;
 	}
 
 	protected function get_label_args_settings( $order_id, $dhl_label_items ) {
@@ -432,6 +426,8 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 	protected function save_default_dhl_label_items( $order_id ) {
 
+		parent::save_default_dhl_label_items( $order_id );
+		
 		$dhl_label_items = $this->get_dhl_label_items( $order_id );
 		
 		if( empty( $dhl_label_items['pr_dhl_is_codeable'] ) ) {
@@ -445,7 +441,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 		$this->save_dhl_label_items( $order_id, $dhl_label_items );
 
-		parent::save_default_dhl_label_items( $order_id );
 	}
 
 	protected function get_default_dhl_print_codeable() {

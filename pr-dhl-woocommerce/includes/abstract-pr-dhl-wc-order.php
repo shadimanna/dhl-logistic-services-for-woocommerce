@@ -128,6 +128,13 @@ abstract class PR_DHL_WC_Order {
 			$print_button = '<a href="'. $label_tracking_info['label_url'] .'" id="dhl-label-print" class="button button-primary" download target="_blank">' .PR_DHL_BUTTON_LABEL_PRINT . '</a>';
 		}
 
+		$dhl_label_data = array(
+			'main_button' => $main_button,
+			'delete_label' => $delete_label,
+			'print_button' => $print_button
+		);
+
+
 		echo '<div id="shipment-dhl-label-form">';
 
 		if( !empty( $dhl_product_list ) ) {
@@ -169,13 +176,6 @@ abstract class PR_DHL_WC_Order {
 				echo $delete_label;
 			}
 			
-			$dhl_label_data = array(
-				'main_button' => $main_button,
-				'delete_label' => $delete_label,
-				'print_button' => $print_button,
-				'note_type' => $this->get_note_type( $order_id ),
-			);
-
 			wp_enqueue_script( 'wc-shipment-dhl-label-js', PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl.js', array(), PR_DHL_VERSION );
 			wp_localize_script( 'wc-shipment-dhl-label-js', 'dhl_label_data', $dhl_label_data );
 			
@@ -236,14 +236,16 @@ abstract class PR_DHL_WC_Order {
 			$label_tracking_info = $dhl_obj->get_dhl_label( $args );
 
 			$this->save_dhl_label_tracking( $order_id, $label_tracking_info );
-			$tracking_note = $this->get_tracking_link( $label_tracking_info['tracking_number'] );
+			$tracking_note = $this->get_tracking_note( $order_id );
+			$tracking_note_type = $this->get_tracking_note_type();
 			$label_url = $label_tracking_info['label_url'];
 
 			wp_send_json( array( 
 				'download_msg' => __('Your DHL label is ready to download, click the "Download Label" button above"', 'pr-shipping-dhl'),
 				'button_txt' => PR_DHL_BUTTON_LABEL_PRINT,
 				'label_url' => $label_url,
-				'tracking_note'	  => $tracking_note
+				'tracking_note'	  => $tracking_note,
+				'tracking_note_type' => $tracking_note_type,
 				) );
 
 			do_action( 'pr_shipping_dhl_label_created', $order_id );
@@ -307,14 +309,43 @@ abstract class PR_DHL_WC_Order {
 		return $label_url;
 	}
 
-	protected function get_tracking_link( $tracking_num ) {
-		if( empty( $tracking_num ) ) {
+	protected function get_tracking_note( $order_id ) {
+		
+		if( ! empty( $this->shipping_dhl_settings['dhl_tracking_note_txt'] ) ) {
+			$tracking_note = $this->shipping_dhl_settings['dhl_tracking_note_txt'];
+		} else {
+			$tracking_note = __( 'DHL Tracking Number: {tracking-link}', 'pr-shipping-dhl' );
+		}
+		
+		$tracking_link = $this->get_tracking_link( $order_id );
+		
+		$tracking_note_new = str_replace('{tracking-link}', $tracking_link, $tracking_note, $count);
+		
+		if( $count == 0 ) {
+			$tracking_note_new = $tracking_note . ' ' . $tracking_link;
+		}
+		
+		return $tracking_note_new;
+	}
+
+	protected function get_tracking_link( $order_id ) {
+		
+		$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
+		if( empty( $label_tracking_info['tracking_number'] ) ) {
 			return '';
 		}
 
-		$tracking_note = sprintf( __( '<label>DHL Tracking Number: </label><a href="%s%s" target="_blank">%s</a>', 'my-text-domain' ), PR_DHL_ECOMM_TRACKING_URL, $tracking_num, $tracking_num);
-		
-		return $tracking_note;
+		return sprintf( __( '<a href="%s%s" target="_blank">%s</a>', 'my-text-domain' ), $this->get_tracking_url(), $label_tracking_info['tracking_number'], $label_tracking_info['tracking_number']);
+	}
+
+	abstract protected function get_tracking_url();
+
+	protected function get_tracking_note_type() {
+		if( isset( $this->shipping_dhl_settings['dhl_tracking_note'] ) && ( $this->shipping_dhl_settings['dhl_tracking_note'] == 'no' ) ) {
+			return 'customer';
+		} else {
+			return '';
+		}
 	}
 
 	/**
@@ -384,6 +415,10 @@ abstract class PR_DHL_WC_Order {
 	protected function save_default_dhl_label_items( $order_id ) {
 		$dhl_label_items = $this->get_dhl_label_items( $order_id );
 
+		if( empty( $dhl_label_items ) ) {
+			$dhl_label_items = array();
+		}
+
 		if( empty( $dhl_label_items['pr_dhl_weight'] ) ) {
 			// Set default weight
 			$dhl_label_items['pr_dhl_weight'] = $this->calculate_order_weight( $order_id );
@@ -404,15 +439,6 @@ abstract class PR_DHL_WC_Order {
 			return $this->shipping_dhl_settings['dhl_default_product_dom'];
 		} else {
 			return $this->shipping_dhl_settings['dhl_default_product_int'];
-		}
-	}
-
-	protected function get_note_type( $order_id ) {
-		// $this->shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
-		if( isset( $this->shipping_dhl_settings['dhl_note_type'] ) && $this->shipping_dhl_settings['dhl_note_type'] == 'yes' ) {
-			return 'customer';
-		} else {
-			return 0;
 		}
 	}
 
@@ -843,7 +869,7 @@ abstract class PR_DHL_WC_Order {
 
 							// Gather args for DHL API call
 							$args = $this->get_label_args( $order_id );
-							error_log(print_r($args['order_details']['dhl_product'], true));
+							error_log(print_r($args, true));
 
 							// Force the use of this DHL Product for all bulk label creation
 							if ( $dhl_force_product ) {
@@ -868,9 +894,12 @@ abstract class PR_DHL_WC_Order {
 
 							$this->save_dhl_label_tracking( $order_id, $label_tracking_info );
 							$tracking_note = $this->get_tracking_note( $order_id );
+							
+							$tracking_note_type = $this->get_tracking_note_type();
+							$tracking_note_type = empty( $tracking_note_type ) ? 0 : 1;
 							// $label_url = $label_tracking_info['label_url'];
 
-							$order->add_order_note( $tracking_note, 1, true );
+							$order->add_order_note( $tracking_note, $tracking_note_type, true );
 							
 							++$label_count;
 
