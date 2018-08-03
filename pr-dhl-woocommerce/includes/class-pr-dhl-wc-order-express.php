@@ -172,7 +172,7 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 					'wrapper_class'		=> 'dhl-total-packages'
 				) );
 
-			echo '<div class="total_packages_container">
+			echo '<div class="total_packages_container" style="margin-bottom:15px;">
 					<div class="package_header">
 						<div class="package_header_field first">Package</div>
 						<div class="package_header_field">Weight</div>
@@ -207,7 +207,20 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 			}
 
 			echo '</div>';
-			echo '<br/><hr style="clear:both;">';
+
+			$contents_desc = isset( $dhl_label_items['pr_dhl_contents_description'] ) ? $dhl_label_items['pr_dhl_contents_description'] : '';
+			woocommerce_wp_textarea_input( array(
+				'id'          		=> 'pr_dhl_contents_description',
+				'label'       		=> __( 'Contents Description: ', 'pr-shipping-dhl' ),
+				'placeholder' 		=> 'Briefly describe package contents',
+				'description'		=> '',
+				'value'       		=> $contents_desc,
+				'rows'				=> 5,
+				'custom_attributes'	=> array( $is_disabled => $is_disabled, 'maxlength' => '90' )
+			) );
+
+			echo '<div style="margin-top:-15px;margin-bottom:10px;"><small>90 chars max</small></div>';
+			echo '<hr style="clear:both;">';
 		}
 	}
 
@@ -321,7 +334,7 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 	 * Function for saving tracking items
 	 */
 	public function get_additional_meta_ids( ) {
-		return array('pr_dhl_ship_date', 'pr_dhl_additional_insurance', 'pr_dhl_insured_value', 'pr_dhl_declared_value','pr_dhl_duties', 'pr_dhl_paperless_trade', 'pr_dhl_total_packages', 'pr_dhl_packages' );
+		return array('pr_dhl_ship_date', 'pr_dhl_additional_insurance', 'pr_dhl_insured_value', 'pr_dhl_declared_value','pr_dhl_duties', 'pr_dhl_paperless_trade', 'pr_dhl_total_packages', 'pr_dhl_packages', 'pr_dhl_contents_description' );
 	}
 
 	protected function get_tracking_link( $tracking_num ) {
