@@ -138,6 +138,9 @@ class PR_DHL_WC {
 		$this->define( 'PR_DHL_CIG_AUTH_QA', 'https://cig.dhl.de/services/sandbox/soap' );
 
 		$this->define( 'PR_DHL_PAKET_TRACKING_URL', 'https://nolp.dhl.de/nextt-online-public/report_popup.jsp?idc=' );
+		
+
+		$this->define( 'PR_DHL_EXPRESS_TRACKING_URL', ' http://www.dhl.com/en/express/tracking.html?AWB=' );
 	}
 	
 	/**

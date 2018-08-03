@@ -276,7 +276,7 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 			return '';
 		}
 
-		$tracking_note = sprintf( __( '<label>DHL Tracking Number: </label><a href="%s%s" target="_blank">%s</a>', 'my-text-domain' ), PR_DHL_PAKET_TRACKING_URL, $tracking_num, $tracking_num);
+		$tracking_note = sprintf( __( '<label>DHL Tracking Number: </label><a href="%s%s" target="_blank">%s</a>', 'my-text-domain' ), PR_DHL_EXPRESS_TRACKING_URL, $tracking_num, $tracking_num);
 		
 		return $tracking_note;
 	}

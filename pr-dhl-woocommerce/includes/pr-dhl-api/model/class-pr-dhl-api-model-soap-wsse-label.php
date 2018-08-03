@@ -70,7 +70,8 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 				}
 			}
 
-			$tracking_number = isset( $response_body->PackagesResult->PackageResult->TrackingNumber ) ? $response_body->PackagesResult->PackageResult->TrackingNumber : '';
+			// $tracking_number = isset( $response_body->PackagesResult->PackageResult->TrackingNumber ) ? $response_body->PackagesResult->PackageResult->TrackingNumber : '';
+			$tracking_number = isset( $response_body->ShipmentIdentificationNumber ) ? $response_body->ShipmentIdentificationNumber : '';
 			
 			$label_tracking_info = $this->save_label_file( $response_body->ShipmentIdentificationNumber, $response_body->LabelImage->LabelImageFormat, $response_body->LabelImage->GraphicImage );
 
