@@ -154,7 +154,57 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 
 			echo $upload_file_button;
 
+
 			echo '<hr style="clear:both;">';
+
+			$total_packages = isset( $dhl_label_items['pr_dhl_total_packages'] ) ? $dhl_label_items['pr_dhl_total_packages'] : '1';
+			$packages = isset( $dhl_label_items['pr_dhl_packages'] ) ? $dhl_label_items['pr_dhl_packages'] : array();
+
+			woocommerce_wp_text_input( array(
+					'id'	          	=> 'pr_dhl_total_packages',
+					'name'          	=> 'pr_dhl_total_packages',
+					'type'          	=> 'number',
+					'label'       		=>  __( 'Total Packages:', 'pr-shipping-dhl' ),
+					'placeholder' 		=> '',
+					'description'		=> '',
+					'custom_attributes'	=> array( $is_disabled => $is_disabled, 'min' => 1, 'max' => 50, 'data-current' => $total_packages ),
+					'value'				=> $total_packages,
+					'wrapper_class'		=> 'dhl-total-packages'
+				) );
+
+			echo '<div class="total_packages_container">
+					<div class="package_header">
+						<div class="package_header_field first">Package</div>
+						<div class="package_header_field">Weight</div>
+						<div class="package_header_field">Length</div>
+						<div class="package_header_field">Width</div>
+						<div class="package_header_field">Height</div>
+					</div>';
+
+			if ( empty( $packages ) ) {
+				echo '	<div class="package_item">
+							<div class="package_item_field package_number first">1</div>
+							<div class="package_item_field"><input type="text" name="pr_dhl_packages_weight[]" placeholder="kg" /></div>
+							<div class="package_item_field"><input type="text" name="pr_dhl_packages_length[]" placeholder="cm" /></div>
+							<div class="package_item_field"><input type="text" name="pr_dhl_packages_width[]" placeholder="cm" /></div>
+							<div class="package_item_field"><input type="text" name="pr_dhl_packages_height[]" placeholder="cm" /></div>
+						</div>';
+			} else {
+				for ($i=0, $num=1; $i<count($packages); $i++, $num++) {
+					$package = $packages[$i];
+
+					echo '	<div class="package_item">
+							<div class="package_item_field package_number first">'.$num.'</div>
+							<div class="package_item_field"><input type="text" name="pr_dhl_packages_weight[]" value="'.$package['weight'].'" placeholder="kg" /></div>
+							<div class="package_item_field"><input type="text" name="pr_dhl_packages_length[]" value="'.$package['length'].'" placeholder="cm" /></div>
+							<div class="package_item_field"><input type="text" name="pr_dhl_packages_width[]" value="'.$package['width'].'" placeholder="cm" /></div>
+							<div class="package_item_field"><input type="text" name="pr_dhl_packages_height[]" value="'.$package['height'].'" placeholder="cm" /></div>
+						</div>';
+				}
+			}
+
+			echo '</div>';
+			echo '<br/><hr style="clear:both;">';
 		}
 	}
 
@@ -268,7 +318,7 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 	 * Function for saving tracking items
 	 */
 	public function get_additional_meta_ids( ) {
-		return array('pr_dhl_ship_date', 'pr_dhl_additional_insurance', 'pr_dhl_insured_value', 'pr_dhl_declared_value','pr_dhl_duties', 'pr_dhl_paperless_trade' );
+		return array('pr_dhl_ship_date', 'pr_dhl_additional_insurance', 'pr_dhl_insured_value', 'pr_dhl_declared_value','pr_dhl_duties', 'pr_dhl_paperless_trade', 'pr_dhl_total_packages', 'pr_dhl_packages' );
 	}
 
 	protected function get_tracking_link( $tracking_num ) {
