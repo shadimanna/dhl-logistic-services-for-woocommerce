@@ -190,15 +190,18 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 							<div class="package_item_field"><input type="text" name="pr_dhl_packages_height[]" placeholder="cm" /></div>
 						</div>';
 			} else {
-				for ($i=0, $num=1; $i<count($packages); $i++, $num++) {
-					$package = $packages[$i];
+				for ($i=0, $num=1; $i<intval($total_packages); $i++, $num++) {
+					$weight = !empty($packages[$i]) ? $packages[$i]['weight'] : '';
+					$length = !empty($packages[$i]) ? $packages[$i]['length'] : '';
+					$width = !empty($packages[$i]) ? $packages[$i]['width'] : '';
+					$height = !empty($packages[$i]) ? $packages[$i]['height'] : '';
 
 					echo '	<div class="package_item">
 							<div class="package_item_field package_number first">'.$num.'</div>
-							<div class="package_item_field"><input type="text" name="pr_dhl_packages_weight[]" value="'.$package['weight'].'" placeholder="kg" /></div>
-							<div class="package_item_field"><input type="text" name="pr_dhl_packages_length[]" value="'.$package['length'].'" placeholder="cm" /></div>
-							<div class="package_item_field"><input type="text" name="pr_dhl_packages_width[]" value="'.$package['width'].'" placeholder="cm" /></div>
-							<div class="package_item_field"><input type="text" name="pr_dhl_packages_height[]" value="'.$package['height'].'" placeholder="cm" /></div>
+							<div class="package_item_field"><input type="text" name="pr_dhl_packages_weight[]" value="'.$weight.'" placeholder="kg" /></div>
+							<div class="package_item_field"><input type="text" name="pr_dhl_packages_length[]" value="'.$length.'" placeholder="cm" /></div>
+							<div class="package_item_field"><input type="text" name="pr_dhl_packages_width[]" value="'.$width.'" placeholder="cm" /></div>
+							<div class="package_item_field"><input type="text" name="pr_dhl_packages_height[]" value="'.$height.'" placeholder="cm" /></div>
 						</div>';
 				}
 			}
