@@ -171,29 +171,33 @@ class DHLPWC_Controller_Admin_Order_Metabox
         ), false);
 
         // Generate options
-        $service = DHLPWC_Model_Service_Label_Option::instance();
-        $options = $service->get_selectable_options($order_id);
-        $option_view = '';
-        foreach($options as $option) {
+        $option_service = DHLPWC_Model_Service_Order_Meta_Option::instance();
+        $customer_preferred_options = $option_service->get_keys($order_id);
+        $default_signature = $option_service->default_signature($order_id, $customer_preferred_options, $to_business);
+        if ($default_signature) {
+            $option_service->add_key_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_HANDT, $customer_preferred_options);
+        }
+
+        $label_service = DHLPWC_Model_Service_Label_Option::instance();
+        $selectable_options = $label_service->get_selectable_options($order_id, $default_signature);
+
+        $selectable_option_view = '';
+        foreach($selectable_options as $selectable_option) {
             $view = new DHLPWC_Template('order.meta.form.option');
-            $option_view .= $view->render($option, false);
+            $selectable_option_view .= $view->render($selectable_option, false);
         }
 
         // Generate parceltypes (with requested options)
-        $service = DHLPWC_Model_Service_Order_Meta_Option::instance();
-        $options = $service->get_keys($order_id);
-
-        $parceltype_content = $this->parceltype_content($order_id, $options, $to_business);
+        $parceltype_content = $this->parceltype_content($order_id, $customer_preferred_options, $to_business);
         $view = new DHLPWC_Template('order.meta.form.parceltype-wrapper');
         $parceltype_view = $view->render(array(
-            'content' => $parceltype_content,
-            'actions' => $this->get_refresh_action($order_id),
+            'content' => $parceltype_content
         ), false);
 
         $view = new DHLPWC_Template('order.meta');
         $meta_view .= $view->render(array(
             'to_business' => $to_business_view,
-            'options' => trim($option_view),
+            'options' => trim($selectable_option_view),
             'parcel_types' => trim($parceltype_view),
         ), false);
 
@@ -220,7 +224,7 @@ class DHLPWC_Controller_Admin_Order_Metabox
         });
 
         $parceltype_view = $view->render(array(
-            'message' => implode(' - ', $option_texts),
+            'message' => implode(' + ', $option_texts),
         ), false);
 
         $service = DHLPWC_Model_Service_Access_Control::instance();
@@ -251,6 +255,14 @@ class DHLPWC_Controller_Admin_Order_Metabox
     {
         $post_id = $post_id ?: get_the_ID();
 
+        $locale = str_replace('_', '-', get_locale());
+
+        $service = DHLPWC_Model_Service_Postcode::instance();
+        $postcode = $service->get_postcode_from_order($post_id);
+
+        $service = DHLPWC_Model_Service_Track_Trace::instance();
+        $tracking_url = $service->get_url($label['tracker_code'], $postcode, $locale);
+
         $actions = array(
             array(
                 'url'    => $label['pdf']['url'],
@@ -258,7 +270,7 @@ class DHLPWC_Controller_Admin_Order_Metabox
                 'action' => "dhlpwc_action_download",
             ),
             array(
-                'url'    => 'https://www.dhlparcel.nl/nl/volg-uw-zending?tt='.$label['tracker_code'],
+                'url'    => esc_url($tracking_url),
                 'name'   => __('Follow track & trace', 'dhlpwc'),
                 'action' => "dhlpwc_action_follow_tt",
             ),
@@ -286,30 +298,6 @@ class DHLPWC_Controller_Admin_Order_Metabox
             'content'  => $action_view,
         ), false);
     }
-
-    protected function get_refresh_action($post_id = null)
-    {
-        $post_id = $post_id ?: get_the_ID();
-
-        $action = array(
-            'url'    => admin_url('post.php?post=' . $post_id . '&action=edit'),
-            'name'   => __('Update available sizes based on selected options', 'dhlpwc'),
-            'action' => "dhlpwc_action_refresh",
-
-        );
-
-        $view = new DHLPWC_Template('admin.action-button');
-        $action_view = $view->render(array(
-            'action'  => $action,
-            'post_id' => $post_id,
-        ), false);
-
-        $view = new DHLPWC_Template('admin.action-button-wrapper');
-        return $view->render(array(
-            'content'  => $action_view,
-        ), false);
-    }
-
 
     public function load_styles()
     {

@@ -52,6 +52,36 @@ class DHLPWC_Model_Service_Order_Meta_Option extends DHLPWC_Model_Core_Singleton
         return $options;
     }
 
+    public function default_signature($order_id, $options, $to_business)
+    {
+        $service = DHLPWC_Model_Service_Access_Control::instance();
+        $send_signature_checked = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DEFAULT_SEND_SIGNATURE);
+        if (!$send_signature_checked) {
+            return false;
+        }
+
+        $allowed_shipping_options = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CAPABILITY_OPTIONS, array(
+            'order_id' => $order_id,
+            'options' => $options,
+            'to_business' => $to_business,
+        ));
+
+        // Disable automatic checking of send signature if there are no parceltypes for it
+        if (!in_array(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_HANDT, $allowed_shipping_options)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function add_key_to_stack($key, &$array)
+    {
+        if (!in_array($key, $array)) {
+            $array[] = $key;
+        }
+        return $array;
+    }
+
 }
 
 endif;

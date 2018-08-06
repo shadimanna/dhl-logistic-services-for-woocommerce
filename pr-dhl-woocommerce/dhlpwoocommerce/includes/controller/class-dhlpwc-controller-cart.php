@@ -9,8 +9,13 @@ class DHLPWC_Controller_Cart
 
     public function __construct()
     {
+        add_action('wp_loaded', array($this, 'set_parcelshop_hooks'));
+    }
+
+    public function set_parcelshop_hooks()
+    {
         $service = DHLPWC_Model_Service_Access_Control::instance();
-        if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_OPTION_PARCELSHOP)) {
+        if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CHECKOUT_PARCELSHOP)) {
             add_action('wp_enqueue_scripts', array($this, 'load_styles'));
             add_action('wp_enqueue_scripts', array($this, 'load_scripts'));
             add_filter('script_loader_tag', array($this, 'update_scripts'), 10, 3);

@@ -13,7 +13,7 @@ class DHLPWC_Controller_Account
         if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_TRACK_TRACE_COMPONENT)) {
             add_action('wp_enqueue_scripts', array($this, 'load_scripts'));
             add_action('wp_enqueue_scripts', array($this, 'load_styles'));
-            add_action('woocommerce_order_items_table', array($this, 'track_and_trace'), 10, 1);
+            add_action('woocommerce_order_details_after_order_table_items', array($this, 'track_and_trace'), 10, 1);
         }
     }
 
@@ -27,7 +27,7 @@ class DHLPWC_Controller_Account
     public function load_scripts()
     {
         if (is_account_page()) {
-            wp_enqueue_script('dhlpwc-track-and-trace', 'https://components.dhlparcel.nl/track-and-trace-iframe.js', array(), null, true);
+            wp_enqueue_script('dhlpwc-track-and-trace', 'https://track-and-trace.dhlparcel.nl/track-and-trace-iframe.js', array(), null, true);
         }
     }
 
@@ -54,4 +54,3 @@ class DHLPWC_Controller_Account
 }
 
 endif;
-

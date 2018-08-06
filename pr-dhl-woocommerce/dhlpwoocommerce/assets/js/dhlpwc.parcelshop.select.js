@@ -2,7 +2,9 @@ jQuery(document).ready(function($) {
 
     var dhlpwc_parcelshop_selection_modal_loading_busy = false;
     var dhlpwc_parcelshop_selection_modal_loaded = false;
-    var dhlpwc_shipping_input_name = $('[id^=shipping_method_][id$=_dhlpwc-parcelshop]').attr('name').replace(/(:|\.|\[|\])/g,'\\$1');
+    if ($('[id^=shipping_method_][id$=_dhlpwc-parcelshop]').length > 0) {
+        var dhlpwc_shipping_input_name = $('[id^=shipping_method_][id$=_dhlpwc-parcelshop]').attr('name').replace(/(:|\.|\[|\])/g,'\\$1');
+    }
 
     $(document.body).on('change', 'input[type=radio][name='+dhlpwc_shipping_input_name+']', function() {
         if ($('[id^=shipping_method_][id$=_dhlpwc-parcelshop]').is(':checked')) {

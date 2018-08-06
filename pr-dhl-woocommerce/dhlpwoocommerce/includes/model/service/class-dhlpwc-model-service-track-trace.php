@@ -7,15 +7,28 @@ if (!class_exists('DHLPWC_Model_Service_Track_Trace')) :
 class DHLPWC_Model_Service_Track_Trace extends DHLPWC_Model_Core_Singleton_Abstract
 {
 
-    protected $url = 'https://www.dhlparcel.nl/nl/volg-uw-zending-0?tt=%1$s&pc=%2$s&lc=%3$s';
+    const QUERY_TRACKING_CODE = 'tt';
+    const QUERY_POSTCODE = 'pc';
+    const QUERY_LANDCODE = 'lc';
 
-    public function get_url($tracking_code, $postcode, $locale)
+    protected $url = 'https://www.dhlparcel.nl/nl/volg-uw-zending-0';
+
+    public function get_url($tracking_code = null, $postcode = null, $locale = null)
     {
-        return sprintf($this->url,
-            urlencode($tracking_code),
-            urlencode($postcode),
-            urlencode($locale)
-        );
+        $query_args = array();
+        if ($tracking_code !== null) {
+            $query_args[self::QUERY_TRACKING_CODE] = urlencode($tracking_code);
+        }
+
+        if ($postcode !== null) {
+            $query_args[self::QUERY_POSTCODE] = urlencode($postcode);
+        }
+
+        if ($locale !== null) {
+            $query_args[self::QUERY_LANDCODE] = urlencode($locale);
+        }
+
+        return add_query_arg($query_args, $this->url);
     }
 
     public function get_track_trace_from_order($order_id)

@@ -47,19 +47,23 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
     {
         $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
 
-        if (!isset($shipping_methods['dhlpwc'])) {
+        if (empty($shipping_methods['dhlpwc'])) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['user_id'])) {
+        if (empty($shipping_methods['dhlpwc']->settings['user_id'])) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['key'])) {
+        if (empty($shipping_methods['dhlpwc']->settings['key'])) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['account_id'])) {
+        if (empty($shipping_methods['dhlpwc']->settings['account_id'])) {
+            return false;
+        }
+
+        if (empty($shipping_methods['dhlpwc']->settings['organization_id'])) {
             return false;
         }
 
@@ -175,50 +179,6 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         return true;
     }
 
-    protected function check_option($enable_option_string)
-    {
-        $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
-
-        if (!isset($shipping_methods['dhlpwc'])) {
-            return false;
-        }
-
-        if (!isset($shipping_methods['dhlpwc']->settings['enable_option_'.$enable_option_string])) {
-            return false;
-        }
-
-        if ($shipping_methods['dhlpwc']->settings['enable_option_'.$enable_option_string] != 'yes') {
-            return false;
-        }
-
-        return true;
-    }
-
-    public function check_enable_free()
-    {
-        return $this->check_option('free');
-    }
-
-    public function check_enable_home()
-    {
-        return $this->check_option('home');
-    }
-
-    public function check_enable_no_neighbour()
-    {
-        return $this->check_option('no_neighbour');
-    }
-
-    public function check_enable_evening()
-    {
-        return $this->check_option('evening');
-    }
-
-    public function check_enable_parcelshop()
-    {
-        return $this->check_option('parcelshop');
-    }
-
     public function check_debug()
     {
         $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
@@ -292,6 +252,76 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         return true;
     }
 
+    public function check_default_send_signature()
+    {
+        $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
+
+        if (!isset($shipping_methods['dhlpwc'])) {
+            return false;
+        }
+
+        if (!isset($shipping_methods['dhlpwc']->settings['check_default_send_signature'])) {
+            return false;
+        }
+
+        if ($shipping_methods['dhlpwc']->settings['check_default_send_signature'] != 'yes') {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function check_parcelshop_enabled()
+    {
+        $cart = WC()->cart;
+        if (!$cart) {
+            return false;
+        }
+
+        $customer = $cart->get_customer();
+
+        if (!$customer) {
+            return false;
+        }
+
+        if (!$customer->get_shipping_country()) {
+            return false;
+        }
+
+        $shipping_methods = WC_Shipping::instance()->load_shipping_methods(array(
+            'destination' => array(
+                'country'  => $customer->get_shipping_country(),
+                'state'    => $customer->get_shipping_state(),
+                'postcode' => $customer->get_shipping_postcode(),
+            ),
+        ));
+
+        if (empty($shipping_methods)) {
+            return false;
+        }
+
+        $continue = false;
+        foreach($shipping_methods as $shipping_method) {
+            if ($shipping_method->id === 'dhlpwc') {
+
+                $continue = true;
+                break;
+            }
+        }
+
+        if (!$continue) {
+            return false;
+        }
+
+        /** @var DHLPWC_Model_WooCommerce_Settings_Shipping_Method $shipping_method */
+        if ($shipping_method->get_option('enable_option_parcelshop') !== 'yes') {
+            return false;
+        }
+
+        return true;
+    }
+
 }
 
 endif;
+

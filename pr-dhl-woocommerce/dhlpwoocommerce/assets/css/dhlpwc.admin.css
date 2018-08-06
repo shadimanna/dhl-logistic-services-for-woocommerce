@@ -66,11 +66,6 @@
 .order_actions .dhlpwc_admin_action_button.dhlpwc_action_download::after { content: "\f316";}
 .order_actions .dhlpwc_admin_action_button.dhlpwc_action_follow_tt::after { content: "\f504";}
 .order_actions .dhlpwc_admin_action_button.dhlpwc_action_delete::after { content: "\f182"; }
-.order_actions .dhlpwc_admin_action_button.dhlpwc_action_refresh::after { content: "\f531"; }
-
-.widefat .column-order_actions a.button.dhlpwc_action_refresh {
-    float:right;
-}
 
 ul.order-meta-options {
     margin: 0;
@@ -84,7 +79,8 @@ ul.order-meta-options {
 
 /* Settings */
 input#woocommerce_dhlpwc_test_connection {
-    width: 200px;
+    width: auto;
+    min-width: 280px;
 }
 input#woocommerce_dhlpwc_test_connection.dhlpwc_button_success {
     background-color: #10fe6f;
@@ -93,33 +89,32 @@ input#woocommerce_dhlpwc_test_connection.dhlpwc_button_fail {
     background-color: #ed1b26;
 }
 
-#dhlpwc_shipping_method_settings {
+
+#mainform > #dhlpwc_shipping_method_settings {
     position: relative;
     padding-left: 220px;
 }
 
-#dhlpwc_shipping_method_settings:after {
+#mainform > #dhlpwc_shipping_method_settings:after {
     content: '';
     display: block;
     clear: both;
 }
 
-#dhlpwc_shipping_method_settings > table {
+#mainform > #dhlpwc_shipping_method_settings > table {
     position: relative;
     top: 0;
     left: 0;
     width: inherit;
     display: none;
     margin-right: -240px;
-    /*border: solid 3px #ffffff;*/
     padding: 0 20px;
-    /*background-color: #ffffff;*/
     border-top: solid 5px #ffffff;
     border-bottom: solid 5px #ffffff;
 }
 
-#dhlpwc_shipping_method_settings > h3,
-#dhlpwc_shipping_method_settings > p {
+#mainform > #dhlpwc_shipping_method_settings > h3,
+#mainform > #dhlpwc_shipping_method_settings > p {
     float: left;
     width: 182px;
     clear: left;
@@ -130,15 +125,15 @@ input#woocommerce_dhlpwc_test_connection.dhlpwc_button_fail {
     margin-left: -220px;
 }
 
-#dhlpwc_shipping_method_settings > h3.dhlpwc-highlight,
-#dhlpwc_shipping_method_settings > h3.dhlpwc-active,
-#dhlpwc_shipping_method_settings > p.dhlpwc-highlight,
-#dhlpwc_shipping_method_settings > p.dhlpwc-active {
+#mainform > #dhlpwc_shipping_method_settings > h3.dhlpwc-highlight,
+#mainform > #dhlpwc_shipping_method_settings > h3.dhlpwc-active,
+#mainform > #dhlpwc_shipping_method_settings > p.dhlpwc-highlight,
+#mainform > #dhlpwc_shipping_method_settings > p.dhlpwc-active {
     background-color: #ffffff;
     padding-left: 8px;
 }
 
-#dhlpwc_shipping_method_settings > h3 {
+#mainform > #dhlpwc_shipping_method_settings > h3 {
     margin-top: 0;
     margin-bottom: 0;
     padding-top: 15px;
@@ -146,17 +141,12 @@ input#woocommerce_dhlpwc_test_connection.dhlpwc_button_fail {
     border-top: solid 5px #ffffff;
 }
 
-#dhlpwc_shipping_method_settings > p {
+#mainform > #dhlpwc_shipping_method_settings > p {
     margin-top: 0;
     margin-bottom: 0;
     padding-bottom: 15px;
-    /*border-bottom: solid 5px #ffffff;*/
 }
 
-#dhlpwc_shipping_method_settings > p.dhlpwc-highlight,
-#dhlpwc_shipping_method_settings > p.dhlpwc-active {
-    /*border-bottom: solid 5px #ffffff;*/
-}
 
 .woocommerce table.form-table input#woocommerce_dhlpwc_price_tax_assistance {
     width: 80px;
@@ -201,6 +191,13 @@ input#woocommerce_dhlpwc_test_connection.dhlpwc_button_fail {
 .woocommerce table.form-table .dhlpwc-currency-pos-right_space > input.dhlpwc-price-input {
     padding-left: 10px;
     padding-right: 36px;
+}
+
+.woocommerce table.form-table tr.dhlpwc-disable-global-shipping-setting label,
+.woocommerce table.form-table tr.dhlpwc-disable-global-shipping-setting p.description,
+.woocommerce table.form-table tr.dhlpwc-disable-global-shipping-setting div.dhlpwc-currency-wrap i,
+.woocommerce table.form-table tr.dhlpwc-disable-global-shipping-setting input {
+    color: #aaaaaa;
 }
 
 div.dhlpwc_settings_suggestion_info {
