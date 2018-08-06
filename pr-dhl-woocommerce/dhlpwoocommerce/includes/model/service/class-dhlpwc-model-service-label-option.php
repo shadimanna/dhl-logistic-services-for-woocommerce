@@ -7,7 +7,7 @@ if (!class_exists('DHLPWC_Model_Service_Label_Option')) :
 class DHLPWC_Model_Service_Label_Option extends DHLPWC_Model_Core_Singleton_Abstract
 {
 
-    public function get_selectable_options($order_id)
+    public function get_selectable_options($order_id, $send_signature_checked = false)
     {
         $service = DHLPWC_Model_Service_Order_Meta_Option::instance();
         $customer_options = $service->get_all($order_id);
@@ -27,6 +27,7 @@ class DHLPWC_Model_Service_Label_Option extends DHLPWC_Model_Core_Singleton_Abst
             $this->add_option_to_array(
                 $option_data,
                 DHLPWC_Model_Meta_Order_Option_Preference::OPTION_DOOR,
+                false,
                 true
             );
         }
@@ -35,7 +36,8 @@ class DHLPWC_Model_Service_Label_Option extends DHLPWC_Model_Core_Singleton_Abst
         if (!array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_HANDT, $customer_options)) {
             $this->add_option_to_array(
                 $option_data,
-                DHLPWC_Model_Meta_Order_Option_Preference::OPTION_HANDT
+                DHLPWC_Model_Meta_Order_Option_Preference::OPTION_HANDT,
+                $send_signature_checked
             );
         }
 
@@ -50,13 +52,14 @@ class DHLPWC_Model_Service_Label_Option extends DHLPWC_Model_Core_Singleton_Abst
         return $option_data;
     }
 
-    protected function add_option_to_array(&$data_array, $option_key, $prepend = false)
+    protected function add_option_to_array(&$data_array, $option_key, $checked = false, $prepend = false)
     {
         $option = array(
             'description' => __(sprintf('OPTION_%s', $option_key), 'dhlpwc'),
             'option' => new DHLPWC_Model_Meta_Order_Option_Preference(array(
                 'key' => $option_key
             )),
+            'checked' => $checked,
         );
 
         if (!$prepend) {

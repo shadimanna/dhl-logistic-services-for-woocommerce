@@ -13,6 +13,11 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
     {
         $order = wc_get_order($order_id);
         $receiver_address = $order->get_address('shipping') ?: $order->get_address();
+        $receiver_billing_address = $order->get_address('billing') ?: $order->get_address();
+        $receiver_address['email'] = $receiver_billing_address['email'];
+        $receiver_address['phone'] = preg_replace('/\D+/', '', $receiver_billing_address['phone']);
+        unset($receiver_billing_address);
+
         $business = isset($options['to_business']) && $options['to_business'] ? true : false;
 
         $service = DHLPWC_Model_Service_Settings::instance();

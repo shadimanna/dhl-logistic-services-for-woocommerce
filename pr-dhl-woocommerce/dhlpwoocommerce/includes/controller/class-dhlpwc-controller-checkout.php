@@ -12,8 +12,13 @@ class DHLPWC_Controller_Checkout
         add_filter('woocommerce_validate_postcode', array($this, 'validate_postcode'), 10, 3);
         add_action('woocommerce_checkout_update_order_meta', array($this, 'add_option_meta'), 10, 2);
 
+        add_action('wp_loaded', array($this, 'set_parcelshop_hooks'));
+    }
+
+    public function set_parcelshop_hooks()
+    {
         $service = DHLPWC_Model_Service_Access_Control::instance();
-        if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_OPTION_PARCELSHOP)) {
+        if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CHECKOUT_PARCELSHOP)) {
             add_action('woocommerce_after_checkout_validation', array($this, 'validate_parcelshop_selection'), 10, 2);
         }
     }

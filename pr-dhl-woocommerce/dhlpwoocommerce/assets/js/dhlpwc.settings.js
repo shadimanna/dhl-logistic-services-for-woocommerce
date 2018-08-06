@@ -46,6 +46,12 @@ jQuery(document).ready(function($) {
                     $.each(info.accounts, function (index, value) {
                         dhlpwc_account_area.append('<div class="dhlpwc_settings_suggestion_accounts" data-account-id="' + value.toString() + '">' + value.toString() + '</div>');
                     });
+
+                    // Autofill account if empty
+                    if ($('input#woocommerce_dhlpwc_account_id').val().length === 0) {
+                        var value = info.accounts[0];
+                        $('input#woocommerce_dhlpwc_account_id').val(value);
+                    }
                 }
 
                 var dhlpwc_organization_area = $('input#woocommerce_dhlpwc_organization_id').closest('fieldset').parent();
@@ -56,6 +62,11 @@ jQuery(document).ready(function($) {
                     var value = info.organization_id;
                     dhlpwc_organization_area.append('<div class="dhlpwc_settings_suggestion_info">' + dhlpwc_settings_object.organization_found_message + '</div>');
                     dhlpwc_organization_area.append('<div class="dhlpwc_settings_suggestion_organization" data-organization-id="' + value.toString() + '">' + value.toString() + '</div>');
+
+                    // Autofill organization if empty
+                    if ($('input#woocommerce_dhlpwc_organization_id').val().length === 0) {
+                        $('input#woocommerce_dhlpwc_organization_id').val(value);
+                    }
                 }
                 
             } else {
@@ -151,10 +162,26 @@ jQuery(document).ready(function($) {
             dhlpwc_settings.description.removeClass('dhlpwc-active');
             dhlpwc_settings.settings.css('display', 'none');
         });
+    }).on('dhlpwc:check_global_shipping_settings', function() {
+        var use_shipping_zones = $('input#woocommerce_dhlpwc_use_shipping_zones').is(':checked') ?  'yes' : 'no';
+        if (use_shipping_zones === 'yes') {
+            $('.dhlpwc-global-shipping-setting').each(function(e) {
+                $(this).prop('disabled', true);
+                $(this).closest('tr').addClass('dhlpwc-disable-global-shipping-setting');
+            })
+        } else {
+            $('.dhlpwc-global-shipping-setting').each(function(e) {
+                $(this).prop('disabled', false);
+                $(this).closest('tr').removeClass('dhlpwc-disable-global-shipping-setting');
+            })
+        }
+    }).on('change', 'input#woocommerce_dhlpwc_use_shipping_zones', function(e) {
+        $(document.body).trigger('dhlpwc:check_global_shipping_settings');
     });
 
     $(document.body).trigger('dhlpwc:init_test_connection_button');
     $(document.body).trigger('dhlpwc:init_settings_menu');
+    $(document.body).trigger('dhlpwc:check_global_shipping_settings');
 
     $('.dhlpwc-price-input').each(function(e) {
         var currency_symbol = $(this).data('dhlpwc-currency-symbol');
