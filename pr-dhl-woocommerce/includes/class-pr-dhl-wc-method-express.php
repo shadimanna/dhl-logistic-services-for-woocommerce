@@ -118,10 +118,9 @@ class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 	 */
 	public function init_form_fields() {
 
-		$log_path = PR_DHL()->get_log_url();
-
 		try {
 			
+			$log_path = PR_DHL()->get_log_url();
 			$dhl_obj = PR_DHL()->get_dhl_factory(true);
 			$select_dhl_product_int = $dhl_obj->get_dhl_products_international();
 			$select_dhl_product_dom = $dhl_obj->get_dhl_products_domestic();

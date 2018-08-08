@@ -100,10 +100,9 @@ class PR_DHL_API_Controller_Factory {
 				case 'IN':
 				case 'DE':
 				case 'AT':
+				default:
 					$dhl_obj = new PR_DHL_API_Controller_Express( $country_code );
 					break;
-				default:
-					throw new Exception( __('The DHL plugin is not supported in your store\'s "Base Location"', 'pr-shipping-dhl') );
 			}
 		} catch (Exception $e) {
 			throw $e;

@@ -207,7 +207,6 @@ class PR_DHL_WC {
 		if ( ! isset( $this->shipping_dhl_order ) ){
 			try {
 				$dhl_obj_express = $this->get_dhl_factory( true );
-
 				$this->shipping_dhl_order_express = new PR_DHL_WC_Order_Express();
 				
 				$dhl_obj = $this->get_dhl_factory();
@@ -218,7 +217,6 @@ class PR_DHL_WC {
 				} elseif( $dhl_obj->is_dhl_ecomm() ) {
 					$this->shipping_dhl_order = new PR_DHL_WC_Order_Ecomm();
 				}
-
 				
 				// Ensure DHL Labels folder exists
 				$this->dhl_label_folder_check();
@@ -287,6 +285,10 @@ class PR_DHL_WC {
 	public function add_shipping_method( $shipping_method ) {
 		// Check country somehow
 		try {
+			// Call factory to confirm whether to create shipping method i.e. will throw exception
+			$dhl_express_obj = $this->get_dhl_factory( true );
+			$shipping_method['pr_dhl_express'] = 'PR_DHL_WC_Method_Express';
+
 			$dhl_obj = $this->get_dhl_factory();
 			
 			if( $dhl_obj->is_dhl_paket() ) {
@@ -297,7 +299,6 @@ class PR_DHL_WC {
 				$shipping_method['pr_dhl_ecomm'] = $pr_dhl_ship_meth;
 			}
 
-			$shipping_method['pr_dhl_express'] = 'PR_DHL_WC_Method_Express';
 		} catch (Exception $e) {
 			// do nothing
 		}
@@ -321,10 +322,16 @@ class PR_DHL_WC {
 	 */
 	public function environment_check() {
 		// Try to get the DHL object...if exception if thrown display to user, mainly to check country support.
+		$dhl_obj_express = false;
+		$dhl_obj = false;
+
 		try {
-			$this->get_dhl_factory();
+			$dhl_obj_express = $this->get_dhl_factory( true );
+			$dhl_obj = $this->get_dhl_factory();
 		} catch (Exception $e) {
-			echo '<div class="error"><p>' . $e->getMessage() . '</p></div>';
+			if ( ! $dhl_obj_express && ! $dhl_obj ) {
+				echo '<div class="error"><p>' . $e->getMessage() . '</p></div>';
+			}
 		}
 	}
 
@@ -464,30 +471,39 @@ class PR_DHL_WC {
 
 		try {
 			$shipping_dhl_settings = $this->get_shipping_dhl_settings();
-			$dhl_debug = isset( $shipping_dhl_settings['dhl_debug'] ) ? $shipping_dhl_settings['dhl_debug'] : 'yes';
-			
-			if( ! $this->logger ) {
-				$this->logger = new PR_DHL_Logger( $dhl_debug );
-			}
+			$shipping_dhl_express_settings = $this->get_shipping_dhl_settings(true);
 
-			$this->logger->write( $msg );
+			// Get DHL (Paket or eComm) setting, default to 'no'
+			$dhl_debug = isset( $shipping_dhl_settings['dhl_debug'] ) ? $shipping_dhl_settings['dhl_debug'] : 'no';
+
+			// Get DHL Express setting, default to 'yes'
+			$dhl_express_debug = isset( $shipping_dhl_express_settings['dhl_debug'] ) ? $shipping_dhl_express_settings['dhl_debug'] : 'yes';
+
+			// If either settings want to log, then we log everything
+			if ( $dhl_debug == 'yes' || $dhl_express_debug == 'yes') {
+				
+				if( ! $this->logger ) {
+					$this->logger = new PR_DHL_Logger();
+				}
+
+				$this->logger->write( $msg );
+			}
+			
 			
 		} catch (Exception $e) {
 			// do nothing
 		}
 	}
 
-	public function get_log_url( )	{
+	public function get_log_url()	{
 
 		try {
-			$shipping_dhl_settings = $this->get_shipping_dhl_settings();
-			$dhl_debug = isset( $shipping_dhl_settings['dhl_debug'] ) ? $shipping_dhl_settings['dhl_debug'] : 'yes';
 			
 			if( ! $this->logger ) {
-				$this->logger = new PR_DHL_Logger( $dhl_debug );
+				$this->logger = new PR_DHL_Logger();
 			}
 			
-			return $this->logger->get_log_url( );
+			return $this->logger->get_log_url();
 			
 		} catch (Exception $e) {
 			throw $e;
