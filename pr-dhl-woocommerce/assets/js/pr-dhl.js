@@ -235,7 +235,7 @@ jQuery( function( $ ) {
 					alert('It appears that one or more of your packages contains empty information. Please kindly fill the weight, length, width and height of the package before submitting.');
 					abort = true;
 				} else {
-					data [ 'pr_dhl_packages' ] = packages;
+					if (packages.length) data [ 'pr_dhl_packages' ] = packages;
 				}		
 				
 
