@@ -206,6 +206,10 @@ class PR_DHL_WC {
 	public function get_pr_dhl_wc_order() {
 		if ( ! isset( $this->shipping_dhl_order ) ){
 			try {
+				$dhl_obj_express = $this->get_dhl_factory( true );
+
+				$this->shipping_dhl_order_express = new PR_DHL_WC_Order_Express();
+				
 				$dhl_obj = $this->get_dhl_factory();
 				
 				if( $dhl_obj->is_dhl_paket() ) {
@@ -215,9 +219,6 @@ class PR_DHL_WC {
 					$this->shipping_dhl_order = new PR_DHL_WC_Order_Ecomm();
 				}
 
-				$dhl_obj_express = $this->get_dhl_factory( true );
-
-				$this->shipping_dhl_order_express = new PR_DHL_WC_Order_Express();
 				
 				// Ensure DHL Labels folder exists
 				$this->dhl_label_folder_check();

@@ -50,7 +50,7 @@ class PR_DHL_API_Controller_Express extends PR_DHL_API {
 
 	public function get_dhl_duties() {
 		$duties = array(
-					'DAP' => __('Delivery At Paid', 'pr-shipping-dhl'),
+					'DAP' => __('Delivery At Place', 'pr-shipping-dhl'),
 					'DDP' => __('Delivery Duty Paid', 'pr-shipping-dhl')
 					);
 		return $duties;

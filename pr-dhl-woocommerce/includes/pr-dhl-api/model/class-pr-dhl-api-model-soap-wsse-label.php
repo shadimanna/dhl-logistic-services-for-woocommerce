@@ -523,7 +523,7 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 					array(
 						'NumberOfPieces' => $number_pieces,
 						'Description' => $item_description,
-						'CustomsValue' => $this->args['order_details']['total_value'],
+						'CustomsValue' => $this->args['order_details']['declared_value'],
 					);
 			}
 

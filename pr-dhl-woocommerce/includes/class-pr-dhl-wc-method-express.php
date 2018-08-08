@@ -611,8 +611,9 @@ class PR_DHL_WC_Method_Express extends WC_Shipping_Method {
 
 	protected function format_dhl_method_time( $date ) {
 		$wp_date_format = get_option('date_format');
-		$wp_time_format = get_option('time_format');
-		return date( $wp_date_format, strtotime( $date ) ) . ', ' . date( $wp_time_format, strtotime( $date ) );
+		// $wp_time_format = get_option('time_format');
+		// return date( $wp_date_format, strtotime( $date ) ) . ', ' . date( $wp_time_format, strtotime( $date ) );
+		return date( $wp_date_format, strtotime( $date ) );
 	}
 
 	protected function get_rates_args()	{
