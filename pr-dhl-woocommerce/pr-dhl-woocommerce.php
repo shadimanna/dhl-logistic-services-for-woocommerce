@@ -136,8 +136,8 @@ class PR_DHL_WC {
 		$this->define( 'PR_DHL_PAKET_BUSSINESS_PORTAL', 'https://www.dhl-geschaeftskundenportal.de' );
 
 		$this->define( 'PR_DHL_PACKSTATION', __('Packstation ', 'pr-shipping-dhl') );
-		$this->define( 'PR_DHL_PARCELSHOP', __('Parcelshop ', 'pr-shipping-dhl') );
-		$this->define( 'PR_DHL_POST_OFFICE', __('Post Office ', 'pr-shipping-dhl') );
+		$this->define( 'PR_DHL_PARCELSHOP', __('Postfiliale ', 'pr-shipping-dhl') );
+		$this->define( 'PR_DHL_POST_OFFICE', __('Postfiliale ', 'pr-shipping-dhl') );
 	}
 	
 	/**

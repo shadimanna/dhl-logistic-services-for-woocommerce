@@ -319,7 +319,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 */
 			woocommerce_wp_text_input( array(
 				'id'          		=> 'pr_dhl_identcheck_dob',
-				'label'       		=> __( 'Identity Check - Date of Birth: ', 'pr-shipping-dhl' ),
+				'label'       		=> __( 'Ident-Check - Date of Birth: ', 'pr-shipping-dhl' ),
 				'placeholder' 		=> '',
 				'description'		=> '',
 				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_dob'] ) ? $dhl_label_items['pr_dhl_identcheck_dob'] : '',
@@ -330,7 +330,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			// $visual_age = $dhl_obj->get_dhl_visual_age();
 			woocommerce_wp_select( array(
 				'id'          		=> 'pr_dhl_identcheck_age',
-				'label'       		=> __( 'Identity Check - Minimum Age: ', 'pr-shipping-dhl' ),
+				'label'       		=> __( 'Ident-Check - Minimum Age: ', 'pr-shipping-dhl' ),
 				'description'		=> '',
 				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_age'] ) ? $dhl_label_items['pr_dhl_identcheck_age'] : '',
 				'options'			=> $visual_age,
@@ -427,7 +427,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	protected function save_default_dhl_label_items( $order_id ) {
 
 		parent::save_default_dhl_label_items( $order_id );
-		
+
 		$dhl_label_items = $this->get_dhl_label_items( $order_id );
 		
 		if( empty( $dhl_label_items['pr_dhl_is_codeable'] ) ) {

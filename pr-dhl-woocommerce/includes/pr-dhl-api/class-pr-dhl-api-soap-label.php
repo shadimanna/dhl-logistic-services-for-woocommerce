@@ -606,26 +606,34 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 											)
 										);
 
+				$address_num = filter_var($this->args['shipping_address']['address_1'], FILTER_SANITIZE_NUMBER_INT);
+
 				if ( $this->pos_ps ) {
 					$parcel_shop['postNumber'] = $this->args['shipping_address']['dhl_postnum'];
-					$parcel_shop['packstationNumber'] = filter_var($this->args['shipping_address']['address_1'], FILTER_SANITIZE_NUMBER_INT);
+					$parcel_shop['packstationNumber'] = $address_num;
 
 					
 					$dhl_label_body['ShipmentOrder']['Shipment']['Receiver']['Packstation'] = $parcel_shop;
 				}
-
+				/*
 				if ( $this->pos_rs ) {
 					$parcel_shop['postNumber'] = $this->args['shipping_address']['dhl_postnum'];
-					$parcel_shop['parcelShopNumber'] = filter_var($this->args['shipping_address']['address_1'], FILTER_SANITIZE_NUMBER_INT);
+					$parcel_shop['parcelShopNumber'] = $address_num;
 
 					
 					$dhl_label_body['ShipmentOrder']['Shipment']['Receiver']['ParcelShop'] = $parcel_shop;
-				}
+				}*/
 
-				if ( $this->pos_po ) {
-					$parcel_shop['postNumber'] = $this->args['shipping_address']['dhl_postnum'];
-					$parcel_shop['postfilialNumber'] = filter_var($this->args['shipping_address']['address_1'], FILTER_SANITIZE_NUMBER_INT);
+				// ONLY POSTAFILIALE HERE?  NO 'PARCELSHOP'?
+				if ( $this->pos_rs || $this->pos_po ) {
+					if( ! empty( $this->args['shipping_address']['dhl_postnum'] ) ) {
+						$parcel_shop['postNumber'] = $this->args['shipping_address']['dhl_postnum'];
+					} else {
+						// DOESN'T SEEM TO WORK!
+						$parcel_shop['postNumber'] = $this->args['shipping_address']['email'];
+					}
 
+					$parcel_shop['postfilialNumber'] = $address_num;
 					
 					$dhl_label_body['ShipmentOrder']['Shipment']['Receiver']['Postfiliale'] = $parcel_shop;
 				}

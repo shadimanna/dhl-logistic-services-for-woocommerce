@@ -109,11 +109,6 @@ jQuery(document).ready(function($) {
           // console.log('address type');
           // wc_checkout_dhl_parcelfinder.address_type;
       // });
-      
-      /*
-      $('#dhl_postoffice_filter').change(function() {
-          $( 'form#checkout_dhl_parcel_finder' ).submit();        
-      });*/
 
       $( 'form#checkout_dhl_parcel_finder' ).submit( this.submit );
     },
@@ -184,10 +179,16 @@ jQuery(document).ready(function($) {
     },
     submit: function() {
       var $form = $( this );
-      
-      $('#dhl_parcel_finder_form #checkout_dhl_parcel_finder .woocommerce-error').remove();
 
+      $('#dhl_parcel_finder_form #checkout_dhl_parcel_finder .woocommerce-error').remove();
+      
       if ( $form.is( '.processing' ) ) {
+        return false;
+      }
+
+      var pf_post_code = $('#dhl_parcelfinder_postcode').val();
+      if( ! pf_post_code ) {
+        $('#dhl_parcel_finder_form #checkout_dhl_parcel_finder').append('<div class="woocommerce-error">' + pr_dhl_checkout_frontend.post_code_error + '</div>');
         return false;
       }
 
@@ -202,11 +203,11 @@ jQuery(document).ready(function($) {
       var data = {
         action:                   'wc_shipment_dhl_parcelfinder_search',
         parcelfinder_country:     $('#dhl_parcelfinder_country').val(),
-        parcelfinder_postcode:    $('#dhl_parcelfinder_postcode').val(),
+        parcelfinder_postcode:    pf_post_code,
         parcelfinder_city:        $('#dhl_parcelfinder_city').val(),
         parcelfinder_address:     $('#dhl_parcelfinder_address').val(),
+        packstation_filter:       $('#dhl_packstation_filter').is(":checked"),
         branch_filter:            $('#dhl_branch_filter').is(":checked"),
-        postoffice_filter:        $('#dhl_postoffice_filter').is(":checked"),
         security:                 $form.find( 'input[name="dhl_parcelfinder_nonce"]' ).val()
       };
 
@@ -255,7 +256,6 @@ jQuery(document).ready(function($) {
         center: uluru
       });
 
-      // alert( dhl_packstation_filter + ' ' + dhl_postoffice_filter);
       var infoWinArray = [];
       $.each(wc_checkout_dhl_parcelfinder.parcelShops, function(key,value) {
         // console.log(key);
@@ -470,7 +470,10 @@ jQuery(document).ready(function($) {
   //   'height' : 800
   //   });
   
-  
+  $("[data-fancybox]").fancybox({
+    modal: true
+  });
+
   wc_checkout_dhl_parcelfinder.init();
 
 

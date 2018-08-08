@@ -195,9 +195,10 @@ a#dhl_parcel_finder {
   position: relative;
   font-weight: 700;
   text-decoration: none;
-  text-align: left;
+  text-align: center;
   cursor: pointer;
   border: 1px solid #dadae5;
+  margin-bottom: 10px;
 }
 
 #dhl_parcel_finder img {
@@ -206,12 +207,12 @@ a#dhl_parcel_finder {
 }
 
 #dhl_google_map {
-  width: 100%;
-  height: 100%;
+  /*width: 90%;*/
+  height: 85%;
 }
 
 #dhl_parcel_finder_form {
-  width: 90%;
+  /*width: 90%;*/
   height: 90%;
 }
 
@@ -226,20 +227,27 @@ a#dhl_parcel_finder {
 }
 
 
-#dhl_parcel_finder_form form .small-field {
-  width: 10%;
+#dhl_parcel_finder_form form #dhl_seach_button {
+  float: right;
+}
+
+#dhl_parcel_finder_form form .form-field {
   float: left;
   margin-right: 10px;
   margin-bottom: 10px;
   vertical-align: middle;
 }
 
-#dhl_parcel_finder_form form .large-field {
+#dhl_parcel_finder_form form .form-field.extra-small {
+  width: 7%;
+}
+
+#dhl_parcel_finder_form form .form-field.small {
+  width: 10%;
+}
+
+#dhl_parcel_finder_form form .form-field.large {
   width: 20%;
-  float: left;
-  margin-right: 10px;
-  margin-bottom: 10px;
-  vertical-align: middle;
 }
 
 #dhl_parcel_finder_form form .form-row label {
