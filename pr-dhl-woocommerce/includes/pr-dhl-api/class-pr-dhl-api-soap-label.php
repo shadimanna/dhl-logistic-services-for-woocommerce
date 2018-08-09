@@ -442,8 +442,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 							case 'identcheck':
 								$services[ $value['name'] ]['Ident']['surname'] = isset( $this->args['shipping_address']['first_name'] ) ? $this->args['shipping_address']['first_name'] : '';
 								$services[ $value['name'] ]['Ident']['givenName'] = isset( $this->args['shipping_address']['last_name'] ) ? $this->args['shipping_address']['last_name'] : '';
-								$services[ $value['name'] ]['Ident']['dateOfBirth'] = $this->args['order_details']['identcheck_dob'];
-								$services[ $value['name'] ]['Ident']['minimumAge'] = $this->args['order_details']['identcheck_age'];
+								$services[ $value['name'] ]['Ident']['dateOfBirth'] = isset( $this->args['order_details']['identcheck_dob'] ) ? $this->args['order_details']['identcheck_dob'] : '';
+								$services[ $value['name'] ]['Ident']['minimumAge'] = isset( $this->args['order_details']['identcheck_age'] ) ? $this->args['order_details']['identcheck_age'] : '';
 								break;							
 						}
 
@@ -720,12 +720,27 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			// Unset/remove any items that are empty strings or 0, even if required!
 			$this->body_request = $this->walk_recursive_remove( $dhl_label_body );
+			
 			// Ensure Export Document is set before adding additional fee
 			if( isset( $this->body_request['ShipmentOrder']['Shipment']['ExportDocument'] ) ) {
 				// Additional fees, required and 0 so place after check
 				$this->body_request['ShipmentOrder']['Shipment']['ExportDocument']['additionalFee'] = 0;
 			}
+			
+			// If "Ident-Check" enabled, then ensure both fields are passed even if empty
+			if ( isset( $this->args['order_details']['identcheck'] ) && ( $this->args['order_details']['identcheck'] == 'yes' ) ) {
+				
+				if( !isset( $this->body_request['ShipmentOrder']['Shipment']['ShipmentDetails']['Service']['IdentCheck']['Ident']['minimumAge'] ) ) {
+					
+					$this->body_request['ShipmentOrder']['Shipment']['ShipmentDetails']['Service']['IdentCheck']['Ident']['minimumAge'] = '';
+				}
 
+				if( !isset( $this->body_request['ShipmentOrder']['Shipment']['ShipmentDetails']['Service']['IdentCheck']['Ident']['dateOfBirth'] ) ) {
+					
+					$this->body_request['ShipmentOrder']['Shipment']['ShipmentDetails']['Service']['IdentCheck']['Ident']['dateOfBirth'] = '';
+				}
+			}
+			
 			return $this->body_request;
 			// $this->body_request = json_encode($dhl_label_body, JSON_PRETTY_PRINT);
 		}
