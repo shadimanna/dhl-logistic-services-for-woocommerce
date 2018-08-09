@@ -260,8 +260,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				throw new Exception( __('First name and last name must be passed for "Identity Check".', 'pr-shipping-dhl') );
 			}
 
-			if ( empty( $args['order_details']['identcheck_dob'] ) || empty( $args['order_details']['identcheck_age'] ) ) {
-				throw new Exception( __('All "Identity Check" values must be entered.', 'pr-shipping-dhl') );
+			if ( empty( $args['order_details']['identcheck_dob'] ) && empty( $args['order_details']['identcheck_age'] ) ) {
+				throw new Exception( __('Either a "Date of Birth" or "Minimum Age" must be eneted for "Ident-Check".', 'pr-shipping-dhl') );
 			}
 		}
 
