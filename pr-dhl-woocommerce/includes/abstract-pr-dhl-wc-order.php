@@ -209,6 +209,7 @@ abstract class PR_DHL_WC_Order {
 		
 		$additional_meta_box_ids = $this->get_additional_meta_ids( );
 
+		error_log(print_r($_POST,true));
 		// $meta_box_ids += $additional_meta_box_ids;
 		$meta_box_ids = array_merge( $meta_box_ids, $additional_meta_box_ids );
 		foreach ($meta_box_ids as $key => $value) {

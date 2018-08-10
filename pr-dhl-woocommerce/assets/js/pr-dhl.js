@@ -19,8 +19,11 @@ jQuery( function( $ ) {
 			$( '#woocommerce-shipment-dhl-label-express' )
 				.on( 'click', 'button.upload-invoice-button', this.upload_invoice );
 
+			// $( '#woocommerce-shipment-dhl-label-express' )
+				// .on( 'change', 'input#pr_dhl_total_packages', this.process_package_action ).on( 'keypress', 'input#pr_dhl_total_packages', this.prevent_manual_entry );
+
 			$( '#woocommerce-shipment-dhl-label-express' )
-				.on( 'change', 'input#pr_dhl_total_packages', this.process_package_action ).on( 'keypress', 'input#pr_dhl_total_packages', this.prevent_manual_entry );
+				.on( 'input', 'input#pr_dhl_total_packages', this.process_package_action ).on( 'keypress', 'input#pr_dhl_total_packages', this.prevent_manual_entry );
 		},
 
 		// Prevent manual input to the total packages input field. This
@@ -75,6 +78,7 @@ jQuery( function( $ ) {
 		// Process the cloning (adding) and removing of package entries based
 		// on the total packages selected by the user.
 		process_package_action: function() {
+			console.log('packages clicked');
 			var old_value = $(this).data('current');
 			var value = $(this).val();
 			var $container = $('.total_packages_container');

@@ -208,8 +208,13 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 		}
 
 		if( PR_DHL()->is_crossborder_shipment( $args['shipping_address']['country'] ) ) {
+			
 			if( empty( $args['order_details']['declared_value'] ) ) {
 				throw new Exception( __('"Declared Value" is empty!', 'pr-shipping-dhl') );
+			}
+
+			if ( empty( $args['order_details']['contents_description'] ) ) {
+				throw new Exception( __('No "Contents Description" has been entered!', 'pr-shipping-dhl') );
 			}
 		}
 
@@ -219,7 +224,7 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 				throw new Exception( __('"Insured Value" is empty!', 'pr-shipping-dhl') );
 			}
 
-			if( ! PR_DHL()->is_shipping_domestic( $this->args['shipping_address']['country'] ) ) {
+			if( ! PR_DHL()->is_shipping_domestic( $args['shipping_address']['country'] ) ) {
 				if( $args['order_details']['declared_value'] != $args['order_details']['insured_value'] ) {
 					throw new Exception( __('"Declared Value" and "Insured Value" must be equal!', 'pr-shipping-dhl') );
 				}
@@ -269,6 +274,10 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 			if ( !file_exists( $args['order_details']['invoice']) ) {
 				throw new Exception( __('The invoice file does not exist!', 'pr-shipping-dhl') );
 			}
+		}
+
+		if ( empty( $args['order_details']['packages'] ) ) {
+			throw new Exception( __('No packages have been defined!', 'pr-shipping-dhl') );
 		}
 
 		// Add default values for required fields that might not be passed e.g. phone
@@ -389,6 +398,22 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 				$ship_date = date('Y-m-d\TH:i:s\G\M\TP', strtotime( $this->args['order_details']['ship_date'] ) );
 			}
 
+			// Packages
+			$packages_arr = array();
+			foreach ( $this->args['order_details']['packages'] as $package_key => $package) {
+				// 'RequestedPackages' =>
+				$temp_package['number'] = $package_key + 1;
+				$temp_package['Weight']['Value'] = $package['weight'];
+				$temp_package['Dimensions']['Length'] = $package['length'];
+				$temp_package['Dimensions']['Width'] = $package['width'];
+				$temp_package['Dimensions']['Height'] = $package['height'];
+				$temp_package['CustomerReferences'] = $temp_package['number']; // TEMPORARILY UNTIL INPUT ADDED
+
+				array_push($packages_arr, $temp_package);
+			}
+
+			// error_log(print_r($packages_arr,true));
+
 			$dhl_label_body = 
 				array(
 					'Version' =>
@@ -452,18 +477,7 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 								),
 							'Packages' => 
 								array(
-									'RequestedPackages' =>
-										array(
-											'number' => 1,
-											'Weight' => 1, // CONVERT TO KG ALWAYS!
-											'Dimensions' =>
-												array(
-													'Length' =>  1, // CONVERT ALL TO CM ALWAYS!
-													'Width' =>  1,
-													'Height' =>  1,
-												),
-											'CustomerReferences' => 'IDK',
-										),
+									'RequestedPackages' => $packages_arr
 								),
 						),
 					);
@@ -522,7 +536,7 @@ class PR_DHL_API_Model_SOAP_WSSE_Label extends PR_DHL_API_SOAP_WSSE implements P
 				$dhl_label_body['RequestedShipment']['InternationalDetail']['Commodities'] = 
 					array(
 						'NumberOfPieces' => $number_pieces,
-						'Description' => $item_description,
+						'Description' => $this->args['order_details']['contents_description'],
 						'CustomsValue' => $this->args['order_details']['declared_value'],
 					);
 			}

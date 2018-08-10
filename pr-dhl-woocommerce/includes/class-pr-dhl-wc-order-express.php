@@ -110,6 +110,19 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
 
+
+			$contents_desc = isset( $dhl_label_items['pr_dhl_contents_description'] ) ? $dhl_label_items['pr_dhl_contents_description'] : '';
+			woocommerce_wp_textarea_input( array(
+				'id'          		=> 'pr_dhl_contents_description',
+				'label'       		=> __( 'Contents Description: ', 'pr-shipping-dhl' ),
+				'placeholder' 		=> 'Briefly describe package contents',
+				'description'		=> '',
+				'value'       		=> $contents_desc,
+				'rows'				=> 5,
+				'custom_attributes'	=> array( $is_disabled => $is_disabled, 'maxlength' => '90' )
+			) );
+
+			echo '<div style="margin-top:-15px;margin-bottom:10px;"><small>90 chars max</small></div>';
 			echo "<hr/>";
 
 			woocommerce_wp_checkbox( array(
@@ -155,73 +168,61 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 			echo $upload_file_button;
 
 
-			echo '<hr style="clear:both;">';
+		}
+		
+		echo '<hr style="clear:both;">';
 
-			$total_packages = isset( $dhl_label_items['pr_dhl_total_packages'] ) ? $dhl_label_items['pr_dhl_total_packages'] : '1';
-			$packages = isset( $dhl_label_items['pr_dhl_packages'] ) ? $dhl_label_items['pr_dhl_packages'] : array();
+		$total_packages = isset( $dhl_label_items['pr_dhl_total_packages'] ) ? $dhl_label_items['pr_dhl_total_packages'] : '1';
+		$packages = isset( $dhl_label_items['pr_dhl_packages'] ) ? $dhl_label_items['pr_dhl_packages'] : array();
 
-			woocommerce_wp_text_input( array(
-					'id'	          	=> 'pr_dhl_total_packages',
-					'name'          	=> 'pr_dhl_total_packages',
-					'type'          	=> 'number',
-					'label'       		=>  __( 'Total Packages:', 'pr-shipping-dhl' ),
-					'placeholder' 		=> '',
-					'description'		=> '',
-					'custom_attributes'	=> array( $is_disabled => $is_disabled, 'min' => 1, 'max' => 50, 'data-current' => $total_packages ),
-					'value'				=> $total_packages,
-					'wrapper_class'		=> 'dhl-total-packages'
-				) );
-
-			echo '<div class="total_packages_container" style="margin-bottom:15px;">
-					<div class="package_header">
-						<div class="package_header_field first">Package</div>
-						<div class="package_header_field">Weight</div>
-						<div class="package_header_field">Length</div>
-						<div class="package_header_field">Width</div>
-						<div class="package_header_field">Height</div>
-					</div>';
-
-			if ( empty( $packages ) ) {
-				echo '	<div class="package_item">
-							<div class="package_item_field package_number first">1</div>
-							<div class="package_item_field"><input type="text" name="pr_dhl_packages_weight[]" placeholder="kg" /></div>
-							<div class="package_item_field"><input type="text" name="pr_dhl_packages_length[]" placeholder="cm" /></div>
-							<div class="package_item_field"><input type="text" name="pr_dhl_packages_width[]" placeholder="cm" /></div>
-							<div class="package_item_field"><input type="text" name="pr_dhl_packages_height[]" placeholder="cm" /></div>
-						</div>';
-			} else {
-				for ($i=0, $num=1; $i<intval($total_packages); $i++, $num++) {
-					$weight = !empty($packages[$i]) ? $packages[$i]['weight'] : '';
-					$length = !empty($packages[$i]) ? $packages[$i]['length'] : '';
-					$width = !empty($packages[$i]) ? $packages[$i]['width'] : '';
-					$height = !empty($packages[$i]) ? $packages[$i]['height'] : '';
-
-					echo '	<div class="package_item">
-							<div class="package_item_field package_number first">'.$num.'</div>
-							<div class="package_item_field"><input type="text" name="pr_dhl_packages_weight[]" value="'.$weight.'" placeholder="kg" /></div>
-							<div class="package_item_field"><input type="text" name="pr_dhl_packages_length[]" value="'.$length.'" placeholder="cm" /></div>
-							<div class="package_item_field"><input type="text" name="pr_dhl_packages_width[]" value="'.$width.'" placeholder="cm" /></div>
-							<div class="package_item_field"><input type="text" name="pr_dhl_packages_height[]" value="'.$height.'" placeholder="cm" /></div>
-						</div>';
-				}
-			}
-
-			echo '</div>';
-
-			$contents_desc = isset( $dhl_label_items['pr_dhl_contents_description'] ) ? $dhl_label_items['pr_dhl_contents_description'] : '';
-			woocommerce_wp_textarea_input( array(
-				'id'          		=> 'pr_dhl_contents_description',
-				'label'       		=> __( 'Contents Description: ', 'pr-shipping-dhl' ),
-				'placeholder' 		=> 'Briefly describe package contents',
+		woocommerce_wp_text_input( array(
+				'id'	          	=> 'pr_dhl_total_packages',
+				'name'          	=> 'pr_dhl_total_packages',
+				'type'          	=> 'number',
+				'label'       		=>  __( 'Total Packages:', 'pr-shipping-dhl' ),
+				'placeholder' 		=> '',
 				'description'		=> '',
-				'value'       		=> $contents_desc,
-				'rows'				=> 5,
-				'custom_attributes'	=> array( $is_disabled => $is_disabled, 'maxlength' => '90' )
+				'custom_attributes'	=> array( $is_disabled => $is_disabled, 'min' => 1, 'max' => 50, 'data-current' => $total_packages ),
+				'value'				=> $total_packages,
+				'wrapper_class'		=> 'dhl-total-packages'
 			) );
 
-			echo '<div style="margin-top:-15px;margin-bottom:10px;"><small>90 chars max</small></div>';
-			echo '<hr style="clear:both;">';
+		echo '<div class="total_packages_container" style="margin-bottom:15px;">
+				<div class="package_header">
+					<div class="package_header_field first">Package</div>
+					<div class="package_header_field">Weight</div>
+					<div class="package_header_field">Length</div>
+					<div class="package_header_field">Width</div>
+					<div class="package_header_field">Height</div>
+				</div>';
+
+		if ( empty( $packages ) ) {
+			echo '	<div class="package_item">
+						<div class="package_item_field package_number first">1</div>
+						<div class="package_item_field"><input type="text" name="pr_dhl_packages_weight[]" placeholder="kg" /></div>
+						<div class="package_item_field"><input type="text" name="pr_dhl_packages_length[]" placeholder="cm" /></div>
+						<div class="package_item_field"><input type="text" name="pr_dhl_packages_width[]" placeholder="cm" /></div>
+						<div class="package_item_field"><input type="text" name="pr_dhl_packages_height[]" placeholder="cm" /></div>
+					</div>';
+		} else {
+			for ($i=0, $num=1; $i<intval($total_packages); $i++, $num++) {
+				$weight = !empty($packages[$i]) ? $packages[$i]['weight'] : '';
+				$length = !empty($packages[$i]) ? $packages[$i]['length'] : '';
+				$width = !empty($packages[$i]) ? $packages[$i]['width'] : '';
+				$height = !empty($packages[$i]) ? $packages[$i]['height'] : '';
+
+				echo '	<div class="package_item">
+						<div class="package_item_field package_number first">'.$num.'</div>
+						<div class="package_item_field"><input type="text" name="pr_dhl_packages_weight[]" value="'.$weight.'" placeholder="kg" /></div>
+						<div class="package_item_field"><input type="text" name="pr_dhl_packages_length[]" value="'.$length.'" placeholder="cm" /></div>
+						<div class="package_item_field"><input type="text" name="pr_dhl_packages_width[]" value="'.$width.'" placeholder="cm" /></div>
+						<div class="package_item_field"><input type="text" name="pr_dhl_packages_height[]" value="'.$height.'" placeholder="cm" /></div>
+					</div>';
+			}
 		}
+
+		echo '</div>';
+		echo '<hr style="clear:both;">';
 	}
 
 
