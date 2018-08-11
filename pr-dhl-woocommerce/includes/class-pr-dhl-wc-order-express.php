@@ -203,7 +203,7 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 
 		if ( empty( $packages ) ) {
 			echo '	<div class="package_item">
-						<div class="package_item_field package_number first"><input type="text" name="pr_dhl_packages_number[]" data-sequence="1" value="1" /></div>
+						<div class="package_item_field package_number first"><input type="text" name="pr_dhl_packages_number[]" data-sequence="1" value="1" maxlength="70" /></div>
 						<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_weight[]" placeholder="kg" /></div>
 						<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_length[]" placeholder="cm" /></div>
 						<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_width[]" placeholder="cm" /></div>
@@ -218,7 +218,7 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 				$height = !empty($packages[$i]) ? $packages[$i]['height'] : '';
 
 				echo '	<div class="package_item">
-						<div class="package_item_field package_number first"><input type="text" name="pr_dhl_packages_number[]" data-sequence="'.$seq.'" value="'.$number.'" autocomplete="off" /></div>
+						<div class="package_item_field package_number first"><input type="text" name="pr_dhl_packages_number[]" data-sequence="'.$seq.'" value="'.$number.'" maxlength="70" autocomplete="off" /></div>
 						<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_weight[]" value="'.$weight.'" placeholder="kg" autocomplete="off" /></div>
 						<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_length[]" value="'.$length.'" placeholder="cm" autocomplete="off" /></div>
 						<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_width[]" value="'.$width.'" placeholder="cm" autocomplete="off" /></div>
