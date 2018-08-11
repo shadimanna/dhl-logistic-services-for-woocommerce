@@ -75,6 +75,8 @@ input#pr_dhl_invoice {
 
 .dhl-total-packages #pr_dhl_total_packages {
   width: 100px !important;
+  margin-top: -7px;
+  margin-left: 5px;
 }
 
 p.dhl-total-packages > label {

@@ -19,18 +19,8 @@ jQuery( function( $ ) {
 			$( '#woocommerce-shipment-dhl-label-express' )
 				.on( 'click', 'button.upload-invoice-button', this.upload_invoice );
 
-			// $( '#woocommerce-shipment-dhl-label-express' )
-				// .on( 'change', 'input#pr_dhl_total_packages', this.process_package_action ).on( 'keypress', 'input#pr_dhl_total_packages', this.prevent_manual_entry );
-
 			$( '#woocommerce-shipment-dhl-label-express' )
-				.on( 'input', 'input#pr_dhl_total_packages', this.process_package_action ).on( 'keypress', 'input#pr_dhl_total_packages', this.prevent_manual_entry );
-		},
-
-		// Prevent manual input to the total packages input field. This
-		// helps to prevent users from inputting invalid info or a number
-		// that goes beyond our imposed limit ( min: 1 to max: 50 )
-		prevent_manual_entry: function(event) {
-			event.preventDefault();
+				.on( 'change', 'select#pr_dhl_total_packages', this.process_package_action );
 		},
 
 		// Extract the entries for the given package attribute
@@ -50,10 +40,12 @@ jQuery( function( $ ) {
 		// Extract all user inputted packages. Retrieving all available
 		// package info or attributes.
 		get_packages_for_saving: function($form, required) {
-			var total = $form.find('input#pr_dhl_total_packages').val();
+			var total = $form.find('select#pr_dhl_total_packages').val();
 			var packages = [],
-				error = false;
+				error = false,
+				invalid_number = false;
 
+			var numbers = this.get_package_array($form, 'number');
 			var weights = this.get_package_array($form, 'weight');
 			var lengths = this.get_package_array($form, 'length');
 			var widths = this.get_package_array($form, 'width');
@@ -61,15 +53,24 @@ jQuery( function( $ ) {
 
 			for (var i=0; i<parseInt(total); i++) {
 				if (required) {
-					if (!weights[i].length || !lengths[i].length || !widths[i].length || !heights[i].length) {
+					if (!numbers[i].length || !weights[i].length || !lengths[i].length || !widths[i].length || !heights[i].length) {
 						error = true;
 						break;
+					} else {
+						if (!$.isNumeric(numbers[i]) || !$.isNumeric(weights[i]) || !$.isNumeric(lengths[i]) || !$.isNumeric(widths[i]) || !$.isNumeric(heights[i])) {
+							invalid_number = true;
+							break;
+						}
 					}
 				}
 
 				packages.push({
-					weight: weights[i], length: lengths[i], width: widths[i], height: heights[i]
+					number: numbers[i], weight: weights[i], length: lengths[i], width: widths[i], height: heights[i]
 				});
+			}
+
+			if (invalid_number) {
+				return 'invalid_number';
 			}
 
 			return (!error) ? packages : false;
@@ -78,20 +79,30 @@ jQuery( function( $ ) {
 		// Process the cloning (adding) and removing of package entries based
 		// on the total packages selected by the user.
 		process_package_action: function() {
-			console.log('packages clicked');
 			var old_value = $(this).data('current');
 			var value = $(this).val();
 			var $container = $('.total_packages_container');
 
 			if (parseInt(old_value) < parseInt(value)) {
-				var $clone = $container.find('.package_item:last').clone();
-				var $package_number = parseInt($clone.find('.package_number').html());
+				var new_value = parseInt(value) - parseInt(old_value);
+				var $clone, $package_number, new_number;
 
-				$clone.find('.package_number').html(++$package_number);
-				$clone.find('.package_item_field > input').val('');
+				for (var i=0; i<new_value; i++) {
+					$clone = $container.find('.package_item:last').clone();
+					$package_number = parseInt($clone.find('.package_number > input').data('sequence'));
+					new_number = parseInt($package_number)+1;
+
+					// We'll update both the cache and DOM to make sure that we get
+					// the expected behaviour when pulling the sequence number for processing.
+					$clone.find('.package_number > input').attr('data-sequence', new_number); // this updates the DOM
+					$clone.find('.package_number > input').data('sequence', new_number); // this updates the jquery cache
+
+					$clone.find('.package_number > input').val(new_number);
+					$clone.find('.package_item_field.clearable > input').val('');
 				$container.append($clone);
+				}
 			} else {
-				$container.find('.package_item:last').remove();
+				$container.find('.package_item').slice(value).remove();
 			}
 			
 			$(this).data('current', value);
@@ -236,12 +247,16 @@ jQuery( function( $ ) {
 				// our packages and add it to the "pr_dhl_packages" field for saving.
 				var packages = wc_shipment_dhl_label_items.get_packages_for_saving($form, true);
 				if (!packages) {
-					alert('It appears that one or more of your packages contains empty information. Please kindly fill the weight, length, width and height of the package before submitting.');
+					alert('It appears that one or more of your packages contains empty information. Please make sure you fill the package number, weight, length, width and height of the package before submitting.');
 					abort = true;
 				} else {
-					if (packages.length) data [ 'pr_dhl_packages' ] = packages;
+					if (packages == 'invalid_number') {
+						alert('One or more of your entries contains invalid values. Only numeric values are allowed in the package line items. Please kindly check your entries and try again.');
+						abort = true;
+					} else {
+						if (packages.length) data [ 'pr_dhl_packages' ] = packages;
+					}		
 				}		
-				
 
 		    });
 			

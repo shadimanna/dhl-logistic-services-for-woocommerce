@@ -175,17 +175,22 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 		$total_packages = isset( $dhl_label_items['pr_dhl_total_packages'] ) ? $dhl_label_items['pr_dhl_total_packages'] : '1';
 		$packages = isset( $dhl_label_items['pr_dhl_packages'] ) ? $dhl_label_items['pr_dhl_packages'] : array();
 
-		woocommerce_wp_text_input( array(
-				'id'	          	=> 'pr_dhl_total_packages',
-				'name'          	=> 'pr_dhl_total_packages',
-				'type'          	=> 'number',
-				'label'       		=>  __( 'Total Packages:', 'pr-shipping-dhl' ),
-				'placeholder' 		=> '',
-				'description'		=> '',
-				'custom_attributes'	=> array( $is_disabled => $is_disabled, 'min' => 1, 'max' => 50, 'data-current' => $total_packages ),
-				'value'				=> $total_packages,
-				'wrapper_class'		=> 'dhl-total-packages'
-			) );
+		// Fallback: for whatever reason the packages were not saved successfully then we make
+		// sure that they are consistent with the total packages entry.
+		$total_packages = empty( $packages ) ? 1 : $total_packages;
+
+		$numbers = array();
+		for ( $i = 1; $i <= 50; $i++ ) $numbers[$i] = $i;
+
+		woocommerce_wp_select( array(
+			'id'	          	=> 'pr_dhl_total_packages',
+			'name'          	=> 'pr_dhl_total_packages',
+			'label'       		=>  __( 'Total Packages:', 'pr-shipping-dhl' ),
+			'value'				=> $total_packages,
+			'options'			=> $numbers,
+			'custom_attributes'	=> array( $is_disabled => $is_disabled, 'data-current' => $total_packages,  "autocomplete" => "off" ),
+			'wrapper_class'		=> 'dhl-total-packages'
+		) );
 
 		echo '<div class="total_packages_container" style="margin-bottom:15px;">
 				<div class="package_header">
@@ -198,25 +203,26 @@ class PR_DHL_WC_Order_Express extends PR_DHL_WC_Order {
 
 		if ( empty( $packages ) ) {
 			echo '	<div class="package_item">
-						<div class="package_item_field package_number first">1</div>
-						<div class="package_item_field"><input type="text" name="pr_dhl_packages_weight[]" placeholder="kg" /></div>
-						<div class="package_item_field"><input type="text" name="pr_dhl_packages_length[]" placeholder="cm" /></div>
-						<div class="package_item_field"><input type="text" name="pr_dhl_packages_width[]" placeholder="cm" /></div>
-						<div class="package_item_field"><input type="text" name="pr_dhl_packages_height[]" placeholder="cm" /></div>
+						<div class="package_item_field package_number first"><input type="text" name="pr_dhl_packages_number[]" data-sequence="1" value="1" /></div>
+						<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_weight[]" placeholder="kg" /></div>
+						<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_length[]" placeholder="cm" /></div>
+						<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_width[]" placeholder="cm" /></div>
+						<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_height[]" placeholder="cm" /></div>
 					</div>';
 		} else {
-			for ($i=0, $num=1; $i<intval($total_packages); $i++, $num++) {
+			for ($i=0, $seq=1; $i<intval($total_packages); $i++, $seq++) {
+				$number = !empty($packages[$i]) ? $packages[$i]['number'] : $seq;
 				$weight = !empty($packages[$i]) ? $packages[$i]['weight'] : '';
 				$length = !empty($packages[$i]) ? $packages[$i]['length'] : '';
 				$width = !empty($packages[$i]) ? $packages[$i]['width'] : '';
 				$height = !empty($packages[$i]) ? $packages[$i]['height'] : '';
 
 				echo '	<div class="package_item">
-						<div class="package_item_field package_number first">'.$num.'</div>
-						<div class="package_item_field"><input type="text" name="pr_dhl_packages_weight[]" value="'.$weight.'" placeholder="kg" /></div>
-						<div class="package_item_field"><input type="text" name="pr_dhl_packages_length[]" value="'.$length.'" placeholder="cm" /></div>
-						<div class="package_item_field"><input type="text" name="pr_dhl_packages_width[]" value="'.$width.'" placeholder="cm" /></div>
-						<div class="package_item_field"><input type="text" name="pr_dhl_packages_height[]" value="'.$height.'" placeholder="cm" /></div>
+						<div class="package_item_field package_number first"><input type="text" name="pr_dhl_packages_number[]" data-sequence="'.$seq.'" value="'.$number.'" autocomplete="off" /></div>
+						<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_weight[]" value="'.$weight.'" placeholder="kg" autocomplete="off" /></div>
+						<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_length[]" value="'.$length.'" placeholder="cm" autocomplete="off" /></div>
+						<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_width[]" value="'.$width.'" placeholder="cm" autocomplete="off" /></div>
+						<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_height[]" value="'.$height.'" placeholder="cm" autocomplete="off" /></div>
 					</div>';
 			}
 		}
