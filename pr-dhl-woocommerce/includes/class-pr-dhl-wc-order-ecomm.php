@@ -162,6 +162,11 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 		foreach ($ordered_items as $key => $item) {
 			$product_id = $item['product_id'];
 			$product = wc_get_product( $product_id );
+			
+			// If product does not exist, i.e. deleted go to next one
+			if ( empty( $product ) ) {
+				continue;
+			}
 
 			switch ($dhl_desc_default) {
 				case 'product_cat':

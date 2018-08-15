@@ -519,6 +519,11 @@ abstract class PR_DHL_WC_Order {
 
 			$product = wc_get_product( $item['product_id'] );
 
+			// If product does not exist, i.e. deleted go to next one
+			if ( empty( $product ) ) {
+				continue;
+			}
+
 		    $country_value = get_post_meta( $item['product_id'], '_dhl_manufacture_country', true );
 		    if( ! empty( $country_value ) ) {
 		    	$new_item['country_origin'] = $country_value;

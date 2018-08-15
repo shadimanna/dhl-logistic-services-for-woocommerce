@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 4.9.2
-Stable tag: 1.0.16
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -78,6 +78,19 @@ In case you could not find what you were looking for in our FAQs and the detaile
 
 
 == Changelog ==
+
+= 1.1.2 =
+* Bug fix - DHL eCommerce: Deleted products cause exception error on edit order
+
+= 1.1.1 =
+* DHL Parcel: Version number increased to load updated CSS and JS files
+
+= 1.1.0 =
+* DHL Parcel: Shipping zones added
+* DHL Parcel: Checkout will now only show available shipping methods based on shopper address
+* DHL Parcel: Added missing customer fields that prevented customers from receiving certain automated notifications
+* DHL Parcel: Signature can be enabled to be checked by default (if available)
+* DHL Parcel: Track & trace link updated to include postcode, to show full data
 
 = 1.0.16 =
 * Validation fix - Validate product exists before adding weight
