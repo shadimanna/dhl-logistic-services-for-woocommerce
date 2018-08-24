@@ -126,7 +126,7 @@ class PR_DHL_WC {
 		$this->define( 'PR_DHL_CIG_AUTH', 'https://cig.dhl.de/services/production/soap' );
 
 		// Flag for sandbox testing
-		$this->define( 'PR_DHL_SANDBOX', true );
+		// $this->define( 'PR_DHL_SANDBOX', true );
 
 		$this->define( 'PR_DHL_CIG_USR_QA', 'shadim' );
 		$this->define( 'PR_DHL_CIG_PWD_QA', 'm6jvtj{U)zH;\']' );

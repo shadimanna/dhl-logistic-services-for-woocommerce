@@ -794,7 +794,11 @@ class PR_DHL_Front_End_Paket {
 			$order_id = $order->id;
 		}
 
-		if( $shipping_dhl_postnum = get_post_meta( $order_id, '_shipping_dhl_postnum', true ) ) {
+		if( ! empty( $shipping_dhl_postnum = get_post_meta( $order_id, '_shipping_dhl_postnum_br', true ) ) ) {
+			$address['dhl_postnum'] = $shipping_dhl_postnum;
+		}
+
+		if( ! empty( $shipping_dhl_postnum = get_post_meta( $order_id, '_shipping_dhl_postnum_ps', true ) ) ) {
 			$address['dhl_postnum'] = $shipping_dhl_postnum;
 		}
 

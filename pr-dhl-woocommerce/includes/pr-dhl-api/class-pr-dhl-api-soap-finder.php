@@ -38,11 +38,11 @@ class PR_DHL_API_SOAP_Finder extends PR_DHL_API_SOAP {
 			// error_log(print_r($soap_client->__getLastRequest(),true));
 			// error_log(print_r($soap_client->__getLastResponse(),true));
 			// error_log(print_r($response_body,true));
-
-			PR_DHL()->log_msg( 'Response Body: ' . print_r( $response_body, true ) );
+			PR_DHL()->log_msg( 'Response: Successful');
 		
 			return $response_body;
 		} catch (Exception $e) {
+			PR_DHL()->log_msg( 'Response Body: ' . print_r( $response_body, true ) );
 			throw $e;
 		}
 	}

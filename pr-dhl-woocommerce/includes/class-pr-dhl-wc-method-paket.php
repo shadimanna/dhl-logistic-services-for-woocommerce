@@ -672,6 +672,29 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		return $value;
 	}
 
+	/**
+	 * Validate the Google API Key
+	 * @see validate_settings_fields()
+	 */
+	public function validate_dhl_google_maps_api_key_field( $key ) {
+		$google_maps_api = wc_clean( $_POST[ $this->plugin_id . $this->id . '_' . $key ] );
+
+		if ( empty( $google_maps_api ) ) {
+
+			if ( isset( $_POST[ $this->plugin_id . $this->id . '_dhl_display_packstation' ] ) || 
+				 isset( $_POST[ $this->plugin_id . $this->id . '_dhl_display_parcelshop' ] ) || 
+				 isset( $_POST[ $this->plugin_id . $this->id . '_dhl_display_post_office' ] ) ) {
+
+					$error_message = __('In order to show the dhl locations on a map, you need to insert a Google API Key. Otherwise, please deactivate the locations.', 'pr-shipping-dhl');
+					echo $this->get_message( $error_message );
+					throw new Exception( $error_message );
+				
+			}
+		}
+
+		return $google_maps_api;
+	}
+
 }
 
 endif;

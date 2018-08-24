@@ -70,10 +70,10 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			// error_log(print_r($soap_client->__getLastRequest(),true));
 			// error_log(print_r($soap_client->__getLastResponse(),true));
 			// error_log(print_r($response_body,true));
+			PR_DHL()->log_msg( 'Response: Successful');
 
-			PR_DHL()->log_msg( 'Response Body: ' . print_r( $response_body, true ) );
-		
 		} catch (Exception $e) {
+			PR_DHL()->log_msg( 'Response Body: ' . print_r( $response_body, true ) );
 			throw $e;
 		}
 
@@ -630,7 +630,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 						$parcel_shop['postNumber'] = $this->args['shipping_address']['dhl_postnum'];
 					} else {
 						// DOESN'T SEEM TO WORK!
-						$parcel_shop['postNumber'] = $this->args['shipping_address']['email'];
+						// $parcel_shop['postNumber'] = '';
 					}
 
 					$parcel_shop['postfilialNumber'] = $address_num;
@@ -739,6 +739,12 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 					
 					$this->body_request['ShipmentOrder']['Shipment']['ShipmentDetails']['Service']['IdentCheck']['Ident']['dateOfBirth'] = '';
 				}
+			}
+
+			// Ensure 'postNumber' is passed with 'Postfiliale' even if empty
+			if( ! isset( $this->body_request['ShipmentOrder']['Shipment']['Receiver']['Postfiliale']['postNumber'] ) ) {
+				// Additional fees, required and 0 so place after check
+				$this->body_request['ShipmentOrder']['Shipment']['Receiver']['Postfiliale']['postNumber'] = '';
 			}
 			
 			return $this->body_request;
