@@ -389,7 +389,7 @@ jQuery(document).ready(function($) {
         var marker = new google.maps.Marker({
           position: uluru,
           map: map,
-          title: 'DHL Parcel',
+          title: value.shopType,
           animation: google.maps.Animation.DROP,
           icon: gmap_marker_icon
         });

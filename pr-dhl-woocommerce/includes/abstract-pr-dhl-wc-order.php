@@ -16,6 +16,8 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 abstract class PR_DHL_WC_Order {
 	
+	const DHL_DOWNLOAD_ENDPOINT = 'dhl_download_label';
+
 	protected $shipping_dhl_settings = array();
 
 	/**
@@ -60,7 +62,7 @@ abstract class PR_DHL_WC_Order {
 		add_action( 'admin_notices', array( $this, 'render_messages' ) );
 
 		add_action( 'init', array( $this, 'add_download_label_endpoint' ) );
-        add_action( 'parse_query', array( $this, 'process_download_label' ) );
+		add_action( 'parse_query', array( $this, 'process_download_label' ) );
 	}
 
 	/**
@@ -294,7 +296,7 @@ abstract class PR_DHL_WC_Order {
 		}
 
 		// Override URL with our solution's download label endpoint:
-		return site_url( '/download_dhl_label/' . $order_id );
+		return site_url( '/' . self::DHL_DOWNLOAD_ENDPOINT . '/' . $order_id );
 	}
 
 	protected function get_tracking_note( $order_id ) {
@@ -857,7 +859,7 @@ abstract class PR_DHL_WC_Order {
 
 							// Gather args for DHL API call
 							$args = $this->get_label_args( $order_id );
-							error_log(print_r($args, true));
+							// error_log(print_r($args, true));
 
 							// Force the use of this DHL Product for all bulk label creation
 							if ( $dhl_force_product ) {
@@ -872,7 +874,7 @@ abstract class PR_DHL_WC_Order {
 									$args['order_details']['dhl_product'] = $dhl_force_product;
 								}
 							}
-							error_log(print_r($args['order_details']['dhl_product'], true));
+							// error_log(print_r($args['order_details']['dhl_product'], true));
 
 							// Allow third parties to modify the args to the DHL APIs
 							$args = apply_filters('pr_shipping_dhl_label_args', $args, $order_id );
@@ -978,7 +980,7 @@ abstract class PR_DHL_WC_Order {
 			}
 
 			$ext = pathinfo($value, PATHINFO_EXTENSION);
-			error_log($ext);
+			// error_log($ext);
 			// if ( strncasecmp('pdf', $ext, strlen($ext) ) == 0 ) {
 			if ( stripos($ext, 'pdf') === false) {
 				throw new Exception( __('Not all the file formats are the same.', 'pr-shipping-dhl') );
@@ -1000,7 +1002,7 @@ abstract class PR_DHL_WC_Order {
 	 * Creates a custom endpoint to download the label
 	 */
 	public function add_download_label_endpoint() {
-		add_rewrite_endpoint( 'download_dhl_label', EP_ROOT );
+		add_rewrite_endpoint(  self::DHL_DOWNLOAD_ENDPOINT, EP_ROOT );
 	}
 
 	/**
@@ -1016,9 +1018,14 @@ abstract class PR_DHL_WC_Order {
 			return;
 		}
 
-	    // If we fail to add the "download_dhl_label" then we bail, otherwise, we
+		if ( ! isset($wp_query->query_vars[ self::DHL_DOWNLOAD_ENDPOINT ] ) ) {
+			return;
+		}
+
+		error_log(print_r($wp_query->query_vars,true));
+	    // If we fail to add the "DHL_DOWNLOAD_ENDPOINT" then we bail, otherwise, we
 	    // will continue with the process below.
-	    $order_id = $wp_query->query_vars['download_dhl_label'];
+	    $order_id = $wp_query->query_vars[ self::DHL_DOWNLOAD_ENDPOINT ];
 	    if ( ! isset( $order_id ) ) {
 	    	return;
 	    }
