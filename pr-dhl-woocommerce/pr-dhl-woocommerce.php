@@ -599,8 +599,7 @@ class PR_DHL_WC {
             array(
                 'base'      => $upload_dir['basedir'] . '/woocommerce_dhl_label',
                 'file'      => '.htaccess',
-                'content'   => "Order deny,allow\nDeny from all\nAllow from ". $_SERVER['SERVER_ADDR']
-                // 'content'   => 'deny from all'
+                'content'   => 'deny from all'
             ),
             array(
                 'base'      => $upload_dir['basedir'] . '/woocommerce_dhl_label',

@@ -58,6 +58,9 @@ abstract class PR_DHL_WC_Order {
 
 		// display admin notices for bulk actions
 		add_action( 'admin_notices', array( $this, 'render_messages' ) );
+
+		add_action( 'init', array( $this, 'add_download_label_endpoint' ) );
+        add_action( 'parse_query', array( $this, 'process_download_label' ) );
 	}
 
 	/**
@@ -125,7 +128,7 @@ abstract class PR_DHL_WC_Order {
 		} else {
 			$is_disabled = 'disabled';
 
-			$print_button = '<a href="'. $label_tracking_info['label_url'] .'" id="dhl-label-print" class="button button-primary" download target="_blank">' .PR_DHL_BUTTON_LABEL_PRINT . '</a>';
+			$print_button = '<a href="'. $this->get_download_label_url( $order_id ) .'" id="dhl-label-print" class="button button-primary" download target="_blank">' .PR_DHL_BUTTON_LABEL_PRINT . '</a>';
 		}
 
 		$dhl_label_data = array(
@@ -238,7 +241,7 @@ abstract class PR_DHL_WC_Order {
 			$this->save_dhl_label_tracking( $order_id, $label_tracking_info );
 			$tracking_note = $this->get_tracking_note( $order_id );
 			$tracking_note_type = $this->get_tracking_note_type();
-			$label_url = $label_tracking_info['label_url'];
+			$label_url = $this->get_download_label_url( $order_id );
 
 			wp_send_json( array( 
 				'download_msg' => __('Your DHL label is ready to download, click the "Download Label" button above"', 'pr-shipping-dhl'),
@@ -284,29 +287,14 @@ abstract class PR_DHL_WC_Order {
 		}
 	}
 
-	protected function get_label_url( $label_url ) {
+	protected function get_download_label_url( $order_id ) {
 		
-		if( empty( $label_url ) ) {
+		if( empty( $order_id ) ) {
 			return '';
 		}
 
-		$ext = pathinfo($label_url, PATHINFO_EXTENSION);
-		$ext = strtoupper($ext);
-		$download_ext = array( 'ZPL' );
-
-		if( in_array($ext, $download_ext) ) {
-			$nonce = wp_create_nonce( 'download-dhl-label' );
-
-			$new_label_url = PR_DHL_PLUGIN_DIR_URL . '/lib/download.php';
-			$upload_path = wp_upload_dir();
-			$label_url = str_replace($upload_path['url'], $upload_path['path'], $label_url);
-
-			$new_label_url .= '?path=' . $label_url . '&nonce=' . $nonce;
-
-			$label_url = $new_label_url;
-		}		
-		
-		return $label_url;
+		// Override URL with our solution's download label endpoint:
+		return site_url( '/download_dhl_label/' . $order_id );
 	}
 
 	protected function get_tracking_note( $order_id ) {
@@ -1006,6 +994,63 @@ abstract class PR_DHL_WC_Order {
 		$pdfMerger->merge( 'file',  $file_bulk_path );
 
 		return array( 'file_bulk_path' => $file_bulk_path, 'file_bulk_url' => $file_bulk_url);
+	}
+
+	/**
+	 * Creates a custom endpoint to download the label
+	 */
+	public function add_download_label_endpoint() {
+		add_rewrite_endpoint( 'download_dhl_label', EP_ROOT );
+	}
+
+	/**
+	 * Processes the download label request
+	 *
+	 * @return void
+	 */
+	public function process_download_label() {
+	    global $wp_query;
+
+	    // Ensure anyone downloading a file can edit orders
+	    if ( ! current_user_can( 'edit_shop_orders' ) ) {
+			return;
+		}
+
+	    // If we fail to add the "download_dhl_label" then we bail, otherwise, we
+	    // will continue with the process below.
+	    $order_id = $wp_query->query_vars['download_dhl_label'];
+	    if ( ! isset( $order_id ) ) {
+	    	return;
+	    }
+
+	    // Get tracking info if it exists
+		$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
+		// Check whether the label has already been created or not
+		if( empty( $label_tracking_info ) ) {
+			return;
+		}
+		
+		$label_path = $label_tracking_info['label_path'];
+
+	    if ( ! empty( $label_path ) ) {
+	    	$filename = basename( $label_path );
+
+	    	// if ( ! empty( $filename ) ) {
+	    		// $upload_dir = wp_upload_dir();
+	    		// $file = $upload_dir['basedir'] . '/woocommerce_seven_senders_label/' . $filename;
+
+			    header( 'Content-Description: File Transfer' );
+			    header( 'Content-Type: application/octet-stream' );
+			    header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
+			    header( 'Expires: 0' );
+			    header( 'Cache-Control: must-revalidate' );
+			    header( 'Pragma: public' );
+			    header( 'Content-Length: ' . filesize( $label_path ) );
+			    readfile( $label_path );
+	    	// }
+	    }
+
+	    exit;
 	}
 }
 
