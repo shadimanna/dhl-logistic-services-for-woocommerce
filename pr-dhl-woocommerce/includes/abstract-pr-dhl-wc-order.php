@@ -1021,8 +1021,7 @@ abstract class PR_DHL_WC_Order {
 		if ( ! isset($wp_query->query_vars[ self::DHL_DOWNLOAD_ENDPOINT ] ) ) {
 			return;
 		}
-
-		error_log(print_r($wp_query->query_vars,true));
+		
 	    // If we fail to add the "DHL_DOWNLOAD_ENDPOINT" then we bail, otherwise, we
 	    // will continue with the process below.
 	    $order_id = $wp_query->query_vars[ self::DHL_DOWNLOAD_ENDPOINT ];

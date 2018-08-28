@@ -116,6 +116,7 @@ jQuery(document).ready(function($) {
         // console.log('addres type');
         var address_type = $('.woocommerce-checkout #shipping_dhl_address_type').val();
         // console.log(address_type);
+        /*
         if (address_type == 'dhl_packstation') {
           $( '.woocommerce-checkout #shipping_dhl_postnum_br_field' ).hide();        
           $( '.woocommerce-checkout #shipping_dhl_postnum_ps_field' ).show();        
@@ -125,6 +126,21 @@ jQuery(document).ready(function($) {
         } else {
           $( '.woocommerce-checkout #shipping_dhl_postnum_ps_field' ).hide();        
           $( '.woocommerce-checkout #shipping_dhl_postnum_br_field' ).hide();        
+        }*/
+
+        if (address_type == 'dhl_packstation') {
+          $( '.woocommerce-checkout #shipping_dhl_postnum_field' ).show();
+          // If does not have span or span with "required" class, add it
+          if ( ! $( '.woocommerce-checkout #shipping_dhl_postnum_field label span' ).length || 
+             ( ! $( '.woocommerce-checkout #shipping_dhl_postnum_field label span' ).hasClass('required') ) ) {
+              $( '.woocommerce-checkout #shipping_dhl_postnum_field label' ).append(' <span class="required">*</span>');
+          }
+        } else if (address_type == 'dhl_branch') {
+          $( '.woocommerce-checkout #shipping_dhl_postnum_field' ).show();
+          // remove "required" span tag  
+          $( '.woocommerce-checkout #shipping_dhl_postnum_field label .required' ).remove();
+        } else {
+          $( '.woocommerce-checkout #shipping_dhl_postnum_field' ).hide();
         }
     },
     init_form: function() {
@@ -349,18 +365,22 @@ jQuery(document).ready(function($) {
           case 'packStation':
             var gmap_marker_icon = pr_dhl_checkout_frontend.packstation_icon;
             var shop_name = pr_dhl_checkout_frontend.packstation;
+            var shop_label = pr_dhl_checkout_frontend.packstation;
             break;
           case 'parcelShop':
             var gmap_marker_icon = pr_dhl_checkout_frontend.parcelshop_icon;
             var shop_name = pr_dhl_checkout_frontend.parcelShop;
+            var shop_label = pr_dhl_checkout_frontend.branch;
             break; 
           case 'postOffice':
             var gmap_marker_icon = pr_dhl_checkout_frontend.post_office_icon;
             var shop_name = pr_dhl_checkout_frontend.postoffice;
+            var shop_label = pr_dhl_checkout_frontend.branch;
             break;
           default:
             var gmap_marker_icon = pr_dhl_checkout_frontend.packstation_icon;
             var shop_name = pr_dhl_checkout_frontend.packstation;
+            var shop_label = pr_dhl_checkout_frontend.packstation;
             break;
         }
 
@@ -389,7 +409,7 @@ jQuery(document).ready(function($) {
         var marker = new google.maps.Marker({
           position: uluru,
           map: map,
-          title: value.shopType,
+          title: shop_label,
           animation: google.maps.Animation.DROP,
           icon: gmap_marker_icon
         });

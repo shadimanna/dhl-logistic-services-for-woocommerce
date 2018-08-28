@@ -676,6 +676,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 	 * Validate the Google API Key
 	 * @see validate_settings_fields()
 	 */
+	/*
 	public function validate_dhl_google_maps_api_key_field( $key ) {
 		$google_maps_api = wc_clean( $_POST[ $this->plugin_id . $this->id . '_' . $key ] );
 
@@ -693,6 +694,56 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		}
 
 		return $google_maps_api;
+	}*/
+
+	/**
+	 * Validate the Packstation enabled field
+	 * @see validate_settings_fields()
+	 */
+	public function validate_dhl_display_packstation_field( $key ) {
+		return $this->validate_location_enabled_field( $key, PR_DHL_PACKSTATION );
+	}
+
+	/**
+	 * Validate the Parcelshop enabled field
+	 * @see validate_settings_fields()
+	 */
+	public function validate_dhl_display_parcelshop_field( $key ) {
+		return $this->validate_location_enabled_field( $key, __( 'Parcelshop', 'pr-shipping-dhl' ) );
+	}
+
+	/**
+	 * Validate the Post Office enabled field
+	 * @see validate_settings_fields()
+	 */
+	public function validate_dhl_display_post_office_field( $key ) {
+		return $this->validate_location_enabled_field( $key, __( 'Post Office', 'pr-shipping-dhl' ) );
+	}
+
+	/**
+	 * Validate the any location enabled field
+	 * @see validate_settings_fields()
+	 */
+	protected function validate_location_enabled_field( $key, $location_type ) {
+		// error_log(print_r($_POST,true));
+		if ( ! isset( $_POST[ $this->plugin_id . $this->id . '_' . $key ] ) ) {
+			return 'no';
+		}
+
+		// Verify whether Google API key set
+		$google_maps_api_key = $_POST[ $this->plugin_id . $this->id . '_dhl_google_maps_api_key' ];
+
+		// If not set throw Exception
+		if ( empty( $google_maps_api_key ) ) {
+
+			$error_message = sprintf( __('In order to show %s on a map, you need to set a Google API Key first.', 'pr-shipping-dhl'), $location_type );
+			echo $this->get_message( $error_message );
+			// throw new Exception( $error_message );
+			return 'no';
+		}
+
+		error_log($value);
+		return 'yes';
 	}
 
 }
