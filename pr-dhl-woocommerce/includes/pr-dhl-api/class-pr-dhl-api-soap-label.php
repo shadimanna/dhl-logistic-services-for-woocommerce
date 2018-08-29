@@ -297,7 +297,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		$this->pos_ps = PR_DHL()->is_packstation( $args['shipping_address']['address_1'] );
 		$this->pos_rs = PR_DHL()->is_parcelshop( $args['shipping_address']['address_1'] );
 		$this->pos_po = PR_DHL()->is_post_office( $args['shipping_address']['address_1'] );
-		error_log(print_r($args['shipping_address'],true));
+
 		// If Packstation, post number is mandatory
 		if ( $this->pos_ps && empty( $args['shipping_address']['dhl_postnum'] ) ) {
 			throw new Exception( __('Post Number is missing, it is mandatory for "Packstation" delivery.', 'pr-shipping-dhl') );
@@ -626,11 +626,11 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 				// ONLY POSTAFILIALE HERE?  NO 'PARCELSHOP'?
 				if ( $this->pos_rs || $this->pos_po ) {
+					
 					if( ! empty( $this->args['shipping_address']['dhl_postnum'] ) ) {
 						$parcel_shop['postNumber'] = $this->args['shipping_address']['dhl_postnum'];
-					} else {
-						// DOESN'T SEEM TO WORK!
-						// $parcel_shop['postNumber'] = '';
+						// Only post number should be set, so unset email
+						unset($dhl_label_body['ShipmentOrder']['Shipment']['Receiver']['Communication']['email']);
 					}
 
 					$parcel_shop['postfilialNumber'] = $address_num;

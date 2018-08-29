@@ -31,30 +31,27 @@ try {
 		
 		<!-- <div class="clear"></div> -->
 		<?php if( $packstation_enabled ) : ?>
-			<p class="form-row form-field small">
+			<p class="form-row form-field packstation">
 				<input type="checkbox" name="dhl_packstation_filter" class="input-checkbox" id="dhl_packstation_filter" value="1" checked />
 				<label for="dhl_packstation_filter"><?php esc_attr_e( 'Packstation', 'pr-shipping-dhl' ); ?></label>
-			</p>
-
-			<p class="form-row form-field small">
-				<img src="<?php echo $packstation_img; ?>" alt="" class="dhl_shop_img packstation_img">
+                <span class="icon" style="background-image: url('<?php echo $packstation_img; ?>');"></span>
 			</p>
 		<?php endif; ?>
 
 		<?php if( $parcelshop_enabled || $post_office_enabled ) : ?>
-			<p class="form-row form-field extra-small">
+			<p class="form-row form-field parcelshop">
 				<input type="checkbox" name="dhl_branch_filter" class="input-checkbox" placeholder="" id="dhl_branch_filter" value="1" checked />
 				<label for="dhl_branch_filter"><?php esc_attr_e( 'Branch', 'pr-shipping-dhl' ); ?></label>
+                <span class="parcel-wrap">
+                    <?php if( $parcelshop_enabled ) : ?>
+                        <span class="icon" style="background-image: url('<?php echo $parcelshop_img; ?>');"></span>
+                    <?php endif; ?>
+                    <?php if( $post_office_enabled ) : ?>
+                        <span class="icon" style="background-image: url('<?php echo $post_office_img; ?>');"></span>
+                    <?php endif; ?>
+                </span>
 			</p>
 
-			<p class="form-row form-field small">
-				<?php if( $parcelshop_enabled ) : ?>
-					<img src="<?php echo $parcelshop_img; ?>" alt="" class="dhl_shop_img parcelshop_img">
-				<?php endif; ?>
-				<?php if( $post_office_enabled ) : ?>
-					<img src="<?php echo $post_office_img; ?>" alt="" class="dhl_shop_img post_office_img">
-				<?php endif; ?>
-			</p>
 		<?php endif; ?>
 		
 		<p id="dhl_seach_button" class="form-row form-field small">

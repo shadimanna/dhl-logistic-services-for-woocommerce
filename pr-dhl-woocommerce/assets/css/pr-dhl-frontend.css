@@ -192,17 +192,14 @@ ul.dhl-preferred-location li label {
   display: inline-block;
 }
 
-@media only screen and (max-width: 600px) {
-  ul.dhl-co-times > li {
-    min-width: 30%;
-    width: 30%;
-  }
-}
-
 #pr_dhl_preferred_location::placeholder,
 #pr_dhl_preferred_neighbour_name::placeholder,
 #pr_dhl_preferred_neighbour_address::placeholder {
   color: #999;
+}
+
+.dhl-preferred_neighbor input, .dhl-preferred_location input {
+    width: 100%;
 }
 
 .dhl-tooltip {
@@ -309,6 +306,19 @@ a#dhl_parcel_finder:hover {
   margin: 0 0 0 10px;
 }
 
+#dhl_parcel_finder_form form .form-field.packstation {
+    margin-right: 25px;
+}
+
+#dhl_parcel_finder_form form .form-row span.icon {
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+    background-repeat: no-repeat;
+    background-size: contain;
+    margin-bottom: -15px;
+}
+
 #dhl_parcel_finder_form form .form-row .input-checkbox {
   vertical-align: middle;
 }
@@ -328,4 +338,23 @@ a#dhl_parcel_finder:hover {
 
 #dhl_parcel_finder_form .dhl_shop_img {
   display: inline;
+}
+
+@media only screen and (max-width: 600px) {
+  ul.dhl-co-times > li {
+    min-width: 30%;
+    width: 30%;
+  }
+    #dhl_parcel_finder_form form .form-field.small, #dhl_parcel_finder_form form .form-field.large {
+        width: 100%;
+    }
+    
+    #dhl_parcel_finder_form form #dhl_seach_button {
+        float: left;
+        margin: 30px 0 40px;
+    }
+    
+    #dhl_parcel_finder_form .woocommerce-error {
+        padding: 1em;
+    }
 }
