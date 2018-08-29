@@ -921,11 +921,20 @@ abstract class PR_DHL_WC_Order {
 
 				if ( file_exists( $file_bulk['file_bulk_path'] ) ) {
 					// $message .= sprintf( __( ' - %sdownload labels file%s', 'pr-shipping-dhl' ), '<a href="' . $file_bulk['file_bulk_url'] . '" target="_blank">', '</a>' );
-					
+
+	                // We're saving the bulk file path temporarily and access it later during the download process.
+		    		// This information expires in 3 minutes (180 seconds), just enough for the user to see the 
+		    		// displayed link and click it if he or she wishes to download the bulk labels
+					set_transient( '_dhl_bulk_download_labels_file_' . get_current_user_id(), $file_bulk['file_bulk_path'], 180);	
+
+					// Construct URL pointing to the download label endpoint (with bulk param):
+					$bulk_download_label_url = site_url( '/' . self::DHL_DOWNLOAD_ENDPOINT . '/bulk' );
+
 					array_push($array_messages, array(
-	                    'message' => sprintf( __( 'Bulk DHL labels file created - %sdownload file%s', 'pr-shipping-dhl' ), '<a href="' . $file_bulk['file_bulk_url'] . '" download target="_blank">', '</a>' ),
+	                    'message' => sprintf( __( 'Bulk DHL labels file created - %sdownload file%s', 'pr-shipping-dhl' ), '<a href="' . $bulk_download_label_url . '" download>', '</a>' ),
 	                    'type' => 'success',
 	                ));
+
 		        } else {
 					// $message .= __( '. Could not create bulk DHL label file, download individually.', 'pr-shipping-dhl' );
 
@@ -1024,39 +1033,98 @@ abstract class PR_DHL_WC_Order {
 		
 	    // If we fail to add the "DHL_DOWNLOAD_ENDPOINT" then we bail, otherwise, we
 	    // will continue with the process below.
-	    $order_id = $wp_query->query_vars[ self::DHL_DOWNLOAD_ENDPOINT ];
-	    if ( ! isset( $order_id ) ) {
+	    $endpoint_param = $wp_query->query_vars[ self::DHL_DOWNLOAD_ENDPOINT ];
+	    if ( ! isset( $endpoint_param ) ) {
 	    	return;
 	    }
 
-	    // Get tracking info if it exists
-		$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
-		// Check whether the label has already been created or not
-		if( empty( $label_tracking_info ) ) {
-			return;
+	    $array_messages = get_option( '_pr_dhl_bulk_action_confirmation' );
+    	if ( empty( $array_messages ) || !is_array( $array_messages ) ) {
+    		$array_messages = array( 'msg_user_id' => get_current_user_id() );
 		}
-		
-		$label_path = $label_tracking_info['label_path'];
 
-	    if ( ! empty( $label_path ) ) {
-	    	$filename = basename( $label_path );
+	    if ( $endpoint_param == 'bulk' ) {
 
-	    	// if ( ! empty( $filename ) ) {
-	    		// $upload_dir = wp_upload_dir();
-	    		// $file = $upload_dir['basedir'] . '/woocommerce_seven_senders_label/' . $filename;
+	    	$bulk_file_path = get_transient( '_dhl_bulk_download_labels_file_' . get_current_user_id() );
+	    	if ( false == $this->download_label( $bulk_file_path ) ) {
+	    		array_push($array_messages, array(
+                    'message' => __( 'There are currently no bulk DHL label file to download or the download link for the bulk DHL label file has already expired. Please try again.', 'pr-shipping-dhl' ),
+                    'type' => 'error'
+                ));
+			}
 
-			    header( 'Content-Description: File Transfer' );
-			    header( 'Content-Type: application/octet-stream' );
-			    header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
-			    header( 'Expires: 0' );
-			    header( 'Cache-Control: must-revalidate' );
-			    header( 'Pragma: public' );
-			    header( 'Content-Length: ' . filesize( $label_path ) );
-			    readfile( $label_path );
-	    	// }
+	    } else {
+	    	$order_id = $endpoint_param;
+
+	    	// Get tracking info if it exists
+			$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
+			// Check whether the label has already been created or not
+			if( empty( $label_tracking_info ) ) {
+				return;
+			}
+			
+			$label_path = $label_tracking_info['label_path'];
+			if ( false == $this->download_label( $label_path ) ) {
+	    		array_push($array_messages, array(
+                    'message' => __( 'Unable to download file. Label appears to be invalid or is missing. Please try again.', 'pr-shipping-dhl' ),
+                    'type' => 'error'
+                ));
+			}
 	    }
 
-	    exit;
+	    update_option( '_pr_dhl_bulk_action_confirmation', $array_messages );
+
+	    // If there are errors redirect to the shop_orders and display error
+	    if ( ! $this->has_error_message( $array_messages ) ) {
+			$redirect_url  = admin_url( 'edit.php?post_type=shop_order' );
+			wp_redirect( $redirect_url );
+			exit;
+		}
+	}
+
+	/**
+	 * Checks whether the current "messages" collection has an
+	 * error message waiting to be rendered.
+	 *
+	 * @param array $messages
+	 * @return boolean
+	 */
+	protected function has_error_message( $messages ) {
+		$has_error = false;
+
+		foreach ( $messages as $key => $value ) {
+			if ( $value['type'] == 'error' ) {
+				$has_error = true;
+				break;
+			}
+		}
+
+		return $has_error;
+	}
+
+	/**
+	 * Downloads the generated label file
+	 *
+	 * @param string $file_path
+	 * @return boolean|void
+	 */
+	protected function download_label( $file_path ) {
+		if ( !empty( $file_path ) && is_string( $file_path ) && file_exists( $file_path ) ) {
+			$filename = basename( $file_path );
+
+		    header( 'Content-Description: File Transfer' );
+		    header( 'Content-Type: application/octet-stream' );
+		    header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
+		    header( 'Expires: 0' );
+		    header( 'Cache-Control: must-revalidate' );
+		    header( 'Pragma: public' );
+		    header( 'Content-Length: ' . filesize( $file_path ) );
+
+		    readfile( $file_path );
+		    exit;
+		} else {
+			return false;
+		}
 	}
 }
 
