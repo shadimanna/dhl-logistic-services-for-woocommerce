@@ -70,7 +70,7 @@ In case you could not find what you were looking for in our FAQs and the detaile
 * Get **DHL eCommerce** support via [Integration@dhl.com](mailto:integration@dhl.com)
 * Get **DHL Paket Germany** support via [Shopsoftware@deutschepost.de](mailto:Shopsoftware@deutschepost.de)
 
-
+== Additional Information ==  * The plugin contains a tracking pixel due to reporting purposes of preferred services. Its output is the URL where the preferred services are integrated via plugin as well as the number of plugin calls. There is no personal data created or collected. * In case you like to offer direct shipment to DHL parcelshops or post offices, please note the following phrase of the DHL Paket Service Specifications (annex to the business customer contract): “The sender guarantees that he is entitled to transmit his customers’ e-mail addresses to DHL for the purpose of the parcel notification.” * A “Google Maps API Key” is required for a complete installation. 
 == Screenshots ==
 
 1. screenshot-4.(png|jpg|jpeg|gif)
