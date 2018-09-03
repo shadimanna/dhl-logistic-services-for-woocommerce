@@ -205,7 +205,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			'dhl_api_pwd' => array(
 				'title'             => __( 'Password', 'pr-shipping-dhl' ),
 				'type'              => 'password',
-				'description'       => sprintf( __( 'Help text: Your password for the DHL business customer portal. Please note the new assignment of the password to 3 (Standard User) or 12 (System User) months and test your access data in advance at %shere%s', 'pr-shipping-dhl' ), '<a href="' . PR_DHL_PAKET_BUSSINESS_PORTAL . '" target = "_blank">', '</a>' ),
+				'description'       => sprintf( __( 'Your password for the DHL business customer portal. Please note the new assignment of the password to 3 (Standard User) or 12 (System User) months and test your access data in advance at %shere%s', 'pr-shipping-dhl' ), '<a href="' . PR_DHL_PAKET_BUSSINESS_PORTAL . '" target = "_blank">', '</a>' ),
 				'desc_tip'          => false,
 				'default'           => ''
 			),/*

@@ -179,7 +179,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 
 	public function get_dhl_preferred_time() {
 		return array(
-				'0' => __('none', 'pr-shipping-dhl'),
+				'0' => _x('none', 'time context', 'pr-shipping-dhl'),
 				'18002000' => '18 - 20',
 				'19002100' => '19 - 21' 
 			);	
@@ -199,7 +199,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 
 	public function get_dhl_visual_age() {
 		$visual_age = array(
-					'0' => __('none', 'pr-shipping-dhl'),
+					'0' => _x('none', 'age context', 'pr-shipping-dhl'),
 					'A16' => __('Minimum age of 16', 'pr-shipping-dhl'),
 					'A18' => __('Minimum age of 18', 'pr-shipping-dhl')
 					);

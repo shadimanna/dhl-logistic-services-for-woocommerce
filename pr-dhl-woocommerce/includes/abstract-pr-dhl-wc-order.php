@@ -31,8 +31,6 @@ abstract class PR_DHL_WC_Order {
 	}
 
 	protected function define_constants() {
-		PR_DHL()->define( 'PR_DHL_BUTTON_LABEL_GEN', __( 'Generate Label', 'pr-shipping-dhl' ) );
-		PR_DHL()->define( 'PR_DHL_BUTTON_LABEL_PRINT', __( 'Download Label', 'pr-shipping-dhl' ) );
 	}
 
 	public function init_hooks() {
@@ -117,7 +115,7 @@ abstract class PR_DHL_WC_Order {
 		
 		$delete_label = '<span class="wc_dhl_delete"><a href="#" id="dhl_delete_label">' . __('Delete Label', 'pr-shipping-dhl') . '</a></span>';
 
-		$main_button = '<button id="dhl-label-button" class="button button-primary button-save-form">' . PR_DHL_BUTTON_LABEL_GEN . '</button>';
+		$main_button = '<button id="dhl-label-button" class="button button-primary button-save-form">' . __( 'Generate Label', 'pr-shipping-dhl' ) . '</button>';
 
 		// Get tracking info if it exists
 		$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
@@ -125,12 +123,12 @@ abstract class PR_DHL_WC_Order {
 		if( empty( $label_tracking_info ) ) {
 			$is_disabled = '';
 			
-			$print_button = '<a href="#" id="dhl-label-print" class="button button-primary" download target="_blank">' . PR_DHL_BUTTON_LABEL_PRINT . '</a>';
+			$print_button = '<a href="#" id="dhl-label-print" class="button button-primary" download target="_blank">' . __( 'Download Label', 'pr-shipping-dhl' ) . '</a>';
 
 		} else {
 			$is_disabled = 'disabled';
 
-			$print_button = '<a href="'. $this->get_download_label_url( $order_id ) .'" id="dhl-label-print" class="button button-primary" download target="_blank">' .PR_DHL_BUTTON_LABEL_PRINT . '</a>';
+			$print_button = '<a href="'. $this->get_download_label_url( $order_id ) .'" id="dhl-label-print" class="button button-primary" download target="_blank">' .__( 'Download Label', 'pr-shipping-dhl' ) . '</a>';
 		}
 
 		$dhl_label_data = array(
@@ -247,7 +245,7 @@ abstract class PR_DHL_WC_Order {
 
 			wp_send_json( array( 
 				'download_msg' => __('Your DHL label is ready to download, click the "Download Label" button above"', 'pr-shipping-dhl'),
-				'button_txt' => PR_DHL_BUTTON_LABEL_PRINT,
+				'button_txt' => __( 'Download Label', 'pr-shipping-dhl' ),
 				'label_url' => $label_url,
 				'tracking_note'	  => $tracking_note,
 				'tracking_note_type' => $tracking_note_type,
@@ -279,7 +277,7 @@ abstract class PR_DHL_WC_Order {
 
 			wp_send_json( array( 
 				'download_msg' => __('Your DHL label is ready to download, click the "Download Label" button above"', 'pr-shipping-dhl'), 
-				'button_txt' => PR_DHL_BUTTON_LABEL_GEN, 
+				'button_txt' => __( 'Generate Label', 'pr-shipping-dhl' ), 
 				'dhl_tracking_num'	  => $tracking_num
 				) );
 
@@ -569,8 +567,6 @@ abstract class PR_DHL_WC_Order {
 		}
 
 		$args['shipping_address'] = $shipping_address;
-
-		// error_log(print_r($args,true));
 
 		// Get order item specific data
 		$ordered_items = $order->get_items( );
@@ -869,7 +865,7 @@ abstract class PR_DHL_WC_Order {
 									$args['order_details']['dhl_product'] = $dhl_force_product;
 								}
 
-								// If forced product is interational AND order is interational
+								// If forced product is international AND order is international
 								if( ! $is_force_product_dom && ! $this->is_shipping_domestic( $order_id ) ) {
 									$args['order_details']['dhl_product'] = $dhl_force_product;
 								}

@@ -292,7 +292,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 			woocommerce_wp_checkbox( array(
 				'id'          		=> 'pr_dhl_identcheck',
-				'label'       		=> __( 'Identity Check: ', 'pr-shipping-dhl' ),
+				'label'       		=> __( 'Ident-Check: ', 'pr-shipping-dhl' ),
 				'placeholder' 		=> '',
 				'description'		=> '',
 				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck'] ) ? $dhl_label_items['pr_dhl_identcheck'] : '',
