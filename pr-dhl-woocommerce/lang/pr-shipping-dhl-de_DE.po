@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DHL Logistic Services for WooCommerce\n"
 "POT-Creation-Date: 2018-09-03 11:51+0200\n"
-"PO-Revision-Date: 2018-09-03 11:52+0200\n"
+"PO-Revision-Date: 2018-09-03 14:34+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -659,14 +659,14 @@ msgstr ""
 #: includes/abstract-pr-dhl-wc-order.php:120
 #: includes/abstract-pr-dhl-wc-order.php:282
 msgid "Generate Label"
-msgstr "Lebel erstellen"
+msgstr "DHL Label erzeugen"
 
 #: includes/abstract-pr-dhl-wc-order.php:35
 #: includes/abstract-pr-dhl-wc-order.php:128
 #: includes/abstract-pr-dhl-wc-order.php:133
 #: includes/abstract-pr-dhl-wc-order.php:250
 msgid "Download Label"
-msgstr "Bezeichnung löschen"
+msgstr ""
 
 #: includes/abstract-pr-dhl-wc-order.php:74
 msgid "DHL Label & Tracking"
