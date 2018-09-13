@@ -341,10 +341,10 @@ abstract class PR_DHL_WC_Order {
 	abstract protected function get_tracking_url();
 
 	protected function get_tracking_note_type() {
-		if( isset( $this->shipping_dhl_settings['dhl_tracking_note'] ) && ( $this->shipping_dhl_settings['dhl_tracking_note'] == 'yes' ) ) {
-			return '';
-		} else {
+		if( isset( $this->shipping_dhl_settings['dhl_tracking_note'] ) && ( $this->shipping_dhl_settings['dhl_tracking_note'] == 'no' ) ) {
 			return 'customer';
+		} else {
+			return '';
 		}
 	}
 
