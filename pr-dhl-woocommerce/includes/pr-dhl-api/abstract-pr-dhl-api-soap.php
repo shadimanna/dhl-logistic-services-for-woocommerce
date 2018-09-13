@@ -8,11 +8,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class PR_DHL_API_SOAP {
 
 	/**
-	 * The request endpoint
+	 * Passed arguments to the API
 	 *
 	 * @var string
 	 */
-	protected $endpoint = '';
+	protected $args = array();
 
 	/**
 	 * The query string
@@ -32,25 +32,6 @@ abstract class PR_DHL_API_SOAP {
 	 */
 	protected $dhl_soap_auth;
 
-	/**
-	 * @var Integrater
-	 */
-	protected $id = '';
-
-	/**
-	 * @var string
-	 */
-	protected $soap_client = '';
-
-	/**
-	 * @var array
-	 */
-	protected $remote_header = array();
-
-	/**
-	 * @var string
-	 */
-	protected $query_string = '';
 
 	/**
 	 * @var array
@@ -62,92 +43,52 @@ abstract class PR_DHL_API_SOAP {
 	 *
 	 * @param string $api_key, $api_secret
 	 */
-	public function __construct( ) {
+	public function __construct( $wsdl_link ) {
 
 		try {
 
-			$this->dhl_soap_auth = PR_DHL_API_Auth_SOAP::get_instance( );
-
+			$this->dhl_soap_auth = new PR_DHL_API_Auth_SOAP( $wsdl_link );
+			
 		} catch (Exception $e) {
 			throw $e;
 		}
 	}
 
-	/**
-	 * Method to set id
-	 *
-	 * @param $id
-	 */
-	public function set_id( $id ) {
-		$this->id = $id;
-	}
-
-	/**
-	 * Get the id
-	 *
-	 * @return $id
-	 */
-	public function get_id() {
-		return $this->id;
-	}
-
-	/**
-	 * Method to set endpoint
-	 *
-	 * @param $endpoint
-	 */
-	protected function set_endpoint( $endpoint ) {
-		$this->endpoint = $endpoint;
-	}
-
-	/**
-	 * Get the endpoint
-	 *
-	 * @return String
-	 */
-	protected function get_endpoint() {
-		return $this->endpoint;
-	}
-
-	/**
-	 * @return string
-	 */
-	protected function get_query() {
-		return $this->query;
-	}
-
-
-	/**
-	 * @param string $query
-	 */
-	protected function set_query( $query ) {
-		$this->query = $query;
-	}
-
-	/**
-	 * Get response
-	 *
-	 * @return array
-	 */
-	public function get_response() {
-		return $this->response;
-	}
-
-	/**
-	 * Clear the response
-	 *
-	 * @return bool
-	 */
-	private function clear_response() {
-		$this->response = null;
-
-		return true;
-	}
-
 	public function get_access_token( $client_id, $client_secret ) {
-		$this->soap_client = $this->dhl_soap_auth->get_access_token( $client_id, $client_secret );
-		return $this->soap_client;
+		return $this->dhl_soap_auth->get_access_token( $client_id, $client_secret );
 	}
+
+	protected function maybe_convert_weight( $weight, $UoM ) {
+		switch ( $UoM ) {
+			case 'g':
+				$weight = $weight / 1000;
+				break;
+			case 'lb':
+				$weight = $weight / 2.2;
+				break;
+			case 'oz':
+				$weight = $weight / 35.274;
+				break;
+			default:
+				break;
+		}
+		return $weight;
+	}
+
+	// Unset/remove any items that are empty strings or 0
+	protected function walk_recursive_remove( array $array ) { 
+	    foreach ($array as $k => $v) { 
+	        if (is_array($v)) { 
+	            $array[$k] = $this->walk_recursive_remove($v); 
+	        } 
+            
+            if ( empty( $v ) ) { 
+                unset($array[$k]); 
+            } 
+	        
+	    }
+	    return $array; 
+	} 
 
 	protected function validate_field( $key, $value ) {
 
@@ -186,7 +127,5 @@ abstract class PR_DHL_API_SOAP {
 				}
 				break;
 		}
-	}
-	
-	// abstract protected function parse_response( );
+	}	
 }

@@ -4,8 +4,10 @@ Donate link:
 Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL Parcel Benelux, DHL Parcel Luxembourg, DHL Paket Germany, WooCommerce, Woocom, Woo Commerce, Shipping, shiping, label creation, label printing, shipping rates, DHL Paket
 Requires at least: 4.1
 Requires PHP: 5.6
-Tested up to: 4.9.2
-Stable tag: 1.1.2
+Tested up to: 4.9.8
+Stable tag: 1.2
+WC requires at least: 2.6.0
+WC tested up to: 3.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -68,6 +70,10 @@ In case you could not find what you were looking for in our FAQs and the detaile
 * Get **DHL eCommerce** support via [Integration@dhl.com](mailto:integration@dhl.com)
 * Get **DHL Paket Germany** support via [Shopsoftware@deutschepost.de](mailto:Shopsoftware@deutschepost.de)
 
+== Additional Information ==  
+* The plugin contains a tracking pixel due to reporting purposes of preferred services. Its output is the URL where the preferred services are integrated via plugin as well as the number of plugin calls. There is no personal data created or collected. 
+* In case you like to offer direct shipment to DHL parcelshops or post offices, please note the following phrase of the DHL Paket Service Specifications (annex to the business customer contract): “The sender guarantees that he is entitled to transmit his customers’ e-mail addresses to DHL for the purpose of the parcel notification.” 
+* A “Google Maps API Key” is required for a complete installation. 
 
 == Screenshots ==
 
@@ -78,6 +84,16 @@ In case you could not find what you were looking for in our FAQs and the detaile
 
 
 == Changelog ==
+
+= 1.2 =
+* DHL Paket: New feature - Added Parcel Shop Finder for "Packstation" and "Branch", with Google map.
+* DHL Paket: New feature - Preferred day and time set dynamically based on postcode
+* DHL Paket: New feature - Bulk create labels in order view
+* DHL Paket: New feature - Create return label option
+* DHL Paket: New feature - Added "Print Only If Codeable" service
+* DHL Paket: New feature - Added "Ident-Check" service
+* DHL Paket: New feature - Making tracking note private setting so it does not send email to customer
+* DHL Paket: Save all labels in their own folder i.e. "/wp-content/uploads/woocommerce_dhl_label"
 
 = 1.1.2 =
 * Bug fix - DHL eCommerce: Deleted products cause exception error on edit order

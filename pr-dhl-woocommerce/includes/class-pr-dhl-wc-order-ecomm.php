@@ -16,13 +16,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Ecomm' ) ) :
 
 class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 	
-	/**
-	 * Init and hook in the integration.
-	 */
-	public function __construct( ) {
-		$this->define_constants();
-		$this->init_hooks();
-	}
 
 	public function init_hooks() {
 		parent::init_hooks();
@@ -32,15 +25,6 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 
 		// add 'Label Created' orders page column content
 		add_action( 'manage_shop_order_posts_custom_column', array( $this, 'add_order_label_column_content' ) );
-
-		// add bulk actions to the Orders screen table bulk action drop-downs
-		add_action( 'admin_footer-edit.php', array( $this, 'add_order_bulk_actions' ) );
-
-		// process orders bulk actions
-		add_action( 'load-edit.php', array( $this, 'process_orders_bulk_actions' ) );
-
-		// display admin notices for bulk actions
-		add_action( 'admin_notices', array( $this, 'render_messages' ) );
 
 		// print DHL handover document
 		add_action( 'admin_init', array( $this, 'print_document_action' ), 1 );
@@ -54,7 +38,9 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 
 		if( ! $this->is_shipping_domestic( $order_id ) ) {
 			
-			$dhl_label_items = $this->get_dhl_label_items( $order_id );
+			// DUPLICATE CALL - TEST MAKE SURE STILL OK
+			// $dhl_label_items = $this->get_dhl_label_items( $order_id );
+			
 			// Get saved package description, otherwise generate the text based on settings
 			if( ! empty( $dhl_label_items['pr_dhl_description'] ) ) {
 				$selected_dhl_desc = $dhl_label_items['pr_dhl_description'];
@@ -85,76 +71,13 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 
 	}
 	
-	protected function get_tracking_link( $tracking_num ) {
-		if( empty( $tracking_num ) ) {
-			return '';
-		}
-
-		$tracking_note = sprintf( __( '<label>DHL Tracking Number: </label><a href="%s%s" target="_blank">%s</a>', 'my-text-domain' ), PR_DHL_ECOMM_TRACKING_URL, $tracking_num, $tracking_num);
-		
-		return $tracking_note;
-	}
-
-	/**
-	 * Saves the tracking items array to post_meta.
-	 *
-	 * @param int   $order_id       Order ID
-	 * @param array $tracking_items List of tracking item
-	 *
-	 * @return void
-	 */
-	public function save_dhl_label_tracking( $order_id, $tracking_items ) {
-		update_post_meta( $order_id, '_pr_shipment_dhl_label_tracking', $tracking_items );
-	}
-
-	/*
-	 * Gets all tracking items fron the post meta array for an order
-	 *
-	 * @param int  $order_id  Order ID
-	 *
-	 * @return tracking items
-	 */
-	public function get_dhl_label_tracking( $order_id ) {
-		return get_post_meta( $order_id, '_pr_shipment_dhl_label_tracking', true );
-	}
-
-	/**
-	 * Delete the tracking items array to post_meta.
-	 *
-	 * @param int   $order_id       Order ID
-	 *
-	 * @return void
-	 */
-	public function delete_dhl_label_tracking( $order_id ) {
-		delete_post_meta( $order_id, '_pr_shipment_dhl_label_tracking' );
-	}
-
-	/**
-	 * Saves the label items array to post_meta.
-	 *
-	 * @param int   $order_id       Order ID
-	 * @param array $tracking_items List of tracking item
-	 *
-	 * @return void
-	 */
-	public function save_dhl_label_items( $order_id, $tracking_items ) {
-		update_post_meta( $order_id, '_pr_shipment_dhl_label_items', $tracking_items );
-	}
-
-	/*
-	 * Gets all label itesm fron the post meta array for an order
-	 *
-	 * @param int  $order_id  Order ID
-	 *
-	 * @return label items
-	 */
-	public function get_dhl_label_items( $order_id ) {
-		return get_post_meta( $order_id, '_pr_shipment_dhl_label_items', true );
+	protected function get_tracking_url() {
+		return PR_DHL_ECOMM_TRACKING_URL;
 	}
 
 	protected function get_package_description( $order_id ) {
-		$shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
-		$dhl_desc_default = $shipping_dhl_settings['dhl_desc_default'];
+		// $this->shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
+		$dhl_desc_default = $this->shipping_dhl_settings['dhl_desc_default'];
 		$order = wc_get_order( $order_id );
 		$ordered_items = $order->get_items();
 
@@ -171,14 +94,18 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 			switch ($dhl_desc_default) {
 				case 'product_cat':
 					$product_terms = get_the_terms( $product_id, 'product_cat' );
-					foreach ($product_terms as $key => $product_term) {
-						array_push( $desc_array, $product_term->name );
+					if ( $product_terms ) {
+						foreach ($product_terms as $key => $product_term) {
+							array_push( $desc_array, $product_term->name );
+						}
 					}
 					break;
 				case 'product_tag':
 					$product_terms = get_the_terms( $product_id, 'product_tag' );
-					foreach ($product_terms as $key => $product_term) {
-						array_push( $desc_array, $product_term->name );
+					if ( $product_terms ) {
+						foreach ($product_terms as $key => $product_term) {
+							array_push( $desc_array, $product_term->name );
+						}
 					}
 					break;
 				case 'product_name':
@@ -199,22 +126,22 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 		return $desc_text;
 	}
 
-	protected function get_label_args_settings( $order_id, $dhl_label_args ) {
-		$shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
+	protected function get_label_args_settings( $order_id, $dhl_label_items ) {
+		// $this->shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
 
 		// Get DHL pickup and distribution center
-		$args['dhl_settings']['dhl_api_key'] = $shipping_dhl_settings['dhl_api_key'];
-		$args['dhl_settings']['dhl_api_secret'] = $shipping_dhl_settings['dhl_api_secret'];
-		$args['dhl_settings']['pickup'] = $shipping_dhl_settings['dhl_pickup'];
-		$args['dhl_settings']['distribution'] = $shipping_dhl_settings['dhl_distribution'];
+		$args['dhl_settings']['dhl_api_key'] = $this->shipping_dhl_settings['dhl_api_key'];
+		$args['dhl_settings']['dhl_api_secret'] = $this->shipping_dhl_settings['dhl_api_secret'];
+		$args['dhl_settings']['pickup'] = $this->shipping_dhl_settings['dhl_pickup'];
+		$args['dhl_settings']['distribution'] = $this->shipping_dhl_settings['dhl_distribution'];
 		$args['dhl_settings']['handover'] = $this->get_label_handover_num();
-		$args['dhl_settings']['label_format'] = $shipping_dhl_settings['dhl_label_format'];
+		$args['dhl_settings']['label_format'] = $this->shipping_dhl_settings['dhl_label_format'];
 
 		// Get package prefix
-		$args['order_details']['prefix'] = $shipping_dhl_settings['dhl_prefix'];
+		$args['order_details']['prefix'] = $this->shipping_dhl_settings['dhl_prefix'];
 
-		if ( ! empty( $dhl_label_args['pr_dhl_description'] ) ) {
-			$args['order_details']['description'] = $dhl_label_args['pr_dhl_description'];
+		if ( ! empty( $dhl_label_items['pr_dhl_description'] ) ) {
+			$args['order_details']['description'] = $dhl_label_items['pr_dhl_description'];
 		} else {
 			// If description is empty and it is an international shipment throw an error
 			if ( ! $this->is_shipping_domestic( $order_id ) ) {
@@ -223,8 +150,10 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 			}			
 		}
 
-		
-		
+		$order = wc_get_order( $order_id );
+		if( $this->is_cod_payment_method( $order_id ) ) {
+			$args['order_details']['cod_value']	= $order->get_total();			
+		}		
 		
 		return $args;
 	}
@@ -248,6 +177,20 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 		$new_item['item_export'] = get_post_meta( $product_id, '_dhl_export_description', true );
 
 		return $new_item;
+	}
+
+	protected function save_default_dhl_label_items( $order_id ) {
+
+		parent::save_default_dhl_label_items( $order_id );
+
+		$dhl_label_items = $this->get_dhl_label_items( $order_id );
+		
+		if( empty( $dhl_label_items['pr_dhl_description'] ) ) {
+			$dhl_label_items['pr_dhl_description'] = $this->get_package_description( $order_id );
+		}
+
+		$this->save_dhl_label_items( $order_id, $dhl_label_items );
+
 	}
 
 	// Used by label API to pass handover number
@@ -331,29 +274,6 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 		}
 	}
 
-	public function add_order_bulk_actions() {
-		global $post_type, $post_status;
-
-		if ( $post_type === 'shop_order' && $post_status !== 'trash' ) :
-
-			?>
-			<script type="text/javascript">
-				jQuery( document ).ready( function ( $ ) {
-					$( 'select[name^=action]' ).append(
-						<?php $index = count( $actions = $this->get_bulk_actions() ); ?>
-						<?php foreach ( $actions as $action => $name ) : ?>
-							$( '<option>' ).val( '<?php echo esc_js( $action ); ?>' ).text( '<?php echo esc_js( $name ); ?>' )
-							<?php --$index; ?>
-							<?php if ( $index ) { echo ','; } ?>
-						<?php endforeach; ?>
-					);
-				} );
-			</script>
-			<?php
-
-		endif;
-	}
-
 	public function get_bulk_actions() {
 
 		$shop_manager_actions = array();
@@ -365,120 +285,74 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 		return $shop_manager_actions;
 	}
 
-	public function process_orders_bulk_actions() {
-		global $typenow;
-
-		if ( 'shop_order' === $typenow ) {
-
-			// Get the bulk action
-			$wp_list_table = _get_list_table( 'WP_Posts_List_Table' );
-			$action        = $wp_list_table->current_action();
-			$order_ids     = array();
-
-			if ( ! $action || ! array_key_exists( $action, $this->get_bulk_actions() ) ) {
-				return;
-			}
-
-			// Make sure order IDs are submitted
-			if ( isset( $_REQUEST['post'] ) ) {
-				$order_ids = array_map( 'absint', $_REQUEST['post'] );
-			}
-
- 			// Return if there are no orders to print
- 			// if ( ! $order_ids ) {
-				// return;
- 			// }
-
-			$redirect_url  = admin_url( 'edit.php?post_type=shop_order' );
-
-			if ( 'pr_dhl_handover' === $action ) {
-				
-				// Trigger an admin notice to have the user manually open a print window
-				// $message = $this->get_print_confirmation_message( $order_ids, $redirect_url );
-				$is_error = 0;
-				$orders_count = count( $order_ids );
-
-				if ( $orders_count < 1 ) {
-					$message = __( 'No orders selected for the DHL Handover creation, please select the orders you want to add to the DHL Handover document.', 'pr-shipping-dhl' );
-					$is_error = 1;
-				} else {
-
-					// Ensure the selected orders have a label created, otherwise don't create handover
-					foreach ( $order_ids as $order_id ) {
-						$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
-						if( empty( $label_tracking_info ) ) {
-							$message = __( 'One or more orders do not have a DHL label created, please ensure all DHL labels are created for each order before creating a handoff document.', 'pr-shipping-dhl' );
-							$is_error = 1;
-						}
-					}
-
-					if ( ! $is_error ) {
-						
-						$order_ids_hash = md5( json_encode( $order_ids ) );
-
-						// Save the order IDs in a option.
-						// Initially we were using a transient, but this seemed to cause issues
-						// on some hosts (mainly GoDaddy) that had difficulty in implementing a
-						// proper object cache override.
-						update_option( "pr_dhl_handover_order_ids_{$order_ids_hash}", $order_ids );
-
-						$action_url = wp_nonce_url(
-							add_query_arg(
-								array(
-									'pr_dhl_action'   => 'print',
-									'order_id'        => $order_ids[0],
-									'order_ids'       => $order_ids_hash,
-								),
-								'' !== $redirect_url ? $redirect_url : admin_url()
-							),
-							'pr_dhl_handover'
-						);
-
-						$print_link = '<a href="' . $action_url .'" target="_blank">' . __( 'Print DHL handover.', 'pr-shipping-dhl' ) . '</a>';
-
-						$message = sprintf( __( 'DHL handover for %1$s order(s) created. %2$s', 'pr-shipping-dhl' ), $orders_count, $print_link );
-						
-					}
+	public function validate_bulk_actions( $action, $order_ids ) {
+		$message = '';
+		if ( 'pr_dhl_handover' === $action ) {
+			// Ensure the selected orders have a label created, otherwise don't create handover
+			foreach ( $order_ids as $order_id ) {
+				$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
+				if( empty( $label_tracking_info ) ) {
+					$message = __( 'One or more orders do not have a DHL label created, please ensure all DHL labels are created for each order before creating a handoff document.', 'pr-shipping-dhl' );
 				}
-
-				/* @see render_messages() */
-				update_option( '_pr_dhl_bulk_action_confirmation', array( get_current_user_id() => $message, 'is_error' => $is_error ) );
-
 			}
-			
- 		}
+		}
+
+		return $message;
 	}
 
-	
-	public function render_messages( $current_screen = null ) {
-		if ( ! $current_screen instanceof WP_Screen ) {
-			$current_screen = get_current_screen();
-		}
+	public function process_bulk_actions( $action, $order_ids, $orders_count, $dhl_force_product = false, $is_force_product_dom = false ) {
 
-		if ( isset( $current_screen->id ) && in_array( $current_screen->id, array( 'shop_order', 'edit-shop_order' ), true ) ) {
+		$array_messages = array();
+		
+		$action_arr = explode(':', $action);
+		if ( ! empty( $action_arr ) ) {
+			$action = $action_arr[0];
 
-			$bulk_action_message_opt = get_option( '_pr_dhl_bulk_action_confirmation' );
+			if ( isset( $action_arr[1] ) && ($action_arr[1] == 'dom') ) {
+				$is_force_product_dom = true;
+			} else {
+				$is_force_product_dom = false;
+			}
 
-			if ( ( $bulk_action_message_opt ) && is_array( $bulk_action_message_opt ) ) {
-
-				$user_id = key( $bulk_action_message_opt );
-
-				if ( get_current_user_id() !== (int) $user_id ) {
-					return;
-				}
-
-				$message = wp_kses_post( current( $bulk_action_message_opt ) );
-				$is_error = wp_kses_post( next( $bulk_action_message_opt ) );
-				
-				if( $is_error ) {
-					echo '<div class="error"><ul><li>' . $message . '</li></ul></div>';
-				} else {
-					echo '<div id="wp-admin-message-handler-message"  class="updated"><ul><li><strong>' . $message . '</strong></li></ul></div>';
-				}
-
-				delete_option( '_pr_dhl_bulk_action_confirmation' );
+			if ( isset( $action_arr[2] ) ) {
+				$dhl_force_product = $action_arr[2];
 			}
 		}
+
+		$array_messages += parent::process_bulk_actions( $action, $order_ids, $orders_count, $dhl_force_product, $is_force_product_dom );
+
+		if ( 'pr_dhl_handover' === $action ) {
+			$redirect_url  = admin_url( 'edit.php?post_type=shop_order' );
+			$order_ids_hash = md5( json_encode( $order_ids ) );
+			// Save the order IDs in a option.
+			// Initially we were using a transient, but this seemed to cause issues
+			// on some hosts (mainly GoDaddy) that had difficulty in implementing a
+			// proper object cache override.
+			update_option( "pr_dhl_handover_order_ids_{$order_ids_hash}", $order_ids );
+
+			$action_url = wp_nonce_url(
+				add_query_arg(
+					array(
+						'pr_dhl_action'   => 'print',
+						'order_id'        => $order_ids[0],
+						'order_ids'       => $order_ids_hash,
+					),
+					'' !== $redirect_url ? $redirect_url : admin_url()
+				),
+				'pr_dhl_handover'
+			);
+
+			$print_link = '<a href="' . $action_url .'" target="_blank">' . __( 'Print DHL handover.', 'pr-shipping-dhl' ) . '</a>';
+
+			$message = sprintf( __( 'DHL handover for %1$s order(s) created. %2$s', 'pr-shipping-dhl' ), $orders_count, $print_link );
+
+			array_push($array_messages, array(
+                'message' => $message,
+                'type' => 'success',
+            ));
+		}
+
+		return $array_messages;
 	}
 
 	public function print_document_action() {

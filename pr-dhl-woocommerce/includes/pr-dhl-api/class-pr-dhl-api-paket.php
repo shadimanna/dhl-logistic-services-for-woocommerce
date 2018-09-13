@@ -16,6 +16,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		$this->country_code = $country_code;
 		try {
 			$this->dhl_label = new PR_DHL_API_SOAP_Label( );
+			$this->dhl_finder = new PR_DHL_API_SOAP_Finder( );
 		} catch (Exception $e) {
 			throw $e;	
 		}
@@ -29,9 +30,9 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		$country_code = $this->country_code;
 		
 		$germany_int =  array( 
-								'V53WPAK' => __('DHL Paket International', 'pr-shipping-dhl'),
+								'V55PAK' => __('DHL Paket Connect', 'pr-shipping-dhl'),
 								'V54EPAK' => __('DHL Europaket (B2B)', 'pr-shipping-dhl'),
-								'V55PAK' => __('DHL Paket Connect', 'pr-shipping-dhl')
+								'V53WPAK' => __('DHL Paket International', 'pr-shipping-dhl'),
 								);
 
 		$austria_int = array(  
@@ -61,7 +62,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		$germany_dom = array(  
 								'V01PAK' => __('DHL Paket', 'pr-shipping-dhl'),
 								'V01PRIO' => __('DHL Paket PRIO', 'pr-shipping-dhl'),
-								'V06PAK' => __('DHL Paket Taggleich', 'pr-shipping-dhl')
+								'V06PAK' => __('DHL Paket Taggleich', 'pr-shipping-dhl'),
 								);
 
 		$austria_dom = array( 'V86PARCEL' => __('DHL Paket Austria', 'pr-shipping-dhl') );
@@ -82,17 +83,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		return $dhl_prod_dom;
 	}
 
-	public function get_dhl_preferred_days( $cutoff_time = '12:00', $exclude_working_days = array() ) {
-		$day_of_week_arr = array(
-		            '1' => __('Mon', 'pr-shipping-dhl'), 
-		            '2' => __('Tue', 'pr-shipping-dhl'), 
-		            '3' => __('Wed', 'pr-shipping-dhl'),
-		            '4' => __('Thu', 'pr-shipping-dhl'),
-		            '5' => __('Fri', 'pr-shipping-dhl'),
-		            '6' => __('Sat', 'pr-shipping-dhl'),
-		            '7' => __('Sun', 'pr-shipping-dhl')
-		        );
-
+	public function get_dhl_preferred_day_time( $postcode, $account_num, $cutoff_time = '12:00', $exclude_working_days = array() ) {
 		// Always exclude Sunday
 		$exclude_sun = array( 'Sun' => __('sun', 'pr-shipping-dhl') );
 		$exclude_working_days += $exclude_sun;
@@ -142,46 +133,75 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 			$day_counter++;
 		}
 
-		$preferred_days = array();
-		while( sizeof( $preferred_days ) < ( self::DHL_PAKET_DISPLAY_DAYS + self::DHL_PAKET_REMOVE_DAYS ) ) {
-
-			// NEED TO TEST WITH DE TRANSLATION FOR DISPLAY!
-			$day_of_week = strtolower( date('N', strtotime("+$day_counter days") ) );
-			$week_day = strtolower( date('D', strtotime("+$day_counter days") ) );
-			// $week_day = strftime('%a', strtotime("+$day_counter days") );
-			$week_date = date('Y-m-d', strtotime("+$day_counter days") );
-			
-			// Do not deliver on Sunday or holiday!
-			if ( ! array_key_exists($week_day, $exclude_sun) && ! in_array($week_date, $this->de_national_holidays) ) {
-
-				// $week_day_num = date('j', strtotime("+$day_counter days") );
-				$preferred_days[ $week_date ] = $day_of_week_arr[ $day_of_week ];
-			}			
-			
-			$day_counter++;
-		}
-		// Remove first 2 working days, since cannot deliver right away
-		for ($i=0; $i < self::DHL_PAKET_REMOVE_DAYS; $i++) { 
-			array_shift( $preferred_days );
-		}
-
-		// Add none option
-		array_unshift( $preferred_days, __('none', 'pr-shipping-dhl') );
+		$args['postcode'] = $postcode;
+		$args['account_num'] = $account_num;
+		$args['start_date'] = $week_date;
+		$dhl_parcel_services = new PR_DHL_API_REST_Parcel();
+		$preferred_services = $dhl_parcel_services->get_dhl_parcel_services($args);
+		
+		$preferred_day_time = array();
+		$preferred_day_time['preferred_day'] = $this->get_dhl_preferred_day( $preferred_services );
+		$preferred_day_time['preferred_time'] = $this->get_dhl_preferred_time( $preferred_services );
 
 		// Reset time locael
 		// setlocale(LC_TIME, $current_locale);
 		// Reset timezone to not affect any other plugins
 		date_default_timezone_set($current_timzone);
 
+		return $preferred_day_time;
+	}
+
+	protected function get_dhl_preferred_day( $preferred_services ) {
+		$day_of_week_arr = array(
+		            '1' => __('Mon', 'pr-shipping-dhl'), 
+		            '2' => __('Tue', 'pr-shipping-dhl'), 
+		            '3' => __('Wed', 'pr-shipping-dhl'),
+		            '4' => __('Thu', 'pr-shipping-dhl'),
+		            '5' => __('Fri', 'pr-shipping-dhl'),
+		            '6' => __('Sat', 'pr-shipping-dhl'),
+		            '7' => __('Sun', 'pr-shipping-dhl')
+		        );
+		
+		$preferred_days = array();
+		if( isset( $preferred_services->preferredDay->available ) && $preferred_services->preferredDay->available && isset( $preferred_services->preferredDay->validDays ) ) {
+
+			foreach ($preferred_services->preferredDay->validDays as $days_key => $days_value) {
+				$temp_day_time = strtotime( $days_value->start );
+
+				$day_of_week = date('N', $temp_day_time );
+				$week_date = date('Y-m-d', $temp_day_time );
+
+				$preferred_days[ $week_date ] = $day_of_week_arr[ $day_of_week ];
+			}
+			
+			// Add none option
+			array_unshift( $preferred_days, __('none', 'pr-shipping-dhl') );
+		}
+
+
 		return $preferred_days;
 	}
 
-	public function get_dhl_preferred_time() {
-		return array(
-				'0' => __('none', 'pr-shipping-dhl'),
-				'18002000' => '18 - 20',
-				'19002100' => '19 - 21' 
-			);	
+	protected function get_dhl_preferred_time( $preferred_services ) {
+		
+		$preferred_times = array();
+		if( isset( $preferred_services->preferredTime->available ) && $preferred_services->preferredTime->available && isset( $preferred_services->preferredTime->timeframes ) ) {
+
+			// Add none option
+			$preferred_times[0] = _x('none', 'time context', 'pr-shipping-dhl');
+			foreach ($preferred_services->preferredTime->timeframes as $time_key => $time_value) {
+				$temp_day_time = str_replace( ':00', '', $time_value->start );
+				$temp_day_time .= '-';
+				$temp_day_time .= str_replace( ':00', '', $time_value->end );
+
+				$temp_day_time_key = str_replace( ':', '', $time_value->start );
+				$temp_day_time_key .= str_replace( ':', '', $time_value->end );
+
+				$preferred_times[ $temp_day_time_key ] = $temp_day_time;
+			}
+		}
+
+		return $preferred_times;
 	}
 
 	public function get_dhl_duties() {
@@ -198,7 +218,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 
 	public function get_dhl_visual_age() {
 		$visual_age = array(
-					'0' => __('none', 'pr-shipping-dhl'),
+					'0' => _x('none', 'age context', 'pr-shipping-dhl'),
 					'A16' => __('Minimum age of 16', 'pr-shipping-dhl'),
 					'A18' => __('Minimum age of 18', 'pr-shipping-dhl')
 					);

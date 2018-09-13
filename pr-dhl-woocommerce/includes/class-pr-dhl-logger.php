@@ -55,12 +55,14 @@ class PR_DHL_Logger {
 	}
 
 	public function get_log_url() {
+		return admin_url('admin.php?page=wc-status&tab=logs');
+		/*
 		$log_path = wc_get_log_file_path( 'DHL' );
 		$upload_path = wp_upload_dir();
 
 		$log_url = str_replace( $upload_path['basedir'], $upload_path['baseurl'], $log_path );
 
-		return $log_url;
+		return $log_url;*/
 	}
 
 }

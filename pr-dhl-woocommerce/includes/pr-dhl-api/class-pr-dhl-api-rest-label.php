@@ -38,12 +38,10 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 		$label_response = $response_body->shipments[0]->packages[0]->responseDetails;
 		$package_id = $label_response->labelDetails[0]->packageId;
 
-		$label_url = $this->save_label_file( $package_id , $label_response->labelDetails[0]->format, $label_response->labelDetails[0]->labelData );
+		$label_tracking_info = $this->save_label_file( $package_id , $label_response->labelDetails[0]->format, $label_response->labelDetails[0]->labelData );
 
-		$label_tracking_info = array( 'label_url' => $label_url,
-										'tracking_number' => $package_id,
-										'tracking_status' => isset( $label_response->trackingNumberStatus ) ? $label_response->trackingNumberStatus : ''
-										);
+		$label_tracking_info['tracking_number'] = $package_id;
+		$label_tracking_info['tracking_status'] = isset( $label_response->trackingNumberStatus ) ? $label_response->trackingNumberStatus : '';
 
 		return $label_tracking_info;
 	}
@@ -92,9 +90,8 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 
 	protected function save_label_file( $package_id, $format, $label_data ) {
 		$label_name = 'dhl-label-' . $package_id . '.' . $format;
-		$upload_path = wp_upload_dir();
-		$label_path = $upload_path['path'] . '/'. $label_name;
-		$label_url = $upload_path['url'] . '/'. $label_name;
+		$label_path = PR_DHL()->get_dhl_label_folder_dir() . $label_name;
+		$label_url = PR_DHL()->get_dhl_label_folder_url() . $label_name;
 
 		if( validate_file($label_path) > 0 ) {
 			throw new Exception( __('Invalid file path!', 'pr-shipping-dhl' ) );
@@ -107,7 +104,7 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 			throw new Exception( __('DHL Label file cannot be saved!', 'pr-shipping-dhl' ) );
 		}
 
-		return $label_url;
+		return array( 'label_url' => $label_url, 'label_path' => $label_path);
 	}
 
 	protected function set_arguments( $args ) {

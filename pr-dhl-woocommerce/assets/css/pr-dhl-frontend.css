@@ -28,24 +28,51 @@ tr.dhl-co-tr.dhl-co-tr-fist > td:last-child {
 }
 
 img.dhl-co-logo {
-  /*padding: 0 5px;*/
+  padding: 0;
   max-height: 100px;
   max-width: 35%;
-  margin: 10px;
+  margin: 5px 10px;
   background: #FFCC00;
+}
+
+body table, .woocommerce table.shop_table {
+     border-collapse: collapse;
 }
 
 .dhl-co-tr th,
 .dhl-co-tr th:first-child,
-.dhl-co-tr td {
+.dhl-co-tr td,
+.woocommerce-page.woocommerce-checkout table.shop_table .dhl-co-tr th,
+.woocommerce-page.woocommerce-checkout form #order_review .dhl-co-tr th,
+.woocommerce-page.woocommerce-checkout form #order_review .dhl-co-tr td,
+.woocommerce-page.woocommerce-checkout table.shop_table .dhl-co-tr td{
   padding: 5px 15px;
+  border-bottom: 0;
+  border-top: 0;
 }
 
-.dhl-co-tr td:first-child {
+.woocommerce table.shop_table tfoot th {
+    border-top: 0;
+}
+
+.dhl-co-tr,
+.dhl-co-tr th,
+.dhl-co-tr td,
+.dhl-co-tr:hover td,
+.hentry table .dhl-co-tr:hover td,
+.woocommerce-checkout-review-order-table tfoot .dhl-co-tr th {
+    background: none;
+}
+
+.dhl-co-tr td:first-child,
+.woocommerce-page.woocommerce-checkout table.shop_table .dhl-co-tr td:first-child,
+.woocommerce-page.woocommerce-checkout form #order_review .dhl-co-tr td:first-child {
   padding-left: 15px;
+    font-weight: normal;
 }
 
-.dhl-co-tr td:last-child {
+.dhl-co-tr td:last-child,
+.woocommerce-page.woocommerce-checkout table.shop_table .dhl-co-tr td:last-child {
   padding-right: 15px;
 }
 
@@ -57,7 +84,12 @@ img.dhl-co-logo {
   padding-top: 20px !important;
 }
 
-tr.dhl-co-tr.dhl-co-tr-fist > td {
+.woocommerce #order_review table.shop_table tfoot tr.dhl-co-tr td {
+    text-align: left;
+}
+
+tr.dhl-co-tr.dhl-co-tr-fist > td,
+.woocommerce #order_review table.shop_table tr.dhl-co-tr.dhl-co-tr-fist > td {
   border-top: 1px solid #FFCC00;
   padding: 0;
 }
@@ -67,6 +99,7 @@ ul.dhl-co-times {
   flex-direction: row;
   flex-wrap: wrap;
   margin: 0;
+  padding: 0;
 }
 
 ul.dhl-co-preffered-time {
@@ -80,6 +113,11 @@ ul.dhl-co-preffered-time > li {
   display: inline-block;
   margin: 0 5px;
   text-align: center;
+}
+
+.woocommerce #order_review table.shop_table ul.dhl-co-times > li label,
+.woocommerce #order_review table.shop_table ul.dhl-co-preffered-time > li label {
+    display: block;
 }
 
 ul.dhl-co-times > li {
@@ -112,11 +150,12 @@ ul.dhl-co-times label,
 ul.dhl-co-preffered-time label {
   position: relative;
   display: block;
-  padding: 15px 25px;
+  padding: 15px 10px;
   font-size: 1em;
   font-weight: normal;
   background: #ecf5f2;
   cursor: pointer;
+  margin: 0;
 }
 
 ul.dhl-co-times label {
@@ -153,17 +192,14 @@ ul.dhl-preferred-location li label {
   display: inline-block;
 }
 
-@media only screen and (max-width: 600px) {
-  ul.dhl-co-times > li {
-    min-width: 30%;
-    width: 30%;
-  }
-}
-
 #pr_dhl_preferred_location::placeholder,
 #pr_dhl_preferred_neighbour_name::placeholder,
 #pr_dhl_preferred_neighbour_address::placeholder {
   color: #999;
+}
+
+.dhl-preferred_neighbor input, .dhl-preferred_location input {
+    width: 100%;
 }
 
 .dhl-tooltip {
@@ -175,4 +211,150 @@ ul.dhl-preferred-location li label {
   text-align: center;
   font-weight: bold;
   cursor: pointer;
+}
+
+.shipping-dhl-postnum {
+  display: none;
+}
+
+.shipping-dhl-postnum span.optional {
+  display: none;
+}
+
+a#dhl_parcel_finder {
+  padding: .125rem;
+  border-radius: 3px;
+  background-clip: padding-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  font-size: .875rem;
+  background-color: #fff;
+  -webkit-font-smoothing: inherit;
+  display: inline-block;
+  position: relative;
+  font-weight: 700;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid #dadae5;
+  margin-bottom: 10px;
+  -webkit-box-shadow: 2px 2px  #dadae5;
+  box-shadow: 2px 2px  #dadae5;
+  color: inherit;
+}
+
+a#dhl_parcel_finder:hover {
+  border: 1px solid #B1B1B1;
+  -webkit-box-shadow: 2px 2px #B1B1B1;
+  box-shadow: 2px 2px #B1B1B1;
+}
+
+#dhl_parcel_finder img {
+  width: 25%;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+#dhl_google_map {
+  /*width: 90%;*/
+  height: 85%;
+}
+
+#dhl_parcel_finder_form {
+  width: 90%;
+  height: 90%;
+}
+
+#dhl_parcel_finder_form .woocommerce-error {
+  padding: 1em 3.5em;
+  width: 95%;
+}
+
+#dhl_parcel_finder_form .parcel-title {
+  padding-top: 0px;
+  margin-bottom: .5em;
+}
+
+
+#dhl_parcel_finder_form form #dhl_seach_button {
+  float: right;
+}
+
+#dhl_parcel_finder_form form .form-field {
+  float: left;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  vertical-align: middle;
+}
+
+#dhl_parcel_finder_form form .form-field.extra-small {
+  width: 7%;
+}
+
+#dhl_parcel_finder_form form .form-field.small {
+  width: 10%;
+}
+
+#dhl_parcel_finder_form form .form-field.large {
+  width: 20%;
+}
+
+#dhl_parcel_finder_form form .form-row label {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 0 0 10px;
+}
+
+#dhl_parcel_finder_form form .form-field.packstation {
+    margin-right: 25px;
+}
+
+#dhl_parcel_finder_form form .form-row span.icon {
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+    background-repeat: no-repeat;
+    background-size: contain;
+    margin-bottom: -15px;
+}
+
+#dhl_parcel_finder_form form .form-row .input-checkbox {
+  vertical-align: middle;
+}
+
+#dhl_parcel_finder_form .parcelshop-select-btn {
+  margin-top: 20px;
+}
+
+#dhl_parcel_finder_form .parcel_subtitle {
+  font-size: 0.8125rem;
+  color: #767676;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 1.5em 0 0;
+}
+
+#dhl_parcel_finder_form .dhl_shop_img {
+  display: inline;
+}
+
+@media only screen and (max-width: 600px) {
+  ul.dhl-co-times > li {
+    min-width: 30%;
+    width: 30%;
+  }
+    #dhl_parcel_finder_form form .form-field.small, #dhl_parcel_finder_form form .form-field.large {
+        width: 100%;
+    }
+    
+    #dhl_parcel_finder_form form #dhl_seach_button {
+        float: left;
+        margin: 30px 0 40px;
+    }
+    
+    #dhl_parcel_finder_form .woocommerce-error {
+        padding: 1em;
+    }
 }

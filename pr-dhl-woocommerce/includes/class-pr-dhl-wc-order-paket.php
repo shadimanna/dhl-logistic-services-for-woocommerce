@@ -31,16 +31,151 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		// } else {
 		// 	$selected_dhl_desc = $this->get_package_description( $order_id );
 		// }
-		
+
+		$order = wc_get_order( $order_id );
+		if( $this->is_cod_payment_method( $order_id ) ) {
+
+			woocommerce_wp_text_input( array(
+					'id'          		=> 'pr_dhl_cod_value',
+					'class'          	=> 'wc_input_decimal',
+					'label'       		=> __( 'COD Amount:', 'pr-shipping-dhl' ),
+					'placeholder' 		=> '',
+					'description'		=> '',
+					'value'       		=> isset( $dhl_label_items['pr_dhl_cod_value'] ) ? $dhl_label_items['pr_dhl_cod_value'] : $order->get_total(),
+					'custom_attributes'	=> array( $is_disabled => $is_disabled )
+			) );
+		}
 
 		$base_country_code = PR_DHL()->get_base_country();
 		
+		echo '<hr/>';
+
+		if( ! $this->is_shipping_domestic( $order_id ) ) {
+
+			// Duties drop down
+			$duties_opt = $dhl_obj->get_dhl_duties();
+			woocommerce_wp_select( array(
+				'id'          		=> 'pr_dhl_duties',
+				'label'       		=> __( 'Duties:', 'pr-shipping-dhl' ),
+				'description'		=> '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_duties'] ) ? $dhl_label_items['pr_dhl_duties'] : '',
+				'options'			=> $duties_opt,
+				'custom_attributes'	=> array( $is_disabled => $is_disabled )
+			) );
+		}
+
 		// Preferred options for Germany only
 		if( ( $base_country_code == 'DE' ) && ( $this->is_shipping_domestic( $order_id ) ) ) {
-			$preferred_days = PR_DHL()->get_dhl_preferred_days();
+
+			if( ! empty( $this->shipping_dhl_settings['dhl_participation_return'] ) ) {
+
+				woocommerce_wp_checkbox( array(
+					'id'          		=> 'pr_dhl_return_address_enabled',
+					'label'       		=> __( 'Create return label: ', 'pr-shipping-dhl' ),
+					'placeholder' 		=> '',
+					'description'		=> '',
+					'value'       		=> isset( $dhl_label_items['pr_dhl_return_address_enabled'] ) ? $dhl_label_items['pr_dhl_return_address_enabled'] : '',
+					'custom_attributes'	=> array( $is_disabled => $is_disabled )
+				) );
+				
+				woocommerce_wp_text_input( array(
+						'id'          		=> 'pr_dhl_return_name',
+						'label'       		=> __( 'Name:', 'pr-shipping-dhl' ),
+						'placeholder' 		=> '',
+						'description'		=> '',
+						'value'       		=> isset( $dhl_label_items['pr_dhl_return_name'] ) ? $dhl_label_items['pr_dhl_return_name'] : $this->shipping_dhl_settings['dhl_return_name'],
+						'custom_attributes'	=> array( $is_disabled => $is_disabled )
+				) );
+
+				woocommerce_wp_text_input( array(
+						'id'          		=> 'pr_dhl_return_company',
+						'label'       		=> __( 'Company:', 'pr-shipping-dhl' ),
+						'placeholder' 		=> '',
+						'description'		=> '',
+						'value'       		=> isset( $dhl_label_items['pr_dhl_return_company'] ) ? $dhl_label_items['pr_dhl_return_company'] : $this->shipping_dhl_settings['dhl_return_company'],
+						'custom_attributes'	=> array( $is_disabled => $is_disabled )
+				) );
+
+				woocommerce_wp_text_input( array(
+						'id'          		=> 'pr_dhl_return_address',
+						'label'       		=> __( 'Street Address:', 'pr-shipping-dhl' ),
+						'placeholder' 		=> '',
+						'description'		=> '',
+						'value'       		=> isset( $dhl_label_items['pr_dhl_return_address'] ) ? $dhl_label_items['pr_dhl_return_address'] : $this->shipping_dhl_settings['dhl_return_address'],
+						'custom_attributes'	=> array( $is_disabled => $is_disabled )
+				) );
+
+				woocommerce_wp_text_input( array(
+						'id'          		=> 'pr_dhl_return_address_no',
+						'label'       		=> __( 'Street Address Number:', 'pr-shipping-dhl' ),
+						'placeholder' 		=> '',
+						'description'		=> '',
+						'value'       		=> isset( $dhl_label_items['pr_dhl_return_address_no'] ) ? $dhl_label_items['pr_dhl_return_address_no'] : $this->shipping_dhl_settings['dhl_return_address_no'],
+						'custom_attributes'	=> array( $is_disabled => $is_disabled )
+				) );
+
+				woocommerce_wp_text_input( array(
+						'id'          		=> 'pr_dhl_return_address_city',
+						'label'       		=> __( 'City:', 'pr-shipping-dhl' ),
+						'placeholder' 		=> '',
+						'description'		=> '',
+						'value'       		=> isset( $dhl_label_items['pr_dhl_return_address_city'] ) ? $dhl_label_items['pr_dhl_return_address_city'] : $this->shipping_dhl_settings['dhl_return_address_city'],
+						'custom_attributes'	=> array( $is_disabled => $is_disabled )
+				) );
+
+				woocommerce_wp_text_input( array(
+						'id'          		=> 'pr_dhl_return_address_state',
+						'label'       		=> __( 'State:', 'pr-shipping-dhl' ),
+						'placeholder' 		=> '',
+						'description'		=> '',
+						'value'       		=> isset( $dhl_label_items['pr_dhl_return_address_state'] ) ? $dhl_label_items['pr_dhl_return_address_state'] : $this->shipping_dhl_settings['dhl_return_address_state'],
+						'custom_attributes'	=> array( $is_disabled => $is_disabled )
+				) );
+
+				woocommerce_wp_text_input( array(
+						'id'          		=> 'pr_dhl_return_address_zip',
+						'label'       		=> __( 'Postcode:', 'pr-shipping-dhl' ),
+						'placeholder' 		=> '',
+						'description'		=> '',
+						'value'       		=> isset( $dhl_label_items['dhl_return_address_zip'] ) ? $dhl_label_items['dhl_return_address_zip'] : $this->shipping_dhl_settings['dhl_return_address_zip'],
+						'custom_attributes'	=> array( $is_disabled => $is_disabled )
+				) );
+
+				woocommerce_wp_text_input( array(
+						'id'          		=> 'pr_dhl_return_phone',
+						'label'       		=> __( 'Phone:', 'pr-shipping-dhl' ),
+						'placeholder' 		=> '',
+						'description'		=> '',
+						'value'       		=> isset( $dhl_label_items['pr_dhl_return_phone'] ) ? $dhl_label_items['pr_dhl_return_phone'] : $this->shipping_dhl_settings['dhl_return_phone'],
+						'custom_attributes'	=> array( $is_disabled => $is_disabled )
+				) );
+
+				woocommerce_wp_text_input( array(
+						'id'          		=> 'pr_dhl_return_email',
+						'label'       		=> __( 'Email:', 'pr-shipping-dhl' ),
+						'placeholder' 		=> '',
+						'description'		=> '',
+						'value'       		=> isset( $dhl_label_items['pr_dhl_return_email'] ) ? $dhl_label_items['pr_dhl_return_email'] : $this->shipping_dhl_settings['dhl_return_email'],
+						'custom_attributes'	=> array( $is_disabled => $is_disabled )
+				) );
+
+				echo '<hr/>';
+			}
+
+			try {
+				$shipping_address = $order->get_address( 'shipping' );
+
+				$preferred_day_time = PR_DHL()->get_dhl_preferred_day_time( $shipping_address['postcode'] );
+
+				$preferred_days = $preferred_day_time['preferred_day'];
+				$preferred_days = array_keys($preferred_days);
+				$preferred_days = array_combine($preferred_days, $preferred_days);
+
+				$preferred_times = $preferred_day_time['preferred_time'];
+			} catch (Exception $e) {
+				// catch exception
+			}
 			
-			$preferred_days = array_keys($preferred_days);
-			$preferred_days = array_combine($preferred_days, $preferred_days);
 			$preferred_days[0] = __( 'none', 'pr-shipping-dhl' );
 
 			woocommerce_wp_select( array(
@@ -52,7 +187,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
 
-			$preferred_times = $dhl_obj->get_dhl_preferred_time();
+			// $preferred_times = $dhl_obj->get_dhl_preferred_time();
 			woocommerce_wp_select( array(
 				'id'          		=> 'pr_dhl_preferred_time',
 				'label'       		=> __( 'Preferred Time:', 'pr-shipping-dhl' ),
@@ -87,20 +222,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				) );
 			}
 
-			if( ! $this->is_shipping_domestic( $order_id ) ) {
-
-				// Duties drop down
-				$duties_opt = $dhl_obj->get_dhl_duties();
-				woocommerce_wp_select( array(
-					'id'          		=> 'pr_dhl_duties',
-					'label'       		=> __( 'Duties:', 'pr-shipping-dhl' ),
-					'description'		=> '',
-					'value'       		=> isset( $dhl_label_items['pr_dhl_duties'] ) ? $dhl_label_items['pr_dhl_duties'] : '',
-					'options'			=> $duties_opt,
-					'custom_attributes'	=> array( $is_disabled => $is_disabled )
-				) );
-			}
-
 			// Visual age, need 16 or 18, drop down
 			$visual_age = $dhl_obj->get_dhl_visual_age();
 			woocommerce_wp_select( array(
@@ -129,7 +250,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				'value'       		=> isset( $dhl_label_items['pr_dhl_additional_insurance'] ) ? $dhl_label_items['pr_dhl_additional_insurance'] : '',
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
-
+/*
 			woocommerce_wp_checkbox( array(
 				'id'          		=> 'pr_dhl_personally',
 				'label'       		=> __( 'Personally: ', 'pr-shipping-dhl' ),
@@ -138,7 +259,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				'value'       		=> isset( $dhl_label_items['pr_dhl_personally'] ) ? $dhl_label_items['pr_dhl_personally'] : '',
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
-
+*/
 			woocommerce_wp_checkbox( array(
 				'id'          		=> 'pr_dhl_no_neighbor',
 				'label'       		=> __( 'No Neighbour Delivery: ', 'pr-shipping-dhl' ),
@@ -176,17 +297,69 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				'value'       		=> isset( $dhl_label_items['pr_dhl_bulky_goods'] ) ? $dhl_label_items['pr_dhl_bulky_goods'] : '',
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
-			/*
+
+			echo '<hr/>';
+
 			woocommerce_wp_checkbox( array(
 				'id'          		=> 'pr_dhl_identcheck',
-				'label'       		=> __( 'IdentCheck: ', 'pr-shipping-dhl' ),
+				'label'       		=> __( 'Ident-Check: ', 'pr-shipping-dhl' ),
 				'placeholder' 		=> '',
 				'description'		=> '',
 				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck'] ) ? $dhl_label_items['pr_dhl_identcheck'] : '',
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
-			) );*/
-		}
+			) );
+/*
+			woocommerce_wp_text_input( array(
+				'id'          		=> 'pr_dhl_identcheck_fname',
+				'label'       		=> __( 'Identity Check - First Name: ', 'pr-shipping-dhl' ),
+				'placeholder' 		=> '',
+				'description'		=> '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_fname'] ) ? $dhl_label_items['pr_dhl_identcheck_fname'] : '',
+				'custom_attributes'	=> array( $is_disabled => $is_disabled )
+			) );
 
+			woocommerce_wp_text_input( array(
+				'id'          		=> 'pr_dhl_identcheck_lname',
+				'label'       		=> __( 'Identity Check - Last Name: ', 'pr-shipping-dhl' ),
+				'placeholder' 		=> '',
+				'description'		=> '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_lname'] ) ? $dhl_label_items['pr_dhl_identcheck_lname'] : '',
+				'custom_attributes'	=> array( $is_disabled => $is_disabled )
+			) );
+*/
+			woocommerce_wp_text_input( array(
+				'id'          		=> 'pr_dhl_identcheck_dob',
+				'label'       		=> __( 'Ident-Check - Date of Birth: ', 'pr-shipping-dhl' ),
+				'placeholder' 		=> '',
+				'description'		=> '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_dob'] ) ? $dhl_label_items['pr_dhl_identcheck_dob'] : '',
+				'custom_attributes'	=> array( $is_disabled => $is_disabled ),
+				'class'				=> 'short date-picker'
+			) );
+
+			// $visual_age = $dhl_obj->get_dhl_visual_age();
+			woocommerce_wp_select( array(
+				'id'          		=> 'pr_dhl_identcheck_age',
+				'label'       		=> __( 'Ident-Check - Minimum Age: ', 'pr-shipping-dhl' ),
+				'description'		=> '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_age'] ) ? $dhl_label_items['pr_dhl_identcheck_age'] : '',
+				'options'			=> $visual_age,
+				'custom_attributes'	=> array( $is_disabled => $is_disabled )
+			) );
+
+			echo '<hr/>';
+
+			woocommerce_wp_checkbox( array(
+				'id'          		=> 'pr_dhl_is_codeable',
+				'label'       		=> __( 'Print Only If Codeable: ', 'pr-shipping-dhl' ),
+				'placeholder' 		=> '',
+				'description'		=> '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_is_codeable'] ) ? $dhl_label_items['pr_dhl_is_codeable'] : $this->get_default_dhl_print_codeable(),
+				'custom_attributes'	=> array( $is_disabled => $is_disabled )
+			) );
+
+		}
+		
 	}
 
 	/**
@@ -195,104 +368,57 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	 * Function for saving tracking items
 	 */
 	public function get_additional_meta_ids( ) {
-
-		return array( 'pr_dhl_preferred_day', 'pr_dhl_preferred_time', 'pr_dhl_preferred_location', 'pr_dhl_preferred_neighbor', 'pr_dhl_duties', 'pr_dhl_age_visual', 'pr_dhl_email_notification', 'pr_dhl_additional_insurance', 'pr_dhl_personally', 'pr_dhl_no_neighbor', 'pr_dhl_named_person', 'pr_dhl_premium', 'pr_dhl_bulky_goods'/*, 'pr_dhl_identcheck'*/ );
-
+		return array( 'pr_dhl_cod_value', 'pr_dhl_preferred_day', 'pr_dhl_preferred_time', 'pr_dhl_preferred_location', 'pr_dhl_preferred_neighbor', 'pr_dhl_duties', 'pr_dhl_age_visual', 'pr_dhl_email_notification', 'pr_dhl_additional_insurance', 'pr_dhl_personally', 'pr_dhl_no_neighbor', 'pr_dhl_named_person', 'pr_dhl_premium', 'pr_dhl_bulky_goods', 'pr_dhl_is_codeable', 'pr_dhl_identcheck', 'pr_dhl_identcheck_dob', 'pr_dhl_identcheck_age', 'pr_dhl_return_address_enabled', 'pr_dhl_return_name', 'pr_dhl_return_company', 'pr_dhl_return_address','pr_dhl_return_address_no', 'pr_dhl_return_address_city', 'pr_dhl_return_address_state', 'pr_dhl_return_address_zip', 'pr_dhl_return_phone', 'pr_dhl_return_email' );
 	}
 
-	protected function get_tracking_link( $tracking_num ) {
-		if( empty( $tracking_num ) ) {
-			return '';
+	protected function get_tracking_url() {
+		return PR_DHL_PAKET_TRACKING_URL;
+	}
+
+	protected function get_label_args_settings( $order_id, $dhl_label_items ) {
+
+		$order = wc_get_order( $order_id );
+		$billing_address = $order->get_address( );
+		$shipping_address = $order->get_address( 'shipping' );
+
+		$shipping_address_email = '';
+		// If shipping email doesn't exist, try to get billing email
+		if( ! isset( $shipping_address['email'] ) && isset( $billing_address['email'] ) ) {
+			$shipping_address_email = $billing_address['email'];
 		}
-
-		$tracking_note = sprintf( __( '<label>DHL Tracking Number: </label><a href="%s%s" target="_blank">%s</a>', 'my-text-domain' ), PR_DHL_PAKET_TRACKING_URL, $tracking_num, $tracking_num);
-		
-		return $tracking_note;
-	}
-
-	/**
-	 * Saves the tracking items array to post_meta.
-	 *
-	 * @param int   $order_id       Order ID
-	 * @param array $tracking_items List of tracking item
-	 *
-	 * @return void
-	 */
-	public function save_dhl_label_tracking( $order_id, $tracking_items ) {
-		update_post_meta( $order_id, '_pr_shipment_dhl_label_tracking', $tracking_items );
-	}
-
-	/*
-	 * Gets all tracking items fron the post meta array for an order
-	 *
-	 * @param int  $order_id  Order ID
-	 *
-	 * @return tracking items
-	 */
-	public function get_dhl_label_tracking( $order_id ) {
-		return get_post_meta( $order_id, '_pr_shipment_dhl_label_tracking', true );
-	}
-
-	/**
-	 * Delete the tracking items array to post_meta.
-	 *
-	 * @param int   $order_id       Order ID
-	 *
-	 * @return void
-	 */
-	public function delete_dhl_label_tracking( $order_id ) {
-		delete_post_meta( $order_id, '_pr_shipment_dhl_label_tracking' );
-	}
-
-	/**
-	 * Saves the label items array to post_meta.
-	 *
-	 * @param int   $order_id       Order ID
-	 * @param array $tracking_items List of tracking item
-	 *
-	 * @return void
-	 */
-	public function save_dhl_label_items( $order_id, $tracking_items ) {
-		update_post_meta( $order_id, '_pr_shipment_dhl_label_items', $tracking_items );
-	}
-
-	/*
-	 * Gets all label itesm fron the post meta array for an order
-	 *
-	 * @param int  $order_id  Order ID
-	 *
-	 * @return label items
-	 */
-	public function get_dhl_label_items( $order_id ) {
-		return get_post_meta( $order_id, '_pr_shipment_dhl_label_items', true );
-	}
-
-	protected function get_label_args_settings( $order_id, $dhl_label_args ) {
 
 		// Get services etc.
 		$meta_box_ids = $this->get_additional_meta_ids();
 		
 		foreach ($meta_box_ids as $value) {
 			$api_key = str_replace('pr_dhl_', '', $value);
-			if ( isset( $dhl_label_args[ $value ] ) ) {
-				$args['order_details'][ $api_key ] = $dhl_label_args[ $value ];
+			if ( isset( $dhl_label_items[ $value ] ) ) {
+				$args['order_details'][ $api_key ] = $dhl_label_items[ $value ];
 			}
 		}
 
 		// Get settings
-		$shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
+		// $this->shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
 
-		$setting_ids = array( 'dhl_api_user','dhl_api_pwd', 'dhl_account_num', 'dhl_shipper_name', 'dhl_shipper_company', 'dhl_shipper_address','dhl_shipper_address_no', 'dhl_shipper_address_city', 'dhl_shipper_address_state', 'dhl_shipper_address_zip', 'dhl_shipper_phone', 'dhl_shipper_email', 'dhl_bank_holder', 'dhl_bank_name', 'dhl_bank_iban', 'dhl_bank_bic', 'dhl_bank_ref', 'dhl_bank_ref_2', 'dhl_cod_fee' );
+		$setting_ids = array( 'dhl_api_user','dhl_api_pwd', 'dhl_account_num', 'dhl_shipper_name', 'dhl_shipper_company', 'dhl_shipper_address','dhl_shipper_address_no', 'dhl_shipper_address_city', 'dhl_shipper_address_state', 'dhl_shipper_address_zip', 'dhl_shipper_phone', 'dhl_shipper_email', 'dhl_bank_holder', 'dhl_bank_name', 'dhl_bank_iban', 'dhl_bank_bic', 'dhl_bank_ref', 'dhl_bank_ref_2', 'dhl_participation_return' );
 
 		foreach ($setting_ids as $value) {
 			$api_key = str_replace('dhl_', '', $value);
-			if ( isset( $shipping_dhl_settings[ $value ] ) ) {
-				$args['dhl_settings'][ $api_key ] = htmlspecialchars_decode( $shipping_dhl_settings[ $value ] );
+			if ( isset( $this->shipping_dhl_settings[ $value ] ) ) {
+				$args['dhl_settings'][ $api_key ] = htmlspecialchars_decode( $this->shipping_dhl_settings[ $value ] );
+
+				if( stripos($value, 'bank_ref') !== false ) {
+
+					$args['dhl_settings'][ $api_key ] = str_replace( '{order_id}', $order_id, $args['dhl_settings'][ $api_key ] );
+					
+					$args['dhl_settings'][ $api_key ] = str_replace( '{email}', $shipping_address_email, $args['dhl_settings'][ $api_key ] );
+				}
 			}
 		}
 		
 		$args['dhl_settings'][ 'shipper_country' ] = PR_DHL()->get_base_country();
-		$args['dhl_settings'][ 'participation' ] = $shipping_dhl_settings[ 'dhl_participation_' . $dhl_label_args['pr_dhl_product'] ];
+		$args['dhl_settings'][ 'return_country' ] = PR_DHL()->get_base_country();
+		$args['dhl_settings'][ 'participation' ] = $this->shipping_dhl_settings[ 'dhl_participation_' . $dhl_label_items['pr_dhl_product'] ];
 
 		return $args;
 	}
@@ -300,14 +426,48 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	protected function delete_label_args( $order_id ) {
 		$args = $this->get_dhl_label_tracking( $order_id );
 
-		$shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
+		// $this->shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
 
-		$args['api_user'] = $shipping_dhl_settings['dhl_api_user'];
-		$args['api_pwd'] = $shipping_dhl_settings['dhl_api_pwd'];
+		$args['api_user'] = $this->shipping_dhl_settings['dhl_api_user'];
+		$args['api_pwd'] = $this->shipping_dhl_settings['dhl_api_pwd'];
 		
 		return $args;
 	}
 
+	protected function save_default_dhl_label_items( $order_id ) {
+
+		parent::save_default_dhl_label_items( $order_id );
+
+		$dhl_label_items = $this->get_dhl_label_items( $order_id );
+		
+		if( empty( $dhl_label_items['pr_dhl_is_codeable'] ) ) {
+			$dhl_label_items['pr_dhl_is_codeable'] = $this->get_default_dhl_print_codeable();
+		}
+		
+		$order = wc_get_order( $order_id );
+		if( $this->is_cod_payment_method( $order_id ) && empty( $dhl_label_items['pr_dhl_cod_value'] ) ) {
+			$dhl_label_items['pr_dhl_cod_value'] = $order->get_total();
+		}
+
+		$this->save_dhl_label_items( $order_id, $dhl_label_items );
+
+	}
+
+	protected function get_default_dhl_print_codeable() {
+		// $this->shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
+		return $this->shipping_dhl_settings['dhl_default_print_codeable'];
+	}
+
+	public function get_bulk_actions() {
+
+		$shop_manager_actions = array();
+
+		$shop_manager_actions = array(
+			'pr_dhl_create_labels'      => __( 'DHL Create Labels', 'pr-shipping-dhl' )
+		);
+
+		return $shop_manager_actions;
+	}
 }
 
 endif;
