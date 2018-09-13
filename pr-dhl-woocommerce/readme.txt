@@ -182,6 +182,9 @@ In case you could not find what you were looking for in our FAQs and the detaile
 
 == Upgrade Notice ==
 
+= 1.2 =
+* New features, please upgrade
+
 = 1.0.14 =
 * Enhancements, please upgrade
 
