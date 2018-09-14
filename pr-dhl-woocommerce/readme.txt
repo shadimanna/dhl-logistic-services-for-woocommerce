@@ -85,6 +85,9 @@ In case you could not find what you were looking for in our FAQs and the detaile
 
 == Changelog ==
 
+= 1.2.3 =
+* Bug fix: Use 'jQuery' instead of '$' on frontend script
+
 = 1.2.2 =
 * Bug fix: Default to 'customer' order note instead of 'private'
 

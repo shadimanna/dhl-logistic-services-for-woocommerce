@@ -404,7 +404,7 @@ jQuery(document).ready(function($) {
     }
   };
   
-  $("[data-fancybox]").fancybox({
+  jQuery("[data-fancybox]").fancybox({
     modal: true
   });
 
