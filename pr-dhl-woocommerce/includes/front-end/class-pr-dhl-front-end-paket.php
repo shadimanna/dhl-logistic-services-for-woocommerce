@@ -692,7 +692,12 @@ class PR_DHL_Front_End_Paket {
 	}
 
 	public function validate_post_number()	{
-		
+
+		// Validate input only if "ship to different address" flag is set
+		if( ! isset( $_POST['ship_to_different_address'] ) ) {
+			return;
+		}
+
 		$shipping_dhl_address_type = wc_clean( $_POST['shipping_dhl_address_type'] );
 		$shipping_address_1 = wc_clean( $_POST['shipping_address_1'] );
 		$shipping_dhl_postnum = wc_clean( $_POST['shipping_dhl_postnum'] );

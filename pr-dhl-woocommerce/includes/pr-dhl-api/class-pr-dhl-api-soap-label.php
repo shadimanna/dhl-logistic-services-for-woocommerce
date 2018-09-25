@@ -499,6 +499,24 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			$this->args['order_details']['weight'] = $this->maybe_convert_weight( $this->args['order_details']['weight'], $this->args['order_details']['weightUom'] );
 
+			// Ensure company name is first for shipper address
+			if( ! empty( $this->args['dhl_settings']['shipper_company'] ) ) {
+				$shipper_name1 = $this->args['dhl_settings']['shipper_company'];
+				$shipper_name2 = $this->args['dhl_settings']['shipper_name'];
+			} else {
+				$shipper_name1 = $this->args['dhl_settings']['shipper_name'];
+				$shipper_name2 = '';
+			}
+
+			// Ensure company name is first for receiver address
+			if( ! empty( $this->args['shipping_address']['company'] ) ) {
+				$receiver_name1 = $this->args['shipping_address']['company'];
+				$receiver_name2 = $this->args['shipping_address']['name'];
+			} else {
+				$receiver_name1 = $this->args['shipping_address']['name'];
+				$receiver_name2 = '';
+			}
+
 			$dhl_label_body = 
 				array(
 					'Version' =>
@@ -529,8 +547,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 											array(
 												'Name' =>
 													array(
-														'name1' => $this->args['dhl_settings']['shipper_name'],
-														'name2' => $this->args['dhl_settings']['shipper_company']
+														'name1' => $shipper_name1,
+														'name2' => $shipper_name2,
 														),
 												'Address' =>
 													array(
@@ -552,10 +570,10 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 											),
 										'Receiver' =>
 											array(
-												'name1' => $this->args['shipping_address']['name'],
+												'name1' => $receiver_name1,
 												'Address' =>
 													array(
-														'name2' => $this->args['shipping_address']['company'],
+														'name2' => $receiver_name2,
 														'streetName' => $this->args['shipping_address']['address_1'],
 														'streetNumber' => $this->args['shipping_address']['address_2'],
 														// 'addressAddition' => $this->args['shipping_address']['address_2'],
@@ -632,11 +650,20 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 				$dhl_label_body['ShipmentOrder']['Shipment']['ShipmentDetails']['returnShipmentAccountNumber'] = $this->args['dhl_settings']['account_num'] . self::DHL_RETURN_PRODUCT . $this->args['dhl_settings']['participation_return'];
 
+				// Ensure company name is first for return address
+				if( ! empty( $this->args['order_details']['return_company'] ) ) {
+					$return_name1 = $this->args['order_details']['return_company'];
+					$return_name2 = $this->args['order_details']['return_name'];
+				} else {
+					$return_name1 = $this->args['order_details']['return_name'];
+					$return_name2 = '';
+				}
+
 				$dhl_label_body['ShipmentOrder']['Shipment']['ReturnReceiver'] = array(
 												'Name' =>
 													array(
-														'name1' => $this->args['order_details']['return_name'],
-														'name2' => $this->args['order_details']['return_company']
+														'name1' => $return_name1,
+														'name2' => $return_name2
 														),
 												'Address' =>
 													array(
