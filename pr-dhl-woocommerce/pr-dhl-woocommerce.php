@@ -5,7 +5,7 @@
  * Description: WooCommerce integration for DHL eCommerce, DHL Paket and DHL Parcel Europe (Benelux and Iberia)
  * Author: DHL
  * Author URI: http://dhl.com/woocommerce
- * Version: 1.2.3
+ * Version: 1.2.4
  * WC requires at least: 2.6.14
  * WC tested up to: 3.4
  *
@@ -32,7 +32,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "1.2.3";
+	private $version = "1.2.4";
 
 	/**
 	 * Instance to call certain functions globally within the plugin

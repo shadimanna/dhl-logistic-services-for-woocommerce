@@ -85,6 +85,10 @@ In case you could not find what you were looking for in our FAQs and the detaile
 
 == Changelog ==
 
+= 1.2.4 =
+* Bug fix: Always place shipper, receiver and return "company name" first in address
+* Bug fix: Only validate locations if "ship to different address" checkbox is checked
+
 = 1.2.3 =
 * Bug fix: Use 'jQuery' instead of '$' on frontend script
 
