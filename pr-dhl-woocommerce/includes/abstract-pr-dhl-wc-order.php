@@ -306,7 +306,7 @@ abstract class PR_DHL_WC_Order {
 		}
 
 		// Override URL with our solution's download label endpoint:
-		return site_url( '/' . self::DHL_DOWNLOAD_ENDPOINT . '/' . $order_id );
+		return $this->generate_download_url( '/' . self::DHL_DOWNLOAD_ENDPOINT . '/' . $order_id );
 	}
 
 	protected function get_tracking_note( $order_id ) {
@@ -941,7 +941,7 @@ abstract class PR_DHL_WC_Order {
 					set_transient( '_dhl_bulk_download_labels_file_' . get_current_user_id(), $file_bulk['file_bulk_path'], 180);	
 
 					// Construct URL pointing to the download label endpoint (with bulk param):
-					$bulk_download_label_url = site_url( '/' . self::DHL_DOWNLOAD_ENDPOINT . '/bulk' );
+					$bulk_download_label_url = $this->generate_download_url( '/' . self::DHL_DOWNLOAD_ENDPOINT . '/bulk' );
 
 					array_push($array_messages, array(
 	                    'message' => sprintf( __( 'Bulk DHL labels file created - %sdownload file%s', 'pr-shipping-dhl' ), '<a href="' . $bulk_download_label_url . '" download>', '</a>' ),
@@ -966,6 +966,32 @@ abstract class PR_DHL_WC_Order {
 		}
 
 		return $array_messages;
+	}
+
+	/**
+	 * Generates the download label URL
+	 *
+	 * @param string $endpoint_path
+	 * @return string - The download URL for the label
+	 */
+	public function generate_download_url( $endpoint_path ) {
+
+		// If we get a different URL addresses from the General settings then we're going to
+		// construct the expected endpoint url for the download label feature manually
+		if ( site_url() != home_url() ) {
+
+			// You can use home_url() here as well, it really doesn't matter
+			// as we're only after for the "scheme" and "host" info.
+			$result = parse_url( site_url() );	
+
+			if ( !empty( $result['scheme'] ) && !empty( $result['host'] ) ) {
+				return $result['scheme'] . '://' . $result['host'] . $endpoint_path;
+			}
+		}
+
+		// Defaults to the "Site Address URL" from the general settings along
+		// with the the custom endpoint path (with parameters)
+		return home_url( $endpoint_path );
 	}
 
 	protected function merge_label_files( $files ) {
