@@ -143,7 +143,7 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'type'        => 'title',
                     'description' => sprintf(
                         __('DHL API settings. Still missing API credentials? Follow the instructions %shere%s.', 'dhlpwc'),
-                        '<a href="https://my.dhlparcel.nl/" target="_blank">',
+                        '<a href="https://www.dhlparcel.nl/sites/default/files/content/PDF/Handleiding_WooCommerce_koppeling_NL.pdf" target="_blank">',
                         '</a>'
                     ),
                 ),
