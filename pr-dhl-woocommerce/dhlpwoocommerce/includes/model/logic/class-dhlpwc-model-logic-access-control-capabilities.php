@@ -36,13 +36,13 @@ class DHLPWC_Model_Logic_Access_Control_Capabilities extends DHLPWC_Model_Core_S
                 if (isset($capability->options) && is_array($capability->options)) {
                     foreach ($capability->options as $option) {
                         if (isset($option->key)) {
-                            $allowed_shipping_options[] = $option->key;
+                            $allowed_shipping_options[$option->key] = $option;
                         }
                     }
                 }
             }
         }
-        return array_unique($allowed_shipping_options);
+        return $allowed_shipping_options;
     }
 
     public function check_order_capabilities($check = array())
@@ -76,6 +76,9 @@ class DHLPWC_Model_Logic_Access_Control_Capabilities extends DHLPWC_Model_Core_S
     }
 
     protected function get_capabilities(DHLPWC_Model_API_Data_Capability_Check $capability_check) {
+        if (!isset($capability_check->option) || empty($capability_check->option)) {
+            $capability_check->option = null;
+        }
         $connector = DHLPWC_Model_API_Connector::instance();
         $sender_type = 'business'; // A webshop is always a business, not a regular consumer type nor a parcelshop. Will leave this as hardcoded for now.
         $response = $connector->get(sprintf('capabilities/%s', $sender_type), $capability_check->to_array());

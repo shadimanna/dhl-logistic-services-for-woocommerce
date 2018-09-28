@@ -7,6 +7,12 @@ if (!class_exists('DHLPWC_Controller_Admin_Settings')) :
 class DHLPWC_Controller_Admin_Settings
 {
 
+    const NOTICE_TAG_PREFIX = 'dhlpwc_';
+
+    const NOTICE_TAG_COUNTRY = 'country';
+    const NOTICE_TAG_API_SETTINGS = 'api_settings';
+    const NOTICE_TAG_PARCELSHOP = 'parcelshop';
+
     public function __construct()
     {
         if (is_admin()) {
@@ -16,14 +22,39 @@ class DHLPWC_Controller_Admin_Settings
             if (defined('DHLPWC_PLUGIN_BASENAME')) {
                 add_filter('plugin_action_links_' . DHLPWC_PLUGIN_BASENAME, array($this, 'add_settings_link'), 10, 1);
             }
-            if (defined('PR_DHL_PLUGIN_BASENAME')) {
-                add_filter('plugin_action_links_' . PR_DHL_PLUGIN_BASENAME, array($this, 'add_settings_link'), 10, 1);
-            }
+
+            // Also try to hook to collaboration plugin, whenever this class is loaded through that
+            $collaboration_name = 'dhl-for-woocommerce/pr-dhl-woocommerce.php';
+            add_filter('plugin_action_links_' . $collaboration_name, array($this, 'add_settings_link'), 10, 1);
 
             add_action('admin_notices', array($this, 'check_for_notices'));
 
+            add_action('wp_ajax_dhlpwc_dismiss_admin_notice', array($this, 'dismiss_admin_notice'));
             add_action('wp_ajax_dhlpwc_test_connection', array($this, 'test_connection'));
+            add_action('wp_ajax_dhlpwc_dynamic_option_settings', array($this, 'dynamic_option_settings'));
         }
+    }
+
+    public function dismiss_admin_notice()
+    {
+        $notice_tag = sanitize_text_field($_POST['notice_tag']);
+
+        $json_response = new DHLPWC_Model_Response_JSON();
+
+        if (substr($notice_tag, 0, strlen(self::NOTICE_TAG_PREFIX)) !== self::NOTICE_TAG_PREFIX) {
+            $json_response->set_error(__('Unknown tag', 'dhlpwc'));
+            wp_send_json($json_response->to_array(), 403);
+            return;
+        }
+
+        // Remove prefix
+        $notice_tag = substr($notice_tag, strlen(self::NOTICE_TAG_PREFIX));
+        $value = true;
+        $time = 7 * DAY_IN_SECONDS; // These are important messages, but we don't want to be too obnoxious. Make these messages return per week.
+        set_site_transient($notice_tag, $value, $time);
+
+        // Send JSON response
+        wp_send_json($json_response->to_array(), 200);
     }
 
     public function test_connection()
@@ -46,16 +77,16 @@ class DHLPWC_Controller_Admin_Settings
 
     public function load_styles()
     {
-        $screen = get_current_screen();
-        if ($screen->base == 'woocommerce_page_wc-settings') {
+        if ($this->is_plugin_screen() || $this->is_shipping_zone_screen()) {
             wp_enqueue_style('dhlpwc-admin-order-style', DHLPWC_PLUGIN_URL . 'assets/css/dhlpwc.admin.css');
         }
     }
 
     public function load_scripts()
     {
-        $screen = get_current_screen();
-        if ($screen->base == 'woocommerce_page_wc-settings') {
+        wp_enqueue_script( 'dhlpwc-admin-notices', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.notices.js', array('jquery'));
+
+        if ($this->is_plugin_screen() || $this->is_shipping_zone_screen()) {
             wp_enqueue_script( 'dhlpwc-settings-action', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.settings.js', array('jquery'));
             wp_localize_script( 'dhlpwc-settings-action', 'dhlpwc_settings_object', array(
                 'test_connection_message' => __('Test connection and retrieve account data', 'dhlpwc'),
@@ -64,6 +95,54 @@ class DHLPWC_Controller_Admin_Settings
                 'organization_found_message' => __('OrganizationID found. Click to use.', 'dhlpwc'),
             ));
         }
+
+        if ($this->is_plugin_screen()) {
+            wp_enqueue_script( 'dhlpwc-settings-usabilla', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.usabilla.js');
+        }
+    }
+
+    protected function is_plugin_screen()
+    {
+        $screen = get_current_screen();
+        if ($screen->base !== 'woocommerce_page_wc-settings') {
+            return false;
+        }
+
+        if (!isset($_GET['page']) || $_GET['page'] !== 'wc-settings') {
+            return false;
+        }
+
+        if (!isset($_GET['tab']) || $_GET['tab'] !== 'shipping') {
+            return false;
+        }
+
+        if (!isset($_GET['section']) || $_GET['section'] !== 'dhlpwc') {
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function is_shipping_zone_screen()
+    {
+        $screen = get_current_screen();
+        if ($screen->base !== 'woocommerce_page_wc-settings') {
+            return false;
+        }
+
+        if (!isset($_GET['page']) || $_GET['page'] !== 'wc-settings') {
+            return false;
+        }
+
+        if (!isset($_GET['tab']) || $_GET['tab'] !== 'shipping') {
+            return false;
+        }
+
+        if (!isset($_GET['zone_id'])) {
+            return false;
+        }
+
+        return true;
     }
 
     public function check_for_notices()
@@ -71,15 +150,16 @@ class DHLPWC_Controller_Admin_Settings
         $access_service = DHLPWC_Model_Service_Access_Control::instance();
         $service = DHLPWC_Model_Service_Settings::instance();
 
+        $messages = array();
+
         // Check if the plugin is enabled, but not allowed to access the API
-        if (!$access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_API) && $service->plugin_is_enabled()) {
+        if ($service->plugin_is_enabled() && !$access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_API)) {
             // Add general reminders
-            $messages = array();
             if (!$service->country_is_set()) {
                 $messages[] = sprintf(__('Missing %1$s from %2$s', 'dhlpwc'), __('Country / State', 'woocommerce'), __('General', 'woocommerce'));
             }
-            if (!empty($messages)) {
-                $this->show_notice($messages, admin_url('admin.php?page=wc-settings&tab=general'));
+            if (!empty($messages) && !get_site_transient(self::NOTICE_TAG_COUNTRY)) {
+                $this->show_notice(self::NOTICE_TAG_COUNTRY, $messages, admin_url('admin.php?page=wc-settings&tab=general'));
             }
 
             // Add plugin reminders
@@ -96,16 +176,27 @@ class DHLPWC_Controller_Admin_Settings
             if (empty($service->get_api_organization())) {
                 $messages[] = sprintf(__('Missing %1$s from %2$s', 'dhlpwc'), __('OrganizationID', 'dhlpwc'), __('Account details', 'dhlpwc'));
             }
-            if (!empty($messages)) {
-                $this->show_notice($messages, admin_url('admin.php?page=wc-settings&tab=shipping&section=dhlpwc'));
+            if (!empty($messages) && !get_site_transient(self::NOTICE_TAG_API_SETTINGS)) {
+                $this->show_notice(self::NOTICE_TAG_API_SETTINGS, $messages, admin_url('admin.php?page=wc-settings&tab=shipping&section=dhlpwc'));
+            }
+
+        } else if ($service->plugin_is_enabled()) {
+            // Maps key
+            if (empty($service->get_maps_key())) {
+                $messages[] = sprintf(__('Missing %1$s from %2$s', 'dhlpwc'), __('Google Maps key', 'dhlpwc'), __('Plugin settings', 'dhlpwc'));
+                $messages[] = __('To continue using DHL ServicePoint and show a visual map to customers, please add a Google Maps API key. If left empty, the DHL ServicePoint map will stop displaying starting from October 30th 10:00 PM CEST', 'dhlpwc');
+            }
+            if (!empty($messages) && !get_site_transient(self::NOTICE_TAG_PARCELSHOP)) {
+                $this->show_notice(self::NOTICE_TAG_PARCELSHOP, $messages, admin_url('admin.php?page=wc-settings&tab=shipping&section=dhlpwc'));
             }
         }
     }
 
-    public function show_notice($messages, $admin_link = null)
+    public function show_notice($notice_tag, $messages, $admin_link = null)
     {
         $view = new DHLPWC_Template('admin.notice');
         $view->render(array(
+            'notice_tag' => self::NOTICE_TAG_PREFIX.$notice_tag,
             'messages'   => $messages,
             'admin_link' => $admin_link,
         ));

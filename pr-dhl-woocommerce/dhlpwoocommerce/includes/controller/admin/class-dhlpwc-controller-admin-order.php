@@ -57,7 +57,6 @@ class DHLPWC_Controller_Admin_Order
         }
     }
 
-
     /**
      * DHL ServicePoint information screen for an order.
      * Note: we're not using $order, but wanted to add the $compact var, WooCommerce automatically passes the order when hooked
@@ -66,13 +65,13 @@ class DHLPWC_Controller_Admin_Order
      * @param null $order
      * @param bool $compact
      */
-    public function parcelshop_info($order = null, $compact = false)
+    public function parcelshop_info($order, $compact = false)
     {
         $service = new DHLPWC_Model_Service_Order_Meta_Option();
-        $parcelshop_meta = $service->get_option_preference(get_the_ID(), DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS);
+        $parcelshop_meta = $service->get_option_preference($order->get_order_number(), DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS);
 
         if ($parcelshop_meta) {
-            $service = new DHLPWC_Model_Service_Checkout();
+            $service = new DHLPWC_Model_Service_Parcelshop();
             /** @var WC_Order $order */
             $parcelshop = $service->get_parcelshop($parcelshop_meta['input'], $order->get_shipping_country());
 
@@ -82,7 +81,7 @@ class DHLPWC_Controller_Admin_Order
                 return;
             }
 
-            $view = new DHLPWC_Template('cart.parcelshop.info');
+            $view = new DHLPWC_Template('parcelshop-info');
             $view->render(array(
                 'warning' => __('Send to DHL ServicePoint', 'dhlpwc'),
                 'name' => $parcelshop->name,

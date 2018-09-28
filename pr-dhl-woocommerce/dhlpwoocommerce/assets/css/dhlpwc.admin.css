@@ -12,6 +12,23 @@
     filter: brightness(60%) sepia(1) saturate(9) hue-rotate(151deg);
 }
 
+#dhlpwc-label {
+    background-image: -webkit-gradient(linear,left top,left bottom,color-stop(50%,#fc0),to(rgba(255,204,0,0)));
+    background-image: linear-gradient(#fc0 50%,rgba(255,204,0,0));
+    background-size: auto 36px;
+    background-repeat:repeat-x;
+}
+
+#dhlpwc-label .ui-sortable-handle span {
+    color: #D40611;
+}
+
+#dhlpwc-label .ui-sortable-handle span img {
+    height:12px;
+    width: auto;
+
+}
+
 #dhlpwc-label[metabox_busy="true"] .dhlpwc-meta-loader { visibility: visible; }
 
 .dhlpwc-order-metabox-form-parceltypes {
@@ -32,6 +49,111 @@
     padding:0;
     margin:0;
     bottom: 0;
+}
+
+/* Metabox: Business */
+.dhlpwc-meta-to-business {
+    width: 100%;
+}
+
+
+input#dhlpw-label-create-to-business {
+    display: none;
+    margin: 0;
+    padding: 0;
+}
+
+input#dhlpw-label-create-to-business ~ label {
+    float: left;
+}
+
+input#dhlpw-label-create-to-business ~ label {
+    display: inline-block;
+    width: 49%;
+    background-color: #e4e4e4;
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 14px;
+    font-weight: normal;
+    text-align: center;
+    text-shadow: none;
+    padding: 3px 0;
+    margin: 0;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
+    -webkit-transition: all 0.1s ease-in-out;
+    -moz-transition:    all 0.1s ease-in-out;
+    -ms-transition:     all 0.1s ease-in-out;
+    -o-transition:      all 0.1s ease-in-out;
+    transition:         all 0.1s ease-in-out;
+}
+
+input#dhlpw-label-create-to-business ~ label:hover {
+    cursor: pointer;
+}
+
+input#dhlpw-label-create-to-business ~ label:first-of-type {
+    border-radius: 4px 0 0 4px;
+}
+
+input#dhlpw-label-create-to-business ~ label:last-of-type {
+    border-radius: 0 4px 4px 0;
+}
+
+input#dhlpw-label-create-to-business:not(:checked) ~ label:first-of-type {
+    background-color: #fccc01;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+input#dhlpw-label-create-to-business:checked ~ label:last-of-type {
+    background-color: #fccc01;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+/* Metabox: Delivery options */
+input[type=radio].dhlpwc-label-create-delivery-option {
+    display:none;
+    margin:0;
+    padding:0;
+}
+
+input[type=radio].dhlpwc-label-create-delivery-option:checked + label.dhlpwc-order-metabox-form-deliverymethod .dhlpwc-order-metabox-form-deliverymethod-icon {
+    background-color: #fccc01;
+}
+
+input[type=checkbox].dhlpwc-label-create-option:disabled + label {
+    opacity: 0.2;
+}
+
+.dhlpwc-order-metabox-form-deliverymethods {
+    width: 100%;
+}
+
+.dhlpwc-order-metabox-form-deliverymethod {
+    float:left;
+    width:33%;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+
+.dhlpwc-order-metabox-form-deliverymethod-icon {
+    height:28px;
+    width:28px;
+    margin: 0;
+    padding: 7px;
+    display:inline-block;
+    border-radius: 50%;
+}
+
+.dhlpwc-order-metabox-form-delivery-option-icon {
+    height:12px;
+    width:12px;
+    margin: 0;
+    padding: 0;
+    display:inline-block;
 }
 
 .order_actions .dhlpwc_admin_action_button {
@@ -200,6 +322,16 @@ input#woocommerce_dhlpwc_test_connection.dhlpwc_button_fail {
     color: #aaaaaa;
 }
 
+.woocommerce table.form-table tr.dhlpwc-disable-shipping-option p.description,
+.woocommerce table.form-table tr.dhlpwc-disable-shipping-option div.dhlpwc-currency-wrap i,
+.woocommerce table.form-table tr.dhlpwc-disable-shipping-option input {
+    color: #aaaaaa;
+}
+
+input.wc_input_price.dhlpwc-grouped-option:disabled {
+    background-color: #f4f4f4;
+}
+
 div.dhlpwc_settings_suggestion_info {
     font-size:smaller;
     padding:5px;
@@ -234,3 +366,96 @@ div.dhlpwc_settings_suggestion_accounts:active,
 div.dhlpwc_settings_suggestion_organization:active {
     background: #ff0;
 }
+
+tr.dhlpwc-options-grid > td {
+    padding: 0;
+}
+
+.wc-modal-shipping-method-settings form .form-table tr.dhlpwc-options-grid th,
+.wc-modal-shipping-method-settings form .form-table tr.dhlpwc-options-grid td,
+tr.dhlpwc-options-grid > td th,
+tr.dhlpwc-options-grid > td td {
+    width: auto;
+    padding: 0 5px 0 0;
+}
+
+.dhlpwc-delivery-option-group td:first-child {
+    font-weight: bold;
+}
+
+.dhlpwc-label-create-delivery-option-description {
+    font-weight: bold;
+    font-size: smaller;
+}
+
+.dhlpwc-original-grouped-option {
+    display:none;
+}
+
+.dhlpwc-metabox-service-input {
+    padding-left: 37px;
+}
+
+.dhlpwc-metabox-service-input input {
+    width: 100%;
+}
+
+#dhlpwc-metabox-terminal-preview-text,
+#dhlpwc-metabox-parcelshop-preview-text {
+    width: 69%;
+    float: left;
+    margin-top: 6px;
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    color: #d30511;
+}
+
+#dhlpwc-metabox-terminal-preview-description,
+#dhlpwc-metabox-parcelshop-preview-description {
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    font-size: smaller;
+    margin-top: 3px;
+}
+
+#dhlpwc-metabox-terminal-display,
+#dhlpwc-metabox-parcelshop-display {
+    width: 29%;
+    overflow: hidden;
+    float: right;
+}
+
+.dhlpwc-metabox-terminal-location,
+.dhlpwc-metabox-parcelshop-location {
+    overflow-x: hidden;
+    font-size: smaller;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 6px 5px;
+    cursor: pointer;
+}
+
+#dhlpwc-metabox-terminal-select-list hr,
+#dhlpwc-metabox-parcelshop-select-list hr {
+    padding: 0;
+    margin: 0;
+    height: 1px;
+}
+
+#dhlpwc-metabox-terminal-search-field,
+#dhlpwc-metabox-parcelshop-search-field {
+    width: 100%;
+}
+
+.dhlpwc-metabox-terminal-location:hover,
+.dhlpwc-metabox-parcelshop-location:hover {
+    background-color: #fccc01;
+}
+
+.dhlpwc-metabox-terminal-location:hover strong,
+.dhlpwc-metabox-parcelshop-location:hover strong {
+    color: #d30511;
+}
+

@@ -19,7 +19,7 @@ class DHLPWC_Model_Service_Label extends DHLPWC_Model_Core_Singleton_Abstract
      * @param $order_id
      * @param null $label_size
      */
-    public function create($order_id, $label_size = null, $label_options = array(), $to_business = false)
+    public function create($order_id, $label_size = null, $label_options = array(), $label_option_data = array(), $to_business = false)
     {
         $this->clear_error(self::CREATE_ERROR);
 
@@ -29,6 +29,7 @@ class DHLPWC_Model_Service_Label extends DHLPWC_Model_Core_Singleton_Abstract
         $label_data = $logic->prepare_data($order_id, array(
             'label_size' => $label_size,
             'label_options' => $label_options,
+            'label_option_data' => $label_option_data,
             'to_business' => $to_business,
         ));
 

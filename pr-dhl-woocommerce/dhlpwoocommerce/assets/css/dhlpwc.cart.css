@@ -28,135 +28,6 @@
     vertical-align: middle;
 }
 
-.dhlpwc-checkout-subsection-side {
-    float:left;
-    width: 34%;
-    background-color: #fff;
-}
-
-.dhlpwc-checkout-subsection-sub-side {
-    visibility: hidden;
-}
-
-.dhlpwc-checkout-subsection-map {
-    float:right;
-    width: 65%;
-    visibility: hidden;
-}
-
-p#dhlpwc_parcelshop_postcode_field {
-    padding: 5px 15px 0;
-}
-
-p#dhlpwc_parcelshop_select_field {
-    padding: 0 0 0 15px;
-    margin: 0;
-    height: 55%;
-    height: 55vh;
-}
-
-p#dhlpwc_parcelshop_select_field .dhlpwc-stylishselect-select {
-    margin-left: -15px;
-}
-
-
-p#dhlpwc_parcelshop_postcode_field label:after,
-p#dhlpwc_parcelshop_postcode_field button:after {
-    content: '';
-    display: block;
-    clear: both;
-}
-
-button#dhlpwc_parcelshop_postcode_search_button {
-    margin-left: 15px;
-    float:right;
-    width:30%;
-    white-space: nowrap;
-    overflow-x: hidden;
-    background-color: #d40511;
-    color: #fff;
-    padding: 0;
-    height: 35px;
-    font-weight: normal;
-}
-
-button#dhlpwc_parcelshop_postcode_search_button.dhlpwc-searching {
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    border: 2px solid #d40511;
-    background-color: #f7f7f7;
-}
-
-button#dhlpwc_parcelshop_postcode_search_button img {
-    margin: auto; /* center */
-}
-
-button#dhlpwc_parcelshop_postcode_confirm_button {
-    width:100%;
-}
-
-#dhlpwc_parcelshop_postcode {
-    width: 60%;
-    box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.2);
-    background-color: #fff;
-    padding-left: 15px;
-    height: 35px;
-
-    font-weight: lighter;
-}
-
-/* Parcelshop info box */
-#dhlpwc-parcelshop-info {
-    position: absolute;
-    background-color: white;
-    z-index:1;
-    width:100%;
-    padding: 8px;
-    margin: 0;
-    opacity: 0;
-}
-
-.dhlpwc-map-info-loader {
-    padding: 25px 0 15px;
-    margin-left:20px;
-}
-
-#dhlpwc-parcelshop-info-address {
-    position: relative;
-    font-size: smaller;
-}
-
-#dhlpwc-parcelshop-info-time-table {
-    position: relative;
-    font-size: smaller;
-
-    padding-top: 20px;
-}
-
-#dhlpwc-parcelshop-info-time-table table tbody tr td {
-    background-color: transparent;
-}
-
-#dhlpwc-parcelshop-info-time-table table {
-    margin: 0;
-}
-
-#dhlpwc-parcelshop-info-time-day {
-    font-weight:bold;
-}
-
-#dhlpwc-parcelshop-info-time-table table td {
-    padding: 0;
-}
-
-#dhlpwc-parcelshop-map {
-    width: 100%;
-    height: 500px; /* fallback */
-    height: 70vh;
-    background-color: grey;
-}
-
 /** Parcelshop cart option **/
 .dhlpwc-shipping-method-parcelshop-option span.dhlpwc-parcelshop-option-message {
     display: inline-block;
@@ -170,15 +41,16 @@ button#dhlpwc_parcelshop_postcode_confirm_button {
 }
 
 input.dhlpwc-parcelshop-option-change {
+    box-shadow: 2px 2px 4px 2px rgba(0,0,0,0.2),2px 2px 2px  0 rgba(0,0,0,0.2);
     padding: 2px 20px;
     display: block;
     float:left;
-    width:30%;
+    width:auto;
 }
 
-.dhlpwc-parcelshop-option-country-select-container {
-    float:right;
-    width: 65%;
+input.dhlpwc-parcelshop-option-change.dhlpwc-still-loading {
+    background-color: darkgrey;
+    color: grey;
 }
 
 .woocommerce-checkout-review-order input.dhlpwc-parcelshop-option-change {
@@ -190,11 +62,50 @@ input.dhlpwc-parcelshop-option-change {
     display: block;
     clear: both;
 }
-.woocommerce-checkout-review-order .dhlpwc-parcelshop-option-country-select-container {
-    float:left;
-    width:100%;
+
+.dhl-parcelshop-locator div.dhl-parcelshop-locator-desktop {
+    min-height: 60vh;
 }
 
-p#dhlpwc-parcelshop-option-country-select_field {
-    margin-bottom: 0;
+.dhl-parcelshop-locator div.dhlpwc-parcelshop-component-confirm-button {
+     box-shadow: 2px 2px 4px 2px rgba(0,0,0,0.2),2px 2px 2px  0 rgba(0,0,0,0.2);
+     height: auto;
+     margin: 5px;
+     cursor: pointer;
+     color: #ffffff;
+     background-color: #000000;
+
+     -webkit-user-select: none; /* Safari */
+     -moz-user-select: none; /* Firefox */
+     -ms-user-select: none; /* IE10+/Edge */
+     user-select: none; /* Standard */
+ }
+
+.dhl-parcelshop-locator div.dhlpwc-parcelshop-component-confirm-button:hover {
+    background-color: #fccc01;
+    color: #D40611;
+}
+
+@media screen and (min-width: 600px) and (max-width: 1024px) {
+    .dhl-parcelshop-locator div.md-text--theme-primary,
+    .dhl-parcelshop-locator div.md-text--theme-primary + div {
+        padding-left: 1.5vw;
+        /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#fccc01+0,fccc01+100&0+0,1+3,1+5,0+5 */
+        background: -moz-linear-gradient(left, rgba(252,204,1,0) 0%, rgba(252,204,1,1) 3%, rgba(252,204,1,0) 5%, rgba(252,204,1,0) 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(left, rgba(252,204,1,0) 0%,rgba(252,204,1,1) 3%,rgba(252,204,1,0) 5%,rgba(252,204,1,0) 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to right, rgba(252,204,1,0) 0%,rgba(252,204,1,1) 3%,rgba(252,204,1,0) 5%,rgba(252,204,1,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00fccc01', endColorstr='#00fccc01',GradientType=1 ); /* IE6-9 */
+    }
+}
+
+@media screen and (min-width: 1025px) {
+    .dhl-parcelshop-locator div.md-text--theme-primary,
+    .dhl-parcelshop-locator div.md-text--theme-primary + div {
+        padding-left: 1.5vw;
+        /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#fccc01+0,fccc01+100&0+0,1+5,1+7,0+8 */
+        background: -moz-linear-gradient(left, rgba(252,204,1,0) 0%, rgba(252,204,1,1) 5%, rgba(252,204,1,1) 7%, rgba(252,204,1,0) 8%, rgba(252,204,1,0) 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(left, rgba(252,204,1,0) 0%,rgba(252,204,1,1) 5%,rgba(252,204,1,1) 7%,rgba(252,204,1,0) 8%,rgba(252,204,1,0) 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to right, rgba(252,204,1,0) 0%,rgba(252,204,1,1) 5%,rgba(252,204,1,1) 7%,rgba(252,204,1,0) 8%,rgba(252,204,1,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00fccc01', endColorstr='#00fccc01',GradientType=1 ); /* IE6-9 */
+    }
 }

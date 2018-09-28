@@ -24,8 +24,9 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
         $shipper_address = $service->get_default_address()->to_array();
 
         $keys = isset($options['label_options']) && is_array($options['label_options']) ? $options['label_options'] : array();
+        $option_data = isset($options['label_option_data']) && is_array($options['label_option_data']) ? $options['label_option_data'] : array();
         $service = DHLPWC_Model_Service_Label_Option::instance();
-        $request_options = $service->get_request_options($order_id, $keys);
+        $request_options = $service->get_request_options($keys, $option_data);
 
         $label = new DHLPWC_Model_API_Data_Label(array(
             'label_id'        => (string)new DHLPWC_Model_UUID(),
@@ -144,7 +145,7 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
 
     protected function get_account_id()
     {
-        $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
+        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
         return $shipping_methods['dhlpwc']->settings['account_id'];
     }
 

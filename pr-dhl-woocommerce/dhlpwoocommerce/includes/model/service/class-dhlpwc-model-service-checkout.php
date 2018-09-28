@@ -7,55 +7,22 @@ if (!class_exists('DHLPWC_Model_Service_Checkout')) :
 class DHLPWC_Model_Service_Checkout extends DHLPWC_Model_Core_Singleton_Abstract
 {
 
-    public function get_options()
+    public function get_cart_shipping_country_code()
     {
-        $connector = DHLPWC_Model_API_Connector::instance();
-        return $connector->get('shipment-options/business');
-    }
-
-    /**
-     * Return an array of closest Parcelshops based on postalcode.
-     *
-     * @param $postalcode
-     * @param int $limit
-     * @return DHLPWC_Model_API_Data_Parcelshop[]
-     */
-    public function get_parcelshops($postalcode, $country, $limit = 13)
-    {
-        $connector = DHLPWC_Model_API_Connector::instance();
-
-        // TODO do country-based zip coded checks
-        if (!$postalcode) {
-            return array();
+        $cart = WC()->cart;
+        if (empty($cart)) {
+            return null;
         }
 
-        // TODO whitelist countries
-//        $service = DHLPWC_Model_Service_Postcode::instance();
-//        $validation = $service->get_validation($country);
-        if (!$this->validate_country($country)) {
-            return array();
+        $customer = $cart->get_customer();
+
+        if (empty($customer)) {
+            return null;
         }
 
-        $parcelshops_data = $connector->get('parcel-shop-locations/'.$country, array(
-            'limit' => $limit,
-            'zipCode' => $postalcode,
-        ));
-        if (!$parcelshops_data || !is_array($parcelshops_data)) {
-            return array();
-        }
+        $country = $customer->get_shipping_country();
 
-        $parcelshops = array();
-        foreach ($parcelshops_data as $parcelshop_data) {
-            $parcelshop = new DHLPWC_Model_API_Data_Parcelshop($parcelshop_data);
-            $parcelshop->country = $country;
-            $parcelshops[] = $parcelshop;
-        }
-        return $parcelshops;
-    }
-
-    public function get_parcelshop($parcelshop_id, $country)
-    {
-        if (!$parcelshop_id) {
+        if (empty($country)) {
             return null;
         }
 
@@ -63,15 +30,38 @@ class DHLPWC_Model_Service_Checkout extends DHLPWC_Model_Core_Singleton_Abstract
             return null;
         }
 
-        $connector = DHLPWC_Model_API_Connector::instance();
-        $parcelshop_data = $connector->get(sprintf('parcel-shop-locations/'.$country.'/%s', $parcelshop_id));
-        if (!$parcelshop_data) {
+        return $country;
+    }
+
+
+    public function get_cart_shipping_postal_code($numbers_only = false)
+    {
+        $cart = WC()->cart;
+        if (empty($cart)) {
             return null;
         }
-        $parcelshop = new DHLPWC_Model_API_Data_Parcelshop($parcelshop_data);
-        $parcelshop->country = $country;
 
-        return $parcelshop;
+        $customer = $cart->get_customer();
+
+        if (empty($customer)) {
+            return null;
+        }
+
+        if (empty($customer->get_shipping_country())) {
+            return null;
+        }
+
+        $postcode = $customer->get_shipping_postcode();
+
+        if (empty($postcode)) {
+            return null;
+        }
+
+        if ($numbers_only) {
+            $postcode = preg_replace('~\D~', '', $postcode);
+        }
+
+        return $postcode;
     }
 
     protected function validate_country($country)

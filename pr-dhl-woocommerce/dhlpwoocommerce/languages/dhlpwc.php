@@ -21,13 +21,13 @@ class DHLPWC_Translations
 
     private function option()
     {
-        // Main send method
+        // Delivery option
         __('OPTION_PS');
         __('OPTION_DOOR');
         __('OPTION_BP');
         __('OPTION_H');
 
-        // Additional and special services
+        // Service option
         __('OPTION_COD_CASH');
         __('OPTION_EXP');
         __('OPTION_BOUW');
@@ -46,6 +46,31 @@ class DHLPWC_Translations
         __('OPTION_PERS_NOTE');
         __('OPTION_SDD');
         __('OPTION_S');
+    }
+
+    private function option_description()
+    {
+        __('Delivery to the address of the recipient');
+        __('Reference');
+        __('E-mail to receiver');
+        __('Same-day delivery');
+        __('Print extra label for return shipment');
+        __('Extra assurance');
+        __('Signature on delivery');
+        __('Evening delivery');
+        __('No neighbour delivery');
+        __('Reference');
+        __('Delivery to the specified DHL Parcelshop or DHL Parcelstation');
+        __('Mailbox delivery');
+        __('Hold for collection');
+        __('Print extra label for return shipment');
+        __('All risks insurance');
+        __('Saturday delivery');
+        __('Expresser');
+        __('Undisclosed sender');
+        __('Cash on delivery. Payment method cash, paid by sender.');
+        __('Delivery to construction site');
+        __('Ex Works');
     }
 
 }

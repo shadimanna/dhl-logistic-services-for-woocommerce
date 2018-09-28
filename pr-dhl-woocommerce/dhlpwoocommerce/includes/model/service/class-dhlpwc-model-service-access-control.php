@@ -11,6 +11,7 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
 
     const ACCESS_API = 'api';
     const ACCESS_COLUMN_INFO = 'column_info';
+    const ACCESS_OPEN_LABEL_LINKS_EXTERNAL = 'open_label_links_external';
     const ACCESS_TRACK_TRACE_MAIL = 'track_trace_mail';
     const ACCESS_TRACK_TRACE_COMPONENT = 'track_trace_component';
 
@@ -19,6 +20,7 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
     const ACCESS_CHECKOUT_PARCELSHOP = 'checkout_parcelshop';
 
     const ACCESS_DEBUG = 'debug';
+    const ACCESS_DEBUG_EXTERNAL = 'debug_external';
     const ACCESS_DEBUG_MAIL = 'debug_mail';
 
     const ACCESS_CAPABILITY_PARCELTYPE = 'capability_parceltype';
@@ -61,6 +63,11 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
             case self::ACCESS_COLUMN_INFO:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
                 return $logic->check_column_info();
+                break;
+
+            case self::ACCESS_OPEN_LABEL_LINKS_EXTERNAL:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_open_label_links_external();
                 break;
 
             case self::ACCESS_TRACK_TRACE_MAIL:
@@ -109,6 +116,11 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
             case self::ACCESS_DEBUG:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
                 return $logic->check_debug();
+                break;
+
+            case self::ACCESS_DEBUG_EXTERNAL:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_debug_external();
                 break;
 
             case self::ACCESS_DEBUG_MAIL:

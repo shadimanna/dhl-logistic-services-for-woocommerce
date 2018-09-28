@@ -4,13 +4,11 @@
     <?php echo $to_business ?><br/>
 <?php endif ?>
 <?php if (isset($options)) : ?>
-    <strong><?php echo __('Shipment option', 'dhlpwc') ?></strong><br/>
-    <small><?php echo __('Recipient preference is automatically selected.', 'dhlpwc') ?></small><br/>
     <?php echo $options ?><br/>
 <?php endif ?>
-<?php if (isset($parcel_types)) : ?>
+<?php if (isset($sizes)) : ?>
     <small><?php echo __('Size and weight', 'dhlpwc') ?></small>
-    <?php echo $parcel_types ?><br/>
+    <?php echo $sizes ?><br/>
 <?php else : ?>
     <?php echo __("Can't load parcel types", 'dhlpwc') ?>
 <?php endif ?>

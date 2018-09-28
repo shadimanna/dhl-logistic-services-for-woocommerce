@@ -9,7 +9,7 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
 
     public function check_enabled()
     {
-        $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
+        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
 
         if (!isset($shipping_methods['dhlpwc'])) {
             return false;
@@ -45,7 +45,7 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
 
     public function check_account()
     {
-        $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
+        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
 
         if (empty($shipping_methods['dhlpwc'])) {
             return false;
@@ -72,7 +72,7 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
 
     public function check_default_shipping_address()
     {
-        $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
+        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
 
         if (!isset($shipping_methods['dhlpwc'])) {
             return false;
@@ -124,7 +124,7 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
 
     public function check_column_info()
     {
-        $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
+        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
 
         if (!isset($shipping_methods['dhlpwc'])) {
             return false;
@@ -141,9 +141,28 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         return true;
     }
 
+    public function check_open_label_links_external()
+    {
+        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+
+        if (!isset($shipping_methods['dhlpwc'])) {
+            return false;
+        }
+
+        if (!isset($shipping_methods['dhlpwc']->settings['open_label_links_external'])) {
+            return false;
+        }
+
+        if ($shipping_methods['dhlpwc']->settings['open_label_links_external'] != 'yes') {
+            return false;
+        }
+
+        return true;
+    }
+
     public function check_track_trace_mail()
     {
-        $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
+        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
 
         if (!isset($shipping_methods['dhlpwc'])) {
             return false;
@@ -162,7 +181,7 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
 
     public function check_track_trace_component()
     {
-        $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
+        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
 
         if (!isset($shipping_methods['dhlpwc'])) {
             return false;
@@ -181,7 +200,7 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
 
     public function check_debug()
     {
-        $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
+        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
 
         if (!isset($shipping_methods['dhlpwc'])) {
             return false;
@@ -210,9 +229,40 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         return $shipping_methods['dhlpwc']->settings['debug_url'];
     }
 
+    public function check_debug_external()
+    {
+        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+
+        if (!isset($shipping_methods['dhlpwc'])) {
+            return false;
+        }
+
+        if (!isset($shipping_methods['dhlpwc']->settings['enable_debug'])) {
+            return false;
+        }
+
+        if ($shipping_methods['dhlpwc']->settings['enable_debug'] != 'yes') {
+            return false;
+        }
+
+        if (!isset($shipping_methods['dhlpwc']->settings['debug_external_url'])) {
+            return false;
+        }
+
+        if (empty($shipping_methods['dhlpwc']->settings['debug_external_url'])) {
+            return false;
+        }
+
+        if (filter_var($shipping_methods['dhlpwc']->settings['debug_external_url'], FILTER_VALIDATE_URL) === false) {
+            return false;
+        }
+
+        return $shipping_methods['dhlpwc']->settings['debug_external_url'];
+    }
+
     public function check_debug_mail()
     {
-        $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
+        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
 
         if (!isset($shipping_methods['dhlpwc'])) {
             return false;
@@ -235,7 +285,7 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
 
     public function check_default_send_to_business()
     {
-        $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
+        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
 
         if (!isset($shipping_methods['dhlpwc'])) {
             return false;
@@ -254,7 +304,7 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
 
     public function check_default_send_signature()
     {
-        $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
+        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
 
         if (!isset($shipping_methods['dhlpwc'])) {
             return false;

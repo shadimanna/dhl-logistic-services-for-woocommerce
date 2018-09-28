@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: DHL\n"
-"POT-Creation-Date: 2018-07-30 15:18+0200\n"
+"POT-Creation-Date: 2018-09-28 11:37+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -11,145 +11,140 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.4\n"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-order-metabox.php:47
+#: includes/controller/admin/class-dhlpwc-controller-admin-order-metabox.php:122
 msgid "Label created."
 msgstr "Label aangemaakt."
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-order-metabox.php:49
+#: includes/controller/admin/class-dhlpwc-controller-admin-order-metabox.php:124
 msgid "Label could not be created."
 msgstr "Label kon niet aangemaakt worden."
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-order-metabox.php:57
+#: includes/controller/admin/class-dhlpwc-controller-admin-order-metabox.php:132
 #, php-format
 msgid "The API responded with [%1$s]: %2$s"
 msgstr "The API heeft het volgende gestuurd [%1$s]: %2$s"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-order-metabox.php:83
+#: includes/controller/admin/class-dhlpwc-controller-admin-order-metabox.php:158
 msgid "Label deleted."
 msgstr "Label verwijderd."
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-order-metabox.php:102
+#: includes/controller/admin/class-dhlpwc-controller-admin-order-metabox.php:177
+#: includes/controller/admin/class-dhlpwc-controller-admin-order-metabox.php:197
 msgid "List updated."
 msgstr "Lijst bijgewerkt."
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-order-metabox.php:117
+#: includes/controller/admin/class-dhlpwc-controller-admin-order-metabox.php:213
 msgid "DHL"
 msgstr "DHL"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-order-metabox.php:269
-msgid "Download PDF label"
-msgstr "Download PDF-label"
-
-#: includes/controller/admin/class-dhlpwc-controller-admin-order-metabox.php:274
-msgid "Follow track & trace"
-msgstr "Volg track & trace"
-
-#: includes/controller/admin/class-dhlpwc-controller-admin-order-metabox.php:279
-msgid "Delete PDF label"
-msgstr "Verwijder PDF-label"
-
 #: includes/controller/admin/class-dhlpwc-controller-admin-order.php:30
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:111
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:102
 msgid "DHL label info"
 msgstr "DHL label informatie"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-order.php:87
+#: includes/controller/admin/class-dhlpwc-controller-admin-order.php:86
 msgid "Send to DHL ServicePoint"
 msgstr "Bezorgen bij DHL ServicePoint"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:41
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:45
+msgid "Unknown tag"
+msgstr "Onbekende tag"
+
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:72
 msgid "Connection successful"
 msgstr "Verbinding succesvol"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:41
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:72
 msgid "Authentication failed"
 msgstr "Authenticatie mislukt"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:61
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:92
 msgid "Test connection and retrieve account data"
 msgstr "Test connectie en haal gegevens op"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:62
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:93
 msgid "Please wait..."
 msgstr "Een moment..."
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:63
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:94
 msgid "Accounts found. Click to use."
 msgstr "Klantnummers gevonden. Kies om te gebruiken."
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:64
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:95
 msgid "OrganizationID found. Click to use."
 msgstr "Bedrijfscode gevonden. Kies om te gebruiken."
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:79
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:88
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:91
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:94
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:97
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:159
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:168
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:171
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:174
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:177
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:186
 #, php-format
 msgid "Missing %1$s from %2$s"
 msgstr "Stel %1$s in %2$s"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:79
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:88
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:143
-msgid "UserID"
-msgstr "UserID"
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:159
+msgid "Country / State"
+msgstr "Land"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:79
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:159
 msgid "General"
 msgstr "Algemeen"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:88
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:91
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:94
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:97
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:134
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:168
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:151
+msgid "UserID"
+msgstr "UserID"
+
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:168
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:171
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:174
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:177
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:142
 msgid "Account details"
 msgstr "Accountgegevens"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:91
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:148
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:171
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:156
 msgid "Key"
 msgstr "Key"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:94
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:158
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:174
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:166
 msgid "AccountID"
 msgstr "Klantnummer"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:97
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:163
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:177
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:171
 msgid "OrganizationID"
 msgstr "Bedrijfscode"
 
-#: includes/controller/class-dhlpwc-controller-cart.php:161
-#, php-format
-msgid "%1$s | %2$s %3$s | %4$s %5$s | Distance: %6$s %7$s"
-msgstr "%1$s | %2$s %3$s | %4$s %5$s | Afstand: %6$s %7$s"
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:186
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:130
+msgid "Google Maps key"
+msgstr "Google Maps key"
 
-#: includes/controller/class-dhlpwc-controller-cart.php:265
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:222
-msgid "Postcode"
-msgstr "Postcode"
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:186
+msgid "Plugin settings"
+msgstr "Plugin instellingen"
 
-#: includes/controller/class-dhlpwc-controller-cart.php:273
-msgid "Select DHL ServicePoint"
-msgstr "Kies een DHL ServicePoint"
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:187
+msgid ""
+"To continue using DHL ServicePoint and show a visual map to customers, "
+"please add a Google Maps API key. If left empty, the DHL ServicePoint map "
+"will stop displaying starting from October 30th 10:00 PM CEST"
+msgstr ""
+"Om de DHL ServicePoint te blijven te gebruiken en een visuele map te tonen "
+"aan klanten, moet er een Google Maps API key toegevoegd worden. Indien deze "
+"niet wordt ingevuld, dan is de DHL ServicePoint map niet meer zichtbaar "
+"vanaf 30 oktober 02:00 GMT"
 
-#: includes/controller/class-dhlpwc-controller-cart.php:335
-msgid "Search"
-msgstr "Zoek"
-
-#: includes/controller/class-dhlpwc-controller-cart.php:336
-msgid "OK"
-msgstr "OK"
-
-#: includes/controller/class-dhlpwc-controller-checkout.php:80
+#: includes/controller/class-dhlpwc-controller-checkout.php:74
 msgid "Choose a DHL ServicePoint"
 msgstr "Kies een DHL ServicePoint"
 
-#: includes/controller/class-dhlpwc-controller-checkout.php:84
+#: includes/controller/class-dhlpwc-controller-checkout.php:78
 msgid ""
 "The DHL ServicePoint country cannot be different than the shipping address "
 "country."
@@ -157,31 +152,133 @@ msgstr ""
 "Het land van de DHL ServicePoint is niet gelijk aan het land van het "
 "verzendadres."
 
-#: includes/model/service/class-dhlpwc-model-service-label.php:37
+#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:118
+#: languages/dhlpwc.php:54 languages/dhlpwc.php:62
+msgid "Reference"
+msgstr "Referentie"
+
+#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:119
+msgid "Second reference"
+msgstr "Tweede referentie"
+
+#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:140
+#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:150
+msgid "In euros (€)"
+msgstr "In euros (€)"
+
+#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:237
+msgid "Download PDF label"
+msgstr "Download PDF-label"
+
+#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:242
+msgid "Follow track & trace"
+msgstr "Volg track & trace"
+
+#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:247
+msgid "Delete PDF label"
+msgstr "Verwijder PDF-label"
+
+#: includes/model/service/class-dhlpwc-model-service-label.php:38
 msgid "Cannot parse street from shipper address."
 msgstr "Straat niet gevonden bij verzendadres."
 
-#: includes/model/service/class-dhlpwc-model-service-label.php:42
+#: includes/model/service/class-dhlpwc-model-service-label.php:43
 msgid "Cannot parse housenumber from shipper address."
 msgstr "Huisnummer niet gevonden bij verzendadres."
 
-#: includes/model/service/class-dhlpwc-model-service-label.php:47
+#: includes/model/service/class-dhlpwc-model-service-label.php:48
 msgid "Cannot parse street from receiver address."
 msgstr "Straat niet gevonden bij afleveradres."
 
-#: includes/model/service/class-dhlpwc-model-service-label.php:52
+#: includes/model/service/class-dhlpwc-model-service-label.php:53
 msgid "Cannot parse housenumber from receiver address."
 msgstr "Huisnummer niet gevonden bij afleveradres."
 
-#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:70
-msgid "Unavailable"
-msgstr "Niet beschikbaar"
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:82
+msgid "Distance"
+msgstr "Afstand"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:36
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:83
+msgid "Search"
+msgstr "Zoek"
+
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:84
+msgid "Monday"
+msgstr "Maandag"
+
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:85
+msgid "Tuesday"
+msgstr "Dinsdag"
+
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:86
+msgid "Wednesday"
+msgstr "Woensdag"
+
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:87
+msgid "Thursday"
+msgstr "Donderdag"
+
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:88
+msgid "Friday"
+msgstr "Vrijdag"
+
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:89
+msgid "Saturday"
+msgstr "Zaterdag"
+
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:90
+msgid "Sunday"
+msgstr "Zondag"
+
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:91
+msgid "Search for a ServicePoint..."
+msgstr "Zoek naar een ServicePoint..."
+
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:92
+msgid "Closed from"
+msgstr "Gesloten van"
+
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:93
+msgid "till"
+msgstr "tot"
+
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:94
+msgid "and"
+msgstr "en"
+
+#: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:16
+msgid "Door delivery"
+msgstr "Thuis bezorgen"
+
+#: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:24
+msgid "Door delivery, avoid dropping at neighbours"
+msgstr "Niet bij de buren bezorgen"
+
+#: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:33
+msgid "Door delivery in the evening"
+msgstr "Avondbezorging (18.00 - 21.00 uur)"
+
+#: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:42
+msgid "Door delivery today"
+msgstr "Vandaag bezorgen (18.00 - 21.00 uur)"
+
+#: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:51
+msgid "Door delivery on Saturdays"
+msgstr "Zaterdagbezorging"
+
+#: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:60
+msgid "Door delivery before 11:00AM"
+msgstr "Bezorging voor 11:00 uur"
+
+#: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:79
+msgid "ServicePoint delivery"
+msgstr "DHL ServicePoint"
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:27
 msgid "DHL for WooCommerce"
 msgstr "DHL in WooCommerce"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:37
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:28
 msgid ""
 "This is the official DHL Plugin for WooCommerce in WordPress. Do you have a "
 "WooCommerce webshop and are you looking for an easy way to process shipments "
@@ -196,123 +293,149 @@ msgstr ""
 "aanmaken en meerdere bezorgopties in uw webshop aanbieden. Stel hieronder uw "
 "account in."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:81
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:72
 msgid "Shipping Zones Settings"
 msgstr "Verzendzones Instellingen"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:83
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:74
 msgid "Please enable Shipping Zones to use this feature."
 msgstr "Activeer Verzendzones in de plugin instellingen om dit te gebruiken."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:99
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:90
 msgid "Plugin Settings"
 msgstr "Plugin instellingen"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:101
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:92
 msgid "Enable features of this plugin."
 msgstr "Activeer de functies van deze plugin."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:104
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:95
 msgid "Enable plugin"
 msgstr "Activeer plugin"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:106
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:120
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:178
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:97
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:111
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:118
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:186
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:194
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:267
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:273
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:305
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:325
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:345
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:365
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:385
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:202
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:276
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:282
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:367
+#: includes/view/admin/settings/options-grid-header.php:7
 msgid "Enable"
 msgstr "Actief"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:107
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:98
 msgid "Disabling this turns all of the plugin's features off."
 msgstr ""
 "Als u deze uitschakelt, worden alle functies van de plugin uitgeschakeld."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:113
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:127
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:104
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:125
 msgid "Show"
 msgstr "Tonen"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:114
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:105
 msgid ""
 "Add shipping information in an additional column in your order overview."
 msgstr ""
 "Informatie over zendingen weergeven in een extra kolom in uw overzicht van "
 "bestellingen."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:118
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:109
+msgid "Open admin label links in a new window"
+msgstr "Label links in de admin openen in een nieuw venster"
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:112
+msgid ""
+"Label actions like downloading PDF or opening track & trace will open in a "
+"new window."
+msgstr ""
+"Voor label functies zoals het downloaden van een PDF of het openen van een "
+"track & trace wordt er een nieuw venster geopend."
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:116
 msgid "Track & trace in mail"
 msgstr "Track & trace in email"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:121
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:119
 msgid ""
-"Add track & trace information to the default WooCommerce completed order e-"
+"Add track & trace information to the default WooCommerce 'completed order' e-"
 "mail if available."
 msgstr ""
-"Voeg track & trace informatie toe aan de standaard Woocommerce bestelling "
-"compleet e-mail indien beschikbaar."
+"Indien beschikbaar, wordt de track & trace informatie toegevoegd aan de "
+"standaard e-mail 'bestelling compleet' van Woocommerce."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:125
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:123
 msgid "Track & trace component"
 msgstr "Track & trace component"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:128
-msgid "Customers can see a track & trace component in the order summary."
-msgstr ""
-"De track & trace component is zichtbaar voor de klant bij de bestelgegevens."
-
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:137
-#, php-format
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:126
 msgid ""
-"Please configure your credentials for the DHL API. No API credentials yet? "
-"Get it %shere%s."
+"Include a track & trace component in the order summary for customers, when "
+"they log into the website and check their account information."
 msgstr ""
-"Instellingen voor de DHL API. Nog geen API gegevens? Haal ze %shier%s op."
+"De track & trace component is zichtbaar voor de klant bij de bestelgegevens "
+"onder accountgegevens nadat ze zijn ingelogd."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:145
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:150
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:160
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:165
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:132
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:153
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:158
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:168
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:173
 #, php-format
 msgid "Example: %s"
 msgstr "Voorbeeld: %s"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:153
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:134
+#, php-format
+msgid ""
+"Please configure your credentials for the Google Maps API. No Google Maps "
+"API credentials yet? Get it %shere%s."
+msgstr ""
+"Instellingen voor de Google Maps API. Nog geen Google Maps API gegevens? "
+"Haal ze %shier%s op."
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:145
+#, php-format
+msgid ""
+"DHL API settings. Still missing API credentials? Follow the instructions "
+"%shere%s."
+msgstr ""
+"Instellingen voor de DHL API. Nog geen API gegevens? Bekijk %shier%s waar u "
+"deze vindt."
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:161
 msgid "Test connection"
 msgstr "Test verbinding"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:170
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:178
 msgid "Shipment options"
 msgstr "Bezorgopties"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:172
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:180
 msgid "Choose the shipment options for the recipients of your webshop."
 msgstr "Kies de bezorgopties voor de ontvangers van uw webshop."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:176
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:184
 msgid "Send to business by default"
 msgstr "Verzend standaard zakelijk"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:179
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:187
 msgid ""
-"When enabled, by default labels will be created for business-to-business "
-"shipments."
+"When enabled, by default labels will be created for business shipments and "
+"the checkout will show business shipping options."
 msgstr ""
-"Indien actief, worden labels standaard gecreëerd voor zakelijke verzendingen."
+"Indien actief, worden labels in het eerste geval gecreëerd voor zakelijke "
+"verzendingen en de checkout laat alleen bezorgopties zien voor zakelijke "
+"zendingen."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:184
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:192
 msgid "Always enable required signature if available"
 msgstr "Altijd met 'handtekening bij ontvangst' verzenden indien beschikbaar"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:187
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:195
 msgid ""
 "When creating a label, always select the signature option by default if the "
 "service is available."
@@ -320,123 +443,139 @@ msgstr ""
 "Bij het aanmaken van een label, wordt standaard altijd de bezorgoptie "
 "'Handtekening bij ontvangst'  geselecteerd als het beschikbaar is."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:192
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:200
 msgid "Use shipping zones"
 msgstr "Gebruik verzendzones"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:195
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:203
 msgid "Set shipping methods per shipping zone."
 msgstr "Stel bezorgopties per verzendzone in."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:205
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:213
 msgid "Default Shipping Address"
 msgstr "Standaard verzendadres"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:207
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:215
 msgid "Fill in the details of your shipping address."
 msgstr "Vul de gegevens van uw verzendadres in."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:210
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:218
 msgid "First Name"
 msgstr "Voornaam"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:214
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:222
 msgid "Last Name"
 msgstr "Achternaam"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:218
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:226
 msgid "Company"
 msgstr "Bedrijf"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:226
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:231
+msgid "Postcode"
+msgstr "Postcode"
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:235
 msgid "City"
 msgstr "Plaats"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:230
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:239
 msgid "Street"
 msgstr "Straat"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:234
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:243
 msgid "Number"
 msgstr "Huisnummer"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:238
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:247
 msgid "Country"
 msgstr "Land"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:241
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:250
 msgid "Netherlands"
 msgstr "Nederland"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:242
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:251
 msgid "Belgium"
 msgstr "België"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:243
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:252
 msgid "Luxemburg"
 msgstr "Luxemburg"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:244
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:253
 msgid "Spain"
 msgstr "Spanje"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:245
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:254
 msgid "Portugal"
 msgstr "Portugal"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:250
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:259
 msgid "Email"
 msgstr "E-mail"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:254
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:263
 msgid "Phone"
 msgstr "Telefoon"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:260
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:269
 msgid "Debug Settings"
 msgstr "Debug instellingen"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:262
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:271
 msgid "Settings for developers."
 msgstr "Instellingen voor ontwikkelaars."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:265
-msgid "Enable reporting"
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:274
+msgid "Report errors"
 msgstr "Rapporteer problemen"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:268
-msgid "Allow the debug options below."
-msgstr "Activeer de onderstaande opties."
-
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:271
-msgid "Report by mail"
-msgstr "Rapporteer via email"
-
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:274
-msgid ""
-"Problems with the DHL API are automatically reported to the plugin "
-"developers."
-msgstr ""
-"Problemen in de plugin worden automatisch gedeeld met de ontwikkelaars."
-
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:277
-msgid "Report with custom URL"
-msgstr "Rapporteer met een debug URL"
-
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:279
 msgid ""
-"Debug URL used by developers. Please contact support if active monitoring is "
-"required and for the correct value. Will not be used if left empty."
+"Enable this and select one of the reporting methods below to automatically "
+"send errors of this plugin to the development team."
 msgstr ""
-"De debug URL wordt ingesteld door ontwikkelaars. Neem contact op met support "
-"indien actieve monitoring nodig is. Dit veld wordt niet gebruikt indien het "
-"leeg gelaten wordt."
+"Zet dit aan en selecteer een van de onderstaande methodes om problemen "
+"automatisch door te sturen naar het ontwikkelteam."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:295
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:280
+msgid "By mail"
+msgstr "Via e-mail"
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:283
+msgid "Errors will be automatically forwarded by e-mail."
+msgstr "Problemen worden automatisch doorgestuurd via e-mail."
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:286
+msgid "By custom URL"
+msgstr "Via URL"
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:288
+msgid ""
+"Monitoring URL. Used by developers. Can be used for active monitoring, "
+"please contact support for this feature. Will not be used if left empty."
+msgstr ""
+"Monitoring URL. Dit wordt ingesteld door ontwikkelaars. Neem contact op met "
+"support indien actieve monitoring nodig is. Dit veld wordt niet gebruikt "
+"indien het leeg gelaten wordt."
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:291
+msgid "External custom URL"
+msgstr "Via externe URL"
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:293
+msgid ""
+"Alternative external URL. Used by developers. Will not be used if left empty."
+msgstr ""
+"Alternatieve URL. Dit wordt ingesteld door ontwikkelaars. Dit veld wordt "
+"niet gebruikt indien het leeg gelaten wordt."
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:357
 msgid "Enter prices with tax included"
 msgstr "Prijzen inclusief belasting invoeren"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:297
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:359
 msgid ""
 "Turn this on to enter prices with the tax included. Turn this off to enter "
 "prices without tax."
@@ -444,85 +583,40 @@ msgstr ""
 "Vink dit aan om prijzen inclusief belasting in te voeren. Vink dit uit om "
 "prijzen exclusief belasting in te voeren."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:303
-msgid "Free shipping"
-msgstr "Gratis verzending"
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:365
+msgid "Free or discounted shipping"
+msgstr "Gratis of afgeprijsde verzending"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:306
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:368
 msgid "Offer free shipping (over a certain amount)."
 msgstr "Geen verzendkosten (vanaf een bepaald bedrag)."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:312
-msgid "Free shipping over"
-msgstr "Gratis verzending bij een bestelling vanaf"
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:374
+msgid "Free or discounted shipping threshold"
+msgstr "Gratis of verlaagd tarief vanaf"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:323
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:413
-msgid "Home delivery"
-msgstr "Thuisbezorging"
-
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:326
-msgid "Delivery of the parcel at the address of the recipient."
-msgstr "Bezorging van het pakket op het adres van de ontvanger."
-
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:332
-msgid "Shipping costs home delivery"
-msgstr "Verzendkosten thuisbezorging"
-
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:343
-msgid "No delivery to neighbour"
-msgstr "Niet bij de buren bezorgen"
-
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:346
-msgid "No delivery at neighbours in case the recipient is not at home."
-msgstr "Geen bezorging bij de buren wanneer de ontvanger niet thuis is."
-
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:352
-msgid "Shipping costs no delivery to neighbour"
-msgstr "Verzendkosten niet bij buren"
-
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:363
-msgid "Evening delivery"
-msgstr "Avondlevering"
-
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:366
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:376
 msgid ""
-"Delivery of the parcel between 6 p.m. and 9 p.m. at the address of the "
-"recipient."
+"Free or discounted shipping prices are applied when the total price is over "
+"the inputted value."
 msgstr ""
-"Bezorging van het pakket tussen 18.00 en 21.00 uur op het adres van de "
-"ontvanger."
-
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:372
-msgid "Shipping costs evening delivery"
-msgstr "Verzendkosten avondlevering"
-
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:383
-#: includes/view/cart/parcelshop/info.php:16
-msgid "DHL ServicePoint"
-msgstr "DHL ServicePoint"
+"Gratis of verlaagd tarief wordt toegepast op de verzendkosten indien de "
+"totaalprijs deze waarde overschrijdt."
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:386
-msgid "Delivery of the parcel at a DHL ServicePoint near to the recipient."
+msgid "Free or discounted shipping and coupons"
+msgstr "Gratis of verlaagd tarief en kortingsbonnen"
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:388
+msgid "Calculate after applying coupons"
+msgstr "Bereken pas na het toepassen van kortingsbonnen"
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:389
+msgid ""
+"Calculate eligibility for free or discounted shipping after applying coupons."
 msgstr ""
-"Bezorging van het pakket bij een DHL ServicePoint in de buurt van de "
-"ontvanger."
-
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:392
-msgid "Shipping costs DHL ServicePoint"
-msgstr "Verzendkosten DHL ServicePoint"
-
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:422
-msgid "Home delivery, no neighbours"
-msgstr "Normale levering, niet bij buren"
-
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:431
-msgid "Home delivery, evening"
-msgstr "Avondlevering"
-
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:440
-msgid "Deliver at a DHL ServicePoint"
-msgstr "Bezorgen bij een DHL ServicePoint"
+"Gratis of een verlaagd tarief van verzendkosten wordt berekend na het "
+"toepassen van kortingsbonnen."
 
 #: includes/view/admin/notice.php:4
 msgid "DHL for WooCommerce notice"
@@ -533,15 +627,34 @@ msgstr "DHL in WooCommerce informatie"
 msgid "%sClick here%s to go to the settings screen."
 msgstr "%sKlik hier%s om naar de instellingen te gaan."
 
-#: includes/view/cart/option/parcelshop.php:5
+#: includes/view/admin/settings/options-grid-header.php:6
+msgid "Delivery Option"
+msgstr "Bezorgoptie"
+
+#: includes/view/admin/settings/options-grid-header.php:8
+msgid "Price"
+msgstr "Prijs"
+
+#: includes/view/admin/settings/options-grid-header.php:9
+msgid "Eligable for Free/discount"
+msgstr "Beschikbaar voor gratis/verlaagd tarief"
+
+#: includes/view/admin/settings/options-grid-header.php:10
+msgid "Free/discount Price"
+msgstr "Prijs bij gratis/verlaagd tarief"
+
+#: includes/view/cart/parcelshop-option.php:8
+#: includes/view/order/meta/form/input/parcelshop.php:11
+#: includes/view/order/meta/form/input/terminal.php:11
 msgid "Change"
 msgstr "Verander"
 
-#: includes/view/cart/option/parcelshop.php:7
+#: includes/view/cart/parcelshop-option.php:10
 msgid "No location selected."
 msgstr "Geen locatie geselecteerd."
 
-#: includes/view/cart/option/parcelshop.php:8
+#: includes/view/cart/parcelshop-option.php:11
+#: includes/view/cart/parcelshop/confirm-button.php:4
 msgid "Select"
 msgstr "Selecteer"
 
@@ -562,45 +675,69 @@ msgstr ""
 msgid "Create a new label"
 msgstr "Maak een nieuw label aan"
 
-#: includes/view/order/meta.php:7
-msgid "Shipment option"
-msgstr "Bezorgoptie"
-
-#: includes/view/order/meta.php:8
-msgid "Recipient preference is automatically selected."
-msgstr "Voorkeur van ontvanger is automatisch geselecteerd."
-
-#: includes/view/order/meta.php:12
+#: includes/view/order/meta.php:10
 msgid "Size and weight"
 msgstr "Afmeting en gewicht"
 
-#: includes/view/order/meta.php:15
+#: includes/view/order/meta.php:13
 msgid "Can't load parcel types"
 msgstr "Parceltypes kunnen niet ingeladen worden"
 
-#: includes/view/order/meta.php:19
+#: includes/view/order/meta.php:17
 msgid "Create"
 msgstr "Maak aan"
 
-#: includes/view/order/meta/form/no-parceltype.php:3
+#: includes/view/order/meta/form/input/parcelshop.php:8
+msgid "Select a DHL ServicePoint"
+msgstr "Kies een DHL ServicePoint"
+
+#: includes/view/order/meta/form/input/parcelshop/none.php:4
+msgid "No DHL ServicePoint found"
+msgstr "Geen DHL ServicePoint gevonden"
+
+#: includes/view/order/meta/form/input/terminal.php:8
+msgid "Select a terminal"
+msgstr "Kies een terminal"
+
+#: includes/view/order/meta/form/input/terminal/none.php:4
+msgid "No terminal found"
+msgstr "Geen terminal gevonden"
+
+#: includes/view/order/meta/form/no-sizes.php:3
 msgid "No labels available with these options."
 msgstr "Geen beschikbare labels met deze bezorgopties."
 
-#: includes/view/order/meta/form/parceltype-headline.php:2
+#: includes/view/order/meta/form/options.php:3
+msgid "Delivery method"
+msgstr "Bezorgmethode"
+
+#: includes/view/order/meta/form/options.php:40
+msgid "Extra services"
+msgstr "Extra services"
+
+#: includes/view/order/meta/form/sizes-headline.php:2
 msgid "Selected:"
 msgstr "Geselecteerd:"
 
-#: includes/view/order/meta/form/to-business.php:11
-msgid "To business"
+#: includes/view/order/meta/form/to-business.php:13
+msgid "Private"
+msgstr "Particulier"
+
+#: includes/view/order/meta/form/to-business.php:14
+msgid "Business"
 msgstr "Zakelijk"
 
-#: includes/view/order/meta/label-wrapper.php:3
+#: includes/view/order/meta/label-container.php:3
 msgid "Labels for this order"
 msgstr "Labels voor deze order"
 
 #: includes/view/order/meta/no-label.php:2
 msgid "No labels have been created yet."
 msgstr "Er zijn nog geen labels aangemaakt."
+
+#: includes/view/parcelshop-info.php:16
+msgid "DHL ServicePoint"
+msgstr "DHL ServicePoint"
 
 #: includes/view/unavailable.php:2
 msgid "DHL data unavailable."
@@ -628,15 +765,15 @@ msgstr "Bulky"
 
 #: languages/dhlpwc.php:25
 msgid "OPTION_PS"
-msgstr "DHL ServicePoint"
+msgstr "ServicePoint"
 
 #: languages/dhlpwc.php:26
 msgid "OPTION_DOOR"
-msgstr "Thuisbezorging"
+msgstr "Aan de deur"
 
 #: languages/dhlpwc.php:27
 msgid "OPTION_BP"
-msgstr "Brievenbuspakket"
+msgstr "Brievenbus"
 
 #: languages/dhlpwc.php:28
 msgid "OPTION_H"
@@ -644,7 +781,7 @@ msgstr "Terminal"
 
 #: languages/dhlpwc.php:31
 msgid "OPTION_COD_CASH"
-msgstr "CoD Cash"
+msgstr "Rembourszending"
 
 #: languages/dhlpwc.php:32
 msgid "OPTION_EXP"
@@ -652,39 +789,39 @@ msgstr "Expresser"
 
 #: languages/dhlpwc.php:33
 msgid "OPTION_BOUW"
-msgstr "Construction site"
+msgstr "Bouwplaats"
 
 #: languages/dhlpwc.php:34
 msgid "OPTION_REFERENCE2"
-msgstr "Reference"
+msgstr "Referentie"
 
 #: languages/dhlpwc.php:35
 msgid "OPTION_EXW"
-msgstr "Ex Works"
+msgstr "Af fabriek"
 
 #: languages/dhlpwc.php:36
 msgid "OPTION_EA"
-msgstr "Inc. Liability"
+msgstr "Extra Zeker"
 
 #: languages/dhlpwc.php:37
 msgid "OPTION_EVE"
-msgstr "Evening"
+msgstr "Avondbezorging"
 
 #: languages/dhlpwc.php:38
 msgid "OPTION_RECAP"
-msgstr "Recap"
+msgstr "Samenvatting"
 
 #: languages/dhlpwc.php:39
 msgid "OPTION_COD_CHECK"
-msgstr "CoD Check"
+msgstr "Rembourszending, betaald met check"
 
 #: languages/dhlpwc.php:40
 msgid "OPTION_INS"
-msgstr "All risks insurance"
+msgstr "Aanvullende transportverzekering"
 
 #: languages/dhlpwc.php:41
 msgid "OPTION_REFERENCE"
-msgstr "Reference"
+msgstr "Referentie"
 
 #: languages/dhlpwc.php:42
 msgid "OPTION_HANDT"
@@ -692,7 +829,7 @@ msgstr "Handtekening bij ontvangst"
 
 #: languages/dhlpwc.php:43
 msgid "OPTION_NBB"
-msgstr "No neighbour"
+msgstr "Niet bij de buren bezorgen"
 
 #: languages/dhlpwc.php:44
 msgid "OPTION_ADD_RETURN_LABEL"
@@ -700,19 +837,165 @@ msgstr "Return label"
 
 #: languages/dhlpwc.php:45
 msgid "OPTION_SSN"
-msgstr "Undisclosed sender"
+msgstr "Verberg verzender"
 
 #: languages/dhlpwc.php:46
 msgid "OPTION_PERS_NOTE"
-msgstr "Email"
+msgstr "Email ontvanger"
 
 #: languages/dhlpwc.php:47
 msgid "OPTION_SDD"
-msgstr "Same day"
+msgstr "DHL Vandaag"
 
 #: languages/dhlpwc.php:48
 msgid "OPTION_S"
-msgstr "Saturday"
+msgstr "Zaterdagbezorging"
+
+#: languages/dhlpwc.php:53
+msgid "Delivery to the address of the recipient"
+msgstr "Bezorging van het pakket op het adres van de ontvanger"
+
+#: languages/dhlpwc.php:55
+msgid "E-mail to receiver"
+msgstr "E-mail naar de ontvanger"
+
+#: languages/dhlpwc.php:56
+msgid "Same-day delivery"
+msgstr "DHL Vandaag"
+
+#: languages/dhlpwc.php:57 languages/dhlpwc.php:66
+msgid "Print extra label for return shipment"
+msgstr "Retourlabel"
+
+#: languages/dhlpwc.php:58
+msgid "Extra assurance"
+msgstr "Extra Zeker"
+
+#: languages/dhlpwc.php:59
+msgid "Signature on delivery"
+msgstr "Handtekening bij ontvangst"
+
+#: languages/dhlpwc.php:60
+msgid "Evening delivery"
+msgstr "Avondlevering"
+
+#: languages/dhlpwc.php:61
+msgid "No neighbour delivery"
+msgstr "Niet bij de buren bezorgen"
+
+#: languages/dhlpwc.php:63
+msgid "Delivery to the specified DHL Parcelshop or DHL Parcelstation"
+msgstr "DHL ServicePoint"
+
+#: languages/dhlpwc.php:64
+msgid "Mailbox delivery"
+msgstr "Door de brievenbus"
+
+#: languages/dhlpwc.php:65
+msgid "Hold for collection"
+msgstr "Op terminal"
+
+#: languages/dhlpwc.php:67
+msgid "All risks insurance"
+msgstr "Aanvullende transportverzekering"
+
+#: languages/dhlpwc.php:68
+msgid "Saturday delivery"
+msgstr "Zaterdagbezorging"
+
+#: languages/dhlpwc.php:69
+msgid "Expresser"
+msgstr "Expresser"
+
+#: languages/dhlpwc.php:70
+msgid "Undisclosed sender"
+msgstr "Verberg verzender"
+
+#: languages/dhlpwc.php:71
+msgid "Cash on delivery. Payment method cash, paid by sender."
+msgstr "Rembourszending."
+
+#: languages/dhlpwc.php:72
+msgid "Delivery to construction site"
+msgstr "Bezorging op bouwplaats"
+
+#: languages/dhlpwc.php:73
+msgid "Ex Works"
+msgstr "Af fabriek"
+
+#~ msgid ""
+#~ "Please configure your credentials for the DHL API. No API credentials "
+#~ "yet? Get it %shere%s."
+#~ msgstr ""
+#~ "Instellingen voor de DHL API. Nog geen API gegevens? Haal ze %shier%s op."
+
+#, fuzzy
+#~| msgid "Track & trace component"
+#~ msgid "Google Maps key & trace compone"
+#~ msgstr "Track & trace component"
+
+#~ msgid "%1$s | %2$s %3$s | %4$s %5$s | Distance: %6$s %7$s"
+#~ msgstr "%1$s | %2$s %3$s | %4$s %5$s | Afstand: %6$s %7$s"
+
+#~ msgid "Select DHL ServicePoint"
+#~ msgstr "Kies een DHL ServicePoint"
+
+#~ msgid "OK"
+#~ msgstr "OK"
+
+#~ msgid "Unavailable"
+#~ msgstr "Niet beschikbaar"
+
+#~ msgid "Message"
+#~ msgstr "Bericht"
+
+#~ msgid "Enable reporting"
+#~ msgstr "Rapporteer problemen"
+
+#~ msgid "Allow the debug options below."
+#~ msgstr "Activeer de onderstaande opties."
+
+#~ msgid ""
+#~ "Problems with the DHL API are automatically reported to the plugin "
+#~ "developers."
+#~ msgstr ""
+#~ "Problemen in de plugin worden automatisch gedeeld met de ontwikkelaars."
+
+#~ msgid "Free shipping over"
+#~ msgstr "Gratis verzending bij een bestelling vanaf"
+
+#~ msgid "No delivery at neighbours in case the recipient is not at home."
+#~ msgstr "Geen bezorging bij de buren wanneer de ontvanger niet thuis is."
+
+#~ msgid "Shipping costs no delivery to neighbour"
+#~ msgstr "Verzendkosten niet bij buren"
+
+#~ msgid ""
+#~ "Delivery of the parcel between 6 p.m. and 9 p.m. at the address of the "
+#~ "recipient."
+#~ msgstr ""
+#~ "Bezorging van het pakket tussen 18.00 en 21.00 uur op het adres van de "
+#~ "ontvanger."
+
+#~ msgid "Shipping costs evening delivery"
+#~ msgstr "Verzendkosten avondlevering"
+
+#~ msgid "Delivery of the parcel at a DHL ServicePoint near to the recipient."
+#~ msgstr ""
+#~ "Bezorging van het pakket bij een DHL ServicePoint in de buurt van de "
+#~ "ontvanger."
+
+#~ msgid "Shipping costs DHL ServicePoint"
+#~ msgstr "Verzendkosten DHL ServicePoint"
+
+#~ msgid "Deliver at a DHL ServicePoint"
+#~ msgstr "Bezorgen bij een DHL ServicePoint"
+
+#~ msgid "Shipment option"
+#~ msgstr "Bezorgoptie"
+
+#~ msgid "Recipient preference is automatically selected."
+#~ msgstr "Voorkeur van ontvanger is automatisch geselecteerd."
 
 #~ msgid "Update available sizes based on selected options"
 #~ msgstr "Update beschikbare maten op basis van geselecteerde bezorgopties"
@@ -753,11 +1036,6 @@ msgstr "Saturday"
 #~ "Vul hier het btw-percentage in voor uw verzendkosten. Zijn uw "
 #~ "verzendkosten exclusief btw, vul hier dan '0' in."
 
-#, fuzzy
-#~| msgid "DHL ServicePoint"
-#~ msgid "ServicePoint"
-#~ msgstr "DHL ServicePoint"
-
 #~ msgid "Send to DHL Parcelshop"
 #~ msgstr "Bezorgen bij  DHL Parcelshop"
 
@@ -793,9 +1071,6 @@ msgstr "Saturday"
 
 #~ msgid "%s"
 #~ msgstr "%s"
-
-#~ msgid "Default receiver type"
-#~ msgstr "Standaard ontvangerstype"
 
 #~ msgid "Consumer"
 #~ msgstr "Consument"
@@ -856,9 +1131,6 @@ msgstr "Saturday"
 
 #~ msgid "Allow shipment to not to be delivered to neighbours, if available."
 #~ msgstr "Geef niet bij buren optie weer, indien beschikbaar."
-
-#~ msgid "No neighbour price"
-#~ msgstr "Niet bij buren prijs"
 
 #~ msgid "Evening delivery selection on checkout"
 #~ msgstr "Avondleveringsselectie bij het afrekenen"
