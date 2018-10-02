@@ -16,7 +16,8 @@ class DHLPWC
     public function __construct()
     {
         // Only load this plugin if WooCommerce is loaded
-        if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
+        if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))
+            || array_key_exists('woocommerce/woocommerce.php', apply_filters('active_plugins', get_site_option('active_sitewide_plugins')))) {
             add_action('init', array($this, 'init'));
         }
     }
