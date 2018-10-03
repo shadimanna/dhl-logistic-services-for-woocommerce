@@ -85,7 +85,7 @@ In case you could not find what you were looking for in our FAQs and the detaile
 
 == Changelog ==
 
-= 1.3 =
+= 1.3.0 =
 - DHL Parcel: Added Usabilla feedback button to the plugin settings page
 - DHL Parcel: Added an option to calculate free shipping after applying discounts
 - DHL Parcel: Updated free shipping settings to be either free, or for discounts
