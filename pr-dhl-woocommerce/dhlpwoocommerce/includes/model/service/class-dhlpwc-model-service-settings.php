@@ -7,27 +7,50 @@ if (!class_exists('DHLPWC_Model_Service_Settings')) :
 class DHLPWC_Model_Service_Settings extends DHLPWC_Model_Core_Singleton_Abstract
 {
 
+    protected $temporary_key = 'AIzaSyAV9qJVXDBnVHWwU01bjHO3wJCUxffYZyw';
+
+    public function get_maps_key()
+    {
+        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+        if (empty($shipping_methods['dhlpwc']->settings['google_maps_key'])) {
+            return !empty($this->temporary_key) ? $this->temporary_key : null;
+        }
+        return $shipping_methods['dhlpwc']->settings['google_maps_key'];
+    }
+
     public function get_api_account()
     {
-        $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
+        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+        if (!isset($shipping_methods['dhlpwc']->settings['account_id'])) {
+            return null;
+        }
         return $shipping_methods['dhlpwc']->settings['account_id'];
     }
 
     public function get_api_organization()
     {
-        $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
+        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+        if (!isset($shipping_methods['dhlpwc']->settings['organization_id'])) {
+            return null;
+        }
         return $shipping_methods['dhlpwc']->settings['organization_id'];
     }
 
     public function get_api_user()
     {
-        $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
+        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+        if (!isset($shipping_methods['dhlpwc']->settings['user_id'])) {
+            return null;
+        }
         return $shipping_methods['dhlpwc']->settings['user_id'];
     }
 
     public function get_api_key()
     {
-        $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
+        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+        if (!isset($shipping_methods['dhlpwc']->settings['key'])) {
+            return null;
+        }
         return $shipping_methods['dhlpwc']->settings['key'];
     }
 
@@ -45,7 +68,7 @@ class DHLPWC_Model_Service_Settings extends DHLPWC_Model_Core_Singleton_Abstract
 
     public function get_default_address()
     {
-        $shipping_methods = WC_Shipping::instance()->load_shipping_methods();
+        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
 
         return new DHLPWC_Model_Meta_Address(array(
             'first_name' => $shipping_methods['dhlpwc']->settings['first_name'],

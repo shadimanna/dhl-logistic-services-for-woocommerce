@@ -60,22 +60,52 @@ class DHLPWC_Model_Service_Order_Meta_Option extends DHLPWC_Model_Core_Singleton
             return false;
         }
 
-        $allowed_shipping_options = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CAPABILITY_OPTIONS, array(
+        $allowed_shipping_options = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CAPABILITY_ORDER_OPTIONS, array(
             'order_id' => $order_id,
             'options' => $options,
             'to_business' => $to_business,
         ));
 
         // Disable automatic checking of send signature if there are no parceltypes for it
-        if (!in_array(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_HANDT, $allowed_shipping_options)) {
+        if (!array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_HANDT, $allowed_shipping_options)) {
             return false;
         }
 
         return true;
     }
 
+    public function get_parcelshop($order_id)
+    {
+        $order = new WC_Order($order_id);
+
+        $service = DHLPWC_Model_Service_Order_Meta_Option::instance();
+        $parcelshop_meta = $service->get_option_preference($order->get_order_number(), DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS);
+
+        if (!$parcelshop_meta) {
+            return null;
+        }
+
+        $service = DHLPWC_Model_Service_Parcelshop::instance();
+        /** @var WC_Order $order */
+        $parcelshop = $service->get_parcelshop($parcelshop_meta['input'], $order->get_shipping_country());
+
+        if (!$parcelshop || !isset($parcelshop->name) || !isset($parcelshop->address)) {
+            return null;
+        }
+
+        return $parcelshop;
+    }
+
     public function add_key_to_stack($key, &$array)
     {
+        if (!is_array($array)) {
+            if (!$array) {
+                $array = array();
+            } else {
+                return $array;
+            }
+        }
+
         if (!in_array($key, $array)) {
             $array[] = $key;
         }

@@ -24,8 +24,82 @@ class DHLPWC_Controller_Admin_Order_Metabox
 
             add_action('wp_ajax_dhlpwc_label_create',  array($this, 'create_label'));
             add_action('wp_ajax_dhlpwc_label_delete', array($this, 'delete_label'));
-            add_action('wp_ajax_dhlpwc_label_refresh', array($this, 'refresh_label'));
+
+            add_action('wp_ajax_dhlpwc_load_options', array($this, 'load_options'));
+            add_action('wp_ajax_dhlpwc_load_sizes', array($this, 'load_sizes'));
+
+            add_action('wp_ajax_dhlpwc_metabox_terminal_search', array($this, 'terminal_search'));
+            add_action('wp_ajax_dhlpwc_metabox_parcelshop_search', array($this, 'parcelshop_search'));
         }
+    }
+
+    public function terminal_search()
+    {
+        $post_id = wc_clean($_POST['post_id']);
+        $search = wc_clean($_POST['search']);
+
+        $order = new WC_Order($post_id);
+        $country = $order->get_shipping_country();
+
+        $service = DHLPWC_Model_Service_Terminal::instance();
+        $terminals = $service->get_terminals($search, $country);
+
+        if (!empty($terminals)) {
+            $terminal_view = '';
+            foreach($terminals as $terminal)
+            {
+                $view = new DHLPWC_Template('order.meta.form.input.terminal.location');
+                $terminal_view .= $view->render(array(
+                    'terminal' => $terminal,
+                ), false);
+            }
+        } else {
+            $view = new DHLPWC_Template('order.meta.form.input.terminal.none');
+            $terminal_view = $view->render(array(), false);
+        }
+
+        // Send JSON response
+        $json_response = new DHLPWC_Model_Response_JSON();
+        $json_response->set_data(array(
+            'view' => $terminal_view,
+        ));
+
+        wp_send_json($json_response->to_array(), 200);
+    }
+
+    public function parcelshop_search()
+    {
+        $post_id = wc_clean($_POST['post_id']);
+        $search = wc_clean($_POST['search']);
+
+        $order = new WC_Order($post_id);
+        $country = $order->get_shipping_country();
+
+        $service = DHLPWC_Model_Service_Parcelshop::instance();
+        $parcelshops = $service->get_parcelshops($search, $country);
+
+        if (!empty($parcelshops)) {
+            $parcelshop_view = '';
+            foreach($parcelshops as $parcelshop)
+            {
+                $view = new DHLPWC_Template('order.meta.form.input.parcelshop.location');
+                $parcelshop_view .= $view->render(array(
+                    'parcelshop' => $parcelshop,
+                ), false);
+            }
+        } else {
+            $view = new DHLPWC_Template('order.meta.form.input.parcelshop.none');
+            $parcelshop_view = $view->render(array(), false);
+        }
+
+
+        // Send JSON response
+        $json_response = new DHLPWC_Model_Response_JSON();
+        $json_response->set_data(array(
+            'view' => $parcelshop_view,
+        ));
+
+        wp_send_json($json_response->to_array(), 200);
     }
 
     /**
@@ -36,10 +110,11 @@ class DHLPWC_Controller_Admin_Order_Metabox
         $post_id = wc_clean($_POST['post_id']);
         $label_size = wc_clean($_POST['label_size']);
         $label_options = isset($_POST['label_options']) && is_array($_POST['label_options']) ? wc_clean($_POST['label_options']) : array();
+        $label_option_data = isset($_POST['label_option_data']) && is_array($_POST['label_option_data']) ? wc_clean($_POST['label_option_data']) : array();
         $to_business = (isset($_POST['to_business']) && wc_clean($_POST['to_business']) == 'yes') ? true : false;
 
         $service = DHLPWC_Model_Service_Label::instance();
-        $success = $service->create($post_id, $label_size, $label_options, $to_business);
+        $success = $service->create($post_id, $label_size, $label_options, $label_option_data, $to_business);
 
         // Set Flash message
         $messages = DHLPWC_Model_Core_Flash_Message::instance();
@@ -62,7 +137,7 @@ class DHLPWC_Controller_Admin_Order_Metabox
         // Send JSON response
         $json_response = new DHLPWC_Model_Response_JSON();
         $json_response->set_data(array(
-            'view' => $this->content_view($post_id)
+            'view' => $this->load_all($post_id, $label_options, $to_business)
         ));
         wp_send_json($json_response->to_array(), 200);
     }
@@ -85,12 +160,32 @@ class DHLPWC_Controller_Admin_Order_Metabox
         // Send JSON response
         $json_response = new DHLPWC_Model_Response_JSON();
         $json_response->set_data(array(
-            'view' => $this->content_view($post_id)
+            'view' => $this->load_all($post_id)
         ));
         wp_send_json($json_response->to_array(), 200);
     }
 
-    public function refresh_label()
+    public function load_options()
+    {
+        $post_id = wc_clean($_POST['post_id']);
+        $to_business = isset($_POST['to_business']) && wc_clean($_POST['to_business']) == 'yes' ? true : false;
+
+        $selected_options = isset($_POST['label_options']) && is_array($_POST['label_options']) ? wc_clean($_POST['label_options']) : array();
+
+        // Set Flash message
+        $messages = DHLPWC_Model_Core_Flash_Message::instance();
+        $messages->add_warning(__('List updated.', 'dhlpwc'), 'dhlpwc_label_meta');
+
+        // Send JSON response
+        $service = DHLPWC_Model_Service_Label_Metabox::instance();
+        $json_response = new DHLPWC_Model_Response_JSON();
+        $json_response->set_data(array(
+            'view' => $service->options_form($post_id, $selected_options, $to_business),
+        ));
+        wp_send_json($json_response->to_array(), 200);
+    }
+
+    public function load_sizes()
     {
         $post_id = wc_clean($_POST['post_id']);
 
@@ -102,9 +197,10 @@ class DHLPWC_Controller_Admin_Order_Metabox
         $messages->add_warning(__('List updated.', 'dhlpwc'), 'dhlpwc_label_meta');
 
         // Send JSON response
+        $service = DHLPWC_Model_Service_Label_Metabox::instance();
         $json_response = new DHLPWC_Model_Response_JSON();
         $json_response->set_data(array(
-            'view' => $this->parceltype_content($post_id, $label_options, $to_business)
+            'view' => $service->sizes_form($post_id, $label_options, $to_business)
         ));
         wp_send_json($json_response->to_array(), 200);
     }
@@ -114,15 +210,16 @@ class DHLPWC_Controller_Admin_Order_Metabox
      */
     public function add_meta_box()
     {
-        add_meta_box('dhlpwc-label', __('DHL', 'dhlpwc'), array($this, 'display_content'), 'shop_order', 'side', 'high');
+        $title = "<img src='".DHLPWC_PLUGIN_URL . "assets/images/dhlpwc_logo_mini.png' alt='".esc_attr(__('DHL', 'dhlpwc'))."'/>";
+        add_meta_box('dhlpwc-label', $title, array($this, 'metabox_content'), 'shop_order', 'side', 'high');
     }
 
     /**
      * Display metabox content
      */
-    public function display_content()
+    public function metabox_content()
     {
-        echo $this->content_view(get_the_ID());
+        echo $this->load_all(get_the_ID());
     }
 
     /**
@@ -131,171 +228,72 @@ class DHLPWC_Controller_Admin_Order_Metabox
      * @param $order_id
      * @return string
      */
-    public function content_view($order_id)
+    public function load_all($order_id, $preselected_options = null, $to_business = null)
     {
         $order_id = intval($order_id);
 
-        $label_view = '';
+        $metabox_service = DHLPWC_Model_Service_Label_Metabox::instance();
 
-        $service = new DHLPWC_Model_Service_Order_Meta();
-        $labels = $service->get_labels($order_id);
+        // Generate label section
+        $meta_service = new DHLPWC_Model_Service_Order_Meta();
+        $labels = $meta_service->get_labels($order_id);
 
-        if (!empty($labels)) {
-            foreach ($labels as $label) {
-                $view = new DHLPWC_Template('order.meta.label');
-                $label_view .= $view->render(array(
-                    'label_size'        => $label['label_size'],
-                    'label_description' => __(sprintf('PARCELTYPE_%s', $label['label_size']), 'dhlpwc'),
-                    'tracker_code'      => $label['tracker_code'],
-                    'actions'           => $this->get_label_actions($label, $order_id),
-                ), false);
-            }
-        } else {
-            $view = new DHLPWC_Template('order.meta.no-label');
-            $label_view .= $view->render(array(), false);
-        }
-
-        $view = new DHLPWC_Template('order.meta.label-wrapper');
-        $meta_view = $view->render(array(
-            'content' => $label_view
-        ), false);
-
-        $meta_view .= '<hr/>';
+        $meta_content = '';
+        $meta_content .= $metabox_service->order_labels($order_id, $labels);
+        $meta_content .= '<hr/>';
 
         // Generate to business option
-        $service = DHLPWC_Model_Service_Access_Control::instance();
-        $to_business = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DEFAULT_TO_BUSINESS);
-        $view = new DHLPWC_Template('order.meta.form.to-business');
-        $to_business_view = $view->render(array(
-            'checked' => $to_business,
-        ), false);
+        $access_service = DHLPWC_Model_Service_Access_Control::instance();
+        if ($to_business === null || !is_bool($to_business)) {
+            $to_business = $access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DEFAULT_TO_BUSINESS);
+        }
+
+        $business_form = $metabox_service->private_or_business_form($to_business);
 
         // Generate options
         $option_service = DHLPWC_Model_Service_Order_Meta_Option::instance();
-        $customer_preferred_options = $option_service->get_keys($order_id);
-        $default_signature = $option_service->default_signature($order_id, $customer_preferred_options, $to_business);
-        if ($default_signature) {
-            $option_service->add_key_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_HANDT, $customer_preferred_options);
+        if ($preselected_options === null) {
+            $preselected_options = $option_service->get_keys($order_id);
+
+            // Default option settings
+            $default_signature = $option_service->default_signature($order_id, $preselected_options, $to_business);
+            if ($default_signature) {
+                $option_service->add_key_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_HANDT, $preselected_options);
+            }
         }
 
-        $label_service = DHLPWC_Model_Service_Label_Option::instance();
-        $selectable_options = $label_service->get_selectable_options($order_id, $default_signature);
-
-        $selectable_option_view = '';
-        foreach($selectable_options as $selectable_option) {
-            $view = new DHLPWC_Template('order.meta.form.option');
-            $selectable_option_view .= $view->render($selectable_option, false);
-        }
-
-        // Generate parceltypes (with requested options)
-        $parceltype_content = $this->parceltype_content($order_id, $customer_preferred_options, $to_business);
-        $view = new DHLPWC_Template('order.meta.form.parceltype-wrapper');
-        $parceltype_view = $view->render(array(
-            'content' => $parceltype_content
+        $view = new DHLPWC_Template('order.meta.form.options-container');
+        $options_form = $view->render(array(
+            'content' => $metabox_service->options_form($order_id, $preselected_options, $to_business),
         ), false);
 
+        // Generate sizes (with requested options)
+        $view = new DHLPWC_Template('order.meta.form.sizes-container');
+        $sizes_form = $view->render(array(
+            'content' => $metabox_service->sizes_form($order_id, $preselected_options, $to_business),
+        ), false);
+
+        // Assemble all content pieces
         $view = new DHLPWC_Template('order.meta');
-        $meta_view .= $view->render(array(
-            'to_business' => $to_business_view,
-            'options' => trim($selectable_option_view),
-            'parcel_types' => trim($parceltype_view),
+        $meta_content .= $view->render(array(
+            'to_business' => $business_form,
+            'options' => trim($options_form),
+            'sizes' => trim($sizes_form),
         ), false);
 
+        // Create notices
         $messages = DHLPWC_Model_Core_Flash_Message::instance();
         $notices = $messages->get_notices('dhlpwc_label_meta');
         $warnings = $messages->get_warnings('dhlpwc_label_meta');
         $errors = $messages->get_errors('dhlpwc_label_meta');
 
-        $view = new DHLPWC_Template('order.meta-wrapper');
+        // Send as metabox
+        $view = new DHLPWC_Template('order.meta-container');
         return $view->render(array(
-            'content' => $meta_view,
+            'content' => $meta_content,
             'notices' => $notices,
             'warnings' => $warnings,
             'errors' => $errors,
-        ), false);
-    }
-
-    public function parceltype_content($order_id, $options, $to_business)
-    {
-        $view = new DHLPWC_Template('order.meta.form.parceltype-headline');
-        $option_texts = $options;
-        array_walk($option_texts, function(&$value, &$key) {
-            $value = __(sprintf('OPTION_%s', $value), 'dhlpwc');
-        });
-
-        $parceltype_view = $view->render(array(
-            'message' => implode(' + ', $option_texts),
-        ), false);
-
-        $service = DHLPWC_Model_Service_Access_Control::instance();
-        $parceltypes = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CAPABILITY_PARCELTYPE, array(
-            'order_id' => $order_id,
-            'options' => $options,
-            'to_business' => $to_business,
-        ));
-
-        if (!empty($parceltypes)) {
-            foreach ($parceltypes as $parceltype) {
-                $view = new DHLPWC_Template('order.meta.form.parceltype');
-                $parceltype_view .= $view->render(array(
-                    'parceltype' => $parceltype,
-                    'description' => __(sprintf('PARCELTYPE_%s', $parceltype->key), 'dhlpwc'),
-                ), false);
-
-            }
-        } else {
-            $view = new DHLPWC_Template('order.meta.form.no-parceltype');
-            $parceltype_view .= $view->render(array(), false);
-        }
-
-        return $parceltype_view;
-    }
-
-    protected function get_label_actions($label, $post_id = null)
-    {
-        $post_id = $post_id ?: get_the_ID();
-
-        $locale = str_replace('_', '-', get_locale());
-
-        $service = DHLPWC_Model_Service_Postcode::instance();
-        $postcode = $service->get_postcode_from_order($post_id);
-
-        $service = DHLPWC_Model_Service_Track_Trace::instance();
-        $tracking_url = $service->get_url($label['tracker_code'], $postcode, $locale);
-
-        $actions = array(
-            array(
-                'url'    => $label['pdf']['url'],
-                'name'   => __('Download PDF label', 'dhlpwc'),
-                'action' => "dhlpwc_action_download",
-            ),
-            array(
-                'url'    => esc_url($tracking_url),
-                'name'   => __('Follow track & trace', 'dhlpwc'),
-                'action' => "dhlpwc_action_follow_tt",
-            ),
-            array(
-                'url'    => admin_url('post.php?post=' . $post_id . '&action=edit'),
-                'name'   => __('Delete PDF label', 'dhlpwc'),
-                'action' => "dhlpwc_action_delete",
-            ),
-        );
-
-        // Create template
-        $action_view = '';
-
-        foreach ($actions as $action) {
-            $view = new DHLPWC_Template('admin.action-button');
-            $action_view .= $view->render(array(
-                'action'  => $action,
-                'post_id' => $post_id,
-                'label_id' => $label['label_id'],
-            ), false);
-        }
-
-        $view = new DHLPWC_Template('admin.action-button-wrapper');
-        return $view->render(array(
-            'content'  => $action_view,
         ), false);
     }
 
@@ -310,7 +308,17 @@ class DHLPWC_Controller_Admin_Order_Metabox
         if ($screen->base == 'post' && $screen->post_type == 'shop_order') {
             wp_enqueue_script( 'dhlpwc-metabox-action', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.metabox.js', array('jquery'));
             wp_localize_script( 'dhlpwc-metabox-action', 'dhlpwc_metabox_object', array(
-                'post_id' => get_the_ID()
+                'post_id' => get_the_ID(),
+            ));
+
+            wp_enqueue_script( 'dhlpwc-metabox-parcelshop-action', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.metabox.parcelshop.js', array('jquery'));
+            wp_localize_script( 'dhlpwc-metabox-parcelshop-action', 'dhlpwc_metabox_parcelshop_object', array(
+                'post_id' => get_the_ID(),
+            ));
+
+            wp_enqueue_script( 'dhlpwc-metabox-terminal-action', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.metabox.terminal.js', array('jquery'));
+            wp_localize_script( 'dhlpwc-metabox-terminal-action', 'dhlpwc_metabox_terminal_object', array(
+                'post_id' => get_the_ID(),
             ));
         }
     }

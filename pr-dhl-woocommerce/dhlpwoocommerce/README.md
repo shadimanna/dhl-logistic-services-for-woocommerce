@@ -1,5 +1,28 @@
 # DHL Parcel plugin for WooCommerce
 
+V1.2.0
+
+## Changes
+- Added Usabilla feedback button to the plugin settings page
+- Added an option to calculate free shipping after applying discounts
+- Updated free shipping settings to be either free, or for discounts
+- Each delivery option can now be seperately set to be eligable for free or discounted shipping
+- Each delivery option has now it's own free or discounted pricing
+- Enabled most shipping options available in My DHL Platform.
+    - Reference
+    - Same-day delivery
+    - Extra Assured
+    - Shipment insurance
+    - Saturday delivery
+    - Expresser (before 11 AM shipping)
+    - Terminal
+- ServicePoint can now be selected and changed in the admin, whether a customer has selected a ServicePoint or not
+- Updated label creation interface to be in-line with My DHL Platform
+- Updated ServicePoint Locator to use the unified React Component version
+    - Removed land selection and automatically matches customer's country
+    - Updated logic to use customer's postcode on first load
+    - Optimized for mobile, phone and desktop
+
 V1.0.2
 
 ## Changes

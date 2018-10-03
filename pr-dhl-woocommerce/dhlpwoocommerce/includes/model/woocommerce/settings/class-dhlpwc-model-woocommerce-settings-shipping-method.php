@@ -10,17 +10,8 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
     const ENABLE_FREE = 'enable_option_free';
     const ENABLE_TAX_ASSISTANCE = 'enable_tax_assistance';
 
-    const ENABLE_HOME = 'enable_option_home';
-    const ENABLE_NO_NEIGHBOUR = 'enable_option_no_neighbour';
-    const ENABLE_EVENING = 'enable_option_evening';
-    const ENABLE_PARCELSHOP = 'enable_option_parcelshop';
-
     const PRICE_FREE = 'price_option_free';
-
-    const PRICE_HOME = 'price_option_home';
-    const PRICE_NO_NEIGHBOUR = 'price_option_no_neighbour';
-    const PRICE_EVENING = 'price_option_evening';
-    const PRICE_PARCELSHOP = 'price_option_parcelshop';
+    const FREE_AFTER_COUPON = 'free_after_coupon';
 
     /**
      * Constructor for your shipping class
@@ -114,19 +105,36 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'description' => __("Add shipping information in an additional column in your order overview.", 'dhlpwc'),
                     'default'     => 'yes',
                 ),
+                'open_label_links_external'    => array(
+                    'title'       => __('Open admin label links in a new window', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Enable', 'dhlpwc'),
+                    'description' => __("Label actions like downloading PDF or opening track & trace will open in a new window.", 'dhlpwc'),
+                    'default'     => 'yes',
+                ),
                 'enable_track_trace_mail' => array(
                     'title'       => __('Track & trace in mail', 'dhlpwc'),
                     'type'        => 'checkbox',
                     'label'       => __('Enable', 'dhlpwc'),
-                    'description' => __("Add track & trace information to the default WooCommerce completed order e-mail if available.", 'dhlpwc'),
+                    'description' => __("Add track & trace information to the default WooCommerce 'completed order' e-mail if available.", 'dhlpwc'),
                     'default'     => 'no',
                 ),
                 'enable_track_trace_component' => array(
                     'title'       => __('Track & trace component', 'dhlpwc'),
                     'type'        => 'checkbox',
                     'label'       => __('Show', 'dhlpwc'),
-                    'description' => __("Customers can see a track & trace component in the order summary.", 'dhlpwc'),
+                    'description' => __("Include a track & trace component in the order summary for customers, when they log into the website and check their account information.", 'dhlpwc'),
                     'default'     => 'yes',
+                ),
+                'google_maps_key' => array(
+                    'title'       => __('Google Maps key', 'dhlpwc'),
+                    'type'        => 'text',
+                    'placeholder' => sprintf(__('Example: %s', 'dhlpwc'), '1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f90a'),
+                    'description' => sprintf(
+                        __('Please configure your credentials for the Google Maps API. No Google Maps API credentials yet? Get it %shere%s.', 'dhlpwc'),
+                        '<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank">',
+                        '</a>'
+                    ),
                 ),
 
                 // API settings
@@ -134,8 +142,8 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'title'       => __('Account details', 'dhlpwc'),
                     'type'        => 'title',
                     'description' => sprintf(
-                        __('Please configure your credentials for the DHL API. No API credentials yet? Get it %shere%s.', 'dhlpwc'),
-                        '<a href="https://my.dhlparcel.nl/" target="_blank">',
+                        __('DHL API settings. Still missing API credentials? Follow the instructions %shere%s.', 'dhlpwc'),
+                        '<a href="https://www.dhlparcel.nl/sites/default/files/content/PDF/Handleiding_WooCommerce_koppeling_NL.pdf" target="_blank">',
                         '</a>'
                     ),
                 ),
@@ -176,7 +184,7 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'title'       => __('Send to business by default', 'dhlpwc'),
                     'type'        => 'checkbox',
                     'label'       => __('Enable', 'dhlpwc'),
-                    'description' => __("When enabled, by default labels will be created for business-to-business shipments.", 'dhlpwc'),
+                    'description' => __("When enabled, by default labels will be created for business shipments and the checkout will show business shipping options.", 'dhlpwc'),
                     'default'     => 'no',
                 ),
 
@@ -218,6 +226,7 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'title' => __('Company', 'dhlpwc'),
                     'type'  => 'text',
                 ),
+
                 'postcode'                          => array(
                     'title' => __('Postcode', 'dhlpwc'),
                     'type'  => 'text',
@@ -262,24 +271,77 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'description' => __('Settings for developers.', 'dhlpwc'),
                 ),
                 'enable_debug'                      => array(
-                    'title'       => __('Enable reporting', 'dhlpwc'),
+                    'title'       => __('Report errors', 'dhlpwc'),
                     'type'        => 'checkbox',
                     'label'       => __('Enable', 'dhlpwc'),
-                    'description' => __('Allow the debug options below.', 'dhlpwc'),
+                    'description' => __('Enable this and select one of the reporting methods below to automatically send errors of this plugin to the development team.', 'dhlpwc'),
                 ),
                 'enable_debug_mail'                 => array(
-                    'title'       => __('Report by mail', 'dhlpwc'),
+                    'title'       => __('By mail', 'dhlpwc'),
                     'type'        => 'checkbox',
                     'label'       => __('Enable', 'dhlpwc'),
-                    'description' => __('Problems with the DHL API are automatically reported to the plugin developers.', 'dhlpwc'),
+                    'description' => __('Errors will be automatically forwarded by e-mail.', 'dhlpwc'),
                 ),
                 'debug_url'                         => array(
-                    'title'       => __('Report with custom URL', 'dhlpwc'),
+                    'title'       => __('By custom URL', 'dhlpwc'),
                     'type'        => 'text',
-                    'description' => __("Debug URL used by developers. Please contact support if active monitoring is required and for the correct value. Will not be used if left empty.", 'dhlpwc'),
+                    'description' => __("Monitoring URL. Used by developers. Can be used for active monitoring, please contact support for this feature. Will not be used if left empty.", 'dhlpwc'),
+                ),
+                'debug_external_url' => array(
+                    'title'       => __('External custom URL', 'dhlpwc'),
+                    'type'        => 'text',
+                    'description' => __("Alternative external URL. Used by developers. Will not be used if left empty.", 'dhlpwc'),
                 ),
             )
         );
+    }
+
+    protected function get_option_group_fields($code, $title, $class = '')
+    {
+        $option_settings = array(
+            'enable_option_' . $code => array(
+                'title'             => __($title, 'dhlpwc'),
+                'type'              => 'checkbox',
+                'class'             => "dhlpwc-grouped-option dhlpwc-option-grid['" . $code . "'] " . $class,
+                'default'           => 'no',
+                'custom_attributes' => array(
+                    'data-option-group' => $code,
+                ),
+            ),
+
+            'price_option_' . $code => array(
+                'type'              => 'price',
+                'class'             => "dhlpwc-grouped-option dhlpwc-price-input dhlpwc-option-grid['" . $code . "'] " . $class,
+                'default'           => '0.00',
+                'custom_attributes' => array(
+                    'data-dhlpwc-currency-symbol' => get_woocommerce_currency_symbol(),
+                    'data-dhlpwc-currency-pos'    => get_option('woocommerce_currency_pos'),
+                    'data-option-group'           => $code,
+                ),
+            ),
+
+            'enable_free_option_' . $code => array(
+                'type'              => 'checkbox',
+                'class'             => "dhlpwc-grouped-option dhlpwc-option-grid['" . $code . "'] " . $class,
+                'default'           => 'no',
+                'custom_attributes' => array(
+                    'data-option-group' => $code,
+                ),
+            ),
+
+            'free_price_option_' . $code => array(
+                'type'              => 'price',
+                'class'             => "dhlpwc-grouped-option dhlpwc-price-input dhlpwc-option-grid['" . $code . "'] " . $class,
+                'default'           => '0.00',
+                'custom_attributes' => array(
+                    'data-dhlpwc-currency-symbol' => get_woocommerce_currency_symbol(),
+                    'data-dhlpwc-currency-pos'    => get_option('woocommerce_currency_pos'),
+                    'data-option-group'           => $code,
+                ),
+            ),
+        );
+
+        return $option_settings;
     }
 
     protected function get_shipping_method_fields($is_global = true)
@@ -290,7 +352,7 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
             $class = 'dhlpwc-instance-shipping-setting';
         }
 
-        return array(
+        $option_settings = array(
             self::ENABLE_TAX_ASSISTANCE => array(
                 'title'       => __('Enter prices with tax included', 'dhlpwc'),
                 'type'        => 'checkbox',
@@ -300,7 +362,7 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
             ),
 
             self::ENABLE_FREE => array(
-                'title'       => __('Free shipping', 'dhlpwc'),
+                'title'       => __('Free or discounted shipping', 'dhlpwc'),
                 'type'        => 'checkbox',
                 'label'       => __('Enable', 'dhlpwc'),
                 'description' => __("Offer free shipping (over a certain amount).", 'dhlpwc'),
@@ -309,8 +371,9 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
             ),
 
             self::PRICE_FREE       => array(
-                'title'             => __('Free shipping over', 'dhlpwc'),
+                'title'             => __('Free or discounted shipping threshold', 'dhlpwc'),
                 'type'              => 'price',
+                'description'       => __("Free or discounted shipping prices are applied when the total price is over the inputted value.", 'dhlpwc'),
                 'default'           => '0.00',
                 'class'             => 'dhlpwc-price-input '.$class,
                 'custom_attributes' => array(
@@ -319,140 +382,103 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                 ),
             ),
 
-            self::ENABLE_HOME => array(
-                'title'       => __('Home delivery', 'dhlpwc'),
+            self::FREE_AFTER_COUPON => array(
+                'title'       => __('Free or discounted shipping and coupons', 'dhlpwc'),
                 'type'        => 'checkbox',
-                'label'       => __('Enable', 'dhlpwc'),
-                'description' => __("Delivery of the parcel at the address of the recipient.", 'dhlpwc'),
+                'label'       => __('Calculate after applying coupons', 'dhlpwc'),
+                'description' => __("Calculate eligibility for free or discounted shipping after applying coupons.", 'dhlpwc'),
                 'class'       => $class,
                 'default'     => 'no',
             ),
 
-            self::PRICE_HOME        => array(
-                'title'             => __('Shipping costs home delivery', 'dhlpwc'),
-                'type'              => 'price',
-                'default'           => '0.00',
-                'class'             => 'dhlpwc-price-input '.$class,
-                'custom_attributes' => array(
-                    'data-dhlpwc-currency-symbol' => get_woocommerce_currency_symbol(),
-                    'data-dhlpwc-currency-pos'    => get_option('woocommerce_currency_pos'),
-                ),
-            ),
-
-            self::ENABLE_NO_NEIGHBOUR => array(
-                'title'       => __('No delivery to neighbour', 'dhlpwc'),
-                'type'        => 'checkbox',
-                'label'       => __('Enable', 'dhlpwc'),
-                'description' => __("No delivery at neighbours in case the recipient is not at home.", 'dhlpwc'),
-                'class'       => $class,
-                'default'     => 'no',
-            ),
-
-            self::PRICE_NO_NEIGHBOUR => array(
-                'title'             => __('Shipping costs no delivery to neighbour', 'dhlpwc'),
-                'type'              => 'price',
-                'default'           => '0.00',
-                'class'             => 'dhlpwc-price-input '.$class,
-                'custom_attributes' => array(
-                    'data-dhlpwc-currency-symbol' => get_woocommerce_currency_symbol(),
-                    'data-dhlpwc-currency-pos'    => get_option('woocommerce_currency_pos'),
-                ),
-            ),
-
-            self::ENABLE_EVENING => array(
-                'title'       => __('Evening delivery', 'dhlpwc'),
-                'type'        => 'checkbox',
-                'label'       => __('Enable', 'dhlpwc'),
-                'description' => __("Delivery of the parcel between 6 p.m. and 9 p.m. at the address of the recipient.", 'dhlpwc'),
-                'class'       => $class,
-                'default'     => 'no',
-            ),
-
-            self::PRICE_EVENING     => array(
-                'title'             => __('Shipping costs evening delivery', 'dhlpwc'),
-                'type'              => 'price',
-                'default'           => '0.00',
-                'class'             => 'dhlpwc-price-input '.$class,
-                'custom_attributes' => array(
-                    'data-dhlpwc-currency-symbol' => get_woocommerce_currency_symbol(),
-                    'data-dhlpwc-currency-pos'    => get_option('woocommerce_currency_pos'),
-                ),
-            ),
-
-            self::ENABLE_PARCELSHOP => array(
-                'title'       => __('DHL ServicePoint', 'dhlpwc'),
-                'type'        => 'checkbox',
-                'label'       => __('Enable', 'dhlpwc'),
-                'description' => __("Delivery of the parcel at a DHL ServicePoint near to the recipient.", 'dhlpwc'),
-                'class'       => $class,
-                'default'     => 'no',
-            ),
-
-            self::PRICE_PARCELSHOP => array(
-                'title'             => __('Shipping costs DHL ServicePoint', 'dhlpwc'),
-                'type'              => 'price',
-                'default'           => '0.00',
-                'class'             => 'dhlpwc-price-input '.$class,
-                'custom_attributes' => array(
-                    'data-dhlpwc-currency-symbol' => get_woocommerce_currency_symbol(),
-                    'data-dhlpwc-currency-pos'    => get_option('woocommerce_currency_pos'),
-                ),
-            )
         );
+
+//        $connector = DHLPWC_Model_API_Connector::instance();
+//        $sender_type = 'business'; // A webshop is always a business, not a regular consumer type nor a parcelshop. Will leave this as hardcoded for now.
+//        $response = $connector->get(sprintf('shipment-options/%s', $sender_type), null, 20000);
+
+        $service = DHLPWC_Model_Service_Shipping_Preset::instance();
+        $presets = $service->get_presets();
+
+        $option_settings['grouped_option_container'] = array(
+            'type'  => 'dhlpwc_grouped_option_container',
+        );
+
+        foreach($presets as $data) {
+            $preset = new DHLPWC_Model_Meta_Shipping_Preset($data);
+
+            $option_settings = array_merge($option_settings, $this->get_option_group_fields($preset->setting_id, $preset->title, $class));
+        }
+
+        return $option_settings;
     }
 
     public function calculate_shipping($package = array())
     {
-        $service = DHLPWC_Model_Service_Access_Control::instance();
-        $allowed_shipping_options = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CAPABILITY_OPTIONS);
+        $service = DHLPWC_Model_Service_Shipping_Preset::instance();
+        $presets = $service->get_presets();
 
-        // Home
-        if ($this->get_option(self::ENABLE_HOME) === 'yes' && in_array(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_DOOR, $allowed_shipping_options)) {
-            $this->add_rate(array(
-                'id'    => 'dhlpwc-home',
-                'label' => __('Home delivery', 'dhlpwc'),
-                'cost'  => $this->calculate_cost($package, self::PRICE_HOME),
-            ));
-        }
+        $access_service = DHLPWC_Model_Service_Access_Control::instance();
+        $allowed_shipping_options = $access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CAPABILITY_OPTIONS);
 
-        // No neighbours
-        if ($this->get_option(self::ENABLE_NO_NEIGHBOUR) === 'yes' && in_array(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_NBB, $allowed_shipping_options)) {
-            $this->add_rate(array(
-                'id'    => 'dhlpwc-home-no-neighbour',
-                'label' => __('Home delivery, no neighbours', 'dhlpwc'),
-                'cost'  => $this->calculate_cost($package, self::PRICE_NO_NEIGHBOUR),
-            ));
-        }
+        foreach($presets as $data) {
+            $preset = new DHLPWC_Model_Meta_Shipping_Preset($data);
 
-        // Evening Delivery
-        if ($this->get_option(self::ENABLE_EVENING) === 'yes' && in_array(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_EVE, $allowed_shipping_options)) {
-            $this->add_rate(array(
-                'id'    => 'dhlpwc-home-evening',
-                'label' => __('Home delivery, evening', 'dhlpwc'),
-                'cost'  => $this->calculate_cost($package, self::PRICE_EVENING),
-            ));
-        }
+            $check_allowed_options = true;
+            foreach($preset->options as $preset_option) {
+                if (!array_key_exists($preset_option, $allowed_shipping_options)) {
+                    $check_allowed_options = false;
+                }
+            }
 
-        // Parcelshops
-        if ($this->get_option(self::ENABLE_PARCELSHOP) === 'yes' && in_array(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS, $allowed_shipping_options)) {
-            $this->add_rate(array(
-                'id'    => 'dhlpwc-parcelshop',
-                'label' => __('Deliver at a DHL ServicePoint', 'dhlpwc'),
-                'cost'  => $this->calculate_cost($package, self::PRICE_PARCELSHOP),
-            ));
+            if ($this->get_option('enable_option_'.$preset->setting_id) === 'yes' && $check_allowed_options === true) {
+                $this->add_rate(array(
+                    'id'    => 'dhlpwc-'.$preset->frontend_id,
+                    'label' => __($preset->title, 'dhlpwc'),
+                    'cost'  => $this->calculate_cost($package, $preset->setting_id),
+                ));
+            }
         }
 
         $this->update_taxes();
     }
 
+    protected function generate_dhlpwc_grouped_option_container_html($key, $data)
+    {
+        $view = new DHLPWC_Template('admin.settings.options-grid-header');
+        return $view->render(array(), false);
+    }
+
     protected function calculate_cost($package = array(), $option)
     {
         if ($this->get_option(self::ENABLE_FREE) === 'yes') {
-            if ($package['cart_subtotal'] >= $this->get_option(self::PRICE_FREE)) {
-                return 0;
+            if ($this->get_subtotal_price($package) >= $this->get_option(self::PRICE_FREE)) {
+                return $this->get_free_price($option);
             }
         }
-        return $this->get_option($option);
+        return $this->get_option('price_option_'.$option);
+    }
+
+    protected function get_free_price($option)
+    {
+        if ($this->get_option('enable_free_option_'.$option) === 'yes') {
+            return round($this->get_option('free_price_option_'.$option), wc_get_price_decimals());
+        }
+        return $this->get_option('price_option_'.$option);
+    }
+
+    protected function get_subtotal_price($package = array())
+    {
+        if ($this->get_option(self::FREE_AFTER_COUPON) === 'yes') {
+            $subtotal = 0;
+            foreach($package['contents'] as $key => $order)
+            {
+                $subtotal += $order['line_total'] + $order['line_tax'];
+            }
+            return round($subtotal, wc_get_price_decimals());
+        }
+
+        return $package['cart_subtotal'];
     }
 
     protected function update_taxes()

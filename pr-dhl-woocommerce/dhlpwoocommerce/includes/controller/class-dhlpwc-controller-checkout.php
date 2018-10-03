@@ -46,42 +46,36 @@ class DHLPWC_Controller_Checkout
 
     public function add_option_meta($order_id, $data)
     {
+        $service = DHLPWC_Model_Service_Shipping_Preset::instance();
+        $presets = $service->get_presets();
 
-        if (isset($data['shipping_method']) && is_array($data['shipping_method']) && in_array('dhlpwc-home', $data['shipping_method'])) {
-            $service = new DHLPWC_Model_Service_Order_Meta_Option();
-            $service->save_option_preference($order_id, DHLPWC_Model_Meta_Order_Option_Preference::OPTION_DOOR);
+        foreach($presets as $preset_data) {
+            $preset = new DHLPWC_Model_Meta_Shipping_Preset($preset_data);
+
+            if (isset($data['shipping_method']) && is_array($data['shipping_method']) && in_array('dhlpwc-'.$preset->frontend_id, $data['shipping_method'])) {
+                $service = new DHLPWC_Model_Service_Order_Meta_Option();
+                foreach($preset->options as $option) {
+                    if ($option === DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS) {
+                        list($parcelshop_id, $country) = WC()->session->get('dhlpwc_parcelshop_selection_sync');
+                        $service->save_option_preference($order_id, $option, $parcelshop_id);
+                    } else {
+                        $service->save_option_preference($order_id, $option);
+                    }
+                }
+            }
         }
-
-        if (isset($data['shipping_method']) && is_array($data['shipping_method']) && in_array('dhlpwc-home-no-neighbour', $data['shipping_method'])) {
-            $service = new DHLPWC_Model_Service_Order_Meta_Option();
-            $service->save_option_preference($order_id, DHLPWC_Model_Meta_Order_Option_Preference::OPTION_DOOR);
-            $service->save_option_preference($order_id, DHLPWC_Model_Meta_Order_Option_Preference::OPTION_NBB);
-        }
-
-        if (isset($data['shipping_method']) && is_array($data['shipping_method']) && in_array('dhlpwc-home-evening', $data['shipping_method'])) {
-            $service = new DHLPWC_Model_Service_Order_Meta_Option();
-            $service->save_option_preference($order_id, DHLPWC_Model_Meta_Order_Option_Preference::OPTION_DOOR);
-            $service->save_option_preference($order_id, DHLPWC_Model_Meta_Order_Option_Preference::OPTION_EVE);
-        }
-
-        if (isset($data['shipping_method']) && is_array($data['shipping_method']) && in_array('dhlpwc-parcelshop', $data['shipping_method'])) {
-            list($parcelshop_id, $country) = WC()->session->get('dhlpwc_parcelshop_passive_sync');
-            $service = new DHLPWC_Model_Service_Order_Meta_Option();
-            $service->save_option_preference($order_id, DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS, $parcelshop_id);
-        }
-
     }
 
     public function validate_parcelshop_selection($data, $errors)
     {
         if (isset($data['shipping_method']) && is_array($data['shipping_method']) && in_array('dhlpwc-parcelshop', $data['shipping_method'])) {
-            list($parcelshop_id, $country) = WC()->session->get('dhlpwc_parcelshop_passive_sync');
+            list($parcelshop_id, $country) = WC()->session->get('dhlpwc_parcelshop_selection_sync');
             if (empty($parcelshop_id) || empty($country)) {
-                $errors->add('dhlpwc_parcelshop_passive_sync', __('Choose a DHL ServicePoint', 'dhlpwc'));
+                $errors->add('dhlpwc_parcelshop_selection_sync', __('Choose a DHL ServicePoint', 'dhlpwc'));
             }
             $shipping_country = WC()->customer->get_shipping_country();
             if ($country != $shipping_country) {
-                $errors->add('dhlpwc_parcelshop_passive_sync_country', __('The DHL ServicePoint country cannot be different than the shipping address country.', 'dhlpwc'));
+                $errors->add('dhlpwc_parcelshop_selection_sync_country', __('The DHL ServicePoint country cannot be different than the shipping address country.', 'dhlpwc'));
             }
         }
     }

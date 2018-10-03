@@ -3,6 +3,9 @@
    href="<?php echo esc_url($action['url']) ?>"
    data-tip="<?php echo esc_attr($action['name']) ?>"
    data-post-id="<?php echo esc_attr($post_id) ?>"
+   <?php if (isset($external_link)) : ?>
+       target="_blank"
+    <?php endif ?>
    <?php if (isset($label_id)) : ?>
         label-id="<?php echo esc_attr($label_id) ?>"
     <?php endif ?>>
