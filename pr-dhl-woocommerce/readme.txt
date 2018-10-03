@@ -85,6 +85,24 @@ In case you could not find what you were looking for in our FAQs and the detaile
 
 == Changelog ==
 
+= 1.3 =
+- DHL Parcel: Added Usabilla feedback button to the plugin settings page
+- DHL Parcel: Added an option to calculate free shipping after applying discounts
+- DHL Parcel: Updated free shipping settings to be either free, or for discounts
+- DHL Parcel: Each delivery option can now be seperately set to be eligable for free or discounted shipping
+- DHL Parcel: Each delivery option has now it's own free or discounted pricing
+- DHL Parcel: Enabled most shipping options available in My DHL Platform.
+- DHL Parcel: ServicePoint can now be selected and changed in the admin, whether a customer has selected a ServicePoint or not
+- DHL Parcel: Updated label creation interface to be in-line with My DHL Platform
+- DHL Parcel: Updated ServicePoint Locator to use the unified React Component version
+- DHL eCommerce: Bulk generate labels for all formats
+- DHL eCommerce: Force DHL product in bulk label generation
+- DHL eCommerce: Add fixed weight to package in settings
+- DHL eCommerce: Set label format settings
+- DHL eCommerce: Set "Incoterms" in order
+- DHL eCommerce: Add COD in order
+- DHL eCommerce: Add Vietnam states to WooCommerce
+
 = 1.2.4 =
 * Bug fix: Always place shipper, receiver and return "company name" first in address
 * Bug fix: Only validate locations if "ship to different address" checkbox is checked
