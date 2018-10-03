@@ -464,6 +464,15 @@ abstract class PR_DHL_WC_Order {
 			}
 		}
 
+		if ( ! empty( $this->shipping_dhl_settings['dhl_add_weight'] ) ) {
+
+			if ( $this->shipping_dhl_settings['dhl_add_weight_type'] == 'absolute' ) {
+				$total_weight += $this->shipping_dhl_settings['dhl_add_weight'];
+			} elseif ( $this->shipping_dhl_settings['dhl_add_weight_type'] == 'percentage' ) {
+				$total_weight += $total_weight * ( $this->shipping_dhl_settings['dhl_add_weight'] / 100 );
+			}
+		}
+
 		return apply_filters('pr_shipping_dhl_order_weight', $total_weight, $order_id );
 	}
 
@@ -519,6 +528,10 @@ abstract class PR_DHL_WC_Order {
 				$args['order_details']['weightUom'] = $weight_units;
 				break;
 		}
+
+		if( $this->is_cod_payment_method( $order_id ) ) {
+			$args['order_details']['cod_value']	= $order->get_total();			
+		}
 		
 		$args['order_details']['total_value'] = $order->get_total();			
 		// Value of ordered items only
@@ -554,8 +567,8 @@ abstract class PR_DHL_WC_Order {
 			// unset( $shipping_address['last_name'] );
 		}
 		
-		// If not USA, then change state from ISO code to name
-		if ( $shipping_address['country'] != 'US' ) {
+		// If not USA or Australia, then change state from ISO code to name
+		if ( $shipping_address['country'] != 'US' && $shipping_address['country'] != 'AU' ) {
 			// Get all states for a country
 			$states = WC()->countries->get_states( $shipping_address['country'] );
 
@@ -890,6 +903,9 @@ abstract class PR_DHL_WC_Order {
 								}
 							}
 
+							// Allow settings to override saved order data, ONLY for bulk action
+							$args = $this->get_bulk_settings_override( $args );
+							
 							// Allow third parties to modify the args to the DHL APIs
 							$args = apply_filters('pr_shipping_dhl_label_args', $args, $order_id );
 
@@ -992,6 +1008,10 @@ abstract class PR_DHL_WC_Order {
 		// Defaults to the "Site Address URL" from the general settings along
 		// with the the custom endpoint path (with parameters)
 		return home_url( $endpoint_path );
+	}
+
+	protected function get_bulk_settings_override( $args ) {
+		return $args;
 	}
 
 	protected function merge_label_files( $files ) {

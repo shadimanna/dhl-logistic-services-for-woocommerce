@@ -24,3 +24,7 @@ span.wc_dhl_error {
 	width:7%;
 	/*text-align:center*/
 }
+
+#dhl-optin-notice {
+	padding: 8px 15px;
+}

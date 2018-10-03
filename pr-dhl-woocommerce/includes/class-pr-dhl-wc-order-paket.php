@@ -16,21 +16,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 
 class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	
-	/**
-	 * Init and hook in the integration, parent will automatically be called
-	 */
-	// public function __construct( ) {}
-
-	
 	public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
-		// $dhl_label_items = $this->get_dhl_label_items( $order_id );
-
-		// Get saved package description, otherwise generate the text based on settings
-		// if( ! empty( $dhl_label_items['shipping_dhl_description'] ) ) {
-		// 	$selected_dhl_desc = $dhl_label_items['shipping_dhl_description'];
-		// } else {
-		// 	$selected_dhl_desc = $this->get_package_description( $order_id );
-		// }
 
 		$order = wc_get_order( $order_id );
 		if( $this->is_cod_payment_method( $order_id ) ) {
@@ -50,7 +36,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		
 		echo '<hr/>';
 
-		if( ! $this->is_shipping_domestic( $order_id ) ) {
+		if( $this->is_crossborder_shipment( $order_id ) ) {
 
 			// Duties drop down
 			$duties_opt = $dhl_obj->get_dhl_duties();

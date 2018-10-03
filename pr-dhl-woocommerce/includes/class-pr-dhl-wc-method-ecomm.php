@@ -95,10 +95,13 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 			$dhl_obj = PR_DHL()->get_dhl_factory();
 			$select_dhl_product_int = $dhl_obj->get_dhl_products_international();
 			$select_dhl_product_dom = $dhl_obj->get_dhl_products_domestic();
+			$select_dhl_duties = $dhl_obj->get_dhl_duties();
 
 		} catch (Exception $e) {
 			PR_DHL()->log_msg( __('DHL Products not displaying - ', 'pr-shipping-dhl') . $e->getMessage() );
 		}
+
+		$weight_units = get_option( 'woocommerce_weight_unit' );
 
 		$this->form_fields = array(
 			'dhl_pickup_dist'     => array(
@@ -132,7 +135,7 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 			)
 		);
 
-		if ( ! empty( $select_dhl_product_int ) ) {
+		// if ( ! empty( $select_dhl_product_int ) ) {
 
 			$this->form_fields += array(
 				'dhl_default_product_int' => array(
@@ -140,12 +143,21 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 					'type'              => 'select',
 					'description'       => __( 'Please select your default DHL eCommerce shipping service for cross-border shippments that you want to offer to your customers (you can always change this within each individual order afterwards).', 'pr-shipping-dhl' ),
 					'desc_tip'          => true,
-					'options'           => $select_dhl_product_int
+					'options'           => $select_dhl_product_int,
+					'class'				=> 'wc-enhanced-select'
+				),
+				'dhl_bulk_product_int' => array(
+					'title'             => __( 'International Bulk Services', 'pr-shipping-dhl' ),
+					'type'              => 'multiselect',
+					'description'       => __( 'Please select the bulk DHL eCommerce shipping service for cross-border shippments that you want to display within the bulk create label actions.', 'pr-shipping-dhl' ),
+					'desc_tip'          => true,
+					'options'           => $select_dhl_product_int,
+					'class'				=> 'wc-enhanced-select'
 				)
 			);
-		}
+		// }
 
-		if ( ! empty( $select_dhl_product_dom ) ) {
+		// if ( ! empty( $select_dhl_product_dom ) ) {
 
 			$this->form_fields += array(
 				'dhl_default_product_dom' => array(
@@ -153,10 +165,19 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 					'type'              => 'select',
 					'description'       => __( 'Please select your default DHL eCommerce shipping service for domestic shippments that you want to offer to your customers (you can always change this within each individual order afterwards)', 'pr-shipping-dhl' ),
 					'desc_tip'          => true,
-					'options'           => $select_dhl_product_dom
+					'options'           => $select_dhl_product_dom,
+					'class'				=> 'wc-enhanced-select'
+				),
+				'dhl_bulk_product_dom' => array(
+					'title'             => __( 'Domestic Bulk Services', 'pr-shipping-dhl' ),
+					'type'              => 'multiselect',
+					'description'       => __( 'Please select the bulk DHL eCommerce shipping service for domestic shippments that you want to display within the bulk create label actions.', 'pr-shipping-dhl' ),
+					'desc_tip'          => true,
+					'options'           => $select_dhl_product_dom,
+					'class'				=> 'wc-enhanced-select'
 				)
 			);
-		}
+		// }
 
 		$this->form_fields += array(
 			'dhl_prefix' => array(
@@ -173,21 +194,88 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 				'type'              => 'select',
 				'description'       => __( 'Prefill the package description with one of the options.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
-				'options'           => $select_dhl_desc_default
+				'options'           => $select_dhl_desc_default,
+				'class'				=> 'wc-enhanced-select'
 			),
 			'dhl_label_format' => array(
 				'title'             => __( 'Label Format', 'pr-shipping-dhl' ),
 				'type'              => 'select',
-				'description'       => __( 'Select one of the formats to generate the label in.', 'pr-shipping-dhl' ),
+				'description'       => __( 'Select one of the formats to generate the shipping label in.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
-				'options'           => array( 'PDF' => 'PDF', 'PNG' => 'PNG', 'ZPL' => 'ZPL' )
+				'options'           => array( 'PDF' => 'PDF', 'PNG' => 'PNG', 'ZPL' => 'ZPL' ),
+				'class'				=> 'wc-enhanced-select'
+			),
+			'dhl_label_size' => array(
+				'title'             => __( 'Label Size', 'pr-shipping-dhl' ),
+				'type'              => 'select',
+				'description'       => __( 'Select the shipping label size.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'options'           => array( '4x6' => '4x6', '4x4' => '4x4' ),
+				'class'				=> 'wc-enhanced-select'
+			),
+			'dhl_label_page' => array(
+				'title'             => __( 'Page Size', 'pr-shipping-dhl' ),
+				'type'              => 'select',
+				'description'       => __( 'Select the shipping label page size.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'options'           => array( 'A4' => 'A4', '400x600' => '400x600', '400x400' => '400x400' ),
+				'class'				=> 'wc-enhanced-select'
 			),
 			'dhl_handover_type' => array(
 				'title'             => __( 'Handover', 'pr-shipping-dhl' ),
 				'type'              => 'select',
 				'description'       => __( 'Select whether to drop-off the packages to DHL or have them pick them up.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
-				'options'           => array( 'dropoff' => 'Drop-Off', 'pickup' => 'Pick-Up')
+				'options'           => array( 'dropoff' => 'Drop-Off', 'pickup' => 'Pick-Up'),
+				'class'				=> 'wc-enhanced-select'
+			),
+			'dhl_add_weight_type' => array(
+				'title'             => __( 'Additional Weight Type', 'pr-shipping-dhl' ),
+				'type'              => 'select',
+				'description'       => __( 'Select whether to add an absolute weight amount or percentage amount to the total product weight.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'options'           => array( 'absolute' => 'Absolute', 'percentage' => 'Percentage'),
+				'class'				=> 'wc-enhanced-select'
+			),
+			'dhl_add_weight' => array(
+				'title'             => sprintf( __( 'Additional Weight (%s or %%)', 'pr-shipping-dhl' ), $weight_units),
+				'type'              => 'text',
+				'description'       => __( 'Add extra weight in addition to the products.  Either an absolute amount or percentage (e.g. 10 for 10%).', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => '',
+				'placeholder'		=> '',
+				'class'				=> 'wc_input_decimal'
+			),
+			'dhl_duties_default' => array(
+				'title'             => __( 'Incoterms', 'pr-shipping-dhl' ),
+				'type'              => 'select',
+				'description'       => __( 'Select default for duties.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'options'           => $select_dhl_duties,
+				'class'				=> 'wc-enhanced-select'
+			),/*
+			'dhl_order_note' => array(
+				'title'             => __( 'Order Notes', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Include Order Notes', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here if you want to send the customer "Order Notes" to be added to the label.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),*/
+			'dhl_tracking_note' => array(
+				'title'             => __( 'Tracking Note', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Make Private', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here to not send an email to the customer when the tracking number is added to the order.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
+			'dhl_tracking_note_txt' => array(
+				'title'             => __( 'Tracking Note', 'pr-shipping-dhl' ),
+				'type'              => 'textarea',
+				'description'       => __( 'Set the custom text when adding the tracking number to the order notes. {tracking-link} is where the tracking number will be set.', 'pr-shipping-dhl' ),
+				'desc_tip'          => false,
+				'default'           => __( 'DHL Tracking Number: {tracking-link}', 'pr-shipping-dhl')
 			),
 			'dhl_api'           => array(
 				'title'           => __( 'API Settings', 'pr-shipping-dhl' ),
@@ -278,11 +366,11 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 	}
 
 	/**
-	 * Validate the API key
+	 * Validate the pickup field
 	 * @see validate_settings_fields()
 	 */
-	public function validate_dhl_pickup_field( $key ) {
-		$value = wc_clean( $_POST[ $this->plugin_id . $this->id . '_' . $key ] );
+	public function validate_dhl_pickup_field( $key, $value ) {
+		// $value = wc_clean( $_POST[ $this->plugin_id . $this->id . '_' . $key ] );
 
 		try {
 			
@@ -300,11 +388,11 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 	}
 
 	/**
-	 * Validate the API secret
+	 * Validate the distribution field
 	 * @see validate_settings_fields()
 	 */
-	public function validate_dhl_distribution_field( $key ) {
-		$value = wc_clean( $_POST[ $this->plugin_id . $this->id . '_' . $key ] );
+	public function validate_dhl_distribution_field( $key, $value ) {
+		// $value = wc_clean( $_POST[ $this->plugin_id . $this->id . '_' . $key ] );
 		
 		try {
 			
@@ -315,6 +403,62 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 
 			echo $this->get_message( __('Distribution Center: ', 'pr-shipping-dhl') . $e->getMessage() );
 			throw $e;
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Validate the label format field
+	 * @see validate_settings_fields()
+	 */
+	public function validate_dhl_label_format_field( $key, $value ) {
+		// $value = wc_clean( $_POST[ $this->plugin_id . $this->id . '_' . $key ] );
+		$post_data = $this->get_post_data();
+		// error_log($value);
+		$label_page = $post_data[ $this->plugin_id . $this->id . '_' . 'dhl_label_page' ];
+		// error_log($label_page);
+
+		if( ( $value == 'PNG' || $value == 'ZPL' ) && ( $label_page == 'A4' ) ) {
+			$msg = __('The selected format does not support "A4"', 'pr-shipping-dhl');
+			echo $this->get_message($msg);
+			throw new Exception( $msg );
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Validate the label size field
+	 * @see validate_settings_fields()
+	 */
+	public function validate_dhl_label_size_field( $key, $value ) {
+		// $value = wc_clean( $_POST[ $this->plugin_id . $this->id . '_' . $key ] );
+		$distribution_centers = array('HKHKG1', 'CNSHA1', 'CNSZX1');
+		$post_data = $this->get_post_data();
+		// error_log($value);
+
+		$distribution = $post_data[ $this->plugin_id . $this->id . '_' . 'dhl_distribution' ];
+		// error_log($distribution);
+		$label_page = $post_data[ $this->plugin_id . $this->id . '_' . 'dhl_label_page' ];
+		// error_log($label_page);
+
+		if( ! in_array( $distribution, $distribution_centers )  && ( $value == '4x4' ) ) {
+			$msg = __('Your distribution center does not support "4x4" label size.', 'pr-shipping-dhl');
+			echo $this->get_message( $msg );
+			throw new Exception( $msg );
+		}
+
+		if( ( $value == '4x4' ) && ( $label_page == '400x600' ) ) {
+			$msg = __('You cannot have a Label Size of "4x4" and Page Size of "400x600".', 'pr-shipping-dhl');
+			echo $this->get_message( $msg );
+			throw new Exception( $msg );
+		}
+
+		if( ( $value == '4x6' ) && ( $label_page == '400x400' ) ) {
+			$msg = __('You cannot have a Label Size of "4x6" and Page Size of "400x400".', 'pr-shipping-dhl');
+			echo $this->get_message( $msg );
+			throw new Exception( $msg );
 		}
 
 		return $value;
@@ -334,7 +478,7 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 		} catch (Exception $e) {
 
 			echo $this->get_message( __('Could not reset connection: ', 'pr-shipping-dhl') . $e->getMessage() );
-			throw $e;
+			// throw $e;
 		}
 
 		return parent::process_admin_options();

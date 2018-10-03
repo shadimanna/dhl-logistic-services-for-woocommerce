@@ -63,6 +63,13 @@ class PR_DHL_WC {
 	protected $shipping_dhl_product = null;
 
 	/**
+	 * DHL Shipping Notice for user optin
+	 *
+	 * @var PR_DHL_WC_Notice
+	 */
+	protected $shipping_dhl_notice = null;
+
+	/**
 	 * DHL Shipping Order for label and tracking.
 	 *
 	 * @var PR_DHL_Logger
@@ -208,7 +215,8 @@ class PR_DHL_WC {
         add_filter( 'woocommerce_shipping_methods', array( $this, 'add_shipping_method' ) );
         // Test connection
         add_action( 'wp_ajax_test_dhl_connection', array( $this, 'test_dhl_connection_callback' ) );
-
+        // Add state field for 'VN'
+        add_filter( 'woocommerce_states', array( $this, 'add_vn_states' ) );
     }
 	
 	public function get_pr_dhl_wc_order() {
@@ -221,6 +229,7 @@ class PR_DHL_WC {
 					$this->shipping_dhl_frontend = new PR_DHL_Front_End_Paket();
 				} elseif( $dhl_obj->is_dhl_ecomm() ) {
 					$this->shipping_dhl_order = new PR_DHL_WC_Order_Ecomm();
+					// $this->shipping_dhl_notice = new PR_DHL_WC_Notice();
 				}
 				
 				// Ensure DHL Labels folder exists
@@ -697,6 +706,23 @@ class PR_DHL_WC {
             return $upload_dir['baseurl'] . '/woocommerce_dhl_label/';
         }
         return '';
+    }
+
+    public function add_vn_states( $states ) {
+    	
+        try {
+			$dhl_obj = $this->get_dhl_factory();
+			
+			if( $dhl_obj->is_dhl_ecomm() ) {
+				if ( empty( $states['VN'] ) ) {
+					include( PR_DHL_PLUGIN_DIR_PATH . '/states/VN.php' );
+				}
+			}
+		} catch (Exception $e) {
+			// add_action( 'admin_notices', array( $this, 'environment_check' ) );
+		}
+		// error_log(print_r($states,true));
+        return $states;
     }
 }
 

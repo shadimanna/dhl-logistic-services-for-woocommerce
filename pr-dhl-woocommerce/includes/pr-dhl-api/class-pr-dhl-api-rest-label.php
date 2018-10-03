@@ -8,10 +8,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label {
 
 	private $dhl_label_format = 'PDF';
-
-	const PR_DHL_LABEL_SIZE = '4x6'; // must be lowercase 'x'
-	const PR_DHL_PAGE_SIZE = 'A4';
-	const PR_DHL_LAYOUT = '1x1';
+	private $dhl_label_size = '4x6'; // must be lowercase 'x'
+	private $dhl_label_page = 'A4';
+	private $dhl_label_layout = '1x1';
+	// const PR_DHL_LABEL_SIZE =  
+	// const PR_DHL_PAGE_SIZE = 
+	// const PR_DHL_LAYOUT = 
 	const PR_DHL_AUTO_CLOSE = '1';
 
 	private $args = array();
@@ -76,7 +78,7 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 					$this->validate( $value );
 					break;
 				case 'hs_code':
-					$this->validate( $value, 'string', 4, 11 );
+					$this->validate( $value, 'string', 4, 20 );
 					break;
 				default:
 					parent::validate_field( $key, $value );
@@ -129,6 +131,20 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 
 		if ( ! empty( $args['dhl_settings']['label_format'] ) ) {
 			$this->dhl_label_format = $args['dhl_settings']['label_format'];
+		}
+
+		if ( ! empty( $args['dhl_settings']['label_size'] ) ) {
+			$this->dhl_label_size = $args['dhl_settings']['label_size'];
+		}
+
+		if ( ! empty( $args['dhl_settings']['label_page'] ) ) {
+			$this->dhl_label_page = $args['dhl_settings']['label_page'];
+			
+			if ( $this->dhl_label_page == 'A4') {
+				$this->dhl_label_layout = '4x1';
+			} else {
+				$this->dhl_label_layout = '1x1';
+			}
 		}
 
 		if ( empty( $args['order_details']['dhl_product'] )) {
@@ -223,9 +239,9 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 	protected function set_query_string() {
 		$dhl_label_query_string = 
 			array( 'format' => $this->dhl_label_format,
-					'labelSize' => self::PR_DHL_LABEL_SIZE,
-					'pageSize' => self::PR_DHL_PAGE_SIZE,
-					'layout' => self::PR_DHL_LAYOUT,
+					'labelSize' => $this->dhl_label_size,
+					'pageSize' => $this->dhl_label_page,
+					'layout' => $this->dhl_label_layout,
 					'autoClose' => self::PR_DHL_AUTO_CLOSE );
 		
 		$this->query_string = http_build_query($dhl_label_query_string);
@@ -235,26 +251,6 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 
 		if( !empty( $this->args ) ) {
 
-			$customsDetails = array();
-			foreach ($this->args['items'] as $key => $item) {
-				
-				$json_item = array( 'itemDescription' 	=>	substr( $item['item_description'], 0, 200 ),
-									'descriptionExport' =>	substr( $item['item_export'], 0, 200 ),
-									// 'descriptionImport' =>	substr( $item['item_description'], 0, 200 ),
-									'countryOfOrigin' 	=> 	$item['country_origin'],
-									'hsCode'			=> 	$item['hs_code'],
-									'packagedQuantity' 	=> 	intval( $item['qty'] ),
-									'itemValue' 		=> 	round( floatval( $item['item_value'] ) , 2),
-									'skuNumber'			=> 	$item['sku']
-						);
-
-				array_push($customsDetails, $json_item);
-			}
-
-			// $shipper_duties = $this->args['order_details']['duties'] == 'shipper' ? 'Y' : 'N';
-			// Default to "consignee" for now
-			$shipper_duties = 'DDU';
-
 			$package_id = '';
 			if( ! empty( $this->args['order_details']['prefix'] ) ) {
 				$package_id = $this->args['order_details']['prefix'];
@@ -263,16 +259,52 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 			// Package id must be max 30
 			$package_id = substr( $package_id, 0, 30 );
 
-			$package_desc = '';
+			$package_desc = $package_id;
 			if( ! empty( $this->args['order_details']['description'] ) ) {
 				$package_desc = substr( $this->args['order_details']['description'], 0, 50 );
 			}
 
-			/*
-				NOT SETTING:
-					'consigneeAddress' => 'address3'
+			if( strlen( $this->args['shipping_address']['address_1'] ) > 50 ) {
+				$consignee_address_1 = substr( $this->args['shipping_address']['address_1'], 0, 50);
 
-			*/	
+				$this->args['shipping_address']['address_2'] = substr( $this->args['shipping_address']['address_1'], 50) . ' ' . $this->args['shipping_address']['address_2'];
+
+			} else {
+				$consignee_address_1 = $this->args['shipping_address']['address_1'];
+			}
+
+			$consignee_address_3 = '';
+			if( strlen( $this->args['shipping_address']['address_2'] ) > 50 ) {
+				$consignee_address_2 = substr( $this->args['shipping_address']['address_2'], 0, 50);
+
+				$consignee_address_3 = substr( $this->args['shipping_address']['address_2'], 50, 50);
+			} else {
+				$consignee_address_2 = $this->args['shipping_address']['address_2'];
+			}
+
+			$shipping_state = '';
+			if( $this->args['shipping_address']['state'] ) {
+
+				// If China
+				if( $this->args['shipping_address']['country'] == 'CN' ) {
+					
+					// Remove everything after '/'
+					$state_arr = explode( '/', $this->args['shipping_address']['state'] );
+
+					if ( $state_arr ) {
+						$this->args['shipping_address']['state'] = trim( $state_arr[0] );
+					}
+				}
+				
+				$shipping_state = substr( $this->args['shipping_address']['state'], 0, 20 );
+			}
+
+			$cod_value = 0;
+			if( isset( $this->args['order_details']['is_cod'] ) && ($this->args['order_details']['is_cod'] == 'yes') ){
+
+				$cod_value = round( floatval( $this->args['order_details']['total_value'] ), 2);
+			}
+
 			$dhl_label_body = 
 				array( 'shipments' => 
 					array (
@@ -285,33 +317,65 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 											'consigneeAddress' =>
 												array( 'name' => $this->args['shipping_address']['name'],
 														'companyName' => $this->args['shipping_address']['company'],
-														'address1' => $this->args['shipping_address']['address_1'],
-														'address2' => $this->args['shipping_address']['address_2'],
+														'address1' => $consignee_address_1,
+														'address2' => $consignee_address_2,
+														'address3' => $consignee_address_3,
 														'city' => $this->args['shipping_address']['city'],
 														'postalCode' => $this->args['shipping_address']['postcode'],
-														'state' => $this->args['shipping_address']['state'],
+														'state' => $shipping_state,
 														'country' => $this->args['shipping_address']['country'],
 														'phone' => $this->args['shipping_address']['phone'],
 														),
 											'packageDetails' =>
 												array( 
-														'codAmount' => round( floatval( $this->args['order_details']['cod_value'] ), 2),
+														'codAmount' => $cod_value,
 														'currency' => $this->args['order_details']['currency'],
-														'declaredValue' => round( floatval( $this->args['order_details']['total_value'] ), 2),
 														'dgCategory' => $this->args['order_details']['dangerous_goods'],
-														'dutiesPaid' => $shipper_duties,
 														'orderedProduct' => $this->args['order_details']['dhl_product'],
 														'packageDesc' => $package_desc,
 														'packageId' => $package_id,
 														'weight' => round( floatval( $this->args['order_details']['weight'] ), 2), 
-														'weightUom' => strtoupper( $this->args['order_details']['weightUom'] )
+														'weightUom' => strtoupper( $this->args['order_details']['weightUom'] ),
+														'billingRef1' => substr( $this->args['order_details']['order_note'], 0, 50),
+														'billingRef2' => substr( $this->args['order_details']['order_note'], 50, 25)
 														),
-											'customsDetails' => $customsDetails
+											// 'customsDetails' => $customsDetails
 										) 
 									)
 						) 
 					)
 				);
+
+			// Add customs info
+			if( PR_DHL()->is_crossborder_shipment( $this->args['shipping_address']['country'] ) ) {
+
+				$customsDetails = array();
+				foreach ($this->args['items'] as $key => $item) {
+					
+					$json_item = array( 'itemDescription' 	=>	substr( $item['item_description'], 0, 200 ),
+										'descriptionExport' =>	substr( $item['item_export'], 0, 200 ),
+										// 'descriptionImport' =>	substr( $item['item_description'], 0, 200 ),
+										'countryOfOrigin' 	=> 	$item['country_origin'],
+										'hsCode'			=> 	$item['hs_code'],
+										'packagedQuantity' 	=> 	intval( $item['qty'] ),
+										'itemValue' 		=> 	round( floatval( $item['item_value'] ) , 2),
+										'skuNumber'			=> 	$item['sku']
+							);
+
+					array_push($customsDetails, $json_item);
+				}
+				// error_log(print_r($dhl_label_body,true));
+				// Add customs info
+				$dhl_label_body['shipments'][0]['packages'][0]['customsDetails'] = $customsDetails;
+
+				// Add duties info
+				$dhl_label_body['shipments'][0]['packages'][0]['packageDetails']['dutiesPaid'] = $this->args['order_details']['duties'];
+				
+				// Declared info
+				$dhl_label_body['shipments'][0]['packages'][0]['packageDetails']['declaredValue'] = round( floatval( $this->args['order_details']['items_value'] ), 2);
+
+				// error_log(print_r($dhl_label_body,true));
+			}
 
 			// Unset/remove any items that are empty strings or 0, even if required!
 			$dhl_label_body = $this->walk_recursive_remove( $dhl_label_body );

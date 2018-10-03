@@ -36,11 +36,19 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 
 	public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
 
-		if( ! $this->is_shipping_domestic( $order_id ) ) {
+		if( $this->is_crossborder_shipment( $order_id ) ) {
 			
-			// DUPLICATE CALL - TEST MAKE SURE STILL OK
-			// $dhl_label_items = $this->get_dhl_label_items( $order_id );
-			
+			// Duties drop down
+			$duties_opt = $dhl_obj->get_dhl_duties();
+			woocommerce_wp_select( array(
+					'id'          		=> 'pr_dhl_duties',
+					'label'       		=> __( 'Incoterms:', 'pr-shipping-dhl' ),
+					'description'		=> '',
+					'value'       		=> isset( $dhl_label_items['pr_dhl_duties'] ) ? $dhl_label_items['pr_dhl_duties'] : $this->shipping_dhl_settings['dhl_duties_default'],
+					'options'			=> $duties_opt,
+					'custom_attributes'	=> array( $is_disabled => $is_disabled )
+				) );
+
 			// Get saved package description, otherwise generate the text based on settings
 			if( ! empty( $dhl_label_items['pr_dhl_description'] ) ) {
 				$selected_dhl_desc = $dhl_label_items['pr_dhl_description'];
@@ -56,6 +64,19 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 				'value'       		=> $selected_dhl_desc,
 				'custom_attributes'	=> array( $is_disabled => $is_disabled, 'maxlength' => '50' )
 			) );
+
+		}
+		
+		if( $this->is_cod_payment_method( $order_id ) ) {
+
+			woocommerce_wp_checkbox( array(
+				'id'          		=> 'pr_dhl_is_cod',
+				'label'       		=> __( 'COD Enabled:', 'pr-shipping-dhl' ),
+				'placeholder' 		=> '',
+				'description'		=> '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_is_cod'] ) ? $dhl_label_items['pr_dhl_is_cod'] : 'yes',
+				'custom_attributes'	=> array( $is_disabled => $is_disabled )
+			) );
 		}
 	}
 	
@@ -67,7 +88,7 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 	 */
 	public function get_additional_meta_ids( ) {
 
-		return array( 'pr_dhl_description' );
+		return array( 'pr_dhl_duties', 'pr_dhl_description', 'pr_dhl_is_cod' );
 
 	}
 	
@@ -128,6 +149,7 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 
 	protected function get_label_args_settings( $order_id, $dhl_label_items ) {
 		// $this->shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
+		$order = wc_get_order( $order_id );
 
 		// Get DHL pickup and distribution center
 		$args['dhl_settings']['dhl_api_key'] = $this->shipping_dhl_settings['dhl_api_key'];
@@ -136,6 +158,9 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 		$args['dhl_settings']['distribution'] = $this->shipping_dhl_settings['dhl_distribution'];
 		$args['dhl_settings']['handover'] = $this->get_label_handover_num();
 		$args['dhl_settings']['label_format'] = $this->shipping_dhl_settings['dhl_label_format'];
+		$args['dhl_settings']['label_size'] = $this->shipping_dhl_settings['dhl_label_size'];
+		$args['dhl_settings']['label_page'] = $this->shipping_dhl_settings['dhl_label_page'];
+		$args['dhl_settings']['label_layout'] = $this->shipping_dhl_settings['dhl_label_layout'];
 
 		// Get package prefix
 		$args['order_details']['prefix'] = $this->shipping_dhl_settings['dhl_prefix'];
@@ -144,17 +169,29 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 			$args['order_details']['description'] = $dhl_label_items['pr_dhl_description'];
 		} else {
 			// If description is empty and it is an international shipment throw an error
-			if ( ! $this->is_shipping_domestic( $order_id ) ) {
+			if ( $this->is_crossborder_shipment( $order_id ) ) {
 				throw new Exception( __('The package description cannot be empty!', 'pr-shipping-dhl') );
 				
 			}			
 		}
 
-		$order = wc_get_order( $order_id );
-		if( $this->is_cod_payment_method( $order_id ) ) {
-			$args['order_details']['cod_value']	= $order->get_total();			
-		}		
-		
+		if ( isset( $this->shipping_dhl_settings['dhl_order_note'] ) && $this->shipping_dhl_settings['dhl_order_note'] == 'yes' ) {
+
+			if ( defined( 'WOOCOMMERCE_VERSION' ) && version_compare( WOOCOMMERCE_VERSION, '3.0', '>=' ) ) {
+				$args['order_details']['order_note'] = $order->get_customer_note();
+			} else {
+				$args['order_details']['order_note'] = $order->customer_note;
+			}
+		}
+
+		if ( ! empty( $dhl_label_items['pr_dhl_duties'] ) ) {
+			$args['order_details']['duties'] = $dhl_label_items['pr_dhl_duties'];
+		}
+
+		if ( ! empty( $dhl_label_items['pr_dhl_is_cod'] ) ) {
+			$args['order_details']['is_cod'] = $dhl_label_items['pr_dhl_is_cod'];
+		}
+
 		return $args;
 	}
 	
@@ -187,6 +224,14 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 		
 		if( empty( $dhl_label_items['pr_dhl_description'] ) ) {
 			$dhl_label_items['pr_dhl_description'] = $this->get_package_description( $order_id );
+		}
+
+		if( empty( $dhl_label_items['pr_dhl_duties'] ) ) {
+			$dhl_label_items['pr_dhl_duties'] = $this->shipping_dhl_settings['dhl_duties_default'];
+		}
+
+		if( empty( $dhl_label_items['pr_dhl_is_cod'] ) ) {
+			$dhl_label_items['pr_dhl_is_cod'] = $this->is_cod_payment_method( $order_id ) ? 'yes' : 'no';
 		}
 
 		$this->save_dhl_label_items( $order_id, $dhl_label_items );
@@ -242,6 +287,8 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 
 			if ( 'order_total' === $column_name ) {
 				$new_columns['dhl_label_created']      = __( 'DHL Label Created', 'pr-shipping-dhl' );
+				$new_columns['dhl_tracking_number']    = __( 'DHL Tracking Number', 'pr-shipping-dhl' );
+				$new_columns['dhl_handover_note']      = __( 'DHL Handover Created', 'pr-shipping-dhl' );
 			}
 		}
 
@@ -251,16 +298,21 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 	public function add_order_label_column_content( $column ) {
 		global $post;
 
-		// Get the order
-		$wc_order = in_array( $column, array(
-			'dhl_label_created'
-		), true ) ? wc_get_order( $post->ID ) : false;
-
-		// $order_id = $wc_order instanceof WC_Order ? SV_WC_Order_Compatibility::get_prop( $wc_order, 'id' ) : null;
 		$order_id = $post->ID;
 
-		if ( $order_id && 'dhl_label_created' === $column ) {
-			echo $this->get_print_status( $order_id );
+		if ( $order_id ) {
+			if( 'dhl_label_created' === $column ) {
+				echo $this->get_print_status( $order_id );
+			}
+
+			if( 'dhl_tracking_number' === $column ) {
+				$tracking_link = $this->get_tracking_link( $order_id );
+				echo empty($tracking_link) ? '<strong>&ndash;</strong>' : $tracking_link;
+			}
+
+			if( 'dhl_handover_note' === $column ) {
+				echo $this->get_hangover_status( $order_id );
+			}
 		}
 	}
 
@@ -274,11 +326,43 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 		}
 	}
 
+	private function get_hangover_status( $order_id ) {
+		$handover = get_post_meta( $order_id, '_pr_shipment_dhl_handover_note', true );
+
+		if( empty( $handover ) ) {
+			return '<strong>&ndash;</strong>';
+		} else {
+			return '&#10004';
+		}
+	}
+
 	public function get_bulk_actions() {
 
 		$shop_manager_actions = array();
 
 		$shop_manager_actions = array(
+			'pr_dhl_create_labels'      => __( 'DHL Create Labels', 'pr-shipping-dhl' )
+		);
+
+		if ( isset( $this->shipping_dhl_settings['dhl_bulk_product_int']) && ($bulk_product_int = $this->shipping_dhl_settings['dhl_bulk_product_int'] ) ) {
+			// error_log(print_r($bulk_product_int,true));
+			foreach ($bulk_product_int as $key => $value) {
+				$shop_manager_actions += array(
+					"pr_dhl_create_labels:int:$value"      => __( "DHL Create Labels - $value", 'pr-shipping-dhl' )
+					);
+			}
+		}
+
+		if ( isset($this->shipping_dhl_settings['dhl_bulk_product_dom']) && ($bulk_product_dom = $this->shipping_dhl_settings['dhl_bulk_product_dom'] ) ) {
+			// error_log(print_r($bulk_product_dom,true));
+			foreach ($bulk_product_dom as $key => $value) {
+				$shop_manager_actions += array(
+					"pr_dhl_create_labels:dom:$value"      => __( "DHL Create Labels - $value", 'pr-shipping-dhl' )
+					);
+			}
+		}
+
+		$shop_manager_actions += array(
 			'pr_dhl_handover'      => __( 'DHL Print Handover', 'pr-shipping-dhl' )
 		);
 
@@ -355,6 +439,12 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 		return $array_messages;
 	}
 
+	protected function get_bulk_settings_override( $args ) {
+		// Override duties to take default settings value for bulk only
+		$args['order_details']['duties'] = $this->shipping_dhl_settings['dhl_duties_default'];
+		return $args;
+	}
+
 	public function print_document_action() {
 
 		// listen for 'print' action query string
@@ -409,6 +499,9 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 				$dhl_label_product = $dhl_product_list[ $dhl_label_items['pr_dhl_product'] ];
 
 				array_push( $dhl_products, $dhl_label_product );
+
+				// Add post meta to identify if added to handover or not
+				update_post_meta( $order_id, '_pr_shipment_dhl_handover_note', 1 );
 			}
 			// There should a unique list of products listed not one for each order!
 			$dhl_products = array_unique($dhl_products);
@@ -497,6 +590,81 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 		}
 
 		return $vars;
+	}
+
+	protected function merge_label_files_png( $files ) {
+
+		if( empty( $files ) ) {
+			throw new Exception( __('There are no files to merge.', 'pr-shipping-dhl') );
+		}
+
+		if( ! class_exists('Imagick') ) {
+			throw new Exception( __('"Imagick" must be installed on the server to merge png files.', 'pr-shipping-dhl') );
+		}
+
+		$all = new Imagick();
+		foreach ($files as $key => $value) {
+
+			if ( ! file_exists( $value ) ) {
+				// throw new Exception( __('File does not exist', 'pr-shipping-dhl') );
+				continue;
+			}
+
+			$ext = pathinfo($value, PATHINFO_EXTENSION);
+			// error_log($ext);
+			if ( stripos($ext, 'png') === false) {
+				throw new Exception( __('Not all the file formats are the same.', 'pr-shipping-dhl') );
+			}
+
+			$im = new Imagick($value);       
+    		$all->addImage( $im );
+		}
+
+		$filename = 'dhl-label-bulk-' . time() . '.png';
+		$file_bulk_path = PR_DHL()->get_dhl_label_folder_dir() . $filename;
+		$file_bulk_url = PR_DHL()->get_dhl_label_folder_url() . $filename;
+
+		/* Append the images into one */
+		$all->resetIterator();
+		$combined = $all->appendImages(true);
+		// $ima = $im1->appendImages(true); 
+		$combined->setImageFormat('png');
+		$combined->writeimage( $file_bulk_path );
+		
+		return array( 'file_bulk_path' => $file_bulk_path, 'file_bulk_url' => $file_bulk_url);
+	}
+
+	protected function merge_label_files_zpl( $files ) {
+
+		if( empty( $files ) ) {
+			throw new Exception( __('There are no files to merge.', 'pr-shipping-dhl') );
+		}
+
+		$files_content = '';
+		foreach ($files as $key => $value) {
+
+			if ( ! file_exists( $value ) ) {
+				// throw new Exception( __('File does not exist', 'pr-shipping-dhl') );
+				continue;
+			}
+
+			$ext = pathinfo($value, PATHINFO_EXTENSION);
+			// error_log($ext);
+			if ( stripos($ext, 'zpl') === false) {
+				throw new Exception( __('Not all the file formats are the same.', 'pr-shipping-dhl') );
+			}
+
+			$files_content .= file_get_contents( $value );
+		}
+
+		$filename = 'dhl-label-bulk-' . time() . '.zpl';
+		$file_bulk_path = PR_DHL()->get_dhl_label_folder_dir() . $filename;
+		$file_bulk_url = PR_DHL()->get_dhl_label_folder_url() . $filename;
+		
+		$fp1 = fopen($file_bulk_path, 'a+');
+		fwrite($fp1, $files_content);
+
+		return array( 'file_bulk_path' => $file_bulk_path, 'file_bulk_url' => $file_bulk_url);
 	}
 }
 

@@ -189,6 +189,11 @@ abstract class PR_DHL_API_REST {
 				break;
 			case '400':
 				$error_message = str_replace('/', ' / ', $response_body->message);
+				
+				if ( isset( $response_body->backendError->message ) ) {
+					$error_message .= ' ' . $response_body->backendError->message;
+				}
+
 				throw new Exception( __('400 - ', 'pr-shipping-dhl') . $error_message );
 				break;
 			case '401':
