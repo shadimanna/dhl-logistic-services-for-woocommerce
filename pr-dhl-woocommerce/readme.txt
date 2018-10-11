@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 4.9.8
-Stable tag: 1.2.2
+Stable tag: 1.3.1
 WC requires at least: 2.6.0
 WC tested up to: 3.4
 License: GPLv2 or later
@@ -84,6 +84,9 @@ In case you could not find what you were looking for in our FAQs and the detaile
 
 
 == Changelog ==
+
+= 1.3.1 =
+* Bug Fix - DHL Paket: Fix JS errors on checkout page, by validating fields exist first
 
 = 1.3.0 =
 - DHL Parcel: Added Usabilla feedback button to the plugin settings page
