@@ -71,7 +71,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			PR_DHL()->log_msg( 'Response: Successful');
 
 		} catch (Exception $e) {
-			PR_DHL()->log_msg( 'Response Error: ' . print_r( $response_body, true ) );
+			PR_DHL()->log_msg( 'Response Error: ' . $e->getMessage() );
 			throw $e;
 		}
 

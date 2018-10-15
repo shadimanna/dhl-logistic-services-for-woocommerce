@@ -17,7 +17,7 @@ class PR_DHL_API_SOAP_Finder extends PR_DHL_API_SOAP {
 	public function __construct( ) {
 		try {
 
-			parent::__construct( self::PR_DHL_FINDER_WSDL_LINK_QA );
+			parent::__construct( self::PR_DHL_FINDER_WSDL_LINK );
 
 		} catch (Exception $e) {
 			throw $e;
@@ -40,7 +40,7 @@ class PR_DHL_API_SOAP_Finder extends PR_DHL_API_SOAP {
 		
 			return $response_body;
 		} catch (Exception $e) {
-			PR_DHL()->log_msg( 'Response Body: ' . print_r( $response_body, true ) );
+			PR_DHL()->log_msg( 'Response Error: ' . $e->getMessage() );
 			throw $e;
 		}
 	}
