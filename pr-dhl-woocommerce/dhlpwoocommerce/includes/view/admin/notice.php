@@ -1,5 +1,9 @@
 <?php if (!defined('ABSPATH')) { exit; } ?>
-<div class="notice notice-warning is-dismissible" data-dhlpwc-dismissable-notice="<?php echo esc_attr($notice_tag) ?>">
+<div class="notice notice-warning is-dismissible"
+     <?php if (!empty($notice_tag)) : ?>
+     data-dhlpwc-dismissable-notice="<?php echo esc_attr($notice_tag) ?>"
+     <?php endif ?>
+>
     <p>
         <h4><?php echo _e('DHL for WooCommerce notice', 'dhlpwc') ?></h4>
 

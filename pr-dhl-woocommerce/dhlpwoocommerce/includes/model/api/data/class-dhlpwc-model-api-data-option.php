@@ -19,6 +19,7 @@ class DHLPWC_Model_API_Data_Option extends DHLPWC_Model_API_Data_Abstract
     const INPUT_TEMPLATE_PARCELSHOP = 'parcelshop';
     const INPUT_TEMPLATE_TERMINAL = 'terminal';
     const INPUT_TEMPLATE_PRICE = 'price';
+    const INPUT_TEMPLATE_ADDRESS = 'address';
 
 
     protected $array_class_map = array(

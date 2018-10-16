@@ -269,7 +269,6 @@ input#woocommerce_dhlpwc_test_connection.dhlpwc_button_fail {
     padding-bottom: 15px;
 }
 
-
 .woocommerce table.form-table input#woocommerce_dhlpwc_price_tax_assistance {
     width: 80px;
 }
@@ -330,6 +329,16 @@ input#woocommerce_dhlpwc_test_connection.dhlpwc_button_fail {
 
 input.wc_input_price.dhlpwc-grouped-option:disabled {
     background-color: #f4f4f4;
+}
+
+.woocommerce table.form-table tr.dhlpwc-hide-hide-sender-address-setting,
+.woocommerce table.form-table tr.dhlpwc-hide-return-address-setting {
+    display:none;
+}
+
+.dhlpwc-required-field-star {
+    display: inline-block;
+    color: red;
 }
 
 div.dhlpwc_settings_suggestion_info {
@@ -400,6 +409,12 @@ tr.dhlpwc-options-grid > td td {
     width: 100%;
 }
 
+.dhlpwc-metabox-adress-label {
+    font-size:smaller;
+    font-weight:bold;
+    padding-left: 8px;
+}
+
 #dhlpwc-metabox-terminal-preview-text,
 #dhlpwc-metabox-parcelshop-preview-text {
     width: 69%;
@@ -459,3 +474,7 @@ tr.dhlpwc-options-grid > td td {
     color: #d30511;
 }
 
+div.dhlpwc_settings_description_warning {
+    font-size:smaller;
+    color:red;
+}

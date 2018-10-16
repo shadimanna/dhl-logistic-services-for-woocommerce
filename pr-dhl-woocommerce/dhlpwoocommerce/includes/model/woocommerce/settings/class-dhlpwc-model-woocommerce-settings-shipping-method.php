@@ -83,6 +83,15 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
      */
     public function init_form_fields()
     {
+        $country_code = wc_get_base_location();
+        switch ($country_code['country']) {
+            case 'NL':
+                $api_settings_manual_url = 'https://www.dhlparcel.nl/sites/default/files/content/PDF/Handleiding_WooCommerce_koppeling_NL.pdf';
+                break;
+            default:
+                $api_settings_manual_url = 'https://www.dhlparcel.nl/sites/default/files/content/PDF/Handleiding_WooCommerce_koppeling.v.2-EN.pdf';
+        }
+
         $this->form_fields = array_merge(
             array(
                 // Enable plugin
@@ -111,6 +120,27 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'label'       => __('Enable', 'dhlpwc'),
                     'description' => __("Label actions like downloading PDF or opening track & trace will open in a new window.", 'dhlpwc'),
                     'default'     => 'yes',
+                ),
+                'bulk_label_creation' => array(
+                    'title'   => __('Bulk label creation', 'dhlpwc'),
+                    'type'    => 'select',
+                    'options' => array(
+                        ''            => __('Disabled', 'dhlpwc'),
+                        'smallest'    => __('Enabled - Choose the smallest available size', 'dhlpwc'),
+                        'small_only'  => sprintf(__("Enabled - Choose size '%s' only, skip if unavailable", 'dhlpwc'), __('PARCELTYPE_SMALL', 'dhlpwc')),
+                        'medium_only' => sprintf(__("Enabled - Choose size '%s' only, skip if unavailable", 'dhlpwc'), __('PARCELTYPE_MEDIUM', 'dhlpwc')),
+                        'large_only'  => sprintf(__("Enabled - Choose size '%s' only, skip if unavailable", 'dhlpwc'), __('PARCELTYPE_LARGE', 'dhlpwc')),
+                        'xsmall_only' => sprintf(__("Enabled - Choose size '%s' only, skip if unavailable", 'dhlpwc'), __('PARCELTYPE_XSMALL', 'dhlpwc')),
+                        'xlarge_only' => sprintf(__("Enabled - Choose size '%s' only, skip if unavailable", 'dhlpwc'), __('PARCELTYPE_XLARGE', 'dhlpwc')),
+                        'largest'     => __('Enabled - Choose the largest available size', 'dhlpwc'),
+                    ),
+                    'default' => '',
+                ),
+                'bulk_label_printing' => array(
+                    'title'       => __('Bulk label printing', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Enable', 'dhlpwc'),
+                    'default'     => 'no',
                 ),
                 'enable_track_trace_mail' => array(
                     'title'       => __('Track & trace in mail', 'dhlpwc'),
@@ -143,7 +173,7 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'type'        => 'title',
                     'description' => sprintf(
                         __('DHL API settings. Still missing API credentials? Follow the instructions %shere%s.', 'dhlpwc'),
-                        '<a href="https://www.dhlparcel.nl/sites/default/files/content/PDF/Handleiding_WooCommerce_koppeling_NL.pdf" target="_blank">',
+                        '<a href="'.esc_url($api_settings_manual_url).'" target="_blank">',
                         '</a>'
                     ),
                 ),
@@ -214,56 +244,37 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'type'        => 'title',
                     'description' => __('Fill in the details of your shipping address.', 'dhlpwc'),
                 ),
-                'first_name'                        => array(
-                    'title' => __('First Name', 'dhlpwc'),
-                    'type'  => 'text',
-                ),
-                'last_name'                         => array(
-                    'title' => __('Last Name', 'dhlpwc'),
-                    'type'  => 'text',
-                ),
-                'company'                           => array(
-                    'title' => __('Company', 'dhlpwc'),
-                    'type'  => 'text',
-                ),
+            ),
 
-                'postcode'                          => array(
-                    'title' => __('Postcode', 'dhlpwc'),
-                    'type'  => 'text',
-                ),
-                'city'                              => array(
-                    'title' => __('City', 'dhlpwc'),
-                    'type'  => 'text',
-                ),
-                'street'                            => array(
-                    'title' => __('Street', 'dhlpwc'),
-                    'type'  => 'text',
-                ),
-                'number'                            => array(
-                    'title' => __('Number', 'dhlpwc'),
-                    'type'  => 'text',
-                ),
-                'country' => array(
-                    'title' => __('Country', 'dhlpwc'),
-                    'type' => 'select',
-                    'options' => array(
-                        'NL' => __('Netherlands', 'dhlpwc'),
-                        'BE' => __('Belgium', 'dhlpwc'),
-                        'LU' => __('Luxemburg', 'dhlpwc'),
-                        'ES' => __('Spain', 'dhlpwc'),
-                        'PT' => __('Portugal', 'dhlpwc'),
-                    ),
-                    'default' => 'NL',
-                ),
-                'email'                             => array(
-                    'title' => __('Email', 'dhlpwc'),
-                    'type'  => 'text',
-                ),
-                'phone'                             => array(
-                    'title' => __('Phone', 'dhlpwc'),
-                    'type'  => 'text',
-                ),
+            $this->get_address_fields(),
 
+            array(
+                'enable_alternate_return_address'                   => array(
+                    'title'       => __('Different return address', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Enable', 'dhlpwc'),
+                    'description' => __("Use a different address for return labels.", 'dhlpwc'),
+                    'default'     => 'no',
+                ),
+            ),
+
+            $this->get_address_fields('return_address_'),
+
+            array(
+                'default_hide_sender_address'                   => array(
+                    'title'       => __('Default hide sender address', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Enable', 'dhlpwc'),
+                    'description' => __("Set a default address for the 'Hide sender' service option.", 'dhlpwc'),
+                    'default'     => 'no',
+                ),
+            ),
+
+            $this->get_address_fields('hide_sender_address_'),
+
+            $this->get_shipping_method_fields(),
+
+            array(
                 // Debug
                 'developer_settings'                => array(
                     'title'       => __('Debug Settings', 'dhlpwc'),
@@ -393,10 +404,6 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
 
         );
 
-//        $connector = DHLPWC_Model_API_Connector::instance();
-//        $sender_type = 'business'; // A webshop is always a business, not a regular consumer type nor a parcelshop. Will leave this as hardcoded for now.
-//        $response = $connector->get(sprintf('shipment-options/%s', $sender_type), null, 20000);
-
         $service = DHLPWC_Model_Service_Shipping_Preset::instance();
         $presets = $service->get_presets();
 
@@ -406,12 +413,96 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
 
         foreach($presets as $data) {
             $preset = new DHLPWC_Model_Meta_Shipping_Preset($data);
-
             $option_settings = array_merge($option_settings, $this->get_option_group_fields($preset->setting_id, $preset->title, $class));
         }
 
         return $option_settings;
     }
+
+    public function get_address_fields($prefix = null)
+    {
+        switch($prefix) {
+            case 'return_address_':
+                $class = 'dhlpwc-return-address-setting';
+                break;
+            case 'hide_sender_address_':
+                $class = 'dhlpwc-hide-sender-address-setting';
+                break;
+            default:
+                $class = 'dhlpwc-default-address-setting';
+        }
+
+        $settings = array(
+            $prefix.'first_name'                        => array(
+                'title' => __('First Name', 'dhlpwc'),
+                'type'  => 'text',
+                'class' => $class,
+            ),
+            $prefix.'last_name'                         => array(
+                'title' => __('Last Name', 'dhlpwc'),
+                'type'  => 'text',
+                'class' => $class,
+            ),
+            $prefix.'company'                           => array(
+                'title' => __('Company', 'dhlpwc'),
+                'type'  => 'text',
+                'class' => $class,
+            ),
+
+            $prefix.'postcode'                          => array(
+                'title' => __('Postcode', 'dhlpwc'),
+                'type'  => 'text',
+                'class' => $class,
+            ),
+            $prefix.'city'                              => array(
+                'title' => __('City', 'dhlpwc'),
+                'type'  => 'text',
+                'class' => $class,
+            ),
+            $prefix.'street'                            => array(
+                'title' => __('Street', 'dhlpwc'),
+                'type'  => 'text',
+                'class' => $class,
+            ),
+            $prefix.'number'                            => array(
+                'title' => __('Number', 'dhlpwc'),
+                'type'  => 'text',
+                'class' => $class,
+            ),
+            $prefix.'country' => array(
+                'title' => __('Country', 'dhlpwc'),
+                'type' => 'select',
+                'options' => array(
+                    'NL' => __('Netherlands', 'dhlpwc'),
+                    'BE' => __('Belgium', 'dhlpwc'),
+                    'LU' => __('Luxembourg', 'dhlpwc'),
+                    'CH' => __('Switzerland', 'dhlpwc'),
+                ),
+                'default' => 'NL',
+                'class' => $class,
+            ),
+            $prefix.'email'                             => array(
+                'title' => __('Email', 'dhlpwc'),
+                'type'  => 'text',
+                'class' => $class,
+            ),
+            $prefix.'phone'                             => array(
+                'title' => __('Phone', 'dhlpwc'),
+                'type'  => 'text',
+                'class' => $class,
+            ),
+        );
+
+        // Remove country settings for SSN
+        if ($prefix == 'hide_sender_address_') {
+            $settings[$prefix.'country'] = null;
+            unset($settings[$prefix.'country']);
+        }
+
+        return $settings;
+    }
+
+
 
     public function calculate_shipping($package = array())
     {

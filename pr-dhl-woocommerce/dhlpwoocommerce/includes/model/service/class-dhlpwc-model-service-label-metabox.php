@@ -30,11 +30,12 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
         DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE,
         DHLPWC_Model_Meta_Order_Option_Preference::OPTION_HANDT,
         DHLPWC_Model_Meta_Order_Option_Preference::OPTION_NBB,
-        //DHLPWC_Model_Meta_Order_Option_Preference::OPTION_ADD_RETURN_LABEL,
-        //DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SSN,
+        DHLPWC_Model_Meta_Order_Option_Preference::OPTION_ADD_RETURN_LABEL,
+        DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SSN,
         //DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PERS_NOTE, // (will be added later in the API, but for now it's not yet available)
         DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SDD,
         DHLPWC_Model_Meta_Order_Option_Preference::OPTION_S,
+        //DHLPWC_Model_Meta_Order_Option_Preference::OPTION_IS_BULKY,
     );
 
     public function order_labels($order_id, $labels)
@@ -43,10 +44,12 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
         if (!empty($labels)) {
             foreach ($labels as $label) {
                 $view = new DHLPWC_Template('order.meta.label');
+                $is_return = (!empty($label['is_return'])) ? $label['is_return'] : false;
                 $content .= $view->render(array(
                     'label_size'        => $label['label_size'],
                     'label_description' => __(sprintf('PARCELTYPE_%s', $label['label_size']), 'dhlpwc'),
                     'tracker_code'      => $label['tracker_code'],
+                    'is_return'         => $is_return,
                     'actions'           => $this->get_label_actions($label, $order_id),
                 ), false);
             }
@@ -69,7 +72,7 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
         ), false);
     }
 
-    public function options_form($order_id, $selected_options, $to_business)
+    public function options_form($order_id, $selected_options, $option_data, $to_business)
     {
         $service = DHLPWC_Model_Service_Access_Control::instance();
         $allowed_options = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CAPABILITY_ORDER_OPTIONS, array(
@@ -140,10 +143,32 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
                             'placeholder' => __('In euros (€)', 'dhlpwc'),
                         );
                         break;
-//                    case (DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SSN):
-//                        $option->input_template = DHLPWC_Model_API_Data_Option::INPUT_TEMPLATE_ADDRESS;
-//                        $option->input_template_data = array();
-//                        break;
+                    case (DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SSN):
+                        if (!empty($option_data) && is_array($option_data) && array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SSN, $option_data)) {
+                            $logic = DHLPWC_Model_Logic_Label::instance();
+                            $hide_sender_data = $logic->get_hide_sender_data($option_data);
+                            if ($logic->validate_flat_address($hide_sender_data)) {
+                                $hide_sender_address = new DHLPWC_Model_Meta_Address($hide_sender_data);
+                            } else {
+                                $hide_sender_address = null;
+                            }
+                        } else {
+                            $access_service = DHLPWC_Model_Service_Access_Control::instance();
+                            $default_hide_sender = $access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DEFAULT_HIDE_SENDER_ADDRESS);
+
+                            if ($default_hide_sender) {
+                                $settings_service = DHLPWC_Model_Service_Settings::instance();
+                                $hide_sender_address = $settings_service->get_hide_sender_address();
+                            } else {
+                                $hide_sender_address = null;
+                            }
+                        }
+
+                        $option->input_template = DHLPWC_Model_API_Data_Option::INPUT_TEMPLATE_ADDRESS;
+                        $option->input_template_data = array(
+                            'address' => $hide_sender_address,
+                        );
+                        break;
                     case (DHLPWC_Model_Meta_Order_Option_Preference::OPTION_COD_CASH):
                         $option->input_template = DHLPWC_Model_API_Data_Option::INPUT_TEMPLATE_PRICE;
                         $option->input_template_data = array(

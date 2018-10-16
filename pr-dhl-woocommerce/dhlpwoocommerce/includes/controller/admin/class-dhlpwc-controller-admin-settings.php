@@ -32,6 +32,8 @@ class DHLPWC_Controller_Admin_Settings
             add_action('wp_ajax_dhlpwc_dismiss_admin_notice', array($this, 'dismiss_admin_notice'));
             add_action('wp_ajax_dhlpwc_test_connection', array($this, 'test_connection'));
             add_action('wp_ajax_dhlpwc_dynamic_option_settings', array($this, 'dynamic_option_settings'));
+            add_action('wp_ajax_dhlpwc_test_bulk_printing', array($this, 'test_bulk_printing'));
+
         }
     }
 
@@ -71,6 +73,20 @@ class DHLPWC_Controller_Admin_Settings
             'success' => $authentication ? 'true' : 'false',
             'message' => $authentication ? __('Connection successful', 'dhlpwc') : __('Authentication failed', 'dhlpwc'),
             'info'    => $authentication,
+        ));
+        wp_send_json($json_response->to_array(), 200);
+    }
+
+    public function test_bulk_printing()
+    {
+        $library = DHLPWC_Libraryloader::instance();
+        $pdf_merger = $library->get_pdf_merger();
+
+        // Send JSON response
+        $json_response = new DHLPWC_Model_Response_JSON();
+        $json_response->set_data(array(
+            'success' => $pdf_merger ? 'true' : 'false',
+            'message' => $pdf_merger ? __('Activated bulk PDF printing', 'dhlpwc') : __('PDFMerger cannot be initiated. To use bulk printing, please check and resolve any conflicting third plugins causing this issue.', 'dhlpwc'),
         ));
         wp_send_json($json_response->to_array(), 200);
     }

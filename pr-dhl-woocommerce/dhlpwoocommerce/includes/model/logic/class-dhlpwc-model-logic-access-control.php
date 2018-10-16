@@ -34,8 +34,7 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
             'NL',
             'BE',
             'LU',
-            'PT',
-            'ES',
+            'CH',
         ))) {
             return false;
         }
@@ -154,6 +153,44 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         }
 
         if ($shipping_methods['dhlpwc']->settings['open_label_links_external'] != 'yes') {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function check_bulk_create()
+    {
+        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+
+        if (!isset($shipping_methods['dhlpwc'])) {
+            return false;
+        }
+
+        if (!isset($shipping_methods['dhlpwc']->settings['bulk_label_creation'])) {
+            return false;
+        }
+
+        if ($shipping_methods['dhlpwc']->settings['bulk_label_creation'] === '') {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function check_bulk_print()
+    {
+        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+
+        if (!isset($shipping_methods['dhlpwc'])) {
+            return false;
+        }
+
+        if (!isset($shipping_methods['dhlpwc']->settings['bulk_label_printing'])) {
+            return false;
+        }
+
+        if ($shipping_methods['dhlpwc']->settings['bulk_label_printing'] != 'yes') {
             return false;
         }
 
@@ -365,6 +402,44 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
 
         /** @var DHLPWC_Model_WooCommerce_Settings_Shipping_Method $shipping_method */
         if ($shipping_method->get_option('enable_option_parcelshop') !== 'yes') {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function check_alternate_return_address()
+    {
+        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+
+        if (!isset($shipping_methods['dhlpwc'])) {
+            return false;
+        }
+
+        if (!isset($shipping_methods['dhlpwc']->settings['enable_alternate_return_address'])) {
+            return false;
+        }
+
+        if ($shipping_methods['dhlpwc']->settings['enable_alternate_return_address'] != 'yes') {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function check_default_hide_sender_address()
+    {
+        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+
+        if (!isset($shipping_methods['dhlpwc'])) {
+            return false;
+        }
+
+        if (!isset($shipping_methods['dhlpwc']->settings['default_hide_sender_address'])) {
+            return false;
+        }
+
+        if ($shipping_methods['dhlpwc']->settings['default_hide_sender_address'] != 'yes') {
             return false;
         }
 
