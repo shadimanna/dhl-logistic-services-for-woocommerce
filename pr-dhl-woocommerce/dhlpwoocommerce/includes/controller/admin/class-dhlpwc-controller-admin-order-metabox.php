@@ -137,7 +137,7 @@ class DHLPWC_Controller_Admin_Order_Metabox
         // Send JSON response
         $json_response = new DHLPWC_Model_Response_JSON();
         $json_response->set_data(array(
-            'view' => $this->load_all($post_id, $label_options, $to_business)
+            'view' => $this->load_all($post_id, $label_options, $label_option_data, $to_business)
         ));
         wp_send_json($json_response->to_array(), 200);
     }
@@ -180,7 +180,7 @@ class DHLPWC_Controller_Admin_Order_Metabox
         $service = DHLPWC_Model_Service_Label_Metabox::instance();
         $json_response = new DHLPWC_Model_Response_JSON();
         $json_response->set_data(array(
-            'view' => $service->options_form($post_id, $selected_options, $to_business),
+            'view' => $service->options_form($post_id, $selected_options, null, $to_business),
         ));
         wp_send_json($json_response->to_array(), 200);
     }
@@ -228,7 +228,7 @@ class DHLPWC_Controller_Admin_Order_Metabox
      * @param $order_id
      * @return string
      */
-    public function load_all($order_id, $preselected_options = null, $to_business = null)
+    public function load_all($order_id, $preselected_options = null, $option_data = null, $to_business = null)
     {
         $order_id = intval($order_id);
 
@@ -264,7 +264,7 @@ class DHLPWC_Controller_Admin_Order_Metabox
 
         $view = new DHLPWC_Template('order.meta.form.options-container');
         $options_form = $view->render(array(
-            'content' => $metabox_service->options_form($order_id, $preselected_options, $to_business),
+            'content' => $metabox_service->options_form($order_id, $preselected_options, $option_data, $to_business),
         ), false);
 
         // Generate sizes (with requested options)

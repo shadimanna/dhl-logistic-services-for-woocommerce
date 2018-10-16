@@ -1,5 +1,15 @@
 # DHL Parcel plugin for WooCommerce
 
+V1.2.1
+
+## Changes
+- Additional return labels can be created alongside regular labels
+- Added settings to set a default address for return labels
+- Added bulk label creation and bulk label printing
+- Added a setting to set the default size preference for bulk label creation
+- Added the service option to hide shipping address
+- Added settings to set a default address when hiding sender address
+
 V1.2.0
 
 ## Changes

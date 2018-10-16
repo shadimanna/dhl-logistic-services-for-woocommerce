@@ -32,7 +32,7 @@ jQuery(document).ready(function($) {
 
             $(document.body).trigger('dhlpwc:enable_test_connection_button');
 
-            if (success == 'true') {
+            if (success === 'true') {
                 dhlpwc_test_connection_button.val(message);
                 dhlpwc_test_connection_button.addClass('dhlpwc_button_success');
 
@@ -295,12 +295,77 @@ jQuery(document).ready(function($) {
         // This js has also been limited to only 2 specific pages (dhlpwc settings page and shipping zone edit page)
         $(document.body).trigger('dhlpwc:init_options_grid');
         $(document.body).trigger('dhlpwc:check_all_option_settings');
+
+    }).on('change', 'input#woocommerce_dhlpwc_enable_alternate_return_address', function(e) {
+        $(document.body).trigger('dhlpwc:check_return_address');
+
+    }).on('dhlpwc:check_return_address', function() {
+        var use_alternate_return_address = $('input#woocommerce_dhlpwc_enable_alternate_return_address').is(':checked') ?  'yes' : 'no';
+        if (use_alternate_return_address === 'yes') {
+            $('.dhlpwc-return-address-setting').each(function(e) {
+                $(this).prop('disabled', false);
+                $(this).closest('tr').removeClass('dhlpwc-hide-return-address-setting');
+            });
+        } else {
+            $('.dhlpwc-return-address-setting').each(function (e) {
+                $(this).prop('disabled', true);
+                $(this).closest('tr').addClass('dhlpwc-hide-return-address-setting');
+            });
+        }
+
+    }).on('change', 'input#woocommerce_dhlpwc_default_hide_sender_address', function(e) {
+        $(document.body).trigger('dhlpwc:check_hide_sender_address');
+
+    }).on('dhlpwc:check_hide_sender_address', function() {
+        var default_hide_sender_address = $('input#woocommerce_dhlpwc_default_hide_sender_address').is(':checked') ?  'yes' : 'no';
+        if (default_hide_sender_address === 'yes') {
+            $('.dhlpwc-hide-sender-address-setting').each(function(e) {
+                $(this).prop('disabled', false);
+                $(this).closest('tr').removeClass('dhlpwc-hide-hide-sender-address-setting');
+            });
+        } else {
+            $('.dhlpwc-hide-sender-address-setting').each(function (e) {
+                $(this).prop('disabled', true);
+                $(this).closest('tr').addClass('dhlpwc-hide-hide-sender-address-setting');
+            });
+        }
+
+    }).on('change', 'input#woocommerce_dhlpwc_bulk_label_printing', function(e) {
+        var dhlpwc_bulk_printing_area = $('input#woocommerce_dhlpwc_bulk_label_printing').closest('fieldset').parent();
+        dhlpwc_bulk_printing_area.children('div.dhlpwc_settings_description_warning').remove();
+
+        if ($(this).attr('checked') !== 'checked') {
+            return;
+        }
+
+        // Do a check for compatibility
+        var data = $.extend(true, $(this).data(), {
+            action: 'dhlpwc_test_bulk_printing'
+        });
+
+        $.post(ajaxurl, data, function (response) {
+            try {
+                var success = response.data.success;
+                var message = response.data.message;
+            } catch (error) {
+                dhlpwc_bulk_printing_area.append('<div class="dhlpwc_settings_description_warning">An error has occured</div>');
+                return;
+            }
+
+            if (success === 'false') {
+                dhlpwc_bulk_printing_area.append('<div class="dhlpwc_settings_description_warning">' + message + '</div>');
+            }
+        }, 'json');
+
     });
 
     $(document.body).trigger('dhlpwc:init_test_connection_button');
     $(document.body).trigger('dhlpwc:init_settings_menu');
     $(document.body).trigger('dhlpwc:init_options_grid');
     $(document.body).trigger('dhlpwc:check_global_shipping_settings');
+    $(document.body).trigger('dhlpwc:check_return_address');
+    $(document.body).trigger('dhlpwc:check_hide_sender_address');
+
 
     $('.dhlpwc-price-input').each(function(e) {
         var currency_symbol = $(this).data('dhlpwc-currency-symbol');

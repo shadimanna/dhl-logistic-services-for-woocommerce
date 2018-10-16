@@ -157,6 +157,9 @@ jQuery(document).ready(function($) {
             $('.dhlpwc-metabox-service-input').filter('[data-option-input="'+$(this).val().toString()+'"]').show();
         });
 
+        // Sync address check if needed
+        $(document.body).trigger('dhlpwc:metabox_address_sync');
+
         $.each(disable_options_collection, function (index, value) {
             $(".dhlpwc-label-create-service-option-container input[name='dhlpwc-label-create-option[]'][value='" + value + "']:checked").attr('checked', false);
             $(".dhlpwc-label-create-service-option-container input[name='dhlpwc-label-create-option[]'][value='" + value + "']:enabled").attr('disabled', true);
@@ -266,9 +269,34 @@ jQuery(document).ready(function($) {
         }, 'json');
 
     }).on('dhlpwc:select_default_size', function() {
-        if($('input:radio[name=dhlpwc-label-create-size]:not(:disabled)').not(':checked')) {
+        if ($('input:radio[name=dhlpwc-label-create-size]:not(:disabled)').not(':checked')) {
             $('input:radio[name=dhlpwc-label-create-size]:not(:disabled):first').attr('checked', true);
         }
+
+    }).on('change', '.dhlpwc-metabox-address-input', function(e) {
+            $(document.body).trigger('dhlpwc:metabox_address_sync');
+
+    }).on('dhlpwc:metabox_address_sync', function(e) {
+        // Continue if hidden input can be found
+        if ($('#dhlpwc-metabox-address-hidden-input').length > 0) {
+
+            var values = {
+                first_name: $('#dhlpwc-metabox-address-first_name').val(),
+                last_name: $('#dhlpwc-metabox-address-last_name').val(),
+                company: $('#dhlpwc-metabox-address-company').val(),
+                postcode: $('#dhlpwc-metabox-address-postcode').val(),
+                city: $('#dhlpwc-metabox-address-city').val(),
+                street: $('#dhlpwc-metabox-address-street').val(),
+                number: $('#dhlpwc-metabox-address-number').val(),
+                email: $('#dhlpwc-metabox-address-email').val(),
+                phone: $('#dhlpwc-metabox-address-phone').val()
+            };
+
+            var json_string = JSON.stringify(values);
+
+            $('#dhlpwc-metabox-address-hidden-input').val(json_string);
+        }
+
     });
 
     $(document.body).trigger('dhlpwc:disable_delivery_option_exclusions');

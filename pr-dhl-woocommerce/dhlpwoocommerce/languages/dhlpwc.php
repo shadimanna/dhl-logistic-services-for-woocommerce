@@ -17,6 +17,8 @@ class DHLPWC_Translations
         __('PARCELTYPE_LARGE');
         __('PARCELTYPE_PALLET');
         __('PARCELTYPE_BULKY');
+        __('PARCELTYPE_XSMALL');
+        __('PARCELTYPE_XLARGE');
     }
 
     private function option()
@@ -46,6 +48,7 @@ class DHLPWC_Translations
         __('OPTION_PERS_NOTE');
         __('OPTION_SDD');
         __('OPTION_S');
+        __('OPTION_IS_BULKY');
     }
 
     private function option_description()

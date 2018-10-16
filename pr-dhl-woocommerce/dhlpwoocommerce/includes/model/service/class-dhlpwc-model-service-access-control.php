@@ -12,12 +12,19 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
     const ACCESS_API = 'api';
     const ACCESS_COLUMN_INFO = 'column_info';
     const ACCESS_OPEN_LABEL_LINKS_EXTERNAL = 'open_label_links_external';
+
+    const ACCESS_BULK_CREATE = 'bulk_create';
+    const ACCESS_BULK_PRINT = 'bulk_print';
+
     const ACCESS_TRACK_TRACE_MAIL = 'track_trace_mail';
     const ACCESS_TRACK_TRACE_COMPONENT = 'track_trace_component';
 
     const ACCESS_DEFAULT_TO_BUSINESS = 'default_to_business';
     const ACCESS_DEFAULT_SEND_SIGNATURE = 'default_send_signature';
     const ACCESS_CHECKOUT_PARCELSHOP = 'checkout_parcelshop';
+
+    const ACCESS_ALTERNATE_RETURN_ADDRESS = 'alternate_return_address';
+    const ACCESS_DEFAULT_HIDE_SENDER_ADDRESS = 'default_hide_sender_address';
 
     const ACCESS_DEBUG = 'debug';
     const ACCESS_DEBUG_EXTERNAL = 'debug_external';
@@ -70,6 +77,16 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
                 return $logic->check_open_label_links_external();
                 break;
 
+            case self::ACCESS_BULK_CREATE:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_bulk_create();
+                break;
+
+            case self::ACCESS_BULK_PRINT:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_bulk_print();
+                break;
+
             case self::ACCESS_TRACK_TRACE_MAIL:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
                 return $logic->check_track_trace_mail();
@@ -111,6 +128,16 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
                 $logic = DHLPWC_Model_Logic_Access_Control_Capabilities::instance();
                 $capabilities = $logic->check_order_capabilities($args);
                 return $logic->filter_unique_options($capabilities);
+                break;
+
+            case self::ACCESS_ALTERNATE_RETURN_ADDRESS:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_alternate_return_address();
+                break;
+
+            case self::ACCESS_DEFAULT_HIDE_SENDER_ADDRESS:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_default_hide_sender_address();
                 break;
 
             case self::ACCESS_DEBUG:

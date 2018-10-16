@@ -42,7 +42,7 @@ class DHLPWC_Model_Service_Track_Trace extends DHLPWC_Model_Core_Singleton_Abstr
 
         $tracker_codes = array();
         foreach($labels as $label) {
-            if (array_key_exists('tracker_code', $label)) {
+            if (array_key_exists('tracker_code', $label) && empty($label['is_return'])) {
                 $tracker_codes[] = $label['tracker_code'];
             }
         }

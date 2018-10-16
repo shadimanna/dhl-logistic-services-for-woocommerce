@@ -11,6 +11,7 @@ class DHLPWC_Model_Service_Order_Meta extends DHLPWC_Model_Core_Singleton_Abstra
 
     public function save_label($order_id, $data)
     {
+        // TODO note: pdf->path is not saving correctly for windows environment due to wordpress meta data removing backslashes
         $meta_object = new DHLPWC_Model_Meta_Order_Label($data);
         return DHLPWC_Model_Logic_Order_Meta::instance()->add_to_stack(
             self::ORDER_LABELS, $order_id, $data['label_id'], $meta_object

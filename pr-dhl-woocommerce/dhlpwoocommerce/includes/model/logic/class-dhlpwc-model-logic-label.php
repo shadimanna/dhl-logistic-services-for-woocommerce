@@ -8,8 +8,9 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
 {
 
     const FILE_PREFIX = 'dhlpwc-label-';
+    const BATCH_FILE_PREFIX = 'dhlpwc-labels-';
 
-    public function prepare_data($order_id, $options = array())
+    public function prepare_data($order_id, $options = array(), $replace_shipping_address = null)
     {
         $order = wc_get_order($order_id);
         $receiver_address = $order->get_address('shipping') ?: $order->get_address();
@@ -41,7 +42,105 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
             'application'     => $this->version_string(),
         ));
 
+        if ($replace_shipping_address) {
+            // Use the same country as the default
+            $replace_shipping_address['country'] = $shipper_address['country'];
+            $label->on_behalf_of = $this->prepare_address_data($replace_shipping_address, true);
+        }
+
         return $label;
+    }
+
+    public function get_return_data($label_data)
+    {
+        /* @var DHLPWC_Model_API_Data_Label $label_data */
+        $service = DHLPWC_Model_Service_Access_Control::instance();
+        $alternate_return = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_ALTERNATE_RETURN_ADDRESS);
+
+        if ($alternate_return) {
+            $service = DHLPWC_Model_Service_Settings::instance();
+            $receiver = $this->prepare_address_data($service->get_return_address()->to_array(), true);
+        } else {
+            $receiver = $label_data->shipper;
+        }
+        $shipper = $label_data->receiver;
+
+        $label_data->label_id = (string)new DHLPWC_Model_UUID();
+        $label_data->return_label = true;
+        $label_data->shipper = $shipper;
+        $label_data->receiver = $receiver;
+
+        $service = DHLPWC_Model_Service_Label_Option::instance();
+        $label_data->options = $service->get_request_options(array(
+            DHLPWC_Model_Meta_Order_Option_Preference::OPTION_DOOR,
+        ));
+
+        return $label_data;
+    }
+
+    public function check_return_option($label_options)
+    {
+        return in_array(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_ADD_RETURN_LABEL, $label_options);
+    }
+
+    public function remove_return_option($label_options)
+    {
+        return array_diff($label_options, array(
+            DHLPWC_Model_Meta_Order_Option_Preference::OPTION_ADD_RETURN_LABEL,
+        ));
+    }
+
+    public function get_hide_sender_data($label_data)
+    {
+        if (!array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SSN, $label_data)) {
+            return null;
+        }
+
+        $cleaned_data = wp_unslash(wc_clean($label_data[DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SSN]));
+        $parsed_data = json_decode($cleaned_data, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return null;
+        }
+
+        if (!$this->validate_flat_address($parsed_data)) {
+            return null;
+        }
+
+        return $parsed_data;
+    }
+
+    public function validate_flat_address($data)
+    {
+        if (empty($data) || !is_array($data)) {
+            return false;
+        }
+
+        // Check if all keys exist
+        $expected_keys = array(
+            'first_name',
+            'last_name',
+            'company',
+            'postcode',
+            'city',
+            'number',
+            'email',
+            'phone',
+        );
+
+        foreach($expected_keys as $expected_key) {
+            if (!array_key_exists($expected_key, $data)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function remove_hide_sender_data($label_data)
+    {
+        return array_diff_key($label_data, array(
+            DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SSN => true,
+        ));
     }
 
     public function send_request($label)
@@ -56,7 +155,7 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
 
         $file_name = self::FILE_PREFIX . $order_id . '_' . str_shuffle((string)time() . rand(1000, 9999)) . '.pdf';
         $upload_path = wp_upload_dir();
-        $path = $upload_path['path'] . '/' . $file_name;
+        $path = $upload_path['path'] . DIRECTORY_SEPARATOR . $file_name;
         $url = $upload_path['url'] . '/' . $file_name;
 
         // TODO, handle errors
@@ -66,6 +165,100 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
             'url' => $url,
             'path' => $path
         );
+    }
+
+    public function combine_pdfs($order_ids)
+    {
+        $loader = DHLPWC_Libraryloader::instance();
+        $pdf_merger = $loader->get_pdf_merger();
+        $files = 0;
+
+        foreach ($order_ids as $order_id) {
+            $meta_service = new DHLPWC_Model_Service_Order_Meta();
+            $labels = $meta_service->get_labels($order_id);
+
+            if (!empty($labels)) {
+
+                foreach ($labels as $label_data) {
+                    $label = new DHLPWC_Model_Meta_Order_Label($label_data);
+                    $path = $label->pdf->path;
+                    if (!file_exists($path)) {
+                        $path = $this->restore_pdf_path($path);
+                        if (!$path) {
+                            // Could not fix
+                            continue;
+                        }
+                    }
+                    $pdf_merger->addPDF($path, 'all');
+                    $files++;
+                }
+            }
+        }
+
+        if (!$files) {
+            return null;
+        }
+
+        $order_id_tag = implode('_', $order_ids);
+        $order_id_tag = substr($order_id_tag,0,20); // Limit the length if a lot of orders are selected
+
+        $file_name = self::BATCH_FILE_PREFIX . $order_id_tag . '_' . str_shuffle((string)time() . rand(1000, 9999)) . '.pdf';
+        $upload_dir = wp_upload_dir();
+        $path = $upload_dir['path'] . DIRECTORY_SEPARATOR . $file_name;
+        $url = $upload_dir['url'] . '/' . $file_name;
+
+        $pdf_merger->merge('file', $path);
+
+        return array(
+            'url' => $url,
+            'path' => $path
+        );
+    }
+
+    protected function restore_pdf_path($path)
+    {
+        $upload_dir = wp_upload_dir();
+
+        // This is an attempt to fix the path if backslashes have been removed by wordpress
+        if (file_exists(str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $path))) {
+
+            $path = str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $path);
+
+        } else {
+
+            $stripped_path = str_replace(array('/', '\\'), '', $path);
+            $stripped_upload_path = str_replace(array('/', '\\'), '', $upload_dir['basedir']);
+
+            if (!substr($stripped_path, 0, strlen($stripped_upload_path)) === $stripped_upload_path) {
+                // Upload base dir has since changed. Unfortunately impossible to determine the path now
+                return null;
+            }
+
+            $end_path = substr($path, strlen($stripped_upload_path));
+
+            if (!file_exists($upload_dir['basedir'] . DIRECTORY_SEPARATOR . $end_path)) {
+                // End path seems incorrect. Attempt to fix it
+                $number_start = strcspn($end_path, '0123456789');
+                $end_path = substr($end_path, $number_start);
+
+                $path = $upload_dir['basedir'] . DIRECTORY_SEPARATOR . $end_path;
+                $path = str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $path);
+
+                if (!file_exists($path)) {
+                    // Final attempt, try to inject a DS after the date, before filename
+                    $position = strpos($path, self::FILE_PREFIX);
+                    $path = substr_replace($path, DIRECTORY_SEPARATOR, $position, 0);
+                }
+            }
+
+        }
+
+        if (!file_exists($path)) {
+            // Still can't find it
+            return null;
+        }
+
+        return $path;
     }
 
     public function delete_pdf_file($path)
