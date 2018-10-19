@@ -37,6 +37,7 @@ class DHLPWC_Controller_Checkout
             case 'NL' :
             case 'BE' :
             case 'LU' :
+            case 'CH' :
                 $service = DHLPWC_Model_Service_Postcode::instance();
                 $valid = $service->validate($postcode, $country);
                 break;

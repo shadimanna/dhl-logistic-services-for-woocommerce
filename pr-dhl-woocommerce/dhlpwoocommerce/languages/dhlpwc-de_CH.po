@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: DHL to German\n"
-"POT-Creation-Date: 2018-10-01 17:16+0200\n"
+"POT-Creation-Date: 2018-10-16 12:15+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -26,7 +26,7 @@ msgstr "Die API antwortete mit [%1$s]: %2$s"
 
 #: includes/controller/admin/class-dhlpwc-controller-admin-order-metabox.php:158
 msgid "Label deleted."
-msgstr "Label gelöscht"
+msgstr "Label gelöscht."
 
 #: includes/controller/admin/class-dhlpwc-controller-admin-order-metabox.php:177
 #: includes/controller/admin/class-dhlpwc-controller-admin-order-metabox.php:197
@@ -43,7 +43,7 @@ msgstr "DHL - Etikett erstellen"
 
 #: includes/controller/admin/class-dhlpwc-controller-admin-order.php:93
 msgid "DHL - Print label"
-msgstr "DHL - Drucketikett"
+msgstr "DHL - Etikett drucken"
 
 #: includes/controller/admin/class-dhlpwc-controller-admin-order.php:117
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:111
@@ -68,14 +68,14 @@ msgstr "Authentifizierung fehlgeschlagen"
 
 #: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:89
 msgid "Activated bulk PDF printing"
-msgstr "Aktiviertes PDF-Drucken"
+msgstr "Aktivierter Massen PDF-Drucken"
 
 #: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:89
 msgid ""
 "PDFMerger cannot be initiated. To use bulk printing, please check and "
 "resolve any conflicting third plugins causing this issue."
 msgstr ""
-"PDFMerger kann nicht gestartet werden. Wenn Sie Bulk-Printing verwenden "
+"PDFMerger kann nicht gestartet werden. Wenn Sie den Massendruck verwenden "
 "möchten, überprüfen und beheben Sie alle Konflikte verursachenden dritten "
 "Plugins, die dieses Problem verursachen."
 
@@ -85,15 +85,15 @@ msgstr "Testen Sie die Verbindung und rufen Sie die Kontodaten ab"
 
 #: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:109
 msgid "Please wait..."
-msgstr "Warten Sie mal..."
+msgstr "Bitte warten..."
 
 #: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:110
 msgid "Accounts found. Click to use."
-msgstr "Konten gefunden. Klicken Sie, um zu verwenden."
+msgstr "Konten gefunden. Bitte wählen."
 
 #: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:111
 msgid "OrganizationID found. Click to use."
-msgstr "OrganisationsID gefunden. Klicken Sie, um zu verwenden."
+msgstr "OrganisationsID gefunden.Bitte wählen."
 
 #: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:175
 #: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:184
@@ -103,7 +103,7 @@ msgstr "OrganisationsID gefunden. Klicken Sie, um zu verwenden."
 #: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:202
 #, php-format
 msgid "Missing %1$s from %2$s"
-msgstr "Fehlende %1$s von %2$s"
+msgstr "%1$s von %2$s fehlen"
 
 #: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:175
 msgid "Country / State"
@@ -129,7 +129,7 @@ msgstr "Kontodetails"
 #: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:187
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:186
 msgid "Key"
-msgstr "Schlüssel"
+msgstr "Key"
 
 #: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:190
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:196
@@ -170,7 +170,7 @@ msgid ""
 "The DHL ServicePoint country cannot be different than the shipping address "
 "country."
 msgstr ""
-"Das Land des DHL ServicePoint kann nicht anders sein als das Land der "
+"Das Land des DHL ServicePoint kann nicht anders sein als das Land in der "
 "Lieferadresse."
 
 #: includes/model/service/class-dhlpwc-model-service-label-metabox.php:121
@@ -200,38 +200,44 @@ msgid "Delete PDF label"
 msgstr "PDF-Label löschen"
 
 #: includes/model/service/class-dhlpwc-model-service-label.php:50
-msgid "Cannot parse street from shipper address."
-msgstr "Die Straße von der Absenderadresse kann nicht analysiert werden."
+#: includes/model/service/class-dhlpwc-model-service-label.php:55
+#: includes/model/service/class-dhlpwc-model-service-label.php:65
+#, php-format
+msgid "Shipper %s field is required."
+msgstr "Absender %s Feld ist erforderlich."
+
+#: includes/model/service/class-dhlpwc-model-service-label.php:50
+#: includes/model/service/class-dhlpwc-model-service-label.php:60
+#: includes/model/service/class-dhlpwc-model-service-label.php:77
+msgid "street"
+msgstr "Straße"
 
 #: includes/model/service/class-dhlpwc-model-service-label.php:55
-msgid "Cannot parse housenumber from shipper address."
-msgstr "Die Hausnummer kann nicht von der Absenderadresse analysiert werden."
+#: includes/model/service/class-dhlpwc-model-service-label.php:65
+#: includes/model/service/class-dhlpwc-model-service-label.php:87
+msgid "house number"
+msgstr "Hausnummer"
 
 #: includes/model/service/class-dhlpwc-model-service-label.php:60
-msgid "Cannot parse street from receiver address."
-msgstr "Die Straße kann nicht von der Empfängeradresse analysiert werden."
-
-#: includes/model/service/class-dhlpwc-model-service-label.php:65
-msgid "Cannot parse housenumber from receiver address."
-msgstr "Die Hausnummer kann nicht von der Empfängeradresse analysiert werden."
+#, php-format
+msgid "Receiver %s field is required."
+msgstr "Empfänger %s Feld ist erforderlich."
 
 #: includes/model/service/class-dhlpwc-model-service-label.php:72
-msgid "Cannot parse name from 'Hide sender' service option."
-msgstr ""
-"Der Name kann nicht über die Serviceoption \"Absender ausblenden\" "
-"analysiert werden."
-
 #: includes/model/service/class-dhlpwc-model-service-label.php:77
-msgid "Cannot parse street from 'Hide sender' service option."
-msgstr ""
-"Die Straße kann nicht über die Serviceoption \"Sender ausblenden\" "
-"analysiert werden."
+#: includes/model/service/class-dhlpwc-model-service-label.php:82
+#: includes/model/service/class-dhlpwc-model-service-label.php:87
+#, php-format
+msgid "Hide shipper %s field is required."
+msgstr "Ausblenden des Versenderfeldes %s  ist erforderlich."
+
+#: includes/model/service/class-dhlpwc-model-service-label.php:72
+msgid "company"
+msgstr "Unternehmen"
 
 #: includes/model/service/class-dhlpwc-model-service-label.php:82
-msgid "Cannot parse housenumber from 'Hide sender' service option."
-msgstr ""
-"Die Hausnummer kann nicht über die Option \"Sender verbergen\" analysiert "
-"werden."
+msgid "city"
+msgstr "Stadt"
 
 #: includes/model/service/class-dhlpwc-model-service-parcelshop.php:82
 msgid "Distance"
@@ -291,7 +297,7 @@ msgstr "Türlieferung"
 
 #: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:24
 msgid "Door delivery, avoid dropping at neighbours"
-msgstr "Tür Lieferung, vermeiden Sie, bei Nachbarn fallen"
+msgstr "Tür Lieferung, Nachbarzustellung vermeiden"
 
 #: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:33
 msgid "Door delivery in the evening"
@@ -338,7 +344,8 @@ msgstr "Versandzonen Einstellungen"
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:74
 msgid "Please enable Shipping Zones to use this feature."
-msgstr "Bitte aktivieren Sie Shipping Zones, um diese Funktion zu verwenden."
+msgstr ""
+"Bitte aktivieren Sie die Shipping Zonen, um diese Funktion zu verwenden."
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:99
 msgid "Plugin Settings"
@@ -376,7 +383,7 @@ msgstr ""
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:113
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:155
 msgid "Show"
-msgstr "Show"
+msgstr "Anzeigen"
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:114
 msgid ""
@@ -395,15 +402,15 @@ msgid ""
 "new window."
 msgstr ""
 "Etikettenaktionen wie das Herunterladen von PDF oder das Öffnen von Track & "
-"Trace öffnen sich in einem neuen Fenster."
+"Trace wird in einem neuen Fenster geöffnet."
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:125
 msgid "Bulk label creation"
-msgstr "Bulk-Label-Erstellung"
+msgstr "Sperrgut Label erstellen"
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:128
 msgid "Disabled"
-msgstr "Behindert"
+msgstr "Deaktiviert"
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:129
 msgid "Enabled - Choose the smallest available size"
@@ -417,8 +424,7 @@ msgstr "Aktiviert - Wählen Sie die kleinste verfügbare Größe"
 #, php-format
 msgid "Enabled - Choose size '%s' only, skip if unavailable"
 msgstr ""
-"Aktiviert - Wählen Sie nur die Größe '% s', überspringen Sie sie, wenn sie "
-"nicht verfügbar ist"
+"Aktiviert - Wählen Sie nur die Größe '%s', überspringen wenn nicht verfügbar"
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:130
 #: languages/dhlpwc.php:15
@@ -451,7 +457,7 @@ msgstr "Aktiviert - Wählen Sie die größte verfügbare Größe"
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:140
 msgid "Bulk label printing"
-msgstr "Bulk-Etikettendruck"
+msgstr "Sperrgut Label drucken"
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:146
 msgid "Track & trace in mail"
@@ -467,7 +473,7 @@ msgstr ""
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:153
 msgid "Track & trace component"
-msgstr "Track & Trace-Komponente"
+msgstr "Track & Trace Komponente"
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:156
 msgid ""
@@ -485,7 +491,7 @@ msgstr ""
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:203
 #, php-format
 msgid "Example: %s"
-msgstr "Beispiel:% s"
+msgstr "Beispiel: %s"
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:164
 #, php-format
@@ -493,8 +499,9 @@ msgid ""
 "Please configure your credentials for the Google Maps API. No Google Maps "
 "API credentials yet? Get it %shere%s."
 msgstr ""
-"Konfigurieren Sie Ihre Anmeldeinformationen für das Google Maps-API. Noch "
-"keine Google Maps API-Anmeldedaten? Holen Sie es% shree% s."
+"Konfigurieren Sie Ihre Anmeldeinformationen für das Google Maps-API. Haben "
+"Sie noch keine Google Maps API-Anmeldedaten? Holen Sie sich welche % shier"
+"% s."
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:175
 #, php-format
@@ -502,12 +509,12 @@ msgid ""
 "DHL API settings. Still missing API credentials? Follow the instructions "
 "%shere%s."
 msgstr ""
-"DHL-API-Einstellungen Immer noch fehlende API-Anmeldedaten? Befolgen Sie die "
-"Anweisungen% shree% s."
+"DHL-API-Einstellungen. Haben Sie immer noch keine API-Anmeldedaten? Befolgen "
+"Sie die Anweisungen %shier%s."
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:191
 msgid "Test connection"
-msgstr "Testverbindung"
+msgstr "Verbindung testen"
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:208
 msgid "Shipment options"
@@ -519,7 +526,7 @@ msgstr "Wählen Sie die Versandoptionen für die Empfänger Ihres Webshops."
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:214
 msgid "Send to business by default"
-msgstr "Standardmäßig an das Unternehmen senden"
+msgstr "Standardmäßig an Unternehmen senden"
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:217
 msgid ""
@@ -556,15 +563,15 @@ msgstr "Standardlieferadresse"
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:245
 msgid "Fill in the details of your shipping address."
-msgstr "Geben Sie die Details Ihrer Lieferadresse ein."
+msgstr "Geben Sie Ihrer Lieferadressedaten ein."
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:253
 msgid "Different return address"
-msgstr "Unterschiedliche Absenderadresse"
+msgstr "Abweichende Absenderadresse"
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:256
 msgid "Use a different address for return labels."
-msgstr "Verwenden Sie eine andere Adresse für Rücksendeetiketten."
+msgstr "Verwenden Sie eine abweichende Adresse für Rücksendeetiketten."
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:265
 msgid "Default hide sender address"
@@ -613,7 +620,7 @@ msgid ""
 "Monitoring URL. Used by developers. Can be used for active monitoring, "
 "please contact support for this feature. Will not be used if left empty."
 msgstr ""
-"Überwachungs-URL Wird von Entwicklern verwendet. Kann zur aktiven "
+"Überwachungs der URL. Wird von Entwicklern verwendet. Kann zur aktiven "
 "Überwachung verwendet werden, wenden Sie sich an den Support für diese "
 "Funktion. Wird nicht verwendet, wenn es leer gelassen wird."
 
@@ -650,7 +657,7 @@ msgstr "Angebot kostenloser Versand (ab einem bestimmten Betrag)."
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:385
 msgid "Free or discounted shipping threshold"
-msgstr "Freier oder ermäßigter Versandschwellenwert"
+msgstr "Kostenloser oder ermäßigter Versandschwellenwert"
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:387
 msgid ""
@@ -666,7 +673,7 @@ msgstr "Kostenloser oder ermäßigter Versand und Gutscheine"
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:399
 msgid "Calculate after applying coupons"
-msgstr "Berechnen Sie nach dem Anwenden von Gutscheinen"
+msgstr "Berechnen nach dem Anwendung von Gutscheinen"
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:400
 msgid ""
@@ -683,7 +690,7 @@ msgstr "Vorname"
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:442
 #: includes/view/order/meta/form/input/address.php:10
 msgid "Last Name"
-msgstr "Familienname, Nachname"
+msgstr "Nachname"
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:447
 #: includes/view/order/meta/form/input/address.php:17
@@ -747,7 +754,7 @@ msgstr "DHL für WooCommerce-Hinweis"
 #: includes/view/admin/notice.php:21
 #, php-format
 msgid "%sClick here%s to go to the settings screen."
-msgstr "% sKlicke hier% s, um zum Einstellungsbildschirm zu gelangen."
+msgstr "%sKlicke hier%s, um zum Einstellungsbildschirm zu gelangen."
 
 #: includes/view/admin/settings/options-grid-header.php:6
 msgid "Delivery Option"
@@ -763,17 +770,17 @@ msgstr "Geeignet für Kostenlos / Rabatt"
 
 #: includes/view/admin/settings/options-grid-header.php:10
 msgid "Free/discount Price"
-msgstr "Frei / Rabatt Preis"
+msgstr "Kostenlos / Rabatt"
 
 #: includes/view/cart/parcelshop-option.php:8
 #: includes/view/order/meta/form/input/parcelshop.php:11
 #: includes/view/order/meta/form/input/terminal.php:11
 msgid "Change"
-msgstr "Veränderung"
+msgstr "Ändern"
 
 #: includes/view/cart/parcelshop-option.php:10
 msgid "No location selected."
-msgstr "Kein Standort ausgewählt"
+msgstr "Kein Standort ausgewählt."
 
 #: includes/view/cart/parcelshop-option.php:11
 #: includes/view/cart/parcelshop/confirm-button.php:4
@@ -790,8 +797,9 @@ msgid ""
 "Once the shipment has been scanned, simply follow it with track & trace. "
 "Once the delivery is planned you will see the expected delivery time."
 msgstr ""
-"Sobald die Sendung gescannt wurde, folgen Sie ihr einfach mit Track & Trace. "
-"Sobald die Lieferung geplant ist, sehen Sie die voraussichtliche Lieferzeit."
+"Sobald die Sendung gescannt wurde, können Sie ihr einfach mit Track & Trace "
+"folgen. Sobald die Lieferung geplant ist, sehen Sie die voraussichtliche "
+"Lieferzeit."
 
 #: includes/view/order/meta.php:2
 msgid "Create a new label"
@@ -843,11 +851,11 @@ msgstr "Ausgewählt:"
 
 #: includes/view/order/meta/form/to-business.php:13
 msgid "Private"
-msgstr "Privatgelände"
+msgstr "Privat"
 
 #: includes/view/order/meta/form/to-business.php:14
 msgid "Business"
-msgstr "Geschäft"
+msgstr "Business"
 
 #: includes/view/order/meta/label-container.php:3
 msgid "Labels for this order"
@@ -987,7 +995,7 @@ msgstr "Drucken Sie zusätzliches Etikett für die Rücksendung"
 
 #: languages/dhlpwc.php:61
 msgid "Extra assurance"
-msgstr "Zusätzliche Sicherheit"
+msgstr "Zusatz Versicherung"
 
 #: languages/dhlpwc.php:62
 msgid "Signature on delivery"
@@ -1040,3 +1048,130 @@ msgstr "Lieferung zur Baustelle"
 #: languages/dhlpwc.php:76
 msgid "Ex Works"
 msgstr "Ab Werk"
+
+#~ msgid "Delivery date"
+#~ msgstr "Lieferdatum"
+
+#~ msgid ""
+#~ "Send\n"
+#~ "ASAP"
+#~ msgstr ""
+#~ "ASAP\n"
+#~ "Senden"
+
+#~ msgid ""
+#~ "Send\n"
+#~ "tomorrow"
+#~ msgstr ""
+#~ "Morgen\n"
+#~ "senden"
+
+#~ msgid ""
+#~ "Send in\n"
+#~ "%s days"
+#~ msgstr ""
+#~ "Senden Sie\n"
+#~ "in %s Tagen"
+
+#~ msgid ""
+#~ "Send\n"
+#~ "today"
+#~ msgstr ""
+#~ "Heute\n"
+#~ "senden"
+
+#~ msgid "Dashboard menu link"
+#~ msgstr "Dashboard-Menüverknüpfung"
+
+#~ msgid ""
+#~ "Add a shortcut to the WooCommerce dashboard menu to quickly jump to DHL "
+#~ "settings."
+#~ msgstr ""
+#~ "Fügen Sie eine Verknüpfung zum WooCommerce-Dashboard-Menü hinzu, um "
+#~ "schnell zu den DHL-Einstellungen zu wechseln."
+
+#~ msgid "Delivery times"
+#~ msgstr "Lieferzeiten"
+
+#~ msgid ""
+#~ "Allow customers to select delivery times and manage when to send packages"
+#~ msgstr ""
+#~ "Erlauben Sie den Kunden, Lieferzeiten zu wählen und zu verwalten, wann "
+#~ "Pakete versandt werden"
+
+#~ msgid "Enable delivery times"
+#~ msgstr "Lieferzeiten aktivieren"
+
+#~ msgid ""
+#~ "Show delivery date and time selection in the checkout and show delivery "
+#~ "dates in the dashboard."
+#~ msgstr ""
+#~ "Zeigen Sie die Lieferdatum- und -zeitauswahl in der Prüfung an und zeigen "
+#~ "Sie Lieferdaten im Dashboard an."
+
+#~ msgid "Check stock"
+#~ msgstr "Überprüfen Sie den Bestand"
+
+#~ msgid "Only show delivery times when all cart items are in stock."
+#~ msgstr "Nur Lieferzeiten anzeigen, wenn alle Artikel auf Lager sind."
+
+#~ msgid "%s available until"
+#~ msgstr "%s verfügbar bis"
+
+#~ msgid "Ship on %ss"
+#~ msgstr "Sende am %s"
+
+#~ msgid "Next day"
+#~ msgstr "Nächster Tag"
+
+#~ msgid "%s day"
+#~ msgstr "%s Tag"
+
+#~ msgid "Expected in %s"
+#~ msgstr "Erwartet in %s"
+
+#~ msgid "Selected date has passed"
+#~ msgstr "Das ausgewählte Datum ist abgelaufen"
+
+#~ msgid "from"
+#~ msgstr "von"
+
+#~ msgid "to"
+#~ msgstr "an"
+
+#~ msgid "Skip %s"
+#~ msgstr "Überspringen Sie %s"
+
+#~ msgid ""
+#~ "%s will not be considered as a shipping day when showing delivery dates."
+#~ msgstr ""
+#~ "%s wird bei der Angabe von Lieferterminen nicht als Versandtag betrachtet."
+
+#~ msgid "Cannot parse street from shipper address."
+#~ msgstr "Die Straße von der Absenderadresse kann nicht analysiert werden."
+
+#~ msgid "Cannot parse housenumber from shipper address."
+#~ msgstr ""
+#~ "Die Hausnummer kann nicht von der Absenderadresse analysiert werden."
+
+#~ msgid "Cannot parse street from receiver address."
+#~ msgstr "Die Straße kann nicht von der Empfängeradresse analysiert werden."
+
+#~ msgid "Cannot parse housenumber from receiver address."
+#~ msgstr ""
+#~ "Die Hausnummer kann nicht von der Empfängeradresse analysiert werden."
+
+#~ msgid "Cannot parse name from 'Hide sender' service option."
+#~ msgstr ""
+#~ "Der Name kann nicht über die Serviceoption \"Absender ausblenden\" "
+#~ "analysiert werden."
+
+#~ msgid "Cannot parse street from 'Hide sender' service option."
+#~ msgstr ""
+#~ "Die Straße kann nicht über die Serviceoption \"Sender ausblenden\" "
+#~ "analysiert werden."
+
+#~ msgid "Cannot parse housenumber from 'Hide sender' service option."
+#~ msgstr ""
+#~ "Die Hausnummer kann nicht über die Option \"Sender verbergen\" analysiert "
+#~ "werden."
