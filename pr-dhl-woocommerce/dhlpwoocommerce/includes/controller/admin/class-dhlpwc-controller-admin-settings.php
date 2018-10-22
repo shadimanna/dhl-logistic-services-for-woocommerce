@@ -27,14 +27,35 @@ class DHLPWC_Controller_Admin_Settings
             $collaboration_name = 'dhl-for-woocommerce/pr-dhl-woocommerce.php';
             add_filter('plugin_action_links_' . $collaboration_name, array($this, 'add_settings_link'), 10, 1);
 
+            $service = DHLPWC_Model_Service_Access_Control::instance();
+            if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_SUBMENU_LINK)) {
+                add_action('admin_menu', array($this, 'add_submenu_link'));
+            }
+
             add_action('admin_notices', array($this, 'check_for_notices'));
 
             add_action('wp_ajax_dhlpwc_dismiss_admin_notice', array($this, 'dismiss_admin_notice'));
             add_action('wp_ajax_dhlpwc_test_connection', array($this, 'test_connection'));
             add_action('wp_ajax_dhlpwc_dynamic_option_settings', array($this, 'dynamic_option_settings'));
             add_action('wp_ajax_dhlpwc_test_bulk_printing', array($this, 'test_bulk_printing'));
-
         }
+    }
+
+    public function add_submenu_link()
+    {
+        add_submenu_page(
+            'woocommerce',
+            __('DHL for WooCommerce', 'dhlpwc'),
+            __('DHL for WooCommerce', 'dhlpwc'),
+            'manage_options',
+            'dhlpwc-menu-link',
+            array($this, 'forward_settings_location')
+        );
+    }
+
+    public function forward_settings_location()
+    {
+        wp_safe_redirect(admin_url('admin.php?page=wc-settings&tab=shipping&section=dhlpwc'));
     }
 
     public function dismiss_admin_notice()

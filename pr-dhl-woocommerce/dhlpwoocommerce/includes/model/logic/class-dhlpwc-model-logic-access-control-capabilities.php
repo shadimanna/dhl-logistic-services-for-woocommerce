@@ -81,7 +81,7 @@ class DHLPWC_Model_Logic_Access_Control_Capabilities extends DHLPWC_Model_Core_S
         }
         $connector = DHLPWC_Model_API_Connector::instance();
         $sender_type = 'business'; // A webshop is always a business, not a regular consumer type nor a parcelshop. Will leave this as hardcoded for now.
-        $response = $connector->get(sprintf('capabilities/%s', $sender_type), $capability_check->to_array());
+        $response = $connector->get(sprintf('capabilities/%s', $sender_type), $capability_check->to_array(), 5);
 
         $capabilities = array();
 

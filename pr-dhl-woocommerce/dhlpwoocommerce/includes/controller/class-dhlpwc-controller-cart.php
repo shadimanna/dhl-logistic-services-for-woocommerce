@@ -10,22 +10,36 @@ class DHLPWC_Controller_Cart
     public function __construct()
     {
         add_action('wp_loaded', array($this, 'set_parcelshop_hooks'));
+        add_action('wp_loaded', array($this, 'set_delivery_time_hooks'));
     }
 
     public function set_parcelshop_hooks()
     {
         $service = DHLPWC_Model_Service_Access_Control::instance();
         if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CHECKOUT_PARCELSHOP)) {
-            add_action('wp_enqueue_scripts', array($this, 'load_styles'));
-            add_action('wp_enqueue_scripts', array($this, 'load_scripts'));
+            add_action('wp_enqueue_scripts', array($this, 'load_parcelshop_styles'));
+            add_action('wp_enqueue_scripts', array($this, 'load_parcelshop_scripts'));
 
-            add_action('woocommerce_after_shipping_rate', array($this, 'show_custom_shipping_method'), 10, 2);
+            add_action('woocommerce_after_shipping_rate', array($this, 'show_parcelshop_shipping_method'), 10, 2);
 
             add_action('wp_ajax_dhlpwc_load_parcelshop_selection', array($this, 'parcelshop_modal_content'));
             add_action('wp_ajax_nopriv_dhlpwc_load_parcelshop_selection', array($this, 'parcelshop_modal_content'));
 
             add_action('wp_ajax_dhlpwc_parcelshop_selection_sync', array($this, 'parcelshop_selection_sync'));
             add_action('wp_ajax_nopriv_dhlpwc_parcelshop_selection_sync', array($this, 'parcelshop_selection_sync'));
+        }
+    }
+
+    public function set_delivery_time_hooks()
+    {
+        $service = DHLPWC_Model_Service_Access_Control::instance();
+        if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DELIVERY_TIMES_ACTIVE)) {
+            add_action('wp_enqueue_scripts', array($this, 'load_delivery_time_scripts'));
+
+            add_action('woocommerce_after_shipping_rate', array($this, 'show_delivery_times_shipping_method'), 10, 2);
+
+            add_action('wp_ajax_dhlpwc_delivery_time_selection_sync', array($this, 'delivery_time_selection_sync'));
+            add_action('wp_ajax_nopriv_dhlpwc_delivery_time_selection_sync', array($this, 'delivery_time_selection_sync'));
         }
     }
 
@@ -64,21 +78,71 @@ class DHLPWC_Controller_Cart
         wp_send_json($json_response->to_array(), 200);
     }
 
-    public function show_custom_shipping_method($method, $index)
+    public function delivery_time_selection_sync()
+    {
+        $json_response = new DHLPWC_Model_Response_JSON();
+
+        $selected = !empty($_POST['selected']) ? wc_clean($_POST['selected']) :  null;
+        $date = !empty($_POST['date']) ? wc_clean($_POST['date']) : null;
+        $start_time = !empty($_POST['start_time']) ? wc_clean($_POST['start_time']): null;
+        $end_time = !empty($_POST['end_time']) ? wc_clean($_POST['end_time']) : null;
+
+        WC()->session->set('dhlpwc_delivery_time_selection_sync', array($selected, $date, $start_time, $end_time));
+
+        wp_send_json($json_response->to_array(), 200);
+    }
+
+    public function show_delivery_times_shipping_method($method, $index)
     {
         $chosen_methods = WC()->session->get('chosen_shipping_methods');
         $chosen_shipping = $chosen_methods[0];
 
-        // This logic is used to always display extra content underneath a shipment method
-        if ($method->id == 'dhlpwc-parcelshop') {
-            // Output content here
+        // This logic shows extra content on the currently selected shipment method
+        if ($method->id == $chosen_shipping) {
+            switch($chosen_shipping) {
+                case 'dhlpwc-home':
+                case 'dhlpwc-home-same-day':
+                case 'dhlpwc-home-evening':
+                    // Get variables
+                    list($selected, $date, $start_time, $end_time) = ($sync = WC()->session->get('dhlpwc_delivery_time_selection_sync')) ? $sync : array(null, null, null, null);
+
+                    $service = DHLPWC_Model_Service_Checkout::instance();
+                    $postal_code = $service->get_cart_shipping_postal_code();
+                    $country_code = $service->get_cart_shipping_country_code();
+
+                    $service = DHLPWC_Model_Service_Delivery_Times::instance();
+                    $delivery_times = $service->get_time_frames($postal_code, $country_code, $selected);
+                    $delivery_times = $service->filter_time_frames($delivery_times);
+
+                    // Show delivery times
+                    if (!empty($delivery_times)) {
+                        $view = new DHLPWC_Template('cart.delivery-times-option');
+                        $view->render(array(
+                            'country_code'   => $country_code,
+                            'postal_code'    => $postal_code,
+                            'delivery_times' => $delivery_times,
+                        ));
+                    }
+
+                    break;
+                default:
+                    // Always empty selection sync if it's a different method
+                    WC()->session->set('dhlpwc_delivery_time_selection_sync', array(null, null, null, null));
+                    break;
+            }
         }
+    }
+
+    public function show_parcelshop_shipping_method($method, $index)
+    {
+        $chosen_methods = WC()->session->get('chosen_shipping_methods');
+        $chosen_shipping = $chosen_methods[0];
 
         // This logic shows extra content on the currently selected shipment method
         if ($method->id == $chosen_shipping) {
             switch($chosen_shipping) {
                 case 'dhlpwc-parcelshop':
-                    list($parcelshop_id, $country_code) = WC()->session->get('dhlpwc_parcelshop_selection_sync');
+                    list($parcelshop_id, $country_code) = ($sync = WC()->session->get('dhlpwc_parcelshop_selection_sync')) ? $sync : array(null, null);
                     $service = DHLPWC_Model_Service_Checkout::instance();
                     $search_value = $service->get_cart_shipping_postal_code(true) ?: null;
                     $country_code = $country_code ?: $service->get_cart_shipping_country_code();
@@ -102,7 +166,7 @@ class DHLPWC_Controller_Cart
         }
     }
 
-    public function load_scripts()
+    public function load_parcelshop_scripts()
     {
         if (is_cart() || is_checkout()) {
 
@@ -142,12 +206,32 @@ class DHLPWC_Controller_Cart
         }
     }
 
-    public function load_styles()
+    public function load_delivery_time_scripts()
+    {
+        if (is_cart() || is_checkout()) {
+            $select_woo_active = $this->version_check('3.2');
+            $dependencies = array('jquery');
+            if ($select_woo_active) {
+                $dependencies[] = 'selectWoo';
+            }
+
+            wp_enqueue_script( 'dhlpwc-checkout-delivery-time-script', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.deliverytime.js', $dependencies);
+            wp_localize_script(
+                'dhlpwc-checkout-delivery-time-script',
+                'dhlpwc_delivery_time_object',
+                array(
+                    'ajax_url'          => admin_url('admin-ajax.php'),
+                    'select_woo_active' => $select_woo_active ? 'true' : 'false',
+                )
+            );
+        }
+    }
+
+    public function load_parcelshop_styles()
     {
         if (is_cart() || is_checkout()) {
             wp_enqueue_style('dhlpwc-checkout-style', DHLPWC_PLUGIN_URL . 'assets/css/dhlpwc.cart.css');
             wp_enqueue_style('dhlpwc-checkout-modal-style', DHLPWC_PLUGIN_URL . 'assets/css/dhlpwc.modal.css');
-
             wp_enqueue_style('dhlpwc-checkout-parcelshop-dsl-style', '//unpkg.com/@dhl-parcel/dhl-servicepoint-locator@latest/build/dsl.css');
         }
     }
@@ -160,6 +244,17 @@ class DHLPWC_Controller_Cart
             $formatted[] = strlen($part) > 1 ? ucfirst(strtolower($part)) : "'".strtolower($part);
         }
         return implode(' ', $formatted);
+    }
+
+    protected function version_check($version = '3.2')
+    {
+        if (class_exists('WooCommerce')) {
+            global $woocommerce;
+            if (version_compare($woocommerce->version, $version, ">=")) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

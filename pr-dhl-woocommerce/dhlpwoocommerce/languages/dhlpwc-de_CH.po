@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: DHL to German\n"
-"POT-Creation-Date: 2018-10-16 12:15+0200\n"
+"POT-Creation-Date: 2018-10-18 17:31+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -37,40 +37,51 @@ msgstr "Liste aktualisiert."
 msgid "DHL"
 msgstr "DHL"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-order.php:38
+#: includes/controller/admin/class-dhlpwc-controller-admin-order.php:58
+#: includes/controller/admin/class-dhlpwc-controller-admin-order.php:100
+msgid "Delivery date"
+msgstr "Lieferdatum"
+
+#: includes/controller/admin/class-dhlpwc-controller-admin-order.php:136
 msgid "DHL - Create label"
 msgstr "DHL - Etikett erstellen"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-order.php:93
+#: includes/controller/admin/class-dhlpwc-controller-admin-order.php:191
 msgid "DHL - Print label"
 msgstr "DHL - Etikett drucken"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-order.php:117
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:111
+#: includes/controller/admin/class-dhlpwc-controller-admin-order.php:215
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:118
 msgid "DHL label info"
 msgstr "DHL-Etiketteninfo"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-order.php:180
+#: includes/controller/admin/class-dhlpwc-controller-admin-order.php:276
 msgid "Send to DHL ServicePoint"
 msgstr "Senden Sie an DHL ServicePoint"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:47
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:48
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:49
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:27
+msgid "DHL for WooCommerce"
+msgstr "DHL für WooCommerce"
+
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:68
 msgid "Unknown tag"
 msgstr "Unbekanntes Tag"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:74
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:95
 msgid "Connection successful"
 msgstr "Verbindung erfolgreich"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:74
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:95
 msgid "Authentication failed"
 msgstr "Authentifizierung fehlgeschlagen"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:89
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:110
 msgid "Activated bulk PDF printing"
 msgstr "Aktivierter Massen PDF-Drucken"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:89
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:110
 msgid ""
 "PDFMerger cannot be initiated. To use bulk printing, please check and "
 "resolve any conflicting third plugins causing this issue."
@@ -79,78 +90,78 @@ msgstr ""
 "möchten, überprüfen und beheben Sie alle Konflikte verursachenden dritten "
 "Plugins, die dieses Problem verursachen."
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:108
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:129
 msgid "Test connection and retrieve account data"
 msgstr "Testen Sie die Verbindung und rufen Sie die Kontodaten ab"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:109
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:130
 msgid "Please wait..."
 msgstr "Bitte warten..."
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:110
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:131
 msgid "Accounts found. Click to use."
 msgstr "Konten gefunden. Bitte wählen."
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:111
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:132
 msgid "OrganizationID found. Click to use."
 msgstr "OrganisationsID gefunden.Bitte wählen."
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:175
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:184
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:187
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:190
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:193
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:202
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:196
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:205
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:208
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:211
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:214
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:223
 #, php-format
 msgid "Missing %1$s from %2$s"
 msgstr "%1$s von %2$s fehlen"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:175
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:196
 msgid "Country / State"
 msgstr "Land / Staat"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:175
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:196
 msgid "General"
 msgstr "Allgemeines"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:184
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:181
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:205
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:188
 msgid "UserID"
 msgstr "Benutzeridentifikation"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:184
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:187
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:190
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:193
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:172
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:205
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:208
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:211
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:214
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:179
 msgid "Account details"
 msgstr "Kontodetails"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:187
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:186
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:208
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:193
 msgid "Key"
 msgstr "Key"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:190
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:196
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:211
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:203
 msgid "AccountID"
 msgstr "KontoID"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:193
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:201
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:214
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:208
 msgid "OrganizationID"
 msgstr "Organisations-ID"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:202
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:160
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:223
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:167
 msgid "Google Maps key"
 msgstr "Google Maps-Schlüssel"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:202
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:223
 msgid "Plugin settings"
 msgstr "Plugin-Einstellungen"
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:203
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:224
 msgid ""
 "To continue using DHL ServicePoint and show a visual map to customers, "
 "please add a Google Maps API key. If left empty, the DHL ServicePoint map "
@@ -161,17 +172,50 @@ msgstr ""
 "diese leer gelassen wird, wird die DHL ServicePoint-Karte ab dem 30. Oktober "
 "um 22:00 Uhr nicht mehr angezeigt"
 
-#: includes/controller/class-dhlpwc-controller-checkout.php:74
+#: includes/controller/class-dhlpwc-controller-checkout.php:81
 msgid "Choose a DHL ServicePoint"
 msgstr "Wählen Sie einen DHL ServicePoint"
 
-#: includes/controller/class-dhlpwc-controller-checkout.php:78
+#: includes/controller/class-dhlpwc-controller-checkout.php:85
 msgid ""
 "The DHL ServicePoint country cannot be different than the shipping address "
 "country."
 msgstr ""
 "Das Land des DHL ServicePoint kann nicht anders sein als das Land in der "
 "Lieferadresse."
+
+#: includes/model/service/class-dhlpwc-model-service-delivery-times.php:370
+msgid ""
+"Send\n"
+"ASAP"
+msgstr ""
+"ASAP\n"
+"Senden"
+
+#: includes/model/service/class-dhlpwc-model-service-delivery-times.php:374
+msgid ""
+"Send\n"
+"tomorrow"
+msgstr ""
+"Morgen\n"
+"senden"
+
+#: includes/model/service/class-dhlpwc-model-service-delivery-times.php:384
+#, php-format
+msgid ""
+"Send in\n"
+"%s days"
+msgstr ""
+"Senden Sie\n"
+"in %s Tagen"
+
+#: includes/model/service/class-dhlpwc-model-service-delivery-times.php:388
+msgid ""
+"Send\n"
+"today"
+msgstr ""
+"Heute\n"
+"senden"
 
 #: includes/model/service/class-dhlpwc-model-service-label-metabox.php:121
 #: languages/dhlpwc.php:57 languages/dhlpwc.php:65
@@ -248,30 +292,37 @@ msgid "Search"
 msgstr "Suche"
 
 #: includes/model/service/class-dhlpwc-model-service-parcelshop.php:84
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:476
 msgid "Monday"
 msgstr "Montag"
 
 #: includes/model/service/class-dhlpwc-model-service-parcelshop.php:85
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:477
 msgid "Tuesday"
 msgstr "Dienstag"
 
 #: includes/model/service/class-dhlpwc-model-service-parcelshop.php:86
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:478
 msgid "Wednesday"
 msgstr "Mittwoch"
 
 #: includes/model/service/class-dhlpwc-model-service-parcelshop.php:87
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:479
 msgid "Thursday"
 msgstr "Donnerstag"
 
 #: includes/model/service/class-dhlpwc-model-service-parcelshop.php:88
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:480
 msgid "Friday"
 msgstr "Freitag"
 
 #: includes/model/service/class-dhlpwc-model-service-parcelshop.php:89
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:481
 msgid "Saturday"
 msgstr "Samstag"
 
 #: includes/model/service/class-dhlpwc-model-service-parcelshop.php:90
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:482
 msgid "Sunday"
 msgstr "Sonntag"
 
@@ -291,37 +342,33 @@ msgstr "bis"
 msgid "and"
 msgstr "und"
 
-#: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:16
+#: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:34
 msgid "Door delivery"
 msgstr "Türlieferung"
 
-#: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:24
-msgid "Door delivery, avoid dropping at neighbours"
-msgstr "Tür Lieferung, Nachbarzustellung vermeiden"
-
-#: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:33
+#: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:42
 msgid "Door delivery in the evening"
 msgstr "Türlieferung am Abend"
 
-#: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:42
+#: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:51
 msgid "Door delivery today"
 msgstr "Türlieferung heute"
 
-#: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:51
+#: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:60
+msgid "Door delivery, avoid dropping at neighbours"
+msgstr "Tür Lieferung, Nachbarzustellung vermeiden"
+
+#: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:69
 msgid "Door delivery on Saturdays"
 msgstr "Türlieferung an Samstagen"
 
-#: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:60
+#: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:78
 msgid "Door delivery before 11:00AM"
 msgstr "Türlieferung vor 11:00 Uhr"
 
-#: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:79
+#: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:88
 msgid "ServicePoint delivery"
 msgstr "ServicePoint Lieferung"
-
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:27
-msgid "DHL for WooCommerce"
-msgstr "DHL für WooCommerce"
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:28
 msgid ""
@@ -360,17 +407,22 @@ msgid "Enable plugin"
 msgstr "Plugin aktivieren"
 
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:106
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:120
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:142
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:148
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:216
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:224
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:232
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:255
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:267
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:287
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:293
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:378
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:113
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:127
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:149
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:155
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:223
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:231
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:239
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:273
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:285
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:305
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:311
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:396
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:451
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:457
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:500
+#: includes/view/admin/settings/delivery-times-header.php:6
 #: includes/view/admin/settings/options-grid-header.php:7
 msgid "Enable"
 msgstr "Aktivieren"
@@ -380,23 +432,35 @@ msgid "Disabling this turns all of the plugin's features off."
 msgstr ""
 "Wenn Sie dies deaktivieren, werden alle Funktionen des Plug-Ins deaktiviert."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:113
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:155
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:111
+msgid "Dashboard menu link"
+msgstr "Dashboard-Menüverknüpfung"
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:114
+msgid ""
+"Add a shortcut to the WooCommerce dashboard menu to quickly jump to DHL "
+"settings."
+msgstr ""
+"Fügen Sie eine Verknüpfung zum WooCommerce-Dashboard-Menü hinzu, um schnell "
+"zu den DHL-Einstellungen zu wechseln."
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:120
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:162
 msgid "Show"
 msgstr "Anzeigen"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:114
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:121
 msgid ""
 "Add shipping information in an additional column in your order overview."
 msgstr ""
 "Fügen Sie Versandinformationen in einer zusätzlichen Spalte in Ihrer "
 "Bestellübersicht hinzu."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:118
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:125
 msgid "Open admin label links in a new window"
 msgstr "Öffnen Sie die Admin-Label-Links in einem neuen Fenster"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:121
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:128
 msgid ""
 "Label actions like downloading PDF or opening track & trace will open in a "
 "new window."
@@ -404,66 +468,66 @@ msgstr ""
 "Etikettenaktionen wie das Herunterladen von PDF oder das Öffnen von Track & "
 "Trace wird in einem neuen Fenster geöffnet."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:125
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:132
 msgid "Bulk label creation"
 msgstr "Sperrgut Label erstellen"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:128
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:135
 msgid "Disabled"
 msgstr "Deaktiviert"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:129
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:136
 msgid "Enabled - Choose the smallest available size"
 msgstr "Aktiviert - Wählen Sie die kleinste verfügbare Größe"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:130
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:131
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:132
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:133
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:134
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:137
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:138
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:139
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:140
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:141
 #, php-format
 msgid "Enabled - Choose size '%s' only, skip if unavailable"
 msgstr ""
 "Aktiviert - Wählen Sie nur die Größe '%s', überspringen wenn nicht verfügbar"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:130
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:137
 #: languages/dhlpwc.php:15
 msgid "PARCELTYPE_SMALL"
 msgstr "Small"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:131
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:138
 #: languages/dhlpwc.php:16
 msgid "PARCELTYPE_MEDIUM"
 msgstr "Medium"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:132
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:139
 #: languages/dhlpwc.php:17
 msgid "PARCELTYPE_LARGE"
 msgstr "Large"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:133
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:140
 #: languages/dhlpwc.php:20
 msgid "PARCELTYPE_XSMALL"
 msgstr "Extra Small"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:134
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:141
 #: languages/dhlpwc.php:21
 msgid "PARCELTYPE_XLARGE"
 msgstr "Extra Large"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:135
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:142
 msgid "Enabled - Choose the largest available size"
 msgstr "Aktiviert - Wählen Sie die größte verfügbare Größe"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:140
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:147
 msgid "Bulk label printing"
 msgstr "Sperrgut Label drucken"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:146
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:153
 msgid "Track & trace in mail"
 msgstr "Track & Trace in Mail"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:149
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:156
 msgid ""
 "Add track & trace information to the default WooCommerce 'completed order' e-"
 "mail if available."
@@ -471,11 +535,11 @@ msgstr ""
 "Fügen Sie Track & Trace-Informationen zur Standard-E-Mail-Nachricht von "
 "WooCommerce \"abgeschlossener Auftrag\" hinzu, falls verfügbar."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:153
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:160
 msgid "Track & trace component"
 msgstr "Track & Trace Komponente"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:156
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:163
 msgid ""
 "Include a track & trace component in the order summary for customers, when "
 "they log into the website and check their account information."
@@ -484,16 +548,16 @@ msgstr ""
 "Kunden ein, wenn sie sich bei der Website anmelden und ihre "
 "Kontoinformationen überprüfen."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:162
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:183
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:188
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:198
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:203
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:169
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:190
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:195
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:205
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:210
 #, php-format
 msgid "Example: %s"
 msgstr "Beispiel: %s"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:164
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:171
 #, php-format
 msgid ""
 "Please configure your credentials for the Google Maps API. No Google Maps "
@@ -503,7 +567,7 @@ msgstr ""
 "Sie noch keine Google Maps API-Anmeldedaten? Holen Sie sich welche % shier"
 "% s."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:175
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:182
 #, php-format
 msgid ""
 "DHL API settings. Still missing API credentials? Follow the instructions "
@@ -512,23 +576,23 @@ msgstr ""
 "DHL-API-Einstellungen. Haben Sie immer noch keine API-Anmeldedaten? Befolgen "
 "Sie die Anweisungen %shier%s."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:191
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:198
 msgid "Test connection"
 msgstr "Verbindung testen"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:208
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:215
 msgid "Shipment options"
 msgstr "Versandoptionen"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:210
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:217
 msgid "Choose the shipment options for the recipients of your webshop."
 msgstr "Wählen Sie die Versandoptionen für die Empfänger Ihres Webshops."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:214
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:221
 msgid "Send to business by default"
 msgstr "Standardmäßig an Unternehmen senden"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:217
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:224
 msgid ""
 "When enabled, by default labels will be created for business shipments and "
 "the checkout will show business shipping options."
@@ -537,11 +601,11 @@ msgstr ""
 "Geschäftssendungen erstellt, und beim Auschecken werden die Versandoptionen "
 "angezeigt."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:222
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:229
 msgid "Always enable required signature if available"
 msgstr "Aktivieren Sie immer die erforderliche Signatur, falls verfügbar"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:225
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:232
 msgid ""
 "When creating a label, always select the signature option by default if the "
 "service is available."
@@ -549,53 +613,64 @@ msgstr ""
 "Wählen Sie beim Erstellen eines Labels immer die Signaturoption, wenn der "
 "Service verfügbar ist."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:230
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:237
 msgid "Use shipping zones"
 msgstr "Verwenden Sie Versandzonen"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:233
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:240
 msgid "Set shipping methods per shipping zone."
 msgstr "Legen Sie die Versandarten pro Versandzone fest."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:243
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:250
+msgid "Delivery times"
+msgstr "Lieferzeiten"
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:252
+msgid ""
+"Allow customers to select delivery times and manage when to send packages"
+msgstr ""
+"Erlauben Sie den Kunden, Lieferzeiten zu wählen und zu verwalten, wann "
+"Pakete versandt werden"
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:261
 msgid "Default Shipping Address"
 msgstr "Standardlieferadresse"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:245
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:263
 msgid "Fill in the details of your shipping address."
 msgstr "Geben Sie Ihrer Lieferadressedaten ein."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:253
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:271
 msgid "Different return address"
 msgstr "Abweichende Absenderadresse"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:256
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:274
 msgid "Use a different address for return labels."
 msgstr "Verwenden Sie eine abweichende Adresse für Rücksendeetiketten."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:265
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:283
 msgid "Default hide sender address"
 msgstr "Standard Absenderadresse ausblenden"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:268
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:286
 msgid "Set a default address for the 'Hide sender' service option."
 msgstr ""
 "Legen Sie eine Standardadresse für die Serviceoption \"Absender ausblenden\" "
 "fest."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:280
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:298
 msgid "Debug Settings"
 msgstr "Debug-Einstellungen"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:282
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:300
 msgid "Settings for developers."
 msgstr "Einstellungen für Entwickler."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:285
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:303
 msgid "Report errors"
 msgstr "Fehler melden"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:288
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:306
 msgid ""
 "Enable this and select one of the reporting methods below to automatically "
 "send errors of this plugin to the development team."
@@ -603,19 +678,19 @@ msgstr ""
 "Aktivieren Sie dies und wählen Sie eine der unten aufgeführten Methoden aus, "
 "um Fehler des Plugins automatisch an das Entwicklerteam zu senden."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:291
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:309
 msgid "By mail"
 msgstr "Per Mail"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:294
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:312
 msgid "Errors will be automatically forwarded by e-mail."
 msgstr "Fehler werden automatisch per E-Mail weitergeleitet."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:297
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:315
 msgid "By custom URL"
 msgstr "Nach benutzerdefinierter URL"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:299
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:317
 msgid ""
 "Monitoring URL. Used by developers. Can be used for active monitoring, "
 "please contact support for this feature. Will not be used if left empty."
@@ -624,22 +699,22 @@ msgstr ""
 "Überwachung verwendet werden, wenden Sie sich an den Support für diese "
 "Funktion. Wird nicht verwendet, wenn es leer gelassen wird."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:302
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:320
 msgid "External custom URL"
 msgstr "Externe benutzerdefinierte URL"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:304
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:322
 msgid ""
 "Alternative external URL. Used by developers. Will not be used if left empty."
 msgstr ""
 "Alternative externe URL Wird von Entwicklern verwendet. Wird nicht "
 "verwendet, wenn es leer gelassen wird."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:368
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:386
 msgid "Enter prices with tax included"
 msgstr "Geben Sie Preise inklusive Steuern ein"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:370
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:388
 msgid ""
 "Turn this on to enter prices with the tax included. Turn this off to enter "
 "prices without tax."
@@ -647,19 +722,19 @@ msgstr ""
 "Aktivieren Sie diese Option, um die Preise inklusive Steuern einzugeben. "
 "Deaktivieren Sie diese Option, um Preise ohne Steuern einzugeben."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:376
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:394
 msgid "Free or discounted shipping"
 msgstr "Kostenloser oder ermäßigter Versand"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:379
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:397
 msgid "Offer free shipping (over a certain amount)."
 msgstr "Angebot kostenloser Versand (ab einem bestimmten Betrag)."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:385
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:403
 msgid "Free or discounted shipping threshold"
 msgstr "Kostenloser oder ermäßigter Versandschwellenwert"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:387
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:405
 msgid ""
 "Free or discounted shipping prices are applied when the total price is over "
 "the inputted value."
@@ -667,82 +742,122 @@ msgstr ""
 "Kostenlose oder ermäßigte Versandkosten gelten, wenn der Gesamtpreis über "
 "dem eingegebenen Wert liegt."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:397
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:415
 msgid "Free or discounted shipping and coupons"
 msgstr "Kostenloser oder ermäßigter Versand und Gutscheine"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:399
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:417
 msgid "Calculate after applying coupons"
 msgstr "Berechnen nach dem Anwendung von Gutscheinen"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:400
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:418
 msgid ""
 "Calculate eligibility for free or discounted shipping after applying coupons."
 msgstr ""
 "Berechnen Sie die Berechtigung für kostenlose oder ermäßigte Lieferung nach "
 "der Anwendung von Gutscheinen."
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:437
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:449
+msgid "Enable delivery times"
+msgstr "Lieferzeiten aktivieren"
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:452
+msgid ""
+"Show delivery date and time selection in the checkout and show delivery "
+"dates in the dashboard."
+msgstr ""
+"Zeigen Sie die Lieferdatum- und -zeitauswahl in der Prüfung an und zeigen "
+"Sie Lieferdaten im Dashboard an."
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:455
+msgid "Check stock"
+msgstr "Überprüfen Sie den Bestand"
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:459
+msgid "Only show delivery times when all cart items are in stock."
+msgstr "Nur Lieferzeiten anzeigen, wenn alle Artikel auf Lager sind."
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:466
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:467
+#, php-format
+msgid "%s available until"
+msgstr "%s verfügbar bis"
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:498
+#, php-format
+msgid "Ship on %ss"
+msgstr "Sende am %s"
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:515
+msgid "Next day"
+msgstr "Nächster Tag"
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:517
+#, php-format
+msgid "%s day"
+msgstr "%s Tag"
+
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:596
 #: includes/view/order/meta/form/input/address.php:3
 msgid "First Name"
 msgstr "Vorname"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:442
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:601
 #: includes/view/order/meta/form/input/address.php:10
 msgid "Last Name"
 msgstr "Nachname"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:447
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:606
 #: includes/view/order/meta/form/input/address.php:17
 msgid "Company"
 msgstr "Unternehmen"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:453
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:612
 #: includes/view/order/meta/form/input/address.php:24
 msgid "Postcode"
 msgstr "Postleitzahl"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:458
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:617
 #: includes/view/order/meta/form/input/address.php:31
 msgid "City"
 msgstr "Stadt"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:463
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:622
 #: includes/view/order/meta/form/input/address.php:38
 msgid "Street"
 msgstr "Straße"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:468
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:627
 #: includes/view/order/meta/form/input/address.php:45
 msgid "Number"
 msgstr "Nummer"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:473
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:632
 msgid "Country"
 msgstr "Land"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:476
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:635
 msgid "Netherlands"
 msgstr "Niederlande"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:477
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:636
 msgid "Belgium"
 msgstr "Belgien"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:478
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:637
 msgid "Luxembourg"
 msgstr "Luxemburg"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:479
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:638
 msgid "Switzerland"
 msgstr "Schweiz"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:485
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:644
 #: includes/view/order/meta/form/input/address.php:52
 msgid "Email"
 msgstr "Email"
 
-#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:490
+#: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:649
 #: includes/view/order/meta/form/input/address.php:59
 msgid "Phone"
 msgstr "Telefon"
@@ -755,6 +870,23 @@ msgstr "DHL für WooCommerce-Hinweis"
 #, php-format
 msgid "%sClick here%s to go to the settings screen."
 msgstr "%sKlicke hier%s, um zum Einstellungsbildschirm zu gelangen."
+
+#: includes/view/admin/order/delivery-times.php:12
+#, php-format
+msgid "Expected in %s"
+msgstr "Erwartet in %s"
+
+#: includes/view/admin/order/delivery-times.php:14
+msgid "Selected date has passed"
+msgstr "Das ausgewählte Datum ist abgelaufen"
+
+#: includes/view/admin/order/delivery-times.php:16
+msgid "from"
+msgstr "von"
+
+#: includes/view/admin/order/delivery-times.php:16
+msgid "to"
+msgstr "an"
 
 #: includes/view/admin/settings/options-grid-header.php:6
 msgid "Delivery Option"
@@ -1048,96 +1180,6 @@ msgstr "Lieferung zur Baustelle"
 #: languages/dhlpwc.php:76
 msgid "Ex Works"
 msgstr "Ab Werk"
-
-#~ msgid "Delivery date"
-#~ msgstr "Lieferdatum"
-
-#~ msgid ""
-#~ "Send\n"
-#~ "ASAP"
-#~ msgstr ""
-#~ "ASAP\n"
-#~ "Senden"
-
-#~ msgid ""
-#~ "Send\n"
-#~ "tomorrow"
-#~ msgstr ""
-#~ "Morgen\n"
-#~ "senden"
-
-#~ msgid ""
-#~ "Send in\n"
-#~ "%s days"
-#~ msgstr ""
-#~ "Senden Sie\n"
-#~ "in %s Tagen"
-
-#~ msgid ""
-#~ "Send\n"
-#~ "today"
-#~ msgstr ""
-#~ "Heute\n"
-#~ "senden"
-
-#~ msgid "Dashboard menu link"
-#~ msgstr "Dashboard-Menüverknüpfung"
-
-#~ msgid ""
-#~ "Add a shortcut to the WooCommerce dashboard menu to quickly jump to DHL "
-#~ "settings."
-#~ msgstr ""
-#~ "Fügen Sie eine Verknüpfung zum WooCommerce-Dashboard-Menü hinzu, um "
-#~ "schnell zu den DHL-Einstellungen zu wechseln."
-
-#~ msgid "Delivery times"
-#~ msgstr "Lieferzeiten"
-
-#~ msgid ""
-#~ "Allow customers to select delivery times and manage when to send packages"
-#~ msgstr ""
-#~ "Erlauben Sie den Kunden, Lieferzeiten zu wählen und zu verwalten, wann "
-#~ "Pakete versandt werden"
-
-#~ msgid "Enable delivery times"
-#~ msgstr "Lieferzeiten aktivieren"
-
-#~ msgid ""
-#~ "Show delivery date and time selection in the checkout and show delivery "
-#~ "dates in the dashboard."
-#~ msgstr ""
-#~ "Zeigen Sie die Lieferdatum- und -zeitauswahl in der Prüfung an und zeigen "
-#~ "Sie Lieferdaten im Dashboard an."
-
-#~ msgid "Check stock"
-#~ msgstr "Überprüfen Sie den Bestand"
-
-#~ msgid "Only show delivery times when all cart items are in stock."
-#~ msgstr "Nur Lieferzeiten anzeigen, wenn alle Artikel auf Lager sind."
-
-#~ msgid "%s available until"
-#~ msgstr "%s verfügbar bis"
-
-#~ msgid "Ship on %ss"
-#~ msgstr "Sende am %s"
-
-#~ msgid "Next day"
-#~ msgstr "Nächster Tag"
-
-#~ msgid "%s day"
-#~ msgstr "%s Tag"
-
-#~ msgid "Expected in %s"
-#~ msgstr "Erwartet in %s"
-
-#~ msgid "Selected date has passed"
-#~ msgstr "Das ausgewählte Datum ist abgelaufen"
-
-#~ msgid "from"
-#~ msgstr "von"
-
-#~ msgid "to"
-#~ msgstr "an"
 
 #~ msgid "Skip %s"
 #~ msgstr "Überspringen Sie %s"

@@ -10,6 +10,7 @@ class DHLPWC_Controller_Admin_Order
     public function __construct()
     {
         if (is_admin()) {
+
             add_action('admin_enqueue_scripts', array($this, 'load_styles'));
 
             add_action('woocommerce_admin_order_data_after_shipping_address', array($this, 'parcelshop_info'), 10, 1);
@@ -17,7 +18,7 @@ class DHLPWC_Controller_Admin_Order
             $service = DHLPWC_Model_Service_Access_Control::instance();
             if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_COLUMN_INFO)) {
                 add_filter('manage_edit-shop_order_columns', array($this, 'add_label_column'), 10, 1);
-                add_action('manage_shop_order_posts_custom_column', array($this, 'add_label_column_content'), 10, 1);
+                add_action('manage_shop_order_posts_custom_column', array($this, 'add_label_column_content'), 10, 2);
             }
 
             if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_BULK_CREATE)) {
@@ -29,6 +30,103 @@ class DHLPWC_Controller_Admin_Order
             if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_BULK_PRINT)) {
                 add_filter('bulk_actions-edit-shop_order', array($this, 'add_bulk_print_action'));
                 add_action('admin_action_dhlpwc_print_labels', array($this, 'print_multiple_labels'));
+            }
+
+            if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DELIVERY_TIMES)) {
+                add_filter('views_edit-shop_order',array($this, 'add_delivery_times_filter'), 10, 1);
+
+                add_filter('manage_edit-shop_order_columns', array($this, 'add_delivery_time_column'));
+                add_action( 'manage_shop_order_posts_custom_column', array($this, 'add_delivery_time_column_content'), 10, 2 );
+
+                add_filter( 'manage_edit-shop_order_sortable_columns', array($this, 'sort_delivery_time_column'));
+                add_action( 'pre_get_posts', array($this, 'delivery_date_orderby'));
+            }
+        }
+    }
+
+    public function add_delivery_times_filter($views)
+    {
+        $result = new WP_Query(array(
+            'post_type'   => 'shop_order',
+            'post_status' => $this->get_available_statuses(),
+            'meta_key'  => DHLPWC_Model_Service_Delivery_Times::ORDER_TIME_SELECTION,
+            )
+        );
+
+        $views['dhlpwc_delivery_date'] = sprintf('%1$s%2$s%3$s%4$s',
+            '<a href="'.admin_url('edit.php?post_type=shop_order&orderby=dhlpwc_delivery_date&order=asc').'">',
+            esc_attr(__('Delivery date', 'dhlpwc')),
+            '</a>',
+            '<span class="count">('.$result->found_posts.')</span>');
+
+        return $views;
+    }
+
+    public function sort_delivery_time_column($columns)
+    {
+        $columns['dhlpwc_delivery_time'] = 'dhlpwc_delivery_date';
+        return $columns;
+    }
+
+    public function delivery_date_orderby($query)
+    {
+        if (!is_admin()) {
+            return;
+        }
+
+        $screen = get_current_screen();
+        if ($screen->base != 'edit' || $screen->post_type != 'shop_order') {
+            return;
+        }
+
+        $orderby = $query->get('orderby');
+
+        if ($orderby === 'dhlpwc_delivery_date') {
+            $meta_query = array(
+                array(
+                    'key'     => DHLPWC_Model_Service_Delivery_Times::ORDER_TIME_SELECTION,
+                    'value' => serialize('timestamp'),
+                    'compare' => 'LIKE',
+                ),
+            );
+
+            $query->set('meta_query', $meta_query);
+            $query->set('post_status', $this->get_available_statuses());
+            $query->set('orderby', 'meta_value');
+        }
+    }
+
+    public function add_delivery_time_column($columns) {
+        $columns['dhlpwc_delivery_time'] = __('Delivery date', 'dhlpwc');
+        return $columns;
+    }
+
+    public function add_delivery_time_column_content($column, $order_id)
+    {
+        if ($column !== 'dhlpwc_delivery_time') {
+            return;
+        }
+
+        $service = DHLPWC_Model_Service_Delivery_Times::instance();
+        $time_selection = $service->get_order_time_selection($order_id);
+        if ($time_selection) {
+            $current_timestamp = current_time('timestamp');
+            $time_left = human_time_diff($current_timestamp, $time_selection->timestamp);
+            if ($current_timestamp > $time_selection->timestamp) {
+                $time_left = null;
+            }
+            $delivery_time = $service->parse_time_frame($time_selection->date, $time_selection->start_time, $time_selection->end_time);
+            $shipping_advice = $service->get_shipping_advice($current_timestamp, $time_selection->timestamp);
+            $shipping_advice_class = $service->get_shipping_advice_class($current_timestamp, $time_selection->timestamp);
+
+            if (!empty($delivery_time)) {
+                $view = new DHLPWC_Template('admin.order.delivery-times');
+                $view->render(array(
+                    'time_left'             => $time_left,
+                    'delivery_time'         => $delivery_time,
+                    'shipping_advice'       => $shipping_advice,
+                    'shipping_advice_class' => $shipping_advice_class,
+                ));
             }
         }
     }
@@ -118,7 +216,7 @@ class DHLPWC_Controller_Admin_Order
             array_slice($columns, $offset, null, true);
     }
 
-    public function add_label_column_content($column)
+    public function add_label_column_content($column, $order_id)
     {
         switch($column) {
             case 'dhlpwc_label_created':
@@ -126,7 +224,7 @@ class DHLPWC_Controller_Admin_Order
                 $external_link = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_OPEN_LABEL_LINKS_EXTERNAL);
 
                 $service = DHLPWC_Model_Service_Order_Meta::instance();
-                $labels = $service->get_labels(get_the_ID());
+                $labels = $service->get_labels($order_id);
 
                 foreach($labels as $label) {
                     $view = new DHLPWC_Template('order.meta.label');
@@ -146,15 +244,13 @@ class DHLPWC_Controller_Admin_Order
                 }
                 break;
             case 'shipping_address':
-                $this->parcelshop_info(new WC_Order(get_the_ID()), true);
+                $this->parcelshop_info(new WC_Order($order_id), true);
                 break;
         }
     }
 
     /**
      * DHL ServicePoint information screen for an order.
-     * Note: we're not using $order, but wanted to add the $compact var, WooCommerce automatically passes the order when hooked
-     * into 'woocommerce_admin_order_data_after_shipping_address'
      *
      * @param null $order
      * @param bool $compact
@@ -191,6 +287,17 @@ class DHLPWC_Controller_Admin_Order
         if ($screen->base == 'post' && $screen->post_type == 'shop_order') {
             wp_enqueue_style('dhlpwc-admin-order-style', DHLPWC_PLUGIN_URL . 'assets/css/dhlpwc.admin.css');
         }
+    }
+
+    protected function get_available_statuses()
+    {
+        $statuses = wc_get_order_statuses();
+
+        unset($statuses['wc-completed']);
+        unset($statuses['wc-refunded']);
+        unset($statuses['wc-failed']);
+
+        return array_keys($statuses);
     }
 
 }

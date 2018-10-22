@@ -388,9 +388,72 @@ tr.dhlpwc-options-grid > td td {
     padding: 0 5px 0 0;
 }
 
-.dhlpwc-delivery-option-group td:first-child {
-    font-weight: bold;
+tr.dhlpwc-delivery-times-grid > td {
+    padding: 0;
 }
+
+tr.dhlpwc-delivery-times-grid > td th,
+tr.dhlpwc-delivery-times-grid > td td {
+    width: auto;
+    padding: 0 5px 0 0;
+}
+
+tr.dhlpwc-delivery-times-grid > td td:first-child {
+    padding-right: 50px;
+}
+
+.dhlpwc-delivery-times-container {
+    overflow: hidden;
+}
+
+.dhlpwc-delivery-times-receiving-day,
+.dhlpwc-delivery-times-shipping-day {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.dhlpwc-delivery-times-shipping-day-content {
+    line-height: normal;
+    text-align: center;
+    border-radius: 4px;
+    border-bottom: 1px solid rgba(0,0,0,.05);
+    padding: 8px;
+}
+
+.dhlpwc-delivery-times-shipping-day-content.dhlpwc-shipping-advice-asap {
+    background: #eba3a3;
+}
+.dhlpwc-delivery-times-shipping-day-content.dhlpwc-shipping-advice-asap p {
+    color: #761919;
+}
+
+.dhlpwc-delivery-times-shipping-day-content.dhlpwc-shipping-advice-soon {
+    background: #f8dda7;
+}
+.dhlpwc-delivery-times-shipping-day-content.dhlpwc-shipping-advice-soon p {
+    color: #94660c;
+}
+
+.dhlpwc-delivery-times-shipping-day-content.dhlpwc-shipping-advice-today {
+    background: #c6e1c6;
+}
+.dhlpwc-delivery-times-shipping-day-content.dhlpwc-shipping-advice-today p {
+    color: #5b841b;
+}
+
+.dhlpwc-delivery-times-shipping-day-content.dhlpwc-shipping-advice-backlog {
+    background: #c8d7e1;
+}
+.dhlpwc-delivery-times-shipping-day-content.dhlpwc-shipping-advice-backlog p {
+    color: #2e4453;
+}
+
+.dhlpwc-delivery-times-receiving-day-content {
+    line-height: normal;
+    text-align: left;
+}
+
+
 
 .dhlpwc-label-create-delivery-option-description {
     font-weight: bold;
@@ -398,6 +461,10 @@ tr.dhlpwc-options-grid > td td {
 }
 
 .dhlpwc-original-grouped-option {
+    display:none;
+}
+
+.dhlpwc-original-delivery-times-option {
     display:none;
 }
 

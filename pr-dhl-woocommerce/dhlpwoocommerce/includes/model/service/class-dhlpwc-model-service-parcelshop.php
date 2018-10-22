@@ -53,7 +53,7 @@ class DHLPWC_Model_Service_Parcelshop extends DHLPWC_Model_Core_Singleton_Abstra
         }
 
         $connector = DHLPWC_Model_API_Connector::instance();
-        $parcelshop_data = $connector->get(sprintf('parcel-shop-locations/'.$country.'/%s', $parcelshop_id));
+        $parcelshop_data = $connector->get(sprintf('parcel-shop-locations/'.$country.'/%s', $parcelshop_id), null, 1 * HOUR_IN_SECONDS);
         if (!$parcelshop_data) {
             return null;
         }

@@ -329,8 +329,22 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
 
         if (!isset($address['number'])) {
             preg_match('/([^\d]+)\s?(.+)/i', $address['street'], $street_parts);
-            $address['street'] = trim($street_parts[1]);
-            $address['number'] = trim($street_parts[2]);
+            $street = trim($street_parts[1]);
+            $number = trim($street_parts[2]);
+
+            // Check if $number has numbers
+            if (preg_match("/\d/", $number) === 0) {
+                // Try a reverse parse
+                preg_match('/([\d]\w+)\s?(.+)/i', $address['street'], $street_parts);
+                $number = trim($street_parts[1]);
+                $street = trim($street_parts[2]);
+            }
+
+            // Check if $number has numbers
+            if (preg_match("/\d/", $number) > 0) {
+                $address['street'] = $street;
+                $address['number'] = $number;
+            }
         }
 
         return $address;
