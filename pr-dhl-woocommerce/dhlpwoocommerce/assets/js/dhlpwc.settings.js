@@ -190,14 +190,10 @@ jQuery(document).ready(function($) {
         }
 
         var dhlpwc_option_collection = [];
-        var dhlpwc_delivery_option_collection = [];
 
         $('.dhlpwc-grouped-option').each(function (e) {
             if ($.inArray($(this).data('option-group'), dhlpwc_option_collection) === -1) {
                 dhlpwc_option_collection.push($(this).data('option-group'));
-                if ($(this).hasClass('dhlpwc-delivery-option-type-setting')) {
-                    dhlpwc_delivery_option_collection.push($(this).data('option-group'));
-                }
             }
             $(this).closest('tr').addClass('dhlpwc-original-grouped-option');
         });
@@ -207,10 +203,6 @@ jQuery(document).ready(function($) {
             $('.dhlpwc-options-grid table')
                 .find('tbody')
                 .append($('<tr id="dhlpwc-option-group-mirror-' + option_identifier + '">'));
-
-            if ($.inArray(option_identifier, dhlpwc_delivery_option_collection) > -1) {
-                $('tr#dhlpwc-option-group-mirror-' + option_identifier).addClass('dhlpwc-delivery-option-group');
-            }
 
             $('.dhlpwc-grouped-option[data-option-group="' + option_identifier + '"]').each(function (e) {
                 // Create a label assuming the 'enable option' is first and has a label
@@ -357,6 +349,64 @@ jQuery(document).ready(function($) {
             }
         }, 'json');
 
+    }).on('dhlpwc:init_delivery_times_grid', function() {
+        // Don't load if the delivery times grid cannot be found
+        if ($('.dhlpwc-delivery-times-grid table').length < 1) {
+            return;
+        }
+        // Don't load if the grid has already been filled (in case this event is called multiple times)
+        if ($('.dhlpwc-delivery-times table').find('td').length > 0) {
+            return;
+        }
+
+        var dhlpwc_delivery_times_collection = [];
+
+        $('.dhlpwc-delivery-times-option').each(function (e) {
+            if ($.inArray($(this).data('delivery-times-group'), dhlpwc_delivery_times_collection) === -1) {
+                dhlpwc_delivery_times_collection.push($(this).data('delivery-times-group'));
+            }
+            $(this).closest('tr').addClass('dhlpwc-original-delivery-times-option');
+        });
+
+        $.each(dhlpwc_delivery_times_collection, function (i, option_identifier) {
+            $('.dhlpwc-delivery-times-grid table')
+                .find('tbody')
+                .append($('<tr id="dhlpwc-delivery-times-group-mirror-' + option_identifier + '">'));
+
+            $('.dhlpwc-delivery-times-option[data-delivery-times-group="' + option_identifier + '"]').each(function (e) {
+
+                // Create a label assuming the 'cut off time' is last and has a label
+                if ($(this).attr('id').indexOf('_dhlpwc_delivery_time_cut_off_') > -1) {
+
+                    // For same_day, there is no day input. Expanded colspan
+                    if (option_identifier == 'same_day') {
+                        var dhlpwc_wrap = '<td colspan="2"></td>';
+                    } else {
+                        var dhlpwc_wrap = '<td></td>';
+                    }
+
+
+                    $(this).closest('tr').find('th').first().find('label').clone()
+                        .removeAttr('id for class')
+                        .appendTo('#dhlpwc-delivery-times-group-mirror-' + option_identifier)
+                        .wrap(dhlpwc_wrap);
+                }
+
+                // Create a clone that mirrors the original input box
+                $(this).clone()
+                    .prop('id', $(this).attr('id') + '-mirror')
+                    .bind('change blur', function () {
+                        if ($(this).attr('type') === 'checkbox') {
+                            $('#' + $(this).attr('id').slice(0, -7)).attr('checked', $(this).attr('checked') === 'checked');
+                        } else {
+                            $('#' + $(this).attr('id').slice(0, -7)).val($(this).val());
+                        }
+                    })
+                    .appendTo('#dhlpwc-delivery-times-group-mirror-' + option_identifier)
+                    .wrap("<td></td>");
+            });
+        });
+
     });
 
     $(document.body).trigger('dhlpwc:init_test_connection_button');
@@ -365,7 +415,7 @@ jQuery(document).ready(function($) {
     $(document.body).trigger('dhlpwc:check_global_shipping_settings');
     $(document.body).trigger('dhlpwc:check_return_address');
     $(document.body).trigger('dhlpwc:check_hide_sender_address');
-
+    $(document.body).trigger('dhlpwc:init_delivery_times_grid');
 
     $('.dhlpwc-price-input').each(function(e) {
         var currency_symbol = $(this).data('dhlpwc-currency-symbol');

@@ -62,7 +62,8 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
     public function get($endpoint, $params = null, $cache_time = 0)
     {
         if ($cache_time) {
-            $cache = get_option('dhlpwc_connector_cache_' . $endpoint);
+            $cache_id = $endpoint.'_'.crc32(json_encode($params));
+            $cache = get_site_transient('dhlpwc_connector_cache_'.$cache_id);
             if (!empty($cache)) {
                 return $cache;
             }
@@ -71,7 +72,8 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
         $response = $this->request(self::GET, $endpoint, $params);
         $parsed_response = $this->parse_response($response, $endpoint, $params);
         if ($parsed_response && $cache_time) {
-            add_option('dhlpwc_connector_cache_' . $endpoint, $parsed_response);
+            $cache_id = $endpoint . '_' . crc32(json_encode($params));
+            set_site_transient('dhlpwc_connector_cache_'.$cache_id, $parsed_response, $cache_time);
         }
         return $parsed_response;
     }

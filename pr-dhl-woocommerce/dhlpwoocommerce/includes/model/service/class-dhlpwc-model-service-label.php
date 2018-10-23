@@ -47,22 +47,22 @@ class DHLPWC_Model_Service_Label extends DHLPWC_Model_Core_Singleton_Abstract
 
         // Cancel request if no street and housenumber are set
         if (empty($label_data->shipper->address->street)) {
-            $this->set_error(self::CREATE_ERROR, sprintf(__('Shipper %s field is required.', 'dhlpwc'), __('street', 'dhlpwc')));
+            $this->set_error(self::CREATE_ERROR, ucfirst(sprintf(__('Shipper %s field is required.', 'dhlpwc'), __('street', 'dhlpwc'))));
             return false;
         }
 
         if (empty($label_data->shipper->address->number)) {
-            $this->set_error(self::CREATE_ERROR, sprintf(__('Shipper %s field is required.', 'dhlpwc'), __('house number', 'dhlpwc')));
+            $this->set_error(self::CREATE_ERROR, ucfirst(sprintf(__('Shipper %s field is required.', 'dhlpwc'), __('house number', 'dhlpwc'))));
             return false;
         }
 
         if (empty($label_data->receiver->address->street)) {
-            $this->set_error(self::CREATE_ERROR, sprintf(__('Receiver %s field is required.', 'dhlpwc'), __('street', 'dhlpwc')));
+            $this->set_error(self::CREATE_ERROR, ucfirst(sprintf(__('Receiver %s field is required.', 'dhlpwc'), __('street', 'dhlpwc'))));
             return false;
         }
 
         if (empty($label_data->receiver->address->number)) {
-            $this->set_error(self::CREATE_ERROR, sprintf(__('Shipper %s field is required.', 'dhlpwc'), __('house number', 'dhlpwc')));
+            $this->set_error(self::CREATE_ERROR, ucfirst(sprintf(__('Shipper %s field is required.', 'dhlpwc'), __('house number', 'dhlpwc'))));
             return false;
         }
 

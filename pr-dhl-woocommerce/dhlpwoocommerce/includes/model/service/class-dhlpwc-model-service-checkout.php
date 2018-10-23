@@ -42,23 +42,24 @@ class DHLPWC_Model_Service_Checkout extends DHLPWC_Model_Core_Singleton_Abstract
         }
 
         $customer = $cart->get_customer();
-
         if (empty($customer)) {
             return null;
         }
 
-        if (empty($customer->get_shipping_country())) {
+        $country = $customer->get_shipping_country();
+        if (empty($country)) {
             return null;
         }
 
         $postcode = $customer->get_shipping_postcode();
-
         if (empty($postcode)) {
             return null;
         }
 
         if ($numbers_only) {
             $postcode = preg_replace('~\D~', '', $postcode);
+        } else {
+            $postcode = WC_Validation::format_postcode($postcode, $country);
         }
 
         return $postcode;

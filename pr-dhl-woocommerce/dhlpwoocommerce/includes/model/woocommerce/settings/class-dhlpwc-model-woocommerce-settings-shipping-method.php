@@ -31,7 +31,7 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
         $this->supports              = array(
             'instance-settings',
             'instance-settings-modal',
-            'settings'
+            'settings',
         );
         if ($this->get_option('use_shipping_zones') === 'yes') {
             array_unshift($this->supports, 'shipping-zones');
@@ -72,7 +72,7 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'title'       => __('Shipping Zones Settings', 'dhlpwc'),
                     'type'        => 'title',
                     'description' => __('Please enable Shipping Zones to use this feature.', 'dhlpwc'),
-                )
+                ),
             );
         }
     }
@@ -106,6 +106,13 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'label'       => __('Enable', 'dhlpwc'),
                     'description' => __("Disabling this turns all of the plugin's features off.", 'dhlpwc'),
                     'default'     => 'yes',
+                ),
+                'enable_submenu_link'          => array(
+                    'title'       => __('Dashboard menu link', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Enable', 'dhlpwc'),
+                    'description' => __("Add a shortcut to the WooCommerce dashboard menu to quickly jump to DHL settings.", 'dhlpwc'),
+                    'default'     => 'no',
                 ),
                 'enable_column_info'           => array(
                     'title'       => __('DHL label info', 'dhlpwc'),
@@ -236,6 +243,17 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
             ),
 
             $this->get_shipping_method_fields(),
+
+            array(
+                // Delivery times
+                'delivery_times_settings' => array(
+                    'title'       => __('Delivery times', 'dhlpwc'),
+                    'type'        => 'title',
+                    'description' => __('Allow customers to select delivery times and manage when to send packages', 'dhlpwc'),
+                ),
+            ),
+
+            $this->get_delivery_times_method_fields(),
 
             array(
                 // Default shipping address
@@ -419,6 +437,147 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
         return $option_settings;
     }
 
+    protected function get_delivery_times_method_fields()
+    {
+        $service = DHLPWC_Model_Service_Shipping_Preset::instance();
+        $same_day = $service->find_preset('same_day');
+        $home = $service->find_preset('home');
+
+        return array_merge(
+            array(
+                'enable_delivery_times' => array(
+                    'title'       => __('Enable delivery times', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Enable', 'dhlpwc'),
+                    'description' => __('Show delivery date and time selection in the checkout and show delivery dates in the dashboard.', 'dhlpwc'),
+                ),
+                'enable_delivery_times_stock_check' => array(
+                    'title'       => __('Check stock', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Enable', 'dhlpwc'),
+                    'default'     => 'yes',
+                    'description' => __('Only show delivery times when all cart items are in stock.', 'dhlpwc'),
+                ),
+                'delivery_times_container' => array(
+                    'type'  => 'dhlpwc_delivery_times_container',
+                ),
+            ),
+
+            $this->get_delivery_times_group_fields($same_day->setting_id, sprintf(__('%s available until', 'dhlpwc'), $same_day->title), true),
+            $this->get_delivery_times_group_fields($home->setting_id, sprintf(__('%s available until', 'dhlpwc'), $home->title)),
+
+            $this->get_shipping_days()
+        );
+    }
+
+    protected function get_shipping_days()
+    {
+        $days = array(
+            'monday'    => __('Monday', 'dhlpwc'),
+            'tuesday'   => __('Tuesday', 'dhlpwc'),
+            'wednesday' => __('Wednesday', 'dhlpwc'),
+            'thursday'  => __('Thursday', 'dhlpwc'),
+            'friday'    => __('Friday', 'dhlpwc'),
+            'saturday'  => __('Saturday', 'dhlpwc'),
+            'sunday'    => __('Sunday', 'dhlpwc'),
+        );
+
+        $defaults = array(
+            'monday'    => 'yes',
+            'tuesday'   => 'yes',
+            'wednesday' => 'yes',
+            'thursday'  => 'yes',
+            'friday'    => 'yes',
+            'saturday'  => 'no',
+            'sunday'    => 'no',
+        );
+
+        $shipping_days = array();
+        foreach($days as $day => $day_text) {
+            $shipping_days['enable_shipping_day_'.$day] = array(
+                'title'       => sprintf(__('Ship on %ss', 'dhlpwc'), $day_text),
+                'type'        => 'checkbox',
+                'label'       => __('Enable', 'dhlpwc'),
+                'default'     => $defaults[$day],
+            );
+        }
+
+        return $shipping_days;
+    }
+
+    protected function get_days_for_sending()
+    {
+        $days = range(1, 14);
+
+        $list = array();
+        foreach ($days as $day) {
+            if ($day === 1) {
+                $list[$day] = __('Next day', 'dhlpwc');
+            } else {
+                $list[$day] = sprintf(__('%s day', 'dhlpwc'), $day);
+            }
+        }
+
+        return $list;
+    }
+
+    protected function get_time_for_sending($ceil = 24)
+    {
+        $hours = range(1, $ceil);
+
+        $list = array();
+        foreach ($hours as $hour) {
+            if ($hour === 24) {
+                $list[$hour] = '23:59';
+            } else {
+                $list[$hour] = sprintf('%s:00', $hour);
+            }
+        }
+
+        return $list;
+    }
+
+    protected function get_delivery_times_group_fields($code, $title, $skip_day_select = false)
+    {
+        $time_ceiling = $skip_day_select ? 18 : 24;
+
+        $options = array(
+            'enable_delivery_time_' . $code  => array(
+                'type'              => 'checkbox',
+                'class'             => "dhlpwc-delivery-times-option dhlpwc-delivery-times-grid['" . $code . "']",
+                'default'           => 'no',
+                'custom_attributes' => array(
+                    'data-delivery-times-group' => $code,
+                ),
+            ),
+            'delivery_day_cut_off_' . $code  => array(
+                'type'              => 'select',
+                'class'             => "dhlpwc-delivery-times-option dhlpwc-delivery-times-grid['" . $code . "']",
+                'options'           => $this->get_days_for_sending(),
+                'custom_attributes' => array(
+                    'data-delivery-times-group' => $code,
+                ),
+            ),
+            'delivery_time_cut_off_' . $code => array(
+                'title'             => $title,
+                'type'              => 'select',
+                'class'             => "dhlpwc-delivery-times-option dhlpwc-delivery-times-grid['" . $code . "']",
+                'options'           => $this->get_time_for_sending($time_ceiling),
+                'default'           => 16,
+                'custom_attributes' => array(
+                    'data-delivery-times-group' => $code,
+                ),
+            ),
+        );
+
+        if ($skip_day_select) {
+            $options['delivery_day_cut_off_'.$code] = null;
+            unset($options['delivery_day_cut_off_'.$code]);
+        }
+
+        return $options;
+    }
+
     public function get_address_fields($prefix = null)
     {
         switch($prefix) {
@@ -512,6 +671,17 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
         $access_service = DHLPWC_Model_Service_Access_Control::instance();
         $allowed_shipping_options = $access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CAPABILITY_OPTIONS);
 
+        // When using delivery times and it is not showing (out of stock, unsupported country, or unavailable), don't allow same day delivery to show
+        if ($access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DELIVERY_TIMES)) {
+            $delivery_times_active = $access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DELIVERY_TIMES_ACTIVE);
+            if (!$delivery_times_active) {
+                if (array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SDD, $allowed_shipping_options)) {
+                    $allowed_shipping_options[DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SDD] = null;
+                    unset($allowed_shipping_options[DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SDD]);
+                }
+            }
+        }
+
         foreach($presets as $data) {
             $preset = new DHLPWC_Model_Meta_Shipping_Preset($data);
 
@@ -523,6 +693,7 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
             }
 
             if ($this->get_option('enable_option_'.$preset->setting_id) === 'yes' && $check_allowed_options === true) {
+
                 $this->add_rate(array(
                     'id'    => 'dhlpwc-'.$preset->frontend_id,
                     'label' => __($preset->title, 'dhlpwc'),
@@ -532,6 +703,12 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
         }
 
         $this->update_taxes();
+    }
+
+    protected function generate_dhlpwc_delivery_times_container_html($key, $data)
+    {
+        $view = new DHLPWC_Template('admin.settings.delivery-times-header');
+        return $view->render(array(), false);
     }
 
     protected function generate_dhlpwc_grouped_option_container_html($key, $data)

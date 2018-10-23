@@ -1,5 +1,16 @@
 # DHL Parcel plugin for WooCommerce
 
+V1.2.2
+
+## Changes
+- Added selectable delivery times based on location
+- Added an automatic switch between Same Day / Home and Evening delivery for delivery times
+- Added a filter to sort orders based on estimated shipping days in the admin
+- Added cutoff times for delivery times
+- Added days needed for shipping for delivery times
+- Added colored indicators for estimated shipping days in the admin
+- Added configurable shipping days for delivery times
+
 V1.2.1
 
 ## Changes

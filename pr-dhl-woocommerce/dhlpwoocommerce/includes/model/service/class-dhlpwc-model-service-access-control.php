@@ -10,6 +10,8 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
     const SIMPLE_OPTION_PREFIX = 'dhlpwc_';
 
     const ACCESS_API = 'api';
+    const ACCESS_SUBMENU_LINK = 'submenu_link';
+
     const ACCESS_COLUMN_INFO = 'column_info';
     const ACCESS_OPEN_LABEL_LINKS_EXTERNAL = 'open_label_links_external';
 
@@ -21,7 +23,15 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
 
     const ACCESS_DEFAULT_TO_BUSINESS = 'default_to_business';
     const ACCESS_DEFAULT_SEND_SIGNATURE = 'default_send_signature';
+
+    const ACCESS_CHECKOUT_HOME = 'checkout_home';
+    const ACCESS_CHECKOUT_EVENING = 'checkout_evening';
+    const ACCESS_CHECKOUT_SAME_DAY = 'checkout_same_day';
     const ACCESS_CHECKOUT_PARCELSHOP = 'checkout_parcelshop';
+
+    const ACCESS_DELIVERY_TIMES = 'delivery_times';
+    const ACCESS_DELIVERY_TIMES_ACTIVE = 'delivery_times_active';
+    const ACCESS_SHIPPING_DAY = 'shipping_day';
 
     const ACCESS_ALTERNATE_RETURN_ADDRESS = 'alternate_return_address';
     const ACCESS_DEFAULT_HIDE_SENDER_ADDRESS = 'default_hide_sender_address';
@@ -57,6 +67,11 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
                 }
 
                 return true;
+                break;
+
+            case self::ACCESS_SUBMENU_LINK:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_submenu_link();
                 break;
 
             case self::ACCESS_CREATE_LABEL:
@@ -107,9 +122,39 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
                 return $logic->check_default_send_signature();
                 break;
 
+            case self::ACCESS_CHECKOUT_HOME:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_home_enabled();
+                break;
+
+            case self::ACCESS_CHECKOUT_EVENING:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_evening_enabled();
+                break;
+
+            case self::ACCESS_CHECKOUT_SAME_DAY:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_same_day_enabled();
+                break;
+
             case self::ACCESS_CHECKOUT_PARCELSHOP:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
                 return $logic->check_parcelshop_enabled();
+                break;
+
+            case self::ACCESS_DELIVERY_TIMES:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_delivery_times_enabled();
+                break;
+
+            case self::ACCESS_DELIVERY_TIMES_ACTIVE:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_delivery_times_active();
+                break;
+
+            case self::ACCESS_SHIPPING_DAY:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_shipping_day($args);
                 break;
 
             case self::ACCESS_CAPABILITY_PARCELTYPE:

@@ -26,6 +26,25 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         return true;
     }
 
+    public function check_submenu_link()
+    {
+        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+
+        if (!isset($shipping_methods['dhlpwc'])) {
+            return false;
+        }
+
+        if (!isset($shipping_methods['dhlpwc']->settings['enable_submenu_link'])) {
+            return false;
+        }
+
+        if ($shipping_methods['dhlpwc']->settings['enable_submenu_link'] != 'yes') {
+            return false;
+        }
+
+        return true;
+    }
+
     public function check_application_country()
     {
         $country_code = wc_get_base_location();
@@ -322,17 +341,17 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
 
     public function check_default_send_to_business()
     {
-        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
-        if (!isset($shipping_methods['dhlpwc'])) {
+        if (empty($shipping_method)) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['default_send_to_business'])) {
+        if (!isset($shipping_method['default_send_to_business'])) {
             return false;
         }
 
-        if ($shipping_methods['dhlpwc']->settings['default_send_to_business'] != 'yes') {
+        if ($shipping_method['default_send_to_business'] != 'yes') {
             return false;
         }
 
@@ -358,7 +377,27 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         return true;
     }
 
+    public function check_home_enabled()
+    {
+        return $this->check_zone_option_enabled('home');
+    }
+
+    public function check_evening_enabled()
+    {
+        return $this->check_zone_option_enabled('evening');
+    }
+
+    public function check_same_day_enabled()
+    {
+        return $this->check_zone_option_enabled('same_day');
+    }
+
     public function check_parcelshop_enabled()
+    {
+        return $this->check_zone_option_enabled('parcelshop');
+    }
+
+    protected function check_zone_option_enabled($option)
     {
         $cart = WC()->cart;
         if (!$cart) {
@@ -401,7 +440,136 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         }
 
         /** @var DHLPWC_Model_WooCommerce_Settings_Shipping_Method $shipping_method */
-        if ($shipping_method->get_option('enable_option_parcelshop') !== 'yes') {
+        if ($shipping_method->get_option('enable_option_'.$option) !== 'yes') {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function check_delivery_times_enabled()
+    {
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
+
+        if (!isset($shipping_method)) {
+            return false;
+        }
+
+        if (!isset($shipping_method['enable_delivery_times'])) {
+            return false;
+        }
+
+        if ($shipping_method['enable_delivery_times'] != 'yes') {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function check_delivery_times_active()
+    {
+        if (!$this->check_delivery_times_enabled()) {
+            return false;
+        }
+
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
+
+        // Consumers only
+        if ($this->check_default_send_to_business()) {
+            return false;
+        }
+
+        $cart = WC()->cart;
+        if (!$cart) {
+            return false;
+        }
+
+        // Do not show for carts with no shipping required
+        if (!$cart->needs_shipping()) {
+            return false;
+        }
+
+        $customer = $cart->get_customer();
+
+        if (!$customer) {
+            return false;
+        }
+
+        if (!$customer->get_shipping_country()) {
+            return false;
+        }
+
+        if (!isset($shipping_method['country'])) {
+            return false;
+        }
+
+        // Same country only
+        if ($customer->get_shipping_country() != $shipping_method['country']) {
+            return false;
+        }
+
+        // Stock check (if enabled)
+        if (isset($shipping_method['enable_delivery_times_stock_check']) && $shipping_method['enable_delivery_times_stock_check'] == 'yes') {
+            $cart_content = $cart->get_cart();
+
+            if (!$cart_content) {
+                return false;
+            }
+
+            $out_of_stock = false;
+            foreach ($cart_content as $cart_item_key => $cart_item) {
+                if (!$cart_item['data']->is_in_stock()) {
+                    $out_of_stock = true;
+                    break;
+
+                } else if ($cart_item['data']->is_on_backorder()) {
+                    $out_of_stock = true;
+                    break;
+                } else if ($cart_item['data']->backorders_allowed()) {
+                    $stock_info = $cart_item['data']->get_stock_quantity();
+                    if ($stock_info < $cart_item['quantity']) {
+                        $out_of_stock = true;
+                        break;
+                    }
+                }
+            }
+
+            if ($out_of_stock) {
+                return false;
+            }
+
+        }
+
+        return true;
+    }
+
+    public function check_shipping_day($day)
+    {
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
+
+        $days = array(
+            'monday',
+            'tuesday',
+            'wednesday',
+            'thursday',
+            'friday',
+            'saturday',
+            'sunday',
+        );
+
+        if (!is_string($day) || !in_array($day, $days)) {
+            return false;
+        }
+
+        if (!isset($shipping_method)) {
+            return false;
+        }
+
+        if (!isset($shipping_method['enable_shipping_day_'.$day])) {
+            return false;
+        }
+
+        if ($shipping_method['enable_shipping_day_'.$day] != 'yes') {
             return false;
         }
 

@@ -70,7 +70,7 @@ input.dhlpwc-parcelshop-option-change.dhlpwc-still-loading {
 .dhl-parcelshop-locator div.dhlpwc-parcelshop-component-confirm-button {
      box-shadow: 2px 2px 4px 2px rgba(0,0,0,0.2),2px 2px 2px  0 rgba(0,0,0,0.2);
      height: auto;
-     margin: 5px;
+     margin: 0 5px 5px 5px;
      cursor: pointer;
      color: #ffffff;
      background-color: #000000;
@@ -89,23 +89,15 @@ input.dhlpwc-parcelshop-option-change.dhlpwc-still-loading {
 @media screen and (min-width: 600px) and (max-width: 1024px) {
     .dhl-parcelshop-locator div.md-text--theme-primary,
     .dhl-parcelshop-locator div.md-text--theme-primary + div {
-        padding-left: 1.5vw;
-        /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#fccc01+0,fccc01+100&0+0,1+3,1+5,0+5 */
-        background: -moz-linear-gradient(left, rgba(252,204,1,0) 0%, rgba(252,204,1,1) 3%, rgba(252,204,1,0) 5%, rgba(252,204,1,0) 100%); /* FF3.6-15 */
-        background: -webkit-linear-gradient(left, rgba(252,204,1,0) 0%,rgba(252,204,1,1) 3%,rgba(252,204,1,0) 5%,rgba(252,204,1,0) 100%); /* Chrome10-25,Safari5.1-6 */
-        background: linear-gradient(to right, rgba(252,204,1,0) 0%,rgba(252,204,1,1) 3%,rgba(252,204,1,0) 5%,rgba(252,204,1,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00fccc01', endColorstr='#00fccc01',GradientType=1 ); /* IE6-9 */
+        padding-left: 4px;
+        border-left: 6px #fccc01 solid;
     }
 }
 
 @media screen and (min-width: 1025px) {
     .dhl-parcelshop-locator div.md-text--theme-primary,
     .dhl-parcelshop-locator div.md-text--theme-primary + div {
-        padding-left: 1.5vw;
-        /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#fccc01+0,fccc01+100&0+0,1+5,1+7,0+8 */
-        background: -moz-linear-gradient(left, rgba(252,204,1,0) 0%, rgba(252,204,1,1) 5%, rgba(252,204,1,1) 7%, rgba(252,204,1,0) 8%, rgba(252,204,1,0) 100%); /* FF3.6-15 */
-        background: -webkit-linear-gradient(left, rgba(252,204,1,0) 0%,rgba(252,204,1,1) 5%,rgba(252,204,1,1) 7%,rgba(252,204,1,0) 8%,rgba(252,204,1,0) 100%); /* Chrome10-25,Safari5.1-6 */
-        background: linear-gradient(to right, rgba(252,204,1,0) 0%,rgba(252,204,1,1) 5%,rgba(252,204,1,1) 7%,rgba(252,204,1,0) 8%,rgba(252,204,1,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00fccc01', endColorstr='#00fccc01',GradientType=1 ); /* IE6-9 */
+        padding-left: 5px;
+        border-left: 10px #fccc01 solid;
     }
 }

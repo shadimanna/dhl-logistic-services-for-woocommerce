@@ -7,24 +7,33 @@ if (!class_exists('DHLPWC_Model_Service_Shipping_Preset')) :
 class DHLPWC_Model_Service_Shipping_Preset extends DHLPWC_Model_Core_Singleton_Abstract
 {
 
+    /**
+     * @param $setting_id
+     * @return DHLPWC_Model_Meta_Shipping_Preset|null
+     */
+    public function find_preset($setting_id)
+    {
+        $presets = $this->get_presets();
+        foreach($presets as $preset_data)
+        {
+            $preset = new DHLPWC_Model_Meta_Shipping_Preset($preset_data);
+            if ($preset->setting_id === $setting_id) {
+                return $preset;
+            }
+        }
+        return null;
+    }
+
     public function get_presets()
     {
         return array(
+            // Home, Evening and Same Day are also part of Delivery Times.
             array(
                 'frontend_id' => 'home',
                 'setting_id' => 'home',
                 'title' => __('Door delivery', 'dhlpwc'),
                 'options' => array(
                     DHLPWC_Model_Meta_Order_Option_Preference::OPTION_DOOR,
-                ),
-            ),
-            array(
-                'frontend_id' => 'home-no-neighbour',
-                'setting_id' => 'no_neighbour',
-                'title' => __('Door delivery, avoid dropping at neighbours', 'dhlpwc'),
-                'options' => array(
-                    DHLPWC_Model_Meta_Order_Option_Preference::OPTION_DOOR,
-                    DHLPWC_Model_Meta_Order_Option_Preference::OPTION_NBB,
                 ),
             ),
             array(
@@ -46,6 +55,15 @@ class DHLPWC_Model_Service_Shipping_Preset extends DHLPWC_Model_Core_Singleton_A
                 ),
             ),
             array(
+                'frontend_id' => 'home-no-neighbour',
+                'setting_id' => 'no_neighbour',
+                'title' => __('Door delivery, avoid dropping at neighbours', 'dhlpwc'),
+                'options' => array(
+                    DHLPWC_Model_Meta_Order_Option_Preference::OPTION_DOOR,
+                    DHLPWC_Model_Meta_Order_Option_Preference::OPTION_NBB,
+                ),
+            ),
+            array(
                 'frontend_id' => 'home-saturday',
                 'setting_id' => 'saturday',
                 'title' => __('Door delivery on Saturdays', 'dhlpwc'),
@@ -63,15 +81,6 @@ class DHLPWC_Model_Service_Shipping_Preset extends DHLPWC_Model_Core_Singleton_A
                     DHLPWC_Model_Meta_Order_Option_Preference::OPTION_EXP,
                 ),
             ),
-//
-//        array(
-//            'frontend_id' => 'terminal',
-//            'setting_id' => 'terminal',
-//            'title' => __('Terminal delivery', 'dhlpwc'),
-//            'options' => array(
-//                DHLPWC_Model_Meta_Order_Option_Preference::OPTION_H,
-//            ),
-//        ),
 
             array(
                 'frontend_id' => 'parcelshop',
