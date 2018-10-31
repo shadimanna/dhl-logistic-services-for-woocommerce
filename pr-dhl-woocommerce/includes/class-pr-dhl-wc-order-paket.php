@@ -153,11 +153,13 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 				$preferred_day_time = PR_DHL()->get_dhl_preferred_day_time( $shipping_address['postcode'] );
 
-				$preferred_days = $preferred_day_time['preferred_day'];
-				$preferred_days = array_keys($preferred_days);
-				$preferred_days = array_combine($preferred_days, $preferred_days);
+				if ( $preferred_day_time ) {
+					$preferred_days = $preferred_day_time['preferred_day'];
+					$preferred_days = array_keys($preferred_days);
+					$preferred_days = array_combine($preferred_days, $preferred_days);
 
-				$preferred_times = $preferred_day_time['preferred_time'];
+					$preferred_times = $preferred_day_time['preferred_time'];
+				}
 			} catch (Exception $e) {
 				// catch exception
 			}
