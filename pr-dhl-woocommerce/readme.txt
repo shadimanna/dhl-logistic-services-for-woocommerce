@@ -69,6 +69,7 @@ In case you could not find what you were looking for in our FAQs and the detaile
 * Get **DHL Parcel Belgium & Netherlands ** support via [cimparcel@dhl.com](mailto:cimparcel@dhl.com)
 * Get **DHL eCommerce** support via [Integration@dhl.com](mailto:integration@dhl.com)
 * Get **DHL Paket Germany** support via [Shopsoftware@deutschepost.de](mailto:Shopsoftware@deutschepost.de)
+* Get **DHL Parcel Switzerland** support via cis.paket.austria@dhl.com
 
 == Additional Information ==  
 * The plugin contains a tracking pixel due to reporting purposes of preferred services. Its output is the URL where the preferred services are integrated via plugin as well as the number of plugin calls. There is no personal data created or collected. 
