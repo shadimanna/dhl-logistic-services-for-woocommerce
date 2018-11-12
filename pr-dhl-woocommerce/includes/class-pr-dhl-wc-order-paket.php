@@ -149,6 +149,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			}
 
 			try {
+				$preferred_times = array();
 				$shipping_address = $order->get_address( 'shipping' );
 
 				$preferred_day_time = PR_DHL()->get_dhl_preferred_day_time( $shipping_address['postcode'] );
