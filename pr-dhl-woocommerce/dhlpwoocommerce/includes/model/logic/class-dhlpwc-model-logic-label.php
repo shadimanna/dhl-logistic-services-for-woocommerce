@@ -352,8 +352,8 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
 
     protected function get_account_id()
     {
-        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
-        return $shipping_methods['dhlpwc']->settings['account_id'];
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
+        return $shipping_method['account_id'];
     }
 
 }

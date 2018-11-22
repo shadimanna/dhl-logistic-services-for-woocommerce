@@ -115,7 +115,7 @@ class DHLPWC_Controller_Admin_Settings
     public function load_styles()
     {
         if ($this->is_plugin_screen() || $this->is_shipping_zone_screen()) {
-            wp_enqueue_style('dhlpwc-admin-order-style', DHLPWC_PLUGIN_URL . 'assets/css/dhlpwc.admin.css');
+            wp_enqueue_style('dhlpwc-admin-style', DHLPWC_PLUGIN_URL . 'assets/css/dhlpwc.admin.css');
         }
     }
 

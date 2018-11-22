@@ -64,6 +64,26 @@ class DHLPWC_Model_Service_Shipping_Preset extends DHLPWC_Model_Core_Singleton_A
                 ),
             ),
             array(
+                'frontend_id' => 'home-no-neighbour-evening',
+                'setting_id' => 'no_neighbour_evening',
+                'title' => __('Door delivery in the evening, avoid dropping at neighbours', 'dhlpwc'),
+                'options' => array(
+                    DHLPWC_Model_Meta_Order_Option_Preference::OPTION_DOOR,
+                    DHLPWC_Model_Meta_Order_Option_Preference::OPTION_NBB,
+                    DHLPWC_Model_Meta_Order_Option_Preference::OPTION_EVE,
+                ),
+            ),
+            array(
+                'frontend_id' => 'home-no-neighbour-same-day',
+                'setting_id' => 'no_neighbour_same_day',
+                'title' => __('Door delivery today, avoid dropping at neighbours', 'dhlpwc'),
+                'options' => array(
+                    DHLPWC_Model_Meta_Order_Option_Preference::OPTION_DOOR,
+                    DHLPWC_Model_Meta_Order_Option_Preference::OPTION_NBB,
+                    DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SDD,
+                ),
+            ),
+            array(
                 'frontend_id' => 'home-saturday',
                 'setting_id' => 'saturday',
                 'title' => __('Door delivery on Saturdays', 'dhlpwc'),

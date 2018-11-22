@@ -24,9 +24,7 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
     const ACCESS_DEFAULT_TO_BUSINESS = 'default_to_business';
     const ACCESS_DEFAULT_SEND_SIGNATURE = 'default_send_signature';
 
-    const ACCESS_CHECKOUT_HOME = 'checkout_home';
-    const ACCESS_CHECKOUT_EVENING = 'checkout_evening';
-    const ACCESS_CHECKOUT_SAME_DAY = 'checkout_same_day';
+    const ACCESS_CHECKOUT_PRESET = 'checkout_preset';
     const ACCESS_CHECKOUT_PARCELSHOP = 'checkout_parcelshop';
 
     const ACCESS_DELIVERY_TIMES = 'delivery_times';
@@ -122,19 +120,9 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
                 return $logic->check_default_send_signature();
                 break;
 
-            case self::ACCESS_CHECKOUT_HOME:
+            case self::ACCESS_CHECKOUT_PRESET:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
-                return $logic->check_home_enabled();
-                break;
-
-            case self::ACCESS_CHECKOUT_EVENING:
-                $logic = DHLPWC_Model_Logic_Access_Control::instance();
-                return $logic->check_evening_enabled();
-                break;
-
-            case self::ACCESS_CHECKOUT_SAME_DAY:
-                $logic = DHLPWC_Model_Logic_Access_Control::instance();
-                return $logic->check_same_day_enabled();
+                return $logic->check_shipping_preset_enabled($args);
                 break;
 
             case self::ACCESS_CHECKOUT_PARCELSHOP:
