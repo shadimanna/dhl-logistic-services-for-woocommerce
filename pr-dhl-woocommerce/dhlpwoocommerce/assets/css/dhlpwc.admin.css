@@ -376,6 +376,25 @@ div.dhlpwc_settings_suggestion_organization:active {
     background: #ff0;
 }
 
+tr.dhlpwc-bulk-grid > td {
+    padding: 0;
+}
+
+tr.dhlpwc-bulk-grid > td th,
+tr.dhlpwc-bulk-grid > td td {
+    width: auto;
+    padding: 0 5px 0 0;
+}
+
+tr.dhlpwc-bulk-grid > td td:first-child {
+    padding-right: 50px;
+}
+
+.dhlpwc-bulk-container {
+    overflow: hidden;
+}
+
+
 tr.dhlpwc-options-grid > td {
     padding: 0;
 }
@@ -458,6 +477,10 @@ tr.dhlpwc-delivery-times-grid > td td:first-child {
 .dhlpwc-label-create-delivery-option-description {
     font-weight: bold;
     font-size: smaller;
+}
+
+.dhlpwc-original-bulk-option {
+    display:none;
 }
 
 .dhlpwc-original-grouped-option {

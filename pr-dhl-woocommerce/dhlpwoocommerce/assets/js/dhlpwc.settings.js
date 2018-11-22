@@ -355,7 +355,7 @@ jQuery(document).ready(function($) {
             return;
         }
         // Don't load if the grid has already been filled (in case this event is called multiple times)
-        if ($('.dhlpwc-delivery-times table').find('td').length > 0) {
+        if ($('.dhlpwc-delivery-times-grid table').find('td').length > 0) {
             return;
         }
 
@@ -379,7 +379,7 @@ jQuery(document).ready(function($) {
                 if ($(this).attr('id').indexOf('_dhlpwc_delivery_time_cut_off_') > -1) {
 
                     // For same_day, there is no day input. Expanded colspan
-                    if (option_identifier == 'same_day') {
+                    if (option_identifier == 'same_day' || option_identifier == 'no_neighbour_same_day') {
                         var dhlpwc_wrap = '<td colspan="2"></td>';
                     } else {
                         var dhlpwc_wrap = '<td></td>';
@@ -407,6 +407,54 @@ jQuery(document).ready(function($) {
             });
         });
 
+    }).on('dhlpwc:init_bulk_grid', function() {
+        // Don't load if the bulk grid cannot be found
+        if ($('.dhlpwc-bulk-grid table').length < 1) {
+            return;
+        }
+        // Don't load if the grid has already been filled (in case this event is called multiple times)
+        if ($('.dhlpwc-bulk-grid table').find('td').length > 0) {
+            return;
+        }
+
+        var dhlpwc_bulk_collection = [];
+
+        $('.dhlpwc-bulk-option').each(function (e) {
+            if ($.inArray($(this).data('bulk-group'), dhlpwc_bulk_collection) === -1) {
+                dhlpwc_bulk_collection.push($(this).data('bulk-group'));
+            }
+            $(this).closest('tr').addClass('dhlpwc-original-bulk-option');
+        });
+
+        $.each(dhlpwc_bulk_collection, function (i, option_identifier) {
+            $('.dhlpwc-bulk-grid table')
+                .find('tbody')
+                .append($('<tr id="dhlpwc-bulk-group-mirror-' + option_identifier + '">'));
+
+            $('.dhlpwc-bulk-option[data-bulk-group="' + option_identifier + '"]').each(function (e) {
+                // Create a label assuming the 'enable option' is first and has a label
+                if ($(this).attr('id').indexOf('_dhlpwc_enable_bulk_option_') > -1) {
+                    $(this).closest('tr').find('th').first().find('label').clone()
+                        .removeAttr('id for class')
+                        .appendTo('#dhlpwc-bulk-group-mirror-' + option_identifier)
+                        .wrap("<td></td>");
+                }
+
+                // Create a clone that mirrors the original input box
+                $(this).clone()
+                    .prop('id', $(this).attr('id') + '-mirror')
+                    .bind('change blur', function () {
+                        if ($(this).attr('type') === 'checkbox') {
+                            $('#' + $(this).attr('id').slice(0, -7)).attr('checked', $(this).attr('checked') === 'checked');
+                        } else {
+                            $('#' + $(this).attr('id').slice(0, -7)).val($(this).val());
+                        }
+                    })
+                    .appendTo('#dhlpwc-bulk-group-mirror-' + option_identifier)
+                    .wrap("<td></td>");
+            });
+        });
+
     });
 
     $(document.body).trigger('dhlpwc:init_test_connection_button');
@@ -416,6 +464,7 @@ jQuery(document).ready(function($) {
     $(document.body).trigger('dhlpwc:check_return_address');
     $(document.body).trigger('dhlpwc:check_hide_sender_address');
     $(document.body).trigger('dhlpwc:init_delivery_times_grid');
+    $(document.body).trigger('dhlpwc:init_bulk_grid');
 
     $('.dhlpwc-price-input').each(function(e) {
         var currency_symbol = $(this).data('dhlpwc-currency-symbol');

@@ -9,17 +9,17 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
 
     public function check_enabled()
     {
-        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
-        if (!isset($shipping_methods['dhlpwc'])) {
+        if (empty($shipping_method)) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['enable_all'])) {
+        if (!isset($shipping_method['enable_all'])) {
             return false;
         }
 
-        if ($shipping_methods['dhlpwc']->settings['enable_all'] != 'yes') {
+        if ($shipping_method['enable_all'] != 'yes') {
             return false;
         }
 
@@ -28,17 +28,17 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
 
     public function check_submenu_link()
     {
-        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
-        if (!isset($shipping_methods['dhlpwc'])) {
+        if (empty($shipping_method)) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['enable_submenu_link'])) {
+        if (!isset($shipping_method['enable_submenu_link'])) {
             return false;
         }
 
-        if ($shipping_methods['dhlpwc']->settings['enable_submenu_link'] != 'yes') {
+        if ($shipping_method['enable_submenu_link'] != 'yes') {
             return false;
         }
 
@@ -63,25 +63,25 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
 
     public function check_account()
     {
-        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
-        if (empty($shipping_methods['dhlpwc'])) {
+        if (empty($shipping_method)) {
             return false;
         }
 
-        if (empty($shipping_methods['dhlpwc']->settings['user_id'])) {
+        if (empty($shipping_method['user_id'])) {
             return false;
         }
 
-        if (empty($shipping_methods['dhlpwc']->settings['key'])) {
+        if (empty($shipping_method['key'])) {
             return false;
         }
 
-        if (empty($shipping_methods['dhlpwc']->settings['account_id'])) {
+        if (empty($shipping_method['account_id'])) {
             return false;
         }
 
-        if (empty($shipping_methods['dhlpwc']->settings['organization_id'])) {
+        if (empty($shipping_method['organization_id'])) {
             return false;
         }
 
@@ -90,49 +90,49 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
 
     public function check_default_shipping_address()
     {
-        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
-        if (!isset($shipping_methods['dhlpwc'])) {
+        if (!empty($shipping_method)) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['first_name'])) {
+        if (empty($shipping_method['first_name'])) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['last_name'])) {
+        if (empty($shipping_method['last_name'])) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['company'])) {
+        if (empty($shipping_method['company'])) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['country'])) {
+        if (empty($shipping_method['country'])) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['postcode'])) {
+        if (empty($shipping_method['postcode'])) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['city'])) {
+        if (empty($shipping_method['city'])) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['street'])) {
+        if (empty($shipping_method['street'])) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['number'])) {
+        if (empty($shipping_method['number'])) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['email'])) {
+        if (empty($shipping_method['email'])) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['phone'])) {
+        if (empty($shipping_method['phone'])) {
             return false;
         }
 
@@ -142,17 +142,17 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
 
     public function check_column_info()
     {
-        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
-        if (!isset($shipping_methods['dhlpwc'])) {
+        if (empty($shipping_method)) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['enable_column_info'])) {
+        if (!isset($shipping_method['enable_column_info'])) {
             return false;
         }
 
-        if ($shipping_methods['dhlpwc']->settings['enable_column_info'] != 'yes') {
+        if ($shipping_method['enable_column_info'] != 'yes') {
             return false;
         }
 
@@ -161,17 +161,17 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
 
     public function check_open_label_links_external()
     {
-        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
-        if (!isset($shipping_methods['dhlpwc'])) {
+        if (empty($shipping_method)) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['open_label_links_external'])) {
+        if (!isset($shipping_method['open_label_links_external'])) {
             return false;
         }
 
-        if ($shipping_methods['dhlpwc']->settings['open_label_links_external'] != 'yes') {
+        if ($shipping_method['open_label_links_external'] != 'yes') {
             return false;
         }
 
@@ -180,36 +180,51 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
 
     public function check_bulk_create()
     {
-        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
-        if (!isset($shipping_methods['dhlpwc'])) {
+        if (empty($shipping_method)) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['bulk_label_creation'])) {
-            return false;
+        $bulk_options = array(
+            'bp_only',
+            'smallest',
+            'small_only',
+            'medium_only',
+            'large_only',
+            'xsmall_only',
+            'xlarge_only',
+            'largest'
+        );
+
+        $enabled = array();
+
+        foreach($bulk_options as $bulk_option) {
+            if (isset($shipping_method['enable_bulk_option_'.$bulk_option]) && $shipping_method['enable_bulk_option_'.$bulk_option] == 'yes') {
+                $enabled[] = $bulk_option;
+            }
         }
 
-        if ($shipping_methods['dhlpwc']->settings['bulk_label_creation'] === '') {
-            return false;
+        if (!count($enabled)) {
+            return null;
         }
 
-        return true;
+        return $enabled;
     }
 
     public function check_bulk_print()
     {
-        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
-        if (!isset($shipping_methods['dhlpwc'])) {
+        if (empty($shipping_method)) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['bulk_label_printing'])) {
+        if (!isset($shipping_method['bulk_label_printing'])) {
             return false;
         }
 
-        if ($shipping_methods['dhlpwc']->settings['bulk_label_printing'] != 'yes') {
+        if ($shipping_method['bulk_label_printing'] != 'yes') {
             return false;
         }
 
@@ -218,17 +233,17 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
 
     public function check_track_trace_mail()
     {
-        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
-        if (!isset($shipping_methods['dhlpwc'])) {
+        if (empty($shipping_method)) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['enable_track_trace_mail'])) {
+        if (!isset($shipping_method['enable_track_trace_mail'])) {
             return false;
         }
 
-        if ($shipping_methods['dhlpwc']->settings['enable_track_trace_mail'] != 'yes') {
+        if ($shipping_method['enable_track_trace_mail'] != 'yes') {
             return false;
         }
 
@@ -237,17 +252,17 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
 
     public function check_track_trace_component()
     {
-        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
-        if (!isset($shipping_methods['dhlpwc'])) {
+        if (empty($shipping_method)) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['enable_track_trace_component'])) {
+        if (!isset($shipping_method['enable_track_trace_component'])) {
             return false;
         }
 
-        if ($shipping_methods['dhlpwc']->settings['enable_track_trace_component'] != 'yes') {
+        if ($shipping_method['enable_track_trace_component'] != 'yes') {
             return false;
         }
 
@@ -256,83 +271,79 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
 
     public function check_debug()
     {
-        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
-        if (!isset($shipping_methods['dhlpwc'])) {
+        if (empty($shipping_method)) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['enable_debug'])) {
+        if (!isset($shipping_method['enable_debug'])) {
             return false;
         }
 
-        if ($shipping_methods['dhlpwc']->settings['enable_debug'] != 'yes') {
+        if ($shipping_method['enable_debug'] != 'yes') {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['debug_url'])) {
+        if (empty($shipping_method['debug_url'])) {
             return false;
         }
 
-        if (empty($shipping_methods['dhlpwc']->settings['debug_url'])) {
+        if (filter_var($shipping_method['debug_url'], FILTER_VALIDATE_URL) === false) {
             return false;
         }
 
-        if (filter_var($shipping_methods['dhlpwc']->settings['debug_url'], FILTER_VALIDATE_URL) === false) {
-            return false;
-        }
-
-        return $shipping_methods['dhlpwc']->settings['debug_url'];
+        return $shipping_method['debug_url'];
     }
 
     public function check_debug_external()
     {
-        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
-        if (!isset($shipping_methods['dhlpwc'])) {
+        if (empty($shipping_method)) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['enable_debug'])) {
+        if (!isset($shipping_method['enable_debug'])) {
             return false;
         }
 
-        if ($shipping_methods['dhlpwc']->settings['enable_debug'] != 'yes') {
+        if ($shipping_method['enable_debug'] != 'yes') {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['debug_external_url'])) {
+        if (empty($shipping_method['debug_external_url'])) {
             return false;
         }
 
-        if (empty($shipping_methods['dhlpwc']->settings['debug_external_url'])) {
+        if (filter_var($shipping_method['debug_external_url'], FILTER_VALIDATE_URL) === false) {
             return false;
         }
 
-        if (filter_var($shipping_methods['dhlpwc']->settings['debug_external_url'], FILTER_VALIDATE_URL) === false) {
-            return false;
-        }
-
-        return $shipping_methods['dhlpwc']->settings['debug_external_url'];
+        return $shipping_method['debug_external_url'];
     }
 
     public function check_debug_mail()
     {
-        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
-        if (!isset($shipping_methods['dhlpwc'])) {
+        if (empty($shipping_method)) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['enable_debug'])) {
+        if (!isset($shipping_method['enable_debug'])) {
             return false;
         }
 
-        if ($shipping_methods['dhlpwc']->settings['enable_debug'] != 'yes') {
+        if ($shipping_method['enable_debug'] != 'yes') {
             return false;
         }
 
-        if ($shipping_methods['dhlpwc']->settings['enable_debug_mail'] != 'yes') {
+        if (!isset($shipping_method['enable_debug_mail'])) {
+            return false;
+        }
+
+        if ($shipping_method['enable_debug_mail'] != 'yes') {
             return false;
         }
 
@@ -360,36 +371,41 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
 
     public function check_default_send_signature()
     {
-        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
-        if (!isset($shipping_methods['dhlpwc'])) {
+        if (empty($shipping_method)) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['check_default_send_signature'])) {
+        if (!isset($shipping_method['check_default_send_signature'])) {
             return false;
         }
 
-        if ($shipping_methods['dhlpwc']->settings['check_default_send_signature'] != 'yes') {
+        if ($shipping_method['check_default_send_signature'] != 'yes') {
             return false;
         }
 
         return true;
     }
 
-    public function check_home_enabled()
+    public function check_shipping_preset_enabled($code)
     {
-        return $this->check_zone_option_enabled('home');
-    }
+        if (!is_string($code)) {
+            return false;
+        }
 
-    public function check_evening_enabled()
-    {
-        return $this->check_zone_option_enabled('evening');
-    }
+        if (!in_array($code, array(
+            'home',
+            'evening',
+            'same_day',
+            'no_neighbour',
+            'no_neighbour_evening',
+            'no_neighbour_same_day',
+        ))) {
+            return false;
+        }
 
-    public function check_same_day_enabled()
-    {
-        return $this->check_zone_option_enabled('same_day');
+        return $this->check_zone_option_enabled($code);
     }
 
     public function check_parcelshop_enabled()
@@ -451,7 +467,7 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
     {
         $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
-        if (!isset($shipping_method)) {
+        if (empty($shipping_method)) {
             return false;
         }
 
@@ -561,7 +577,7 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
             return false;
         }
 
-        if (!isset($shipping_method)) {
+        if (empty($shipping_method)) {
             return false;
         }
 
@@ -578,17 +594,17 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
 
     public function check_alternate_return_address()
     {
-        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
-        if (!isset($shipping_methods['dhlpwc'])) {
+        if (empty($shipping_method)) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['enable_alternate_return_address'])) {
+        if (!isset($shipping_method['enable_alternate_return_address'])) {
             return false;
         }
 
-        if ($shipping_methods['dhlpwc']->settings['enable_alternate_return_address'] != 'yes') {
+        if ($shipping_method['enable_alternate_return_address'] != 'yes') {
             return false;
         }
 
@@ -597,17 +613,17 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
 
     public function check_default_hide_sender_address()
     {
-        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
-        if (!isset($shipping_methods['dhlpwc'])) {
+        if (empty($shipping_method)) {
             return false;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['default_hide_sender_address'])) {
+        if (!isset($shipping_method['default_hide_sender_address'])) {
             return false;
         }
 
-        if ($shipping_methods['dhlpwc']->settings['default_hide_sender_address'] != 'yes') {
+        if ($shipping_method['default_hide_sender_address'] != 'yes') {
             return false;
         }
 

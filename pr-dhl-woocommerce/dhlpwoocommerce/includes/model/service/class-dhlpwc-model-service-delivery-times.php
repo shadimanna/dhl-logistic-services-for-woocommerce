@@ -65,7 +65,16 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
      */
     public function check_checkout_delivery_time_selected($preset)
     {
-        if ($preset->setting_id != 'home' && $preset->setting_id != 'same_day' && $preset->setting_id != 'evening') {
+        $delivery_time_preset_ids = array(
+            'home',
+            'evening',
+            'same_day',
+            'no_neighbour',
+            'no_neighbour_evening',
+            'no_neighbour_same_day',
+        );
+
+        if (!in_array($preset->setting_id, $delivery_time_preset_ids)) {
             return false;
         }
 
@@ -115,12 +124,22 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
      * @param DHLPWC_Model_Data_Delivery_Time[] $delivery_times
      * @return DHLPWC_Model_Data_Delivery_Time[] array
      */
-    public function filter_time_frames($delivery_times)
+    public function filter_time_frames($delivery_times, $no_neighbour = false, $selected = null)
     {
         $filtered_times = array();
 
-        $timestamp_same_day = $this->get_timestamp_setting('same_day');
-        $timestamp_home = $this->get_timestamp_setting('home');
+        if ($no_neighbour) {
+            $code_same_day = 'no_neighbour_same_day';
+            $code_evening = 'no_neighbour_evening';
+            $code_home = 'no_neighbour';
+        } else {
+            $code_same_day = 'same_day';
+            $code_evening = 'evening';
+            $code_home = 'home';
+        }
+
+        $timestamp_same_day = $this->get_timestamp_setting($code_same_day);
+        $timestamp_home = $this->get_timestamp_setting($code_home);
 
         $today_midnight_timestamp = strtotime('today 23:59:59');
 
@@ -139,20 +158,20 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
 
         $service = DHLPWC_Model_Service_Shipping_Preset::instance();
 
-        $preset = $service->find_preset('same_day');
+        $preset = $service->find_preset($code_same_day);
         $same_day_id = $preset->frontend_id;
         $same_day_allowed = $this->check_allowed_options($preset->options, $allowed_shipping_options);
-        $same_day_enabled = $access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CHECKOUT_SAME_DAY);
+        $same_day_enabled = $access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CHECKOUT_PRESET, $code_same_day);
 
-        $preset = $service->find_preset('home');
+        $preset = $service->find_preset($code_home);
         $home_id = $preset->frontend_id;
         $home_allowed = $this->check_allowed_options($preset->options, $allowed_shipping_options);
-        $home_enabled = $access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CHECKOUT_HOME);
+        $home_enabled = $access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CHECKOUT_PRESET, $code_home);
 
-        $preset = $service->find_preset('evening');
+        $preset = $service->find_preset($code_evening);
         $evening_id = $preset->frontend_id;
         $evening_allowed = $this->check_allowed_options($preset->options, $allowed_shipping_options);
-        $evening_enabled = $access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CHECKOUT_EVENING);
+        $evening_enabled = $access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CHECKOUT_PRESET, $code_evening);
 
         foreach($delivery_times as $delivery_time) {
             /** @var DHLPWC_Model_Data_Delivery_Time $delivery_time */
@@ -177,7 +196,7 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
 
                     if ($this->validate_with_shipping_days($timestamp_home, $timestamp, $shipping_days)) {
 
-                        if ($delivery_time->source->start_time == '1800') { // This is an ambiguous check with intent, due to no strict regulations on the type of input from the Time Window API
+                        if ($delivery_time->source->start_time == '1800') { // This is an intentional ambiguous check, due to no strict regulations on the type of input from the Time Window API
                             if ($evening_enabled && $evening_allowed) {
                                 $delivery_time->preset_frontend_id = $evening_id;
                                 $filtered_times[] = $delivery_time;
@@ -186,6 +205,13 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
                         } else {
                             if ($home_enabled && $home_allowed) {
                                 $delivery_time->preset_frontend_id = $home_id;
+
+                                // Auto-select first default entry if no selection has been made
+                                if ($selected === null) {
+                                    $selected = true;
+                                    $delivery_time->selected = true;
+                                }
+
                                 $filtered_times[] = $delivery_time;
                             }
                         }
@@ -253,31 +279,31 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
 
     protected function get_timestamp_setting($code)
     {
-        $shipping_methods = WC_Shipping::instance()->get_shipping_methods();
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
-        if (!isset($shipping_methods['dhlpwc'])) {
+        if (empty($shipping_method)) {
             return null;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['enable_delivery_time_'.$code])) {
+        if (!isset($shipping_method['enable_delivery_time_'.$code])) {
             return null;
         }
 
-        if ($shipping_methods['dhlpwc']->settings['enable_delivery_time_'.$code] != 'yes') {
+        if ($shipping_method['enable_delivery_time_'.$code] != 'yes') {
             return null;
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['delivery_time_cut_off_'.$code])) {
+        if (!isset($shipping_method['delivery_time_cut_off_'.$code])) {
             return null;
         }
 
-        $cut_off_hour = (int) $shipping_methods['dhlpwc']->settings['delivery_time_cut_off_'.$code];
+        $cut_off_hour = (int) $shipping_method['delivery_time_cut_off_'.$code];
         $current_hour = (int) current_time('G');
 
 
         $cut_off = (bool) ($current_hour >= $cut_off_hour);
 
-        if ($code === 'same_day') {
+        if ($code === 'same_day' || $code === 'no_neighbour_same_day') {
             if ($cut_off) {
                 return null;
             } else {
@@ -286,11 +312,11 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
             }
         }
 
-        if (!isset($shipping_methods['dhlpwc']->settings['delivery_day_cut_off_'.$code])) {
+        if (!isset($shipping_method['delivery_day_cut_off_'.$code])) {
             return null;
         }
 
-        $days = (int) $shipping_methods['dhlpwc']->settings['delivery_day_cut_off_'.$code];
+        $days = (int) $shipping_method['delivery_day_cut_off_'.$code];
         $days += $cut_off ? 1 : 0;
 
         $current_timestamp = strtotime('yesterday 23:59:59');

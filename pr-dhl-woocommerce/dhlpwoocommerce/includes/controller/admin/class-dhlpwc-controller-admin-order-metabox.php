@@ -299,7 +299,7 @@ class DHLPWC_Controller_Admin_Order_Metabox
 
     public function load_styles()
     {
-        wp_enqueue_style('dhlpwc-admin-order-style', DHLPWC_PLUGIN_URL . 'assets/css/dhlpwc.admin.css');
+        wp_enqueue_style('dhlpwc-admin-style', DHLPWC_PLUGIN_URL . 'assets/css/dhlpwc.admin.css');
     }
 
     public function load_scripts()

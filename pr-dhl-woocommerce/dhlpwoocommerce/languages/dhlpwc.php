@@ -76,6 +76,18 @@ class DHLPWC_Translations
         __('Ex Works');
     }
 
+    private function bulk()
+    {
+        __('BULK_BP_ONLY');
+        __('BULK_SMALLEST');
+        __('BULK_SMALL_ONLY');
+        __('BULK_MEDIUM_ONLY');
+        __('BULK_LARGE_ONLY');
+        __('BULK_XSMALL_ONLY');
+        __('BULK_XLARGE_ONLY');
+        __('BULK_LARGEST');
+    }
+
 }
 
 endif;

@@ -23,24 +23,74 @@ jQuery(document).ready(function($) {
     }).on('dhlpwc:update_delivery_time_visibility', function() {
         // Show / hide shipping methods based on time and selected shipping method
         if ($('[id^=shipping_method_][id$=_dhlpwc-home]').is(':checked')) {
+
             $('[id^=shipping_method_][id$=_dhlpwc-home]').closest('li').show();
             $('[id^=shipping_method_][id$=_dhlpwc-home-evening]').closest('li').hide();
             $('[id^=shipping_method_][id$=_dhlpwc-home-same-day]').closest('li').hide();
 
+            $('[id^=shipping_method_][id$=_dhlpwc-home-o-neighbour]').closest('li').show();
+            $('[id^=shipping_method_][id$=_dhlpwc-home-no-neighbour-evening]').closest('li').hide();
+            $('[id^=shipping_method_][id$=_dhlpwc-home-no-neighbour-same-day]').closest('li').hide();
+
         } else if ($('[id^=shipping_method_][id$=_dhlpwc-home-evening]').is(':checked')) {
+
             $('[id^=shipping_method_][id$=_dhlpwc-home]').closest('li').hide();
             $('[id^=shipping_method_][id$=_dhlpwc-home-evening]').closest('li').show();
             $('[id^=shipping_method_][id$=_dhlpwc-home-same-day]').closest('li').hide();
 
+            $('[id^=shipping_method_][id$=_dhlpwc-home-no-neighbour]').closest('li').show();
+            $('[id^=shipping_method_][id$=_dhlpwc-home-no-neighbour-evening]').closest('li').hide();
+            $('[id^=shipping_method_][id$=_dhlpwc-home-no-neighbour-same-day]').closest('li').hide();
+
         } else if ($('[id^=shipping_method_][id$=_dhlpwc-home-same-day]').is(':checked')) {
             $('[id^=shipping_method_][id$=_dhlpwc-home]').closest('li').hide();
+
             $('[id^=shipping_method_][id$=_dhlpwc-home-evening]').closest('li').hide();
             $('[id^=shipping_method_][id$=_dhlpwc-home-same-day]').closest('li').show();
 
-        } else {
+            $('[id^=shipping_method_][id$=_dhlpwc-home-no-neighbour]').closest('li').show();
+            $('[id^=shipping_method_][id$=_dhlpwc-home-no-neighbour-evening]').closest('li').hide();
+            $('[id^=shipping_method_][id$=_dhlpwc-home-no-neighbour-same-day]').closest('li').hide();
+
+        } else if ($('[id^=shipping_method_][id$=_dhlpwc-home-no-neighbour]').is(':checked')) {
+
             $('[id^=shipping_method_][id$=_dhlpwc-home]').closest('li').show();
             $('[id^=shipping_method_][id$=_dhlpwc-home-evening]').closest('li').hide();
             $('[id^=shipping_method_][id$=_dhlpwc-home-same-day]').closest('li').hide();
+
+            $('[id^=shipping_method_][id$=_dhlpwc-home-no-neighbour]').closest('li').show();
+            $('[id^=shipping_method_][id$=_dhlpwc-home-no-neighbour-evening]').closest('li').hide();
+            $('[id^=shipping_method_][id$=_dhlpwc-home-no-neighbour-same-day]').closest('li').hide();
+
+        } else if ($('[id^=shipping_method_][id$=_dhlpwc-home-no-neighbour-evening]').is(':checked')) {
+
+            $('[id^=shipping_method_][id$=_dhlpwc-home]').closest('li').show();
+            $('[id^=shipping_method_][id$=_dhlpwc-home-evening]').closest('li').hide();
+            $('[id^=shipping_method_][id$=_dhlpwc-home-same-day]').closest('li').hide();
+
+            $('[id^=shipping_method_][id$=_dhlpwc-home-no-neighbour]').closest('li').hide();
+            $('[id^=shipping_method_][id$=_dhlpwc-home-no-neighbour-evening]').closest('li').show();
+            $('[id^=shipping_method_][id$=_dhlpwc-home-no-neighbour-same-day]').closest('li').hide();
+
+        } else if ($('[id^=shipping_method_][id$=_dhlpwc-home-no-neighbour-same-day]').is(':checked')) {
+
+            $('[id^=shipping_method_][id$=_dhlpwc-home]').closest('li').show();
+            $('[id^=shipping_method_][id$=_dhlpwc-home-evening]').closest('li').hide();
+            $('[id^=shipping_method_][id$=_dhlpwc-home-same-day]').closest('li').hide();
+
+            $('[id^=shipping_method_][id$=_dhlpwc-home-no-neighbour]').closest('li').hide();
+            $('[id^=shipping_method_][id$=_dhlpwc-home-no-neighbour-evening]').closest('li').hide();
+            $('[id^=shipping_method_][id$=_dhlpwc-home-no-neighbour-same-day]').closest('li').show();
+
+        } else {
+
+            $('[id^=shipping_method_][id$=_dhlpwc-home]').closest('li').show();
+            $('[id^=shipping_method_][id$=_dhlpwc-home-evening]').closest('li').hide();
+            $('[id^=shipping_method_][id$=_dhlpwc-home-same-day]').closest('li').hide();
+
+            $('[id^=shipping_method_][id$=_dhlpwc-home-no-neighbour]').closest('li').show();
+            $('[id^=shipping_method_][id$=_dhlpwc-home-no-neighbour-evening]').closest('li').hide();
+            $('[id^=shipping_method_][id$=_dhlpwc-home-no-neighbour-same-day]').closest('li').hide();
         }
 
     }).on('dhlpwc:update_delivery_times_style', function() {
