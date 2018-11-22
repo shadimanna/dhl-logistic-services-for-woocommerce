@@ -4,76 +4,70 @@ Donate link:
 Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL Parcel Benelux, DHL Parcel Luxembourg, DHL Paket Germany, WooCommerce, Woocom, Woo Commerce, Shipping, shiping, label creation, label printing, shipping rates, DHL Paket
 Requires at least: 4.1
 Requires PHP: 5.6
-Tested up to: 4.9.8
+Tested up to: 5.0
 Stable tag: 1.3.1
 WC requires at least: 2.6.0
-WC tested up to: 3.4
+WC tested up to: 3.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 The official DHL for WooCommerce plugin allows you to automate your e-commerce order process. Covering shipping services from DHL eCommerce (globally), DHL Paket (Germany and Austria), DHL Parcel (Benelux) and soon DHL Express (globally).
 
+
 == Description ==
 
-Here it is - DHL`s official  extension for WooCommerce on WordPress. If you are managing your orders via a WooCommerce store on WordPress and you are looking for a convenient way to manage your national and international shipments with either DHL eCommerce or DHL Paket (see the table attached on availabilities )- this is what you need. 
+DHL’s official extension for WooCommerce on Wordpress. Manage your national and international shipments easily.  The “DHL for WooCommerce” – plugin is compatible with (whether the plugin is available in your country see [here](https://www.logistics.dhl/content/dam/dhl/local/global/dhl-ecommerce/images/text-generic-1592x896/g0-integration-3pv-wooocommerce-00.web.796.448.jpg "Global DHL service coverage within WooCommerce").):
+* DHL Paket (Germany and Austria)
+* DHL Parcel Europe
+* DHL eCommerce
 
-Even better, you now have a more convenient way to retrieve shipping products, print labels and provide tracking information to your customers with the DHL Shipping for WooCommerce extension. 
 
 == Features ==
 
-1. **Print DHL labels** Fast and easy label creation of your national and international orders with DHL Paket and DHL eCommerce
-1. **Create Auto tracking codes** Automatically receive a tracking code for each label you create (if tracking is available for the selected product) 
-1. **Create Handover Notes** conveniently for a smooth and reliable manifesting process in-line with your specific regional requirements for DHL eCommerce 
+1. Fast and easy **label creation** of your national and international orders.
+1. Automatically receive a **tracking code** for each label.
+1. **Create Handover Notes** conveniently for a smooth and reliable manifesting process in-line with your specific regional requirements for DHL eCommerce.
 1. Use **additional delivery services** as e.g. the visual check of age available via the API of DHL Paket or Cash on delivery by DHL eCommerce in selected countries. 
-1. Offer **Preferred Delivery Options** to your customers via DHL Paket “Wunschpaket” enabling your customers to select the preferred time and location of delivery. If the customer enters his home address and chooses a preferred location or preferred neighbor, the parcel can also be delivered in his absence. 
-1. **Customize  names and rates** Enable/disable or edit the names of services and set up the handling costs for each DHL shipping service 
-1. **Delete or reprint labels** in case your printer experienced any issues.  
-1. Experience **premium support**, timely compatibility updates and bug fixes. 
+1. Offer **Preferred Delivery Options** to your customers via “Wunschpaket”. The customer has the opportunity to select a specific time and date for his delivery.
+1. **Customization** Enable/disable or edit the names of services and set up the handling cost for each DHL shipping service.
+1. Experience **premium support**, timely compatibility updates and bug fixes.
+1. The **“print only if codeable”** – option you can activate in the DHL settings will check whether the address is correct or not before generating the label.
+1. **Bulk Label Creation** allows you to create multiple DHL Labels at once. 
+1. **Return Parcel Handling** allows you to print a return label with a “return address” so your customer can return the shipment easily. 
 
 
-== Availability of DHL Shipping Products by Sender Country == 
+== Availability by countries and prerequisites == 
 
-DHL shipping products range from small light weight packets with milestone tracking to delivery duty paid parcels with end to end tracking and a range of delivery times from same day delivery to 14 day delivery depending on your sender country and shipment destinations. 
-To find the DHL shipping product that best suits your needs, please see the available DHL products and services within the DHL for WooCommerce plugin as shown [here](https://www.logistics.dhl/content/dam/dhl/local/global/dhl-ecommerce/images/text-generic-1592x896/g0-integration-3pv-wooocommerce-00.web.796.448.jpg "Global DHL service coverage within WooCommerce").
+Based on your sender country and shipping preference, different access credentials for **DHL Paket, DHL Parcel Europe** and **DHL eCommerce** are required for the configuration: 
 
-**Please note:** Based on your sender country and shipping preference, different access credentials for DHL Paket, DHL Parcel Benelux and DHL eCommerce are required for configuration. 
+**DHL Paket for Germany and Austria** log in with your business customer portal credentials. (not a customer yet? Click [here](https://www.dhl.de/en/geschaeftskunden/paket/kunde-werden/angebot-dhl-geschaeftskunden-online.html) for **DHL Paket**)
 
-== Prerequisits & Download ==
-
-1. WordPress installation is up and running and WooCommerce plugin is installed too?
-1. Please check, if the required DHL service is available geographically in your sender country as shown [here](https://ps.w.org/dhl-for-woocommerce/assets/screenshot-4.png "Global DHL service coverage within WooCommerce"). 
-1. In case you can use DHL where you want it, please sent us your company name and customer account number via integration@dhl.com and we will provide you back with credentials for this plugin. 
-1. You are not yet a customer? Go for it and sign up for DHL eCommerce [here](http://www.dhl.com/signup-wooCommerce "Get a quote and become a DHL Ecommerce customer"), for DHL Paket [here](https://www.dhl.de/en/geschaeftskunden/paket/kunde-werden/angebot-dhl-geschaeftskunden-online.html "Get a quote and become a DHL Paket customer"), for DHL Parcel Netherlands [here](https://www.dhlparcel.nl/en/get-quote "Get a quote and become a DHL Parcel NL customer") and for DHL Parcel Belgium [here](https://www.dhlparcel.be/nl/offerte-aanvragen "Get a quote and become a DHL Parcel Belgium customer"). 
-1. Download our DHL for WooCommerce Plugin from the [here](http://www.dhl.com/download-wooCommerce "Download the DHL for WooCommerce plugin") install and configure as described below
+**DHL Parcel Europe** for BeNeLux, Iberia and Switzerland please self-generate your API credentials with your business customer portal account.  (not a customer yet? Click [here](https://www.dhlparcel.nl/en/get-quote) for **DHL Parcel Netherlands**, here for **DHL Parcel Switzerland** and [here](https://www.dhlparcel.be/nl/offerte-aanvragen) for **DHL Parcel Belgium**). 
+**DHL eCommerce**: send us your company name and customer account number via the form [here](https://www.logistics.dhl/us-en/home/all-products-and-solutions/technology-platform-integration/request-api-access.html) and we will provide you the credentials for this plugin. (not a customer yet? Click [here](www.dhl.com/signup-wooCommerce)). 
 
 == Installation & Configuration ==
 
-1. Upload the downloaded plugin files to your `/wp-content/plugins/DHL-for-WooCommerce` directory, or install the plugin through the WordPress plugins screen directly.
+1. Upload the downloaded plugin files to your `/wp-content/plugins/DHL-for-WooCommerce` directory, **OR** install the plugin through the WordPress plugins screen directly.
 1. Activate the plugin through the 'Plugins' screen in WordPress
 1. Go to WooCommerce-->Settings->Shipping and select the upper DHL unit (depending on your home country this is DHL Paket, DHL eCommerce) etc to configure the plugin
-# ...for DHL eCommerce, please have your customer account number, your distribution center used, as well as your client-ID and client-Secret ready 
-# ...for DHL Paket, please enter your EKP number (10 digits) and add the participation numbers to the respective products available for you. You will find the participation numbers in the DHL business customer portal. Additionally you also need to enter your DHL business customer portal’s credentials.
 
-Since our DHL for WooCommerce plugin offers you a lot of different integrations into the wide world of DHL, please find some more detailed instructions on how to set up your store on the page [DHL/WooCommerce](http://www.dhl.com/wooCommerce "All About DHL for WooCommerce") and let us know if you need any further support.
+...for DHL Paket (Germany, Austria): you need your EKP number (10 digits) and add the participation numbers to the respective products available (you will find the participation numbers in the DHL business customer portal).
+...for DHL Parcel Europe (BeNeLux, Iberia, Switzerland): you need your self-generated API credentials (UserID and Key). Push the “Test connection” and the fields below will be prefilled automatically. 
+...for DHL eCommerce: you need your customer account number, the distribution center you are using, your client-ID and client-secret. 
 
-== Frequently asked questions ==
-
-Do you have more questions? For a detailed list of frequently asked questions please check our consolidated [FAQs](http://www.dhl.com/faqs "Frequently asked questions on DHL for WooCommerce")  or check out our [integration page ](http://www.dhl.com/Integration "Integrate with the world of DHL") with alternative integration options. 
 
 == Support ==
 
 More detailed instructions on how to set up your store and configure it are consolidated on on the page [http://www.dhl.com/WooCommerce](http://www.dhl.com/wooCommerce "All About DHL for WooCommerce")
 
-In case you could not find what you were looking for in our FAQs and the detailed instruction page on DHL, please get individual support by the respective DHL Business unit, so we can help you with your request and add your question to our FAQs, thanks!
+Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](www.dhl.com/Integration) with alternative integration options.
 
-* Get **DHL Parcel Belgium & Netherlands ** support via [cimparcel@dhl.com](mailto:cimparcel@dhl.com)
-* Get **DHL eCommerce** support via [Integration@dhl.com](mailto:integration@dhl.com)
-* Get **DHL Paket Germany** support via [Shopsoftware@deutschepost.de](mailto:Shopsoftware@deutschepost.de)
-* Get **DHL Parcel Switzerland** support via cis.paket.austria@dhl.com
+For individual support please use our support form [here](https://www.logistics.dhl/us-en/home/all-products-and-solutions/technology-platform-integration/request-technical-help.html)
+
 
 == Additional Information ==  
-* The plugin contains a tracking pixel due to reporting purposes of preferred services. Its output is the URL where the preferred services are integrated via plugin as well as the number of plugin calls. There is no personal data created or collected. 
-* In case you like to offer direct shipment to DHL parcelshops or post offices, please note the following phrase of the DHL Paket Service Specifications (annex to the business customer contract): “The sender guarantees that he is entitled to transmit his customers’ e-mail addresses to DHL for the purpose of the parcel notification.” 
+* The plugin contains a tracking pixel due to reporting purposes of preferred services. Its output is the URL where the preferred services are integrated via plugin as well as the number of plugin calls. There is no personal data created or collected.
+* In case you like to offer direct shipment to DHL parcelshops or post offices, please note the following phrase of the DHL Paket Service Specifications (annex to the business customer contract): “The sender guarantees that he is entitled to transmit his customers’ e-mail addresses to DHL for the purpose of the parcel notification.”
 * A “Google Maps API Key” is required for a complete installation. 
 
 == Screenshots ==
