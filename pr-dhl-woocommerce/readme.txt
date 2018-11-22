@@ -43,7 +43,7 @@ Based on your sender country and shipping preference, different access credentia
 **DHL Paket for Germany and Austria** log in with your business customer portal credentials. (not a customer yet? Click [here](https://www.dhl.de/en/geschaeftskunden/paket/kunde-werden/angebot-dhl-geschaeftskunden-online.html) for **DHL Paket**)
 
 **DHL Parcel Europe** for BeNeLux, Iberia and Switzerland please self-generate your API credentials with your business customer portal account.  (not a customer yet? Click [here](https://www.dhlparcel.nl/en/get-quote) for **DHL Parcel Netherlands**, here for **DHL Parcel Switzerland** and [here](https://www.dhlparcel.be/nl/offerte-aanvragen) for **DHL Parcel Belgium**). 
-**DHL eCommerce**: send us your company name and customer account number via the form [here](https://www.logistics.dhl/us-en/home/all-products-and-solutions/technology-platform-integration/request-api-access.html) and we will provide you the credentials for this plugin. (not a customer yet? Click [here](www.dhl.com/signup-wooCommerce)). 
+**DHL eCommerce**: send us your company name and customer account number via the form [here](https://www.logistics.dhl/us-en/home/all-products-and-solutions/technology-platform-integration/request-api-access.html) and we will provide you the credentials for this plugin. (not a customer yet? Click [here](http://www.dhl.com/signup-wooCommerce)). 
 
 == Installation & Configuration ==
 
@@ -51,9 +51,9 @@ Based on your sender country and shipping preference, different access credentia
 1. Activate the plugin through the 'Plugins' screen in WordPress
 1. Go to WooCommerce-->Settings->Shipping and select the upper DHL unit (depending on your home country this is DHL Paket, DHL eCommerce) etc to configure the plugin
 
-...for DHL Paket (Germany, Austria): you need your EKP number (10 digits) and add the participation numbers to the respective products available (you will find the participation numbers in the DHL business customer portal).
-...for DHL Parcel Europe (BeNeLux, Iberia, Switzerland): you need your self-generated API credentials (UserID and Key). Push the “Test connection” and the fields below will be prefilled automatically. 
-...for DHL eCommerce: you need your customer account number, the distribution center you are using, your client-ID and client-secret. 
+...for **DHL Paket (Germany, Austria)**: you need your EKP number (10 digits) and add the participation numbers to the respective products available (you will find the participation numbers in the DHL business customer portal).
+...for **DHL Parcel Europe (BeNeLux, Iberia, Switzerland)**: you need your self-generated API credentials (UserID and Key). Push the “Test connection” and the fields below will be prefilled automatically. 
+...for **DHL eCommerce**: you need your customer account number, the distribution center you are using, your client-ID and client-secret. 
 
 
 == Support ==
@@ -79,6 +79,30 @@ For individual support please use our support form [here](https://www.logistics.
 
 
 == Changelog ==
+
+= 1.3.5 =
+* DHL Paket: Validation fixes
+* Readme text changes
+
+= 1.3.4 =
+* DHL Parcel: Added selectable delivery times based on location
+* DHL Parcel: Added an automatic switch between Same Day / Home and Evening delivery for delivery times
+* DHL Parcel: Added a filter to sort orders based on estimated shipping days in the admin
+* DHL Parcel: Added cutoff times for delivery times
+* DHL Parcel: Added days needed for shipping for delivery times
+* DHL Parcel: Added colored indicators for estimated shipping days in the admin
+* DHL Parcel: Added configurable shipping days for delivery times
+
+= 1.3.3 =
+* DHL Parcel: Enabled Switzerland
+
+= 1.3.2 =
+* DHL Parcel: Additional return labels can be created alongside regular labels
+* DHL Parcel: Added settings to set a default address for return labels
+* DHL Parcel: Added bulk label creation and bulk label printing
+* DHL Parcel: Added a setting to set the default size preference for bulk label creation
+* DHL Parcel: Added the service option to hide shipping address
+* DHL Parcel: Added settings to set a default address when hiding sender address
 
 = 1.3.1 =
 * Bug Fix - DHL Paket: Fix JS errors on checkout page, by validating fields exist first
