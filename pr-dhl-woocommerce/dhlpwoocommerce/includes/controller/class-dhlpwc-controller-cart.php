@@ -100,6 +100,11 @@ class DHLPWC_Controller_Cart
         // This logic shows extra content on the currently selected shipment method
         if ($method->id == $chosen_shipping) {
             switch($chosen_shipping) {
+                case 'dhlpwc-home-no-neighbour':
+                case 'dhlpwc-home-no-neighbour-same-day':
+                case 'dhlpwc-home-no-neighbour-evening':
+                    $no_neighbour = true;
+
                 case 'dhlpwc-home':
                 case 'dhlpwc-home-same-day':
                 case 'dhlpwc-home-evening':
@@ -112,7 +117,7 @@ class DHLPWC_Controller_Cart
 
                     $service = DHLPWC_Model_Service_Delivery_Times::instance();
                     $delivery_times = $service->get_time_frames($postal_code, $country_code, $selected);
-                    $delivery_times = $service->filter_time_frames($delivery_times);
+                    $delivery_times = $service->filter_time_frames($delivery_times, !empty($no_neighbour), $selected);
 
                     // Show delivery times
                     if (!empty($delivery_times)) {

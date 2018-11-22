@@ -8,6 +8,7 @@
                 <th><?php _e('Price', 'dhlpwc') ?></th>
                 <th><?php _e('Eligable for Free/discount', 'dhlpwc') ?></th>
                 <th><?php _e('Free/discount Price', 'dhlpwc') ?></th>
+                <th><?php _e('Replace text label', 'dhlpwc') ?></th>
             </tr>
         </table>
     </td>

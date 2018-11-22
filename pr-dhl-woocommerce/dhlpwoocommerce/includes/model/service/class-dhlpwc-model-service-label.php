@@ -144,13 +144,10 @@ class DHLPWC_Model_Service_Label extends DHLPWC_Model_Core_Singleton_Abstract
         return true;
     }
 
-    public function bulk($order_ids)
+    public function bulk($order_ids, $bulk_size)
     {
         $bulk_success = 0;
         $bulk_fail = 0;
-
-        $settings_service = DHLPWC_Model_Service_Settings::instance();
-        $bulk_size = $settings_service->get_bulk_size();
 
         foreach ($order_ids as $order_id) {
 
@@ -180,6 +177,20 @@ class DHLPWC_Model_Service_Label extends DHLPWC_Model_Core_Singleton_Abstract
                 }
             }
 
+            // BP preference
+            if ($bulk_size == 'bp_only') {
+                // Manual check for PS, due to the API not correctly invalidating this label combination
+                if (in_array(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS, $preselected_options)) {
+                    continue;
+                }
+
+                $key = array_search(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_DOOR, $preselected_options);
+                if ($key !== false) {
+                    unset($preselected_options[$key]);
+                }
+                $preselected_options[] = DHLPWC_Model_Meta_Order_Option_Preference::OPTION_BP;
+            }
+
             // Generate sizes (with requested options)
             $service = DHLPWC_Model_Service_Access_Control::instance();
             $sizes = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CAPABILITY_PARCELTYPE, array(
@@ -194,6 +205,7 @@ class DHLPWC_Model_Service_Label extends DHLPWC_Model_Core_Singleton_Abstract
             } else {
                 $label_size = null;
                 switch($bulk_size) {
+                    case 'bp_only':
                     case 'smallest':
                         // Select smallest size available
                         $lowest_weight = null;
@@ -227,6 +239,24 @@ class DHLPWC_Model_Service_Label extends DHLPWC_Model_Core_Singleton_Abstract
                         foreach($sizes as $size) {
                             /** @var DHLPWC_Model_API_Data_Parceltype $size */
                             if (strtolower($size->key) === 'large') {
+                                $label_size = $size->key;
+                                break;
+                            }
+                        }
+                        break;
+                    case 'xsmall_only':
+                        foreach($sizes as $size) {
+                            /** @var DHLPWC_Model_API_Data_Parceltype $size */
+                            if (strtolower($size->key) === 'xsmall') {
+                                $label_size = $size->key;
+                                break;
+                            }
+                        }
+                        break;
+                    case 'xlarge_only':
+                        foreach($sizes as $size) {
+                            /** @var DHLPWC_Model_API_Data_Parceltype $size */
+                            if (strtolower($size->key) === 'xlarge') {
                                 $label_size = $size->key;
                                 break;
                             }

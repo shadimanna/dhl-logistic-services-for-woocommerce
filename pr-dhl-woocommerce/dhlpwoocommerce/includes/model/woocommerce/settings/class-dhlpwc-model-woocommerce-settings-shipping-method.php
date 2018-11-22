@@ -13,6 +13,8 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
     const PRICE_FREE = 'price_option_free';
     const FREE_AFTER_COUPON = 'free_after_coupon';
 
+    const PRESET_TRANSLATION_DOMAIN = 'preset_translation_domain';
+
     /**
      * Constructor for your shipping class
      *
@@ -128,21 +130,21 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'description' => __("Label actions like downloading PDF or opening track & trace will open in a new window.", 'dhlpwc'),
                     'default'     => 'yes',
                 ),
-                'bulk_label_creation' => array(
-                    'title'   => __('Bulk label creation', 'dhlpwc'),
-                    'type'    => 'select',
-                    'options' => array(
-                        ''            => __('Disabled', 'dhlpwc'),
-                        'smallest'    => __('Enabled - Choose the smallest available size', 'dhlpwc'),
-                        'small_only'  => sprintf(__("Enabled - Choose size '%s' only, skip if unavailable", 'dhlpwc'), __('PARCELTYPE_SMALL', 'dhlpwc')),
-                        'medium_only' => sprintf(__("Enabled - Choose size '%s' only, skip if unavailable", 'dhlpwc'), __('PARCELTYPE_MEDIUM', 'dhlpwc')),
-                        'large_only'  => sprintf(__("Enabled - Choose size '%s' only, skip if unavailable", 'dhlpwc'), __('PARCELTYPE_LARGE', 'dhlpwc')),
-                        'xsmall_only' => sprintf(__("Enabled - Choose size '%s' only, skip if unavailable", 'dhlpwc'), __('PARCELTYPE_XSMALL', 'dhlpwc')),
-                        'xlarge_only' => sprintf(__("Enabled - Choose size '%s' only, skip if unavailable", 'dhlpwc'), __('PARCELTYPE_XLARGE', 'dhlpwc')),
-                        'largest'     => __('Enabled - Choose the largest available size', 'dhlpwc'),
-                    ),
-                    'default' => '',
+                'bulk_container' => array(
+                    'type'  => 'dhlpwc_bulk_container',
                 ),
+            ),
+
+            $this->get_bulk_group_fields('bp_only', __('Choose mailbox, skip if unavailable', 'dhlpwc')),
+            $this->get_bulk_group_fields('smallest', __('Choose the smallest available size', 'dhlpwc')),
+            $this->get_bulk_group_fields('small_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), __('PARCELTYPE_SMALL', 'dhlpwc'))),
+            $this->get_bulk_group_fields('medium_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), __('PARCELTYPE_MEDIUM', 'dhlpwc'))),
+            $this->get_bulk_group_fields('large_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), __('PARCELTYPE_LARGE', 'dhlpwc'))),
+            $this->get_bulk_group_fields('xsmall_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), __('PARCELTYPE_XSMALL', 'dhlpwc'))),
+            $this->get_bulk_group_fields('xlarge_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), __('PARCELTYPE_XLARGE', 'dhlpwc'))),
+            $this->get_bulk_group_fields('largest', __('Choose the largest available size', 'dhlpwc')),
+
+            array(
                 'bulk_label_printing' => array(
                     'title'       => __('Bulk label printing', 'dhlpwc'),
                     'type'        => 'checkbox',
@@ -231,6 +233,12 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'label'       => __('Enable', 'dhlpwc'),
                     'description' => __("When creating a label, always select the signature option by default if the service is available.", 'dhlpwc'),
                     'default'     => 'no',
+                ),
+
+                self::PRESET_TRANSLATION_DOMAIN => array(
+                    'title'       => __('Replace text label translation domain', 'dhlpwc'),
+                    'type'        => 'text',
+                    'description' => __("If using replacement text labels for shipping methods, it's possible to filter it with a translation domain. To use the text as-is, leave this field empty.", 'dhlpwc'),
                 ),
 
                 'use_shipping_zones' => array(
@@ -368,6 +376,16 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'data-option-group'           => $code,
                 ),
             ),
+
+            'alternative_option_text_' . $code => array(
+                'type'              => 'text',
+                'class'             => "dhlpwc-grouped-option dhlpwc-option-grid['" . $code . "'] " . $class,
+                'default'           => '',
+                'placeholder'       => __('Use default text label', 'dhlpwc'),
+                'custom_attributes' => array(
+                    'data-option-group' => $code,
+                ),
+            ),
         );
 
         return $option_settings;
@@ -442,6 +460,8 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
         $service = DHLPWC_Model_Service_Shipping_Preset::instance();
         $same_day = $service->find_preset('same_day');
         $home = $service->find_preset('home');
+        $no_neighbour_same_day = $service->find_preset('no_neighbour_same_day');
+        $no_neighbour = $service->find_preset('no_neighbour');
 
         return array_merge(
             array(
@@ -464,7 +484,9 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
             ),
 
             $this->get_delivery_times_group_fields($same_day->setting_id, sprintf(__('%s available until', 'dhlpwc'), $same_day->title), true),
+            $this->get_delivery_times_group_fields($no_neighbour_same_day->setting_id, sprintf(__('%s available until', 'dhlpwc'), $no_neighbour_same_day->title), true),
             $this->get_delivery_times_group_fields($home->setting_id, sprintf(__('%s available until', 'dhlpwc'), $home->title)),
+            $this->get_delivery_times_group_fields($no_neighbour->setting_id, sprintf(__('%s available until', 'dhlpwc'), $no_neighbour->title)),
 
             $this->get_shipping_days()
         );
@@ -578,6 +600,21 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
         return $options;
     }
 
+    protected function get_bulk_group_fields($code, $title)
+    {
+        return array(
+            'enable_bulk_option_' . $code  => array(
+                'title'             => __($title, 'dhlpwc'),
+                'type'              => 'checkbox',
+                'class'             => "dhlpwc-bulk-option dhlpwc-bulk-grid['" . $code . "']",
+                'default'           => 'no',
+                'custom_attributes' => array(
+                    'data-bulk-group' => $code,
+                ),
+            )
+        );
+    }
+
     public function get_address_fields($prefix = null)
     {
         switch($prefix) {
@@ -665,6 +702,8 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
 
     public function calculate_shipping($package = array())
     {
+        $domain = $this->get_option(self::PRESET_TRANSLATION_DOMAIN);
+
         $service = DHLPWC_Model_Service_Shipping_Preset::instance();
         $presets = $service->get_presets();
 
@@ -694,15 +733,33 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
 
             if ($this->get_option('enable_option_'.$preset->setting_id) === 'yes' && $check_allowed_options === true) {
 
+                $alternate_text = $this->get_option('alternative_option_text_'.$preset->setting_id);
+                if (!empty($alternate_text)) {
+                    if (!empty($domain)) {
+                        $title = __($alternate_text, $domain);
+                    } else {
+                        $title = $alternate_text;
+                    }
+                } else {
+                    $title = __($preset->title, 'dhlpwc');
+                }
+
                 $this->add_rate(array(
                     'id'    => 'dhlpwc-'.$preset->frontend_id,
-                    'label' => __($preset->title, 'dhlpwc'),
+                    'label' => $title,
                     'cost'  => $this->calculate_cost($package, $preset->setting_id),
                 ));
+
             }
         }
 
         $this->update_taxes();
+    }
+
+    protected function generate_dhlpwc_bulk_container_html($key, $data)
+    {
+        $view = new DHLPWC_Template('admin.settings.bulk-header');
+        return $view->render(array(), false);
     }
 
     protected function generate_dhlpwc_delivery_times_container_html($key, $data)

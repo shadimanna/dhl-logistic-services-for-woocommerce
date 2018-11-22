@@ -1,5 +1,16 @@
 # DHL Parcel plugin for WooCommerce
 
+V1.2.3
+
+## Changes
+- Updated bulk label creation from 1 type to each type enable-able separately
+- Added mailbox option for bulk label creation
+- Added optional fields to replace shipping text in the checkout
+- Added Same Day, No Neighbour shipping for checkout 
+- Added Evening, No Neighbour shipping for checkout
+- Added delivery times for No Neighbour shipping methods
+- Fixed a compatibility issue with third party plugins
+
 V1.2.2
 
 ## Changes
