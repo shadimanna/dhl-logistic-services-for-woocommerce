@@ -42,7 +42,7 @@ Based on your sender country and shipping preference, different access credentia
 
 **DHL Paket for Germany and Austria** log in with your business customer portal credentials. (not a customer yet? Click [here](https://www.dhl.de/en/geschaeftskunden/paket/kunde-werden/angebot-dhl-geschaeftskunden-online.html) for **DHL Paket**)
 
-**DHL Parcel Europe** for BeNeLux, Iberia and Switzerland please self-generate your API credentials with your business customer portal account.  (not a customer yet? Click [here](https://www.dhlparcel.nl/en/get-quote) for **DHL Parcel Netherlands**, here for **DHL Parcel Switzerland** and [here](https://www.dhlparcel.be/nl/offerte-aanvragen) for **DHL Parcel Belgium**). 
+**DHL Parcel Europe** for BeNeLux, Iberia and Switzerland please self-generate your API credentials with your business customer portal account.  (not a customer yet? Click [here](https://www.dhlparcel.nl/en/get-quote) for **DHL Parcel Netherlands**, [here](https://www.dhlparcel.ch/de/geschaeftskunden/kunde-werden.html) for **DHL Parcel Switzerland** and [here](https://www.dhlparcel.be/nl/offerte-aanvragen) for **DHL Parcel Belgium**). 
 **DHL eCommerce**: send us your company name and customer account number via the form [here](https://www.logistics.dhl/us-en/home/all-products-and-solutions/technology-platform-integration/request-api-access.html) and we will provide you the credentials for this plugin. (not a customer yet? Click [here](http://www.dhl.com/signup-wooCommerce)). 
 
 == Installation & Configuration ==
