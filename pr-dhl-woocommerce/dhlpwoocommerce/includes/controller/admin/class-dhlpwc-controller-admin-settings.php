@@ -140,7 +140,15 @@ class DHLPWC_Controller_Admin_Settings
 
     protected function is_plugin_screen()
     {
+        if (!function_exists('get_current_screen')) {
+            return false;
+        }
+
         $screen = get_current_screen();
+        if (!isset($screen)) {
+            return false;
+        }
+
         if ($screen->base !== 'woocommerce_page_wc-settings') {
             return false;
         }
@@ -162,7 +170,15 @@ class DHLPWC_Controller_Admin_Settings
 
     protected function is_shipping_zone_screen()
     {
+        if (!function_exists('get_current_screen')) {
+            return false;
+        }
+
         $screen = get_current_screen();
+        if (!isset($screen)) {
+            return false;
+        }
+
         if ($screen->base !== 'woocommerce_page_wc-settings') {
             return false;
         }

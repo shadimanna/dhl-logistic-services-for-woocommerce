@@ -33,9 +33,11 @@ class DHLPWC_Controller_Cart
     public function set_delivery_time_hooks()
     {
         $service = DHLPWC_Model_Service_Access_Control::instance();
-        if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DELIVERY_TIMES_ACTIVE)) {
+        if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DELIVERY_TIMES)) {
             add_action('wp_enqueue_scripts', array($this, 'load_delivery_time_scripts'));
+        }
 
+        if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DELIVERY_TIMES_ACTIVE)) {
             add_action('woocommerce_after_shipping_rate', array($this, 'show_delivery_times_shipping_method'), 10, 2);
 
             add_action('wp_ajax_dhlpwc_delivery_time_selection_sync', array($this, 'delivery_time_selection_sync'));

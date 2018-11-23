@@ -76,8 +76,12 @@ class DHLPWC_Controller_Admin_Order
             return;
         }
 
+        if (!function_exists('get_current_screen')) {
+            return;
+        }
+
         $screen = get_current_screen();
-        if ($screen->base != 'edit' || $screen->post_type != 'shop_order') {
+        if (!isset($screen) || $screen->base != 'edit' || $screen->post_type != 'shop_order') {
             return;
         }
 
@@ -209,7 +213,15 @@ class DHLPWC_Controller_Admin_Order
 
     public function bulk_create_notice()
     {
+        if (!function_exists('get_current_screen')) {
+            return;
+        }
+
         $screen = get_current_screen();
+        if (!isset($screen)) {
+            return;
+        }
+
         if ($screen->base == 'edit' && $screen->post_type == 'shop_order') {
             if (isset($_GET['dhlpwc_labels_created'])) {
                 $created = isset($_GET['dhlpwc_create_count']) && is_numeric($_GET['dhlpwc_create_count']) ? wc_clean($_GET['dhlpwc_create_count']) : 0;
@@ -330,7 +342,15 @@ class DHLPWC_Controller_Admin_Order
 
     public function load_styles()
     {
+        if (!function_exists('get_current_screen')) {
+            return;
+        }
+
         $screen = get_current_screen();
+        if (!isset($screen)) {
+            return;
+        }
+
         if ($screen->base == 'post' && $screen->post_type == 'shop_order') {
             wp_enqueue_style('dhlpwc-admin-style', DHLPWC_PLUGIN_URL . 'assets/css/dhlpwc.admin.css');
         }
