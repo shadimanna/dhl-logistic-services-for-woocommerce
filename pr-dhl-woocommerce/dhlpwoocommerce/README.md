@@ -1,5 +1,11 @@
 # DHL Parcel plugin for WooCommerce
 
+V1.2.4
+
+## Changes
+- Fixed an issue with delivery times not always loading in the right order
+- Fixed an issue that causes Customizer not to load on specific themes
+
 V1.2.3
 
 ## Changes

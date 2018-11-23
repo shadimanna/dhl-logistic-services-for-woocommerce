@@ -304,7 +304,15 @@ class DHLPWC_Controller_Admin_Order_Metabox
 
     public function load_scripts()
     {
+        if (!function_exists('get_current_screen')) {
+            return;
+        }
+
         $screen = get_current_screen();
+        if (!isset($screen)) {
+            return;
+        }
+
         if ($screen->base == 'post' && $screen->post_type == 'shop_order') {
             wp_enqueue_script( 'dhlpwc-metabox-action', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.metabox.js', array('jquery'));
             wp_localize_script( 'dhlpwc-metabox-action', 'dhlpwc_metabox_object', array(
