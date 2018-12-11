@@ -270,8 +270,9 @@ abstract class PR_DHL_WC_Order {
 			$args = $this->delete_label_args( $order_id );
 			$dhl_obj = PR_DHL()->get_dhl_factory();
 			
+			// Delete meta data first in case there is an error with the API call
+			$this->delete_dhl_label_tracking( $order_id ); 
 			$dhl_obj->delete_dhl_label( $args );
-			$this->delete_dhl_label_tracking( $order_id );
 			
 			$tracking_num = $args['tracking_number'];
 

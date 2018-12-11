@@ -265,9 +265,9 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 			}
 
 			if( strlen( $this->args['shipping_address']['address_1'] ) > 50 ) {
-				$consignee_address_1 = substr( $this->args['shipping_address']['address_1'], 0, 50);
+				$consignee_address_1 = mb_substr( $this->args['shipping_address']['address_1'], 0, 50, 'UTF-8');
 
-				$this->args['shipping_address']['address_2'] = substr( $this->args['shipping_address']['address_1'], 50) . ' ' . $this->args['shipping_address']['address_2'];
+				$this->args['shipping_address']['address_2'] = mb_substr( $this->args['shipping_address']['address_1'], 50, 'UTF-8') . ' ' . $this->args['shipping_address']['address_2'];
 
 			} else {
 				$consignee_address_1 = $this->args['shipping_address']['address_1'];
@@ -275,9 +275,9 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 
 			$consignee_address_3 = '';
 			if( strlen( $this->args['shipping_address']['address_2'] ) > 50 ) {
-				$consignee_address_2 = substr( $this->args['shipping_address']['address_2'], 0, 50);
+				$consignee_address_2 = mb_substr( $this->args['shipping_address']['address_2'], 0, 50, 'UTF-8');
 
-				$consignee_address_3 = substr( $this->args['shipping_address']['address_2'], 50, 50);
+				$consignee_address_3 = mb_substr( $this->args['shipping_address']['address_2'], 50, 50, 'UTF-8');
 			} else {
 				$consignee_address_2 = $this->args['shipping_address']['address_2'];
 			}
