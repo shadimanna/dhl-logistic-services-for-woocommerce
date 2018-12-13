@@ -142,7 +142,7 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 		// Make sure there are no duplicate taxonomies
 		$desc_array = array_unique($desc_array);
 		$desc_text = implode(', ', $desc_array);
-		$desc_text = substr( $desc_text, 0, 50 );
+		$desc_text = mb_substr( $desc_text, 0, 50, 'UTF-8' );
 		
 		return $desc_text;
 	}

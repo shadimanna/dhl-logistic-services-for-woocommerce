@@ -174,7 +174,7 @@ jQuery( function( $ ) {
 					}
 
 				}
-			});				
+			});		
 
 			return false;
 		},

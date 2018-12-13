@@ -586,6 +586,8 @@ class PR_DHL_Front_End_Paket {
 		} catch (Exception $e) {
 			wp_send_json( array( 'error' => $e->getMessage() ) );
 		}
+
+		wp_die();
 	}
 
 	protected function is_parcelfinder_enabled() {
