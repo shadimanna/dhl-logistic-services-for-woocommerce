@@ -82,7 +82,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			sleep(1);
 
 			$export_data = '';
-			if ($response_body->CreationState->LabelData->exportLabelData) {
+			if ( isset( $response_body->CreationState->LabelData->exportLabelData) ) {
 				$export_data = $response_body->CreationState->LabelData->exportLabelData;
 			}
 
