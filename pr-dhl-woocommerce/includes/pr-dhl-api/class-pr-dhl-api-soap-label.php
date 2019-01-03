@@ -81,11 +81,14 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			// Give the server 1 second to create the PDF before downloading it
 			sleep(1);
 
-			$tracking_number = isset( $response_body->CreationState->LabelData->shipmentNumber ) ? $response_body->CreationState->LabelData->shipmentNumber : '';
-			
-			// $label_url = $this->save_label_file( $response_body->CreationState->sequenceNumber, 'pdf', $response_body->CreationState->LabelData->labelUrl );
-			$label_tracking_info = $this->save_label_file( $response_body->CreationState->sequenceNumber, 'pdf', $response_body->CreationState->LabelData->labelData );
+			$export_data = '';
+			if ($response_body->CreationState->LabelData->exportLabelData) {
+				$export_data = $response_body->CreationState->LabelData->exportLabelData;
+			}
 
+			$label_tracking_info = $this->save_data_files( $response_body->CreationState->sequenceNumber, $response_body->CreationState->LabelData->labelData, $export_data );
+
+			$tracking_number = isset( $response_body->CreationState->LabelData->shipmentNumber ) ? $response_body->CreationState->LabelData->shipmentNumber : '';
 			$label_tracking_info['tracking_number'] = $tracking_number;
 
 			return $label_tracking_info;
@@ -147,27 +150,47 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		}
 	}
 
-	protected function save_label_file( $order_id, $format, $label_data ) {
-		$label_name = 'dhl-label-' . $order_id . '.' . $format;
-		$label_path = PR_DHL()->get_dhl_label_folder_dir() . $label_name;
-		$label_url = PR_DHL()->get_dhl_label_folder_url() . $label_name;
+	protected function save_data_files( $order_id, $label_data, $export_data ) {
+
+		$label_info = $this->save_data_file( 'label', $order_id, $label_data );
+
+		if ( ! empty( $export_data ) ) {
+			$export_info = $this->save_data_file( 'export', $order_id, $export_data );
+
+			// Merge PDF files
+			$pdfMerger = new PDFMerger;
+			$pdfMerger->addPDF( $label_info['data_path'], 'all' );
+			$pdfMerger->addPDF( $export_info['data_path'], 'all' );
+
+			$filename = 'dhl-label-export-' . $order_id . '.pdf';
+			$label_url = PR_DHL()->get_dhl_label_folder_url() . $filename;
+			$label_path = PR_DHL()->get_dhl_label_folder_dir() . $filename;
+			$pdfMerger->merge( 'file',  $label_path );
+		} else {
+			$label_url = $label_info['data_url'];
+			$label_path = $label_info['data_path'];
+		}
 		
-		if( validate_file($label_path) > 0 ) {
+		return array( 'label_url' => $label_url, 'label_path' => $label_path);
+	}
+
+	protected function save_data_file( $prefix, $order_id, $data_decoded ) {
+		$data_name = 'dhl-' . $prefix . '-' . $order_id . '.pdf';
+		$data_path = PR_DHL()->get_dhl_label_folder_dir() . $data_name;
+		$data_url = PR_DHL()->get_dhl_label_folder_url() . $data_name;
+
+		if( validate_file($data_path) > 0 ) {
 			throw new Exception( __('Invalid file path!', 'pr-shipping-dhl' ) );
 		}
 
-		$label_data_decoded = $label_data;
-		// $label_data_decoded = base64_decode($label_data);
-		// $label_data_decoded = file_get_contents( $label_data );
-
 		// SOAP client decodes (base64) on its own so no need to do it here
-		$file_ret = file_put_contents( $label_path, $label_data_decoded );
+		$file_ret = file_put_contents( $data_path, $data_decoded );
 		
 		if( empty( $file_ret ) ) {
-			throw new Exception( __('DHL Label file cannot be saved!', 'pr-shipping-dhl' ) );
+			throw new Exception( __('File cannot be saved!', 'pr-shipping-dhl' ) );
 		}
 
-		return array( 'label_url' => $label_url, 'label_path' => $label_path);
+		return array( 'data_url' => $data_url, 'data_path' => $data_path);
 	}
 
 	protected function set_arguments( $args ) {
