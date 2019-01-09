@@ -333,17 +333,29 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			if ( empty( $args['shipping_address']['address_2'] )) {
 				// Break address into pieces			
 				$address_exploded = explode(' ', $args['shipping_address']['address_1']);
-				// Get last piece, assuming it is street number 
-				$last_index = sizeof($address_exploded);
+				
+				// Loop through address and set number value only...
+				// ...last found number will be 'address_2'
+				foreach ($address_exploded as $address_key => $address_value) {
+					if (is_numeric($address_value)) {
+						// Set last index as street number
+						$args['shipping_address']['address_2'] = $address_value;
+						$set_key = $address_key;
+					}
+				}
 
-				// Set last index as street number
-				$args['shipping_address']['address_2'] = $address_exploded[ $last_index - 1 ];
+				// If no number was found, then throw exception...
+				// ...else unset number value and create 'address_1' without it
+				if ( empty( $args['shipping_address']['address_2'] )) {
+					throw new Exception( __('Shipping "Address 2" is empty!', 'pr-shipping-dhl') );
+				} else {
 
-				// Unset it in address 1
-				unset( $address_exploded[ $last_index - 1 ] );
+					// Unset it in address 1
+					unset( $address_exploded[ $set_key ] );
 
-				// Set address 1 without street number
-				$args['shipping_address']['address_1'] = implode(' ', $address_exploded );
+					// Set address 1 without street number
+					$args['shipping_address']['address_1'] = implode(' ', $address_exploded );
+				}
 			}
 		}
 
