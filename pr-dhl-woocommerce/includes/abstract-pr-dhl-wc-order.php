@@ -535,9 +535,7 @@ abstract class PR_DHL_WC_Order {
 		}
 		
 		$args['order_details']['total_value'] = $order->get_total();			
-		// Value of ordered items only
-		$args['order_details']['items_value'] = $order->get_subtotal();
-
+		
 		// Get address related information 
 		$billing_address = $order->get_address();
 		$shipping_address = $order->get_address( 'shipping' );
@@ -596,10 +594,14 @@ abstract class PR_DHL_WC_Order {
 		// Get order item specific data
 		$ordered_items = $order->get_items( );
 		$args['items'] = array();
+		// Sum value of ordered items
+		$args['order_details']['items_value'] = 0;
 		foreach ($ordered_items as $key => $item) {
 			$new_item['qty'] = $item['qty'];
 			// Get 1 item value not total items, based on ordered items in case currency is different that set product price
 			$new_item['item_value'] = ( $item['line_total'] / $item['qty'] );
+			// Sum 'line_total' to get items total value w/ discounts!
+			$args['order_details']['items_value'] += $item['line_total'];
 
 			$product = wc_get_product( $item['product_id'] );
 
