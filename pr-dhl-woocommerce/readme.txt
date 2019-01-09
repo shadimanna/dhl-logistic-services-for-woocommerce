@@ -80,6 +80,15 @@ For individual support please use our support form [here](https://www.logistics.
 
 == Changelog ==
 
+= 1.3.9 =
+* DHL Paket: Add CN23/CP71 forms to returned shipping label
+* DHL Paket: Ensure receiver "streetNumber" is a numeric value
+* DHL eCommerce: Fix "declaredValue" to include product discounts
+
+= 1.3.8 =
+* DHL eCommerce: Fix sub string to use 'UTF-8' for Asian chars
+* DHL Paket: Fix delete meta data before API call
+
 = 1.3.8 =
 * DHL eCommerce: Fix sub string to use 'UTF-8' for Asian chars
 * DHL Paket: Fix delete meta data before API call
