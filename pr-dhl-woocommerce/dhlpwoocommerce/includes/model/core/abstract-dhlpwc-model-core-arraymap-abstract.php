@@ -117,6 +117,18 @@ abstract class DHLPWC_Model_Core_Arraymap_Abstract
             if ($key != 'class_map' && $key != 'rename_map' && $key != 'array_class_map' && $key != 'ignore_null_map') {
                 if ($value instanceof DHLPWC_Model_Core_Arraymap_Abstract) {
                     $formatted_data[$this->format_key($key)] = $value->to_array();
+                } else if (array_key_exists($key, $this->array_class_map) && is_array($value)) {
+                    $array_values = array();
+                    foreach($value as $array_value) {
+                        if ($array_value instanceof DHLPWC_Model_Core_Arraymap_Abstract) {
+                            $array_values[] = $array_value->to_array();
+                        } else {
+                            /** @var DHLPWC_Model_Core_Arraymap_Abstract $class */
+                            $class = new $this->array_class_map[$key]($value);
+                            $array_values[] = $class->to_array();
+                        }
+                    }
+                    $formatted_data[$this->format_key($key)] = $array_values;
                 } else {
                     if ($value !== null || !in_array($key, $this->ignore_null_map)) {
                         $formatted_data[$this->format_key($key)] = $value;

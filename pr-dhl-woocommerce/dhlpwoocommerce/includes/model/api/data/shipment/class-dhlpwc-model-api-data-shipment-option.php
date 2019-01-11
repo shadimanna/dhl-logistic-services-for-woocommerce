@@ -2,9 +2,9 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-if (!class_exists('DHLPWC_Model_API_Data_Label_Option')) :
+if (!class_exists('DHLPWC_Model_API_Data_Shipment_Option')) :
 
-class DHLPWC_Model_API_Data_Label_Option extends DHLPWC_Model_API_Data_Abstract
+class DHLPWC_Model_API_Data_Shipment_Option extends DHLPWC_Model_API_Data_Abstract
 {
 
     protected $ignore_null_map = array(

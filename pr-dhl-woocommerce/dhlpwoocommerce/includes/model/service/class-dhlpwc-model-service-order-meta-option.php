@@ -74,6 +74,50 @@ class DHLPWC_Model_Service_Order_Meta_Option extends DHLPWC_Model_Core_Singleton
         return true;
     }
 
+    public function default_order_id_reference($order_id, $options, $to_business)
+    {
+        $service = DHLPWC_Model_Service_Access_Control::instance();
+        $order_id_reference_checked = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DEFAULT_ORDER_ID_REFERENCE);
+        if (!$order_id_reference_checked) {
+            return false;
+        }
+
+        $allowed_shipping_options = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CAPABILITY_ORDER_OPTIONS, array(
+            'order_id' => $order_id,
+            'options' => $options,
+            'to_business' => $to_business,
+        ));
+
+        // Disable automatic checking of order id reference if there are no parceltypes for it
+        if (!array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE, $allowed_shipping_options)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function default_return($order_id, $options, $to_business)
+    {
+        $service = DHLPWC_Model_Service_Access_Control::instance();
+        $return_checked = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DEFAULT_RETURN);
+        if (!$return_checked) {
+            return false;
+        }
+
+        $allowed_shipping_options = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CAPABILITY_ORDER_OPTIONS, array(
+            'order_id' => $order_id,
+            'options' => $options,
+            'to_business' => $to_business,
+        ));
+
+        // Disable automatic checking of add return label if there are no parceltypes for it
+        if (!array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_ADD_RETURN_LABEL, $allowed_shipping_options)) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function get_parcelshop($order_id)
     {
         $order = new WC_Order($order_id);
@@ -94,6 +138,22 @@ class DHLPWC_Model_Service_Order_Meta_Option extends DHLPWC_Model_Core_Singleton
         }
 
         return $parcelshop;
+    }
+
+    public function add_key_value_to_stack($key, $value, &$array)
+    {
+        if (!is_array($array)) {
+            if (!$array) {
+                $array = array();
+            } else {
+                return $array;
+            }
+        }
+
+        if (!in_array($key, $array)) {
+            $array[$key] = $value;
+        }
+        return $array;
     }
 
     public function add_key_to_stack($key, &$array)

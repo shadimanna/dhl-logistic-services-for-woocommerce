@@ -35,7 +35,11 @@ class DHLPWC_Model_Service_Postcode extends DHLPWC_Model_Core_Singleton_Abstract
             return $expression;
         }
 
-        $request = wp_remote_get($this->url . $country_code);
+        try {
+            $request = wp_remote_get($this->url . $country_code);
+        } catch (Exception $exception) {
+            return false;
+        }
 
         if ($request instanceof WP_Error) {
             return false;
@@ -65,17 +69,22 @@ class DHLPWC_Model_Service_Postcode extends DHLPWC_Model_Core_Singleton_Abstract
         if (!isset($this->cached_countries) || !is_array($this->cached_countries)) {
             $this->cached_countries = array();
         }
+        set_site_transient('dhlpwc_postcode_validation_'.$country_code, $expression, 7 * DAY_IN_SECONDS);
         $this->cached_countries[$country_code] = $expression;
     }
 
     protected function get_cached_expression($country_code)
     {
         if (!isset($this->cached_countries) || !is_array($this->cached_countries)) {
-            return false;
+            $this->cached_countries = array();
         }
 
         if (!array_key_exists($country_code, $this->cached_countries)) {
-            return false;
+            if ($expression = get_site_transient('dhlpwc_postcode_validation'.$country_code)) {
+                $this->cached_countries[$country_code] = $expression;
+            } else {
+                return false;
+            }
         }
 
         return $this->cached_countries[$country_code];

@@ -1,5 +1,16 @@
 # DHL Parcel plugin for WooCommerce
 
+V1.2.5
+
+## Changes
+- Updated feedback information to be multilingual
+- Shipping methods can be sorted by default, price or custom order
+- Added a setting to automatically create return labels
+- Added a setting to automatically add order numbers as reference
+- Updated the API endpoint for label creation
+- Updated translations
+- Fixed close button not showing on certain websites
+
 V1.2.4
 
 ## Changes

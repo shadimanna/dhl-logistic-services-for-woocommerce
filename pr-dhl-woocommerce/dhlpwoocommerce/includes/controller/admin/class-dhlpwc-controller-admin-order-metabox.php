@@ -113,7 +113,7 @@ class DHLPWC_Controller_Admin_Order_Metabox
         $label_option_data = isset($_POST['label_option_data']) && is_array($_POST['label_option_data']) ? wc_clean($_POST['label_option_data']) : array();
         $to_business = (isset($_POST['to_business']) && wc_clean($_POST['to_business']) == 'yes') ? true : false;
 
-        $service = DHLPWC_Model_Service_Label::instance();
+        $service = DHLPWC_Model_Service_Shipment::instance();
         $success = $service->create($post_id, $label_size, $label_options, $label_option_data, $to_business);
 
         // Set Flash message
@@ -123,7 +123,7 @@ class DHLPWC_Controller_Admin_Order_Metabox
         } else {
             $messages->add_error(__('Label could not be created.', 'dhlpwc'), 'dhlpwc_label_meta');
             // Check if internal error
-            if ($error_message = $service->get_error(DHLPWC_Model_Service_Label::CREATE_ERROR)) {
+            if ($error_message = $service->get_error(DHLPWC_Model_Service_Shipment::CREATE_ERROR)) {
                 $messages->add_error($error_message, 'dhlpwc_label_meta');
             } else {
                 // Attempt to retrieve last API error
@@ -259,6 +259,19 @@ class DHLPWC_Controller_Admin_Order_Metabox
             $default_signature = $option_service->default_signature($order_id, $preselected_options, $to_business);
             if ($default_signature) {
                 $option_service->add_key_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_HANDT, $preselected_options);
+            }
+
+            // Default option settings
+            $default_order_id_reference = $option_service->default_order_id_reference($order_id, $preselected_options, $to_business);
+            if ($default_order_id_reference) {
+                $option_service->add_key_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE, $preselected_options);
+                $option_service->add_key_value_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE, $order_id, $option_data);
+            }
+
+            // Default option settings
+            $default_return = $option_service->default_return($order_id, $preselected_options, $to_business);
+            if ($default_return) {
+                $option_service->add_key_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_ADD_RETURN_LABEL, $preselected_options);
             }
         }
 

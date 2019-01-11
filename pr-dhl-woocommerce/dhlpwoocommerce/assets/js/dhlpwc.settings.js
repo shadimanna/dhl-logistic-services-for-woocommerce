@@ -154,6 +154,8 @@ jQuery(document).ready(function($) {
         dhlpwc_settings_menu_collection[index].title.addClass('dhlpwc-active');
         dhlpwc_settings_menu_collection[index].description.addClass('dhlpwc-active');
         dhlpwc_settings_menu_collection[index].settings.css('display', 'inline-block');
+        // Sending out event for other scripts
+        $(document.body).trigger('dhlpwc:settings_clicked', [dhlpwc_settings_menu_collection[index].title.attr('id')]);
 
     }).on('dhlpwc:deselect_settings', function() {
         $.each(dhlpwc_settings_menu_collection, function(e, dhlpwc_settings) {
