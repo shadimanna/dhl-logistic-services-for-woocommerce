@@ -24,9 +24,41 @@ class DHLPWC_Model_Service_Shipping_Preset extends DHLPWC_Model_Core_Singleton_A
         return null;
     }
 
+    public function sort_rates($rates)
+    {
+        if (!$rates || !is_array($rates)) {
+            return $rates;
+        }
+
+        $logic = DHLPWC_Model_Logic_Access_Control::instance();
+        $custom_sort = $logic->check_custom_sort();
+
+        switch ($custom_sort) {
+            case DHLPWC_Model_WooCommerce_Settings_Shipping_Method::SORT_COST_LOW:
+                $rates = $this->sort_rates_by_cost($rates);
+                break;
+            case DHLPWC_Model_WooCommerce_Settings_Shipping_Method::SORT_COST_HIGH:
+                $rates = $this->sort_rates_by_cost($rates, false);
+                break;
+            case DHLPWC_Model_WooCommerce_Settings_Shipping_Method::SORT_CUSTOM:
+                $rates = $this->sort_rates_by_position_setting($rates);
+                break;
+        }
+
+        return $rates;
+    }
+
     public function get_presets()
     {
         return array(
+            array(
+                'frontend_id' => 'parcelshop',
+                'setting_id' => 'parcelshop',
+                'title' => __('ServicePoint delivery', 'dhlpwc'),
+                'options' => array(
+                    DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS,
+                ),
+            ),
             // Home, Evening and Same Day are also part of Delivery Times.
             array(
                 'frontend_id' => 'home',
@@ -54,6 +86,7 @@ class DHLPWC_Model_Service_Shipping_Preset extends DHLPWC_Model_Core_Singleton_A
                     DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SDD,
                 ),
             ),
+            // Home, Evening and Same Day set for No Neighbours, Delivery Times.
             array(
                 'frontend_id' => 'home-no-neighbour',
                 'setting_id' => 'no_neighbour',
@@ -101,16 +134,79 @@ class DHLPWC_Model_Service_Shipping_Preset extends DHLPWC_Model_Core_Singleton_A
                     DHLPWC_Model_Meta_Order_Option_Preference::OPTION_EXP,
                 ),
             ),
-
-            array(
-                'frontend_id' => 'parcelshop',
-                'setting_id' => 'parcelshop',
-                'title' => __('ServicePoint delivery', 'dhlpwc'),
-                'options' => array(
-                    DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS,
-                ),
-            ),
         );
+    }
+
+    protected function sort_rates_by_position_setting($rates)
+    {
+        $filter = array();
+        foreach ($rates as $rate) {
+            /** @var WC_Shipping_Rate $rate */
+            if ($rate->get_method_id() != 'dhlpwc') {
+                $filter[] = 0;
+            } else {
+                $preset = $this->find_rate($rate->get_id());
+                if ($preset) {
+                    $filter[] = $this->get_sort_position($preset->setting_id);
+                } else {
+                    $filter[] = 0;
+                }
+            }
+        }
+
+        array_multisort($filter, $rates);
+
+        return $rates;
+    }
+
+    protected function sort_rates_by_cost($rates, $asc = true)
+    {
+        $cost_filter = array();
+        foreach ($rates as $rate) {
+            /** @var WC_Shipping_Rate $rate */
+            $cost_filter[] = $rate->cost;
+        }
+
+        $sort = ($asc === true) ? SORT_ASC : SORT_DESC;
+
+        array_multisort($cost_filter, $sort, $rates);
+        return $rates;
+    }
+
+    protected function get_sort_position($setting_id)
+    {
+        if (!$setting_id) {
+            return 0;
+        }
+
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
+
+        if (empty($shipping_method)) {
+            return 0;
+        }
+
+        if (empty($shipping_method['sort_position_'.$setting_id])) {
+            return 0;
+        }
+
+        return intval($shipping_method['sort_position_'.$setting_id]);
+    }
+
+    /**
+     * @param $frontend_id
+     * @return DHLPWC_Model_Meta_Shipping_Preset|null
+     */
+    protected function find_rate($frontend_id)
+    {
+        $presets = $this->get_presets();
+        foreach($presets as $preset_data)
+        {
+            $preset = new DHLPWC_Model_Meta_Shipping_Preset($preset_data);
+            if ('dhlpwc-'.$preset->frontend_id === $frontend_id) {
+                return $preset;
+            }
+        }
+        return null;
     }
 
 }

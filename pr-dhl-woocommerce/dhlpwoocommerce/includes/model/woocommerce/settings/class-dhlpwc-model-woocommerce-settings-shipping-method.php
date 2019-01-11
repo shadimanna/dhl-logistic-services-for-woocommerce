@@ -15,6 +15,10 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
 
     const PRESET_TRANSLATION_DOMAIN = 'preset_translation_domain';
 
+    const SORT_COST_LOW = 'cost_low';
+    const SORT_COST_HIGH = 'cost_high';
+    const SORT_CUSTOM = 'custom';
+
     /**
      * Constructor for your shipping class
      *
@@ -235,6 +239,23 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'default'     => 'no',
                 ),
 
+                'check_default_order_id_reference' => array(
+                    'title'       => __('Automatically add the order number as a reference, if possible', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Enable', 'dhlpwc'),
+                    'description' => __("When creating a label, always add the order number as reference by default if the service is available.", 'dhlpwc'),
+                    'default'     => 'no',
+                ),
+
+                'check_default_return' => array(
+                    'title'       => __('Always enable return label if available', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Enable', 'dhlpwc'),
+                    'description' => __("When creating a label, always select the return label option by default if the service is available.", 'dhlpwc'),
+
+                    'default'     => 'no',
+                ),
+
                 self::PRESET_TRANSLATION_DOMAIN => array(
                     'title'       => __('Replace text label translation domain', 'dhlpwc'),
                     'type'        => 'text',
@@ -247,6 +268,18 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'label'       => __('Enable', 'dhlpwc'),
                     'description' => __("Set shipping methods per shipping zone.", 'dhlpwc'),
                     'default'     => 'no',
+                ),
+
+                'custom_preset_sorting' => array(
+                    'title'   => __('Change the sort behavior of shipment methods', 'dhlpwc'),
+                    'type'    => 'select',
+                    'options' => array(
+                        ''                   => __('Default', 'dhlpwc'),
+                        self::SORT_COST_LOW  => __('Sort by cost - lowest first', 'dhlpwc'),
+                        self::SORT_COST_HIGH => __('Sort by cost - highest first', 'dhlpwc'),
+                        self::SORT_CUSTOM    => __('Sort by custom sorting number', 'dhlpwc'),
+                    ),
+                    'default' => '',
                 ),
             ),
 
@@ -298,8 +331,6 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
 
             $this->get_address_fields('hide_sender_address_'),
 
-            $this->get_shipping_method_fields(),
-
             array(
                 // Debug
                 'developer_settings'                => array(
@@ -328,6 +359,13 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'title'       => __('External custom URL', 'dhlpwc'),
                     'type'        => 'text',
                     'description' => __("Alternative external URL. Used by developers. Will not be used if left empty.", 'dhlpwc'),
+                ),
+
+                // Feedback
+                'feedback_settings'                => array(
+                    'title'       => __('Feedback', 'dhlpwc'),
+                    'type'        => 'title',
+                    'description' => __('Got questions or feedback about the plugin? Please let us know by clicking here.', 'dhlpwc'),
                 ),
             )
         );
@@ -382,6 +420,16 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                 'class'             => "dhlpwc-grouped-option dhlpwc-option-grid['" . $code . "'] " . $class,
                 'default'           => '',
                 'placeholder'       => __('Use default text label', 'dhlpwc'),
+                'custom_attributes' => array(
+                    'data-option-group' => $code,
+                ),
+            ),
+
+            'sort_position_' . $code => array(
+                'type'              => 'decimal',
+                'class'             => "dhlpwc-grouped-option dhlpwc-option-grid['" . $code . "'] " . $class,
+                'default'           => '',
+                'placeholder'       => '0',
                 'custom_attributes' => array(
                     'data-option-group' => $code,
                 ),

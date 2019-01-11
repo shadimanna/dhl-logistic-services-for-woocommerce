@@ -134,7 +134,15 @@ class DHLPWC_Controller_Admin_Settings
         }
 
         if ($this->is_plugin_screen()) {
-            wp_enqueue_script( 'dhlpwc-settings-usabilla', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.usabilla.js');
+            $locale = get_locale();
+            $locale_parts = explode('_', $locale);
+            $language = strtolower(reset($locale_parts));
+
+            wp_enqueue_script( 'dhlpwc-settings-usabilla', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.usabilla-loader.js');
+            wp_localize_script( 'dhlpwc-settings-usabilla', 'dhlpwc_usabilla_object', array(
+                'usabilla_js' => DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.usabilla.js',
+                'language' => $language,
+            ));
         }
     }
 

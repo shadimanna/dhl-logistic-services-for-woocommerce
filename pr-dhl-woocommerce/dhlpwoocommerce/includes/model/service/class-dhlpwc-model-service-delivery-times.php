@@ -104,7 +104,7 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
         $time_windows = $connector->get('time-windows', array(
             'countryCode' => $country_code,
             'postalCode' => $postal_code,
-        ), 0 * MINUTE_IN_SECONDS);
+        ), 30 * MINUTE_IN_SECONDS);
 
         if (!$time_windows || !is_array($time_windows) || empty($time_windows)) {
             return array();

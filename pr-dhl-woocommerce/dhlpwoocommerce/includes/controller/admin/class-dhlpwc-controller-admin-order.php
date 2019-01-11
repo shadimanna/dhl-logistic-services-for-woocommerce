@@ -196,7 +196,7 @@ class DHLPWC_Controller_Admin_Order
 
         $order_ids = isset($_GET['post']) && is_array($_GET['post']) ? wc_clean($_GET['post']) : array();
 
-        $service = DHLPWC_Model_Service_Label::instance();
+        $service = DHLPWC_Model_Service_Shipment::instance();
         $success_data = $service->bulk($order_ids, $option);
 
         // of course using add_query_arg() is not required, you can build your URL inline

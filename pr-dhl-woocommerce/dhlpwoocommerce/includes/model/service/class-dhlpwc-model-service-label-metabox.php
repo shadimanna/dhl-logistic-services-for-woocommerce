@@ -84,7 +84,7 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
         $delivery_options = array();
         $service_options = array();
         if ($allowed_options) {
-            $service = DHLPWC_Model_Service_Label_Option::instance();
+            $service = DHLPWC_Model_Service_Shipment_Option::instance();
 
             foreach ($allowed_options as $allowed_option) {
                 // TODO temporarily use a whitelist
@@ -116,10 +116,25 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
                 // Update input template
                 switch($option->key) {
                     case (DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE):
+                        if (!empty($option_data) && is_array($option_data) && array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE, $option_data)) {
+                            $logic = DHLPWC_Model_Logic_Shipment::instance();
+                            $value = $logic->get_reference_data($option_data);
+                        } else {
+                            $access_service = DHLPWC_Model_Service_Access_Control::instance();
+                            $default_order_id_reference = $access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DEFAULT_ORDER_ID_REFERENCE);
+
+                            if ($default_order_id_reference) {
+                                $value = $order_id;
+                            } else {
+                                $value = null;
+                            }
+                        }
+
                         $option->input_template = DHLPWC_Model_API_Data_Option::INPUT_TEMPLATE_TEXT;
                         $option->input_template_data = array(
                             'placeholder' => __('Reference', 'dhlpwc'),
                             'placeholder2' => __('Second reference', 'dhlpwc'),
+                            'value' => $value,
                         );
                         break;
 //                    case (DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PERS_NOTE):
@@ -145,7 +160,7 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
                         break;
                     case (DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SSN):
                         if (!empty($option_data) && is_array($option_data) && array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SSN, $option_data)) {
-                            $logic = DHLPWC_Model_Logic_Label::instance();
+                            $logic = DHLPWC_Model_Logic_Shipment::instance();
                             $hide_sender_data = $logic->get_hide_sender_data($option_data);
                             if ($logic->validate_flat_address($hide_sender_data)) {
                                 $hide_sender_address = new DHLPWC_Model_Meta_Address($hide_sender_data);

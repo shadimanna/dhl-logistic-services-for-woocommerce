@@ -63,7 +63,7 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
     {
         if ($cache_time) {
             $cache_id = $endpoint.'_'.crc32(json_encode($params));
-            $cache = get_site_transient('dhlpwc_connector_cache_'.$cache_id);
+            $cache = get_transient('dhlpwc_connector_cache_'.$cache_id);
             if (!empty($cache)) {
                 return $cache;
             }
@@ -73,7 +73,7 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
         $parsed_response = $this->parse_response($response, $endpoint, $params);
         if ($parsed_response && $cache_time) {
             $cache_id = $endpoint . '_' . crc32(json_encode($params));
-            set_site_transient('dhlpwc_connector_cache_'.$cache_id, $parsed_response, $cache_time);
+            set_transient('dhlpwc_connector_cache_'.$cache_id, $parsed_response, $cache_time);
         }
         return $parsed_response;
     }

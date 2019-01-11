@@ -2,9 +2,9 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-if (!class_exists('DHLPWC_Model_Service_Label_Option')) :
+if (!class_exists('DHLPWC_Model_Service_Shipment_Option')) :
 
-class DHLPWC_Model_Service_Label_Option extends DHLPWC_Model_Core_Singleton_Abstract
+class DHLPWC_Model_Service_Shipment_Option extends DHLPWC_Model_Core_Singleton_Abstract
 {
 
     public function get_image_url($option_key = null)
@@ -25,7 +25,7 @@ class DHLPWC_Model_Service_Label_Option extends DHLPWC_Model_Core_Singleton_Abst
     {
         $request_options = array();
         foreach($keys as $key) {
-            $option = new DHLPWC_Model_API_Data_Label_Option(array(
+            $option = new DHLPWC_Model_API_Data_Shipment_Option(array(
                 'key'   => $key,
             ));
             if (array_key_exists($key, $data)) {
