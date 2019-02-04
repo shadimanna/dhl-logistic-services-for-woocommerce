@@ -344,18 +344,16 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 					}
 				}
 
-				// If no number was found, then throw exception...
-				// ...else unset number value and create 'address_1' without it
+				// If no number was found, then take last part of address no matter what it is
 				if ( empty( $args['shipping_address']['address_2'] )) {
-					throw new Exception( __('Shipping "Address 2" is empty!', 'pr-shipping-dhl') );
-				} else {
-
-					// Unset it in address 1
-					unset( $address_exploded[ $set_key ] );
-
-					// Set address 1 without street number
-					$args['shipping_address']['address_1'] = implode(' ', $address_exploded );
+					$args['shipping_address']['address_2'] = $address_exploded[ $address_key ];
+					$set_key = $address_key;
 				}
+
+				// Unset it in address 1
+				unset( $address_exploded[ $set_key ] );
+				// Set address 1 without street number or last part of address
+				$args['shipping_address']['address_1'] = implode(' ', $address_exploded );
 			}
 		}
 
