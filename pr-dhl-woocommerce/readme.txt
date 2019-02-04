@@ -80,6 +80,18 @@ For individual support please use our support form [here](https://www.logistics.
 
 == Changelog ==
 
+= 1.3.11 =
+* DHL Paket: Ensure "address 2" is never empty
+
+= 1.3.10 =
+* DHL Parcel: Updated feedback information to be multilingual
+* DHL Parcel: Shipping methods can be sorted by default, price or custom order
+* DHL Parcel: Added a setting to automatically create return labels
+* DHL Parcel: Added a setting to automatically add order numbers as reference
+* DHL Parcel: Updated the API endpoint for label creation
+* DHL Parcel: Updated translations
+* DHL Parcel: Fixed close button not showing on certain websites
+
 = 1.3.9 =
 * DHL Paket: Add CN23/CP71 forms to returned shipping label
 * DHL Paket: Ensure receiver "streetNumber" is a numeric value
