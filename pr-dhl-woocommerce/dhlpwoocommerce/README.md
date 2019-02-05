@@ -1,5 +1,12 @@
 # DHL Parcel plugin for WooCommerce
 
+V1.2.6
+
+## Changes
+- Fixed automatic order id reference not being added for bulk
+- Fixed ServicePoint locator not loading
+- Added developer methods to update templates
+
 V1.2.5
 
 ## Changes
