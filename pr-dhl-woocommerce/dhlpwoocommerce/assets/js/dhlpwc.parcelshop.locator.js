@@ -88,9 +88,17 @@ jQuery(document).ready(function($) {
             // The safest way to load external React
             // It is staggered on purpose
 
+            // Disable getScript from adding a custom timestamp
+            $.ajaxSetup({cache: true});
             $.getScript("//unpkg.com/react@16.5.2/umd/react.production.min.js").done(function() {
+                // Disable getScript from adding a custom timestamp
+                $.ajaxSetup({cache: true});
                 $.getScript("//unpkg.com/react-dom@16.5.2/umd/react-dom.production.min.js").done(function() {
+                    // Disable getScript from adding a custom timestamp
+                    $.ajaxSetup({cache: true});
                     $.getScript("//unpkg.com/react-md@1.7.1/dist/react-md.min.js").done(function() {
+                        // Disable getScript from adding a custom timestamp
+                        $.ajaxSetup({cache: true});
                         $.getScript("//unpkg.com/@dhl-parcel/dhl-servicepoint-locator@latest/build/dsl.js").done(function() {
                             dhlpwc_parcelshop_selection_modal_loaded = true;
                             dhlpwc_parcelshop_selection_modal_loading_busy = false;

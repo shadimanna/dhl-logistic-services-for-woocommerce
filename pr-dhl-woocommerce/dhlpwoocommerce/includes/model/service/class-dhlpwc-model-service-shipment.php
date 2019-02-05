@@ -194,6 +194,12 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
             $preselected_options = $option_service->get_keys($order_id);
 
             // Default option settings
+            $default_order_id_reference = $option_service->default_order_id_reference($order_id, $preselected_options, $to_business);
+            if ($default_order_id_reference) {
+                $option_service->add_key_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE, $preselected_options);
+            }
+
+            // Default option settings
             $default_signature = $option_service->default_signature($order_id, $preselected_options, $to_business);
             if ($default_signature) {
                 $option_service->add_key_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_HANDT, $preselected_options);
@@ -213,6 +219,9 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
                         $order_meta_service = new DHLPWC_Model_Service_Order_Meta_Option();
                         $parcelshop = $order_meta_service->get_parcelshop($order_id);
                         $option_data[DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS] = $parcelshop->id;
+                        break;
+                    case (DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE):
+                        $option_data[DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE] = $order_id;
                         break;
                 }
             }
