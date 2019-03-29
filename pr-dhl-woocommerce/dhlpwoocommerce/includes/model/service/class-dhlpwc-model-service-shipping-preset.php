@@ -185,11 +185,11 @@ class DHLPWC_Model_Service_Shipping_Preset extends DHLPWC_Model_Core_Singleton_A
             return 0;
         }
 
-        if (empty($shipping_method['sort_position_'.$setting_id])) {
+        if (empty($shipping_method['sort_position_' . $setting_id])) {
             return 0;
         }
 
-        return intval($shipping_method['sort_position_'.$setting_id]);
+        return intval($shipping_method['sort_position_' . $setting_id]);
     }
 
     /**
@@ -202,7 +202,7 @@ class DHLPWC_Model_Service_Shipping_Preset extends DHLPWC_Model_Core_Singleton_A
         foreach($presets as $preset_data)
         {
             $preset = new DHLPWC_Model_Meta_Shipping_Preset($preset_data);
-            if ('dhlpwc-'.$preset->frontend_id === $frontend_id) {
+            if ('dhlpwc-' . $preset->frontend_id === $frontend_id) {
                 return $preset;
             }
         }

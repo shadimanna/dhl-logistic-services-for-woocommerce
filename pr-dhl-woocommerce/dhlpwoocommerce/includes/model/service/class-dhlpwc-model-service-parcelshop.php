@@ -25,7 +25,7 @@ class DHLPWC_Model_Service_Parcelshop extends DHLPWC_Model_Core_Singleton_Abstra
             return array();
         }
 
-        $parcelshops_data = $connector->get('parcel-shop-locations/'.$country, array(
+        $parcelshops_data = $connector->get('parcel-shop-locations/' . $country, array(
             'limit' => $limit,
             'fuzzy' => $search,
         ), 10 * MINUTE_IN_SECONDS);
@@ -53,10 +53,41 @@ class DHLPWC_Model_Service_Parcelshop extends DHLPWC_Model_Core_Singleton_Abstra
         }
 
         $connector = DHLPWC_Model_API_Connector::instance();
-        $parcelshop_data = $connector->get(sprintf('parcel-shop-locations/'.$country.'/%s', $parcelshop_id), null, 1 * HOUR_IN_SECONDS);
+        $parcelshop_data = $connector->get(sprintf('parcel-shop-locations/' . $country . '/%s', $parcelshop_id), null, 1 * HOUR_IN_SECONDS);
         if (!$parcelshop_data) {
             return null;
         }
+        $parcelshop = new DHLPWC_Model_API_Data_Parcelshop($parcelshop_data);
+        $parcelshop->country = $country;
+
+        return $parcelshop;
+    }
+
+    public function search_parcelshop($postal_search, $country)
+    {
+        if (!$postal_search) {
+            return null;
+        }
+
+        if (!$this->validate_country($country)) {
+            return null;
+        }
+
+        $connector = DHLPWC_Model_API_Connector::instance();
+        $parcelshops_data = $connector->get('parcel-shop-locations/' . $country, array(
+            'limit'   => 1,
+            'zipCode' => trim($postal_search),
+        ), 1 * HOUR_IN_SECONDS);
+
+        if (empty($parcelshops_data) || !is_array($parcelshops_data)) {
+            return null;
+        }
+
+        $parcelshop_data = reset($parcelshops_data);
+        if (!$parcelshop_data) {
+            return null;
+        }
+
         $parcelshop = new DHLPWC_Model_API_Data_Parcelshop($parcelshop_data);
         $parcelshop->country = $country;
 

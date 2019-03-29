@@ -470,7 +470,7 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                 'type'              => 'price',
                 'description'       => __("Free or discounted shipping prices are applied when the total price is over the inputted value.", 'dhlpwc'),
                 'default'           => '0.00',
-                'class'             => 'dhlpwc-price-input '.$class,
+                'class'             => 'dhlpwc-price-input ' . $class,
                 'custom_attributes' => array(
                     'data-dhlpwc-currency-symbol'     => get_woocommerce_currency_symbol(),
                     'data-dhlpwc-currency-pos' => get_option('woocommerce_currency_pos'),
@@ -564,7 +564,7 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
 
         $shipping_days = array();
         foreach($days as $day => $day_text) {
-            $shipping_days['enable_shipping_day_'.$day] = array(
+            $shipping_days['enable_shipping_day_' . $day] = array(
                 'title'       => sprintf(__('Ship on %ss', 'dhlpwc'), $day_text),
                 'type'        => 'checkbox',
                 'label'       => __('Enable', 'dhlpwc'),
@@ -641,8 +641,8 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
         );
 
         if ($skip_day_select) {
-            $options['delivery_day_cut_off_'.$code] = null;
-            unset($options['delivery_day_cut_off_'.$code]);
+            $options['delivery_day_cut_off_' . $code] = null;
+            unset($options['delivery_day_cut_off_' . $code]);
         }
 
         return $options;
@@ -750,6 +750,11 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
 
     public function calculate_shipping($package = array())
     {
+        // Skip calculation if plugin is not enabled
+        if ($this->get_option('enable_all') !== 'yes') {
+            return;
+        }
+
         $domain = $this->get_option(self::PRESET_TRANSLATION_DOMAIN);
 
         $service = DHLPWC_Model_Service_Shipping_Preset::instance();
@@ -770,6 +775,7 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
         }
 
         foreach($presets as $data) {
+
             $preset = new DHLPWC_Model_Meta_Shipping_Preset($data);
 
             $check_allowed_options = true;
@@ -779,9 +785,9 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                 }
             }
 
-            if ($this->get_option('enable_option_'.$preset->setting_id) === 'yes' && $check_allowed_options === true) {
+            if ($this->get_option('enable_option_' . $preset->setting_id) === 'yes' && $check_allowed_options === true) {
 
-                $alternate_text = $this->get_option('alternative_option_text_'.$preset->setting_id);
+                $alternate_text = $this->get_option('alternative_option_text_' . $preset->setting_id);
                 if (!empty($alternate_text)) {
                     if (!empty($domain)) {
                         $title = __($alternate_text, $domain);
@@ -792,16 +798,23 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     $title = __($preset->title, 'dhlpwc');
                 }
 
+                $cost = $this->calculate_cost($package, $preset->setting_id);
+                // Apply negative tax if tax assistance is turned on (so WooCommerce can apply tax on it properly)
+                if ($this->get_option(self::ENABLE_TAX_ASSISTANCE) === 'yes') {
+                    $taxes = WC_Tax::calc_inclusive_tax($cost, WC_Tax::get_shipping_tax_rates());
+                    foreach($taxes as $tax) {
+                        $cost -= $tax;
+                    }
+                }
+
                 $this->add_rate(array(
-                    'id'    => 'dhlpwc-'.$preset->frontend_id,
+                    'id'    => 'dhlpwc-' . $preset->frontend_id,
                     'label' => $title,
-                    'cost'  => $this->calculate_cost($package, $preset->setting_id),
+                    'cost'  => $cost,
                 ));
 
             }
         }
-
-        $this->update_taxes();
     }
 
     protected function generate_dhlpwc_bulk_container_html($key, $data)
@@ -824,20 +837,26 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
 
     protected function calculate_cost($package = array(), $option)
     {
-        if ($this->get_option(self::ENABLE_FREE) === 'yes') {
-            if ($this->get_subtotal_price($package) >= $this->get_option(self::PRICE_FREE)) {
-                return $this->get_free_price($option);
-            }
+        $free_or_discounted = $this->get_option(self::ENABLE_FREE) === 'yes' && $this->get_subtotal_price($package) >= $this->get_option(self::PRICE_FREE);
+        // Allow developers to add other conditions to trigger free & discount prices
+        $free_or_discounted = apply_filters('dhlpwc_use_discount_price', $free_or_discounted, $option, $package);
+
+        if ($free_or_discounted) {
+            $price = $this->get_free_price($option);
+        } else {
+            $price = $this->get_option('price_option_' . $option);
         }
-        return $this->get_option('price_option_'.$option);
+
+        // Allow developers to manipulate the calculated price
+        return apply_filters('dhlpwc_calculate_price', $price, $free_or_discounted, $option, $package);
     }
 
     protected function get_free_price($option)
     {
-        if ($this->get_option('enable_free_option_'.$option) === 'yes') {
-            return round($this->get_option('free_price_option_'.$option), wc_get_price_decimals());
+        if ($this->get_option('enable_free_option_' . $option) === 'yes') {
+            return round($this->get_option('free_price_option_' . $option), wc_get_price_decimals());
         }
-        return $this->get_option('price_option_'.$option);
+        return $this->get_option('price_option_' . $option);
     }
 
     protected function get_subtotal_price($package = array())
@@ -854,15 +873,6 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
         return $package['cart_subtotal'];
     }
 
-    protected function update_taxes()
-    {
-        if ($this->get_option(self::ENABLE_TAX_ASSISTANCE) === 'yes') {
-            foreach($this->rates as $rate_id => $rate) {
-                /** @var WC_Shipping_Rate $rate */
-                $rate->set_cost($rate->get_cost() - $rate->get_shipping_tax());
-            }
-        }
-    }
 }
 
 endif;

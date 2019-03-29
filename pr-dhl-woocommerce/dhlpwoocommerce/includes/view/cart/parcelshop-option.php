@@ -1,7 +1,7 @@
 <?php if (!defined('ABSPATH')) { exit; } ?>
 <div class="dhlpwc-shipping-method-parcelshop-option"
-    <?php echo !empty($search_value) ? 'data-search-value="'.$search_value.'"' : '' ?>
-    <?php echo !empty($country_code) ? 'data-country-code="'.$country_code.'"' : '' ?>
+    <?php echo !empty($search_value) ? 'data-search-value="' . $search_value . '"' : '' ?>
+    <?php echo !empty($country_code) ? 'data-country-code="' . $country_code . '"' : '' ?>
 >
     <?php if (!empty($parcelshop)) : ?>
         <span class="dhlpwc-parcelshop-option-message dhlpwc_notice"><?php echo $parcelshop->name ?></span><br/>

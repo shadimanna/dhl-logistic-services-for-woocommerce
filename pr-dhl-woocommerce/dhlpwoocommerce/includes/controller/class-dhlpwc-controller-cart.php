@@ -91,7 +91,10 @@ class DHLPWC_Controller_Cart
             $country_code = null;
         }
 
-        WC()->session->set('dhlpwc_parcelshop_selection_sync', array($parcelshop_id, $country_code));
+        $service = DHLPWC_Model_Service_Checkout::instance();
+        $search_value = $service->get_cart_shipping_postal_code(true) ?: null;
+
+        WC()->session->set('dhlpwc_parcelshop_selection_sync', array($parcelshop_id, $country_code, $search_value));
         wp_send_json($json_response->to_array(), 200);
     }
 
@@ -164,13 +167,22 @@ class DHLPWC_Controller_Cart
         if ($method->id == $chosen_shipping) {
             switch($chosen_shipping) {
                 case 'dhlpwc-parcelshop':
-                    list($parcelshop_id, $country_code) = ($sync = WC()->session->get('dhlpwc_parcelshop_selection_sync')) ? $sync : array(null, null);
+                    list($parcelshop_id, $country_code, $search_value_memory) = ($sync = WC()->session->get('dhlpwc_parcelshop_selection_sync')) ? $sync : array(null, null, null);
                     $service = DHLPWC_Model_Service_Checkout::instance();
                     $search_value = $service->get_cart_shipping_postal_code(true) ?: null;
+                    $postal_code = $service->get_cart_shipping_postal_code() ?: null;
                     $country_code = $country_code ?: $service->get_cart_shipping_country_code();
 
+                    // Attempt to select a default parcelshop when none is selected or postal code is changed
                     $service = DHLPWC_Model_Service_Parcelshop::instance();
-                    $parcelshop = $service->get_parcelshop($parcelshop_id, $country_code);
+                    if (!$parcelshop_id || $search_value != $search_value_memory) {
+                        $parcelshop = $service->search_parcelshop($postal_code, $country_code);
+                        if ($parcelshop) {
+                            WC()->session->set('dhlpwc_parcelshop_selection_sync', array($parcelshop->id, $country_code, $search_value));
+                        }
+                    } else {
+                        $parcelshop = $service->get_parcelshop($parcelshop_id, $country_code);
+                    }
 
                     $view = new DHLPWC_Template('cart.parcelshop-option');
                     $view->render(array(
@@ -182,7 +194,7 @@ class DHLPWC_Controller_Cart
                     break;
                 default:
                     // Always empty selection sync if it's a different method
-                    WC()->session->set('dhlpwc_parcelshop_selection_sync', array(null, null));
+                    WC()->session->set('dhlpwc_parcelshop_selection_sync', array(null, null, null));
                     break;
             }
         }
@@ -254,7 +266,7 @@ class DHLPWC_Controller_Cart
         if (is_cart() || is_checkout()) {
             wp_enqueue_style('dhlpwc-checkout-style', DHLPWC_PLUGIN_URL . 'assets/css/dhlpwc.cart.css');
             wp_enqueue_style('dhlpwc-checkout-modal-style', DHLPWC_PLUGIN_URL . 'assets/css/dhlpwc.modal.css');
-            wp_enqueue_style('dhlpwc-checkout-parcelshop-dsl-style', '//unpkg.com/@dhl-parcel/dhl-servicepoint-locator@latest/build/dsl.css');
+            wp_enqueue_style('dhlpwc-checkout-parcelshop-dsl-style', 'https://servicepoint-locator.dhlparcel.nl/servicepoint-locator.css');
         }
     }
 

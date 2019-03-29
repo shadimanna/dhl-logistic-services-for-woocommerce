@@ -24,7 +24,7 @@ class DHLPWC_Controller_Admin_Order
             if ($bulk_options = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_BULK_CREATE)) {
                 add_filter('bulk_actions-edit-shop_order', array($this, 'add_bulk_create_actions'));
                 foreach ($bulk_options as $bulk_option) {
-                    add_action('admin_action_dhlpwc_create_labels_'.$bulk_option, array($this, 'create_multiple_labels_'.$bulk_option));
+                    add_action('admin_action_dhlpwc_create_labels_' . $bulk_option, array($this, 'create_multiple_labels_' . $bulk_option));
                 }
                 add_action('admin_notices', array($this, 'bulk_create_notice'));
             }
@@ -59,7 +59,7 @@ class DHLPWC_Controller_Admin_Order
             '<a href="'.admin_url('edit.php?post_type=shop_order&orderby=dhlpwc_delivery_date&order=asc').'">',
             esc_attr(__('Delivery date', 'dhlpwc')),
             '</a>',
-            '<span class="count">('.$result->found_posts.')</span>');
+            '<span class="count">(' . $result->found_posts . ')</span>');
 
         return $views;
     }
@@ -143,7 +143,7 @@ class DHLPWC_Controller_Admin_Order
         $bulk_options = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_BULK_CREATE);
         foreach ($bulk_options as $bulk_option) {
             $bulk_string = 'BULK_'.strtoupper($bulk_option);
-            $bulk_actions['dhlpwc_create_labels_'.$bulk_option] = sprintf(__('DHL - Create label (%s)', 'dhlpwc'), __($bulk_string, 'dhlpwc'));
+            $bulk_actions['dhlpwc_create_labels_' . $bulk_option] = sprintf(__('DHL - Create label (%s)', 'dhlpwc'), __($bulk_string, 'dhlpwc'));
         }
         return $bulk_actions;
     }

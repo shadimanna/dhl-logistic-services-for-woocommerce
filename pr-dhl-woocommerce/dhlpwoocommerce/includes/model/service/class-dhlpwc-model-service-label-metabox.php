@@ -200,7 +200,7 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
                 }
 
                 if (!empty($option->input_template)) {
-                    $view = new DHLPWC_Template('order.meta.form.input.'.$option->input_template);
+                    $view = new DHLPWC_Template('order.meta.form.input.' . $option->input_template);
                     $option->input_template = $view->render($option->input_template_data, false);
                 }
 

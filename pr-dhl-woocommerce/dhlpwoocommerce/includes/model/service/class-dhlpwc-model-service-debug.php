@@ -41,6 +41,16 @@ class DHLPWC_Model_Service_Debug extends DHLPWC_Model_Core_Singleton_Abstract
             return;
         }
 
+        $cache_time = 15 * MINUTE_IN_SECONDS;
+        $cache_id = $endpoint;
+        $cache = get_transient('dhlpwc_debug_mail_cache_' . $cache_id);
+        if (!empty($cache)) {
+            // Already mailed the error for this endpoint. Throttle amount of error mailing
+            return;
+        }
+
+        set_transient('dhlpwc_debug_mail_cache_' . $cache_id, true, $cache_time);
+
         $timestamp = current_time( 'timestamp', 1 );
         $title = 'ERROR: DHL for WooCommerce > ' . get_site_url() . ' > Endpoint:' . $endpoint . ' > (timestamp:' . $timestamp . ')';
 

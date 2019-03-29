@@ -1,7 +1,7 @@
 <?php if (!defined('ABSPATH')) { exit; } ?>
 <div class="dhlpwc-shipping-method-delivery-times-option"
-    <?php echo !empty($postal_code) ? 'data-postal-code-value="'.$postal_code.'"' : '' ?>
-    <?php echo !empty($country_code) ? 'data-country-code="'.$country_code.'"' : '' ?>
+    <?php echo !empty($postal_code) ? 'data-postal-code-value="' . $postal_code . '"' : '' ?>
+    <?php echo !empty($country_code) ? 'data-country-code="' . $country_code . '"' : '' ?>
 >
 
     <?php if (!empty($delivery_times)) : ?>

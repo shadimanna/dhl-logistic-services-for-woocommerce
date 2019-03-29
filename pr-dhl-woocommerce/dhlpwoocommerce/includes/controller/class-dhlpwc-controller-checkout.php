@@ -53,7 +53,7 @@ class DHLPWC_Controller_Checkout
         foreach($presets as $preset_data) {
             $preset = new DHLPWC_Model_Meta_Shipping_Preset($preset_data);
 
-            if (isset($data['shipping_method']) && is_array($data['shipping_method']) && in_array('dhlpwc-'.$preset->frontend_id, $data['shipping_method'])) {
+            if (isset($data['shipping_method']) && is_array($data['shipping_method']) && in_array('dhlpwc-' . $preset->frontend_id, $data['shipping_method'])) {
                 $meta_service = new DHLPWC_Model_Service_Order_Meta_Option();
 
                 // Save preset data
@@ -64,7 +64,7 @@ class DHLPWC_Controller_Checkout
 
                 foreach($preset->options as $option) {
                     if ($option === DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS) {
-                        list($parcelshop_id, $country) = ($sync = WC()->session->get('dhlpwc_parcelshop_selection_sync')) ? $sync : array(null, null);
+                        list($parcelshop_id, $country, $search_value_memory) = ($sync = WC()->session->get('dhlpwc_parcelshop_selection_sync')) ? $sync : array(null, null, null);
                         $meta_service->save_option_preference($order_id, $option, $parcelshop_id);
                     } else {
                         $meta_service->save_option_preference($order_id, $option);

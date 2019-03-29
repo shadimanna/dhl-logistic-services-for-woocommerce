@@ -200,7 +200,7 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         $enabled = array();
 
         foreach($bulk_options as $bulk_option) {
-            if (isset($shipping_method['enable_bulk_option_'.$bulk_option]) && $shipping_method['enable_bulk_option_'.$bulk_option] == 'yes') {
+            if (isset($shipping_method['enable_bulk_option_' . $bulk_option]) && $shipping_method['enable_bulk_option_' . $bulk_option] == 'yes') {
                 $enabled[] = $bulk_option;
             }
         }
@@ -509,7 +509,7 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         }
 
         /** @var DHLPWC_Model_WooCommerce_Settings_Shipping_Method $shipping_method */
-        if ($shipping_method->get_option('enable_option_'.$option) !== 'yes') {
+        if ($shipping_method->get_option('enable_option_' . $option) !== 'yes') {
             return false;
         }
 
@@ -634,11 +634,11 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
             return false;
         }
 
-        if (!isset($shipping_method['enable_shipping_day_'.$day])) {
+        if (!isset($shipping_method['enable_shipping_day_' . $day])) {
             return false;
         }
 
-        if ($shipping_method['enable_shipping_day_'.$day] != 'yes') {
+        if ($shipping_method['enable_shipping_day_' . $day] != 'yes') {
             return false;
         }
 
