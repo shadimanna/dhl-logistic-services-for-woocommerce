@@ -1,0 +1,9 @@
+{
+    "name": "pr/dhl-logistic-services-woocommerce",
+    "description": "DHL for WooCommerce",
+    "autoload": {
+        "psr-4": {
+            "PR\\DHL\\": "includes"
+        }
+    }
+}
