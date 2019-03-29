@@ -19,33 +19,25 @@ jQuery(document).ready(function($) {
             return;
         }
 
-        if (dhlpwc_parcelshop_selection_modal_loading_busy === true) {
-            return;
-        }
-
-        ReactDOM.unmountComponentAtNode(document.getElementById('dhlpwc-parcelshop-locator-wrapper'));
-        ReactDOM.render(
-            React.createElement(
-                window['@dhl-parcel/dhl-servicepoint-locator'].ParcelshopLocatorIsolated,
-                {
-                    host: dhlpwc_parcelshop_locator.gateway,
-                    apiKey: dhlpwc_parcelshop_locator.google_map_key,
-                    zipCode: $('.dhlpwc-shipping-method-parcelshop-option').data('search-value'),
-                    countryCode: $('.dhlpwc-shipping-method-parcelshop-option').data('country-code'),
-                    limit: dhlpwc_parcelshop_locator.limit,
-                    tr: function (i) {
-                        return dhlpwc_parcelshop_locator.translations[i.toLowerCase()];
-                    },
-                    onChange: function (event) {
-                        $(document.body).trigger("dhlpwc:add_parcelshop_component_confirm_button");
-                        $(document.body).trigger("dhlpwc:parcelshop_selection_sync", [event.id, event.address.countryCode]);
-                    }
+        if (typeof  window.dhlpwc_reset_servicepoint === "function") {
+            var options = {
+                host: dhlpwc_parcelshop_locator.gateway,
+                apiKey: dhlpwc_parcelshop_locator.google_map_key,
+                query: $('.dhlpwc-shipping-method-parcelshop-option').data('search-value'),
+                countryCode: $('.dhlpwc-shipping-method-parcelshop-option').data('country-code'),
+                limit: dhlpwc_parcelshop_locator.limit,
+                tr: function (i) {
+                    return dhlpwc_parcelshop_locator.translations[i.toLowerCase()];
                 }
-            ),
-            document.getElementById('dhlpwc-parcelshop-locator-wrapper')
-        );
+            };
 
-        $('div.dhlpwc-modal').show();
+            // Use the generated function provided by the component to load the ServicePoints
+            window.dhlpwc_reset_servicepoint(options);
+
+            $('div.dhlpwc-modal').show();
+        } else {
+            console.log('An unexpected error occured. ServicePoint functions were not loaded.');
+        }
 
     }).on('dhlpwc:add_parcelshop_component_confirm_button', function() {
         if ($('.dhl-parcelshop-locator .dhl-parcelshop-locator-desktop ul .dhlpwc-parcelshop-component-confirm-button').length === 0) {
@@ -85,28 +77,19 @@ jQuery(document).ready(function($) {
             /* Set background image dynamically */
             $('.dhlpwc-modal-content').css('background-image', 'url(' + dhlpwc_parcelshop_locator.modal_background + ')');
 
-            // The safest way to load external React
-            // It is staggered on purpose
+            // Create selection function
+            window.dhlpwc_select_servicepoint = function(event)
+            {
+                $(document.body).trigger("dhlpwc:add_parcelshop_component_confirm_button");
+                $(document.body).trigger("dhlpwc:parcelshop_selection_sync", [event.id, event.address.countryCode]);
+            };
 
             // Disable getScript from adding a custom timestamp
             $.ajaxSetup({cache: true});
-            $.getScript("//unpkg.com/react@16.5.2/umd/react.production.min.js").done(function() {
-                // Disable getScript from adding a custom timestamp
-                $.ajaxSetup({cache: true});
-                $.getScript("//unpkg.com/react-dom@16.5.2/umd/react-dom.production.min.js").done(function() {
-                    // Disable getScript from adding a custom timestamp
-                    $.ajaxSetup({cache: true});
-                    $.getScript("//unpkg.com/react-md@1.7.1/dist/react-md.min.js").done(function() {
-                        // Disable getScript from adding a custom timestamp
-                        $.ajaxSetup({cache: true});
-                        $.getScript("//unpkg.com/@dhl-parcel/dhl-servicepoint-locator@latest/build/dsl.js").done(function() {
-                            dhlpwc_parcelshop_selection_modal_loaded = true;
-                            dhlpwc_parcelshop_selection_modal_loading_busy = false;
-                            $('.dhlpwc-parcelshop-option-change').removeClass('dhlpwc-still-loading');
-
-                        });
-                    });
-                });
+            $.getScript("https://servicepoint-locator.dhlparcel.nl/servicepoint-locator.js").done(function() {
+                dhlpwc_parcelshop_selection_modal_loaded = true;
+                dhlpwc_parcelshop_selection_modal_loading_busy = false;
+                $('.dhlpwc-parcelshop-option-change').removeClass('dhlpwc-still-loading');
             });
         }, 'json');
 

@@ -1,5 +1,14 @@
 # DHL Parcel plugin for WooCommerce
 
+V1.2.7
+
+## Changes
+- Updated the ServicePoint locator to load from DHL's own servers instead of third party
+- Updated the ServicePoint locator to select the closest ServicePoint automatically
+- Added developer filters for price manipulation
+- Fixed delivery times API call to not send data when no postal code is set
+- Fixed tax adjustment calculation
+
 V1.2.6
 
 ## Changes

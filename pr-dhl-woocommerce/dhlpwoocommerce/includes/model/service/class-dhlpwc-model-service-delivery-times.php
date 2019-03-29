@@ -30,7 +30,7 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
             'date'       => $date,
             'start_time' => $start_time,
             'end_time'   => $end_time,
-            'timestamp'  => strtotime($date.' '.$start_time),
+            'timestamp' => strtotime($date . ' ' . $start_time),
         ));
 
         return update_post_meta($order_id, self::ORDER_TIME_SELECTION, $meta_object->to_array());
@@ -100,6 +100,10 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
      */
     public function get_time_frames($postal_code, $country_code, $selected = null)
     {
+        if (!$postal_code || !$country_code) {
+            return array();
+        }
+
         $connector = DHLPWC_Model_API_Connector::instance();
         $time_windows = $connector->get('time-windows', array(
             'countryCode' => $country_code,
@@ -257,7 +261,7 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
         }
 
         // Add the additional days to the minimum timestamp
-        $minimum_timestamp = strtotime('+'.$additional_days.' days', $minimum_timestamp);
+        $minimum_timestamp = strtotime('+' . $additional_days . ' days', $minimum_timestamp);
 
         if ($minimum_timestamp > $timestamp) {
             return false;
@@ -285,19 +289,19 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
             return null;
         }
 
-        if (!isset($shipping_method['enable_delivery_time_'.$code])) {
+        if (!isset($shipping_method['enable_delivery_time_' . $code])) {
             return null;
         }
 
-        if ($shipping_method['enable_delivery_time_'.$code] != 'yes') {
+        if ($shipping_method['enable_delivery_time_' . $code] != 'yes') {
             return null;
         }
 
-        if (!isset($shipping_method['delivery_time_cut_off_'.$code])) {
+        if (!isset($shipping_method['delivery_time_cut_off_' . $code])) {
             return null;
         }
 
-        $cut_off_hour = (int) $shipping_method['delivery_time_cut_off_'.$code];
+        $cut_off_hour = (int) $shipping_method['delivery_time_cut_off_' . $code];
         $current_hour = (int) current_time('G');
 
 
@@ -312,15 +316,15 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
             }
         }
 
-        if (!isset($shipping_method['delivery_day_cut_off_'.$code])) {
+        if (!isset($shipping_method['delivery_day_cut_off_' . $code])) {
             return null;
         }
 
-        $days = (int) $shipping_method['delivery_day_cut_off_'.$code];
+        $days = (int) $shipping_method['delivery_day_cut_off_' . $code];
         $days += $cut_off ? 1 : 0;
 
         $current_timestamp = strtotime('yesterday 23:59:59');
-        $cut_off_timestamp = strtotime('+'.$days.' days', $current_timestamp);
+        $cut_off_timestamp = strtotime('+' . $days . ' days', $current_timestamp);
 
         return $cut_off_timestamp;
     }
@@ -445,7 +449,7 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
 
     public function get_identifier($date, $start_time, $end_time)
     {
-        return $date.'___'.$start_time.'___'.$end_time;
+        return $date . '___' . $start_time . '___' . $end_time;
     }
 
 }
