@@ -16,7 +16,7 @@ function dhlTestConnection(btn_id) {
   }).insertAfter(btn);
 
   var loader = $('<img/>', {
-    src: '/wp-admin/images/loading.gif',
+    src: dhl_test_con_obj.loader_image,
     'class': 'loader-image'
   }).appendTo(loaderContainer);
 
