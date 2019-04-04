@@ -68,7 +68,7 @@ class Response {
 		array $cookies = array()
 	) {
 		$this->request = $request;
-		$this->status = $status;
+		$this->status = (int) $status;
 		$this->body = $body;
 		$this->headers = $headers;
 		$this->cookies = $cookies;
