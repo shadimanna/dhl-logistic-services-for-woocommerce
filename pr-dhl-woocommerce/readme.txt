@@ -62,9 +62,6 @@ More detailed instructions on how to set up your store and configure it are cons
 
 Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](www.dhl.com/Integration) with alternative integration options.
 
-For individual support please use our support form [here](https://www.logistics.dhl/us-en/home/all-products-and-solutions/technology-platform-integration/request-technical-help.html)
-
-
 == Additional Information ==  
 * The plugin contains a tracking pixel due to reporting purposes of preferred services. Its output is the URL where the preferred services are integrated via plugin as well as the number of plugin calls. There is no personal data created or collected.
 * In case you like to offer direct shipment to DHL parcelshops or post offices, please note the following phrase of the DHL Paket Service Specifications (annex to the business customer contract): “The sender guarantees that he is entitled to transmit his customers’ e-mail addresses to DHL for the purpose of the parcel notification.”
