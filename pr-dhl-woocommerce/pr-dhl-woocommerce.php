@@ -166,6 +166,8 @@ class PR_DHL_WC {
 		include_once( 'includes/abstract-pr-dhl-wc-product.php' );
 		// Load PDF Merger
 		include_once( 'lib/PDFMerger/PDFMerger.php' );
+		// Composer autoloader
+		include_once( 'vendor/autoload.php' );
 	}
 
 	/**
@@ -292,7 +294,7 @@ class PR_DHL_WC {
 			define( $name, $value );
 		}
 	}
-	
+
 	/**
 	 * Add a new integration to WooCommerce.
 	 */
