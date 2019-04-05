@@ -307,6 +307,9 @@ class PR_DHL_WC {
 			} elseif( $dhl_obj->is_dhl_ecomm() ) {
 				$pr_dhl_ship_meth = 'PR_DHL_WC_Method_Ecomm';
 				$shipping_method['pr_dhl_ecomm'] = $pr_dhl_ship_meth;
+			} elseif( $dhl_obj->is_dhl_deutsche_post() ) {
+				$pr_dhl_ship_meth = 'PR_DHL_WC_Method_Deutsche_Post';
+				$shipping_method['pr_dhl_ecomm'] = $pr_dhl_ship_meth;
 			}
 
 		} catch (Exception $e) {
@@ -394,7 +397,9 @@ class PR_DHL_WC {
 					return PR_DHL_REST_AUTH_URL;
 				}
 
-			}
+			} elseif( $dhl_obj->is_dhl_deutsche_post() ) {
+			    return $dhl_obj->get_api_url();
+            }
 			
 			
 		} catch (Exception $e) {
@@ -412,7 +417,9 @@ class PR_DHL_WC {
 				$dhl_settings = get_option('woocommerce_pr_dhl_paket_settings');
 			} elseif( $dhl_obj->is_dhl_ecomm() ) {
 				$dhl_settings = get_option('woocommerce_pr_dhl_ecomm_settings');
-			}
+			} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
+			    $dhl_settings = $dhl_obj->get_settings();
+            }
 
 		} catch (Exception $e) {
 			throw $e;
@@ -433,8 +440,10 @@ class PR_DHL_WC {
 				$api_user = $shipping_dhl_settings['dhl_api_user']; 
 				$api_pwd = $shipping_dhl_settings['dhl_api_pwd'];
 			} elseif( $dhl_obj->is_dhl_ecomm() ) {
-				$api_user = $shipping_dhl_settings['dhl_api_key']; 
+				$api_user = $shipping_dhl_settings['dhl_api_key'];
 				$api_pwd = $shipping_dhl_settings['dhl_api_secret'];
+			} elseif( $dhl_obj->is_dhl_deutsche_post() ) {
+			    list($api_user, $api_pwd) = $dhl_obj->get_api_creds();
 			} else {
 				throw new Exception( __('Country not supported', 'pr-shipping-dhl') );
 				

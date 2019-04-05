@@ -21,6 +21,10 @@ abstract class PR_DHL_API {
 		return false;
 	}
 
+	public function is_dhl_deutsche_post( ) {
+		return false;
+	}
+
 	public function get_dhl_label( $args ) {
 		return $this->dhl_label->get_dhl_label( $args );
 	}
