@@ -102,7 +102,7 @@ class PR_DHL_WC {
 	 *
 	 * @static
 	 * @see PR_DHL()
-	 * @return PR DHL - Main instance.
+	 * @return self Main instance.
 	 */
 	public static function instance() {
 		if ( is_null( self::$_instance ) ) {
