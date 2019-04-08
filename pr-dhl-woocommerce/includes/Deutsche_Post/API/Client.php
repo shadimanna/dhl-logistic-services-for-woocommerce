@@ -3,83 +3,121 @@
 namespace PR\DHL\Deutsche_Post\API;
 
 use Exception;
-use PR\DHL\Deutsche_Post\Deutsche_Post_Label;
+use PR\DHL\Deutsche_Post\Item_Info;
 use PR\DHL\REST_API\API_Client;
+use PR\DHL\REST_API\Interfaces\API_Auth_Interface;
+use PR\DHL\REST_API\Interfaces\API_Driver_Interface;
 use PR\DHL\REST_API\Request;
+use stdClass;
 
+/**
+ * The API client for Deutsche Post.
+ *
+ * @since [*next-version*]
+ */
 class Client extends API_Client {
-	public function generate_label( Deutsche_Post_Label $label ) {
-		$args = $label->get_args();
-		$order = $args['order_details'];
-		$shipping = $args['shipping_address'];
+	/**
+	 * The customer EKP.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @var string
+	 */
+	protected $ekp;
 
-		$contents_data = array();
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $ekp The customer EKP.
+	 */
+	public function __construct( $ekp, $base_url, API_Driver_Interface $driver, API_Auth_Interface $auth = null ) {
+		parent::__construct( $base_url, $driver, $auth );
 
-		// Add customs info
-		if ( PR_DHL()->is_crossborder_shipment( $shipping['country'] ) ) {
-			foreach ( $args['items'] as $item ) {
-				$contents_data[] = array(
-					'contentPieceDescription' => $item['description'],
-					'contentPieceValue'       => $item['value'],
-					'contentPieceNetweight'   => $item['weight'],
-					'contentPieceAmount'      => $item['qty'],
-					'contentPieceOrigin'      => $item['origin'],
-				);
-			}
-		}
-
-		$data = array(
-			'serviceLevel'        => 'PRIORITY',
-			'product'             => $order['dhl_product'],
-			'recipient'           => $shipping['name'],
-			'recipientPhone'      => $shipping['phone'],
-			'recipientEmail'      => $shipping['email'],
-			'addressLine1'        => $shipping['address_1'],
-			'addressLine2'        => $shipping['address_2'],
-			'city'                => $shipping['city'],
-			'postalCode'          => $shipping['postcode'],
-			'state'               => $shipping['state'],
-			'destinationCountry'  => $shipping['country'],
-			'shipmentAmount'      => 85,
-			'shipmentCurrency'    => $order['currency'],
-			'shipmentGrossWeight' => $order['weight'] * 1000.0,
-			'contents'            => $contents_data,
-		);
-
-		$body = json_encode( $data );
-
-		$this->send_request( Request::TYPE_POST, '/customers/' );
-
-		$request = new Request( Request::TYPE_POST, $this->prepare_url( '/items/' ), array(), $body );
-
-		return $request;
+		$this->ekp = $ekp;
 	}
 
-	public function create_item( $customer_ekp, $item_data ) {
-		$response = $this->send_request(
-			Request::TYPE_POST,
-			$this->customer_route( $customer_ekp, 'items' ),
-			$item_data
+	/**
+	 * Creates an item on the remote API.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param Item_Info $item_info The information of the item to be created.
+	 *
+	 * @return stdClass The item information as returned by the remote API.
+	 *
+	 * @throws Exception
+	 */
+	public function create_item( Item_Info $item_info ) {
+		$response = $this->post(
+			$this->customer_route( 'items' ),
+			array(
+				'serviceLevel'        => $item_info->shipment->service_level,
+				'product'             => $item_info->shipment->product,
+				'recipient'           => $item_info->recipient->name,
+				'recipientPhone'      => $item_info->recipient->phone,
+				'recipientEmail'      => $item_info->recipient->email,
+				'addressLine1'        => $item_info->recipient->address_1,
+				'addressLine2'        => $item_info->recipient->address_2,
+				'city'                => $item_info->recipient->city,
+				'postalCode'          => $item_info->recipient->postcode,
+				'state'               => $item_info->recipient->state,
+				'destinationCountry'  => $item_info->recipient->country,
+				'shipmentAmount'      => $item_info->shipment->value,
+				'shipmentCurrency'    => $item_info->shipment->currency,
+				'shipmentGrossWeight' => $item_info->shipment->weight * 1000.0,
+				'contents'            => $item_info->contents,
+			)
 		);
 
 		if ( $response->status !== 200 ) {
-			$message = ! empty( $response->body->messages )
-				? implode( ', ', $response->body->messages )
-				: '';
-
-			throw new Exception(
-				sprintf( __( 'API error: %s', 'pr-shipping-dhl' ), $message )
-			);
+			return $response->body;
 		}
 
-		return $response->body;
+		$message = ! empty( $response->body->messages )
+			? implode( ', ', $response->body->messages )
+			: '';
+
+		throw new Exception(
+			sprintf( __( 'API error: %s', 'pr-shipping-dhl' ), $message )
+		);
 	}
 
-	public function get_items( $customer_ekp ) {
-		return $this->send_request( Request::TYPE_GET, $this->customer_route( $customer_ekp, 'items' ) );
+	/**
+	 * Retrieves items from the remote API.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return array The list of items.
+	 *
+	 * @throws Exception
+	 */
+	public function get_items() {
+		$response = $this->send_request( Request::TYPE_GET, $this->customer_route( 'items' ) );
+
+		if ( $response->status === 200 ) {
+			return (array) $response->body;
+		}
+
+		throw new Exception(
+			sprintf(
+				__( 'Failed to get items from the API: %s', 'pr-shipping-dhl' )
+			),
+			implode( ', ', $response->body->messages )
+		);
 	}
 
-	protected function customer_route( $customer_ekp, $route ) {
-		return sprintf( 'customers/%s/%s', $customer_ekp, $route );
+	/**
+	 * Prepares an API route with the customer namespace and EKP.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $route The route to prepare.
+	 *
+	 * @return string
+	 */
+	protected function customer_route( $route ) {
+		return sprintf( 'customers/%s/%s', $this->ekp, $route );
 	}
 }

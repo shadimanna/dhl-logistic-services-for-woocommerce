@@ -100,6 +100,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 			return;
 		}
 
+		$ekp = $this->get_ekp();
 		$api_url = $this->get_api_url();
 		list( $client_id, $client_secret ) = $this->get_api_creds();
 
@@ -112,7 +113,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 			static::ACCESS_TOKEN_TRANSIENT
 		);
 
-		$this->api_client = new Client( $api_url, $this->api_driver, $this->api_auth );
+		$this->api_client = new Client( $ekp, $api_url, $this->api_driver, $this->api_auth );
 	}
 
 	/**
