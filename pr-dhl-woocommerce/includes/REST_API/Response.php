@@ -2,6 +2,8 @@
 
 namespace PR\DHL\REST_API;
 
+use stdClass;
+
 /**
  * A class that represents a REST API response.
  *
@@ -29,7 +31,7 @@ class Response {
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @var string
+	 * @var string|stdClass
 	 */
 	public $body;
 	/**
