@@ -13,7 +13,7 @@ use PR\DHL\Utils\Args_Parser;
  *
  * @since [*next-version*]
  */
-class Item {
+class Item_Info {
 	/**
 	 * The shipment information.
 	 *
@@ -21,7 +21,7 @@ class Item {
 	 *
 	 * @var Shipment_Info
 	 */
-	protected $shipment;
+	public $shipment;
 	/**
 	 * The recipient information.
 	 *
@@ -29,7 +29,7 @@ class Item {
 	 *
 	 * @var Recipient_Info
 	 */
-	protected $recipient;
+	public $recipient;
 	/**
 	 * The content pieces.
 	 *
@@ -39,7 +39,7 @@ class Item {
 	 *
 	 * @var Content_Piece_Info[]
 	 */
-	protected $contents;
+	public $contents;
 
 	/**
 	 * Constructor.
