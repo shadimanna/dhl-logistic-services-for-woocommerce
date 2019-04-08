@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 5.0
-Stable tag: 1.3.11
+Stable tag: 1.3.15
 WC requires at least: 2.6.0
 WC tested up to: 3.5
 License: GPLv2 or later
@@ -76,6 +76,24 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+
+= 1.3.15 =
+* DHL Paket: Add tracking setting, to enable/disable services tracking on the frontend
+
+= 1.3.14 =
+* DHL Parcel: Updated the ServicePoint locator to load from DHL's own servers instead of third party
+* DHL Parcel: Updated the ServicePoint locator to select the closest ServicePoint automatically
+* DHL Parcel: Added developer filters for price manipulation
+* DHL Parcel: Fixed delivery times API call to not send data when no postal code is set
+* DHL Parcel: Fixed tax adjustment calculation
+
+= 1.3.13 =
+* DHL Parcel: Added missing files
+
+= 1.3.12 =
+* DHL Parcel: Fixed automatic order id reference not being added for bulk
+* DHL Parcel: Fixed ServicePoint locator not loading
+* DHL Parcel: Added developer hooks to customise templates
 
 = 1.3.11 =
 * DHL Paket: Ensure "address 2" is never empty
