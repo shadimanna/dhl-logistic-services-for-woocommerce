@@ -1,7 +1,7 @@
 <?php
 
-use PR\DHL\REST_API\Deutsche_Post\Deutsche_Post_API_Auth;
-use PR\DHL\REST_API\Deutsche_Post\Deutsche_Post_API_Client;
+use PR\DHL\Deutsche_Post\API\Auth;
+use PR\DHL\Deutsche_Post\API\Client;
 use PR\DHL\REST_API\Interfaces\API_Client_Interface;
 use PR\DHL\REST_API\Interfaces\API_Driver_Interface;
 use PR\DHL\REST_API\JSON_API_Driver;
@@ -47,7 +47,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @var Deutsche_Post_API_Auth
+	 * @var Auth
 	 */
 	protected $api_auth;
 	/**
@@ -104,7 +104,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 		list( $client_id, $client_secret ) = $this->get_api_creds();
 
 		$this->api_driver = new JSON_API_Driver( new WP_API_Driver() );
-		$this->api_auth = new Deutsche_Post_API_Auth(
+		$this->api_auth = new Auth(
 			$this->api_driver,
 			$api_url,
 			$client_id,
@@ -112,7 +112,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 			static::ACCESS_TOKEN_TRANSIENT
 		);
 
-		$this->api_client = new Deutsche_Post_API_Client( $api_url, $this->api_driver, $this->api_auth );
+		$this->api_client = new Client( $api_url, $this->api_driver, $this->api_auth );
 	}
 
 	/**

@@ -1,11 +1,10 @@
 <?php
 
-namespace PR\DHL\REST_API\Deutsche_Post;
+namespace PR\DHL\Deutsche_Post\API;
 
 use PR\DHL\REST_API\Interfaces\API_Auth_Interface;
-use PR\DHL\REST_API\Request;
 use PR\DHL\REST_API\Interfaces\API_Driver_Interface;
-use PR\DHL\REST_API\Response;
+use PR\DHL\REST_API\Request;
 use PR\DHL\REST_API\URL_Utils;
 use RuntimeException;
 
@@ -14,7 +13,7 @@ use RuntimeException;
  *
  * @since [*next-version*]
  */
-class Deutsche_Post_API_Auth implements API_Auth_Interface {
+class Auth implements API_Auth_Interface {
 	/**
 	 * The Deutsche POST route for obtaining an access token.
 	 *
@@ -150,8 +149,7 @@ class Deutsche_Post_API_Auth implements API_Auth_Interface {
 	 *
 	 * @throws RuntimeException If failed to retrieve the access token.
 	 */
-	public function request_token()
-	{
+	public function request_token() {
 		// Base64 encode the "<client_id>:<client_secret>" and send as the "Authorization" header
 		$auth_str_64 = base64_encode( $this->client_id . ':' . $this->client_secret );
 		$headers = array( static::H_AUTH_CREDENTIALS => 'Basic ' . $auth_str_64 );
@@ -163,15 +161,12 @@ class Deutsche_Post_API_Auth implements API_Auth_Interface {
 		$request = new Request( Request::TYPE_GET, $full_url, array(), '', $headers );
 		$response = $this->driver->send( $request );
 
-		// Decode the JSON response body
-		$decoded = json_decode( $response->body );
-
 		// If the status code is not 200, throw an error with the raw response body
-		if ($response->status !== 200) {
-			throw new RuntimeException( $decoded->error_description );
+		if ( $response->status !== 200 ) {
+			throw new RuntimeException( $response->body->error_description );
 		}
 
-		return $decoded;
+		return $response->body;
 	}
 
 	/**
@@ -183,7 +178,7 @@ class Deutsche_Post_API_Auth implements API_Auth_Interface {
 	 */
 	public function revoke() {
 		// Do nothing if we didn't already have a token
-		if (empty($this->token) || empty($this->token->access_token)) {
+		if ( empty( $this->token ) || empty( $this->token->access_token ) ) {
 			return '';
 		}
 
@@ -211,13 +206,12 @@ class Deutsche_Post_API_Auth implements API_Auth_Interface {
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @param string $client_id The client ID.
+	 * @param string $client_id     The client ID.
 	 * @param string $client_secret The client secret.
 	 *
 	 * @return object
 	 */
-	public function test_connection($client_id, $client_secret)
-	{
+	public function test_connection( $client_id, $client_secret ) {
 		// Backup the client credentials
 		$backup_client_id = $this->client_id;
 		$backup_client_secret = $this->client_secret;
