@@ -2,6 +2,7 @@
 
 use PR\DHL\Deutsche_Post\API\Auth;
 use PR\DHL\Deutsche_Post\API\Client;
+use PR\DHL\Deutsche_Post\Item_Info;
 use PR\DHL\REST_API\Interfaces\API_Client_Interface;
 use PR\DHL\REST_API\Interfaces\API_Driver_Interface;
 use PR\DHL\REST_API\JSON_API_Driver;
@@ -55,7 +56,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @var API_Client_Interface
+	 * @var Client
 	 */
 	protected $api_client;
 
@@ -210,5 +211,23 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 */
 	public function get_dhl_products_domestic() {
 		return $this->get_dhl_products_international();
+	}
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @since [*next-version*]
+	 */
+	public function get_dhl_label( $args ) {
+		$this->init_api();
+
+		$item_info = new Item_Info( $args );
+
+		$item_response = $this->api_client->create_item( $item_info );
+		$item_barcode = $item_response->barcode;
+
+		$label_response = $this->api_client->get_label( $item_barcode );
+
+		return $label_response;
 	}
 }
