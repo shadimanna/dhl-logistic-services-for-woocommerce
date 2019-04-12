@@ -23,7 +23,7 @@ class Args_Parser {
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @param array $args The arguments to parse.
+	 * @param array $args   The arguments to parse.
 	 * @param array $scheme The scheme to parse with.
 	 *
 	 * @return array The parsed arguments.
@@ -34,17 +34,21 @@ class Args_Parser {
 		$final_args = array();
 
 		foreach ( $scheme as $key => $s_scheme ) {
+			// Rename the key if "rename" was specified
+			$new_key = empty( $s_scheme['rename'] ) ? $key : $s_scheme['rename'];
+
 			// Recurse for array values and nested schemes
-			if ( ! empty( $args[ $key ] ) && count( $s_scheme ) === 1 && is_array( $s_scheme[0] ) ) {
-				$final_args[ $key ] = static::parse_args( $args[ $key ], $s_scheme );
+			if ( ! empty( $args[ $key ] ) && isset( $s_scheme[0] ) && is_array( $s_scheme[0] ) ) {
+				$final_args[ $new_key ] = static::parse_args( $args[ $key ], $s_scheme );
+				continue;
 			}
 
 			// If the key is not set in the args
-			if ( empty( $args[ $key ] ) ) {
+			if ( ! isset( $args[ $key ] ) ) {
 				// If no default value is given, throw
-				if ( empty( $s_scheme['default'] ) ) {
+				if ( ! isset( $s_scheme['default'] ) ) {
 					// If no default value is specified, throw an exception
-					$message = empty( $s_scheme['error'] )
+					$message = ! isset( $s_scheme['error'] )
 						? sprintf( __( 'Please specify a "%s" argument', 'pr-shipping-dhl' ), $key )
 						: $s_scheme['error'];
 
@@ -56,28 +60,17 @@ class Args_Parser {
 				$value = $args[ $key ];
 			}
 
-			// If no validation function is given, continue onto the next arg
-			if ( empty( $s_scheme['validate'] ) ) {
-				continue;
-			}
-
 			// Call the validation function
-			call_user_func_array( $s_scheme['validate'], array( $value, $args, $scheme ) );
-
-			// If no sanitization function is given, continue onto the next arg
-			if ( empty( $s_scheme['sanitize'] ) ) {
-				continue;
+			if ( ! empty( $s_scheme['validate'] ) && is_callable( $s_scheme['validate'] ) ) {
+				call_user_func_array( $s_scheme['validate'], array( $value, $args, $scheme ) );
 			}
 
 			// Call the sanitization function and get the sanitized value
-			$sanitized = call_user_func_array( $s_scheme['sanitize'], array( $value, $args, $scheme ) );
+			if ( ! empty( $s_scheme['sanitize'] ) && is_callable( $s_scheme['sanitize'] ) ) {
+				$value = call_user_func_array( $s_scheme['sanitize'], array( $value, $args, $scheme ) );
+			}
 
-			// Rename the key if "rename" was specified
-			$new_key = empty($s_scheme['rename'])
-				? $scheme['rename']
-				: $key;
-
-			$final_args[ $new_key ] = $sanitized;
+			$final_args[ $new_key ] = $value;
 		}
 
 		return $final_args;
