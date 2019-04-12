@@ -107,6 +107,10 @@ class Content_Piece_Info {
 				'validate' => function( $hs_code ) {
 					$length = is_string( $hs_code ) ? strlen( $hs_code ) : 0;
 
+					if (empty($length)) {
+						return;
+					}
+
 					if ( $length < 4 || $length > 20 ) {
 						throw new Exception(
 							__( 'Item HS Code must be between 0 and 20 characters long', 'pr-shipping-dhl' )
