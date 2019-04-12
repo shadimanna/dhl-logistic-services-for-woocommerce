@@ -236,7 +236,7 @@ class Auth implements API_Auth_Interface {
 	 * @param object $token The token to save.
 	 */
 	public function save_token( $token ) {
-		set_transient( $this->transient, $token, $this->token->expires_in );
+		set_transient( $this->transient, $token, $token->expires_in );
 
 		$this->token = $token;
 	}
