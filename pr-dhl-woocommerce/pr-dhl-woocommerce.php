@@ -232,7 +232,9 @@ class PR_DHL_WC {
 				} elseif( $dhl_obj->is_dhl_ecomm() ) {
 					$this->shipping_dhl_order = new PR_DHL_WC_Order_Ecomm();
 					// $this->shipping_dhl_notice = new PR_DHL_WC_Notice();
-				}
+				} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
+				    $this->shipping_dhl_order = new PR_DHL_WC_Order_Deutsche_Post();
+                }
 				
 				// Ensure DHL Labels folder exists
 				$this->dhl_label_folder_check();
