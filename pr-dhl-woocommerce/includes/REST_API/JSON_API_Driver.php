@@ -87,7 +87,9 @@ class JSON_API_Driver implements API_Driver_Interface {
 	 */
 	protected function encode_request( Request $request ) {
 		// Add the header that tells the remote that we accept JSON responses
-		$request->headers[ static::H_ACCEPT ] = static::JSON_CONTENT_TYPE;
+		if (empty($request->headers[ static::H_ACCEPT ])) {
+			$request->headers[ static::H_ACCEPT ] = static::JSON_CONTENT_TYPE;
+		}
 
 		// For POST requests, encode the body and set the content type and length
 		if ( $request->type === Request::TYPE_POST ) {
