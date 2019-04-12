@@ -117,6 +117,15 @@ class Shipment_Info {
 			'currency'          => array(
 				'error' => __( 'Shop "Currency" is empty!', 'pr-shipping-dhl' ),
 			),
+			'total_value'       => array(
+				'rename' => 'value',
+				'error'  => __( 'Shipment "Value" is empty!', 'pr-shipping-dhl' ),
+				'validate' => function( $value ) {
+					if ( ! is_numeric( $value ) ) {
+						throw new Exception( __( 'The order "value" must be a number', 'pr-shipping-dhl' ) );
+					}
+				},
+			),
 		);
 	}
 }
