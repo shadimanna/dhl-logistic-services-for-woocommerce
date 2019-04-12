@@ -71,13 +71,38 @@ class Client extends API_Client {
 			)
 		);
 
-		if ( $response->status !== 200 ) {
+		if ( $response->status === 200 ) {
 			return $response->body;
 		}
 
 		$message = ! empty( $response->body->messages )
 			? implode( ', ', $response->body->messages )
-			: '';
+			: strval( $response->body );
+
+		throw new Exception(
+			sprintf( __( 'API error: %s', 'pr-shipping-dhl' ), $message )
+		);
+	}
+
+	public function get_label($item_barcode)
+	{
+		$route = sprintf('items/%s/label', $item_barcode);
+
+		$response = $this->post(
+			$this->customer_route( $route ),
+			array(),
+			array(
+				'Accept' => 'application/pdf'
+			)
+		);
+
+		if ($response->status === 200) {
+			return $response->body;
+		}
+
+		$message = ! empty( $response->body->messages )
+			? implode( ', ', $response->body->messages )
+			: strval( $response->body );
 
 		throw new Exception(
 			sprintf( __( 'API error: %s', 'pr-shipping-dhl' ), $message )
