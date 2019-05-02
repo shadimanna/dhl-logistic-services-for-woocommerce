@@ -16,8 +16,30 @@ class DHLPWC_Model_Service_Label extends DHLPWC_Model_Core_Singleton_Abstract
             return null;
         }
 
+        $logic = DHLPWC_Model_Logic_Access_Control::instance();
+        $labels_per_page = $logic->check_labels_per_page();
+
         $logic = DHLPWC_Model_Logic_Label::instance();
-        $combined = $logic->combine_pdfs($order_ids);
+
+        switch ($labels_per_page) {
+            case DHLPWC_Model_WooCommerce_Settings_Shipping_Method::PER_PAGE_HORIZONTAL_2:
+                $combined = $logic->combine_pdfs($order_ids, 'L', 2);
+                break;
+            case DHLPWC_Model_WooCommerce_Settings_Shipping_Method::PER_PAGE_HORIZONTAL_3:
+                $combined = $logic->combine_pdfs($order_ids, 'L', 3);
+                break;
+            case DHLPWC_Model_WooCommerce_Settings_Shipping_Method::PER_PAGE_HORIZONTAL_4:
+                $combined = $logic->combine_pdfs($order_ids, 'L', 4);
+                break;
+            case DHLPWC_Model_WooCommerce_Settings_Shipping_Method::PER_PAGE_HORIZONTAL_5:
+                $combined = $logic->combine_pdfs($order_ids, 'L', 5);
+                break;
+            case DHLPWC_Model_WooCommerce_Settings_Shipping_Method::PER_PAGE_HORIZONTAL_6:
+                $combined = $logic->combine_pdfs($order_ids, 'L', 6);
+                break;
+            default:
+                $combined = $logic->combine_pdfs($order_ids);
+        }
 
         if (!$combined) {
             return null;

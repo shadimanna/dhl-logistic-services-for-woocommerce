@@ -62,6 +62,8 @@ class DHLPWC_Model_Logic_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
         if ($alternate_return) {
             $service = DHLPWC_Model_Service_Settings::instance();
             $receiver = $this->prepare_address_data($service->get_return_address()->to_array(), true);
+        } elseif (!empty($shipment_data->on_behalf_of->address)) {
+            $receiver = $shipment_data->on_behalf_of;
         } else {
             $receiver = $shipment_data->shipper;
         }
@@ -76,6 +78,8 @@ class DHLPWC_Model_Logic_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
         $shipment_data->options = $service->get_request_options(array(
             DHLPWC_Model_Meta_Order_Option_Preference::OPTION_DOOR,
         ));
+
+        $shipment_data->on_behalf_of = null;
 
         return $shipment_data;
     }
@@ -135,6 +139,7 @@ class DHLPWC_Model_Logic_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
             'postcode',
             'city',
             'number',
+            'addition',
             'email',
             'phone',
         );
@@ -189,7 +194,7 @@ class DHLPWC_Model_Logic_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
                 'street'       => $address['street'],
                 'number'       => $address['number'],
                 'is_business'  => $business,
-                'addition'     => '',
+                'addition'     => $address['addition'],
             ),
             'email'         => $address['email'],
             'phone_number' => $address['phone'],
@@ -198,27 +203,43 @@ class DHLPWC_Model_Logic_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
 
     protected function prepare_street_address($address)
     {
+        $skip_addition_check = false;
+
         if (!isset($address['street'])) {
             $address['street'] = join(' ', array($address['address_1'], $address['address_2']));
         }
 
         if (!isset($address['number'])) {
+            // Always create a default key
+            $address['number'] = '';
+
             preg_match('/([^\d]+)\s?(.+)/i', $address['street'], $street_parts);
             $street = trim($street_parts[1]);
             $number = trim($street_parts[2]);
 
-            // Check if $number has numbers
+            // Check if $number has no numbers
             if (preg_match("/\d/", $number) === 0) {
                 // Try a reverse parse
-                preg_match('/([\d]\w+)\s?(.+)/i', $address['street'], $street_parts);
+                preg_match('/([\d]+\w*)\s?(.+)/i', $address['street'], $street_parts);
                 $number = trim($street_parts[1]);
                 $street = trim($street_parts[2]);
+                $skip_addition_check = true;
             }
 
             // Check if $number has numbers
-            if (preg_match("/\d/", $number) > 0) {
+            if (preg_match("/\d/", $number) === 1) {
                 $address['street'] = $street;
                 $address['number'] = $number;
+            }
+        }
+
+        if (!isset($address['addition'])) {
+            // Always create a default key
+            $address['addition'] = '';
+            if (!$skip_addition_check) {
+                preg_match('/([\d]+)[ .-]*(.*)/i', $address['number'], $number_parts);
+                $address['number'] = trim($number_parts[1]);
+                $address['addition'] = trim($number_parts[2]);
             }
         }
 

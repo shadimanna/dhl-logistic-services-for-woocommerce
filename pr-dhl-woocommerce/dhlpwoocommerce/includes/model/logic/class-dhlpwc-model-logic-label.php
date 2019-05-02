@@ -27,7 +27,7 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
         );
     }
 
-    public function combine_pdfs($order_ids)
+    public function combine_pdfs($order_ids, $orientation = null, $stack = 0)
     {
         $loader = DHLPWC_Libraryloader::instance();
         $pdf_merger = $loader->get_pdf_merger();
@@ -67,7 +67,12 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
         $path = $upload_dir['path'] . DIRECTORY_SEPARATOR . $file_name;
         $url = $upload_dir['url'] . '/' . $file_name;
 
-        $pdf_merger->merge('file', $path);
+
+        if (($orientation == 'L' || $orientation == 'P') && $stack > 0) {
+            $pdf_merger->groupedMerge('file', $path, $orientation, $stack);
+        } else {
+            $pdf_merger->merge('file', $path);
+        }
 
         return array(
             'url' => $url,

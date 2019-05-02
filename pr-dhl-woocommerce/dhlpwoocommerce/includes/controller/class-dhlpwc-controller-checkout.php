@@ -64,7 +64,12 @@ class DHLPWC_Controller_Checkout
 
                 foreach($preset->options as $option) {
                     if ($option === DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS) {
-                        list($parcelshop_id, $country, $search_value_memory) = ($sync = WC()->session->get('dhlpwc_parcelshop_selection_sync')) ? $sync : array(null, null, null);
+                        $sync = WC()->session->get('dhlpwc_parcelshop_selection_sync');
+                        if ($sync) {
+                            list($parcelshop_id, $country_code, $search_value_memory) = $sync;
+                        } else {
+                            list($parcelshop_id, $country_code, $search_value_memory) = array(null, null, null);
+                        }
                         $meta_service->save_option_preference($order_id, $option, $parcelshop_id);
                     } else {
                         $meta_service->save_option_preference($order_id, $option);
@@ -77,12 +82,18 @@ class DHLPWC_Controller_Checkout
     public function validate_parcelshop_selection($data, $errors)
     {
         if (isset($data['shipping_method']) && is_array($data['shipping_method']) && in_array('dhlpwc-parcelshop', $data['shipping_method'])) {
-            list($parcelshop_id, $country) = ($sync = WC()->session->get('dhlpwc_parcelshop_selection_sync')) ? $sync : array(null, null);
-            if (empty($parcelshop_id) || empty($country)) {
+            $sync = WC()->session->get('dhlpwc_parcelshop_selection_sync');
+            if ($sync) {
+                list($parcelshop_id, $country_code, $search_value_memory) = $sync;
+            } else {
+                list($parcelshop_id, $country_code, $search_value_memory) = array(null, null, null);
+            }
+
+            if (empty($parcelshop_id) || empty($country_code)) {
                 $errors->add('dhlpwc_parcelshop_selection_sync', __('Choose a DHL ServicePoint', 'dhlpwc'));
             }
             $shipping_country = WC()->customer->get_shipping_country();
-            if ($country != $shipping_country) {
+            if ($country_code != $shipping_country) {
                 $errors->add('dhlpwc_parcelshop_selection_sync_country', __('The DHL ServicePoint country cannot be different than the shipping address country.', 'dhlpwc'));
             }
         }

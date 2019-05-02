@@ -129,7 +129,12 @@ class DHLPWC_Controller_Cart
                 case 'dhlpwc-home-same-day':
                 case 'dhlpwc-home-evening':
                     // Get variables
-                    list($selected, $date, $start_time, $end_time) = ($sync = WC()->session->get('dhlpwc_delivery_time_selection_sync')) ? $sync : array(null, null, null, null);
+                    $sync = WC()->session->get('dhlpwc_delivery_time_selection_sync');
+                    if ($sync) {
+                        list($selected, $date, $start_time, $end_time) = $sync;
+                    } else {
+                        list($selected, $date, $start_time, $end_time) = array(null, null, null, null);
+                    }
 
                     $service = DHLPWC_Model_Service_Checkout::instance();
                     $postal_code = $service->get_cart_shipping_postal_code();
@@ -167,11 +172,26 @@ class DHLPWC_Controller_Cart
         if ($method->id == $chosen_shipping) {
             switch($chosen_shipping) {
                 case 'dhlpwc-parcelshop':
-                    list($parcelshop_id, $country_code, $search_value_memory) = ($sync = WC()->session->get('dhlpwc_parcelshop_selection_sync')) ? $sync : array(null, null, null);
+                    $sync = WC()->session->get('dhlpwc_parcelshop_selection_sync');
+                    if ($sync) {
+                        list($parcelshop_id, $country_code, $search_value_memory) = $sync;
+                    } else {
+                        list($parcelshop_id, $country_code, $search_value_memory) = array(null, null, null);
+                    }
+
                     $service = DHLPWC_Model_Service_Checkout::instance();
+
+                    // Validate country change
+                    $cart_country = $service->get_cart_shipping_country_code();
+                    if (!empty($country_code) && $country_code != $cart_country) {
+                        // Reset selection, due to countries being out of sync
+                        list($parcelshop_id, $country_code, $search_value_memory) = array(null, null, null);
+                        WC()->session->set('dhlpwc_parcelshop_selection_sync', array(null, null, null));
+                    }
+
                     $search_value = $service->get_cart_shipping_postal_code(true) ?: null;
                     $postal_code = $service->get_cart_shipping_postal_code() ?: null;
-                    $country_code = $country_code ?: $service->get_cart_shipping_country_code();
+                    $country_code = $country_code ?: $cart_country;
 
                     // Attempt to select a default parcelshop when none is selected or postal code is changed
                     $service = DHLPWC_Model_Service_Parcelshop::instance();

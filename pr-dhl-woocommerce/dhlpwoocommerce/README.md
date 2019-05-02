@@ -1,5 +1,15 @@
 # DHL Parcel plugin for WooCommerce
 
+V1.2.8
+
+## Changes
+- Added pricing filters for weight and cart totals
+- Added multiple labels per page option for bulk printing
+- Added a box field for addresses for address additions after the street and number
+- Fixed an issue addresses starting with numbers first
+- Fixed ServicePoint not always searching for the selected country
+- Fixed an issue where return labels had incorrect hide shipper information
+
 V1.2.7
 
 ## Changes
