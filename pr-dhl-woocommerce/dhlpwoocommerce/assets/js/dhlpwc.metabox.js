@@ -288,6 +288,7 @@ jQuery(document).ready(function($) {
                 city: $('#dhlpwc-metabox-address-city').val(),
                 street: $('#dhlpwc-metabox-address-street').val(),
                 number: $('#dhlpwc-metabox-address-number').val(),
+                addition: $('#dhlpwc-metabox-address-addition').val(),
                 email: $('#dhlpwc-metabox-address-email').val(),
                 phone: $('#dhlpwc-metabox-address-phone').val()
             };

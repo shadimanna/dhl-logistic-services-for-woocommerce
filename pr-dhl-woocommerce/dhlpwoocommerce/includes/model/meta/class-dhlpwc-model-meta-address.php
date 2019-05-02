@@ -16,6 +16,7 @@ class DHLPWC_Model_Meta_Address extends DHLPWC_Model_Meta_Abstract
     public $city;
     public $street;
     public $number;
+    public $addition;
 
     public $email;
     public $phone;

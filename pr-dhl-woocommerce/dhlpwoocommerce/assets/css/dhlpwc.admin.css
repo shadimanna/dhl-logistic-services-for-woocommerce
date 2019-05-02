@@ -273,13 +273,19 @@ input#woocommerce_dhlpwc_test_connection.dhlpwc_button_fail {
     width: 80px;
 }
 
-/* Currency input */
-.woocommerce table.form-table .dhlpwc-currency-wrap {
+/* Currency input  & Weight unit input */
+.woocommerce table.form-table .dhlpwc-currency-wrap,
+.woocommerce table.form-table .dhlpwc-weight-unit-wrap,
+.wc-modal-shipping-method-settings form .form-table tr td .dhlpwc-currency-wrap,
+.wc-modal-shipping-method-settings form .form-table tr td .dhlpwc-weight-unit-wrap {
     position: relative;
     width: 150px;
 }
 
-.woocommerce table.form-table .dhlpwc-currency-wrap > i {
+.woocommerce table.form-table .dhlpwc-currency-wrap > i,
+.woocommerce table.form-table .dhlpwc-weight-unit-wrap > i,
+.wc-modal-shipping-method-settings form .form-table tr td .dhlpwc-currency-wrap > i,
+.wc-modal-shipping-method-settings form .form-table tr td .dhlpwc-weight-unit-wrap > i {
     position: absolute;
     display: block;
     transform: translate(0, -50%);
@@ -290,26 +296,40 @@ input#woocommerce_dhlpwc_test_connection.dhlpwc_button_fail {
     font-style: normal;
 }
 
-.woocommerce table.form-table .dhlpwc-currency-wrap > input.dhlpwc-price-input {
+.woocommerce table.form-table .dhlpwc-currency-wrap > input.dhlpwc-price-input,
+.woocommerce table.form-table .dhlpwc-weight-unit-wrap > input.dhlpwc-weight-input,
+.wc-modal-shipping-method-settings form .form-table tr td .dhlpwc-currency-wrap > input.dhlpwc-price-input,
+.wc-modal-shipping-method-settings form .form-table tr td .dhlpwc-weight-unit-wrap > input.dhlpwc-weight-input {
     padding-left: 25px;
     padding-right: 10px;
     width:150px;
+    min-width: 150px;
     text-align: right;
 }
 
 .woocommerce table.form-table .dhlpwc-currency-pos-left > i,
-.woocommerce table.form-table .dhlpwc-currency-pos-left_space > i {
+.woocommerce table.form-table .dhlpwc-currency-pos-left_space > i,
+.wc-modal-shipping-method-settings form .form-table tr td .dhlpwc-currency-pos-left > i,
+.wc-modal-shipping-method-settings form .form-table tr td .dhlpwc-currency-pos-left_space > i {
     border-right: solid 1px lightgrey;
 }
 
 .woocommerce table.form-table .dhlpwc-currency-pos-right > i,
-.woocommerce table.form-table .dhlpwc-currency-pos-right_space > i {
+.woocommerce table.form-table .dhlpwc-currency-pos-right_space > i,
+.woocommerce table.form-table .dhlpwc-weight-unit-wrap > i,
+.wc-modal-shipping-method-settings form .form-table tr td .dhlpwc-currency-pos-right > i,
+.wc-modal-shipping-method-settings form .form-table tr td .dhlpwc-currency-pos-right_space > i,
+.wc-modal-shipping-method-settings form .form-table tr td .dhlpwc-weight-unit-wrap > i {
     right: 4px;
     border-left: solid 1px lightgrey;
 }
 
 .woocommerce table.form-table .dhlpwc-currency-pos-right > input.dhlpwc-price-input,
-.woocommerce table.form-table .dhlpwc-currency-pos-right_space > input.dhlpwc-price-input {
+.woocommerce table.form-table .dhlpwc-currency-pos-right_space > input.dhlpwc-price-input,
+.woocommerce table.form-table .dhlpwc-weight-unit-wrap > input.dhlpwc-weight-input,
+.wc-modal-shipping-method-settings form .form-table tr td .dhlpwc-currency-pos-right > input.dhlpwc-price-input
+.wc-modal-shipping-method-settings form .form-table tr td .dhlpwc-currency-pos-right_space > input.dhlpwc-price-input,
+.wc-modal-shipping-method-settings form .form-table tr td .dhlpwc-weight-unit-wrap > input.dhlpwc-weight-input {
     padding-left: 10px;
     padding-right: 36px;
 }
@@ -317,12 +337,14 @@ input#woocommerce_dhlpwc_test_connection.dhlpwc_button_fail {
 .woocommerce table.form-table tr.dhlpwc-disable-global-shipping-setting label,
 .woocommerce table.form-table tr.dhlpwc-disable-global-shipping-setting p.description,
 .woocommerce table.form-table tr.dhlpwc-disable-global-shipping-setting div.dhlpwc-currency-wrap i,
+.woocommerce table.form-table tr.dhlpwc-disable-global-shipping-setting div.dhlpwc-weight-unit-wrap i,
 .woocommerce table.form-table tr.dhlpwc-disable-global-shipping-setting input {
     color: #aaaaaa;
 }
 
 .woocommerce table.form-table tr.dhlpwc-disable-shipping-option p.description,
 .woocommerce table.form-table tr.dhlpwc-disable-shipping-option div.dhlpwc-currency-wrap i,
+.woocommerce table.form-table tr.dhlpwc-disable-shipping-option div.dhlpwc-weight-unit-wrap i,
 .woocommerce table.form-table tr.dhlpwc-disable-shipping-option input {
     color: #aaaaaa;
 }
@@ -567,4 +589,69 @@ tr.dhlpwc-delivery-times-grid > td td:first-child {
 div.dhlpwc_settings_description_warning {
     font-size:smaller;
     color:red;
+}
+
+/* Conditions table */
+.dhlpwc-condition-table {
+    padding: 0 8px 4px 8px;
+    border-radius: 0 0 5px 5px;
+    border: none;
+    box-shadow: 0 20px 30px -20px #8B8B8B;
+    margin-bottom: 10px
+}
+
+.dhlpwc-condition-remove-button {
+    background-color: #b41010;
+    color: #ffffff;
+    border-width: 2px;
+    border-radius: 14px;
+    border-color: #E34848 #830000 #570000  #C43030;
+    padding: 0;
+
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+
+    cursor: pointer;
+}
+
+.dhlpwc-condition-add-button {
+    background-color: #fcfcfc;
+    color: #000000;
+    border-width: 1px;
+    border-radius: 1px;
+    border-color: #ffffff #f0f0f0 #f0f0f0  #ffffff;
+    padding: 5px 10px;
+    margin-top: 3px;
+
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+
+    cursor: pointer;
+}
+
+.dhlpwc-condition-remove-button:disabled,
+.dhlpwc-condition-add-button:disabled {
+    opacity: 0.2;
+}
+
+.wc-modal-shipping-method-settings form .form-table tr.dhlpwc-condition-rule td,
+tr.dhlpwc-options-grid > td tr.dhlpwc-condition-rule td {
+    border-bottom:1px solid #ffffff;
+    padding: 2px 5px 3px 0;
+}
+
+.wc-modal-shipping-method-settings form .form-table tr.dhlpwc-condition-rule td.dhlpwc-condition-vellipsis,
+tr.dhlpwc-options-grid > td tr.dhlpwc-condition-rule td.dhlpwc-condition-vellipsis {
+    padding-right: 20px;
+
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+
+    cursor: move;
 }

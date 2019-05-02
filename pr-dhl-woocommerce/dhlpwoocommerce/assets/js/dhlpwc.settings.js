@@ -202,9 +202,13 @@ jQuery(document).ready(function($) {
 
         $.each(dhlpwc_option_collection, function (i, option_identifier) {
 
-            $('.dhlpwc-options-grid table')
-                .find('tbody')
-                .append($('<tr id="dhlpwc-option-group-mirror-' + option_identifier + '">'));
+            $(".dhlpwc-options-grid table:not('.dhlpwc-condition-table')")
+                .find("tbody:not('.dhlpwc-condition-tbody')")
+                .append($('<tr id="dhlpwc-option-group-mirror-' + option_identifier + '">'))
+                .append($('<tr id="dhlpwc-option-condition-' + option_identifier + '">'));
+
+            // Add condition
+            $(document.body).trigger('dhlpwc:init_conditions', [option_identifier]);
 
             $('.dhlpwc-grouped-option[data-option-group="' + option_identifier + '"]').each(function (e) {
                 // Create a label assuming the 'enable option' is first and has a label
@@ -230,6 +234,138 @@ jQuery(document).ready(function($) {
                     .wrap("<td></td>");
             });
         });
+
+    }).on('dhlpwc:init_conditions', function(e, code) {
+        // Hide original input
+        $("textarea[id$='_dhlpwc_option_condition_" + code + "']").closest('tr').hide();
+
+        $('#dhlpwc-option-condition-' + code).append('<td colspan="7">');
+        $('#dhlpwc-option-condition-' + code + ' td').empty();
+        $('#dhlpwc-option-condition-' + code + ' td').html(dhlpwc_settings_object.condition_templates.table);
+        $('#dhlpwc-option-condition-' + code + ' td table.dhlpwc-condition-table').attr('id', 'dhlpwc-condition-table-' + code);
+        $('#dhlpwc-condition-table-' + code).data('condition', code);
+
+        $('#dhlpwc-condition-table-' + code + ' tbody').append(dhlpwc_settings_object.condition_templates.add_button);
+
+        $('#dhlpwc-condition-table-' + code + ' tbody').sortable({
+            update: function () {
+                $(document.body).trigger('dhlpwc:save_conditions', [code]);
+            },
+            items: 'tr.dhlpwc-condition-rule',
+            handle: '.dhlpwc-condition-rule-handle'
+        });
+
+        $(document.body).trigger('dhlpwc:build_conditions', [code]);
+
+    }).on('dhlpwc:add_condition_row', function(e, code, condition_object) {
+        // Validate input
+        if (typeof(condition_object.input_type) === 'undefined') { return; }
+        if (typeof(condition_object.input_data) === 'undefined') { return; }
+        if (typeof(condition_object.input_action) === 'undefined') { return; }
+        if (typeof(condition_object.input_action_data) === 'undefined') { return; }
+
+        // Add row
+        $(dhlpwc_settings_object.condition_templates.row).insertBefore('#dhlpwc-condition-table-' + code + ' .dhlpwc-condition-add');
+        var current_row = $('#dhlpwc-condition-table-' + code + ' tbody tr.dhlpwc-condition-rule:last');
+
+        // Set first drop down selection
+        current_row.find('.dhlpwc-condition-input-type option[value=' + condition_object.input_type + ']').attr('selected', 'selected');
+
+        // Update input based on drop down selection
+        if (condition_object.input_type === 'weight') {
+            current_row.find('.dhlpwc-condition-input-data').addClass('dhlpwc-weight-input');
+        } else if (condition_object.input_type === 'cart_total') {
+            current_row.find('.dhlpwc-condition-input-data').addClass('dhlpwc-price-input');
+        }
+
+        // Fill input value
+        current_row.find('.dhlpwc-condition-input-data').val(condition_object.input_data);
+
+        // Set second drop down selection
+        current_row.find('.dhlpwc-condition-input-action option[value=' + condition_object.input_action + ']').attr('selected', 'selected');
+
+        // Update input based on drop down selection
+        if (condition_object.input_action === 'disable') {
+            current_row.find('.dhlpwc-condition-input-action-data').hide();
+        } else if (condition_object.input_action === 'change_price' || condition_object.input_action === 'add_fee' || condition_object.input_action === 'add_fee_repeat') {
+            current_row.find('.dhlpwc-condition-input-action-data').addClass('dhlpwc-price-input');
+        }
+
+        // Set second drop down selection
+        current_row.find('.dhlpwc-condition-input-action-data').val(condition_object.input_action_data);
+
+    }).on('dhlpwc:save_conditions', function(e, code) {
+        // Save the data to the field
+        var condition_rules = $('#dhlpwc-condition-table-' + code + ' tr.dhlpwc-condition-rule');
+
+        condition_objects = [];
+        condition_rules.each(function (index, condition_rule) {
+            var condition_object = {
+                input_type: $(condition_rule).find('.dhlpwc-condition-input-type').val(),
+                input_data: $(condition_rule).find('.dhlpwc-condition-input-data').val(),
+                input_action: $(condition_rule).find('.dhlpwc-condition-input-action').val(),
+                input_action_data: $(condition_rule).find('.dhlpwc-condition-input-action-data').val()
+            };
+
+            condition_objects.push(condition_object);
+        });
+
+        $("textarea[id$='_dhlpwc_option_condition_" + code + "']").text(JSON.stringify(condition_objects));
+
+    }).on('dhlpwc:build_conditions', function(e, code) {
+        // Read input
+        var condition_input = $("textarea[id$='_dhlpwc_option_condition_" + code + "']").val();
+        try {
+            var condition_objects = JSON.parse(condition_input);
+        } catch(e) {
+            // Not a valid JSON object, skip building
+            return;
+        }
+
+        // Parse input
+        $.each(condition_objects, function (index, condition_object) {
+            $(document.body).trigger('dhlpwc:add_condition_row', [code, condition_object]);
+        });
+
+        $(document.body).trigger('dhlpwc:update_price_fields');
+        $(document.body).trigger('dhlpwc:update_weight_fields');
+
+    }).on('dhlpwc:clear_conditions', function(e, code) {
+        $('#dhlpwc-condition-table-' + code + ' tbody').find('tr.dhlpwc-condition-rule').remove();
+
+    }).on('change', '.dhlpwc-condition-field', function(e) {
+        var code = $(this).closest('.dhlpwc-condition-table').data('condition');
+
+        $(document.body).trigger('dhlpwc:save_conditions', [code]);
+
+        if ($(this).is("select")) {
+            $(document.body).trigger('dhlpwc:clear_conditions', [code]);
+            $(document.body).trigger('dhlpwc:build_conditions', [code]);
+        }
+
+    }).on('click', '.dhlpwc-condition-add-button', function(e) {
+        e.preventDefault();
+        var code = $(this).closest('.dhlpwc-condition-table').data('condition');
+
+        var condition_object = {
+            input_type: 'weight',
+            input_data: '',
+            input_action: 'change_price',
+            input_action_data: ''
+        };
+
+        $(document.body).trigger('dhlpwc:add_condition_row', [code, condition_object]);
+
+        $(document.body).trigger('dhlpwc:update_price_fields');
+        $(document.body).trigger('dhlpwc:update_weight_fields');
+
+        $(document.body).trigger('dhlpwc:save_conditions', [code]);
+
+    }).on('click', '.dhlpwc-condition-remove-button', function(e) {
+        e.preventDefault();
+        var code = $(this).closest('.dhlpwc-condition-table').data('condition');
+        $(this).closest('tr.dhlpwc-condition-rule').remove();
+        $(document.body).trigger('dhlpwc:save_conditions', [code]);
 
     }).on('dhlpwc:check_option_setting', function(e, code) {
         var checked = $("input[id$='_dhlpwc_enable_option_" + code + "-mirror']").attr('checked') === 'checked';
@@ -289,6 +425,9 @@ jQuery(document).ready(function($) {
         // This js has also been limited to only 2 specific pages (dhlpwc settings page and shipping zone edit page)
         $(document.body).trigger('dhlpwc:init_options_grid');
         $(document.body).trigger('dhlpwc:check_all_option_settings');
+
+        $(document.body).trigger('dhlpwc:update_price_fields');
+        $(document.body).trigger('dhlpwc:update_weight_fields');
 
     }).on('change', 'input#woocommerce_dhlpwc_enable_alternate_return_address', function(e) {
         $(document.body).trigger('dhlpwc:check_return_address');
@@ -457,6 +596,20 @@ jQuery(document).ready(function($) {
             });
         });
 
+    }).on('dhlpwc:update_price_fields', function() {
+        var currency_symbol = dhlpwc_settings_object.currency_symbol;
+        var currency_pos = 'dhlpwc-currency-pos-' + dhlpwc_settings_object.currency_pos;
+
+        $('.dhlpwc-price-input').not('.dhlpwc-currency-wrap .dhlpwc-price-input').each(function(e) {
+            $(this).wrapAll('<div class="dhlpwc-currency-wrap ' + currency_pos + '"></div>').parent().prepend('<i>' + currency_symbol + '</i>');
+        });
+    }).on('dhlpwc:update_weight_fields', function() {
+        var weight_unit = dhlpwc_settings_object.weight_unit;
+
+        $('.dhlpwc-weight-input').not('.dhlpwc-weight-unit-wrap .dhlpwc-weight-input').each(function(e) {
+            $(this).wrapAll('<div class="dhlpwc-weight-unit-wrap"></div>').parent().prepend('<i>' + weight_unit + '</i>');
+        });
+
     });
 
     $(document.body).trigger('dhlpwc:init_test_connection_button');
@@ -467,11 +620,7 @@ jQuery(document).ready(function($) {
     $(document.body).trigger('dhlpwc:check_hide_sender_address');
     $(document.body).trigger('dhlpwc:init_delivery_times_grid');
     $(document.body).trigger('dhlpwc:init_bulk_grid');
-
-    $('.dhlpwc-price-input').each(function(e) {
-        var currency_symbol = $(this).data('dhlpwc-currency-symbol');
-        var currency_pos = 'dhlpwc-currency-pos-' + $(this).data('dhlpwc-currency-pos');
-        $(this).wrapAll('<div class="dhlpwc-currency-wrap ' + currency_pos + '"></div>').parent().prepend('<i>' + currency_symbol + '</i>');
-    });
+    $(document.body).trigger('dhlpwc:update_price_fields');
+    $(document.body).trigger('dhlpwc:update_weight_fields');
 
 });

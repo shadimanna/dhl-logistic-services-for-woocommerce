@@ -124,12 +124,34 @@ class DHLPWC_Controller_Admin_Settings
         wp_enqueue_script( 'dhlpwc-admin-notices', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.notices.js', array('jquery'));
 
         if ($this->is_plugin_screen() || $this->is_shipping_zone_screen()) {
-            wp_enqueue_script( 'dhlpwc-settings-action', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.settings.js', array('jquery'));
+
+            $condition_templates = array();
+            $view = new DHLPWC_Template('admin.settings.condition.add-button');
+            $condition_templates['add_button'] = $view->render(array(), false);
+
+            $condition_service = DHLPWC_Model_Service_Condition_Rule::instance();
+            $input_types = $condition_service->get_input_types();
+            $input_actions = $condition_service->get_input_actions();
+
+            $view = new DHLPWC_Template('admin.settings.condition.row');
+            $condition_templates['row'] = $view->render(array(
+                'input_types' => $input_types,
+                'input_actions' => $input_actions,
+            ), false);
+
+            $view = new DHLPWC_Template('admin.settings.condition.table');
+            $condition_templates['table'] = $view->render(array(), false);
+
+            wp_enqueue_script( 'dhlpwc-settings-action', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.settings.js', array('jquery', 'jquery-ui-sortable'));
             wp_localize_script( 'dhlpwc-settings-action', 'dhlpwc_settings_object', array(
                 'test_connection_message' => __('Test connection and retrieve account data', 'dhlpwc'),
                 'test_connection_loading_message' => __('Please wait...', 'dhlpwc'),
                 'accounts_found_message' => __('Accounts found. Click to use.', 'dhlpwc'),
                 'organization_found_message' => __('OrganizationID found. Click to use.', 'dhlpwc'),
+                'condition_templates' => $condition_templates,
+                'currency_symbol' => get_woocommerce_currency_symbol(),
+                'currency_pos' => get_option('woocommerce_currency_pos'),
+                'weight_unit' => get_option('woocommerce_weight_unit'),
             ));
         }
 
@@ -243,9 +265,9 @@ class DHLPWC_Controller_Admin_Settings
 
         } else if ($service->plugin_is_enabled()) {
             // Maps key
-            if (empty($service->get_maps_key())) {
+            if (empty($service->get_maps_key(false))) {
                 $messages[] = sprintf(__('Missing %1$s from %2$s', 'dhlpwc'), __('Google Maps key', 'dhlpwc'), __('Plugin settings', 'dhlpwc'));
-                $messages[] = __('To continue using DHL ServicePoint and show a visual map to customers, please add a Google Maps API key. If left empty, the DHL ServicePoint map will stop displaying starting from October 30th 10:00 PM CEST', 'dhlpwc');
+                $messages[] = __('To continue using DHL ServicePoint and show a visual map to customers, please add a Google Maps API key. If left empty, the DHL ServicePoint map will stop displaying starting from July 1st 10:00 PM CEST', 'dhlpwc');
             }
             if (!empty($messages) && !get_site_transient(self::NOTICE_TAG_PARCELSHOP)) {
                 $this->show_notice(self::NOTICE_TAG_PARCELSHOP, $messages, admin_url('admin.php?page=wc-settings&tab=shipping&section=dhlpwc'));

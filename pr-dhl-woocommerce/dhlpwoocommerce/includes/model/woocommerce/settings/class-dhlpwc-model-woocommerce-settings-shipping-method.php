@@ -12,12 +12,19 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
 
     const PRICE_FREE = 'price_option_free';
     const FREE_AFTER_COUPON = 'free_after_coupon';
+    const RULES_AFTER_FREE = 'rules_after_free';
 
     const PRESET_TRANSLATION_DOMAIN = 'preset_translation_domain';
 
     const SORT_COST_LOW = 'cost_low';
     const SORT_COST_HIGH = 'cost_high';
     const SORT_CUSTOM = 'custom';
+
+    const PER_PAGE_HORIZONTAL_2 = 'horizontal-2';
+    const PER_PAGE_HORIZONTAL_3 = 'horizontal-3';
+    const PER_PAGE_HORIZONTAL_4 = 'horizontal-4';
+    const PER_PAGE_HORIZONTAL_5 = 'horizontal-5';
+    const PER_PAGE_HORIZONTAL_6 = 'horizontal-6';
 
     /**
      * Constructor for your shipping class
@@ -154,6 +161,20 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'type'        => 'checkbox',
                     'label'       => __('Enable', 'dhlpwc'),
                     'default'     => 'no',
+                ),
+                'labels_per_page' => array(
+                    'title'   => __('Bulk labels per page', 'dhlpwc'),
+                    'type'    => 'select',
+                    'options' => array(
+                        ''                          => __('Default (no stacking)', 'dhlpwc'),
+                        self::PER_PAGE_HORIZONTAL_2 => sprintf(__("Print %s per page, stack horizontally", 'dhlpwc'), '2'),
+                        self::PER_PAGE_HORIZONTAL_3 => sprintf(__("Print %s per page, stack horizontally", 'dhlpwc'), '3'),
+                        self::PER_PAGE_HORIZONTAL_4 => sprintf(__("Print %s per page, stack horizontally", 'dhlpwc'), '4'),
+                        self::PER_PAGE_HORIZONTAL_5 => sprintf(__("Print %s per page, stack horizontally", 'dhlpwc'), '5'),
+                        self::PER_PAGE_HORIZONTAL_6 => sprintf(__("Print %s per page, stack horizontally", 'dhlpwc'), '6'),
+                    ),
+                    'description' => __("When printing in bulk, labels can be combined to make it easier to print on a single sheet", 'dhlpwc'),
+                    'default' => '',
                 ),
                 'enable_track_trace_mail' => array(
                     'title'       => __('Track & trace in mail', 'dhlpwc'),
@@ -389,8 +410,6 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                 'class'             => "dhlpwc-grouped-option dhlpwc-price-input dhlpwc-option-grid['" . $code . "'] " . $class,
                 'default'           => '0.00',
                 'custom_attributes' => array(
-                    'data-dhlpwc-currency-symbol' => get_woocommerce_currency_symbol(),
-                    'data-dhlpwc-currency-pos'    => get_option('woocommerce_currency_pos'),
                     'data-option-group'           => $code,
                 ),
             ),
@@ -409,8 +428,6 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                 'class'             => "dhlpwc-grouped-option dhlpwc-price-input dhlpwc-option-grid['" . $code . "'] " . $class,
                 'default'           => '0.00',
                 'custom_attributes' => array(
-                    'data-dhlpwc-currency-symbol' => get_woocommerce_currency_symbol(),
-                    'data-dhlpwc-currency-pos'    => get_option('woocommerce_currency_pos'),
                     'data-option-group'           => $code,
                 ),
             ),
@@ -433,6 +450,12 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                 'custom_attributes' => array(
                     'data-option-group' => $code,
                 ),
+            ),
+
+            'option_condition_' . $code => array(
+                'type'              => 'textarea',
+                'class'             => 'dhlpwc-option-condition ' . $class,
+                'default'           => ''
             ),
         );
 
@@ -471,10 +494,6 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                 'description'       => __("Free or discounted shipping prices are applied when the total price is over the inputted value.", 'dhlpwc'),
                 'default'           => '0.00',
                 'class'             => 'dhlpwc-price-input ' . $class,
-                'custom_attributes' => array(
-                    'data-dhlpwc-currency-symbol'     => get_woocommerce_currency_symbol(),
-                    'data-dhlpwc-currency-pos' => get_option('woocommerce_currency_pos'),
-                ),
             ),
 
             self::FREE_AFTER_COUPON => array(
@@ -482,6 +501,15 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                 'type'        => 'checkbox',
                 'label'       => __('Calculate after applying coupons', 'dhlpwc'),
                 'description' => __("Calculate eligibility for free or discounted shipping after applying coupons.", 'dhlpwc'),
+                'class'       => $class,
+                'default'     => 'no',
+            ),
+
+            self::RULES_AFTER_FREE => array(
+                'title'       => __('Apply additional rules after free or discount calculation', 'dhlpwc'),
+                'type'        => 'checkbox',
+                'label'       => __('Calculate additional rules after free or discount', 'dhlpwc'),
+                'description' => __("When checked, rules will apply after free or discount calculation. When unchecked, rules will be applied first and ends with free or discount calculation.", 'dhlpwc'),
                 'class'       => $class,
                 'default'     => 'no',
             ),
@@ -713,6 +741,11 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                 'type'  => 'text',
                 'class' => $class,
             ),
+            $prefix.'addition'                            => array(
+                'title' => __('Addition', 'dhlpwc'),
+                'type'  => 'text',
+                'class' => $class,
+            ),
             $prefix.'country' => array(
                 'title' => __('Country', 'dhlpwc'),
                 'type' => 'select',
@@ -745,8 +778,6 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
 
         return $settings;
     }
-
-
 
     public function calculate_shipping($package = array())
     {
@@ -807,11 +838,13 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     }
                 }
 
-                $this->add_rate(array(
-                    'id'    => 'dhlpwc-' . $preset->frontend_id,
-                    'label' => $title,
-                    'cost'  => $cost,
-                ));
+                if (!$this->disable_condition($preset->setting_id, $package)) {
+                    $this->add_rate(array(
+                        'id'    => 'dhlpwc-' . $preset->frontend_id,
+                        'label' => $title,
+                        'cost'  => $cost,
+                    ));
+                }
 
             }
         }
@@ -835,28 +868,62 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
         return $view->render(array(), false);
     }
 
-    protected function calculate_cost($package = array(), $option)
+    protected function calculate_cost($package = array(), $option = null)
     {
+        $price = $this->get_option('price_option_' . $option);
+
+        // Apply condition rules before free/discount
+        if ($this->get_option(self::RULES_AFTER_FREE) !== 'yes') {
+            $price = $this->price_conditions($price, $option, $package);
+        }
+
+        // Free/discount price calculation
         $free_or_discounted = $this->get_option(self::ENABLE_FREE) === 'yes' && $this->get_subtotal_price($package) >= $this->get_option(self::PRICE_FREE);
         // Allow developers to add other conditions to trigger free & discount prices
         $free_or_discounted = apply_filters('dhlpwc_use_discount_price', $free_or_discounted, $option, $package);
 
         if ($free_or_discounted) {
-            $price = $this->get_free_price($option);
-        } else {
-            $price = $this->get_option('price_option_' . $option);
+            if ($this->get_option('enable_free_option_' . $option) === 'yes') {
+                $price = $this->get_free_price($option);
+            }
+        }
+
+        // Apply condition rules after free/discount
+        if ($this->get_option(self::RULES_AFTER_FREE) === 'yes') {
+            $price = $this->price_conditions($price, $option, $package);
         }
 
         // Allow developers to manipulate the calculated price
         return apply_filters('dhlpwc_calculate_price', $price, $free_or_discounted, $option, $package);
     }
 
+    protected function price_conditions($price, $option, $package)
+    {
+        $conditions = $this->get_option('option_condition_' . $option);
+        $service = DHLPWC_Model_Service_Condition_Rule::instance();
+
+        // Allow developers to manipulate price conditions
+        $conditions = apply_filters('dhlpwc_price_conditions', $conditions, $option);
+
+        $price = $service->calculate_price($price, $conditions, $this->get_subtotal_price($package));
+        return $price;
+    }
+
+    protected function disable_condition($option, $package)
+    {
+        $conditions = $this->get_option('option_condition_' . $option);
+        $service = DHLPWC_Model_Service_Condition_Rule::instance();
+
+        // Allow developers to manipulate disable conditions
+        $conditions = apply_filters('dhlpwc_disable_conditions', $conditions, $option);
+
+        $disabled = $service->is_disabled($conditions, $this->get_subtotal_price($package));
+        return $disabled;
+    }
+
     protected function get_free_price($option)
     {
-        if ($this->get_option('enable_free_option_' . $option) === 'yes') {
-            return round($this->get_option('free_price_option_' . $option), wc_get_price_decimals());
-        }
-        return $this->get_option('price_option_' . $option);
+        return round($this->get_option('free_price_option_' . $option), wc_get_price_decimals());
     }
 
     protected function get_subtotal_price($package = array())

@@ -9,12 +9,16 @@ class DHLPWC_Model_Service_Settings extends DHLPWC_Model_Core_Singleton_Abstract
 
     protected $temporary_key = 'AIzaSyAV9qJVXDBnVHWwU01bjHO3wJCUxffYZyw';
 
-    public function get_maps_key()
+    public function get_maps_key($backup_replace = true)
     {
         $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
         if (empty($shipping_method['google_maps_key'])) {
-            return !empty($this->temporary_key) ? $this->temporary_key : null;
+            if ($backup_replace) {
+                return !empty($this->temporary_key) ? $this->temporary_key : null;
+            } else {
+                return null;
+            }
         }
         return $shipping_method['google_maps_key'];
     }
@@ -71,6 +75,11 @@ class DHLPWC_Model_Service_Settings extends DHLPWC_Model_Core_Singleton_Abstract
     {
         $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
+        // Backwards compatibility checks
+        if (!isset($shipping_method[$prefix.'addition'])) {
+            $shipping_method[$prefix.'addition'] = '';
+        }
+
         return new DHLPWC_Model_Meta_Address(array(
             'first_name' => $shipping_method[$prefix.'first_name'],
             'last_name'  => $shipping_method[$prefix.'last_name'],
@@ -81,6 +90,7 @@ class DHLPWC_Model_Service_Settings extends DHLPWC_Model_Core_Singleton_Abstract
             'city'       => $shipping_method[$prefix.'city'],
             'street'     => $shipping_method[$prefix.'street'],
             'number'     => $shipping_method[$prefix.'number'],
+            'addition'   => $shipping_method[$prefix.'addition'],
 
             'email'      => $shipping_method[$prefix.'email'],
             'phone'      => $shipping_method[$prefix.'phone'],

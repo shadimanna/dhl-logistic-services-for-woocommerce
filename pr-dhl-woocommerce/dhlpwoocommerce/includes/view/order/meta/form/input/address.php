@@ -49,6 +49,13 @@
     <?php endif ?>
 />
 
+<label class="dhlpwc-metabox-adress-label"><?php _e('Addition', 'dhlpwc') ?></label>
+<input type="text" class="dhlpwc-metabox-address-input" id="dhlpwc-metabox-address-addition"
+    <?php if (!empty($address) && !empty($address->addition)) : ?>
+        value="<?php echo esc_attr($address->addition) ?>"
+    <?php endif ?>
+/>
+
 <label class="dhlpwc-metabox-adress-label"><?php _e('Email', 'dhlpwc') ?></label>
 <input type="text" class="dhlpwc-metabox-address-input" id="dhlpwc-metabox-address-email"
     <?php if (!empty($address) && !empty($address->email)) : ?>

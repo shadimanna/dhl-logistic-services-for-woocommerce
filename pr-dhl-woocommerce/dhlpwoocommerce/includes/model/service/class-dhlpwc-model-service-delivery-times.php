@@ -21,7 +21,13 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
      */
     public function save_order_time_selection($order_id)
     {
-        list($selected, $date, $start_time, $end_time) = ($sync = WC()->session->get('dhlpwc_delivery_time_selection_sync')) ? $sync : array(null, null, null, null);
+        $sync = WC()->session->get('dhlpwc_delivery_time_selection_sync');
+        if ($sync) {
+            list($selected, $date, $start_time, $end_time) = $sync;
+        } else {
+            list($selected, $date, $start_time, $end_time) = array(null, null, null, null);
+        }
+
         if (empty($date) || empty($start_time) || empty($end_time)) {
             return false;
         }
@@ -78,7 +84,13 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
             return false;
         }
 
-        list($selected, $date, $start_time, $end_time) = ($sync = WC()->session->get('dhlpwc_delivery_time_selection_sync')) ? $sync : array(null, null, null, null);
+        $sync = WC()->session->get('dhlpwc_delivery_time_selection_sync');
+        if ($sync) {
+            list($selected, $date, $start_time, $end_time) = $sync;
+        } else {
+            list($selected, $date, $start_time, $end_time) = array(null, null, null, null);
+        }
+
         if (empty($date) || empty($start_time) || empty($end_time)) {
             return false;
         }
