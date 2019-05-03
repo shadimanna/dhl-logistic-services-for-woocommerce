@@ -3,9 +3,6 @@
 namespace PR\DHL\Deutsche_Post;
 
 use Exception;
-use PR\DHL\Deutsche_Post\Item\Content_Piece_Info;
-use PR\DHL\Deutsche_Post\Item\Recipient_Info;
-use PR\DHL\Deutsche_Post\Item\Shipment_Info;
 use PR\DHL\Utils\Args_Parser;
 
 /**
@@ -15,29 +12,27 @@ use PR\DHL\Utils\Args_Parser;
  */
 class Item_Info {
 	/**
-	 * The shipment information.
+	 * The array of shipment information.
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @var Shipment_Info
+	 * @var array
 	 */
 	public $shipment;
 	/**
-	 * The recipient information.
+	 * The array of order recipient information.
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @var Recipient_Info
+	 * @var array
 	 */
 	public $recipient;
 	/**
-	 * The content pieces.
-	 *
-	 * These correspond to WooCommerce products.
+	 * The array of content item information sub-arrays.
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @var Content_Piece_Info[]
+	 * @var array[]
 	 */
 	public $contents;
 
@@ -64,37 +59,143 @@ class Item_Info {
 	 * @throws Exception If some data in $args did not pass validation.
 	 */
 	protected function parse_args( $args ) {
-		$parsed = Args_Parser::parse_args( $args, $this->get_args_scheme() );
-
-		$this->recipient = new Recipient_Info( $parsed['recipient'] );
-		$this->shipment = new Shipment_Info( $parsed['shipment'] );
+		$this->shipment = Args_Parser::parse_args( $args[ 'shipping_address' ], $this->get_shipment_info_schema() );
+		$this->recipient = Args_Parser::parse_args( $args[ 'order_details' ], $this->get_recipient_info_schema() );
+		$this->contents = array();
 
 		$this->contents = array();
-		foreach ( $parsed['content_pieces'] as $content_piece_args ) {
-			$this->contents[] = new Content_Piece_Info( $content_piece_args );
+		foreach ( $args['items'] as $item ) {
+			$this->contents[] = Args_Parser::parse_args( $item, $this->get_content_item_info_schema() );
 		}
 	}
 
 	/**
-	 * Retrieves the args scheme to use with {@link Args_Parser}.
+	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing shipment info.
 	 *
 	 * @since [*next-version*]
 	 *
 	 * @return array
 	 */
-	protected function get_args_scheme() {
+	protected function get_shipment_info_schema() {
 		return array(
-			'dhl_settings'     => array(
-				'rename' => 'settings',
+			'dhl_product'       => array(
+				'rename' => 'product',
+				'error'  => __( 'DHL "Product" is empty!', 'pr-shipping-dhl' ),
 			),
-			'shipping_address' => array(
-				'rename' => 'recipient',
+			'dhl_service_level' => array(
+				'rename'   => 'service_level',
+				'default'  => 'STANDARD',
+				'validate' => function( $level ) {
+					if ( $level !== 'STANDARD' && $level !== 'PRIORITY' && $level !== 'REGISTERED' ) {
+						throw new Exception( __( 'Order "Service Level" is invalid', 'pr-shipping-dhl' ) );
+					}
+				},
 			),
-			'order_details'    => array(
-				'rename' => 'shipment',
+			'weight'            => array(
+				'error'    => __( 'Order "Weight" is empty!', 'pr-shipping-dhl' ),
+				'validate' => function( $weight ) {
+					if ( ! is_numeric( $weight ) ) {
+						throw new Exception( __( 'The order "Weight" must be a number', 'pr-shipping-dhl' ) );
+					}
+				},
 			),
-			'items'            => array(
-				'rename' => 'content_pieces',
+			'currency'          => array(
+				'error' => __( 'Shop "Currency" is empty!', 'pr-shipping-dhl' ),
+			),
+			'total_value'       => array(
+				'rename' => 'value',
+				'error'  => __( 'Shipment "Value" is empty!', 'pr-shipping-dhl' ),
+				'validate' => function( $value ) {
+					if ( ! is_numeric( $value ) ) {
+						throw new Exception( __( 'The order "value" must be a number', 'pr-shipping-dhl' ) );
+					}
+				},
+			),
+		);
+	}
+
+	/**
+	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing order recipient info.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return array
+	 */
+	protected function get_recipient_info_schema() {
+		return array(
+			'name'      => array(
+				'default' => '',
+			),
+			'phone'     => array(
+				'default' => '',
+			),
+			'email'     => array(
+				'default' => '',
+			),
+			'address_1' => array(
+				'error' => __( 'Shipping "Address 1" is empty!', 'pr-shipping-dhl' ),
+			),
+			'address_2' => array(
+				'default' => '',
+			),
+			'city'      => array(
+				'error' => __( 'Shipping "City" is empty!', 'pr-shipping-dhl' ),
+			),
+			'postcode'  => array(
+				'default' => '',
+			),
+			'state'     => array(
+				'default' => '',
+			),
+			'country'   => array(
+				'error' => __( 'Shipping "Country" is empty!', 'pr-shipping-dhl' ),
+			),
+		);
+	}
+
+	/**
+	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing order content item info.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return array
+	 */
+	protected function get_content_item_info_schema()
+	{
+		return array(
+			'hs_code'     => array(
+				'default'  => '',
+				'validate' => function( $hs_code ) {
+					$length = is_string( $hs_code ) ? strlen( $hs_code ) : 0;
+
+					if (empty($length)) {
+						return;
+					}
+
+					if ( $length < 4 || $length > 20 ) {
+						throw new Exception(
+							__( 'Item HS Code must be between 0 and 20 characters long', 'pr-shipping-dhl' )
+						);
+					}
+				},
+			),
+			'description' => array(
+				'default' => '',
+			),
+			'sku'         => array(
+				'default' => '',
+			),
+			'value'       => array(
+				'default' => 0,
+			),
+			'origin'      => array(
+				'default' => '',
+			),
+			'qty'         => array(
+				'default' => 1,
+			),
+			'weight'      => array(
+				'default' => 0,
 			),
 		);
 	}

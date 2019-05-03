@@ -24,7 +24,7 @@ class Args_Parser {
 	 * @since [*next-version*]
 	 *
 	 * @param array $args   The arguments to parse.
-	 * @param array $scheme The scheme to parse with.
+	 * @param array $scheme The scheme to parse with, or a fixed scalar value.
 	 *
 	 * @return array The parsed arguments.
 	 *
@@ -34,6 +34,12 @@ class Args_Parser {
 		$final_args = array();
 
 		foreach ( $scheme as $key => $s_scheme ) {
+			// If not an array, just use it as a value.
+			if (!is_array($s_scheme)) {
+				$final_args[ $key ] = $s_scheme;
+				continue;
+			}
+
 			// Rename the key if "rename" was specified
 			$new_key = empty( $s_scheme['rename'] ) ? $key : $s_scheme['rename'];
 
