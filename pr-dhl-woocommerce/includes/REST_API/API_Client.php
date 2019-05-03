@@ -7,7 +7,7 @@ use PR\DHL\REST_API\Interfaces\API_Client_Interface;
 use PR\DHL\REST_API\Interfaces\API_Driver_Interface;
 
 /**
- * A simple REST API client implementation that uses an internally-known base URL for all requests.
+ * A simple and generic REST API client implementation that uses an internally-known base URL for all requests.
  *
  * @since [*next-version*]
  */

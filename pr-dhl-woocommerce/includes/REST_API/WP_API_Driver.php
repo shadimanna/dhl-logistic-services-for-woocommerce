@@ -10,6 +10,10 @@ use Traversable;
 /**
  * A REST API driver that uses WordPress's `wp_remote_*()` functions to make requests to a REST API.
  *
+ * This simple REST API driver implementation uses the WordPress `wp_remote_*()` family of functions to dispatch the
+ * requests to the remote resource. The same family of functions are used parse the response into a {@link Response}
+ * object.
+ *
  * @since [*next-version*]
  */
 class WP_API_Driver implements API_Driver_Interface {
@@ -63,6 +67,9 @@ class WP_API_Driver implements API_Driver_Interface {
 
 	/**
 	 * Sends a request using WordPress' remote functions and retrieves the response.
+	 *
+	 * This method is basically a wrapper for `wp_remote_request()`, but accepts a {@link Request} argument instead
+	 * of accepting a URL and an args array.
 	 *
 	 * @since [*next-version*]
 	 *

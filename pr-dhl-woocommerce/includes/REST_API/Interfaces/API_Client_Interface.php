@@ -8,6 +8,15 @@ use RuntimeException;
 /**
  * Interface for objects that represent a REST API client.
  *
+ * The purpose of this interface is to create a unified API for REST API clients. In this context, a "client" merely
+ * represents the local object that can programmatically interact with the remote resource, in this case a REST API.
+ * Ideally, a client object will use a {@link API_Driver_Interface} instance under the hood to send the actual requests.
+ * This allows the client to focus solely of what to send, whereas the driver would be concerned with how to send it.
+ *
+ * API clients are intended to be domain-specific and have context. When calling methods on a client instance, it should
+ * be assumed that the client already has some information about the recipient remote resource, such as the base URL,
+ * what headers should always be sent, what authentication to use, etc.
+ *
  * @since [*next-version*]
  */
 interface API_Client_Interface {
