@@ -231,6 +231,21 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         return true;
     }
 
+    public function check_labels_per_page()
+    {
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
+
+        if (empty($shipping_method)) {
+            return false;
+        }
+
+        if (empty($shipping_method['labels_per_page'])) {
+            return false;
+        }
+
+        return $shipping_method['labels_per_page'];
+    }
+
     public function check_track_trace_mail()
     {
         $shipping_method = get_option('woocommerce_dhlpwc_settings');

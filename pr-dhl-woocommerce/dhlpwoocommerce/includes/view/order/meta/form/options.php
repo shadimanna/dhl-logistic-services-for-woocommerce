@@ -1,6 +1,6 @@
 <?php if (!defined('ABSPATH')) { exit; } ?>
 <?php if (!empty($delivery_options)) : ?>
-    <h3><?php echo _e('Delivery method', 'dhlpwc') ?></h3>
+    <h3><?php _e('Delivery method', 'dhlpwc') ?></h3>
 
     <div class="dhlpwc-order-metabox-form-deliverymethods">
         <div class="clear"></div>
@@ -17,7 +17,7 @@
                         <img src="<?php echo esc_url($option->image_url) ?>">
                     </div>
                     <div class="dhlpwc-label-create-delivery-option-description">
-                    <?php echo _e($option->description, 'dhlpwc') ?>
+                    <?php _e($option->description, 'dhlpwc') ?>
                     </div>
                 </label>
 
@@ -37,7 +37,7 @@
 <?php endif ?>
 <hr/>
 <?php if (!empty($service_options)) : ?>
-    <h3><?php echo _e('Extra services', 'dhlpwc') ?></h3>
+    <h3><?php _e('Extra services', 'dhlpwc') ?></h3>
 
     <div class="dhlpwc-order-metabox-form-services">
     <?php foreach($service_options as $option) : ?>
@@ -52,7 +52,7 @@
                 <div class="dhlpwc-order-metabox-form-delivery-option-icon">
                     <img src="<?php echo esc_url($option->image_url) ?>">
                 </div>
-                <?php echo _e($option->description, 'dhlpwc') ?>
+                <?php _e($option->description, 'dhlpwc') ?>
             </label>
             <?php if (!empty($option->input_template)): ?>
             <div style="display:none" class="dhlpwc-metabox-service-input" data-option-input="<?php echo $option->key ?>">

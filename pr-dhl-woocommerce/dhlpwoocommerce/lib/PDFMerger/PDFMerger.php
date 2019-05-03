@@ -74,6 +74,93 @@ class PDFMerger
 		return $this;
 	}
 
+    /**
+     * DHL Parcel custom merge
+     */
+    public function groupedMerge($outputmode = 'browser', $outputpath = 'newfile.pdf', $orientation, $stack)
+    {
+        if (!isset($this->_files) || !is_array($this->_files)): throw new exception("No PDFs to merge."); endif;
+
+        $fpdi = new TCPDI;
+        $fpdi->SetPrintHeader(false);
+        $fpdi->SetPrintFooter(false);
+
+        $counter = 0;
+
+        if ($orientation != 'L' && $orientation != 'P') {
+            $orientation = 'L';
+        }
+
+        if (!is_numeric($stack) || $stack < 1) {
+            $stack = 1;
+        }
+
+        //merger operations
+        foreach ($this->_files as $file) {
+            $filename = $file[0];
+            $filepages = $file[1];
+
+            $count = $fpdi->setSourceFile($filename);
+
+            //add the pages
+            if ($filepages == 'all') {
+                for ($i = 1; $i <= $count; $i++) {
+                    $template = $fpdi->importPage($i);
+                    $size = $fpdi->getTemplateSize($template);
+
+                    if (($counter % $stack) === 0) {
+                        if ($orientation == 'L') {
+                            $fpdi->AddPage($orientation, array($size['w'] * $stack, $size['h']));
+                        } else {
+                            $fpdi->AddPage($orientation, array($size['w'], $size['h'] * $stack));
+                        }
+                    }
+
+                    $fpdi->useTemplate(
+                        $template,
+                        $size['w'] * ($counter % $stack),
+                        null,
+                        $size['w'],
+                        $size['h'],
+                        false
+                    );
+
+                    $counter++;
+                }
+            } else {
+                foreach ($filepages as $page) {
+                    if (!$template = $fpdi->importPage($page)): throw new exception("Could not load page '$page' in PDF '$filename'. Check that the page exists."); endif;
+                    $size = $fpdi->getTemplateSize($template);
+                    $orientation = ($size['h'] > $size['w']) ? 'P' : 'L';
+
+                    $fpdi->AddPage($orientation, array($size['w'], $size['h']));
+                    $fpdi->useTemplate($template);
+                }
+            }
+        }
+
+        //output operations
+        $mode = $this->_switchmode($outputmode);
+
+        if ($mode == 'S') {
+            return $fpdi->Output($outputpath, 'S');
+        } else {
+            if ($mode == 'F') {
+                $fpdi->Output($outputpath, $mode);
+                return true;
+            } else {
+                if ($fpdi->Output($outputpath, $mode) == '') {
+                    return true;
+                } else {
+                    throw new exception("Error outputting PDF to '$outputmode'.");
+                    return false;
+                }
+            }
+        }
+
+
+    }
+
 	/**
 	 * Merges your provided PDFs and outputs to specified location.
 	 * @param $outputmode

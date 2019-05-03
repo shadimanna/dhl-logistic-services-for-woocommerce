@@ -5,7 +5,7 @@
      <?php endif ?>
 >
     <p>
-        <h4><?php echo _e('DHL for WooCommerce notice', 'dhlpwc') ?></h4>
+        <h4><?php _e('DHL for WooCommerce notice', 'dhlpwc') ?></h4>
 
         <ul>
             <?php foreach ($messages as $message) : ?>

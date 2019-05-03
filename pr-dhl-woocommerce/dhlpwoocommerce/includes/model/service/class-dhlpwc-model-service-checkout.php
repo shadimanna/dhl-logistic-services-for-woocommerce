@@ -9,12 +9,7 @@ class DHLPWC_Model_Service_Checkout extends DHLPWC_Model_Core_Singleton_Abstract
 
     public function get_cart_shipping_country_code()
     {
-        $cart = WC()->cart;
-        if (empty($cart)) {
-            return null;
-        }
-
-        $customer = $cart->get_customer();
+        $customer = WC()->customer;
 
         if (empty($customer)) {
             return null;
@@ -36,12 +31,8 @@ class DHLPWC_Model_Service_Checkout extends DHLPWC_Model_Core_Singleton_Abstract
 
     public function get_cart_shipping_postal_code($numbers_only = false)
     {
-        $cart = WC()->cart;
-        if (empty($cart)) {
-            return null;
-        }
+        $customer = WC()->customer;
 
-        $customer = $cart->get_customer();
         if (empty($customer)) {
             return null;
         }

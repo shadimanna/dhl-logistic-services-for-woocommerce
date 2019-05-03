@@ -1,2 +1,4 @@
-/.idea/
-/pr-dhl-woocommerce/vendor/
+/vendor
+/.idea
+.DS_Store
+/pr-dhl-woocommerce/vendor

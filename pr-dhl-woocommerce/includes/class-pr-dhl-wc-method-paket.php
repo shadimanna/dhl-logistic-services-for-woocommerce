@@ -225,6 +225,13 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'default'           => 'no',
 				'description'       => sprintf( __( 'A log file containing the communication to the DHL server will be maintained if this option is checked. This can be used in case of technical issues and can be found %shere%s.', 'pr-shipping-dhl' ), '<a href="' . $log_path . '" target = "_blank">', '</a>' )
 			),
+			'dhl_pixel_tracking' => array(
+				'title'             => __( 'Tracking', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Enable tracking', 'pr-shipping-dhl' ),
+				'default'           => 'yes',
+				'description'       => __( 'This allows DHL to anomously track whether the preferred services are being used on the shop or not.' )
+			),
 		);
 
 		$base_country_code = PR_DHL()->get_base_country();

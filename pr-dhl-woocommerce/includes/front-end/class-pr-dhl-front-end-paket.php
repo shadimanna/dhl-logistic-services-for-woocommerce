@@ -49,7 +49,7 @@ class PR_DHL_Front_End_Paket {
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_styles_scripts' ) );
 
-		if( $this->is_preferredservice_enabled() || $this->is_parcelfinder_enabled() ) {
+		if( $this->is_tracking_enabled() &&  ( $this->is_preferredservice_enabled() || $this->is_parcelfinder_enabled() ) ) {
 			// Add DHL meta tag
 			add_action( 'wp_head', array( $this, 'dhl_add_meta_tags') );
 		}
@@ -81,6 +81,15 @@ class PR_DHL_Front_End_Paket {
 		}
 	}
 
+	protected function is_tracking_enabled() {
+		
+		if ( isset( $this->shipping_dhl_settings['dhl_pixel_tracking'] ) && ( $this->shipping_dhl_settings['dhl_pixel_tracking'] == 'yes' ) ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	protected function is_preferredservice_enabled() {
 		
 		if( ( isset( $this->shipping_dhl_settings['dhl_preferred_day'] ) && ( $this->shipping_dhl_settings['dhl_preferred_day'] == 'yes' ) ) ||	( isset( $this->shipping_dhl_settings['dhl_preferred_time'] ) && ( $this->shipping_dhl_settings['dhl_preferred_time'] == 'yes' ) ) || ( isset( $this->shipping_dhl_settings['dhl_preferred_location'] ) && ( $this->shipping_dhl_settings['dhl_preferred_location'] == 'yes' ) ) ||	( isset( $this->shipping_dhl_settings['dhl_preferred_neighbour'] ) && ( $this->shipping_dhl_settings['dhl_preferred_neighbour'] == 'yes' ) ) ) {
@@ -96,11 +105,9 @@ class PR_DHL_Front_End_Paket {
 
 	public function load_styles_scripts() {
 
-		// Load pixel on all pages?!
-		if( $this->is_preferredservice_enabled() || $this->is_parcelfinder_enabled() ) {
+		if( $this->is_tracking_enabled() && ( $this->is_preferredservice_enabled() || $this->is_parcelfinder_enabled() ) ) {
 			
 			wp_enqueue_script( 'pr-dhl-frontend-pixel', PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-frontend-pixel.js', array(), PR_DHL_VERSION, true );
-			// wp_add_inline_script( 'pr-dhl-frontend-pixel', string $data );
 		}
 
 		// load scripts on checkout page only

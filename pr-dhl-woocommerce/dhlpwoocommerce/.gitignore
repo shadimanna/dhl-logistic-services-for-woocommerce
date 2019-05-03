@@ -1,6 +1,0 @@
-/.idea/
-/vendor/
-/tests/node_modules/
-/tests/cypress.*.json
-/tests/cypress/screenshots/
-/tests/cypress/videos/
