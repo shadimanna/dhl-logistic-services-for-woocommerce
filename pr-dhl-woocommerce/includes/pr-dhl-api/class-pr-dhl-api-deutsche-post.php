@@ -5,6 +5,8 @@ use PR\DHL\REST_API\Deutsche_Post\Client;
 use PR\DHL\REST_API\Deutsche_Post\Item_Info;
 use PR\DHL\REST_API\Drivers\JSON_API_Driver;
 use PR\DHL\REST_API\Drivers\WP_API_Driver;
+use PR\DHL\REST_API\Interfaces\API_Auth_Interface;
+use PR\DHL\REST_API\Interfaces\API_Client_Interface;
 use PR\DHL\REST_API\Interfaces\API_Driver_Interface;
 
 // Exit if accessed directly or class already exists
@@ -72,11 +74,75 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 		$this->country_code = $country_code;
 
 		try {
-			$this->init_api();
+			$this->api_driver = $this->create_api_driver();
+			$this->api_auth = $this->create_api_auth();
+			$this->api_client = $this->create_api_client();
 			$this->dhl_label = new PR_DHL_API_REST_Label();
 		} catch ( Exception $e ) {
 			throw $e;
 		}
+	}
+
+	/**
+	 * Initializes the API client instance.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @throws Exception
+	 *
+	 * @return API_Client_Interface
+	 */
+	protected function create_api_client()
+	{
+		// Get the saved DHL customer EKP
+		$ekp = $this->get_ekp();
+
+		// Create the API client, using this instance's driver and auth objects
+		return new Client(
+			$ekp,
+			$this->get_api_url(),
+			$this->api_driver,
+			$this->api_auth
+		);
+	}
+
+	/**
+	 * Initializes the API driver instance.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @throws Exception
+	 *
+	 * @return API_Driver_Interface
+	 */
+	protected function create_api_driver()
+	{
+		// Use a standard WordPress-driven API driver, decorated using the JSON driver decorator class
+		return new JSON_API_Driver( new WP_API_Driver() );
+	}
+
+	/**
+	 * Initializes the API auth instance.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @throws Exception
+	 *
+	 * @return API_Auth_Interface
+	 */
+	protected function create_api_auth()
+	{
+		// Get the saved DHL customer API credentials
+		list( $client_id, $client_secret ) = $this->get_api_creds();
+
+		// Create the auth object using this instance's API driver and URL
+		return new Auth(
+			$this->api_driver,
+			$this->get_api_url(),
+			$client_id,
+			$client_secret,
+			static::ACCESS_TOKEN_TRANSIENT
+		);
 	}
 
 	/**
@@ -86,34 +152,6 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 */
 	public function is_dhl_deutsche_post() {
 		return true;
-	}
-
-	/**
-	 * Initializes the API client instance.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @throws Exception
-	 */
-	public function init_api() {
-		if ( $this->api_client !== null ) {
-			return;
-		}
-
-		$ekp = $this->get_ekp();
-		$api_url = $this->get_api_url();
-		list( $client_id, $client_secret ) = $this->get_api_creds();
-
-		$this->api_driver = new JSON_API_Driver( new WP_API_Driver() );
-		$this->api_auth = new Auth(
-			$this->api_driver,
-			$api_url,
-			$client_id,
-			$client_secret,
-			static::ACCESS_TOKEN_TRANSIENT
-		);
-
-		$this->api_client = new Client( $ekp, $api_url, $this->api_driver, $this->api_auth );
 	}
 
 	/**
