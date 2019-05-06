@@ -49,31 +49,19 @@ class Client extends API_Client {
 	 * @throws Exception
 	 */
 	public function create_item( Item_Info $item_info ) {
-		$response = $this->post(
-			$this->customer_route( 'items' ),
-			array(
-				'serviceLevel'        => 'PRIORITY',
-				'product'             => $item_info->shipment[ 'product' ],
-				'shipmentAmount'      => $item_info->shipment[ 'value' ],
-				'shipmentCurrency'    => $item_info->shipment[ 'currency' ],
-				'shipmentGrossWeight' => $item_info->shipment[ 'weight' ] * 1000.0,
-				'recipient'           => $item_info->recipient[ 'name' ],
-				'recipientPhone'      => $item_info->recipient[ 'phone' ],
-				'recipientEmail'      => $item_info->recipient[ 'email' ],
-				'addressLine1'        => $item_info->recipient[ 'address_1' ],
-				'addressLine2'        => $item_info->recipient[ 'address_2' ],
-				'city'                => $item_info->recipient[ 'city' ],
-				'postalCode'          => $item_info->recipient[ 'postcode' ],
-				'state'               => $item_info->recipient[ 'state' ],
-				'destinationCountry'  => $item_info->recipient[ 'country' ],
-				'contents'            => $item_info->contents,
-			)
-		);
+		// Prepare the request route and data
+		$route = $this->customer_route( 'items' );
+		$data = $this->item_info_to_request_data( $item_info );
 
+		// Send the request and get the response
+		$response = $this->post( $route, $data );
+
+		// Return the response body on success
 		if ( $response->status === 200 ) {
 			return $response->body;
 		}
 
+		// Otherwise throw an exception using the response's error messages
 		$message = ! empty( $response->body->messages )
 			? implode( ', ', $response->body->messages )
 			: strval( $response->body );
@@ -83,6 +71,15 @@ class Client extends API_Client {
 		);
 	}
 
+	/**
+	 * Retrieves the label for a DHL item, by its barcode.
+	 *
+	 * @param string $item_barcode The barcode of the item whose label to retrieve.
+	 *
+	 * @return string The label data.
+	 *
+	 * @throws Exception
+	 */
 	public function get_label($item_barcode)
 	{
 		$route = sprintf('items/%s/label', $item_barcode);
@@ -129,6 +126,33 @@ class Client extends API_Client {
 				__( 'Failed to get items from the API: %s', 'pr-shipping-dhl' )
 			),
 			implode( ', ', $response->body->messages )
+		);
+	}
+
+	/**
+	 * Transforms an item info object into a request data array.
+	 *
+	 * @param Item_Info $item_info The item info object to transform.
+	 *
+	 * @return array The request data for the given item info object.
+	 */
+	protected function item_info_to_request_data( Item_Info $item_info ) {
+		return array(
+			'serviceLevel'        => 'PRIORITY',
+			'product'             => $item_info->shipment[ 'product' ],
+			'shipmentAmount'      => $item_info->shipment[ 'value' ],
+			'shipmentCurrency'    => $item_info->shipment[ 'currency' ],
+			'shipmentGrossWeight' => $item_info->shipment[ 'weight' ] * 1000.0,
+			'recipient'           => $item_info->recipient[ 'name' ],
+			'recipientPhone'      => $item_info->recipient[ 'phone' ],
+			'recipientEmail'      => $item_info->recipient[ 'email' ],
+			'addressLine1'        => $item_info->recipient[ 'address_1' ],
+			'addressLine2'        => $item_info->recipient[ 'address_2' ],
+			'city'                => $item_info->recipient[ 'city' ],
+			'postalCode'          => $item_info->recipient[ 'postcode' ],
+			'state'               => $item_info->recipient[ 'state' ],
+			'destinationCountry'  => $item_info->recipient[ 'country' ],
+			'contents'            => $item_info->contents,
 		);
 	}
 
