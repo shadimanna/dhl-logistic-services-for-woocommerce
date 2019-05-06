@@ -1,12 +1,11 @@
 <?php
 
-use PR\DHL\Deutsche_Post\API\Auth;
-use PR\DHL\Deutsche_Post\API\Client;
-use PR\DHL\Deutsche_Post\Item_Info;
-use PR\DHL\REST_API\Interfaces\API_Client_Interface;
+use PR\DHL\REST_API\Deutsche_Post\Auth;
+use PR\DHL\REST_API\Deutsche_Post\Client;
+use PR\DHL\REST_API\Deutsche_Post\Item_Info;
+use PR\DHL\REST_API\Drivers\JSON_API_Driver;
+use PR\DHL\REST_API\Drivers\WP_API_Driver;
 use PR\DHL\REST_API\Interfaces\API_Driver_Interface;
-use PR\DHL\REST_API\JSON_API_Driver;
-use PR\DHL\REST_API\WP_API_Driver;
 
 // Exit if accessed directly or class already exists
 if ( ! defined( 'ABSPATH' ) || class_exists( 'PR_DHL_API_Deutsche_Post', false ) ) {

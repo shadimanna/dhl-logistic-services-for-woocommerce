@@ -1,9 +1,8 @@
 <?php
 
-namespace PR\DHL\Deutsche_Post\API;
+namespace PR\DHL\REST_API\Deutsche_Post;
 
 use Exception;
-use PR\DHL\Deutsche_Post\Item_Info;
 use PR\DHL\REST_API\API_Client;
 use PR\DHL\REST_API\Interfaces\API_Auth_Interface;
 use PR\DHL\REST_API\Interfaces\API_Driver_Interface;

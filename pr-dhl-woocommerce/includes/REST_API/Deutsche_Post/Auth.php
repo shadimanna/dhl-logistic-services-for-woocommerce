@@ -1,6 +1,6 @@
 <?php
 
-namespace PR\DHL\Deutsche_Post\API;
+namespace PR\DHL\REST_API\Deutsche_Post;
 
 use PR\DHL\REST_API\Interfaces\API_Auth_Interface;
 use PR\DHL\REST_API\Interfaces\API_Driver_Interface;

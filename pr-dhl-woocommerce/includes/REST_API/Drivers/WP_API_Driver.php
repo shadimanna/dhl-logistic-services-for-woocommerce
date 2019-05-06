@@ -1,9 +1,10 @@
 <?php
 
-namespace PR\DHL\REST_API;
+namespace PR\DHL\REST_API\Drivers;
 
-use PR\DHL\REST_API\Interfaces\API_Auth_Interface;
 use PR\DHL\REST_API\Interfaces\API_Driver_Interface;
+use PR\DHL\REST_API\Request;
+use PR\DHL\REST_API\Response;
 use RuntimeException;
 use Traversable;
 

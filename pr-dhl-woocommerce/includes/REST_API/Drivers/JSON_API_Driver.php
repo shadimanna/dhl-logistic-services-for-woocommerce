@@ -1,8 +1,10 @@
 <?php
 
-namespace PR\DHL\REST_API;
+namespace PR\DHL\REST_API\Drivers;
 
 use PR\DHL\REST_API\Interfaces\API_Driver_Interface;
+use PR\DHL\REST_API\Request;
+use PR\DHL\REST_API\Response;
 
 /**
  * A REST API driver decorator that automatically encodes/decodes JSON in POST requests/responses respectively.

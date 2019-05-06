@@ -1,6 +1,6 @@
 <?php
 
-namespace PR\DHL\Deutsche_Post;
+namespace PR\DHL\REST_API\Deutsche_Post;
 
 use Exception;
 use PR\DHL\Utils\Args_Parser;
