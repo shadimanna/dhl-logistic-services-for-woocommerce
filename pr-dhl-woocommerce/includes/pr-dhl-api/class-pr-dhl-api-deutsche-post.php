@@ -43,7 +43,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 *
 	 * @var API_Driver_Interface
 	 */
-	protected $api_driver;
+	public $api_driver;
 	/**
 	 * The API authorization instance.
 	 *
@@ -51,7 +51,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 *
 	 * @var Auth
 	 */
-	protected $api_auth;
+	public $api_auth;
 	/**
 	 * The API client instance.
 	 *
@@ -59,7 +59,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 *
 	 * @var Client
 	 */
-	protected $api_client;
+	public $api_client;
 
 	/**
 	 * Constructor.
@@ -212,9 +212,17 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 * @since [*next-version*]
 	 */
 	public function dhl_test_connection( $client_id, $client_secret ) {
-		$this->init_api();
+		try {
+			// Test the given ID and secret
+			$token = $this->api_auth->test_connection( $client_id, $client_secret );
+			// Save the token if successful
+			$this->api_auth->save_token($token);
 
-		return $this->api_auth->test_connection( $client_id, $client_secret );
+			return $token;
+		} catch (Exception $e) {
+			$this->api_auth->save_token(null);
+			throw $e;
+		}
 	}
 
 	/**
@@ -223,8 +231,6 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 * @since [*next-version*]
 	 */
 	public function dhl_reset_connection() {
-		$this->init_api();
-
 		return $this->api_auth->revoke();
 	}
 
@@ -256,9 +262,11 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 * @since [*next-version*]
 	 */
 	public function get_dhl_label( $args ) {
-		$this->init_api();
-
-		$item_info = new Item_Info( $args );
+		try {
+			$item_info = new Item_Info( $args );
+		} catch (Exception $e) {
+			throw $e;
+		}
 
 		$item_response = $this->api_client->create_item( $item_info );
 		$item_barcode = $item_response->barcode;
