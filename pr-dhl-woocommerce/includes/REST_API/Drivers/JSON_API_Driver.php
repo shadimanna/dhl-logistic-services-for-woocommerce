@@ -102,8 +102,8 @@ class JSON_API_Driver implements API_Driver_Interface {
 		// For POST requests, encode the body and set the content type and length
 		if ( $request->type === Request::TYPE_POST ) {
 			$request->body = json_encode( $request->body );
-			$headers[ static::H_CONTENT_TYPE ] = static::JSON_CONTENT_TYPE;
-			$headers[ static::H_CONTENT_LENGTH ] = strlen( $request->body );
+			$request->headers[ static::H_CONTENT_TYPE ] = static::JSON_CONTENT_TYPE;
+			$request->headers[ static::H_CONTENT_LENGTH ] = strlen( $request->body );
 		}
 
 		return $request;
