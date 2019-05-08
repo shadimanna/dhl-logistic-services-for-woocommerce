@@ -227,7 +227,7 @@ class Auth implements API_Auth_Interface {
 		$this->client_id = $backup_client_id;
 		$this->client_secret = $backup_client_secret;
 
-		return $token->access_token;
+		return $token;
 	}
 
 	/**
@@ -236,7 +236,11 @@ class Auth implements API_Auth_Interface {
 	 * @param object $token The token to save.
 	 */
 	public function save_token( $token ) {
-		set_transient( $this->transient, $token, $token->expires_in );
+		$expires_in = isset($token->expires_in)
+			? $token->expires_in
+			: time() + DAY_IN_SECONDS;
+
+		set_transient( $this->transient, $token, $expires_in );
 
 		$this->token = $token;
 	}
