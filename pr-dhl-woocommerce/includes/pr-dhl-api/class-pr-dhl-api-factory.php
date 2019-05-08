@@ -18,6 +18,13 @@ class PR_DHL_API_Factory {
 	}
 
 	public static function make_dhl( $country_code ) {
+		static $cache = array();
+
+		// If object exists in cache, simply return it
+		if ( array_key_exists( $country_code, $cache ) ) {
+			return $cache[ $country_code ];
+		}
+
 		PR_DHL_API_Factory::init();
 
 		$dhl_obj = null;
@@ -108,6 +115,9 @@ class PR_DHL_API_Factory {
 		} catch (Exception $e) {
 			throw $e;
 		}
+
+		// Cache the object to optimize later invocations of the factory
+		$cache[ $country_code ] = $dhl_obj;
 
 		return $dhl_obj;
 	}
