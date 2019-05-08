@@ -25,6 +25,15 @@ class Client extends API_Client {
 	protected $ekp;
 
 	/**
+	 * Information about the current DHL order.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @var array
+	 */
+	protected $order;
+
+	/**
 	 * {@inheritdoc}
 	 *
 	 * @since [*next-version*]
@@ -137,6 +146,24 @@ class Client extends API_Client {
 	 * @return array The request data for the given item info object.
 	 */
 	protected function item_info_to_request_data( Item_Info $item_info ) {
+		$contents = array();
+		foreach ( $item_info->contents as $content_info ) {
+			$data = array(
+				'contentPieceAmount' => $content_info[ 'qty' ],
+				'contentPieceDescription' => $content_info[ 'description' ],
+				'contentPieceIndexNumber' => $content_info[ 'sku' ],
+				'contentPieceNetweight' => $content_info[ 'weight' ],
+				'contentPieceOrigin' => $content_info[ 'origin' ],
+				'contentPieceValue' => $content_info[ 'value' ],
+				'contentPieceHsCode' => trim( $content_info[ 'hs_code' ] )
+			);
+			// Only include HS code if it's not empty
+			if ( strlen( $content_info[ 'contentPieceHsCode' ] ) === 0 ) {
+				unset( $data[ 'contentPieceHsCode' ] );
+			}
+			$contents[] = $data;
+		}
+
 		return array(
 			'serviceLevel'        => 'PRIORITY',
 			'product'             => $item_info->shipment[ 'product' ],
@@ -152,7 +179,7 @@ class Client extends API_Client {
 			'postalCode'          => $item_info->recipient[ 'postcode' ],
 			'state'               => $item_info->recipient[ 'state' ],
 			'destinationCountry'  => $item_info->recipient[ 'country' ],
-			'contents'            => $item_info->contents,
+			'contents'            => $contents
 		);
 	}
 
