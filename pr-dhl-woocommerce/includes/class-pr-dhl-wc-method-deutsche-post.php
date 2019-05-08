@@ -227,33 +227,6 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
                 'options'     => $select_dhl_desc_default,
                 'class'       => 'wc-enhanced-select',
             ),
-            'dhl_label_format'      => array(
-                'title'       => __( 'Label Format', 'pr-shipping-dhl' ),
-                'type'        => 'select',
-                'description' => __(
-                    'Select one of the formats to generate the shipping label in.',
-                    'pr-shipping-dhl'
-                ),
-                'desc_tip'    => true,
-                'options'     => array( 'PDF' => 'PDF', 'PNG' => 'PNG', 'ZPL' => 'ZPL' ),
-                'class'       => 'wc-enhanced-select',
-            ),
-            'dhl_label_size'        => array(
-                'title'       => __( 'Label Size', 'pr-shipping-dhl' ),
-                'type'        => 'select',
-                'description' => __( 'Select the shipping label size.', 'pr-shipping-dhl' ),
-                'desc_tip'    => true,
-                'options'     => array( '4x6' => '4x6', '4x4' => '4x4' ),
-                'class'       => 'wc-enhanced-select',
-            ),
-            'dhl_label_page'        => array(
-                'title'       => __( 'Page Size', 'pr-shipping-dhl' ),
-                'type'        => 'select',
-                'description' => __( 'Select the shipping label page size.', 'pr-shipping-dhl' ),
-                'desc_tip'    => true,
-                'options'     => array( 'A4' => 'A4', '400x600' => '400x600', '400x400' => '400x400' ),
-                'class'       => 'wc-enhanced-select',
-            ),
             'dhl_handover_type'     => array(
                 'title'       => __( 'Handover', 'pr-shipping-dhl' ),
                 'type'        => 'select',
@@ -317,6 +290,57 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
                 'desc_tip'    => false,
                 'default'     => __( 'DHL Tracking Number: {tracking-link}', 'pr-shipping-dhl' ),
             ),
+        );
+
+	    $this->form_fields += array(
+		    'dhl_label_section'   => array(
+			    'title'           => __( 'Label options', 'pr-shipping-dhl' ),
+			    'type'            => 'title',
+			    'description'     => __( 'Options for configuring your label preferences', 'pr-shipping-dhl' ),
+		    ),
+		    'dhl_label_format'      => array(
+			    'title'       => __( 'Label Format', 'pr-shipping-dhl' ),
+			    'type'        => 'select',
+			    'description' => __(
+				    'Select one of the formats to generate the shipping label in.',
+				    'pr-shipping-dhl'
+			    ),
+			    'desc_tip'    => true,
+			    'options'     => array( 'PDF' => 'PDF', 'PNG' => 'PNG', 'ZPL' => 'ZPL' ),
+			    'class'       => 'wc-enhanced-select',
+		    ),
+		    'dhl_label_size'        => array(
+			    'title'       => __( 'Label Size', 'pr-shipping-dhl' ),
+			    'type'        => 'select',
+			    'description' => __( 'Select the shipping label size.', 'pr-shipping-dhl' ),
+			    'desc_tip'    => true,
+			    'options'     => array( '4x6' => '4x6', '4x4' => '4x4' ),
+			    'class'       => 'wc-enhanced-select',
+		    ),
+		    'dhl_label_page'        => array(
+			    'title'       => __( 'Page Size', 'pr-shipping-dhl' ),
+			    'type'        => 'select',
+			    'description' => __( 'Select the shipping label page size.', 'pr-shipping-dhl' ),
+			    'desc_tip'    => true,
+			    'options'     => array( 'A4' => 'A4', '400x600' => '400x600', '400x400' => '400x400' ),
+			    'class'       => 'wc-enhanced-select',
+		    ),
+	        'dhl_label_ref' => array(
+		        'title'             => __( 'Label Reference', 'pr-shipping-dhl' ),
+		        'type'              => 'text',
+		        'custom_attributes'	=> array( 'maxlength' => '35' ),
+		        'description'       => sprintf( __( 'Use "%s" to send the order id as a reference, "%s" to send the customer email and "%s" to send the user id. This text is limited to 35 characters.', 'pr-shipping-dhl' ), '{order_id}' , '{email}', '{user_id}' ),
+		        'desc_tip'          => true,
+		        'default'           => '{order_id}'
+	        ),
+	        'dhl_label_ref_2' => array(
+		        'title'             => __( 'Label Reference 2', 'pr-shipping-dhl' ),
+		        'type'              => 'text',
+		        'custom_attributes'	=> array( 'maxlength' => '35' ),
+		        'description'       => sprintf( __( 'Use "%s" to send the order id as a reference, "%s" to send the customer email and "%s" to send the user id. This text is limited to 35 characters.', 'pr-shipping-dhl' ), '{order_id}' , '{email}', '{user_id}' ),
+		        'desc_tip'          => true,
+		        'default'           => '{email}'
+	        ),
         );
 
         $this->form_fields += array(
