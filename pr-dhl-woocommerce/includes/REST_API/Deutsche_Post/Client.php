@@ -166,6 +166,6 @@ class Client extends API_Client {
 	 * @return string
 	 */
 	protected function customer_route( $route ) {
-		return sprintf( 'customers/%s/%s', $this->ekp, $route );
+		return sprintf( 'dpi/shipping/v1/customers/%s/%s', $this->ekp, $route );
 	}
 }

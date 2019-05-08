@@ -19,14 +19,14 @@ class Auth implements API_Auth_Interface {
 	 *
 	 * @since [*next-version*]
 	 */
-	const AUTH_ROUTE = 'auth/accesstoken';
+	const AUTH_ROUTE = 'v1/auth/accesstoken';
 
 	/**
 	 * The Deutsche POST route for revoking an access token.
 	 *
 	 * @since [*next-version*]
 	 */
-	const REVOKE_ROUTE = 'auth/accesstoken/revoke';
+	const REVOKE_ROUTE = 'v1/auth/accesstoken/revoke';
 
 	/**
 	 * The Deutsche POST header where the client ID and secret are included when fetching the access token.
