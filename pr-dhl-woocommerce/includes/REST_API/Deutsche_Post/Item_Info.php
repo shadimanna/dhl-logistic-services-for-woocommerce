@@ -59,13 +59,18 @@ class Item_Info {
 	 * @throws Exception If some data in $args did not pass validation.
 	 */
 	protected function parse_args( $args ) {
-		$this->shipment = Args_Parser::parse_args( $args[ 'shipping_address' ], $this->get_shipment_info_schema() );
-		$this->recipient = Args_Parser::parse_args( $args[ 'order_details' ], $this->get_recipient_info_schema() );
+		$settings = $args[ 'dhl_settings' ];
+		$recipient_info = $args[ 'shipping_address' ] + $settings;
+		$shipping_info = $args[ 'order_details' ] + $settings;
+		$items_info = $args['items'];
+
+		$this->shipment = Args_Parser::parse_args( $shipping_info, $this->get_shipment_info_schema() );
+		$this->recipient = Args_Parser::parse_args( $recipient_info, $this->get_recipient_info_schema() );
 		$this->contents = array();
 
 		$this->contents = array();
-		foreach ( $args['items'] as $item ) {
-			$this->contents[] = Args_Parser::parse_args( $item, $this->get_content_item_info_schema() );
+		foreach ( $items_info as $item_info ) {
+			$this->contents[] = Args_Parser::parse_args( $item_info, $this->get_content_item_info_schema() );
 		}
 	}
 
@@ -179,23 +184,26 @@ class Item_Info {
 					}
 				},
 			),
-			'description' => array(
+			'item_description' => array(
+				'rename' => 'description',
 				'default' => '',
 			),
 			'sku'         => array(
 				'default' => '',
 			),
-			'value'       => array(
+			'item_value'       => array(
+				'rename' => 'value',
 				'default' => 0,
 			),
 			'origin'      => array(
-				'default' => '',
+				'default' => PR_DHL()->get_base_country(),
 			),
 			'qty'         => array(
 				'default' => 1,
 			),
-			'weight'      => array(
-				'default' => 0,
+			'item_weight'      => array(
+				'rename' => 'weight',
+				'default' => 1,
 			),
 		);
 	}
