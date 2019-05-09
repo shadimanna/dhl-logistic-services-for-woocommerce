@@ -1,5 +1,10 @@
 # DHL Parcel plugin for WooCommerce
 
+V1.2.9
+
+## Changes
+- Fixed pricing filters rounding prices
+
 V1.2.8
 
 ## Changes
