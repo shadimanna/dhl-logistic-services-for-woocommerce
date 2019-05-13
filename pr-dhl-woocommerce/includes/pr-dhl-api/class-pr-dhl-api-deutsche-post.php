@@ -2,7 +2,6 @@
 
 use PR\DHL\REST_API\Deutsche_Post\Auth;
 use PR\DHL\REST_API\Deutsche_Post\Client;
-use PR\DHL\REST_API\Deutsche_Post\Item_Info;
 use PR\DHL\REST_API\Drivers\JSON_API_Driver;
 use PR\DHL\REST_API\Drivers\WP_API_Driver;
 use PR\DHL\REST_API\Interfaces\API_Auth_Interface;
@@ -68,7 +67,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 *
 	 * @param string $country_code The country code.
 	 *
-	 * @throws Exception
+	 * @throws Exception If an error occurred while creating the API driver, auth or client.
 	 */
 	public function __construct( $country_code ) {
 		$this->country_code = $country_code;
@@ -88,12 +87,11 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @throws Exception
-	 *
 	 * @return API_Client_Interface
+	 *
+	 * @throws Exception If failed to create the API client.
 	 */
-	protected function create_api_client()
-	{
+	protected function create_api_client() {
 		// Get the saved DHL customer EKP
 		$ekp = $this->get_ekp();
 
@@ -111,12 +109,11 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @throws Exception
-	 *
 	 * @return API_Driver_Interface
+	 *
+	 * @throws Exception If failed to create the API driver.
 	 */
-	protected function create_api_driver()
-	{
+	protected function create_api_driver() {
 		// Use a standard WordPress-driven API driver, decorated using the JSON driver decorator class
 		return new JSON_API_Driver( new WP_API_Driver() );
 	}
@@ -126,12 +123,11 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @throws Exception
-	 *
 	 * @return API_Auth_Interface
+	 *
+	 * @throws Exception If failed to create the API auth.
 	 */
-	protected function create_api_auth()
-	{
+	protected function create_api_auth() {
 		// Get the saved DHL customer API credentials
 		list( $client_id, $client_secret ) = $this->get_api_creds();
 
@@ -160,7 +156,8 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 * @since [*next-version*]
 	 *
 	 * @return string
-	 * @throws Exception
+	 *
+	 * @throws Exception If failed to determine if using the sandbox API or not.
 	 */
 	public function get_api_url() {
 		$is_sandbox = $this->get_setting( 'dhl_sandbox' );
@@ -175,7 +172,8 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 * @since [*next-version*]
 	 *
 	 * @return array The client ID and client secret.
-	 * @throws Exception
+	 *
+	 * @throws Exception If failed to retrieve the API credentials.
 	 */
 	public function get_api_creds() {
 		return array(
@@ -190,18 +188,36 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 * @since [*next-version*]
 	 *
 	 * @return string
-	 * @throws Exception
+	 *
+	 * @throws Exception If failed to retrieve the EKP from the settings.
 	 */
 	public function get_ekp() {
 		return $this->get_setting( 'dhl_pickup' );
 	}
 
+	/**
+	 * Retrieves a single setting.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $key     The key of the setting to retrieve.
+	 * @param string $default The value to return if the setting is not saved.
+	 *
+	 * @return mixed The setting value.
+	 */
 	public function get_setting( $key, $default = '' ) {
 		$settings = $this->get_settings();
 
 		return isset( $settings[ $key ] ) ? $settings[ $key ] : $default;
 	}
 
+	/**
+	 * Retrieves all of the Deutsche Post settings.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return array An associative array of the settings keys mapping to their values.
+	 */
 	public function get_settings() {
 		return get_option( 'woocommerce_pr_dhl_dp_settings', array() );
 	}
