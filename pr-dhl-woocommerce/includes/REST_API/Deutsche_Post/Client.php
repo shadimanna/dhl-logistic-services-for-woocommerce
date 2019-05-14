@@ -25,15 +25,6 @@ class Client extends API_Client {
 	protected $ekp;
 
 	/**
-	 * Information about the current DHL order.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @var array
-	 */
-	protected $order;
-
-	/**
 	 * {@inheritdoc}
 	 *
 	 * @since [*next-version*]
@@ -161,6 +152,83 @@ class Client extends API_Client {
 		throw new Exception(
 			sprintf(
 				__( 'Failed to get items from the API: %s', 'pr-shipping-dhl' )
+			),
+			implode( ', ', $response->body->messages )
+		);
+	}
+
+	/**
+	 * Retrieves the items for the current DHL order.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return array
+	 */
+	public function get_current_order()
+	{
+		return get_option( 'pr_dhl_dp_order', array(
+			'items' => array()
+		) );
+	}
+
+	/**
+	 * Adds an item to the current DHL order.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $item_barcode The barcode of the item to add.
+	 * @param string $wc_order The ID of the WooCommerce order.
+	 */
+	public function add_item_to_order( $item_barcode, $wc_order )
+	{
+		$order = $this->get_current_order();
+
+		$order['items'][$item_barcode] = $wc_order;
+
+		update_option( 'pr_dhl_dp_order', $order );
+	}
+
+	/**
+	 * Adds an item to the current DHL order.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $item_barcode The barcode of the item to add.
+	 */
+	public function remove_item_from_order( $item_barcode )
+	{
+		$order = $this->get_current_order();
+
+		unset( $order['items'][$item_barcode] );
+
+		update_option( 'pr_dhl_dp_order', $order );
+	}
+
+	/**
+	 * Submits the current DHL order to DHL.
+	 *
+	 * @since [*next-version*]
+	 */
+	public function submit_order()
+	{
+		$route = $this->customer_route( 'orders' );
+		$data = array(
+			'itemBarcodes' => array(),
+			'paperwork' => array(
+				'awbCopyCount' => 1,
+				'contactName' => '',
+			),
+		);
+
+		$response = $this->post($route, $data);
+
+		if ( $response->status === 200 ) {
+			return (array) $response->body;
+		}
+
+		throw new Exception(
+			sprintf(
+				__( 'Failed to create order: %s', 'pr-shipping-dhl' )
 			),
 			implode( ', ', $response->body->messages )
 		);
