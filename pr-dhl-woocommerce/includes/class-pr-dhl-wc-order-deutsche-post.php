@@ -37,6 +37,28 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		// add bulk order filter for printed / non-printed orders
 		add_action( 'restrict_manage_posts', array( $this, 'filter_orders_by_label_created' ), 20 );
 		add_filter( 'request', array( $this, 'filter_orders_by_label_created_query' ) );
+
+		// Add the DHL order meta box
+		add_action( 'add_meta_boxes', array( $this, 'add_dhl_order_meta_box' ), 20 );
+
+		// AJAX handlers for the DHL order meta box
+		add_action( 'wp_ajax_wc_shipment_dhl_add_order_item', array( $this, 'ajax_add_order_item' ) );
+		add_action( 'wp_ajax_wc_shipment_dhl_remove_order_item', array( $this, 'ajax_remove_order_item' ) );
+		add_action( 'wp_ajax_wc_shipment_dhl_finalize_order', array( $this, 'ajax_finalize_order' ) );
+	}
+
+	/**
+	 * Adds the DHL order info meta box to the WooCommerce order page.
+	 */
+	public function add_dhl_order_meta_box() {
+		add_meta_box(
+			'woocommerce-dhl-dp-order',
+			__( 'DHL Order', 'pr-shipping-dhl' ),
+			array( $this, 'dhl_order_meta_box' ),
+			'shop_order',
+			'side',
+			'low'
+		);
 	}
 
 	/**
@@ -90,7 +112,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 				'value'       		=> isset( $dhl_label_items['pr_dhl_return_item_wanted'] ) ? $dhl_label_items['pr_dhl_return_item_wanted'] : 'no',
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
-        }
+		}
 
 		if( $this->is_cod_payment_method( $order_id ) ) {
 
@@ -103,6 +125,146 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
 		}
+	}
+
+	/**
+	 * The meta box for managing the current Deutsche Post order.
+	 *
+	 * @since [*next-version*]
+	 */
+	public function dhl_order_meta_box() {
+		$nonce = wp_create_nonce( 'pr_dhl_order_ajax' );
+
+		echo $this->dhl_order_meta_box_table();
+
+		?>
+		<p>
+			<button id="pr_dhl_add_to_order" class="button button-secondary" type="button">
+				<?php _e( 'Add item to order', 'pr-shipping-dhl' ) ?>
+			</button>
+			<button id="pr_dhl_finalize_order" class="button button-primary" type="button" style="float: right">
+				<?php _e( 'Finalize order', 'pr-shipping-dhl' ) ?>
+			</button>
+			<input type="hidden" id="pr_dhl_order_nonce" value="<?php echo $nonce; ?>" />
+		</p>
+		<?php
+	}
+
+	/**
+	 * Creates the table of DHL items for the current Deutsche Post order.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return string The rendered HTML table.
+	 *
+	 * @throws Exception If an error occurred while creating the DHL object from the factory.
+	 */
+	public function dhl_order_meta_box_table() {
+		$dhl_obj = PR_DHL()->get_dhl_factory();
+		$dhl_order = $dhl_obj->api_client->get_current_order();
+		$dhl_items = $dhl_order['items'];
+
+		$table_rows = array();
+
+		if (empty($dhl_items)) {
+			$table_rows[] = sprintf(
+				'<tr id="pr_dhl_no_items_msg"><td colspan="2"><i>%s</i></td></tr>',
+				__( 'There are no items in your DHL order', 'pr-shipping-dhl' )
+			);
+		} else {
+			foreach ( $dhl_items as $barcode => $wc_order ) {
+				$order_url = get_edit_post_link( $wc_order );
+				$order_link = sprintf(
+					'<a href="%s" target="_blank" class="pr_dhl_item_barcode">%s</a>',
+					$order_url,
+					$barcode
+				);
+
+				$remove_link = sprintf(
+					'<a href="javascript:void(0)" class="pr_dhl_order_remove_item">%s</a>',
+					__( 'Remove', 'pr-shipping-dhl' )
+				);
+
+				$table_rows[] = sprintf( '<tr><td>%s</td><td>%s</td></tr>', $order_link, $remove_link );
+			}
+		}
+
+		ob_start();
+
+		?>
+		<table class="widefat striped" id="pr_dhl_order_items_table">
+			<thead>
+			<tr>
+				<th><?php _e( 'Item', 'pr-shipping-dhl' ) ?></th>
+				<th><?php _e( 'Actions', 'pr-shipping-dhl' ) ?></th>
+			</tr>
+			</thead>
+			<tbody>
+			<?php echo implode( '', $table_rows ) ?>
+			</tbody>
+		</table>
+		<?php
+
+		return ob_get_clean();
+	}
+
+	/**
+	 * The AJAX handler for adding an item to the current Deutsche Post order.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @throws Exception If an error occurred while creating the DHL object from the factory.
+	 */
+	public function ajax_add_order_item()
+	{
+		check_ajax_referer( 'pr_dhl_order_ajax', 'pr_dhl_order_nonce' );
+		$order_id = wc_clean( $_POST[ 'order_id' ] );
+
+		$item_barcode = get_post_meta( $order_id, 'pr_dhl_dp_item_barcode', true );
+
+		if ( ! empty( $item_barcode ) ) {
+			PR_DHL()->get_dhl_factory()->api_client->add_item_to_order( $item_barcode, $order_id );
+		}
+
+		echo $this->dhl_order_meta_box_table();
+		die;
+	}
+
+	/**
+	 * The AJAX handler for removing an item from the current Deutsche Post order.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @throws Exception If an error occurred while creating the DHL object from the factory.
+	 */
+	public function ajax_remove_order_item()
+	{
+		check_ajax_referer( 'pr_dhl_order_ajax', 'pr_dhl_order_nonce' );
+
+		$item_barcode = wc_clean( $_POST[ 'item_barcode' ] );
+
+		if ( ! empty( $item_barcode ) ) {
+			PR_DHL()->get_dhl_factory()->api_client->remove_item_from_order( $item_barcode );
+		}
+
+		echo $this->dhl_order_meta_box_table();
+		die;
+	}
+
+	/**
+	 * The AJAX handler for finalizing the current Deutsche Post order.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @throws Exception If an error occurred while creating the DHL object from the factory.
+	 */
+	public function ajax_finalize_order()
+	{
+		check_ajax_referer( 'pr_dhl_order_ajax', 'pr_dhl_order_nonce' );
+
+		// @todo submit order to DP API
+
+		die;
 	}
 
 	/**
