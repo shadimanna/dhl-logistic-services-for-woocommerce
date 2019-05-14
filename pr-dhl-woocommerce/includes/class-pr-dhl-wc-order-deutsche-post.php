@@ -81,7 +81,16 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 				'custom_attributes'	=> array( $is_disabled => $is_disabled, 'maxlength' => '50' )
 			) );
 
-		}
+		} else {
+			woocommerce_wp_checkbox( array(
+				'id'          		=> 'pr_dhl_return_item_wanted',
+				'label'       		=> __( 'Allow return item: ', 'pr-shipping-dhl' ),
+				'placeholder' 		=> '',
+				'description'		=> '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_return_item_wanted'] ) ? $dhl_label_items['pr_dhl_return_item_wanted'] : 'no',
+				'custom_attributes'	=> array( $is_disabled => $is_disabled )
+			) );
+        }
 
 		if( $this->is_cod_payment_method( $order_id ) ) {
 
