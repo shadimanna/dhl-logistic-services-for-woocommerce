@@ -152,7 +152,7 @@ class Client extends API_Client {
 	 * @throws Exception
 	 */
 	public function get_items() {
-		$response = $this->send_request( Request::TYPE_GET, $this->customer_route( 'items' ) );
+		$response = $this->get( $this->customer_route( 'items' ) );
 
 		if ( $response->status === 200 ) {
 			return (array) $response->body;

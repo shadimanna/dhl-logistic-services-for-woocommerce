@@ -233,11 +233,11 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 			// Test the given ID and secret
 			$token = $this->api_auth->test_connection( $client_id, $client_secret );
 			// Save the token if successful
-			$this->api_auth->save_token($token);
+			$this->api_auth->save_token( $token );
 
 			return $token;
-		} catch (Exception $e) {
-			$this->api_auth->save_token(null);
+		} catch ( Exception $e ) {
+			$this->api_auth->save_token( null );
 			throw $e;
 		}
 	}
