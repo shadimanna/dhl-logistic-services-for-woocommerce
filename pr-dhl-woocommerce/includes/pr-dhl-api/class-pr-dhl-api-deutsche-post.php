@@ -76,7 +76,8 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 			$this->api_driver = $this->create_api_driver();
 			$this->api_auth = $this->create_api_auth();
 			$this->api_client = $this->create_api_client();
-			$this->dhl_label = new PR_DHL_API_REST_Label();
+
+			$this->dhl_label = new PR_DHL_API_DP_Label( $this->api_client );
 		} catch ( Exception $e ) {
 			throw $e;
 		}
@@ -270,25 +271,5 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 */
 	public function get_dhl_products_domestic() {
 		return $this->get_dhl_products_international();
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @since [*next-version*]
-	 */
-	public function get_dhl_label( $args ) {
-		try {
-			$item_info = new Item_Info( $args );
-		} catch (Exception $e) {
-			throw $e;
-		}
-
-		$item_response = $this->api_client->create_item( $item_info );
-		$item_barcode = $item_response->barcode;
-
-		$label_response = $this->api_client->get_label( $item_barcode );
-
-		return $label_response;
 	}
 }

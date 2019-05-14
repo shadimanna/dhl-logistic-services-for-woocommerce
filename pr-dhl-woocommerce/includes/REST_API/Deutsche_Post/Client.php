@@ -81,19 +81,47 @@ class Client extends API_Client {
 	}
 
 	/**
+	 * Retrieves tracking info for a given item, by its barcode.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $item_barcode The barcode of the item.
+	 *
+	 * @return object The tracking info as returned by the remote API.
+	 *
+	 * @throws Exception
+	 */
+	public function get_item_tracking_info( $item_barcode )
+	{
+		$response = $this->get( sprintf( 'dpi/tracking/v1/trackings/%s', $item_barcode ) );
+
+		if ( $response->status === 200 ) {
+			return $response->body;
+		}
+
+		$message = ! empty( $response->body->messages )
+			? implode( ', ', $response->body->messages )
+			: strval( $response->body );
+
+		throw new Exception(
+			sprintf( __( 'API error: %s', 'pr-shipping-dhl' ), $message )
+		);
+	}
+
+	/**
 	 * Retrieves the label for a DHL item, by its barcode.
 	 *
 	 * @param string $item_barcode The barcode of the item whose label to retrieve.
 	 *
-	 * @return string The label data.
+	 * @return string The raw PDF data for the item's label.
 	 *
 	 * @throws Exception
 	 */
-	public function get_label($item_barcode)
+	public function get_item_label($item_barcode)
 	{
 		$route = sprintf('items/%s/label', $item_barcode);
 
-		$response = $this->post(
+		$response = $this->get(
 			$this->customer_route( $route ),
 			array(),
 			array(
