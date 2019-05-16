@@ -4,6 +4,12 @@ jQuery(document).ready(function($) {
         var selected_option = $(this).find('option:selected');
         $(document.body).trigger('dhlpwc:delivery_time_selection_sync', [selected_option.val().toString(), selected_option.data('date'), selected_option.data('start-time'), selected_option.data('end-time'), selected_option.data('frontend-id')]);
 
+    }).on('dhlpwc:delivery_time_check_sync', function(e) {
+        var selected_option = $('div.dhlpwc-shipping-method-delivery-times-option select option:selected');
+        if (selected_option.length !== 0) {
+            $(document.body).trigger('dhlpwc:delivery_time_selection_sync', [selected_option.val().toString(), selected_option.data('date'), selected_option.data('start-time'), selected_option.data('end-time'), selected_option.data('frontend-id')]);
+        }
+
     }).on('dhlpwc:delivery_time_selection_sync', function(e, selected, date, start_time, end_time, frontend_id) {
         // Due to the cart page not having an actual form, we will temporarily remember the selection as a shadow selection.
         // The actual checkout form will always have priority, this is just backup logic.
@@ -109,15 +115,18 @@ jQuery(document).ready(function($) {
         });
 
     }).on('updated_cart_totals', function() {
+        $(document.body).trigger('dhlpwc:delivery_time_check_sync');
         $(document.body).trigger('dhlpwc:update_delivery_time_visibility');
         $(document.body).trigger('dhlpwc:update_delivery_times_style');
 
     }).on('updated_checkout', function() {
+        $(document.body).trigger('dhlpwc:delivery_time_check_sync');
         $(document.body).trigger('dhlpwc:update_delivery_time_visibility');
         $(document.body).trigger('dhlpwc:update_delivery_times_style');
 
     });
 
+    $(document.body).trigger('dhlpwc:delivery_time_check_sync');
     $(document.body).trigger('dhlpwc:update_delivery_time_visibility');
     $(document.body).trigger('dhlpwc:update_delivery_times_style');
 

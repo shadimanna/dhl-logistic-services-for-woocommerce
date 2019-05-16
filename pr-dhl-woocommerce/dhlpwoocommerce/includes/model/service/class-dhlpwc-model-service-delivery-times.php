@@ -116,10 +116,12 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
             return array();
         }
 
+        $postal_code_trim = preg_replace('/\s+/', '', $postal_code);
+
         $connector = DHLPWC_Model_API_Connector::instance();
         $time_windows = $connector->get('time-windows', array(
             'countryCode' => $country_code,
-            'postalCode' => $postal_code,
+            'postalCode'  => strtoupper($postal_code_trim),
         ), 30 * MINUTE_IN_SECONDS);
 
         if (!$time_windows || !is_array($time_windows) || empty($time_windows)) {

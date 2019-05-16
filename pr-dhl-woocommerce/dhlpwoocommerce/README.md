@@ -1,5 +1,11 @@
 # DHL Parcel plugin for WooCommerce
 
+v1.2.10
+
+## Changes
+- Fixed delivery times not loading for newest WooCommerce release
+- Fixed an issue where postal code is case sensitive
+
 V1.2.9
 
 ## Changes
