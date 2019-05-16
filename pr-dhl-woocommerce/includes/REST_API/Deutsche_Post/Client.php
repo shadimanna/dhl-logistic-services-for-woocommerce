@@ -6,8 +6,8 @@ use Exception;
 use PR\DHL\REST_API\API_Client;
 use PR\DHL\REST_API\Interfaces\API_Auth_Interface;
 use PR\DHL\REST_API\Interfaces\API_Driver_Interface;
-use PR\DHL\REST_API\Request;
 use stdClass;
+use WC_Order;
 
 /**
  * The API client for Deutsche Post.
@@ -208,15 +208,25 @@ class Client extends API_Client {
 	 * Submits the current DHL order to DHL.
 	 *
 	 * @since [*next-version*]
+	 *
+	 * @param WC_Order $wc_order The WooCommerce order.
+	 *
+	 * @return array The response data.
+	 *
+	 * @throws Exception
 	 */
-	public function submit_order()
+	public function submit_order( $wc_order )
 	{
+		$order = $this->get_current_order();
+		$items = $order['items'];
+		$barcodes = array_keys( $items );
+
 		$route = $this->customer_route( 'orders' );
 		$data = array(
-			'itemBarcodes' => array(),
+			'itemBarcodes' => $barcodes,
 			'paperwork' => array(
 				'awbCopyCount' => 1,
-				'contactName' => '',
+				'contactName' => $wc_order->get_formatted_billing_full_name(),
 			),
 		);
 
