@@ -251,7 +251,7 @@ class Auth implements API_Auth_Interface {
 	 * @return object
 	 */
 	public function load_token() {
-		return $this->token = (object) get_transient( $this->transient );
+		return $this->token = get_transient( $this->transient );
 	}
 
 	/**
