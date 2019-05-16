@@ -26,6 +26,9 @@ jQuery( function( $ ) {
 
 			$( '#woocommerce-dhl-dp-order' )
 				.on( 'click', '.pr_dhl_order_remove_item', this.remove_item_from_order.bind(this) );
+
+			$( '#woocommerce-dhl-dp-order' )
+				.on( 'click', '#pr_dhl_finalize_order', this.finalize_order.bind(this) );
 		},
 	
 		validate_product_return: function () {
@@ -309,6 +312,20 @@ jQuery( function( $ ) {
 			$.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
 				$( '#pr_dhl_order_items_table' ).replaceWith( response );
 
+				this.unlock_order_controls();
+			}.bind(this) );
+		},
+
+		finalize_order: function () {
+			var data = {
+				action:                   'wc_shipment_dhl_finalize_order',
+				order_id:                 woocommerce_admin_meta_boxes.post_id,
+				pr_dhl_order_nonce:       $( '#pr_dhl_order_nonce' ).val()
+			};
+
+			this.lock_order_controls();
+
+			$.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
 				this.unlock_order_controls();
 			}.bind(this) );
 		},

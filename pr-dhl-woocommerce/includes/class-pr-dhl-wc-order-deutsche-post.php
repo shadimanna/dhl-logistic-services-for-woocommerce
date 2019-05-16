@@ -262,8 +262,17 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	{
 		check_ajax_referer( 'pr_dhl_order_ajax', 'pr_dhl_order_nonce' );
 
-		// @todo submit order to DP API
+		// Get the WC order
+		$order_id = wc_clean( $_POST[ 'order_id' ] );
+		$order = new WC_Order( $order_id );
 
+		// Get the API client to make the requests
+		$api_client = PR_DHL()->get_dhl_factory()->api_client;
+
+		// Create the DHL order
+		$response = $api_client->submit_order( $order );
+
+		echo json_encode($response);
 		die;
 	}
 
