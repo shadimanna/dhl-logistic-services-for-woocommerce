@@ -220,7 +220,7 @@ class DHLPWC_Model_Logic_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
             // Check if $number has no numbers
             if (preg_match("/\d/", $number) === 0) {
                 // Try a reverse parse
-                preg_match('/([\d]+\w*)\s?(.+)/i', $address['street'], $street_parts);
+                preg_match('/([\d]+[\w.-]*)\s?(.+)/i', $address['street'], $street_parts);
                 $number = trim($street_parts[1]);
                 $street = trim($street_parts[2]);
                 $skip_addition_check = true;

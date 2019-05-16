@@ -76,7 +76,7 @@ class DHLPWC_Model_Service_Parcelshop extends DHLPWC_Model_Core_Singleton_Abstra
         $connector = DHLPWC_Model_API_Connector::instance();
         $parcelshops_data = $connector->get('parcel-shop-locations/' . $country, array(
             'limit'   => 1,
-            'zipCode' => trim($postal_search),
+            'zipCode' => trim(strtoupper($postal_search)),
         ), 1 * HOUR_IN_SECONDS);
 
         if (empty($parcelshops_data) || !is_array($parcelshops_data)) {
