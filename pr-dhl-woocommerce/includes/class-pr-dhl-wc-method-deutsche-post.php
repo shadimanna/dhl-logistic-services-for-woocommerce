@@ -131,16 +131,14 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
                 'desc_tip'    => true,
                 'default'     => '',
             ),
-            'dhl_pickup'       => array(
-                'title'       => __( 'Pickup Account Number', 'pr-shipping-dhl' ),
-                'type'        => 'text',
-                'description' => __(
-                    'The pickup account number (10 digits - numerical) will be provided by your local DHL sales organization and tells us where to pick up your shipments.',
-                    'pr-shipping-dhl'
-                ),
-                'desc_tip'    => true,
-                'default'     => '',
-                'placeholder' => '0000500000',
+            'dhl_account_num' => array(
+	            'title'             => __( 'Account Number (EKP)', 'pr-shipping-dhl' ),
+	            'type'              => 'text',
+	            'description'       => __( 'Your DHL account number (10 digits - numerical), also called "EKP“. This will be provided by your local DHL sales organization.', 'pr-shipping-dhl' ),
+	            'desc_tip'          => true,
+	            'default'           => '',
+	            'placeholder'		=> '1234567890',
+	            'custom_attributes'	=> array( 'maxlength' => '10' )
             ),
             'dhl_distribution' => array(
                 'title'             => __( 'Distribution Center', 'pr-shipping-dhl' ),

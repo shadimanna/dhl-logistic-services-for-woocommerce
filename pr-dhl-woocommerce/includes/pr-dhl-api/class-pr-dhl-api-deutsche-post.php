@@ -193,7 +193,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 * @throws Exception If failed to retrieve the EKP from the settings.
 	 */
 	public function get_ekp() {
-		return $this->get_setting( 'dhl_pickup' );
+		return $this->get_setting( 'dhl_account_num' );
 	}
 
 	/**
