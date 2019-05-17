@@ -1,16 +1,31 @@
 jQuery( function( $ ) {
 
-    var wc_shipment_dhl_dp_label_items = {
+    var wc_dhl_dp_order_items = {
         // init Class
         init: function() {
             $( '#woocommerce-dhl-dp-order' )
-                .on( 'click', '#pr_dhl_add_to_order', this.add_item_to_order.bind(this) );
+                .on( 'click', '#pr_dhl_add_to_order', this.add_item_to_order );
 
             $( '#woocommerce-dhl-dp-order' )
-                .on( 'click', '.pr_dhl_order_remove_item', this.remove_item_from_order.bind(this) );
+                .on( 'click', '.pr_dhl_order_remove_item', this.remove_item_from_order );
 
             $( '#woocommerce-dhl-dp-order' )
-                .on( 'click', '#pr_dhl_finalize_order', this.finalize_order.bind(this) );
+                .on( 'click', '#pr_dhl_finalize_order', this.finalize_order );
+
+            this.update();
+        },
+
+        update: function () {
+            var num_rows = $( '#pr_dhl_order_items_table tbody tr:not("#pr_dhl_no_items_msg")' ).length;
+
+            // If there are no items, disable the finalize order button
+            if ( num_rows > 0 ) {
+                $( '#pr_dhl_finalize_order' ).removeClass( 'disabled' );
+            } else {
+                // The "disabled" class is used to not accidentally re-enable the button after an AJAX call
+                // The WordPress "disabled" class handles the disabling while the AJAX locking uses the HTML5 attribute
+                $( '#pr_dhl_finalize_order' ).addClass( 'disabled' );
+            }
         },
 
         lock_order_controls: function () {
@@ -18,8 +33,9 @@ jQuery( function( $ ) {
         },
 
         unlock_order_controls: function () {
-            $( '#pr_dhl_add_to_order, .pr_dhl_order_remove_item, #pr_dhl_finalize_order' ).removeAttr( 'disabled' );
+            $( '#pr_dhl_add_to_order, .pr_dhl_order_remove_item, #pr_dhl_finalize_order:not(.disabled)' ).removeAttr( 'disabled' );
         },
+
 
         add_item_to_order: function () {
             var data = {
@@ -28,11 +44,12 @@ jQuery( function( $ ) {
                 pr_dhl_order_nonce:       $( '#pr_dhl_order_nonce' ).val()
             };
 
-            this.lock_order_controls();
+            wc_dhl_dp_order_items.lock_order_controls();
             $.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
                 $( '#pr_dhl_order_items_table' ).replaceWith( response );
-                this.unlock_order_controls();
-            }.bind(this) );
+                wc_dhl_dp_order_items.update();
+                wc_dhl_dp_order_items.unlock_order_controls();
+            } );
         },
 
         remove_item_from_order: function ( event ) {
@@ -45,11 +62,12 @@ jQuery( function( $ ) {
                 pr_dhl_order_nonce:       $( '#pr_dhl_order_nonce' ).val()
             };
 
-            this.lock_order_controls();
+            wc_dhl_dp_order_items.lock_order_controls();
             $.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
                 $( '#pr_dhl_order_items_table' ).replaceWith( response );
-                this.unlock_order_controls();
-            }.bind(this) );
+                wc_dhl_dp_order_items.update();
+                wc_dhl_dp_order_items.unlock_order_controls();
+            } );
         },
 
         finalize_order: function () {
@@ -59,13 +77,14 @@ jQuery( function( $ ) {
                 pr_dhl_order_nonce:       $( '#pr_dhl_order_nonce' ).val()
             };
 
-            this.lock_order_controls();
+            wc_dhl_dp_order_items.lock_order_controls();
             $.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
-                this.unlock_order_controls();
-            }.bind(this) );
+                wc_dhl_dp_order_items.update();
+                wc_dhl_dp_order_items.unlock_order_controls();
+            } );
         },
     };
 
-    wc_shipment_dhl_dp_label_items.init();
+    wc_dhl_dp_order_items.init();
 
 } );
