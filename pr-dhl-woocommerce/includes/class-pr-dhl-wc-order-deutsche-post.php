@@ -133,21 +133,50 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 * @since [*next-version*]
 	 */
 	public function dhl_order_meta_box() {
+		global $post;
+
 		$nonce = wp_create_nonce( 'pr_dhl_order_ajax' );
+		$dhl_order = get_post_meta( $post->ID, 'pr_dhl_dp_order', true );
+		$item_barcode = get_post_meta( $post->ID, 'pr_dhl_dp_item_barcode', true );
 
 		echo $this->dhl_order_meta_box_table();
 
 		?>
 		<p>
-			<button id="pr_dhl_add_to_order" class="button button-secondary" type="button">
-				<?php _e( 'Add item to order', 'pr-shipping-dhl' ) ?>
-			</button>
-			<button id="pr_dhl_finalize_order" class="button button-primary" type="button" style="float: right">
-				<?php _e( 'Finalize order', 'pr-shipping-dhl' ) ?>
-			</button>
+			<?php if ( empty( $item_barcode ) ) : ?>
+				<button class="button button-secondary" type="button" disabled="disabled">
+					<?php _e( 'Add item to order', 'pr-shipping-dhl' ); ?>
+				</button>
+			<?php else: ?>
+				<button id="pr_dhl_add_to_order" class="button button-secondary" type="button">
+					<?php _e( 'Add item to order', 'pr-shipping-dhl' ); ?>
+				</button>
+			<?php endif; ?>
+
+			<?php if ( empty( $dhl_order ) ) : ?>
+				<button id="pr_dhl_finalize_order" class="button button-primary" type="button">
+					<?php _e( 'Finalize order', 'pr-shipping-dhl' ) ?>
+				</button>
+			<?php else: ?>
+				<button id="pr_dhl_download_order_label" class="button button-primary" type="button">
+					<?php _e( 'Download label', 'pr-shipping-dhl' ); ?>
+				</button>
+			<?php endif; ?>
+
+			<?php if ( empty ( $item_barcode ) ) : ?>
+				<p><?php _e( 'Please generate a label before adding to the DHL order', 'pr-shipping-dhl' ); ?></p>
+			<?php endif; ?>
+
 			<input type="hidden" id="pr_dhl_order_nonce" value="<?php echo $nonce; ?>" />
 		</p>
 		<?php
+
+		wp_enqueue_script(
+			'wc-shipment-dhl-dp-label-js',
+			PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-dp.js',
+			array(),
+			PR_DHL_VERSION
+		);
 	}
 
 	/**

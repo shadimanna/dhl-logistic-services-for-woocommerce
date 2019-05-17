@@ -28,3 +28,17 @@ span.wc_dhl_error {
 #dhl-optin-notice {
 	padding: 8px 15px;
 }
+
+#pr_dhl_download_order_label,
+#pr_dhl_finalize_order {
+	float: right;
+}
+
+#pr_dhl_order_items_table a.pr_dhl_order_remove_item {
+	outline: 0;
+	box-shadow: 0 0 0 transparent;
+}
+#pr_dhl_order_items_table a.pr_dhl_order_remove_item[disabled] {
+	color: #777;
+	pointer-events: none;
+}
