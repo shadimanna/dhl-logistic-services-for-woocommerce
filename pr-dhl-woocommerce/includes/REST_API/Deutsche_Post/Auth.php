@@ -43,6 +43,20 @@ class Auth implements API_Auth_Interface {
 	const H_AUTH_TOKEN = 'Authorization';
 
 	/**
+	 * The Deutsche Post authorization header where the 3rd party vendor ID is included.
+	 *
+	 * @since [*next-version*]
+	 */
+	const H_3PV_ID = 'ThirdPartyVendor-ID';
+
+	/**
+	 * The Deutsche Post 3rd party vendor ID to include in the corresponding header.
+	 *
+	 * @since [*next-version*]
+	 */
+	const V_3PV_ID = '3PV_woocommerce';
+
+	/**
 	 * The driver to use for obtaining and revoking the access token.
 	 *
 	 * @since [*next-version*]
@@ -118,6 +132,7 @@ class Auth implements API_Auth_Interface {
 		$code = $this->token->access_token;
 
 		$request->headers[ static::H_AUTH_TOKEN ] = $type . ' ' . $code;
+		$request->headers[ static::H_3PV_ID ] = static::V_3PV_ID;
 
 		return $request;
 	}
