@@ -316,12 +316,10 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		$api_client = PR_DHL()->get_dhl_factory()->api_client;
 
 		// Create the DHL order
-		$response = $api_client->submit_order( $order );
+		$response = $api_client->create_order( $order );
 
 		// Save the DHL order ID in the WC order meta
 		update_post_meta( $order_id, 'pr_dhl_dp_order', $response->order_id );
-
-		// @todo finalize the order
 
 		echo json_encode($response);
 		die;

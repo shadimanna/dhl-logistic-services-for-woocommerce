@@ -238,17 +238,15 @@ class Client extends API_Client {
 	}
 
 	/**
-	 * Submits the current DHL order to DHL.
+	 * Creates the Deutsche Post order for the current local order of items.
 	 *
 	 * @since [*next-version*]
-	 *
-	 * @param WC_Order $wc_order The WooCommerce order.
 	 *
 	 * @return array The response data.
 	 *
 	 * @throws Exception
 	 */
-	public function submit_order( $wc_order )
+	public function create_order()
 	{
 		$order = $this->get_current_order();
 		$items = $order['items'];
@@ -259,14 +257,14 @@ class Client extends API_Client {
 			'itemBarcodes' => $barcodes,
 			'paperwork' => array(
 				'awbCopyCount' => 1,
-				'contactName' => $wc_order->get_formatted_billing_full_name(),
+				'contactName' => 'WooCommerce Test',
 			),
 		);
 
 		$response = $this->post($route, $data);
 
 		if ( $response->status === 200 ) {
-			return (array) $response->body;
+			return $response->body;
 		}
 
 		throw new Exception(
