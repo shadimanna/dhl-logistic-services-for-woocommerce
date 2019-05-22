@@ -54,9 +54,11 @@ class PR_DHL_API_DP_Label extends PR_DHL_API_REST implements PR_DHL_API_Label {
 			// Create the item and get the barcode
 			$item_response = $this->api_client->create_item( $item_info );
 			$item_barcode = $item_response->barcode;
+			$item_id = $item_response->id;
 
 			// Save it in the order
 			update_post_meta( $order_id, 'pr_dhl_dp_item_barcode', $item_barcode );
+			update_post_meta( $order_id, 'pr_dhl_dp_item_id', $item_id );
 		}
 
 		// Get the label for the created item

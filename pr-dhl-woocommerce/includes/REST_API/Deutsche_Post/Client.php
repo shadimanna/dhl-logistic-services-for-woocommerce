@@ -72,6 +72,39 @@ class Client extends API_Client {
 	}
 
 	/**
+	 * Deletes an item from the remote API.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param int $item_id The ID of the item to delete.
+	 *
+	 * @return stdClass The response.
+	 *
+	 * @throws Exception
+	 */
+	public function delete_item( $item_id ) {
+		// Compute the route to the API endpoint
+		$route = $this->customer_route( 'items/' . $item_id );
+
+		// Send the DELETE request
+		$response = $this->delete( $route );
+
+		// Return the response body on success
+		if ( $response->status === 200 ) {
+			return $response->body;
+		}
+
+		// Otherwise throw an exception using the response's error messages
+		$message = ! empty( $response->body->messages )
+			? implode( ', ', $response->body->messages )
+			: strval( $response->body );
+
+		throw new Exception(
+			sprintf( __( 'API error: %s', 'pr-shipping-dhl' ), $message )
+		);
+	}
+
+	/**
 	 * Retrieves tracking info for a given item, by its barcode.
 	 *
 	 * @since [*next-version*]

@@ -301,8 +301,36 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		// Create the DHL order
 		$response = $api_client->submit_order( $order );
 
+		// Save the DHL order ID in the WC order meta
+		update_post_meta( $order_id, 'pr_dhl_dp_order', $response->order_id );
+
+		// @todo finalize the order
+
 		echo json_encode($response);
 		die;
+	}
+
+	/**
+	 * @inheritdoc
+	 *
+	 * @since [*next-version*]
+	 */
+	public function delete_label_ajax( ) {
+		check_ajax_referer( 'create-dhl-label', 'pr_dhl_label_nonce' );
+		$order_id = wc_clean( $_POST[ 'order_id' ] );
+
+		// If the order has an associated DHL item ...
+		$dhl_item_id = get_post_meta( $order_id, 'pr_dhl_dp_item_id', true);
+		if ( ! empty( $dhl_item_id ) ) {
+		    // Delete it from the API
+            try {
+	            PR_DHL()->get_dhl_factory()->api_client->delete_item( $dhl_item_id );
+            } catch (Exception $e) {
+            }
+        }
+
+		// continue as usual
+		parent::delete_label_ajax();
 	}
 
 	/**
