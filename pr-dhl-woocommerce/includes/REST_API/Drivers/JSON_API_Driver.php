@@ -9,13 +9,18 @@ use PR\DHL\REST_API\Response;
 /**
  * A REST API driver decorator that automatically encodes/decodes JSON in POST requests/responses respectively.
  *
- * This class is a REST API driver decorator class, meaning that it is a REST API driver that wraps around another
- * REST API driver. The purpose of this class is to create driver objects that extend another driver's REST API
- * functionality with JSON encoding and parsing. It ensures that the necessary headers are sent to the remote
- * resource that indicate that the content body is a JSON string and it also ensures that incoming responses are
- * correctly parsed as JSON strings if the remote resource indicates that it is such.
+ * This is a REST API driver DECORATOR class, which means that it is not a standalone driver but instead decorates
+ * another driver. It does so to add JSON encoding and parsing functionality to that "inner" driver.
+ *
+ * It ensures that the necessary headers are sent to the remote resource that indicate that the content body is a
+ * JSON string and it also ensures that incoming responses are correctly parsed as JSON strings if the remote
+ * resource indicates that it is such.
+ *
+ * For more information on REST API drivers, refer to the documentation for the {@link API_Driver_Interface}.
  *
  * @since [*next-version*]
+ *
+ * @see API_Driver_Interface
  */
 class JSON_API_Driver implements API_Driver_Interface {
 	/**
@@ -68,6 +73,10 @@ class JSON_API_Driver implements API_Driver_Interface {
 
 	/**
 	 * {@inheritdoc}
+	 *
+	 * Before invoking the inner driver's {@link send()} method, it creates a copy of the request to encode its body,
+	 * if necessary, and add the appropriate headers. The response from the inner driver is then decoded, if necessary,
+	 * and returned.
 	 *
 	 * @since [*next-version*]
 	 */
