@@ -206,7 +206,7 @@ class Auth implements API_Auth_Interface {
 		// Send the request
 		$response = $this->driver->send( $request );
 
-		if ( $response->status !== 200 ) {
+		if ( $response->status !== 200 && $response->status !== 401 ) {
 			throw new RuntimeException( 'Failed to revoke the Deutsche Post access token' );
 		}
 
