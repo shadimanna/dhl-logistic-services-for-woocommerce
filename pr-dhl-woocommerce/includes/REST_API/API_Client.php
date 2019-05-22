@@ -71,6 +71,15 @@ class API_Client implements API_Client_Interface {
 	}
 
 	/**
+	 * {@inheritdoc}
+	 *
+	 * @since [*next-version*]
+	 */
+	public function delete( $route, $body = '', array $headers = array(), array $cookies = array() ) {
+		return $this->send_request( Request::TYPE_DELETE, $route, array(), $body, $headers, $cookies );
+	}
+
+	/**
 	 * Sends a request using the internal driver.
 	 *
 	 * @since [*next-version*]

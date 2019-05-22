@@ -51,4 +51,20 @@ interface API_Client_Interface {
 	 * @throws RuntimeException If an error occurred and the request could not be sent.
 	 */
 	public function post( $route, $body = '', array $headers = array(), array $cookies = array() );
+
+	/**
+	 * Sends a DELETE request to the REST API.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $route   The request route, relative to the REST API's base URL.
+	 * @param mixed  $body    The body data to send.
+	 * @param array  $headers Optional list of headers to send.
+	 * @param array  $cookies Optional list of cookies to send.
+	 *
+	 * @return Response The response.
+	 *
+	 * @throws RuntimeException If an error occurred and the request could not be sent.
+	 */
+	public function delete( $route, $body = '', array $headers = array(), array $cookies = array() );
 }

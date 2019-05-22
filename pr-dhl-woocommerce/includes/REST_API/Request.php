@@ -18,13 +18,22 @@ class Request {
 	const TYPE_GET = 0;
 
 	/**
-	 * Constant for GET requests.
+	 * Constant for POST requests.
 	 *
 	 * @since [*next-version*]
 	 *
 	 * @var int
 	 */
 	const TYPE_POST = 1;
+
+	/**
+	 * Constant for DELETE requests.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @var int
+	 */
+	const TYPE_DELETE = 2;
 
 	/**
 	 * The type of the request: {@link TYPE_GET} or {@link TYPE_POST}.
