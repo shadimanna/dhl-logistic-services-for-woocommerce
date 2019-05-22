@@ -141,17 +141,4 @@ class API_Client {
 
 		return $response;
 	}
-
-	/**
-	 * Prepares a request URL by combining the base URL of the REST API with the request route.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param string $route The request route.
-	 *
-	 * @return string The prepared URL string.
-	 */
-	protected function prepare_url( $route ) {
-		return $this->base_url . '/' . ltrim( $route, '/' );
-	}
 }
