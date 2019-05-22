@@ -27,7 +27,7 @@ class Response {
 	 */
 	public $status;
 	/**
-	 * The body of the response.
+	 * The body of the response, as a raw string or parsed object.
 	 *
 	 * @since [*next-version*]
 	 *

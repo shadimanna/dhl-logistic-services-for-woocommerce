@@ -36,15 +36,19 @@ class Request {
 	const TYPE_DELETE = 2;
 
 	/**
-	 * The type of the request: {@link TYPE_GET} or {@link TYPE_POST}.
+	 * The type of the request.
 	 *
 	 * @since [*next-version*]
+	 *
+	 * @see Request::TYPE_GET
+	 * @see Request::TYPE_POST
+	 * @see Request::TYPE_DELETE
 	 *
 	 * @var int
 	 */
 	public $type;
 	/**
-	 * The base URL where the request will be made.
+	 * The URL where the request will be made.
 	 *
 	 * @since [*next-version*]
 	 *
@@ -89,7 +93,7 @@ class Request {
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @param int        $type    The request type, either {@link TYPE_GET} or {@link TYPE_POST}.
+	 * @param int        $type    The request type.
 	 * @param string     $url     The base URL where the request will be made.
 	 * @param array      $params  The GET params for this request.
 	 * @param mixed|null $body    The body of the request.

@@ -136,8 +136,13 @@ class Auth implements API_Auth_Interface {
 	 * @since [*next-version*]
 	 */
 	public function authorize( Request $request ) {
-		// Initialize, if needed
-		$this->init();
+		// Check if we have a token - a token is ALWAYS needed
+		if ( empty( $this->token ) ) {
+			// If not, request one from the REST API
+			$token = $this->request_token();
+			// Cache it for subsequent requests
+			$this->save_token( $token );
+		}
 
 		$type = $this->token->token_type;
 		$code = $this->token->access_token;
@@ -149,25 +154,11 @@ class Auth implements API_Auth_Interface {
 	}
 
 	/**
-	 * Sends the client ID and client secret to the REST API to obtain the access token.
-	 *
-	 * The access token is then used to authorize all other requests.
-	 * See https://api-qa.deutschepost.com/dpi-apidoc/#/reference/authentication/access-token/get-access-token
-	 *
-	 * @since [*next-version*]
-	 */
-	protected function init() {
-		// If the cache is not empty
-		if ( ! empty( $this->token ) ) {
-			return;
-		}
-
-		// Request the token and save it
-		$this->save_token( $this->request_token() );
-	}
-
-	/**
 	 * Requests an access token from the API.
+	 *
+	 * Sends the client ID and client secret to the REST API to obtain the access token. The access token is then
+	 * used to authorize all other requests.
+	 * See https://api-qa.deutschepost.com/dpi-apidoc/#/reference/authentication/access-token/get-access-token
 	 *
 	 * @since [*next-version*]
 	 *
