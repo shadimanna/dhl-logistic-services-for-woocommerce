@@ -3,11 +3,37 @@
 namespace PR\DHL\REST_API;
 
 use PR\DHL\REST_API\Interfaces\API_Auth_Interface;
-use PR\DHL\REST_API\Interfaces\API_Client_Interface;
 use PR\DHL\REST_API\Interfaces\API_Driver_Interface;
 
 /**
- * A simple and generic REST API client implementation that uses an internally-known base URL for all requests.
+ * A generic REST API client implementation.
+ *
+ * This class does not expose any public methods. It is intended to be extended to create real client classes,
+ * alleviating most of the work involved in using drivers, auth handlers, creating request and response objects as
+ * well as ensuring proper request URL integrity.
+ *
+ * This class provides the following functionality:
+ * - protected methods for sending GET, POST and DELETE requests
+ * - a base URL property that is prepended to routes before creating and sending requests
+ * - implements usage of a REST API driver for sending requests
+ * - implements optional usage of an auth handler to authorize requests before sending them via the driver
+ *
+ * Example usage:
+ *  ```
+ *  class My_API_Client extends API_Client {
+ *
+ *      public function do_foo_bar( ) {
+ *          $response = $this->post( 'foo/bar, array('some' => 'data') );
+ *
+ *          if ($response->status === 200) {
+ *              return $response->body;
+ *          }
+ *
+ *          throw new Exception($response->body->error_msg);
+ *      }
+ *
+ *  }
+ *  ```
  *
  * @since [*next-version*]
  */
