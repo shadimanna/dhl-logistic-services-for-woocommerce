@@ -42,6 +42,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		add_action( 'add_meta_boxes', array( $this, 'add_dhl_order_meta_box' ), 20 );
 
 		// AJAX handlers for the DHL order meta box
+		add_action( 'wp_ajax_wc_shipment_dhl_get_order_items', array( $this, 'ajax_get_order_items' ) );
 		add_action( 'wp_ajax_wc_shipment_dhl_add_order_item', array( $this, 'ajax_add_order_item' ) );
 		add_action( 'wp_ajax_wc_shipment_dhl_remove_order_item', array( $this, 'ajax_remove_order_item' ) );
 		add_action( 'wp_ajax_wc_shipment_dhl_finalize_order', array( $this, 'ajax_finalize_order' ) );
@@ -163,9 +164,9 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 				</button>
 			<?php endif; ?>
 
-			<?php if ( empty ( $item_barcode ) ) : ?>
-				<p><?php _e( 'Please generate a label before adding to the DHL order', 'pr-shipping-dhl' ); ?></p>
-			<?php endif; ?>
+            <p id="pr_dhl_order_gen_label_message">
+                <?php _e( 'Please generate a label before adding to the DHL order', 'pr-shipping-dhl' ); ?>
+            </p>
 
 			<input type="hidden" id="pr_dhl_order_nonce" value="<?php echo $nonce; ?>" />
 		</p>
@@ -236,6 +237,22 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
 		return ob_get_clean();
 	}
+
+	/**
+     * Ajax handler that responds with the order items table.
+     *
+     * @since [*next-version*]
+     *
+	 * @throws Exception
+	 */
+	public function ajax_get_order_items()
+    {
+	    check_ajax_referer( 'pr_dhl_order_ajax', 'pr_dhl_order_nonce' );
+
+        echo $this->dhl_order_meta_box_table();
+
+        die;
+    }
 
 	/**
 	 * The AJAX handler for adding an item to the current Deutsche Post order.
@@ -319,15 +336,24 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		check_ajax_referer( 'create-dhl-label', 'pr_dhl_label_nonce' );
 		$order_id = wc_clean( $_POST[ 'order_id' ] );
 
+		$api_client = PR_DHL()->get_dhl_factory()->api_client;
+
 		// If the order has an associated DHL item ...
 		$dhl_item_id = get_post_meta( $order_id, 'pr_dhl_dp_item_id', true);
+		$item_barcode = get_post_meta( $order_id, 'pr_dhl_dp_item_barcode', true);
+
 		if ( ! empty( $dhl_item_id ) ) {
 		    // Delete it from the API
             try {
-	            PR_DHL()->get_dhl_factory()->api_client->delete_item( $dhl_item_id );
+	            $api_client->delete_item( $dhl_item_id );
             } catch (Exception $e) {
             }
         }
+
+		$api_client->remove_item_from_order( $item_barcode );
+
+		delete_post_meta( $order_id, 'pr_dhl_dp_item_barcode' );
+		delete_post_meta( $order_id, 'pr_dhl_dp_item_id' );
 
 		// continue as usual
 		parent::delete_label_ajax();

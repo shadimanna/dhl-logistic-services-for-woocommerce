@@ -173,6 +173,7 @@ jQuery( function( $ ) {
 						});							
 					}
 
+					$( document ).trigger( 'pr_dhl_saved_label' );
 				}
 			});		
 
@@ -257,6 +258,8 @@ jQuery( function( $ ) {
 							}
 						});
 					}
+
+					$( document ).trigger( 'pr_dhl_deleted_label' );
 				}
 			});
 

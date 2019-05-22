@@ -12,11 +12,24 @@ jQuery( function( $ ) {
             $( '#woocommerce-dhl-dp-order' )
                 .on( 'click', '#pr_dhl_finalize_order', this.finalize_order );
 
+            $( document ).on( 'pr_dhl_saved_label', this.get_order_items );
+            $( document ).on( 'pr_dhl_deleted_label', this.get_order_items );
+
             this.update();
         },
 
         update: function () {
+            // Check if download label button is found on the page
+            var has_label = $( '#dhl-label-print' ).length > 0;
             var num_rows = $( '#pr_dhl_order_items_table tbody tr:not("#pr_dhl_no_items_msg")' ).length;
+
+            if (has_label) {
+                $( '#pr_dhl_add_to_order' ).removeClass( 'disabled' );
+                $( '#pr_dhl_order_gen_label_message' ).hide();
+            } else {
+                $( '#pr_dhl_add_to_order' ).addClass( 'disabled' );
+                $( '#pr_dhl_order_gen_label_message' ).show();
+            }
 
             // If there are no items, disable the finalize order button
             if ( num_rows > 0 ) {
@@ -29,13 +42,27 @@ jQuery( function( $ ) {
         },
 
         lock_order_controls: function () {
-            $( '#pr_dhl_add_to_order, .pr_dhl_order_remove_item, #pr_dhl_finalize_order' ).attr( 'disabled', 'disabled' );
+            $( '#pr_dhl_add_to_order, .pr_dhl_order_remove_item, #pr_dhl_finalize_order' ).not('.disabled').attr( 'disabled', 'disabled' );
         },
 
         unlock_order_controls: function () {
-            $( '#pr_dhl_add_to_order, .pr_dhl_order_remove_item, #pr_dhl_finalize_order:not(.disabled)' ).removeAttr( 'disabled' );
+            $( '#pr_dhl_add_to_order, .pr_dhl_order_remove_item, #pr_dhl_finalize_order' ).not('.disabled').removeAttr( 'disabled' );
         },
 
+        get_order_items: function () {
+            var data = {
+                action:                   'wc_shipment_dhl_get_order_items',
+                order_id:                 woocommerce_admin_meta_boxes.post_id,
+                pr_dhl_order_nonce:       $( '#pr_dhl_order_nonce' ).val()
+            };
+
+            wc_dhl_dp_order_items.lock_order_controls();
+            $.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
+                $( '#pr_dhl_order_items_table' ).replaceWith( response );
+                wc_dhl_dp_order_items.update();
+                wc_dhl_dp_order_items.unlock_order_controls();
+            } );
+        },
 
         add_item_to_order: function () {
             var data = {

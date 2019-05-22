@@ -42,3 +42,7 @@ span.wc_dhl_error {
 	color: #777;
 	pointer-events: none;
 }
+
+#pr_dhl_order_gen_label_message {
+	display: none;
+}
