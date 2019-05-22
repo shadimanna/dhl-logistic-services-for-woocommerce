@@ -316,9 +316,9 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 *
 	 * @since [*next-version*]
 	 */
-	public function delete_dhl_label( $label_url ) {
+	public function delete_dhl_label( $label_info ) {
 		$upload_path = wp_upload_dir();
-		$label_path = str_replace( $upload_path['url'], $upload_path['path'], $label_url );
+		$label_path = str_replace( $upload_path['baseurl'], $upload_path['basedir'], $label_info['label_url'] );
 
 		if ( file_exists( $label_path ) ) {
 			$res = unlink( $label_path );
