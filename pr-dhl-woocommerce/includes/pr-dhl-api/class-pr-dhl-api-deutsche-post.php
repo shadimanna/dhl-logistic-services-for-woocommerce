@@ -92,12 +92,9 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 * @throws Exception If failed to create the API client.
 	 */
 	protected function create_api_client() {
-		// Get the saved DHL customer EKP
-		$ekp = $this->get_ekp();
-
 		// Create the API client, using this instance's driver and auth objects
 		return new Client(
-			$ekp,
+			$this->get_ekp(),
 			$this->get_api_url(),
 			$this->api_driver,
 			$this->api_auth
