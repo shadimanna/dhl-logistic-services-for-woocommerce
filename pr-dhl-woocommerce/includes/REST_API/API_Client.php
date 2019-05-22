@@ -11,7 +11,7 @@ use PR\DHL\REST_API\Interfaces\API_Driver_Interface;
  *
  * @since [*next-version*]
  */
-class API_Client implements API_Client_Interface {
+class API_Client {
 	/**
 	 * The base URL for the REST API.
 	 *
@@ -57,7 +57,7 @@ class API_Client implements API_Client_Interface {
 	 *
 	 * @since [*next-version*]
 	 */
-	public function get( $route, array $params = array(), array $headers = array(), array $cookies = array() ) {
+	protected function get( $route, array $params = array(), array $headers = array(), array $cookies = array() ) {
 		return $this->send_request( Request::TYPE_GET, $route, $params, '', $headers, $cookies );
 	}
 
@@ -66,7 +66,7 @@ class API_Client implements API_Client_Interface {
 	 *
 	 * @since [*next-version*]
 	 */
-	public function post( $route, $body = '', array $headers = array(), array $cookies = array() ) {
+	protected function post( $route, $body = '', array $headers = array(), array $cookies = array() ) {
 		return $this->send_request( Request::TYPE_POST, $route, array(), $body, $headers, $cookies );
 	}
 
@@ -75,7 +75,7 @@ class API_Client implements API_Client_Interface {
 	 *
 	 * @since [*next-version*]
 	 */
-	public function delete( $route, $body = '', array $headers = array(), array $cookies = array() ) {
+	protected function delete( $route, $body = '', array $headers = array(), array $cookies = array() ) {
 		return $this->send_request( Request::TYPE_DELETE, $route, array(), $body, $headers, $cookies );
 	}
 
