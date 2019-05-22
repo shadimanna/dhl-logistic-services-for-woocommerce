@@ -54,7 +54,7 @@ class Auth implements API_Auth_Interface {
 	 *
 	 * @since [*next-version*]
 	 */
-	const V_3PV_ID = '3PV_woocommerce';
+	const V_3PV_ID = '3pv_woocommerce';
 
 	/**
 	 * The driver to use for obtaining and revoking the access token.
