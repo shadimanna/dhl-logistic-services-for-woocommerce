@@ -2,6 +2,7 @@
 
 use PR\DHL\REST_API\Deutsche_Post\Auth;
 use PR\DHL\REST_API\Deutsche_Post\Client;
+use PR\DHL\REST_API\Deutsche_Post\Item_Info;
 use PR\DHL\REST_API\Drivers\JSON_API_Driver;
 use PR\DHL\REST_API\Drivers\WP_API_Driver;
 use PR\DHL\REST_API\Interfaces\API_Auth_Interface;
@@ -76,8 +77,6 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 			$this->api_driver = $this->create_api_driver();
 			$this->api_auth = $this->create_api_auth();
 			$this->api_client = $this->create_api_client();
-
-			$this->dhl_label = new PR_DHL_API_DP_Label( $this->api_client );
 		} catch ( Exception $e ) {
 			throw $e;
 		}
@@ -271,5 +270,91 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 */
 	public function get_dhl_products_domestic() {
 		return $this->get_dhl_products_international();
+	}
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @since [*next-version*]
+	 */
+	public function get_dhl_label( $args ) {
+		$order_id = isset( $args[ 'order_details' ][ 'order_id' ] )
+			? $args[ 'order_details' ][ 'order_id' ]
+			: null;
+		$item_barcode = get_post_meta( $order_id, 'pr_dhl_dp_item_barcode', true );
+
+		// If order has no saved barcode, create the DHL item and get the barcode
+		if ( empty( $item_barcode ) ) {
+			try {
+				$item_info = new Item_Info( $args );
+			} catch (Exception $e) {
+				throw $e;
+			}
+
+			// Create the item and get the barcode
+			$item_response = $this->api_client->create_item( $item_info );
+			$item_barcode = $item_response->barcode;
+			$item_id = $item_response->id;
+
+			// Save it in the order
+			update_post_meta( $order_id, 'pr_dhl_dp_item_barcode', $item_barcode );
+			update_post_meta( $order_id, 'pr_dhl_dp_item_id', $item_id );
+		}
+
+		// Get the label for the created item
+		$label_pdf_data = $this->api_client->get_item_label( $item_barcode );
+		// Save the label to a file
+		$label_info = $this->save_label_file( $item_barcode, 'pdf', $label_pdf_data );
+
+		// Add tracking data to the info to return
+		$label_info['item_barcode'] = $item_barcode;
+		$label_info['tracking_number'] = $item_barcode;
+		$label_info['tracking_status'] = '';
+
+		return $label_info;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @since [*next-version*]
+	 */
+	public function delete_dhl_label( $label_url ) {
+		$upload_path = wp_upload_dir();
+		$label_path = str_replace( $upload_path['url'], $upload_path['path'], $label_url );
+
+		if ( file_exists( $label_path ) ) {
+			$res = unlink( $label_path );
+
+			if ( ! $res ) {
+				throw new Exception( __( 'DHL Label could not be deleted!', 'pr-shipping-dhl' ) );
+			}
+		}
+	}
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @since [*next-version*]
+	 */
+	public function dhl_validate_field( $key, $value ) {
+	}
+
+	protected function save_label_file( $item_barcode, $format, $label_data ) {
+		$label_name = 'dhl-label-' . $item_barcode . '.' . $format;
+		$label_path = PR_DHL()->get_dhl_label_folder_dir() . $label_name;
+		$label_url = PR_DHL()->get_dhl_label_folder_url() . $label_name;
+
+		if ( validate_file( $label_path ) > 0 ) {
+			throw new Exception( __( 'Invalid file path!', 'pr-shipping-dhl' ) );
+		}
+
+		$file_ret = file_put_contents( $label_path, $label_data );
+
+		if ( empty( $file_ret ) ) {
+			throw new Exception( __( 'DHL Label file cannot be saved!', 'pr-shipping-dhl' ) );
+		}
+
+		return array( 'label_url' => $label_url );
 	}
 }
