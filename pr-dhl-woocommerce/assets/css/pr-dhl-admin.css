@@ -29,8 +29,8 @@ span.wc_dhl_error {
 	padding: 8px 15px;
 }
 
-#pr_dhl_download_order_label,
-#pr_dhl_create_order {
+#pr_dhl_create_order,
+#pr_dhl_reset_order {
 	float: right;
 }
 
@@ -43,6 +43,12 @@ span.wc_dhl_error {
 	pointer-events: none;
 }
 
-#pr_dhl_order_gen_label_message {
+#pr_dhl_order_gen_label_message,
+#pr_dhl_reset_order,
+#pr_dhl_dp_error {
 	display: none;
+}
+
+#pr_dhl_dp_error {
+    color: red;
 }

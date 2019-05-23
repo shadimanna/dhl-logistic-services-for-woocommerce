@@ -199,9 +199,7 @@ class Client extends API_Client {
 	 */
 	public function get_current_order()
 	{
-		return get_option( 'pr_dhl_dp_order', array(
-			'items' => array()
-		) );
+		return get_option( 'pr_dhl_dp_order', $this->get_default_order_info() );
 	}
 
 	/**
@@ -238,6 +236,16 @@ class Client extends API_Client {
 	}
 
 	/**
+	 * Resets the current order.
+	 *
+	 * @since [*next-version*]
+	 */
+	public function reset_current_order()
+	{
+		update_option( 'pr_dhl_dp_order', $this->get_default_order_info() );
+	}
+
+	/**
 	 * Creates the Deutsche Post order for the current local order of items.
 	 *
 	 * @since [*next-version*]
@@ -264,6 +272,8 @@ class Client extends API_Client {
 		$response = $this->post($route, $data);
 
 		if ( $response->status === 200 ) {
+			$this->update_order( $response->body );
+
 			return $response->body;
 		}
 
@@ -317,6 +327,36 @@ class Client extends API_Client {
 			'state'               => $item_info->recipient[ 'state' ],
 			'destinationCountry'  => $item_info->recipient[ 'country' ],
 			'contents'            => $contents
+		);
+	}
+
+	/**
+	 * Updates the current order with information received from the REST API.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param object $info The information received from the REST API.
+	 */
+	protected function update_order( $info )
+	{
+		$order = $this->get_current_order();
+
+		$order['id'] = $info->orderId;
+		$order['status'] = $info->orderStatus;
+		$order['shipments'] = $info->shipments;
+
+		update_option( 'pr_dhl_dp_order', $order );
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function get_default_order_info() {
+		return array(
+			'id' => null,
+			'status' => null,
+			'items' => array(),
+			'shipments' => array(),
 		);
 	}
 

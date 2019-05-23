@@ -12,34 +12,49 @@ jQuery( function( $ ) {
             $( '#woocommerce-dhl-dp-order' )
                 .on( 'click', '#pr_dhl_create_order', this.create_order );
 
+            $( '#woocommerce-dhl-dp-order' )
+                .on( 'click', '#pr_dhl_reset_order', this.reset_order );
+
             $( document ).on( 'pr_dhl_saved_label', this.get_order_items );
             $( document ).on( 'pr_dhl_deleted_label', this.get_order_items );
 
             this.update();
         },
 
-        update: function () {
+        update: function ( response ) {
+            if ( response && response.html ) {
+                $( '#woocommerce-dhl-dp-order .inside' ).html( response.html );
+            }
+
+            if ( response && response.error ) {
+                $( '#pr_dhl_dp_error' ).text( response.error ).show();
+            } else {
+                $( '#pr_dhl_dp_error' ).hide();
+            }
+
+            var create_order_button = $( '#pr_dhl_create_order' ),
+                add_item_button = $( '#pr_dhl_add_to_order' ),
+                gen_label_message = $( '#pr_dhl_order_gen_label_message' ),
+                reset_order_button = $( '#pr_dhl_reset_order' );
+
             // Check if download label button is found on the page
             var has_label = $( '#dhl-label-print' ).length > 0;
-            var num_rows = $( '#pr_dhl_order_items_table tbody tr:not("#pr_dhl_no_items_msg")' ).length;
+            // Check if showing the shipments table
+            var showing_shipments = $( '#pr_dhl_order_shipments_table' ).length > 0;
 
-            // Enable the "add" button if the item has a label, otherwise disable it and show the message
-            if (has_label) {
-                $( '#pr_dhl_add_to_order' ).removeClass( 'disabled' );
-                $( '#pr_dhl_order_gen_label_message' ).hide();
-            } else {
-                $( '#pr_dhl_add_to_order' ).addClass( 'disabled' );
-                $( '#pr_dhl_order_gen_label_message' ).show();
-            }
+            // Enable the "add" button if the item has a label and not showing the shipments
+            add_item_button.toggleClass( 'disabled', !(has_label && !showing_shipments) );
+            // Show the generate label message if the item has no label and not showing the shipments
+            gen_label_message.toggle( !has_label && !showing_shipments );
+            // Hide the "create order" button if showing the shipments table
+            create_order_button.toggle( !showing_shipments );
+            // Show the reset order button if showing the shipments table
+            reset_order_button.toggle( showing_shipments );
 
-            // If there are no items, disable the finalize order button
-            if ( num_rows > 0 ) {
-                $( '#pr_dhl_create_order' ).removeClass( 'disabled' );
-            } else {
-                // The "disabled" class is used to not accidentally re-enable the button after an AJAX call
-                // The WordPress "disabled" class handles the disabling while the AJAX locking uses the HTML5 attribute
-                $( '#pr_dhl_create_order' ).addClass( 'disabled' );
-            }
+            // Check if there are items in the items table
+            var has_items = $( '#pr_dhl_order_items_table tbody tr:not("#pr_dhl_no_items_msg")' ).length;
+            // If there are items in the items table, enable the create order button. Otherwise disable it
+            create_order_button.toggleClass( 'disabled', !has_items );
         },
 
         lock_order_controls: function () {
@@ -58,8 +73,7 @@ jQuery( function( $ ) {
 
             wc_dhl_dp_order_items.lock_order_controls();
             $.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
-                $( '#pr_dhl_order_items_table' ).replaceWith( response );
-                wc_dhl_dp_order_items.update();
+                wc_dhl_dp_order_items.update( response );
             } );
         },
 
@@ -72,8 +86,7 @@ jQuery( function( $ ) {
 
             wc_dhl_dp_order_items.lock_order_controls();
             $.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
-                $( '#pr_dhl_order_items_table' ).replaceWith( response );
-                wc_dhl_dp_order_items.update();
+                wc_dhl_dp_order_items.update( response );
             } );
         },
 
@@ -89,8 +102,7 @@ jQuery( function( $ ) {
 
             wc_dhl_dp_order_items.lock_order_controls();
             $.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
-                $( '#pr_dhl_order_items_table' ).replaceWith( response );
-                wc_dhl_dp_order_items.update();
+                wc_dhl_dp_order_items.update( response );
             } );
         },
 
@@ -103,7 +115,20 @@ jQuery( function( $ ) {
 
             wc_dhl_dp_order_items.lock_order_controls();
             $.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
-                wc_dhl_dp_order_items.update();
+                wc_dhl_dp_order_items.update( response );
+            } );
+        },
+
+        reset_order: function () {
+            var data = {
+                action:                   'wc_shipment_dhl_reset_order',
+                order_id:                 woocommerce_admin_meta_boxes.post_id,
+                pr_dhl_order_nonce:       $( '#pr_dhl_order_nonce' ).val()
+            };
+
+            wc_dhl_dp_order_items.lock_order_controls();
+            $.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
+                wc_dhl_dp_order_items.update( response );
             } );
         },
     };

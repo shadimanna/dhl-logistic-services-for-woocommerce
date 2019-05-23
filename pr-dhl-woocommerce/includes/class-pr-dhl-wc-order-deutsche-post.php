@@ -46,6 +46,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		add_action( 'wp_ajax_wc_shipment_dhl_add_order_item', array( $this, 'ajax_add_order_item' ) );
 		add_action( 'wp_ajax_wc_shipment_dhl_remove_order_item', array( $this, 'ajax_remove_order_item' ) );
 		add_action( 'wp_ajax_wc_shipment_dhl_create_order', array( $this, 'ajax_create_order' ) );
+		add_action( 'wp_ajax_wc_shipment_dhl_reset_order', array( $this, 'ajax_reset_order' ) );
 	}
 
 	/**
@@ -134,36 +135,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 * @since [*next-version*]
 	 */
 	public function dhl_order_meta_box() {
-		global $post;
-
-		$nonce = wp_create_nonce( 'pr_dhl_order_ajax' );
-		$dhl_order = get_post_meta( $post->ID, 'pr_dhl_dp_order', true );
-
 		echo $this->dhl_order_meta_box_table();
-
-		?>
-		<p>
-			<button id="pr_dhl_add_to_order" class="button button-secondary disabled" type="button">
-				<?php _e( 'Add item to order', 'pr-shipping-dhl' ); ?>
-			</button>
-
-			<?php if ( empty( $dhl_order ) ) : ?>
-				<button id="pr_dhl_create_order" class="button button-primary" type="button">
-					<?php _e( 'Create order', 'pr-shipping-dhl' ) ?>
-				</button>
-			<?php else: ?>
-				<button id="pr_dhl_download_order_label" class="button button-primary" type="button">
-					<?php _e( 'Download label', 'pr-shipping-dhl' ); ?>
-				</button>
-			<?php endif; ?>
-
-			<p id="pr_dhl_order_gen_label_message">
-				<?php _e( 'Please generate a label before adding the item to the DHL order', 'pr-shipping-dhl' ); ?>
-			</p>
-
-			<input type="hidden" id="pr_dhl_order_nonce" value="<?php echo $nonce; ?>" />
-		</p>
-		<?php
 
 		wp_enqueue_script(
 			'wc-shipment-dhl-dp-label-js',
@@ -183,19 +155,67 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 * @throws Exception If an error occurred while creating the DHL object from the factory.
 	 */
 	public function dhl_order_meta_box_table() {
-		$dhl_obj = PR_DHL()->get_dhl_factory();
-		$dhl_order = $dhl_obj->api_client->get_current_order();
-		$dhl_items = $dhl_order['items'];
+		$nonce = wp_create_nonce( 'pr_dhl_order_ajax' );
 
+		$dhl_obj = PR_DHL()->get_dhl_factory();$dhl_order = $dhl_obj->api_client->get_current_order();
+		$dhl_items = $dhl_order['items'];
+		$dhl_shipments = $dhl_order['shipments'];
+
+		// If no shipments have been created yet, show the items table.
+        // If there are shipments, show the shipments table
+		$table = ( empty($dhl_shipments) )
+            ? $this->order_items_table( $dhl_items )
+            : $this->order_shipments_table( $dhl_shipments );
+
+		ob_start();
+		?>
+        <p>
+            <button id="pr_dhl_add_to_order" class="button button-secondary disabled" type="button">
+				<?php _e( 'Add item to order', 'pr-shipping-dhl' ); ?>
+            </button>
+
+            <button id="pr_dhl_create_order" class="button button-primary" type="button">
+				<?php _e( 'Create order', 'pr-shipping-dhl' ) ?>
+            </button>
+
+            <button id="pr_dhl_reset_order" class="button button-primary" type="button">
+				<?php _e( 'Start a new order', 'pr-shipping-dhl' ); ?>
+            </button>
+
+        <p id="pr_dhl_order_gen_label_message">
+			<?php _e( 'Please generate a label before adding the item to the DHL order', 'pr-shipping-dhl' ); ?>
+        </p>
+
+        <p id="pr_dhl_dp_error"></p>
+
+        <input type="hidden" id="pr_dhl_order_nonce" value="<?php echo $nonce; ?>" />
+        </p>
+        <?php
+
+        $buttons = ob_get_clean();
+
+        return $table . $buttons;
+	}
+
+	/**
+	 * Renders the table that shows order items.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param array $items The items to show.
+	 *
+	 * @return string The rendered table.
+	 */
+	public function order_items_table( $items ) {
 		$table_rows = array();
 
-		if (empty($dhl_items)) {
+		if (empty($items)) {
 			$table_rows[] = sprintf(
 				'<tr id="pr_dhl_no_items_msg"><td colspan="2"><i>%s</i></td></tr>',
 				__( 'There are no items in your DHL order', 'pr-shipping-dhl' )
 			);
 		} else {
-			foreach ( $dhl_items as $barcode => $wc_order ) {
+			foreach ( $items as $barcode => $wc_order ) {
 				$order_url = get_edit_post_link( $wc_order );
 				$order_link = sprintf(
 					'<a href="%s" target="_blank">%s</a>',
@@ -220,21 +240,64 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		ob_start();
 
 		?>
-		<table class="widefat striped" id="pr_dhl_order_items_table">
-			<thead>
-			<tr>
-				<th><?php _e( 'Item', 'pr-shipping-dhl' ) ?></th>
-				<th><?php _e( 'Actions', 'pr-shipping-dhl' ) ?></th>
-			</tr>
-			</thead>
-			<tbody>
+        <table class="widefat striped" id="pr_dhl_order_items_table">
+            <thead>
+            <tr>
+                <th><?php _e( 'Item', 'pr-shipping-dhl' ) ?></th>
+                <th><?php _e( 'Actions', 'pr-shipping-dhl' ) ?></th>
+            </tr>
+            </thead>
+            <tbody>
 			<?php echo implode( '', $table_rows ) ?>
-			</tbody>
-		</table>
+            </tbody>
+        </table>
 		<?php
 
 		return ob_get_clean();
-	}
+    }
+
+	/**
+     * Renders the table that shows order shipments.
+     *
+     * @since [*next-version*]
+     *
+	 * @param array $shipments The shipments to show.
+     *
+	 * @return string The rendered table.
+	 */
+	public function order_shipments_table( $shipments )
+    {
+        ob_start();
+
+	    $table_rows = array();
+	    foreach ( $shipments as $idx => $shipment ) {
+		    $download_link = sprintf(
+			    '<a href="javascript:void(0)" class="pr_dhl_download_awb_label">%s</a>',
+			    __( 'Download label', 'pr-shipping-dhl' )
+		    );
+
+		    $table_rows[] = sprintf(
+			    '<tr> <td class="pr_dhl_shipment_awb">%s</td> <td>%s</td> </tr>',
+			    $shipment->awb, $download_link
+		    );
+	    }
+
+	    ?>
+        <table class="widefat striped" id="pr_dhl_order_shipments_table">
+            <thead>
+            <tr>
+                <th><?php _e( 'Shipment AWB', 'pr-shipping-dhl' ) ?></th>
+                <th><?php _e( 'Actions', 'pr-shipping-dhl' ) ?></th>
+            </tr>
+            </thead>
+            <tbody>
+		    <?php echo implode( '', $table_rows ) ?>
+            </tbody>
+        </table>
+	    <?php
+
+        return ob_get_clean();
+    }
 
 	/**
      * Ajax handler that responds with the order items table.
@@ -247,9 +310,9 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
     {
 	    check_ajax_referer( 'pr_dhl_order_ajax', 'pr_dhl_order_nonce' );
 
-        echo $this->dhl_order_meta_box_table();
-
-        die;
+	    wp_send_json( array(
+		    'html' => $this->dhl_order_meta_box_table(),
+	    ) );
     }
 
 	/**
@@ -270,8 +333,9 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			PR_DHL()->get_dhl_factory()->api_client->add_item_to_order( $item_barcode, $order_id );
 		}
 
-		echo $this->dhl_order_meta_box_table();
-		die;
+		wp_send_json( array(
+			'html' => $this->dhl_order_meta_box_table(),
+		) );
 	}
 
 	/**
@@ -291,8 +355,9 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			PR_DHL()->get_dhl_factory()->api_client->remove_item_from_order( $item_barcode );
 		}
 
-		echo $this->dhl_order_meta_box_table();
-		die;
+		wp_send_json( array(
+			'html' => $this->dhl_order_meta_box_table(),
+		) );
 	}
 
 	/**
@@ -307,20 +372,46 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		check_ajax_referer( 'pr_dhl_order_ajax', 'pr_dhl_order_nonce' );
 
 		// Get the WC order
-		$order_id = wc_clean( $_POST[ 'order_id' ] );
-		$order = new WC_Order( $order_id );
+		$wc_order_id = wc_clean( $_POST[ 'order_id' ] );
+		$wc_order = new WC_Order( $wc_order_id );
 
 		// Get the API client to make the requests
 		$api_client = PR_DHL()->get_dhl_factory()->api_client;
 
-		// Create the DHL order
-		$response = $api_client->create_order( $order );
+		try {
+			// Create the DHL order
+			$response = $api_client->create_order($wc_order);
+		} catch (Exception $e) {
+		    wp_send_json( array (
+                'error' => $e->getMessage(),
+            ) );
+        }
 
 		// Save the DHL order ID in the WC order meta
-		update_post_meta( $order_id, 'pr_dhl_dp_order', $response->order_id );
+		update_post_meta( $wc_order_id, 'pr_dhl_dp_order', $response->orderId );
 
-		echo json_encode($response);
-		die;
+		wp_send_json( array(
+			'html' => $this->dhl_order_meta_box_table(),
+		) );
+	}
+
+	/**
+	 * The AJAX handler for resetting the current Deutsche Post order.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @throws Exception If an error occurred while creating the DHL object from the factory.
+	 */
+	public function ajax_reset_order()
+	{
+		check_ajax_referer( 'pr_dhl_order_ajax', 'pr_dhl_order_nonce' );
+
+		// Get the API client and reset the order
+		PR_DHL()->get_dhl_factory()->api_client->reset_current_order();
+
+		wp_send_json( array(
+		    'html' => $this->dhl_order_meta_box_table(),
+        ) );
 	}
 
 	/**
