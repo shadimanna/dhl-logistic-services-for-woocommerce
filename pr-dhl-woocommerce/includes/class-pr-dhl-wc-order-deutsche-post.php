@@ -198,17 +198,22 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			foreach ( $dhl_items as $barcode => $wc_order ) {
 				$order_url = get_edit_post_link( $wc_order );
 				$order_link = sprintf(
-					'<a href="%s" target="_blank" class="pr_dhl_item_barcode">%s</a>',
+					'<a href="%s" target="_blank">%s</a>',
 					$order_url,
-					$barcode
+					sprintf( __( 'Order #%d', 'pr-shipping-dhl' ), $wc_order )
 				);
+
+				$barcode_input = sprintf( '<input type="hidden" class="pr_dhl_item_barcode" value="%s">', $barcode );
 
 				$remove_link = sprintf(
 					'<a href="javascript:void(0)" class="pr_dhl_order_remove_item">%s</a>',
 					__( 'Remove', 'pr-shipping-dhl' )
 				);
 
-				$table_rows[] = sprintf( '<tr><td>%s</td><td>%s</td></tr>', $order_link, $remove_link );
+				$table_rows[] = sprintf(
+					'<tr><td>%s %s</td><td>%s</td></tr>',
+					$order_link, $barcode_input, $remove_link
+				);
 			}
 		}
 

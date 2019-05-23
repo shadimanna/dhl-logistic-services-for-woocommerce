@@ -80,10 +80,10 @@ jQuery( function( $ ) {
         remove_item_from_order: function ( event ) {
             var click_target = $( event.target );
             var item_row = click_target.closest('tr');
-            var item_barcode = item_row.find('.pr_dhl_item_barcode');
+            var item_barcode = item_row.find('.pr_dhl_item_barcode').val();
             var data = {
                 action:                   'wc_shipment_dhl_remove_order_item',
-                item_barcode:             item_barcode.text(),
+                item_barcode:             item_barcode,
                 pr_dhl_order_nonce:       $( '#pr_dhl_order_nonce' ).val()
             };
 
