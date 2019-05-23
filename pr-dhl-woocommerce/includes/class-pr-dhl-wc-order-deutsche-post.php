@@ -45,7 +45,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		add_action( 'wp_ajax_wc_shipment_dhl_get_order_items', array( $this, 'ajax_get_order_items' ) );
 		add_action( 'wp_ajax_wc_shipment_dhl_add_order_item', array( $this, 'ajax_add_order_item' ) );
 		add_action( 'wp_ajax_wc_shipment_dhl_remove_order_item', array( $this, 'ajax_remove_order_item' ) );
-		add_action( 'wp_ajax_wc_shipment_dhl_finalize_order', array( $this, 'ajax_finalize_order' ) );
+		add_action( 'wp_ajax_wc_shipment_dhl_create_order', array( $this, 'ajax_create_order' ) );
 	}
 
 	/**
@@ -297,7 +297,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 *
 	 * @throws Exception If an error occurred while creating the DHL object from the factory.
 	 */
-	public function ajax_finalize_order()
+	public function ajax_create_order()
 	{
 		check_ajax_referer( 'pr_dhl_order_ajax', 'pr_dhl_order_nonce' );
 

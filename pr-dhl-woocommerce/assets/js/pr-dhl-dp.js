@@ -96,7 +96,7 @@ jQuery( function( $ ) {
 
         create_order: function () {
             var data = {
-                action:                   'wc_shipment_dhl_finalize_order',
+                action:                   'wc_shipment_dhl_create_order',
                 order_id:                 woocommerce_admin_meta_boxes.post_id,
                 pr_dhl_order_nonce:       $( '#pr_dhl_order_nonce' ).val()
             };
