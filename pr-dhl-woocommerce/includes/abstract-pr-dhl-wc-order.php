@@ -1167,10 +1167,13 @@ abstract class PR_DHL_WC_Order {
 	 */
 	protected function download_label( $file_path ) {
 		if ( !empty( $file_path ) && is_string( $file_path ) && file_exists( $file_path ) ) {
+			// Flush any buffered output to prevent it from being included in the file's content
+			ob_get_clean();
+
 			$filename = basename( $file_path );
 
 		    header( 'Content-Description: File Transfer' );
-		    header( 'Content-Type: application/octet-stream' );
+		    header( 'Content-Type: application/pdf' );
 		    header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
 		    header( 'Expires: 0' );
 		    header( 'Cache-Control: must-revalidate' );
