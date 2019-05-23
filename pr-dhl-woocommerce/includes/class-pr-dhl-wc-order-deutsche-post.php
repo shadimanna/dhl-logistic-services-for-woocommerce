@@ -138,25 +138,18 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
 		$nonce = wp_create_nonce( 'pr_dhl_order_ajax' );
 		$dhl_order = get_post_meta( $post->ID, 'pr_dhl_dp_order', true );
-		$item_barcode = get_post_meta( $post->ID, 'pr_dhl_dp_item_barcode', true );
 
 		echo $this->dhl_order_meta_box_table();
 
 		?>
 		<p>
-			<?php if ( empty( $item_barcode ) ) : ?>
-				<button class="button button-secondary" type="button" disabled="disabled">
-					<?php _e( 'Add item to order', 'pr-shipping-dhl' ); ?>
-				</button>
-			<?php else: ?>
-				<button id="pr_dhl_add_to_order" class="button button-secondary" type="button">
-					<?php _e( 'Add item to order', 'pr-shipping-dhl' ); ?>
-				</button>
-			<?php endif; ?>
+			<button id="pr_dhl_add_to_order" class="button button-secondary disabled" type="button">
+				<?php _e( 'Add item to order', 'pr-shipping-dhl' ); ?>
+			</button>
 
 			<?php if ( empty( $dhl_order ) ) : ?>
-				<button id="pr_dhl_finalize_order" class="button button-primary" type="button">
-					<?php _e( 'Finalize order', 'pr-shipping-dhl' ) ?>
+				<button id="pr_dhl_create_order" class="button button-primary" type="button">
+					<?php _e( 'Create order', 'pr-shipping-dhl' ) ?>
 				</button>
 			<?php else: ?>
 				<button id="pr_dhl_download_order_label" class="button button-primary" type="button">
@@ -164,9 +157,9 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 				</button>
 			<?php endif; ?>
 
-            <p id="pr_dhl_order_gen_label_message">
-                <?php _e( 'Please generate a label before adding to the DHL order', 'pr-shipping-dhl' ); ?>
-            </p>
+			<p id="pr_dhl_order_gen_label_message">
+				<?php _e( 'Please generate a label before adding the item to the DHL order', 'pr-shipping-dhl' ); ?>
+			</p>
 
 			<input type="hidden" id="pr_dhl_order_nonce" value="<?php echo $nonce; ?>" />
 		</p>

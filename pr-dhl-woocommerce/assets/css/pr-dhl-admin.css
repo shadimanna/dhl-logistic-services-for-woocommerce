@@ -30,7 +30,7 @@ span.wc_dhl_error {
 }
 
 #pr_dhl_download_order_label,
-#pr_dhl_finalize_order {
+#pr_dhl_create_order {
 	float: right;
 }
 
