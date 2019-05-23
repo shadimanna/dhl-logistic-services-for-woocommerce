@@ -242,7 +242,7 @@ class Client extends API_Client {
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @return array The response data.
+	 * @return object The response data.
 	 *
 	 * @throws Exception
 	 */
