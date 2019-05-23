@@ -184,9 +184,9 @@ class Client extends API_Client {
 
 		throw new Exception(
 			sprintf(
-				__( 'Failed to get items from the API: %s', 'pr-shipping-dhl' )
-			),
-			implode( ', ', $response->body->messages )
+				__( 'Failed to get items from the API: %s', 'pr-shipping-dhl' ),
+				implode( ', ', $response->body->messages )
+			)
 		);
 	}
 
@@ -279,9 +279,9 @@ class Client extends API_Client {
 
 		throw new Exception(
 			sprintf(
-				__( 'Failed to create order: %s', 'pr-shipping-dhl' )
-			),
-			implode( ', ', $response->body->messages )
+				__( 'Failed to create order: %s', 'pr-shipping-dhl' ),
+				implode( ', ', $response->body->messages )
+			)
 		);
 	}
 
