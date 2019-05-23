@@ -91,7 +91,7 @@ class PR_DHL_WC {
 	*/
 	public function __construct() {
 		// add_action( 'init', array( $this, 'init' ) );
-        add_action( 'plugins_loaded', array( $this, 'select_plugin' ) );
+		add_action( 'plugins_loaded', array( $this, 'select_plugin' ) );
     }
 
 	/**
@@ -181,7 +181,7 @@ class PR_DHL_WC {
 			if ( in_array( $this->base_country_code, $dhl_parcel_countries ) ) {
 				include( 'dhlpwoocommerce/dhlpwoocommerce.php' );
 			} else {
-                add_action( 'init', array( $this, 'load_plugin' ), 0 );
+				add_action( 'init', array( $this, 'load_plugin' ), 0 );
 			}
 
 		} else {
@@ -191,14 +191,14 @@ class PR_DHL_WC {
 
 	}
 
-    /**
-     * Load regular main plugin
-     */
+	/**
+	* Load regular main plugin
+	*/
 	public function load_plugin() {
-        $this->define_constants();
-        $this->includes();
-        $this->init_hooks();
-    }
+		$this->define_constants();
+		$this->includes();
+		$this->init_hooks();
+	}
 
     /**
      * Initialize the plugin.
