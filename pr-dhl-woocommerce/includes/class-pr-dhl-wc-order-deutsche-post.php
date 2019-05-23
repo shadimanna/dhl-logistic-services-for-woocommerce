@@ -323,6 +323,45 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 *
 	 * @since [*next-version*]
 	 */
+	public function save_meta_box_ajax( ) {
+		check_ajax_referer( 'create-dhl-label', 'pr_dhl_label_nonce' );
+		$order_id = wc_clean( $_POST[ 'order_id' ] );
+
+		// Save inputted data first
+		$this->save_meta_box( $order_id );
+
+		try {
+			// Gather args for DHL API call
+			$args = $this->get_label_args( $order_id );
+
+			// Allow third parties to modify the args to the DHL APIs
+			$args = apply_filters('pr_shipping_dhl_label_args', $args, $order_id );
+			$dhl_obj = PR_DHL()->get_dhl_factory();
+			$label_info = $dhl_obj->get_dhl_label( $args );
+
+			$this->save_dhl_label_tracking( $order_id, $label_info );
+			$label_url = $this->get_download_label_url( $order_id );
+
+			wp_send_json( array(
+				'download_msg' => __('Your DHL label is ready to download, click the "Download Label" button above"', 'pr-shipping-dhl'),
+				'button_txt' => __( 'Download Label', 'pr-shipping-dhl' ),
+				'label_url' => $label_url,
+			) );
+
+			do_action( 'pr_shipping_dhl_label_created', $order_id );
+
+		} catch ( Exception $e ) {
+			wp_send_json( array( 'error' => $e->getMessage() ) );
+		}
+
+		wp_die();
+	}
+
+	/**
+	 * @inheritdoc
+	 *
+	 * @since [*next-version*]
+	 */
 	public function delete_label_ajax( ) {
 		check_ajax_referer( 'create-dhl-label', 'pr_dhl_label_nonce' );
 		$order_id = wc_clean( $_POST[ 'order_id' ] );
