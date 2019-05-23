@@ -1173,7 +1173,7 @@ abstract class PR_DHL_WC_Order {
 			$filename = basename( $file_path );
 
 		    header( 'Content-Description: File Transfer' );
-		    header( 'Content-Type: application/pdf' );
+		    header( 'Content-Type: application/octet-stream' );
 		    header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
 		    header( 'Expires: 0' );
 		    header( 'Cache-Control: must-revalidate' );
