@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 5.0
-Stable tag: 1.3.15
+Stable tag: 1.3.19
 WC requires at least: 2.6.0
 WC tested up to: 3.5
 License: GPLv2 or later
@@ -76,6 +76,24 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+
+= 1.3.19 =
+* DHL Paket: Fix corrupted file when clicking "Download Label" in edit order, needed to flush output buffer.
+
+= 1.3.18 =
+* DHL Parcel: Fixed delivery times not loading for newest WooCommerce release
+* DHL Parcel: Fixed an issue where postal code is case sensitive
+
+= 1.3.17 =
+* DHL Parcel: Fixed pricing filters rounding prices
+
+= 1.3.16 =
+* DHL Parcel: Added pricing filters for weight and cart totals
+* DHL Parcel: Added multiple labels per page option for bulk printing
+* DHL Parcel: Added an addition field for addresses for address additions after the street and number
+* DHL Parcel: Fixed an issue for addresses starting with numbers first
+* DHL Parcel: Fixed ServicePoint not always searching for the selected country
+* DHL Parcel: Fixed an issue where return labels had incorrect hide shipper information
 
 = 1.3.15 =
 * DHL Paket: Add tracking setting, to enable/disable services tracking on the frontend
@@ -161,22 +179,22 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 * Bug Fix - DHL Paket: Fix JS errors on checkout page, by validating fields exist first
 
 = 1.3.0 =
-- DHL Parcel: Added Usabilla feedback button to the plugin settings page
-- DHL Parcel: Added an option to calculate free shipping after applying discounts
-- DHL Parcel: Updated free shipping settings to be either free, or for discounts
-- DHL Parcel: Each delivery option can now be seperately set to be eligable for free or discounted shipping
-- DHL Parcel: Each delivery option has now it's own free or discounted pricing
-- DHL Parcel: Enabled most shipping options available in My DHL Platform.
-- DHL Parcel: ServicePoint can now be selected and changed in the admin, whether a customer has selected a ServicePoint or not
-- DHL Parcel: Updated label creation interface to be in-line with My DHL Platform
-- DHL Parcel: Updated ServicePoint Locator to use the unified React Component version
-- DHL eCommerce: Bulk generate labels for all formats
-- DHL eCommerce: Force DHL product in bulk label generation
-- DHL eCommerce: Add fixed weight to package in settings
-- DHL eCommerce: Set label format settings
-- DHL eCommerce: Set "Incoterms" in order
-- DHL eCommerce: Add COD in order
-- DHL eCommerce: Add Vietnam states to WooCommerce
+* DHL Parcel: Added Usabilla feedback button to the plugin settings page
+* DHL Parcel: Added an option to calculate free shipping after applying discounts
+* DHL Parcel: Updated free shipping settings to be either free, or for discounts
+* DHL Parcel: Each delivery option can now be seperately set to be eligable for free or discounted shipping
+* DHL Parcel: Each delivery option has now it's own free or discounted pricing
+* DHL Parcel: Enabled most shipping options available in My DHL Platform.
+* DHL Parcel: ServicePoint can now be selected and changed in the admin, whether a customer has selected a ServicePoint or not
+* DHL Parcel: Updated label creation interface to be in-line with My DHL Platform
+* DHL Parcel: Updated ServicePoint Locator to use the unified React Component version
+* DHL eCommerce: Bulk generate labels for all formats
+* DHL eCommerce: Force DHL product in bulk label generation
+* DHL eCommerce: Add fixed weight to package in settings
+* DHL eCommerce: Set label format settings
+* DHL eCommerce: Set "Incoterms" in order
+* DHL eCommerce: Add COD in order
+* DHL eCommerce: Add Vietnam states to WooCommerce
 
 = 1.2.4 =
 * Bug fix: Always place shipper, receiver and return "company name" first in address
