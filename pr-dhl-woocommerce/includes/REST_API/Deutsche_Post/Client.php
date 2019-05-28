@@ -7,7 +7,6 @@ use PR\DHL\REST_API\API_Client;
 use PR\DHL\REST_API\Interfaces\API_Auth_Interface;
 use PR\DHL\REST_API\Interfaces\API_Driver_Interface;
 use stdClass;
-use WC_Order;
 
 /**
  * The API client for Deutsche Post.
@@ -25,16 +24,27 @@ class Client extends API_Client {
 	protected $ekp;
 
 	/**
+	 * The contact name to use for creating orders.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @var string
+	 */
+	protected $contact_name;
+
+	/**
 	 * {@inheritdoc}
 	 *
 	 * @since [*next-version*]
 	 *
 	 * @param string $ekp The customer EKP.
+	 * @param string $contact_name The contact name to use for creating orders.
 	 */
-	public function __construct( $ekp, $base_url, API_Driver_Interface $driver, API_Auth_Interface $auth = null ) {
+	public function __construct( $ekp, $contact_name, $base_url, API_Driver_Interface $driver, API_Auth_Interface $auth = null ) {
 		parent::__construct( $base_url, $driver, $auth );
 
 		$this->ekp = $ekp;
+		$this->contact_name = $contact_name;
 	}
 
 	/**
@@ -265,7 +275,7 @@ class Client extends API_Client {
 			'itemBarcodes' => $barcodes,
 			'paperwork' => array(
 				'awbCopyCount' => 1,
-				'contactName' => 'WooCommerce Test',
+				'contactName' => $this->contact_name,
 			),
 		);
 

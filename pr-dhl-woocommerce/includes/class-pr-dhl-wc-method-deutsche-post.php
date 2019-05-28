@@ -140,6 +140,14 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
 	            'placeholder'		=> '1234567890',
 	            'custom_attributes'	=> array( 'maxlength' => '10' )
             ),
+	        'dhl_contact_name' => array(
+		        'title'             => __( 'Contact Name', 'pr-shipping-dhl' ),
+		        'type'              => 'text',
+		        'description'       => __( 'The name of the merchant, used as contact information when creating DHL orders.', 'pr-shipping-dhl' ),
+		        'desc_tip'          => true,
+		        'default'           => '',
+		        'placeholder'		=> 'Contact Name',
+	        ),
             'dhl_distribution' => array(
                 'title'             => __( 'Distribution Center', 'pr-shipping-dhl' ),
                 'type'              => 'text',

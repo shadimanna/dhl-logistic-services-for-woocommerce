@@ -87,7 +87,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @return API_Client_Interface
+	 * @return Client
 	 *
 	 * @throws Exception If failed to create the API client.
 	 */
@@ -95,6 +95,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 		// Create the API client, using this instance's driver and auth objects
 		return new Client(
 			$this->get_ekp(),
+			$this->get_contact_name(),
 			$this->get_api_url(),
 			$this->api_driver,
 			$this->api_auth
@@ -190,6 +191,19 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 */
 	public function get_ekp() {
 		return $this->get_setting( 'dhl_account_num' );
+	}
+
+	/**
+	 * Retrieves the DHL contact name for orders.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return string
+	 *
+	 * @throws Exception If failed to retrieve the contact name from the settings.
+	 */
+	public function get_contact_name() {
+		return $this->get_setting( 'dhl_contact_name' );
 	}
 
 	/**
