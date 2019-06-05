@@ -1,5 +1,6 @@
 .wc_dhl_error,
-.wc_dhl_delete #dhl_delete_label {
+.wc_dhl_delete #dhl_delete_label,
+.wc_dhl_delete #pr_dhl_dp_delete_label {
 	color: #a00;
 }
 
@@ -29,8 +30,7 @@ span.wc_dhl_error {
 	padding: 8px 15px;
 }
 
-#pr_dhl_create_order,
-#pr_dhl_reset_order {
+#pr_dhl_create_order {
 	float: right;
 }
 

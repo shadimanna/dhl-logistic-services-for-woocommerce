@@ -13,7 +13,10 @@ jQuery( function( $ ) {
                 .on( 'click', '#pr_dhl_create_order', this.create_order );
 
             $( '#woocommerce-dhl-dp-order' )
-                .on( 'click', '#pr_dhl_reset_order', this.reset_order );
+                .on( 'click', '#pr_dhl_dp_download_awb_label', this.download_awb_label );
+
+            $( '#woocommerce-dhl-dp-order' )
+                .on( 'click', '#pr_dhl_dp_delete_label', this.reset_order );
 
             $( document ).on( 'pr_dhl_saved_label', this.get_order_items );
             $( document ).on( 'pr_dhl_deleted_label', this.get_order_items );
@@ -116,6 +119,10 @@ jQuery( function( $ ) {
             wc_dhl_dp_order_items.lock_order_controls();
             $.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
                 wc_dhl_dp_order_items.update( response );
+
+                if (response.tracking) {
+                    wc_dhl_dp_order_items.add_wc_order_note(response.tracking.note, response.tracking.type);
+                }
             } );
         },
 
@@ -130,6 +137,50 @@ jQuery( function( $ ) {
             $.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
                 wc_dhl_dp_order_items.update( response );
             } );
+        },
+
+        download_awb_label: function () {
+            // Get the AWB from the sibling table cell's text
+            var awb = $(this).closest('tr').find('.pr_dhl_shipment_awb').text();
+            var data = {
+                action:              'wc_shipment_dhl_download_awb_label',
+                awb:                 awb,
+                pr_dhl_order_nonce:  $( '#pr_dhl_order_nonce' ).val()
+            };
+
+            wc_dhl_dp_order_items.lock_order_controls();
+            $.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
+                wc_dhl_dp_order_items.update( response );
+
+                if ( response.label_url ) {
+                    window.location = response.label_url;
+                }
+            } );
+        },
+
+        add_wc_order_note: function (tracking_note, tracking_note_type) {
+            $( '#woocommerce-order-notes' ).block({
+                message: null,
+                overlayCSS: {
+                    background: '#fff',
+                    opacity: 0.6
+                }
+            });
+
+            var data = {
+                action:                   'woocommerce_add_order_note',
+                post_id:                  woocommerce_admin_meta_boxes.post_id,
+                note_type: 				  tracking_note_type,
+                note:					  tracking_note,
+                security:                 woocommerce_admin_meta_boxes.add_order_note_nonce
+            };
+
+            $.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response_note ) {
+                // alert(response_note);
+                $( 'ul.order_notes' ).prepend( response_note );
+                $( '#woocommerce-order-notes' ).unblock();
+                $( '#add_order_note' ).val( '' );
+            });
         },
     };
 
