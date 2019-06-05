@@ -15,7 +15,14 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 *
 	 * @since [*next-version*]
 	 */
-	const TRACKING_URL_PATTERN = '';
+	const TRACKING_URL_PATTERN = 'https://www.dhl.com/en/express/tracking.html?AWB=%s&brand=DHL';
+
+	/**
+	 * The endpoint for download AWB labels.
+     *
+     * @since [*next-version*]
+	 */
+	const DHL_DOWNLOAD_AWB_LABEL_ENDPOINT = 'dhl_download_awb_label';
 
 	/**
 	 * Sets up the WordPress and WooCommerce hooks.
@@ -47,7 +54,16 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		add_action( 'wp_ajax_wc_shipment_dhl_remove_order_item', array( $this, 'ajax_remove_order_item' ) );
 		add_action( 'wp_ajax_wc_shipment_dhl_create_order', array( $this, 'ajax_create_order' ) );
 		add_action( 'wp_ajax_wc_shipment_dhl_reset_order', array( $this, 'ajax_reset_order' ) );
+		add_action( 'wp_ajax_wc_shipment_dhl_get_awb_label', array( $this, 'ajax_generate_awb_label') );
+
+		// The AWB label download endpoint
+		add_action( 'init', array( $this, 'add_download_awb_label_endpoint' ) );
+		add_action( 'parse_query', array( $this, 'process_download_awb_label' ) );
 	}
+
+	public function add_download_awb_label_endpoint() {
+	    add_rewrite_endpoint( self::DHL_DOWNLOAD_AWB_LABEL_ENDPOINT, EP_ROOT );
+    }
 
 	/**
 	 * Adds the DHL order info meta box to the WooCommerce order page.
@@ -149,47 +165,37 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 * Creates the table of DHL items for the current Deutsche Post order.
 	 *
 	 * @since [*next-version*]
+     *
+     * @param int $wc_order_id The ID of the WooCommerce order where the meta box is shown.
 	 *
 	 * @return string The rendered HTML table.
 	 *
 	 * @throws Exception If an error occurred while creating the DHL object from the factory.
 	 */
-	public function dhl_order_meta_box_table() {
+	public function dhl_order_meta_box_table( $wc_order_id = null ) {
+	    if ( $wc_order_id === null ) {
+	        global $post;
+	        $wc_order_id = $post->ID;
+        }
+
 		$nonce = wp_create_nonce( 'pr_dhl_order_ajax' );
 
-		$dhl_obj = PR_DHL()->get_dhl_factory();$dhl_order = $dhl_obj->api_client->get_current_order();
+		$dhl_obj = PR_DHL()->get_dhl_factory();
+		$dhl_order = $dhl_obj->api_client->get_current_order();
 		$dhl_items = $dhl_order['items'];
 		$dhl_shipments = $dhl_order['shipments'];
 
 		// If no shipments have been created yet, show the items table.
         // If there are shipments, show the shipments table
 		$table = ( empty($dhl_shipments) )
-            ? $this->order_items_table( $dhl_items )
-            : $this->order_shipments_table( $dhl_shipments );
+            ? $this->order_items_table( $dhl_items, $wc_order_id )
+            : $this->order_shipments_table( $dhl_shipments, $wc_order_id );
 
 		ob_start();
 		?>
-        <p>
-            <button id="pr_dhl_add_to_order" class="button button-secondary disabled" type="button">
-				<?php _e( 'Add item to order', 'pr-shipping-dhl' ); ?>
-            </button>
-
-            <button id="pr_dhl_create_order" class="button button-primary" type="button">
-				<?php _e( 'Create order', 'pr-shipping-dhl' ) ?>
-            </button>
-
-            <button id="pr_dhl_reset_order" class="button button-primary" type="button">
-				<?php _e( 'Start a new order', 'pr-shipping-dhl' ); ?>
-            </button>
-
-        <p id="pr_dhl_order_gen_label_message">
-			<?php _e( 'Please generate a label before adding the item to the DHL order', 'pr-shipping-dhl' ); ?>
-        </p>
-
         <p id="pr_dhl_dp_error"></p>
 
         <input type="hidden" id="pr_dhl_order_nonce" value="<?php echo $nonce; ?>" />
-        </p>
         <?php
 
         $buttons = ob_get_clean();
@@ -203,10 +209,11 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 * @since [*next-version*]
 	 *
 	 * @param array $items The items to show.
+     * @param int $wc_order_id The ID of the WooCommerce order where the meta box is shown.
 	 *
 	 * @return string The rendered table.
 	 */
-	public function order_items_table( $items ) {
+	public function order_items_table( $items, $wc_order_id = null ) {
 		$table_rows = array();
 
 		if (empty($items)) {
@@ -251,6 +258,18 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			<?php echo implode( '', $table_rows ) ?>
             </tbody>
         </table>
+        <p>
+            <button id="pr_dhl_add_to_order" class="button button-secondary disabled" type="button">
+				<?php _e( 'Add item to order', 'pr-shipping-dhl' ); ?>
+            </button>
+
+            <button id="pr_dhl_create_order" class="button button-primary" type="button">
+				<?php _e( 'Create order', 'pr-shipping-dhl' ) ?>
+            </button>
+        </p>
+        <p id="pr_dhl_order_gen_label_message">
+			<?php _e( 'Please generate a label before adding the item to the DHL order', 'pr-shipping-dhl' ); ?>
+        </p>
 		<?php
 
 		return ob_get_clean();
@@ -262,38 +281,47 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
      * @since [*next-version*]
      *
 	 * @param array $shipments The shipments to show.
+     * @param int $wc_order_id The ID of the WooCommerce order where the meta box is shown.
      *
 	 * @return string The rendered table.
 	 */
-	public function order_shipments_table( $shipments )
+	public function order_shipments_table( $shipments, $wc_order_id = null )
     {
-        ob_start();
+        // Get the DHL order ID from meta
+        $dhl_order_id = get_post_meta( $wc_order_id, 'pr_dhl_dp_order', true);
+        $label_url = $this->generate_download_url( '/' . self::DHL_DOWNLOAD_AWB_LABEL_ENDPOINT . '/' . $dhl_order_id );
 
 	    $table_rows = array();
 	    foreach ( $shipments as $idx => $shipment ) {
-		    $download_link = sprintf(
-			    '<a href="javascript:void(0)" class="pr_dhl_download_awb_label">%s</a>',
-			    __( 'Download label', 'pr-shipping-dhl' )
-		    );
-
 		    $table_rows[] = sprintf(
 			    '<tr> <td class="pr_dhl_shipment_awb">%s</td> <td>%s</td> </tr>',
-			    $shipment->awb, $download_link
+			    $this->get_awb_tracking_link($shipment->awb),
+                count($shipment->items)
 		    );
 	    }
 
+        ob_start();
 	    ?>
         <table class="widefat striped" id="pr_dhl_order_shipments_table">
             <thead>
             <tr>
                 <th><?php _e( 'Shipment AWB', 'pr-shipping-dhl' ) ?></th>
-                <th><?php _e( 'Actions', 'pr-shipping-dhl' ) ?></th>
+                <th><?php _e( 'Items', 'pr-shipping-dhl' ) ?></th>
             </tr>
             </thead>
             <tbody>
 		    <?php echo implode( '', $table_rows ) ?>
             </tbody>
         </table>
+        <p>
+            <span class="wc_dhl_delete"><a href="#" id="pr_dhl_dp_delete_label">
+                    <?php _e('Delete Label', 'pr-shipping-dhl'); ?>
+                </a>
+            </span>
+            <a id="pr_dhl_dp_download_awb_label" href="<?php echo $label_url ?>" class="button button-primary" target="_blank">
+                <?php _e( 'Download Labels', 'pr-shipping-dhl' ); ?>
+            </a>
+        </p>
 	    <?php
 
         return ob_get_clean();
@@ -376,23 +404,55 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		$wc_order = new WC_Order( $wc_order_id );
 
 		// Get the API client to make the requests
-		$api_client = PR_DHL()->get_dhl_factory()->api_client;
+        $dhl_obj = PR_DHL()->get_dhl_factory();
+		$api_client = $dhl_obj->api_client;
 
 		try {
 			// Create the DHL order
 			$response = $api_client->create_order($wc_order);
+
+			// Get the current DHL order - the one that was just submitted
+			$order = $api_client->get_current_order();
+			$order_items = $order['items'];
+
+			// Go through the shipments retrieved from the API and save the AWB of the shipment to
+            // each DHL item's associated WooCommerce order in post meta. This will make sure that each
+            // WooCommerce order has a reference to the its DHL shipment AWB.
+            // At the same time, we will be collecting the AWBs to merge the label PDFs later on.
+            $awbs = array();
+			foreach ($response->shipments as $shipment) {
+			    foreach ($shipment->items as $item) {
+			        if ( ! isset( $order_items[ $item->barcode ] ) ) {
+			            continue;
+                    }
+			        // Get the WC order ID for this DHL item
+			        $item_wc_order = $order_items[ $item->barcode ];
+			        // Save the AWB to the WC order
+			        update_post_meta( $item_wc_order, 'pr_dhl_dp_awb', $shipment->awb );
+
+			        $awbs[] = $shipment->awb;
+                }
+            }
+
+			// Generate the merged AWB label file
+			$dhl_obj->create_merged_awb_label( $awbs, $response->orderId );
+
+            // Save the DHL order ID in the WC order meta
+            update_post_meta( $wc_order_id, 'pr_dhl_dp_order', $response->orderId );
+
+            // Send the new metabox HTML and the AWB (from the meta we just saved) as a tracking note
+            wp_send_json( array(
+                'html' => $this->dhl_order_meta_box_table( $wc_order_id ),
+                'tracking' => array(
+                    'note' => $this->get_tracking_note( $wc_order_id ),
+                    'type' => $this->get_tracking_note_type(),
+                ),
+            ) );
 		} catch (Exception $e) {
 		    wp_send_json( array (
                 'error' => $e->getMessage(),
             ) );
         }
-
-		// Save the DHL order ID in the WC order meta
-		update_post_meta( $wc_order_id, 'pr_dhl_dp_order', $response->orderId );
-
-		wp_send_json( array(
-			'html' => $this->dhl_order_meta_box_table(),
-		) );
 	}
 
 	/**
@@ -486,6 +546,25 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	}
 
 	/**
+	 * @inheritdoc
+	 *
+	 * @since [*next-version*]
+	 */
+	protected function get_download_label_url( $order_id ) {
+		if ( empty( $order_id ) ) {
+			return '';
+		}
+
+		$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
+		if( empty( $label_tracking_info ) ) {
+			return '';
+		}
+
+		// Override URL with our solution's download label endpoint:
+		return $this->generate_download_url( '/' . self::DHL_DOWNLOAD_ENDPOINT . '/' . $order_id );
+	}
+
+	/**
 	 * Order Tracking Save
 	 *
 	 * Function for saving tracking items
@@ -494,6 +573,48 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		return array();
 	}
 
+	/**
+	 * @inheritdoc
+	 *
+	 * @since [*next-version*]
+	 */
+	protected function get_tracking_link( $order_id )
+    {
+        // Get the AWB for the order
+        $awb = get_post_meta( $order_id,'pr_dhl_dp_awb', true );
+        if ( empty( $awb ) ) {
+            return '';
+        }
+
+        return $this->get_awb_tracking_link( $awb );
+	}
+
+	/**
+     * Retrieves the tracking link for an AWB.
+     *
+     * @since [*next-version*]
+     *
+	 * @param string $awb The AWB.
+     *
+	 * @return string The tracking HTML link.
+	 */
+	protected function get_awb_tracking_link( $awb )
+    {
+	    // Prepare the tracking URL
+	    $tracking_url = sprintf( $this->get_tracking_url(), $awb );
+
+	    return sprintf(
+		    '<a href="%s" target="_blank">%s</a>',
+		    $tracking_url,
+		    $awb
+	    );
+    }
+
+	/**
+	 * @inheritdoc
+	 *
+	 * @since [*next-version*]
+	 */
 	protected function get_tracking_url() {
 		return static::TRACKING_URL_PATTERN;
 	}
@@ -1107,5 +1228,46 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		fwrite( $fp1, $files_content );
 
 		return array( 'file_bulk_path' => $file_bulk_path, 'file_bulk_url' => $file_bulk_url );
+	}
+
+	public function process_download_awb_label() {
+		global $wp_query;
+
+		$dhl_order_id = isset($wp_query->query_vars[ self::DHL_DOWNLOAD_AWB_LABEL_ENDPOINT ] )
+			? $wp_query->query_vars[ self::DHL_DOWNLOAD_AWB_LABEL_ENDPOINT ]
+			: null;
+
+		// If the endpoint param (aka hte DHL order ID) is not in the query, we bail
+		if ( $dhl_order_id === null ) {
+			return;
+		}
+
+		$dhl_obj = PR_DHL()->get_dhl_factory();
+		$label_info = $dhl_obj->get_merged_awb_label_info( $dhl_order_id );
+		$label_path = $label_info['path'];
+
+		$array_messages = get_option( '_pr_dhl_bulk_action_confirmation' );
+		if ( empty( $array_messages ) || !is_array( $array_messages ) ) {
+			$array_messages = array( 'msg_user_id' => get_current_user_id() );
+		}
+
+		if ( false == $this->download_label( $label_path ) ) {
+			array_push($array_messages, array(
+				'message' => __( 'Unable to download file. Label appears to be invalid or is missing. Please try again.', 'pr-shipping-dhl' ),
+				'type' => 'error'
+			));
+		}
+
+		update_option( '_pr_dhl_bulk_action_confirmation', $array_messages );
+
+		$redirect_url = isset($wp_query->query_vars[ 'referer' ])
+			? $wp_query->query_vars[ 'referer' ]
+			: admin_url('edit.php?post_type=shop_order');
+
+		// If there are errors redirect to the shop_orders and display error
+		if ( $this->has_error_message( $array_messages ) ) {
+			wp_redirect( $redirect_url );
+			exit;
+		}
 	}
 }

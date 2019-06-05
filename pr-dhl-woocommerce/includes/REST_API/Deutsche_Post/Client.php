@@ -115,34 +115,6 @@ class Client extends API_Client {
 	}
 
 	/**
-	 * Retrieves tracking info for a given item, by its barcode.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param string $item_barcode The barcode of the item.
-	 *
-	 * @return object The tracking info as returned by the remote API.
-	 *
-	 * @throws Exception
-	 */
-	public function get_item_tracking_info( $item_barcode )
-	{
-		$response = $this->get( sprintf( 'dpi/tracking/v1/trackings/%s', $item_barcode ) );
-
-		if ( $response->status === 200 ) {
-			return $response->body;
-		}
-
-		$message = ! empty( $response->body->messages )
-			? implode( ', ', $response->body->messages )
-			: strval( $response->body );
-
-		throw new Exception(
-			sprintf( __( 'API error: %s', 'pr-shipping-dhl' ), $message )
-		);
-	}
-
-	/**
 	 * Retrieves the label for a DHL item, by its barcode.
 	 *
 	 * @param string $item_barcode The barcode of the item whose label to retrieve.
@@ -292,6 +264,62 @@ class Client extends API_Client {
 				__( 'Failed to create order: %s', 'pr-shipping-dhl' ),
 				implode( ', ', $response->body->messages )
 			)
+		);
+	}
+
+	/**
+	 * Retrieves the label for a given AWB
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $awb The AWB of the shipment.
+	 *
+	 * @return string The raw PDF data for the AWB label.
+	 *
+	 * @throws Exception
+	 */
+	public function get_awb_label( $awb )
+	{
+		$response = $this->get(sprintf('dpi/shipping/v1/shipments/%s/awblabels', $awb));
+
+		if ($response->status === 200) {
+			return $response->body;
+		}
+
+		$message = !empty($response->body->messages)
+			? implode(', ', $response->body->messages)
+			: strval($response->body);
+
+		throw new Exception(
+			sprintf(__('API error: %s', 'pr-shipping-dhl'), $message)
+		);
+	}
+
+	/**
+	 * Retrieves tracking info for a shipment by its AWB
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $awb The AWB of the shipment.
+	 *
+	 * @return object The tracking info as returned by the remote API.
+	 *
+	 * @throws Exception
+	 */
+	public function get_shipment_tracking_info( $awb )
+	{
+		$response = $this->get( sprintf( 'dpi/tracking/v1/trackings/awb/%s', $awb ) );
+
+		if ( $response->status === 200 ) {
+			return $response->body;
+		}
+
+		$message = ! empty( $response->body->messages )
+			? implode( ', ', $response->body->messages )
+			: strval( $response->body );
+
+		throw new Exception(
+			sprintf( __( 'API error: %s', 'pr-shipping-dhl' ), $message )
 		);
 	}
 

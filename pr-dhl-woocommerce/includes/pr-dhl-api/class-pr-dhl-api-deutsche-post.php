@@ -6,7 +6,6 @@ use PR\DHL\REST_API\Deutsche_Post\Item_Info;
 use PR\DHL\REST_API\Drivers\JSON_API_Driver;
 use PR\DHL\REST_API\Drivers\WP_API_Driver;
 use PR\DHL\REST_API\Interfaces\API_Auth_Interface;
-use PR\DHL\REST_API\Interfaces\API_Client_Interface;
 use PR\DHL\REST_API\Interfaces\API_Driver_Interface;
 
 // Exit if accessed directly or class already exists
@@ -315,14 +314,14 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 		// Get the label for the created item
 		$label_pdf_data = $this->api_client->get_item_label( $item_barcode );
 		// Save the label to a file
-		$label_info = $this->save_label_file( $item_barcode, 'pdf', $label_pdf_data );
+		$this->save_dhl_label_file( $item_barcode, $label_pdf_data );
 
-		// Add tracking data to the info to return
-		$label_info['item_barcode'] = $item_barcode;
-		$label_info['tracking_number'] = $item_barcode;
-		$label_info['tracking_status'] = '';
-
-		return $label_info;
+		return array(
+			'label_path' => $this->get_dhl_label_path( $item_barcode ),
+			'item_barcode' => $item_barcode,
+			'tracking_number' => $item_barcode,
+			'tracking_status' => '',
+		);
 	}
 
 	/**
@@ -331,8 +330,11 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 * @since [*next-version*]
 	 */
 	public function delete_dhl_label( $label_info ) {
-		$upload_path = wp_upload_dir();
-		$label_path = str_replace( $upload_path['baseurl'], $upload_path['basedir'], $label_info['label_url'] );
+		if ( ! isset( $label_info['label_path'] ) ) {
+			throw new Exception( __( 'DHL Label has no path!', 'pr-shipping-dhl' ) );
+		}
+
+		$label_path = $label_info['label_path'];
 
 		if ( file_exists( $label_path ) ) {
 			$res = unlink( $label_path );
@@ -344,17 +346,31 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * Retrieves the path to an item label file.
 	 *
 	 * @since [*next-version*]
+	 *
+	 * @param string $barcode The item barcode.
+	 * @param string $format The label file format.
+	 *
+	 * @return string
 	 */
-	public function dhl_validate_field( $key, $value ) {
+	public function get_dhl_label_path( $barcode, $format = 'pdf' ) {
+		return PR_DHL()->get_dhl_label_folder_dir() . 'dhl-label-' . $barcode . '.' . $format;
 	}
 
-	protected function save_label_file( $item_barcode, $format, $label_data ) {
-		$label_name = 'dhl-label-' . $item_barcode . '.' . $format;
-		$label_path = PR_DHL()->get_dhl_label_folder_dir() . $label_name;
-		$label_url = PR_DHL()->get_dhl_label_folder_url() . $label_name;
+	/**
+	 * Saves an item label file.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $barcode The item barcode.
+	 * @param string $label_data The label file data.
+	 *
+	 * @throws Exception If failed to save the label file.
+	 */
+	public function save_dhl_label_file( $barcode, $label_data ) {
+		$label_path = $this->get_dhl_label_path( $barcode );
 
 		if ( validate_file( $label_path ) > 0 ) {
 			throw new Exception( __( 'Invalid file path!', 'pr-shipping-dhl' ) );
@@ -363,9 +379,141 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 		$file_ret = file_put_contents( $label_path, $label_data );
 
 		if ( empty( $file_ret ) ) {
-			throw new Exception( __( 'DHL Label file cannot be saved!', 'pr-shipping-dhl' ) );
+			throw new Exception( __( 'DHL Item Label file cannot be saved!', 'pr-shipping-dhl' ) );
+		}
+	}
+
+	/**
+	 * Retrieves the path to an AWB label file.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $awb The AWB.
+	 *
+	 * @return string
+	 */
+	public function get_awb_label_file_path( $awb ) {
+		return $this->get_dhl_label_path( 'awb-' . $awb );
+	}
+
+	/**
+	 * Checks if an AWB label file already exist, and if not fetches it from the API and saves it.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $awb The AWB.
+	 *
+	 * @return string The path to the label file.
+	 *
+	 * @throws Exception
+	 */
+	public function maybe_create_awb_label_file( $awb )
+	{
+		$label_path = $this->get_awb_label_file_path( $awb );
+
+		// Create the file if it does not exist
+		if ( ! file_exists( $label_path ) ) {
+			$label_data = $this->api_client->get_awb_label( $awb );
+			$this->save_awb_label_file( $awb, $label_data );
 		}
 
-		return array( 'label_url' => $label_url );
+		return $label_path;
+	}
+
+	/**
+	 * Saves an AWB label file.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $awb The AWB.
+	 * @param string $label_data The label data.
+	 *
+	 * @return string The path to the label file.
+	 *
+	 * @throws Exception
+	 */
+	public function save_awb_label_file( $awb, $label_data )
+	{
+		$label_path = $this->get_awb_label_file_path( $awb );
+
+		if ( validate_file( $label_path ) > 0 ) {
+			throw new Exception( __( 'Invalid file path!', 'pr-shipping-dhl' ) );
+		}
+
+		$file_ret = file_put_contents( $label_path, $label_data );
+
+		if ( empty( $file_ret ) ) {
+			throw new Exception( __( 'DHL AWB Label file cannot be saved!', 'pr-shipping-dhl' ) );
+		}
+
+		return $label_path;
+	}
+
+	public function get_merged_awb_label_info( $dhl_order_id )
+	{
+		$filename = 'dhl-label-merged-awbs-' . $dhl_order_id . '.pdf';
+
+		return array(
+			'path' => PR_DHL()->get_dhl_label_folder_dir() . $filename,
+			'url' => PR_DHL()->get_dhl_label_folder_url() . $filename,
+		);
+	}
+
+	public function create_merged_awb_label( $awbs, $dhl_order_id ) {
+		if ( empty ($awbs) ) {
+			throw new Exception(__('No AWBs given', 'pr-shipping-dhl'));
+		}
+
+		$pdfMerger = new PDFMerger();
+
+		foreach ( $awbs as $awb ) {
+			$file = $this->maybe_create_awb_label_file( $awb );
+
+			if ( ! file_exists( $file ) ) {
+				continue;
+			}
+
+			$ext = pathinfo($file, PATHINFO_EXTENSION);
+			if ( stripos($ext, 'pdf') === false) {
+				throw new Exception( __('Not all the file formats are the same.', 'pr-shipping-dhl') );
+			}
+
+			$pdfMerger->addPDF( $file, 'all' );
+		}
+
+		$label_info = $this->get_merged_awb_label_info( $dhl_order_id );
+		$pdfMerger->merge( 'file',  $label_info['path'] );
+
+		return $label_info;
+	}
+
+	/**
+	 * Deletes an AWB label file.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $awb The AWB.
+	 *
+	 * @throws Exception
+	 */
+	public function delete_awb_label( $awb )
+	{
+		$label_path = $this->get_awb_label_file_path( $awb );
+
+		if (file_exists($label_path)) {
+			$res = unlink($label_path);
+
+			if (!$res) {
+				throw new Exception(__('DHL AWB Label could not be deleted!', 'pr-shipping-dhl'));
+			}
+		}
+	}
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @since [*next-version*]
+	 */
+	public function dhl_validate_field( $key, $value ) {
 	}
 }
