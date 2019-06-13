@@ -10,8 +10,9 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 	/**
 	 * WSDL definitions
 	 */
-	const PR_DHL_WSDL_LINK = 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/2.2/geschaeftskundenversand-api-2.2.wsdl';
-	
+	const PR_DHL_WSDL_LINK = 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/3.0/geschaeftskundenversand-api-3.0.wsdl';
+//	const PR_DHL_WSDL_LINK = 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/2.2/geschaeftskundenversand-api-2.2.wsdl';
+
 	const DHL_MAX_ITEMS = '6';
 	const DHL_RETURN_PRODUCT = '07';
 
@@ -68,6 +69,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			$response_body = $soap_client->createShipmentOrder($soap_request);
 
+			error_log(print_r($response_body,true));
 			PR_DHL()->log_msg( 'Response: Successful');
 
 		} catch (Exception $e) {
@@ -76,7 +78,13 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		}
 
 		if( $response_body->Status->statusCode != 0 ) {
-			throw new Exception( sprintf( __('Could not create label - %s', 'pr-shipping-dhl'), $response_body->Status->statusMessage ) );
+		    if( isset( $response_body->Status->statusMessage ) ) {
+                $status_message = $response_body->Status->statusMessage;
+            } elseif( isset( $response_body->CreationState->LabelData->Status->statusMessage[0] ) ) {
+                $status_message = $response_body->CreationState->LabelData->Status->statusMessage[0];
+            }
+
+		    throw new Exception( sprintf( __('Could not create label - %s', 'pr-shipping-dhl'), $status_message ) );
 		} else {
 			// Give the server 1 second to create the PDF before downloading it
 			sleep(1);
@@ -88,7 +96,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			$label_tracking_info = $this->save_data_files( $response_body->CreationState->sequenceNumber, $response_body->CreationState->LabelData->labelData, $export_data );
 
-			$tracking_number = isset( $response_body->CreationState->LabelData->shipmentNumber ) ? $response_body->CreationState->LabelData->shipmentNumber : '';
+			$tracking_number = isset( $response_body->CreationState->shipmentNumber ) ? $response_body->CreationState->shipmentNumber : '';
 			$label_tracking_info['tracking_number'] = $tracking_number;
 
 			return $label_tracking_info;
@@ -174,7 +182,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		return array( 'label_url' => $label_url, 'label_path' => $label_path);
 	}
 
-	protected function save_data_file( $prefix, $order_id, $data_decoded ) {
+	protected function save_data_file( $prefix, $order_id, $label_data ) {
 		$data_name = 'dhl-' . $prefix . '-' . $order_id . '.pdf';
 		$data_path = PR_DHL()->get_dhl_label_folder_dir() . $data_name;
 		$data_url = PR_DHL()->get_dhl_label_folder_url() . $data_name;
@@ -183,8 +191,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			throw new Exception( __('Invalid file path!', 'pr-shipping-dhl' ) );
 		}
 
-		// SOAP client decodes (base64) on its own so no need to do it here
-		$file_ret = file_put_contents( $data_path, $data_decoded );
+        $label_data_decoded = base64_decode($label_data);
+		$file_ret = file_put_contents( $data_path, $label_data_decoded );
 		
 		if( empty( $file_ret ) ) {
 			throw new Exception( __('File cannot be saved!', 'pr-shipping-dhl' ) );
@@ -397,7 +405,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 	}
 
 	protected function set_message() {
-		
+
+	    error_log(print_r($this->args,true));
 		if( ! empty( $this->args ) ) {
 			// Set date related functions to German time
 			// date_default_timezone_set('Europe/Berlin');
@@ -626,9 +635,9 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 														)
 											)											
 									),
-								'labelResponseType' => 'B64'
 
-						)
+						),
+						'labelResponseType' => 'B64'
 				);
 
 
