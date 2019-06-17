@@ -19,7 +19,7 @@ jQuery( function( $ ) {
 			wc_shipment_dhl_label_items.show_hide_ident();
 
 			$( '#woocommerce-shipment-dhl-label' )
-				.on( 'change', '#pr_dhl_is_routing', this.show_hide_routing);
+				.on( 'change', '#pr_dhl_routing', this.show_hide_routing);
 			wc_shipment_dhl_label_items.show_hide_routing();
 
 			$( '#woocommerce-shipment-dhl-label' )
@@ -79,14 +79,14 @@ jQuery( function( $ ) {
 		},
 
 		show_hide_routing: function () {
-			var is_checked = $( '#pr_dhl_is_routing' ).prop('checked');
+			var is_checked = $( '#pr_dhl_routing' ).prop('checked');
 
 			$( '#shipment-dhl-label-form' ).children().each( function () {
 
 				// If class exists, and is not 'pr_dhl_return_address_enabled' but is 'pr_dhl_return_' field
 			    if( ( $(this).attr("class") ) &&
-			    	( $(this).attr("class").indexOf('pr_dhl_is_routing_field ') == -1 ) &&
-			    	( $(this).attr("class").indexOf('pr_dhl_is_routing') >= 0 )
+			    	( $(this).attr("class").indexOf('pr_dhl_routing_field ') == -1 ) &&
+			    	( $(this).attr("class").indexOf('pr_dhl_routing') >= 0 )
 			    ) {
 
 			    	if ( is_checked ) {

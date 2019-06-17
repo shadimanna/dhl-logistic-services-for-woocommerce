@@ -449,6 +449,9 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 								'identcheck' => array(
 													'name' => 'IdentCheck'
 													),
+                                'routing'   => array(
+                                                    'name' => 'ParcelOutletRouting'
+                                )
 								);
 
 			$services = array();
@@ -456,10 +459,12 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 				if ( ! empty( $this->args['order_details'][ $key ] ) ) {
 
+				    // If checkbox not checked
 					if ( $this->args['order_details'][ $key ] == 'no' ) {
 						continue;
 					}
-					
+
+					// If a checkbox is checked, check specific structure
 					if ( $this->args['order_details'][ $key ] == 'yes' ) {
 
 						$services[ $value['name'] ] = array(
@@ -475,7 +480,10 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 								$services[ $value['name'] ]['Ident']['givenName'] = isset( $this->args['shipping_address']['last_name'] ) ? $this->args['shipping_address']['last_name'] : '';
 								$services[ $value['name'] ]['Ident']['dateOfBirth'] = isset( $this->args['order_details']['identcheck_dob'] ) ? $this->args['order_details']['identcheck_dob'] : '';
 								$services[ $value['name'] ]['Ident']['minimumAge'] = isset( $this->args['order_details']['identcheck_age'] ) ? $this->args['order_details']['identcheck_age'] : '';
-								break;							
+								break;
+							case 'routing':
+								$services[ $value['name'] ]['details'] = isset( $this->args['order_details']['routing_email'] ) ? $this->args['order_details']['routing_email'] : '';
+								break;
 						}
 
 					} else {
