@@ -186,6 +186,7 @@ input[type=checkbox].dhlpwc-label-create-option:disabled + label {
 
 .order_actions .dhlpwc_admin_action_button.dhlpwc_action_create::after { content: "\f133";}
 .order_actions .dhlpwc_admin_action_button.dhlpwc_action_download::after { content: "\f316";}
+.order_actions .dhlpwc_admin_action_button.dhlpwc_action_print::after { content: "\f121";}
 .order_actions .dhlpwc_admin_action_button.dhlpwc_action_follow_tt::after { content: "\f504";}
 .order_actions .dhlpwc_admin_action_button.dhlpwc_action_delete::after { content: "\f182"; }
 
@@ -200,17 +201,32 @@ ul.order-meta-options {
 }
 
 /* Settings */
-input#woocommerce_dhlpwc_test_connection {
+.woocommerce table.form-table > tbody > tr > td.forminp > fieldset > p.description {
+    margin-right: -240px;
+    width: 45vw;
+}
+
+tr.dhlpwc-options-grid > td > table {
+    margin-right: -240px;
+    width: 60vw;
+}
+.dhlpwc-condition-table {
+    margin-right: -240px;
+}
+
+input#woocommerce_dhlpwc_test_connection,
+input#woocommerce_dhlpwc_search_printers {
     width: auto;
     min-width: 280px;
 }
-input#woocommerce_dhlpwc_test_connection.dhlpwc_button_success {
+input#woocommerce_dhlpwc_test_connection.dhlpwc_button_success,
+input#woocommerce_dhlpwc_search_printers.dhlpwc_button_success {
     background-color: #10fe6f;
 }
-input#woocommerce_dhlpwc_test_connection.dhlpwc_button_fail {
+input#woocommerce_dhlpwc_test_connection.dhlpwc_button_fail,
+input#woocommerce_dhlpwc_search_printers.dhlpwc_button_fail {
     background-color: #ed1b26;
 }
-
 
 #mainform > #dhlpwc_shipping_method_settings {
     position: relative;
@@ -369,7 +385,7 @@ div.dhlpwc_settings_suggestion_info {
 }
 
 div.dhlpwc_settings_suggestion_accounts,
-div.dhlpwc_settings_suggestion_organization {
+div.dhlpwc_settings_suggestion_printers {
     display: inline-block;
     color: #444;
     border: 1px solid #CCC;
@@ -388,13 +404,13 @@ div.dhlpwc_settings_suggestion_organization {
 }
 
 div.dhlpwc_settings_suggestion_accounts:hover,
-div.dhlpwc_settings_suggestion_organization:hover {
+div.dhlpwc_settings_suggestion_printers:hover {
     color:red;
     box-shadow: 0 0 5px -1px rgba(0,0,0,0.6);
 }
 
 div.dhlpwc_settings_suggestion_accounts:active,
-div.dhlpwc_settings_suggestion_organization:active {
+div.dhlpwc_settings_suggestion_printers:active {
     background: #ff0;
 }
 
@@ -427,6 +443,13 @@ tr.dhlpwc-options-grid > td th,
 tr.dhlpwc-options-grid > td td {
     width: auto;
     padding: 0 5px 0 0;
+}
+
+.wc-modal-shipping-method-settings form .form-table tr.dhlpwc-options-grid th:last-of-type,
+.wc-modal-shipping-method-settings form .form-table tr.dhlpwc-options-grid td:last-of-type,
+tr.dhlpwc-options-grid > td th:last-of-type,
+tr.dhlpwc-options-grid > td td:last-of-type {
+    padding-right: 0;
 }
 
 tr.dhlpwc-delivery-times-grid > td {

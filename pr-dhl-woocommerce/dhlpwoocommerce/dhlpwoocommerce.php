@@ -4,8 +4,8 @@ Plugin Name: DHL Parcel for WooCommmerce
 Plugin URI: https://www.dhlparcel.nl
 Description: This is the official DHL Parcel for WooCommerce plugin.
 Author: DHL Parcel
-Version: 1.2.10
-WC requires at least: 3.0.0
+Version: 1.2.11
+WC requires at least: 2.6.14
 WC tested up to: 3.5.3
 */
 
@@ -18,14 +18,20 @@ class DHLPWC
     public function __construct()
     {
         // Only load this plugin if WooCommerce is loaded
-        if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))
-         || array_key_exists('woocommerce/woocommerce.php', apply_filters('active_plugins', get_site_option('active_sitewide_plugins')))) {
+        if (
+            in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))
+            || array_key_exists('woocommerce/woocommerce.php', apply_filters('active_plugins', get_site_option('active_sitewide_plugins')))
+        ) {
             add_action('init', array($this, 'init'));
         }
     }
 
     public function init()
     {
+        if (!$this->country_check()) {
+            return;
+        }
+
         // Autoloader
         include_once('includes/class-dhlpwc-autoloader.php');
 
@@ -69,6 +75,29 @@ class DHLPWC
 
         $relative_dir = substr(DHLPWC_PLUGIN_DIR, strlen(WP_PLUGIN_DIR), strlen(DHLPWC_PLUGIN_DIR));
         return trim($relative_dir, '/\\');
+    }
+
+    protected function country_check() {
+        if (!function_exists('wc_get_base_location')) {
+            return false;
+        }
+
+        $country_code = wc_get_base_location();
+        if (!isset($country_code['country'])) {
+            return false;
+        }
+
+        $valid_countries = array(
+            'NL',
+            'BE',
+            'LU',
+        );
+
+        if (!in_array($country_code['country'], $valid_countries)) {
+            return false;
+        }
+
+        return true;
     }
 
     protected function define($name, $value) {

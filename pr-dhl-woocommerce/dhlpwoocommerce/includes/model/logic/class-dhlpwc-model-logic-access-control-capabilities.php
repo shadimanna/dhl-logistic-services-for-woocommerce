@@ -113,7 +113,6 @@ class DHLPWC_Model_Logic_Access_Control_Capabilities extends DHLPWC_Model_Core_S
         $capability_check->return_product = null; // TODO
         $capability_check->to_postal_code = $receiver_address->postcode;
         $capability_check->account_number = $service->get_api_account();
-        $capability_check->organisation_id = $service->get_api_organization();
 
         return $capability_check;
     }
@@ -127,9 +126,25 @@ class DHLPWC_Model_Logic_Access_Control_Capabilities extends DHLPWC_Model_Core_S
 
     protected function get_address_from_cart()
     {
-        $cart = WC()->cart;
-        if ($cart && $cart->get_customer() && $cart->get_customer()->get_shipping()) {
-            return new DHLPWC_Model_Meta_Address($cart->get_customer()->get_shipping());
+        $customer = WC()->customer;
+        if ($customer) {
+            if (is_callable(array($customer, 'get_shipping'))) {
+                // WooCommerce 3.2.0+
+                return new DHLPWC_Model_Meta_Address($customer->get_shipping());
+            } else {
+                // WooCommerce < 3.2.0
+                return new DHLPWC_Model_Meta_Address(array(
+                    'first_name' => $customer->shipping_first_name,
+                    'last_name'  => $customer->shipping_last_name,
+                    'company'    => $customer->shipping_company,
+                    'address_1'  => $customer->get_shipping_address(),
+                    'address_2'  => $customer->get_shipping_address_2(),
+                    'city'       => $customer->get_shipping_city(),
+                    'state'      => $customer->get_shipping_state(),
+                    'postcode'   => $customer->get_shipping_postcode(),
+                    'country'    => $customer->get_shipping_country(),
+                ));
+            }
         }
 
         return new DHLPWC_Model_Meta_Address();

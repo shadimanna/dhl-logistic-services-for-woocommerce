@@ -131,9 +131,9 @@ class DHLPWC_Controller_Cart
                     // Get variables
                     $sync = WC()->session->get('dhlpwc_delivery_time_selection_sync');
                     if ($sync) {
-                        list($selected, $date, $start_time, $end_time) = $sync;
+                        list($selected) = $sync;
                     } else {
-                        list($selected, $date, $start_time, $end_time) = array(null, null, null, null);
+                        list($selected) = array(null, null, null, null);
                     }
 
                     $service = DHLPWC_Model_Service_Checkout::instance();

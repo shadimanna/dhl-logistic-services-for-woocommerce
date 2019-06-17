@@ -19,7 +19,8 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
         $url = $upload_path['url'] . '/' . $file_name;
 
         // TODO, handle errors
-        $file_save_status = file_put_contents($path, $pdf);
+        //$file_save_status = file_put_contents($path, $pdf);
+        file_put_contents($path, $pdf);
 
         return array(
             'url' => $url,
