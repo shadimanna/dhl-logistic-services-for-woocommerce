@@ -16,7 +16,7 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
     const ACCESS_OPEN_LABEL_LINKS_EXTERNAL = 'open_label_links_external';
 
     const ACCESS_BULK_CREATE = 'bulk_create';
-    const ACCESS_BULK_PRINT = 'bulk_print';
+    const ACCESS_BULK_DOWNLOAD = 'bulk_download';
 
     const ACCESS_TRACK_TRACE_MAIL = 'track_trace_mail';
     const ACCESS_TRACK_TRACE_COMPONENT = 'track_trace_component';
@@ -46,6 +46,8 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
     const ACCESS_CAPABILITY_ORDER_OPTIONS = 'capability_order_options';
 
     const ACCESS_CREATE_LABEL = 'create_label';
+
+    const ACCESS_PRINTER = 'printer';
 
     // Simple options can be set and retrieved without custom logic
     protected $simple_options = array(
@@ -98,9 +100,9 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
                 return $logic->check_bulk_create();
                 break;
 
-            case self::ACCESS_BULK_PRINT:
+            case self::ACCESS_BULK_DOWNLOAD:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
-                return $logic->check_bulk_print();
+                return $logic->check_bulk_download();
                 break;
 
             case self::ACCESS_TRACK_TRACE_MAIL:
@@ -189,6 +191,11 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
             case self::ACCESS_DEFAULT_HIDE_SENDER_ADDRESS:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
                 return $logic->check_default_hide_sender_address();
+                break;
+
+            case self::ACCESS_PRINTER:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_printer();
                 break;
 
             case self::ACCESS_DEBUG:

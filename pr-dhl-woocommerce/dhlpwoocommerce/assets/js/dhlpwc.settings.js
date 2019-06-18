@@ -2,6 +2,7 @@ jQuery(document).ready(function($) {
 
     var dhlpwc_settings_menu_collection = [];
     var dhlpwc_test_connection_button = $("input#woocommerce_dhlpwc_test_connection");
+    var dhlpwc_search_printers_button = $("input#woocommerce_dhlpwc_search_printers");
 
     $(document.body).on('click', 'input#woocommerce_dhlpwc_test_connection', function(e) {
         e.preventDefault();
@@ -52,21 +53,6 @@ jQuery(document).ready(function($) {
                         $('input#woocommerce_dhlpwc_account_id').val(value);
                     }
                 }
-
-                var dhlpwc_organization_area = $('input#woocommerce_dhlpwc_organization_id').closest('fieldset').parent();
-                dhlpwc_organization_area.children('div.dhlpwc_settings_suggestion_info').remove();
-                dhlpwc_organization_area.children('div.dhlpwc_settings_suggestion_organization').remove();
-
-                if (info.organization_id !== undefined) {
-                    var value = info.organization_id;
-                    dhlpwc_organization_area.append('<div class="dhlpwc_settings_suggestion_info">' + dhlpwc_settings_object.organization_found_message + '</div>');
-                    dhlpwc_organization_area.append('<div class="dhlpwc_settings_suggestion_organization" data-organization-id="' + value.toString() + '">' + value.toString() + '</div>');
-
-                    // Autofill organization if empty
-                    if ($('input#woocommerce_dhlpwc_organization_id').val().length === 0) {
-                        $('input#woocommerce_dhlpwc_organization_id').val(value);
-                    }
-                }
                 
             } else {
                 dhlpwc_test_connection_button.val(message);
@@ -79,11 +65,6 @@ jQuery(document).ready(function($) {
         var account_id = $(this).data('account-id');
         $('input#woocommerce_dhlpwc_account_id').val(account_id);
 
-    }).on('click', '.dhlpwc_settings_suggestion_organization', function(e) {
-        var organization_id = $(this).data('organization-id');
-        $('input#woocommerce_dhlpwc_organization_id').val(organization_id);
-
-
     }).on('dhlpwc:init_test_connection_button', function(e) {
         if (dhlpwc_test_connection_button === undefined) { return; }
         dhlpwc_test_connection_button.val(dhlpwc_settings_object.test_connection_message);
@@ -94,10 +75,82 @@ jQuery(document).ready(function($) {
         dhlpwc_test_connection_button.prop("disabled", false);
 
     }).on('dhlpwc:disable_test_connection_button', function(e) {
-        if (dhlpwc_test_connection_button === undefined) { return; }
+        if (dhlpwc_test_connection_button === undefined) {
+            return;
+        }
         dhlpwc_test_connection_button.removeClass('dhlpwc_button_success');
         dhlpwc_test_connection_button.removeClass('dhlpwc_button_fail');
         dhlpwc_test_connection_button.prop("disabled", true);
+
+    }).on('click', 'input#woocommerce_dhlpwc_search_printers', function(e) {
+        e.preventDefault();
+
+        var data = $.extend(true, $(this).data(), {
+            action: 'dhlpwc_search_printers'
+        });
+
+        dhlpwc_search_printers_button.val(dhlpwc_settings_object.search_printers_loading_message);
+        $(document.body).trigger('dhlpwc:disable_search_printers_button');
+
+        $.post(ajaxurl, data, function (response) {
+
+            try {
+                var success = response.data.success;
+                var message = response.data.message;
+                var info = response.data.info;
+            } catch (error) {
+                alert('Error');
+                return;
+            }
+
+            $(document.body).trigger('dhlpwc:enable_search_printers_button');
+
+            if (success === 'true') {
+                dhlpwc_search_printers_button.val(message);
+                dhlpwc_search_printers_button.addClass('dhlpwc_button_success');
+
+                var dhlpwc_printer_area = $('input#woocommerce_dhlpwc_printer_id').closest('fieldset').parent();
+                dhlpwc_printer_area.children('div.dhlpwc_settings_suggestion_info').remove();
+                dhlpwc_printer_area.children('div.dhlpwc_settings_suggestion_printers').remove();
+
+                if (!$.isEmptyObject(info.printers)) {
+                    dhlpwc_printer_area.append('<div class="dhlpwc_settings_suggestion_info">' + dhlpwc_settings_object.printers_found_message + '</div>');
+                    $.each(info.printers, function (index, value) {
+                        dhlpwc_printer_area.append('<div class="dhlpwc_settings_suggestion_printers" data-printer-id="' + value.id.toString() + '">' + value.name.toString() + ': ' + value.id.toString() + '</div>');
+                    });
+
+                    // Autofill printer if empty
+                    if ($('input#woocommerce_dhlpwc_printer_id').val().length === 0) {
+                        var value = info.printers[0].id;
+                        $('input#woocommerce_dhlpwc_printer_id').val(value);
+                    }
+                }
+
+            } else {
+                dhlpwc_search_printers_button.val(message);
+                dhlpwc_search_printers_button.addClass('dhlpwc_button_fail');
+            }
+
+        }, 'json');
+
+    }).on('click', '.dhlpwc_settings_suggestion_printers', function(e) {
+        var printer_id = $(this).data('printer-id');
+        $('input#woocommerce_dhlpwc_printer_id').val(printer_id);
+
+    }).on('dhlpwc:init_search_printers_button', function(e) {
+        if (dhlpwc_search_printers_button === undefined) { return; }
+        dhlpwc_search_printers_button.val(dhlpwc_settings_object.search_printers_message);
+        dhlpwc_search_printers_button.prop("disabled", false);
+
+    }).on('dhlpwc:enable_search_printers_button', function(e) {
+        if (dhlpwc_search_printers_button === undefined) { return; }
+        dhlpwc_search_printers_button.prop("disabled", false);
+
+    }).on('dhlpwc:disable_search_printers_button', function(e) {
+        if (dhlpwc_search_printers_button === undefined) { return; }
+        dhlpwc_search_printers_button.removeClass('dhlpwc_button_success');
+        dhlpwc_search_printers_button.removeClass('dhlpwc_button_fail');
+        dhlpwc_search_printers_button.prop("disabled", true);
 
     }).on('dhlpwc:init_settings_menu', function(e) {
         $('#dhlpwc_shipping_method_settings').find('h3').each(function(e) {
@@ -463,9 +516,9 @@ jQuery(document).ready(function($) {
             });
         }
 
-    }).on('change', 'input#woocommerce_dhlpwc_bulk_label_printing', function(e) {
-        var dhlpwc_bulk_printing_area = $('input#woocommerce_dhlpwc_bulk_label_printing').closest('fieldset').parent();
-        dhlpwc_bulk_printing_area.children('div.dhlpwc_settings_description_warning').remove();
+    }).on('change', 'input#woocommerce_dhlpwc_bulk_label_download', function(e) {
+        var dhlpwc_bulk_download_area = $('input#woocommerce_dhlpwc_bulk_label_download').closest('fieldset').parent();
+        dhlpwc_bulk_download_area.children('div.dhlpwc_settings_description_warning').remove();
 
         if ($(this).attr('checked') !== 'checked') {
             return;
@@ -473,7 +526,7 @@ jQuery(document).ready(function($) {
 
         // Do a check for compatibility
         var data = $.extend(true, $(this).data(), {
-            action: 'dhlpwc_test_bulk_printing'
+            action: 'dhlpwc_test_bulk_download'
         });
 
         $.post(ajaxurl, data, function (response) {
@@ -481,12 +534,12 @@ jQuery(document).ready(function($) {
                 var success = response.data.success;
                 var message = response.data.message;
             } catch (error) {
-                dhlpwc_bulk_printing_area.append('<div class="dhlpwc_settings_description_warning">An error has occured</div>');
+                dhlpwc_bulk_download_area.append('<div class="dhlpwc_settings_description_warning">An error has occured</div>');
                 return;
             }
 
             if (success === 'false') {
-                dhlpwc_bulk_printing_area.append('<div class="dhlpwc_settings_description_warning">' + message + '</div>');
+                dhlpwc_bulk_download_area.append('<div class="dhlpwc_settings_description_warning">' + message + '</div>');
             }
         }, 'json');
 
@@ -613,6 +666,7 @@ jQuery(document).ready(function($) {
     });
 
     $(document.body).trigger('dhlpwc:init_test_connection_button');
+    $(document.body).trigger('dhlpwc:init_search_printers_button');
     $(document.body).trigger('dhlpwc:init_settings_menu');
     $(document.body).trigger('dhlpwc:init_options_grid');
     $(document.body).trigger('dhlpwc:check_global_shipping_settings');

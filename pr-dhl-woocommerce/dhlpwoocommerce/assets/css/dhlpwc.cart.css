@@ -68,22 +68,26 @@ input.dhlpwc-parcelshop-option-change.dhlpwc-still-loading {
 }
 
 .dhl-parcelshop-locator div.dhlpwc-parcelshop-component-confirm-button {
-     box-shadow: 2px 2px 4px 2px rgba(0,0,0,0.2),2px 2px 2px  0 rgba(0,0,0,0.2);
      height: auto;
-     margin: 0 5px 5px 5px;
+     margin: 15px 20% 15px 16px;
      cursor: pointer;
      color: #ffffff;
-     background-color: #000000;
+     background-color: #CD030C;
+     padding-top: 12px;
+     padding-bottom: 12px;
+     font-weight: bold;
+     display: block;
+     text-align: center;
 
-     -webkit-user-select: none; /* Safari */
+
+    -webkit-user-select: none; /* Safari */
      -moz-user-select: none; /* Firefox */
      -ms-user-select: none; /* IE10+/Edge */
      user-select: none; /* Standard */
  }
 
 .dhl-parcelshop-locator div.dhlpwc-parcelshop-component-confirm-button:hover {
-    background-color: #fccc01;
-    color: #D40611;
+    background-color: #e9030c;
 }
 
 @media screen and (min-width: 600px) and (max-width: 1024px) {

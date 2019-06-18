@@ -120,6 +120,7 @@ class DHLPWC_Model_Service_Order_Meta_Option extends DHLPWC_Model_Core_Singleton
 
     public function get_parcelshop($order_id)
     {
+        /** @var WC_Order $order */
         $order = new WC_Order($order_id);
 
         $service = DHLPWC_Model_Service_Order_Meta_Option::instance();
@@ -130,9 +131,13 @@ class DHLPWC_Model_Service_Order_Meta_Option extends DHLPWC_Model_Core_Singleton
         }
 
         $service = DHLPWC_Model_Service_Parcelshop::instance();
-        /** @var WC_Order $order */
-        $parcelshop = $service->get_parcelshop($parcelshop_meta['input'], $order->get_shipping_country());
-
+        if (is_callable(array($order, 'get_shipping_country'))) {
+            // WooCommerce 3.2.0+
+            $parcelshop = $service->get_parcelshop($parcelshop_meta['input'], $order->get_shipping_country());
+        } else {
+            // WooCommerce < 3.2.0
+            $parcelshop = $service->get_parcelshop($parcelshop_meta['input'], $order->shipping_country);
+        }
         if (!$parcelshop || !isset($parcelshop->name) || !isset($parcelshop->address)) {
             return null;
         }

@@ -176,12 +176,10 @@ class PR_DHL_WC {
 		if ( class_exists( 'WC_Shipping_Method' ) ) {			
 			$this->base_country_code = $this->get_base_country();
 
-			// If NL selected, load DHL Parcel plugin.
-			$dhl_parcel_countries = array( 'NL', 'BE', 'LU', 'CH' );
+			// Load plugin except for DHL Parcel countries
+			$dhl_parcel_countries = array( 'NL', 'BE', 'LU' );
 
-			if ( in_array( $this->base_country_code, $dhl_parcel_countries ) ) {
-				include( 'dhlpwoocommerce/dhlpwoocommerce.php' );
-			} else {
+			if ( !in_array( $this->base_country_code, $dhl_parcel_countries ) ) {
                 $this->define_constants();
                 $this->includes();
 			    $this->init_hooks();
@@ -733,3 +731,5 @@ function PR_DHL() {
 }
 
 $PR_DHL_WC = PR_DHL();
+
+include( 'dhlpwoocommerce/dhlpwoocommerce.php' );

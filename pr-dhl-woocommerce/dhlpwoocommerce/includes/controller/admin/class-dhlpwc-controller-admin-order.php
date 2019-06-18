@@ -12,6 +12,7 @@ class DHLPWC_Controller_Admin_Order
         if (is_admin()) {
 
             add_action('admin_enqueue_scripts', array($this, 'load_styles'));
+            add_action('admin_enqueue_scripts', array($this, 'load_scripts'));
 
             add_action('woocommerce_admin_order_data_after_shipping_address', array($this, 'parcelshop_info'), 10, 1);
 
@@ -29,9 +30,15 @@ class DHLPWC_Controller_Admin_Order
                 add_action('admin_notices', array($this, 'bulk_create_notice'));
             }
 
-            if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_BULK_PRINT)) {
+            if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_BULK_DOWNLOAD)) {
+                add_filter('bulk_actions-edit-shop_order', array($this, 'add_bulk_download_action'));
+                add_action('admin_action_dhlpwc_download_labels', array($this, 'download_multiple_labels'));
+            }
+
+            if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_PRINTER)) {
                 add_filter('bulk_actions-edit-shop_order', array($this, 'add_bulk_print_action'));
                 add_action('admin_action_dhlpwc_print_labels', array($this, 'print_multiple_labels'));
+                add_action('admin_notices', array($this, 'bulk_print_notice'));
             }
 
             if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DELIVERY_TIMES)) {
@@ -76,12 +83,7 @@ class DHLPWC_Controller_Admin_Order
             return;
         }
 
-        if (!function_exists('get_current_screen')) {
-            return;
-        }
-
-        $screen = get_current_screen();
-        if (!isset($screen) || $screen->base != 'edit' || $screen->post_type != 'shop_order') {
+        if (!$this->is_ordergrid_screen()) {
             return;
         }
 
@@ -142,8 +144,8 @@ class DHLPWC_Controller_Admin_Order
         $service = DHLPWC_Model_Service_Access_Control::instance();
         $bulk_options = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_BULK_CREATE);
         foreach ($bulk_options as $bulk_option) {
-            $bulk_string = 'BULK_'.strtoupper($bulk_option);
-            $bulk_actions['dhlpwc_create_labels_' . $bulk_option] = sprintf(__('DHL - Create label (%s)', 'dhlpwc'), __($bulk_string, 'dhlpwc'));
+            $bulk_string = DHLPWC_Model_Service_Translation::instance()->bulk($bulk_option);
+            $bulk_actions['dhlpwc_create_labels_' . $bulk_option] = sprintf(__('DHL - Create label (%s)', 'dhlpwc'), $bulk_string);
         }
         return $bulk_actions;
     }
@@ -199,7 +201,6 @@ class DHLPWC_Controller_Admin_Order
         $service = DHLPWC_Model_Service_Shipment::instance();
         $success_data = $service->bulk($order_ids, $option);
 
-        // of course using add_query_arg() is not required, you can build your URL inline
         $location = add_query_arg(array(
             'post_type'             => 'shop_order',
             'dhlpwc_labels_created' => 1,
@@ -213,16 +214,7 @@ class DHLPWC_Controller_Admin_Order
 
     public function bulk_create_notice()
     {
-        if (!function_exists('get_current_screen')) {
-            return;
-        }
-
-        $screen = get_current_screen();
-        if (!isset($screen)) {
-            return;
-        }
-
-        if ($screen->base == 'edit' && $screen->post_type == 'shop_order') {
+        if ($this->is_ordergrid_screen()) {
             if (isset($_GET['dhlpwc_labels_created'])) {
                 $created = isset($_GET['dhlpwc_create_count']) && is_numeric($_GET['dhlpwc_create_count']) ? wc_clean($_GET['dhlpwc_create_count']) : 0;
                 $failed = isset($_GET['dhlpwc_fail_count']) && is_numeric($_GET['dhlpwc_fail_count']) ? wc_clean($_GET['dhlpwc_fail_count']) : 0;
@@ -245,13 +237,13 @@ class DHLPWC_Controller_Admin_Order
         }
     }
 
-    public function add_bulk_print_action($bulk_actions)
+    public function add_bulk_download_action($bulk_actions)
     {
-        $bulk_actions['dhlpwc_print_labels'] = __('DHL - Print label', 'dhlpwc');
+        $bulk_actions['dhlpwc_download_labels'] = __('DHL - Download label', 'dhlpwc');
         return $bulk_actions;
     }
 
-    public function print_multiple_labels()
+    public function download_multiple_labels()
     {
         $order_ids = isset($_GET['post']) && is_array($_GET['post']) ? wc_clean($_GET['post']) : array();
 
@@ -264,6 +256,63 @@ class DHLPWC_Controller_Admin_Order
 
         wp_redirect($url);
         exit;
+    }
+
+    public function add_bulk_print_action($bulk_actions)
+    {
+        $bulk_actions['dhlpwc_print_labels'] = __('DHL - Print label', 'dhlpwc');
+        return $bulk_actions;
+    }
+
+    public function print_multiple_labels()
+    {
+        $order_ids = isset($_GET['post']) && is_array($_GET['post']) ? wc_clean($_GET['post']) : array();
+        $order_count = intval(count($order_ids));
+
+        $service = DHLPWC_Model_Service_Printer::instance();
+        $label_ids = $service->get_label_ids($order_ids);
+        $label_count = intval(count($label_ids));
+
+        $success = $service->send($label_ids);
+
+        $location = add_query_arg(array(
+            'post_type'             => 'shop_order',
+            'dhlpwc_labels_printed' => 1,
+            'dhlpwc_order_count'    => $order_count,
+            'dhlpwc_label_count'    => $label_count,
+            'dhlpwc_success'        => $success ? 'true' : 'false',
+        ), 'edit.php');
+
+        wp_redirect(admin_url($location));
+        exit;
+    }
+
+    public function bulk_print_notice()
+    {
+        if ($this->is_ordergrid_screen()) {
+            if (isset($_GET['dhlpwc_labels_printed'])) {
+                $orders = isset($_GET['dhlpwc_order_count']) && is_numeric($_GET['dhlpwc_order_count']) ? wc_clean($_GET['dhlpwc_order_count']) : 0;
+                $labels = isset($_GET['dhlpwc_label_count']) && is_numeric($_GET['dhlpwc_label_count']) ? wc_clean($_GET['dhlpwc_label_count']) : 0;
+                $success = isset($_GET['dhlpwc_success']) ? boolval(wc_clean($_GET['dhlpwc_success']) == 'true') : false;
+
+                $messages = array();
+                if ($orders) {
+                    $messages[] = sprintf(_n('Order processed.', '%s orders processed.', number_format_i18n($orders), 'dhlpwc'), number_format_i18n($orders));
+                }
+                if ($success && $labels) {
+                    $messages[] = sprintf(_n('Label sent to printer.', '%s labels sent to printer.', number_format_i18n($labels), 'dhlpwc'), number_format_i18n($labels));
+                } else {
+                    $messages[] = sprintf(_n('Failed to print label.', 'Failed to print labels.', number_format_i18n($labels), 'dhlpwc'), number_format_i18n($labels));
+                }
+
+                if (!empty($messages)) {
+                    $view = new DHLPWC_Template('admin.notice');
+                    $view->render(array(
+                        'messages'   => $messages,
+                    ));
+                }
+            }
+        }
     }
 
     public function add_label_column($columns)
@@ -295,7 +344,7 @@ class DHLPWC_Controller_Admin_Order
                     $view->render(array(
                         'url'               => $label['pdf']['url'],
                         'label_size'        => $label['label_size'],
-                        'label_description' => __(sprintf('PARCELTYPE_%s', $label['label_size']), 'dhlpwc'),
+                        'label_description' => DHLPWC_Model_Service_Translation::instance()->parcelType($label['label_size']),
                         'tracker_code'      => $label['tracker_code'],
                         'is_return'         => $is_return,
                         'external_link'     => $external_link,
@@ -311,7 +360,7 @@ class DHLPWC_Controller_Admin_Order
     /**
      * DHL ServicePoint information screen for an order.
      *
-     * @param null $order
+     * @param WC_Order $order
      * @param bool $compact
      */
     public function parcelshop_info($order, $compact = false)
@@ -321,8 +370,13 @@ class DHLPWC_Controller_Admin_Order
 
         if ($parcelshop_meta) {
             $service = new DHLPWC_Model_Service_Parcelshop();
-            /** @var WC_Order $order */
-            $parcelshop = $service->get_parcelshop($parcelshop_meta['input'], $order->get_shipping_country());
+            if (is_callable(array($order, 'get_shipping_country'))) {
+                // WooCommerce 3.2.0+
+                $parcelshop = $service->get_parcelshop($parcelshop_meta['input'], $order->get_shipping_country());
+            } else {
+                // WooCommerce < 3.2.0
+                $parcelshop = $service->get_parcelshop($parcelshop_meta['input'], $order->shipping_country);
+            }
 
             if (!$parcelshop || !isset($parcelshop->name) || !isset($parcelshop->address)) {
                 $view = new DHLPWC_Template('unavailable');
@@ -342,18 +396,38 @@ class DHLPWC_Controller_Admin_Order
 
     public function load_styles()
     {
+        if ($this->is_ordergrid_screen()) {
+            wp_enqueue_style('dhlpwc-admin-style', DHLPWC_PLUGIN_URL . 'assets/css/dhlpwc.admin.css');
+        }
+    }
+
+    public function load_scripts()
+    {
+        if ($this->is_ordergrid_screen()) {
+            $service = DHLPWC_Model_Service_Access_Control::instance();
+            $external_link = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_OPEN_LABEL_LINKS_EXTERNAL);
+            if ($external_link) {
+                wp_enqueue_script('dhlpwc-admin-external', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.admin.external.js', array('jquery'));
+            }
+        }
+    }
+
+    protected function is_ordergrid_screen()
+    {
         if (!function_exists('get_current_screen')) {
-            return;
+            return false;
         }
 
         $screen = get_current_screen();
         if (!isset($screen)) {
-            return;
+            return false;
         }
 
-        if ($screen->base == 'post' && $screen->post_type == 'shop_order') {
-            wp_enqueue_style('dhlpwc-admin-style', DHLPWC_PLUGIN_URL . 'assets/css/dhlpwc.admin.css');
+        if ($screen->base !== 'edit' || $screen->post_type !== 'shop_order') {
+            return false;
         }
+
+        return true;
     }
 
     protected function get_available_statuses()

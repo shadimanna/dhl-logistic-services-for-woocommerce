@@ -1,5 +1,18 @@
 # DHL Parcel plugin for WooCommerce
 
+v1.2.11
+
+## Changes
+- Added support for Direct Label Printing
+- Added setting for maximum number of days shown for delivery times
+- Updated bulk settings to also work with the open in new window setting
+- Updated setting for combined labels to display page options only (A4)
+- Updated translations to no longer use system codes
+- Updated country check in the plugin
+- Updated ServicePoint locator to support Packstation code input
+- Updated code for increased compatibility with WooCommerce 2.6 (or higher)
+- Removed placeholder Google Maps key
+
 v1.2.10
 
 ## Changes

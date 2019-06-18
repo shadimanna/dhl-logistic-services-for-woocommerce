@@ -16,11 +16,6 @@ class DHLPWC_Model_Service_Shipment_Option extends DHLPWC_Model_Core_Singleton_A
         return DHLPWC_PLUGIN_URL . 'assets/images/option/' . strtolower($option_key) . '.svg';
     }
 
-    public function get_local_description($option_key)
-    {
-        return __(sprintf('OPTION_%s', $option_key), 'dhlpwc');
-    }
-
     public function get_request_options($keys = array(), $data = array())
     {
         $request_options = array();
