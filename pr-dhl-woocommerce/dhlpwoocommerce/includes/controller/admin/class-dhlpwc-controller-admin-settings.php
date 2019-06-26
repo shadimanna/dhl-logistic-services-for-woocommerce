@@ -36,8 +36,9 @@ class DHLPWC_Controller_Admin_Settings
 
             add_action('wp_ajax_dhlpwc_dismiss_admin_notice', array($this, 'dismiss_admin_notice'));
             add_action('wp_ajax_dhlpwc_test_connection', array($this, 'test_connection'));
+            add_action('wp_ajax_dhlpwc_search_printers', array($this, 'search_printers'));
             add_action('wp_ajax_dhlpwc_dynamic_option_settings', array($this, 'dynamic_option_settings'));
-            add_action('wp_ajax_dhlpwc_test_bulk_printing', array($this, 'test_bulk_printing'));
+            add_action('wp_ajax_dhlpwc_test_bulk_download', array($this, 'test_bulk_download'));
         }
     }
 
@@ -98,7 +99,22 @@ class DHLPWC_Controller_Admin_Settings
         wp_send_json($json_response->to_array(), 200);
     }
 
-    public function test_bulk_printing()
+    public function search_printers()
+    {
+        $service = DHLPWC_Model_Service_Printer::instance();
+        $printers = $service->get_printers();
+
+        // Send JSON response
+        $json_response = new DHLPWC_Model_Response_JSON();
+        $json_response->set_data(array(
+            'success' => $printers ? 'true' : 'false',
+            'message' => $printers ? __('Printers found', 'dhlpwc') : __('No printers found', 'dhlpwc'),
+            'info'    => $printers,
+        ));
+        wp_send_json($json_response->to_array(), 200);
+    }
+
+    public function test_bulk_download()
     {
         $library = DHLPWC_Libraryloader::instance();
         $pdf_merger = $library->get_pdf_merger();
@@ -107,7 +123,7 @@ class DHLPWC_Controller_Admin_Settings
         $json_response = new DHLPWC_Model_Response_JSON();
         $json_response->set_data(array(
             'success' => $pdf_merger ? 'true' : 'false',
-            'message' => $pdf_merger ? __('Activated bulk PDF printing', 'dhlpwc') : __('PDFMerger cannot be initiated. To use bulk printing, please check and resolve any conflicting third plugins causing this issue.', 'dhlpwc'),
+            'message' => $pdf_merger ? __('Activated bulk PDF download', 'dhlpwc') : __('PDFMerger cannot be initiated. To use bulk download, please check and resolve any conflicting third plugins causing this issue.', 'dhlpwc'),
         ));
         wp_send_json($json_response->to_array(), 200);
     }
@@ -144,14 +160,16 @@ class DHLPWC_Controller_Admin_Settings
 
             wp_enqueue_script( 'dhlpwc-settings-action', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.settings.js', array('jquery', 'jquery-ui-sortable'));
             wp_localize_script( 'dhlpwc-settings-action', 'dhlpwc_settings_object', array(
-                'test_connection_message' => __('Test connection and retrieve account data', 'dhlpwc'),
+                'test_connection_message'         => __('Test connection and retrieve account data', 'dhlpwc'),
                 'test_connection_loading_message' => __('Please wait...', 'dhlpwc'),
-                'accounts_found_message' => __('Accounts found. Click to use.', 'dhlpwc'),
-                'organization_found_message' => __('OrganizationID found. Click to use.', 'dhlpwc'),
-                'condition_templates' => $condition_templates,
-                'currency_symbol' => get_woocommerce_currency_symbol(),
-                'currency_pos' => get_option('woocommerce_currency_pos'),
-                'weight_unit' => get_option('woocommerce_weight_unit'),
+                'accounts_found_message'          => __('Accounts found. Click to use.', 'dhlpwc'),
+                'search_printers_message'         => __('Search for printers linked to account', 'dhlpwc'),
+                'search_printers_loading_message' => __('Please wait...', 'dhlpwc'),
+                'printers_found_message'          => __('Printers found. Click to use.', 'dhlpwc'),
+                'condition_templates'             => $condition_templates,
+                'currency_symbol'                 => get_woocommerce_currency_symbol(),
+                'currency_pos'                    => get_option('woocommerce_currency_pos'),
+                'weight_unit'                     => get_option('woocommerce_weight_unit'),
             ));
         }
 
@@ -256,16 +274,13 @@ class DHLPWC_Controller_Admin_Settings
             if (empty($service->get_api_account())) {
                 $messages[] = sprintf(__('Missing %1$s from %2$s', 'dhlpwc'), __('AccountID', 'dhlpwc'), __('Account details', 'dhlpwc'));
             }
-            if (empty($service->get_api_organization())) {
-                $messages[] = sprintf(__('Missing %1$s from %2$s', 'dhlpwc'), __('OrganizationID', 'dhlpwc'), __('Account details', 'dhlpwc'));
-            }
             if (!empty($messages) && !get_site_transient(self::NOTICE_TAG_API_SETTINGS)) {
                 $this->show_notice(self::NOTICE_TAG_API_SETTINGS, $messages, admin_url('admin.php?page=wc-settings&tab=shipping&section=dhlpwc'));
             }
 
         } else if ($service->plugin_is_enabled()) {
             // Maps key
-            if (empty($service->get_maps_key(false))) {
+            if (empty($service->get_maps_key())) {
                 $messages[] = sprintf(__('Missing %1$s from %2$s', 'dhlpwc'), __('Google Maps key', 'dhlpwc'), __('Plugin settings', 'dhlpwc'));
                 $messages[] = __('To continue using DHL ServicePoint and show a visual map to customers, please add a Google Maps API key. If left empty, the DHL ServicePoint map will stop displaying starting from July 1st 10:00 PM CEST', 'dhlpwc');
             }

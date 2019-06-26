@@ -20,11 +20,7 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
     const SORT_COST_HIGH = 'cost_high';
     const SORT_CUSTOM = 'custom';
 
-    const PER_PAGE_HORIZONTAL_2 = 'horizontal-2';
-    const PER_PAGE_HORIZONTAL_3 = 'horizontal-3';
-    const PER_PAGE_HORIZONTAL_4 = 'horizontal-4';
-    const PER_PAGE_HORIZONTAL_5 = 'horizontal-5';
-    const PER_PAGE_HORIZONTAL_6 = 'horizontal-6';
+    const COMBINE_A4 = 'a4';
 
     /**
      * Constructor for your shipping class
@@ -148,32 +144,28 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
 
             $this->get_bulk_group_fields('bp_only', __('Choose mailbox, skip if unavailable', 'dhlpwc')),
             $this->get_bulk_group_fields('smallest', __('Choose the smallest available size', 'dhlpwc')),
-            $this->get_bulk_group_fields('small_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), __('PARCELTYPE_SMALL', 'dhlpwc'))),
-            $this->get_bulk_group_fields('medium_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), __('PARCELTYPE_MEDIUM', 'dhlpwc'))),
-            $this->get_bulk_group_fields('large_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), __('PARCELTYPE_LARGE', 'dhlpwc'))),
-            $this->get_bulk_group_fields('xsmall_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), __('PARCELTYPE_XSMALL', 'dhlpwc'))),
-            $this->get_bulk_group_fields('xlarge_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), __('PARCELTYPE_XLARGE', 'dhlpwc'))),
+            $this->get_bulk_group_fields('small_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), DHLPWC_Model_Service_Translation::instance()->parcelType('PARCELTYPE_SMALL'))),
+            $this->get_bulk_group_fields('medium_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), DHLPWC_Model_Service_Translation::instance()->parcelType('PARCELTYPE_MEDIUM'))),
+            $this->get_bulk_group_fields('large_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), DHLPWC_Model_Service_Translation::instance()->parcelType('PARCELTYPE_LARGE'))),
+            $this->get_bulk_group_fields('xsmall_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), DHLPWC_Model_Service_Translation::instance()->parcelType('PARCELTYPE_XSMALL'))),
+            $this->get_bulk_group_fields('xlarge_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), DHLPWC_Model_Service_Translation::instance()->parcelType('PARCELTYPE_XLARGE'))),
             $this->get_bulk_group_fields('largest', __('Choose the largest available size', 'dhlpwc')),
 
             array(
-                'bulk_label_printing' => array(
-                    'title'       => __('Bulk label printing', 'dhlpwc'),
+                'bulk_label_download' => array(
+                    'title'       => __('Bulk label download', 'dhlpwc'),
                     'type'        => 'checkbox',
                     'label'       => __('Enable', 'dhlpwc'),
                     'default'     => 'no',
                 ),
-                'labels_per_page' => array(
-                    'title'   => __('Bulk labels per page', 'dhlpwc'),
+                'bulk_label_combine' => array(
+                    'title'   => __('Bulk labels combined for page printing', 'dhlpwc'),
                     'type'    => 'select',
                     'options' => array(
-                        ''                          => __('Default (no stacking)', 'dhlpwc'),
-                        self::PER_PAGE_HORIZONTAL_2 => sprintf(__("Print %s per page, stack horizontally", 'dhlpwc'), '2'),
-                        self::PER_PAGE_HORIZONTAL_3 => sprintf(__("Print %s per page, stack horizontally", 'dhlpwc'), '3'),
-                        self::PER_PAGE_HORIZONTAL_4 => sprintf(__("Print %s per page, stack horizontally", 'dhlpwc'), '4'),
-                        self::PER_PAGE_HORIZONTAL_5 => sprintf(__("Print %s per page, stack horizontally", 'dhlpwc'), '5'),
-                        self::PER_PAGE_HORIZONTAL_6 => sprintf(__("Print %s per page, stack horizontally", 'dhlpwc'), '6'),
+                        ''               => __('Default (1 label per page)', 'dhlpwc'),
+                        self::COMBINE_A4 => __("Print 3 labels per page for an A4 paper sheet", 'dhlpwc'),
                     ),
-                    'description' => __("When printing in bulk, labels can be combined to make it easier to print on a single sheet", 'dhlpwc'),
+                    'description' => __("When downloading labels with the bulk feature, labels can be combined to make it easier to print on a single sheet", 'dhlpwc'),
                     'default' => '',
                 ),
                 'enable_track_trace_mail' => array(
@@ -230,11 +222,6 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'title'       => __('AccountID', 'dhlpwc'),
                     'type'        => 'text',
                     'placeholder' => sprintf(__('Example: %s', 'dhlpwc'), '01234567'),
-                ),
-                'organization_id' => array(
-                    'title'       => __('OrganizationID', 'dhlpwc'),
-                    'type'        => 'text',
-                    'placeholder' => sprintf(__('Example: %s', 'dhlpwc'), '1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d'),
                 ),
 
                 // Shipment options
@@ -351,6 +338,31 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
             ),
 
             $this->get_address_fields('hide_sender_address_'),
+
+            array(
+                // Printing
+                'printer_settings' => array(
+                    'title'       => __('Printer settings', 'dhlpwc'),
+                    'type'        => 'title',
+                    'description' => __('Got a Zebra printer? Download our DHL Printer Service app and print directly from WooCommerce!', 'dhlpwc'),
+                ),
+                'enable_printer' => array(
+                    'title'       => __('Enable printer features', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Enable', 'dhlpwc'),
+                    'description' => __('Print labels directly with your Zebra printer from within the order view and order list.', 'dhlpwc'),
+                ),
+                'search_printers' => array(
+                    'title'       => __('Search printers', 'dhlpwc'),
+                    'type'        => 'button',
+                    'disabled'    => true,
+                ),
+                'printer_id' => array(
+                    'title'       => __('PrinterID', 'dhlpwc'),
+                    'type'        => 'text',
+                    'placeholder' => sprintf(__('Example: %s', 'dhlpwc'), '1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d'),
+                ),
+            ),
 
             array(
                 // Debug
@@ -554,6 +566,13 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'default'     => 'yes',
                     'description' => __('Only show delivery times when all cart items are in stock.', 'dhlpwc'),
                 ),
+                'delivery_times_number_of_days' => array(
+                    'title'       => __('Number of days to display', 'dhlpwc'),
+                    'type'        => 'select',
+                    'options'     => $this->get_number_of_days(),
+                    'description' => __("Number of days to display for delivery times", 'dhlpwc'),
+                    'default'     => 14,
+                ),
                 'delivery_times_container' => array(
                     'type'  => 'dhlpwc_delivery_times_container',
                 ),
@@ -566,6 +585,15 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
 
             $this->get_shipping_days()
         );
+    }
+
+    protected function get_number_of_days()
+    {
+        $days = array();
+        for ($day = 1; $day <= 14; $day++) {
+            $days[$day] = sprintf(_n('Display %s day', 'Display %s days', $day, 'dhlpwc'), $day);
+        }
+        return $days;
     }
 
     protected function get_shipping_days()

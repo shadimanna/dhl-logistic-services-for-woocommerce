@@ -47,7 +47,7 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
                 $is_return = (!empty($label['is_return'])) ? $label['is_return'] : false;
                 $content .= $view->render(array(
                     'label_size'        => $label['label_size'],
-                    'label_description' => __(sprintf('PARCELTYPE_%s', $label['label_size']), 'dhlpwc'),
+                    'label_description' => DHLPWC_Model_Service_Translation::instance()->parcelType($label['label_size']),
                     'tracker_code'      => $label['tracker_code'],
                     'is_return'         => $is_return,
                     'actions'           => $this->get_label_actions($label, $order_id),
@@ -95,7 +95,7 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
                 /* @var DHLPWC_Model_API_Data_Option $option */
                 $option = $allowed_option;
                 $option->image_url = $service->get_image_url($option->key);
-                $option->description = $service->get_local_description($option->key);
+                $option->description = DHLPWC_Model_Service_Translation::instance()->option($option->key);
                 $option->exclusion_list = array();
 
                 // Making a special case: H is also a delivery_type
@@ -230,7 +230,7 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
         $view = new DHLPWC_Template('order.meta.form.sizes-headline');
         $option_texts = $selected_options;
         array_walk($option_texts, function(&$value, &$key) {
-            $value = __(sprintf('OPTION_%s', $value), 'dhlpwc');
+            $value = DHLPWC_Model_Service_Translation::instance()->option($value);
         });
 
         $size_view = $view->render(array(
@@ -249,7 +249,7 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
                 $view = new DHLPWC_Template('order.meta.form.size');
                 $size_view .= $view->render(array(
                     'parceltype' => $size,
-                    'description' => __(sprintf('PARCELTYPE_%s', $size->key), 'dhlpwc'),
+                    'description' => DHLPWC_Model_Service_Translation::instance()->parcelType($size->key)
                 ), false);
 
             }
@@ -271,22 +271,34 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
         $service = DHLPWC_Model_Service_Track_Trace::instance();
         $tracking_url = $service->get_url($label['tracker_code'], $postcode, $locale);
 
-        $actions = array(
-            array(
+        $service = DHLPWC_Model_Service_Access_Control::instance();
+        $printer = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_PRINTER);
+
+        $actions = array();
+        $actions[] = array(
                 'url'    => $label['pdf']['url'],
                 'name'   => __('Download PDF label', 'dhlpwc'),
                 'action' => "dhlpwc_action_download",
-            ),
-            array(
-                'url'    => esc_url($tracking_url),
-                'name'   => __('Follow track & trace', 'dhlpwc'),
-                'action' => "dhlpwc_action_follow_tt",
-            ),
-            array(
+        );
+
+        if ($printer) {
+            $actions[] = array(
                 'url'    => admin_url('post.php?post=' . $post_id . '&action=edit'),
-                'name'   => __('Delete PDF label', 'dhlpwc'),
-                'action' => "dhlpwc_action_delete",
-            ),
+                'name'   => __('Print PDF label', 'dhlpwc'),
+                'action' => "dhlpwc_action_print",
+            );
+        }
+
+        $actions[] = array(
+            'url'    => esc_url($tracking_url),
+            'name'   => __('Follow track & trace', 'dhlpwc'),
+            'action' => "dhlpwc_action_follow_tt",
+        );
+
+        $actions[] = array(
+            'url'    => admin_url('post.php?post=' . $post_id . '&action=edit'),
+            'name'   => __('Delete PDF label', 'dhlpwc'),
+            'action' => "dhlpwc_action_delete",
         );
 
         // Create template

@@ -91,6 +91,37 @@ jQuery(document).ready(function($) {
             $('#dhlpwc-label').attr('metabox_busy', 'false');
         }, 'json');
 
+    }).on('click', '.dhlpwc_action_print', function(e) {
+        e.preventDefault();
+
+        var data = {
+            'action': 'dhlpwc_label_print',
+            post_id: $(this).data('post-id'),
+            label_id: $(this).attr('label-id')
+        };
+
+        // Click-2-much prevention
+        if ($('#dhlpwc-label').attr('metabox_busy') == 'true') {
+            alert('Currently handling the previous request, please wait.');
+            return;
+        } else {
+            $('#dhlpwc-label').attr('metabox_busy', 'true');
+        }
+
+        $.post(ajaxurl, data, function(response) {
+            try {
+                view = response.data.view;
+            } catch(error) {
+                alert('Error');
+                return;
+            }
+
+            $('div.dhlpwc-order-metabox-content').html(view);
+            $(document.body).trigger('dhlpwc:disable_delivery_option_exclusions');
+            $(document.body).trigger('dhlpwc:select_default_size');
+            $('#dhlpwc-label').attr('metabox_busy', 'false');
+        }, 'json');
+
     }).on('change', '.dhlpwc-meta-to-business input.dhlpwc-label-create-option', function(e) {
         // Cancel regular options loading
         if (dhlpwc_metabox_timeout) {
