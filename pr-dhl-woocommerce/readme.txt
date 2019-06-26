@@ -5,9 +5,9 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 5.0
-Stable tag: 1.3.19
+Stable tag: 1.4.1
 WC requires at least: 2.6.0
-WC tested up to: 3.5
+WC tested up to: 3.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -76,6 +76,20 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+
+= 1.4.1 =
+* DHL Paket: Switch from "ob_get_clean" to "ob_clean" since latter does not close the buffer.
+
+= 1.4.0 =
+* DHL Parcel: Added support for Direct Label Printing
+* DHL Parcel: Added setting for maximum number of days shown for delivery times
+* DHL Parcel: Updated bulk settings to also work with the open in new window setting
+* DHL Parcel: Updated setting for combined labels to display page options only (A4)
+* DHL Parcel: Updated translations to no longer use system codes
+* DHL Parcel: Updated country check in the plugin
+* DHL Parcel: Updated ServicePoint locator to support Packstation code input
+* DHL Parcel: Updated code for increased compatibility with WooCommerce 2.6 (or higher)
+* DHL Parcel: Removed placeholder Google Maps key
 
 = 1.3.19 =
 * DHL Paket: Fix corrupted file when clicking "Download Label" in edit order, needed to flush output buffer.
