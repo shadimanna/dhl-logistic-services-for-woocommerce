@@ -159,6 +159,14 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			array(),
 			PR_DHL_VERSION
 		);
+
+		wp_localize_script(
+			'wc-shipment-dhl-dp-label-js',
+            'PR_DHL_DP',
+            array(
+                'create_order_confirmation' => __('Creating an order is final and cannot be undone, so make sure you have added all the desired items before continuing.', 'pr-shipping-dhl')
+            )
+        );
 	}
 
 	/**

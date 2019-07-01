@@ -1,4 +1,4 @@
-jQuery( function( $ ) {
+( function( $, PR_DHL_DP ) {
 
     var wc_dhl_dp_order_items = {
         // init Class
@@ -113,6 +113,10 @@ jQuery( function( $ ) {
         },
 
         create_order: function () {
+            if (!confirm(PR_DHL_DP.create_order_confirmation)) {
+                return;
+            }
+
             var data = {
                 action:                   'wc_shipment_dhl_create_order',
                 order_id:                 woocommerce_admin_meta_boxes.post_id,
@@ -189,4 +193,4 @@ jQuery( function( $ ) {
 
     wc_dhl_dp_order_items.init();
 
-} );
+} )(jQuery, PR_DHL_DP);
