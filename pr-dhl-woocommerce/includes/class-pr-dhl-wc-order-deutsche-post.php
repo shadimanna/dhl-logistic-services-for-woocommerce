@@ -214,9 +214,6 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		$dhl_order_id = get_post_meta( $wc_order_id, 'pr_dhl_dp_order', true );
 		$dhl_order = $dhl_obj->api_client->get_order($dhl_order_id);
 
-		// Check if it actually was in a DHL order
-		$is_in_order = !empty($dhl_order_id);
-
 		$dhl_items = $dhl_order['items'];
 		$dhl_shipments = $dhl_order['shipments'];
 
