@@ -180,8 +180,15 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
 		$nonce = wp_create_nonce( 'pr_dhl_order_ajax' );
 
+
+	    // Get the DHL order that this WooCommerce order was submitted in
 		$dhl_obj = PR_DHL()->get_dhl_factory();
-		$dhl_order = $dhl_obj->api_client->get_current_order();
+		$dhl_order_id = get_post_meta( $wc_order_id, 'pr_dhl_dp_order', true );
+		$dhl_order = $dhl_obj->api_client->get_order($dhl_order_id);
+
+		// Check if it actually was in a DHL order
+		$is_in_order = !empty($dhl_order_id);
+
 		$dhl_items = $dhl_order['items'];
 		$dhl_shipments = $dhl_order['shipments'];
 
@@ -401,7 +408,6 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
 		// Get the WC order
 		$wc_order_id = wc_clean( $_POST[ 'order_id' ] );
-		$wc_order = new WC_Order( $wc_order_id );
 
 		// Get the API client to make the requests
         $dhl_obj = PR_DHL()->get_dhl_factory();
@@ -409,10 +415,10 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
 		try {
 			// Create the DHL order
-			$response = $api_client->create_order($wc_order);
+			$response = $api_client->create_order();
 
 			// Get the current DHL order - the one that was just submitted
-			$order = $api_client->get_current_order();
+			$order = $api_client->get_order($response->orderId);
 			$order_items = $order['items'];
 
 			// Go through the shipments retrieved from the API and save the AWB of the shipment to
@@ -434,11 +440,11 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
                 }
             }
 
-			// Generate the merged AWB label file
-			$dhl_obj->create_merged_awb_label( $awbs, $response->orderId );
-
             // Save the DHL order ID in the WC order meta
             update_post_meta( $wc_order_id, 'pr_dhl_dp_order', $response->orderId );
+
+			// Generate the merged AWB label file
+			$dhl_obj->create_merged_awb_label( $awbs, $response->orderId );
 
             // Send the new metabox HTML and the AWB (from the meta we just saved) as a tracking note
             wp_send_json( array(

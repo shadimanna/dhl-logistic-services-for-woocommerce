@@ -173,15 +173,23 @@ class Client extends API_Client {
 	}
 
 	/**
-	 * Retrieves the items for the current DHL order.
+	 * Retrieves the current DHL order, or an existing one if an ID is given.
 	 *
 	 * @since [*next-version*]
 	 *
+	 * @param int|null $orderId Optional DHL order ID.
+	 *
 	 * @return array
 	 */
-	public function get_current_order()
+	public function get_order($orderId = null)
 	{
-		return get_option( 'pr_dhl_dp_order', $this->get_default_order_info() );
+		$current = get_option( 'pr_dhl_dp_order', $this->get_default_order_info() );
+
+		if (empty($orderId)) {
+			return $current;
+		}
+
+		return get_option( 'pr_dhl_dp_order_' . $orderId, $current );
 	}
 
 	/**
@@ -194,7 +202,7 @@ class Client extends API_Client {
 	 */
 	public function add_item_to_order( $item_barcode, $wc_order )
 	{
-		$order = $this->get_current_order();
+		$order = $this->get_order();
 
 		$order['items'][$item_barcode] = $wc_order;
 
@@ -210,7 +218,7 @@ class Client extends API_Client {
 	 */
 	public function remove_item_from_order( $item_barcode )
 	{
-		$order = $this->get_current_order();
+		$order = $this->get_order();
 
 		unset( $order['items'][$item_barcode] );
 
@@ -238,7 +246,7 @@ class Client extends API_Client {
 	 */
 	public function create_order()
 	{
-		$order = $this->get_current_order();
+		$order = $this->get_order();
 		$items = $order['items'];
 		$barcodes = array_keys( $items );
 
@@ -254,7 +262,7 @@ class Client extends API_Client {
 		$response = $this->post($route, $data);
 
 		if ( $response->status === 200 ) {
-			$this->update_order( $response->body );
+			$this->close_order( $response->body );
 
 			return $response->body;
 		}
@@ -265,6 +273,27 @@ class Client extends API_Client {
 				implode( ', ', $response->body->messages )
 			)
 		);
+	}
+
+	/**
+	 * Closes the current order with information received from the REST API.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param object $info The information received from the REST API.
+	 */
+	protected function close_order($info)
+	{
+		// Get the current order from the options
+		$order = $this->get_order();
+		// Save the response info in the order
+		$order['id'] = $info->orderId;
+		$order['status'] = $info->orderStatus;
+		$order['shipments'] = $info->shipments;
+		// Save the order in a new option
+		update_option( 'pr_dhl_dp_order_' . $info->orderId, $order );
+		// Reset the current order
+		$this->reset_current_order();
 	}
 
 	/**
@@ -366,24 +395,6 @@ class Client extends API_Client {
 			'destinationCountry'  => $item_info->recipient[ 'country' ],
 			'contents'            => $contents
 		);
-	}
-
-	/**
-	 * Updates the current order with information received from the REST API.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param object $info The information received from the REST API.
-	 */
-	protected function update_order( $info )
-	{
-		$order = $this->get_current_order();
-
-		$order['id'] = $info->orderId;
-		$order['status'] = $info->orderStatus;
-		$order['shipments'] = $info->shipments;
-
-		update_option( 'pr_dhl_dp_order', $order );
 	}
 
 	/**
