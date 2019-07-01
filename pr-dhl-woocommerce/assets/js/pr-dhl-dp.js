@@ -25,6 +25,9 @@ jQuery( function( $ ) {
         },
 
         update: function ( response ) {
+            // Re-enable the "remove item" links
+            $( '.pr_dhl_order_remove_item').removeAttr( 'disabled' );
+
             if ( response && response.html ) {
                 $( '#woocommerce-dhl-dp-order .inside' ).html( response.html );
             }
