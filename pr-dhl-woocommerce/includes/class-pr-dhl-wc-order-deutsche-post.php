@@ -66,6 +66,26 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
     }
 
 	/**
+	 * Cannot delete labels once an order is created.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param int $order_id The ID of the order.
+	 *
+	 * @return bool
+	 *
+	 * @throws Exception
+	 */
+	protected function can_delete_label($order_id) {
+		$dhl_obj = PR_DHL()->get_dhl_factory();
+		$dhl_order_id = get_post_meta( $order_id, 'pr_dhl_dp_order', true );
+		$dhl_order = $dhl_obj->api_client->get_order($dhl_order_id);
+		$dhl_order_created = !empty($dhl_order['shipments']);
+
+		return parent::can_delete_label($order_id) && !$dhl_order_created;
+	}
+
+	/**
 	 * Adds the DHL order info meta box to the WooCommerce order page.
 	 */
 	public function add_dhl_order_meta_box() {
@@ -329,10 +349,6 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
             </tbody>
         </table>
         <p>
-            <span class="wc_dhl_delete"><a href="#" id="pr_dhl_dp_delete_label">
-                    <?php _e('Delete Label', 'pr-shipping-dhl'); ?>
-                </a>
-            </span>
             <a id="pr_dhl_dp_download_awb_label" href="<?php echo $label_url ?>" class="button button-primary" target="_blank">
                 <?php _e( 'Download Labels', 'pr-shipping-dhl' ); ?>
             </a>
