@@ -33,17 +33,17 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		parent::init_hooks();
 
 		// add 'Label Created' orders page column header
-		add_filter( 'manage_edit-shop_order_columns', array( $this, 'add_order_label_column_header' ), 30 );
+//		add_filter( 'manage_edit-shop_order_columns', array( $this, 'add_order_label_column_header' ), 30 );
 
 		// add 'Label Created' orders page column content
-		add_action( 'manage_shop_order_posts_custom_column', array( $this, 'add_order_label_column_content' ) );
+//		add_action( 'manage_shop_order_posts_custom_column', array( $this, 'add_order_label_column_content' ) );
 
 		// print DHL handover document
-		add_action( 'admin_init', array( $this, 'print_document_action' ), 1 );
+//		add_action( 'admin_init', array( $this, 'print_document_action' ), 1 );
 
 		// add bulk order filter for printed / non-printed orders
-		add_action( 'restrict_manage_posts', array( $this, 'filter_orders_by_label_created' ), 20 );
-		add_filter( 'request', array( $this, 'filter_orders_by_label_created_query' ) );
+//		add_action( 'restrict_manage_posts', array( $this, 'filter_orders_by_label_created' ), 20 );
+//		add_filter( 'request', array( $this, 'filter_orders_by_label_created_query' ) );
 
 		// Add the DHL order meta box
 		add_action( 'add_meta_boxes', array( $this, 'add_dhl_order_meta_box' ), 20 );
@@ -894,7 +894,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	public function get_bulk_actions() {
 
 		$shop_manager_actions = array();
-
+    /*
 		$shop_manager_actions = array(
 			'pr_dhl_create_labels' => __( 'DHL Create Labels', 'pr-shipping-dhl' ),
 		);
@@ -920,8 +920,9 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		$shop_manager_actions += array(
 			'pr_dhl_handover' => __( 'DHL Print Handover', 'pr-shipping-dhl' ),
 		);
-
+    */
 		return $shop_manager_actions;
+
 	}
 
 	public function validate_bulk_actions( $action, $order_ids ) {

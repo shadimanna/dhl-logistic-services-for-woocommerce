@@ -183,11 +183,12 @@ class PR_DHL_WC {
 
 			if ( in_array( $this->base_country_code, $dhl_parcel_countries ) ) {
 				include( 'dhlpwoocommerce/dhlpwoocommerce.php' );
-			} else {
-                $this->define_constants();
-                $this->includes();
-			    $this->init_hooks();
 			}
+
+			// Load DHL Parcel countries as well if supported by DPI
+            $this->define_constants();
+            $this->includes();
+            $this->init_hooks();
 
 		} else {
 			// Throw an admin error informing the user this plugin needs WooCommerce to function

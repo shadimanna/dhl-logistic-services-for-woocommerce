@@ -95,13 +95,6 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
 
         $log_path = PR_DHL()->get_log_url();
 
-        $select_dhl_desc_default = array(
-            'product_cat'    => __( 'Product Categories', 'pr-shipping-dhl' ),
-            'product_tag'    => __( 'Product Tags', 'pr-shipping-dhl' ),
-            'product_name'   => __( 'Product Name', 'pr-shipping-dhl' ),
-            'product_export' => __( 'Product Export Description', 'pr-shipping-dhl' ),
-        );
-
         try {
 
             $dhl_obj = PR_DHL()->get_dhl_factory();
@@ -115,21 +108,14 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
         $weight_units = get_option( 'woocommerce_weight_unit' );
 
         $this->form_fields = array(
-            'dhl_pickup_dist'  => array(
-                'title'       => __( 'Shipping and Pickup', 'pr-shipping-dhl' ),
+            'dhl_api'                    => array(
+                'title'       => __( 'Account and API Settings', 'pr-shipping-dhl' ),
                 'type'        => 'title',
-                'description' => __( 'Please configure your shipping parameters underneath.', 'pr-shipping-dhl' ),
-                'class'       => '',
-            ),
-            'dhl_pickup_name'  => array(
-                'title'       => __( 'Pickup Account Name', 'pr-shipping-dhl' ),
-                'type'        => 'text',
                 'description' => __(
-                    'The pickup account name will be provided by your local DHL sales organization and tells us where to pick up your shipments.',
+                    'Please configure your account and API settings with Deutschepost International.',
                     'pr-shipping-dhl'
                 ),
-                'desc_tip'    => true,
-                'default'     => '',
+                'class'       => '',
             ),
             'dhl_account_num' => array(
 	            'title'             => __( 'Account Number (EKP)', 'pr-shipping-dhl' ),
@@ -148,37 +134,77 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
 		        'default'           => '',
 		        'placeholder'		=> 'Contact Name',
 	        ),
-            'dhl_distribution' => array(
-                'title'             => __( 'Distribution Center', 'pr-shipping-dhl' ),
-                'type'              => 'text',
+            'dhl_api_key'                => array(
+                'title'       => __( 'Client Id', 'pr-shipping-dhl' ),
+                'type'        => 'text',
+                'description' => __(
+                    'The client ID (a 36 digits alphanumerical string made from 5 blocks) is required for authentication and is provided to you within your contract.',
+                    'pr-shipping-dhl'
+                ),
+                'desc_tip'    => true,
+                'default'     => '',
+            ),
+            'dhl_api_secret'             => array(
+                'title'       => __( 'Client Secret', 'pr-shipping-dhl' ),
+                'type'        => 'text',
+                'description' => __(
+                    'The client secret (also a 36 digits alphanumerical string made from 5 blocks) is required for authentication (together with the client ID) and creates the tokens needed to ensure secure access. It is part of your contract provided by your DHL sales partner.',
+                    'pr-shipping-dhl'
+                ),
+                'desc_tip'    => true,
+                'default'     => '',
+            ),
+            'dhl_sandbox'                => array(
+                'title'       => __( 'Sandbox Mode', 'pr-shipping-dhl' ),
+                'type'        => 'checkbox',
+                'label'       => __( 'Enable Sandbox Mode', 'pr-shipping-dhl' ),
+                'default'     => 'no',
+                'description' => __(
+                    'Please, tick here if you want to test the plug-in installation against the DHL Sandbox Environment. Labels generated via Sandbox cannot be used for shipping and you need to enter your client ID and client secret for the Sandbox environment instead of the ones for production!',
+                    'pr-shipping-dhl'
+                ),
+                'desc_tip'    => true,
+            ),
+            'dhl_test_connection_button' => array(
+                'title'             => PR_DHL_BUTTON_TEST_CONNECTION,
+                'type'              => 'button',
+                'custom_attributes' => array(
+                    'onclick' => "dhlTestConnection('#woocommerce_pr_dhl_dp_dhl_test_connection_button');",
+                ),
                 'description'       => __(
-                    'Your distribution center is a 6 digit alphanumerical field (like USLAX1) indicating where we are processing your items and will be provided by your local DHL sales organization too.',
+                    'Press the button for testing the connection against our DHL eCommerce Gateways (depending on the selected environment this test is being done against the Sandbox or the Production Environment).',
                     'pr-shipping-dhl'
                 ),
                 'desc_tip'          => true,
-                'default'           => '',
-                'placeholder'       => 'USLAX1',
-                'custom_attributes' => array( 'maxlength' => '6' ),
+            ),
+            'dhl_debug'                  => array(
+                'title'       => __( 'Debug Log', 'pr-shipping-dhl' ),
+                'type'        => 'checkbox',
+                'label'       => __( 'Enable logging', 'pr-shipping-dhl' ),
+                'default'     => 'yes',
+                'description' => sprintf(
+                    __(
+                        'A log file containing the communication to the DHL server will be maintained if this option is checked. This can be used in case of technical issues and can be found %shere%s.',
+                        'pr-shipping-dhl'
+                    ),
+                    '<a href="' . $log_path . '" target = "_blank">',
+                    '</a>'
+                ),
             ),
         );
 
         $this->form_fields += array(
+            'dhl_pickup_dist'  => array(
+                'title'       => __( 'Shipping', 'pr-shipping-dhl' ),
+                'type'        => 'title',
+                'description' => __( 'Please configure your shipping parameters underneath.', 'pr-shipping-dhl' ),
+                'class'       => '',
+            ),
             'dhl_default_product_int' => array(
                 'title'       => __( 'International Default Service', 'pr-shipping-dhl' ),
                 'type'        => 'select',
                 'description' => __(
                     'Please select your default DHL eCommerce shipping service for cross-border shippments that you want to offer to your customers (you can always change this within each individual order afterwards).',
-                    'pr-shipping-dhl'
-                ),
-                'desc_tip'    => true,
-                'options'     => $select_dhl_product_int,
-                'class'       => 'wc-enhanced-select',
-            ),
-            'dhl_bulk_product_int'    => array(
-                'title'       => __( 'International Bulk Services', 'pr-shipping-dhl' ),
-                'type'        => 'multiselect',
-                'description' => __(
-                    'Please select the bulk DHL eCommerce shipping service for cross-border shippments that you want to display within the bulk create label actions.',
                     'pr-shipping-dhl'
                 ),
                 'desc_tip'    => true,
@@ -194,54 +220,6 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
                 ),
                 'desc_tip'    => true,
                 'options'     => $select_dhl_product_dom,
-                'class'       => 'wc-enhanced-select',
-            ),
-            'dhl_bulk_product_dom'    => array(
-                'title'       => __( 'Domestic Bulk Services', 'pr-shipping-dhl' ),
-                'type'        => 'multiselect',
-                'description' => __(
-                    'Please select the bulk DHL eCommerce shipping service for domestic shippments that you want to display within the bulk create label actions.',
-                    'pr-shipping-dhl'
-                ),
-                'desc_tip'    => true,
-                'options'     => $select_dhl_product_dom,
-                'class'       => 'wc-enhanced-select',
-            ),
-        );
-
-        $this->form_fields += array(
-            'dhl_prefix'            => array(
-                'title'             => __( 'Package Prefix', 'pr-shipping-dhl' ),
-                'type'              => 'text',
-                'description'       => __(
-                    'The package prefix is added to identify the package is coming from your shop. This value is limited to 5 charaters.',
-                    'pr-shipping-dhl'
-                ),
-                'desc_tip'          => true,
-                'default'           => '',
-                'placeholder'       => '',
-                'custom_attributes' => array( 'maxlength' => '5' ),
-            ),
-            'dhl_desc_default'      => array(
-                'title'       => __( 'Package Description', 'pr-shipping-dhl' ),
-                'type'        => 'select',
-                'description' => __(
-                    'Prefill the package description with one of the options.',
-                    'pr-shipping-dhl'
-                ),
-                'desc_tip'    => true,
-                'options'     => $select_dhl_desc_default,
-                'class'       => 'wc-enhanced-select',
-            ),
-            'dhl_handover_type'     => array(
-                'title'       => __( 'Handover', 'pr-shipping-dhl' ),
-                'type'        => 'select',
-                'description' => __(
-                    'Select whether to drop-off the packages to DHL or have them pick them up.',
-                    'pr-shipping-dhl'
-                ),
-                'desc_tip'    => true,
-                'options'     => array( 'dropoff' => 'Drop-Off', 'pickup' => 'Pick-Up' ),
                 'class'       => 'wc-enhanced-select',
             ),
             'dhl_add_weight_type'   => array(
@@ -304,33 +282,6 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
 			    'type'            => 'title',
 			    'description'     => __( 'Options for configuring your label preferences', 'pr-shipping-dhl' ),
 		    ),
-		    'dhl_label_format'      => array(
-			    'title'       => __( 'Label Format', 'pr-shipping-dhl' ),
-			    'type'        => 'select',
-			    'description' => __(
-				    'Select one of the formats to generate the shipping label in.',
-				    'pr-shipping-dhl'
-			    ),
-			    'desc_tip'    => true,
-			    'options'     => array( 'PDF' => 'PDF', 'PNG' => 'PNG', 'ZPL' => 'ZPL' ),
-			    'class'       => 'wc-enhanced-select',
-		    ),
-		    'dhl_label_size'        => array(
-			    'title'       => __( 'Label Size', 'pr-shipping-dhl' ),
-			    'type'        => 'select',
-			    'description' => __( 'Select the shipping label size.', 'pr-shipping-dhl' ),
-			    'desc_tip'    => true,
-			    'options'     => array( '4x6' => '4x6', '4x4' => '4x4' ),
-			    'class'       => 'wc-enhanced-select',
-		    ),
-		    'dhl_label_page'        => array(
-			    'title'       => __( 'Page Size', 'pr-shipping-dhl' ),
-			    'type'        => 'select',
-			    'description' => __( 'Select the shipping label page size.', 'pr-shipping-dhl' ),
-			    'desc_tip'    => true,
-			    'options'     => array( 'A4' => 'A4', '400x600' => '400x600', '400x400' => '400x400' ),
-			    'class'       => 'wc-enhanced-select',
-		    ),
 	        'dhl_label_ref' => array(
 		        'title'             => __( 'Label Reference', 'pr-shipping-dhl' ),
 		        'type'              => 'text',
@@ -350,72 +301,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
         );
 
         $this->form_fields += array(
-            'dhl_api'                    => array(
-                'title'       => __( 'API Settings', 'pr-shipping-dhl' ),
-                'type'        => 'title',
-                'description' => __(
-                    'Please configure your access towards the DHL eCommerce APIs by means of authentication.',
-                    'pr-shipping-dhl'
-                ),
-                'class'       => '',
-            ),
-            'dhl_api_key'                => array(
-                'title'       => __( 'Client Id', 'pr-shipping-dhl' ),
-                'type'        => 'text',
-                'description' => __(
-                    'The client ID (a 36 digits alphanumerical string made from 5 blocks) is required for authentication and is provided to you within your contract.',
-                    'pr-shipping-dhl'
-                ),
-                'desc_tip'    => true,
-                'default'     => '',
-            ),
-            'dhl_api_secret'             => array(
-                'title'       => __( 'Client Secret', 'pr-shipping-dhl' ),
-                'type'        => 'text',
-                'description' => __(
-                    'The client secret (also a 36 digits alphanumerical string made from 5 blocks) is required for authentication (together with the client ID) and creates the tokens needed to ensure secure access. It is part of your contract provided by your DHL sales partner.',
-                    'pr-shipping-dhl'
-                ),
-                'desc_tip'    => true,
-                'default'     => '',
-            ),
-            'dhl_sandbox'                => array(
-                'title'       => __( 'Sandbox Mode', 'pr-shipping-dhl' ),
-                'type'        => 'checkbox',
-                'label'       => __( 'Enable Sandbox Mode', 'pr-shipping-dhl' ),
-                'default'     => 'no',
-                'description' => __(
-                    'Please, tick here if you want to test the plug-in installation against the DHL Sandbox Environment. Labels generated via Sandbox cannot be used for shipping and you need to enter your client ID and client secret for the Sandbox environment instead of the ones for production!',
-                    'pr-shipping-dhl'
-                ),
-                'desc_tip'    => true,
-            ),
-            'dhl_test_connection_button' => array(
-                'title'             => PR_DHL_BUTTON_TEST_CONNECTION,
-                'type'              => 'button',
-                'custom_attributes' => array(
-                    'onclick' => "dhlTestConnection('#woocommerce_pr_dhl_dp_dhl_test_connection_button');",
-                ),
-                'description'       => __(
-                    'Press the button for testing the connection against our DHL eCommerce Gateways (depending on the selected environment this test is being done against the Sandbox or the Production Environment).',
-                    'pr-shipping-dhl'
-                ),
-                'desc_tip'          => true,
-            ),
-            'dhl_debug'                  => array(
-                'title'       => __( 'Debug Log', 'pr-shipping-dhl' ),
-                'type'        => 'checkbox',
-                'label'       => __( 'Enable logging', 'pr-shipping-dhl' ),
-                'default'     => 'yes',
-                'description' => sprintf(
-                    __(
-                        'A log file containing the communication to the DHL server will be maintained if this option is checked. This can be used in case of technical issues and can be found %shere%s.',
-                        'pr-shipping-dhl'
-                    ),
-                    '<a href="' . $log_path . '" target = "_blank">',
-                    '</a>'
-                ),
-            ),
+
         );
     }
 
