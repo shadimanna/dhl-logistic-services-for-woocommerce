@@ -11,11 +11,11 @@ if ( ! defined( 'ABSPATH' ) || class_exists( 'PR_DHL_WC_Order_Ecomm', false ) ) 
  */
 class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	/**
-	 * The order tracking URL printf-style pattern where "%s" tokens are replaced with the order ID.
+	 * The order tracking URL printf-style pattern where "%s" tokens are replaced with the item barcode.
 	 *
 	 * @since [*next-version*]
 	 */
-	const TRACKING_URL_PATTERN = 'https://www.dhl.com/en/express/tracking.html?AWB=%s&brand=DHL';
+	const TRACKING_URL_PATTERN = 'https://www.packet.deutschepost.com/web/portal-europe/packet_traceit?barcode=%s';
 
 	/**
 	 * The endpoint for download AWB labels.
@@ -613,36 +613,33 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 * @since [*next-version*]
 	 */
 	protected function get_tracking_link( $order_id )
-    {
-        // Get the AWB for the order
-        $awb = get_post_meta( $order_id,'pr_dhl_dp_awb', true );
-        if ( empty( $awb ) ) {
-            return '';
-        }
+	{
+		// Get the item barcode
+		$barcode = get_post_meta( $order_id,'pr_dhl_dp_item_barcode', true );
+		if ( empty( $barcode ) ) {
+			return '';
+		}
 
-        return $this->get_awb_tracking_link( $awb );
+		return sprintf(
+			'<a href="%s" target="_blank">%s</a>',
+			$this->get_item_tracking_url($barcode),
+			$barcode
+		);
 	}
 
 	/**
-     * Retrieves the tracking link for an AWB.
-     *
-     * @since [*next-version*]
-     *
-	 * @param string $awb The AWB.
-     *
-	 * @return string The tracking HTML link.
+	 * Retrieves the tracking URL for an item.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $barcode The item's barcode.
+	 *
+	 * @return string The tracking URL.
 	 */
-	protected function get_awb_tracking_link( $awb )
-    {
-	    // Prepare the tracking URL
-	    $tracking_url = sprintf( $this->get_tracking_url(), $awb );
-
-	    return sprintf(
-		    '<a href="%s" target="_blank">%s</a>',
-		    $tracking_url,
-		    $awb
-	    );
-    }
+	protected function get_item_tracking_url($barcode )
+	{
+		return sprintf( $this->get_tracking_url(), $barcode );
+	}
 
 	/**
 	 * @inheritdoc
