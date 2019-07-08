@@ -193,23 +193,23 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 * Creates the table of DHL items for the current Deutsche Post order.
 	 *
 	 * @since [*next-version*]
-     *
-     * @param int $wc_order_id The ID of the WooCommerce order where the meta box is shown.
+	 *
+	 * @param int $wc_order_id The ID of the WooCommerce order where the meta box is shown.
 	 *
 	 * @return string The rendered HTML table.
 	 *
 	 * @throws Exception If an error occurred while creating the DHL object from the factory.
 	 */
 	public function dhl_order_meta_box_table( $wc_order_id = null ) {
-	    if ( $wc_order_id === null ) {
-	        global $post;
-	        $wc_order_id = $post->ID;
-        }
+		if ( $wc_order_id === null ) {
+			global $post;
+			$wc_order_id = $post->ID;
+		}
 
 		$nonce = wp_create_nonce( 'pr_dhl_order_ajax' );
 
 
-	    // Get the DHL order that this WooCommerce order was submitted in
+		// Get the DHL order that this WooCommerce order was submitted in
 		$dhl_obj = PR_DHL()->get_dhl_factory();
 		$dhl_order_id = get_post_meta( $wc_order_id, 'pr_dhl_dp_order', true );
 		$dhl_order = $dhl_obj->api_client->get_order($dhl_order_id);
@@ -218,21 +218,21 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		$dhl_shipments = $dhl_order['shipments'];
 
 		// If no shipments have been created yet, show the items table.
-        // If there are shipments, show the shipments table
+		// If there are shipments, show the shipments table
 		$table = ( empty($dhl_shipments) )
-            ? $this->order_items_table( $dhl_items, $wc_order_id )
-            : $this->order_shipments_table( $dhl_shipments, $wc_order_id );
+			? $this->order_items_table( $dhl_items, $wc_order_id )
+			: $this->locked_order_items_table( $dhl_items, $dhl_order_id, $wc_order_id );
 
 		ob_start();
 		?>
-        <p id="pr_dhl_dp_error"></p>
+		<p id="pr_dhl_dp_error"></p>
 
-        <input type="hidden" id="pr_dhl_order_nonce" value="<?php echo $nonce; ?>" />
-        <?php
+		<input type="hidden" id="pr_dhl_order_nonce" value="<?php echo $nonce; ?>" />
+		<?php
 
-        $buttons = ob_get_clean();
+		$buttons = ob_get_clean();
 
-        return $table . $buttons;
+		return $table . $buttons;
 	}
 
 	/**
@@ -241,11 +241,11 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 * @since [*next-version*]
 	 *
 	 * @param array $items The items to show.
-     * @param int $wc_order_id The ID of the WooCommerce order where the meta box is shown.
+	 * @param int|null $current_wc_order The ID of the current WC order.
 	 *
 	 * @return string The rendered table.
 	 */
-	public function order_items_table( $items, $wc_order_id = null ) {
+	public function order_items_table( $items, $current_wc_order = null ) {
 		$table_rows = array();
 
 		if (empty($items)) {
@@ -256,11 +256,11 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		} else {
 			foreach ( $items as $barcode => $wc_order ) {
 				$order_url = get_edit_post_link( $wc_order );
-				$order_link = sprintf(
-					'<a href="%s" target="_blank">%s</a>',
-					$order_url,
-					sprintf( __( 'Order #%d', 'pr-shipping-dhl' ), $wc_order )
-				);
+				$order_text = sprintf( __( 'Order #%d', 'pr-shipping-dhl' ), $wc_order );
+				$order_text = ($wc_order === $current_wc_order)
+					? sprintf('<b>%s</b>', $order_text)
+					: $order_text;
+				$order_link = sprintf('<a href="%s" target="_blank">%s</a>', $order_url, $order_text);
 
 				$barcode_input = sprintf( '<input type="hidden" class="pr_dhl_item_barcode" value="%s">', $barcode );
 
@@ -279,81 +279,88 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		ob_start();
 
 		?>
-        <table class="widefat striped" id="pr_dhl_order_items_table">
-            <thead>
-            <tr>
-                <th><?php _e( 'Item', 'pr-shipping-dhl' ) ?></th>
-                <th><?php _e( 'Actions', 'pr-shipping-dhl' ) ?></th>
-            </tr>
-            </thead>
-            <tbody>
+		<table class="widefat striped" id="pr_dhl_order_items_table">
+			<thead>
+			<tr>
+				<th><?php _e( 'Item', 'pr-shipping-dhl' ) ?></th>
+				<th><?php _e( 'Actions', 'pr-shipping-dhl' ) ?></th>
+			</tr>
+			</thead>
+			<tbody>
 			<?php echo implode( '', $table_rows ) ?>
-            </tbody>
-        </table>
-        <p>
-            <button id="pr_dhl_add_to_order" class="button button-secondary disabled" type="button">
+			</tbody>
+		</table>
+		<p>
+			<button id="pr_dhl_add_to_order" class="button button-secondary disabled" type="button">
 				<?php _e( 'Add item to order', 'pr-shipping-dhl' ); ?>
-            </button>
+			</button>
 
-            <button id="pr_dhl_create_order" class="button button-primary" type="button">
+			<button id="pr_dhl_create_order" class="button button-primary" type="button">
 				<?php _e( 'Create order', 'pr-shipping-dhl' ) ?>
-            </button>
-        </p>
-        <p id="pr_dhl_order_gen_label_message">
+			</button>
+		</p>
+		<p id="pr_dhl_order_gen_label_message">
 			<?php _e( 'Please generate a label before adding the item to the DHL order', 'pr-shipping-dhl' ); ?>
-        </p>
+		</p>
 		<?php
 
 		return ob_get_clean();
-    }
+	}
 
 	/**
-     * Renders the table that shows order shipments.
-     *
-     * @since [*next-version*]
-     *
-	 * @param array $shipments The shipments to show.
-     * @param int $wc_order_id The ID of the WooCommerce order where the meta box is shown.
-     *
+	 * Renders the table that shows order items.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param array $items The items to show.
+	 * @param int $dhl_order_id The DHL order ID to show.
+	 * @param int|null $current_wc_order The ID of the current WC order.
+	 *
 	 * @return string The rendered table.
 	 */
-	public function order_shipments_table( $shipments, $wc_order_id = null )
-    {
-        // Get the DHL order ID from meta
-        $dhl_order_id = get_post_meta( $wc_order_id, 'pr_dhl_dp_order', true);
-        $label_url = $this->generate_download_url( '/' . self::DHL_DOWNLOAD_AWB_LABEL_ENDPOINT . '/' . $dhl_order_id );
+	public function locked_order_items_table( $items, $dhl_order_id, $current_wc_order = null ) {
+		$table_rows = array();
+		foreach ( $items as $barcode => $wc_order ) {
+			$order_url = get_edit_post_link( $wc_order );
+			$order_text = sprintf( __( 'Order #%d', 'pr-shipping-dhl' ), $wc_order );
+			$order_text = ($wc_order === $current_wc_order)
+				? sprintf('<b>%s</b>', $order_text)
+				: $order_text;
+			$order_link = sprintf('<a href="%s" target="_blank">%s</a>', $order_url, $order_text);
 
-	    $table_rows = array();
-	    foreach ( $shipments as $idx => $shipment ) {
-		    $table_rows[] = sprintf(
-			    '<tr> <td class="pr_dhl_shipment_awb">%s</td> <td>%s</td> </tr>',
-			    $this->get_awb_tracking_link($shipment->awb),
-                count($shipment->items)
-		    );
-	    }
+			$table_rows[] = sprintf('<tr><td>%s</td><td>%s</td></tr>', $order_link, $barcode);
+		}
 
-        ob_start();
-	    ?>
-        <table class="widefat striped" id="pr_dhl_order_shipments_table">
-            <thead>
-            <tr>
-                <th><?php _e( 'Shipment AWB', 'pr-shipping-dhl' ) ?></th>
-                <th><?php _e( 'Items', 'pr-shipping-dhl' ) ?></th>
-            </tr>
-            </thead>
-            <tbody>
-		    <?php echo implode( '', $table_rows ) ?>
-            </tbody>
-        </table>
-        <p>
-            <a id="pr_dhl_dp_download_awb_label" href="<?php echo $label_url ?>" class="button button-primary" target="_blank">
-                <?php _e( 'Download Labels', 'pr-shipping-dhl' ); ?>
-            </a>
-        </p>
-	    <?php
+		$label_url = $this->generate_download_url( '/' . self::DHL_DOWNLOAD_AWB_LABEL_ENDPOINT . '/' . $dhl_order_id );
 
-        return ob_get_clean();
-    }
+		ob_start();
+
+		?>
+		<p>
+			<strong><?php _e('DHL Order ID:', 'pr-shipping-dhl'); ?></strong>
+			<?php echo $dhl_order_id ?>
+		</p>
+		<table class="widefat striped" id="pr_dhl_order_items_table">
+			<thead>
+			<tr>
+				<th><?php _e( 'Item', 'pr-shipping-dhl' ) ?></th>
+				<th><?php _e( 'Barcode', 'pr-shipping-dhl' ) ?></th>
+			</tr>
+			</thead>
+			<tbody>
+			<?php echo implode( '', $table_rows ) ?>
+			</tbody>
+		</table>
+		<p>
+			<a id="pr_dhl_dp_download_awb_label" href="<?php echo $label_url ?>" class="button button-primary" target="_blank">
+				<?php _e( 'Download Labels', 'pr-shipping-dhl' ); ?>
+			</a>
+		</p>
+
+		<?php
+
+		return ob_get_clean();
+	}
 
 	/**
      * Ajax handler that responds with the order items table.
