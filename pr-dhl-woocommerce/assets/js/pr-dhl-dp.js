@@ -130,7 +130,7 @@
 				if (response.tracking) {
 					wc_dhl_dp_order_items.add_wc_order_note(response.tracking.note, response.tracking.type);
 
-					$('.postbox#woocommerce-shipment-dhl-label span#dhl_delete_label').remove();
+					$('a#dhl_delete_label').parent().remove();
 				}
 			} );
 		},
