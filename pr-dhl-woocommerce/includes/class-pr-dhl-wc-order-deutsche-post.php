@@ -448,6 +448,10 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
         $dhl_obj = PR_DHL()->get_dhl_factory();
 		$api_client = $dhl_obj->api_client;
 
+		// Get the tracking note type - if a customer note or a private note
+		$tracking_note_type = $this->get_tracking_note_type();
+		$tracking_note_type = empty( $tracking_note_type ) ? 0 : 1;
+
 		try {
 			// Create the DHL order
 			$response = $api_client->create_order();
@@ -459,18 +463,27 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			// Go through the shipments retrieved from the API and save the AWB of the shipment to
             // each DHL item's associated WooCommerce order in post meta. This will make sure that each
             // WooCommerce order has a reference to the its DHL shipment AWB.
-            // At the same time, we will be collecting the AWBs to merge the label PDFs later on.
+            // At the same time, we will be collecting the AWBs to merge the label PDFs later on, as well
+            // as adding order notes for the AWB to each WC order.
             $awbs = array();
 			foreach ($response->shipments as $shipment) {
 			    foreach ($shipment->items as $item) {
 			        if ( ! isset( $order_items[ $item->barcode ] ) ) {
 			            continue;
                     }
-			        // Get the WC order ID for this DHL item
-			        $item_wc_order = $order_items[ $item->barcode ];
-			        // Save the AWB to the WC order
-			        update_post_meta( $item_wc_order, 'pr_dhl_dp_awb', $shipment->awb );
 
+			        // Get the WC order for this DHL item
+			        $item_wc_order_id = $order_items[ $item->barcode ];
+			        $item_wc_order = wc_get_order( $item_wc_order_id );
+
+			        // Save the AWB to the WC order
+			        update_post_meta( $item_wc_order_id, 'pr_dhl_dp_awb', $shipment->awb );
+
+                    // An an order note for the AWB
+                    $item_awb_note = __('Shipment AWB: ', 'pr-shipping-dhl') . $shipment->awb;
+				    $item_wc_order->add_order_note( $item_awb_note, $tracking_note_type, true );
+
+				    // Save the AWB in the list.
 			        $awbs[] = $shipment->awb;
                 }
             }
@@ -543,6 +556,8 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 				'download_msg' => __('Your DHL label is ready to download, click the "Download Label" button above"', 'pr-shipping-dhl'),
 				'button_txt' => __( 'Download Label', 'pr-shipping-dhl' ),
 				'label_url' => $label_url,
+				'tracking_note'	  => $this->get_tracking_note( $order_id ),
+				'tracking_note_type' => $this->get_tracking_note_type()
 			) );
 
 			do_action( 'pr_shipping_dhl_label_created', $order_id );
