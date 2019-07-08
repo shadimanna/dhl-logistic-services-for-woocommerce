@@ -32,11 +32,10 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	public function init_hooks() {
 		parent::init_hooks();
 
-		// add 'Label Created' orders page column header
-//		add_filter( 'manage_edit-shop_order_columns', array( $this, 'add_order_label_column_header' ), 30 );
-
-		// add 'Label Created' orders page column content
-//		add_action( 'manage_shop_order_posts_custom_column', array( $this, 'add_order_label_column_content' ) );
+		// add 'Status' orders page column header
+		add_filter( 'manage_edit-shop_order_columns', array( $this, 'add_order_status_column_header' ), 30 );
+		// add 'Status Created' orders page column content
+		add_action( 'manage_shop_order_posts_custom_column', array( $this, 'add_order_status_column_content' ) );
 
 		// print DHL handover document
 //		add_action( 'admin_init', array( $this, 'print_document_action' ), 1 );
@@ -845,7 +844,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	*
 	*/
 
-	public function add_order_label_column_header( $columns ) {
+	public function add_order_status_column_header( $columns ) {
 
 		$new_columns = array();
 
@@ -853,44 +852,54 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			$new_columns[ $column_name ] = $column_info;
 
 			if ( 'order_total' === $column_name ) {
-				$new_columns['dhl_label_created'] = __( 'DHL Label Created', 'pr-shipping-dhl' );
+				$new_columns['dhl_dp_status'] = __( 'DHL Order Status', 'pr-shipping-dhl' );
 				$new_columns['dhl_tracking_number'] = __( 'DHL Tracking Number', 'pr-shipping-dhl' );
-				$new_columns['dhl_handover_note'] = __( 'DHL Handover Created', 'pr-shipping-dhl' );
 			}
 		}
 
 		return $new_columns;
 	}
 
-	public function add_order_label_column_content( $column ) {
+	public function add_order_status_column_content( $column ) {
 		global $post;
 
 		$order_id = $post->ID;
 
-		if ( $order_id ) {
-			if ( 'dhl_label_created' === $column ) {
-				echo $this->get_print_status( $order_id );
-			}
-
-			if ( 'dhl_tracking_number' === $column ) {
-				$tracking_link = $this->get_tracking_link( $order_id );
-				echo empty( $tracking_link ) ? '<strong>&ndash;</strong>' : $tracking_link;
-			}
-
-			if ( 'dhl_handover_note' === $column ) {
-				echo $this->get_hangover_status( $order_id );
-			}
+		if ( !$order_id ) {
+			return;
 		}
+
+        if ( 'dhl_dp_status' === $column ) {
+	        echo $this->get_order_status( $order_id );
+        }
+
+        if ( 'dhl_tracking_number' === $column ) {
+            $tracking_link = $this->get_tracking_link( $order_id );
+            echo empty( $tracking_link ) ? '<strong>&ndash;</strong>' : $tracking_link;
+        }
 	}
 
-	private function get_print_status( $order_id ) {
-		$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
+	private function get_order_status( $order_id ) {
+	    $barcode = get_post_meta( $order_id, 'pr_dhl_dp_item_barcode', true );
+	    $awb = get_post_meta( $order_id, 'pr_dhl_dp_awb', true );
 
-		if ( empty( $label_tracking_info ) ) {
-			return '<strong>&ndash;</strong>';
-		} else {
-			return '&#10004';
-		}
+	    if ( !empty( $awb ) ) {
+	        return sprintf( __( 'Added to shipment %s', 'pr-shipping-dhl' ), $awb );
+        }
+
+	    $api_client = PR_DHL()->get_dhl_factory()->api_client;
+		$order = $api_client->get_order();
+		$order_items = $order['items'];
+
+	    if ( in_array( $order_id, $order_items ) ) {
+		    return __('Added to order', 'pr-shipping-dhl');
+	    }
+
+	    if ( ! empty( $barcode ) ) {
+	        return __( 'DHL item created', 'pr-shipping-dhl' );
+        }
+
+	    return '';
 	}
 
 	private function get_hangover_status( $order_id ) {
