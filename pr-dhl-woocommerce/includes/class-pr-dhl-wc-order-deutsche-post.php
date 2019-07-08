@@ -201,9 +201,17 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 * @throws Exception If an error occurred while creating the DHL object from the factory.
 	 */
 	public function dhl_order_meta_box_table( $wc_order_id = null ) {
+	    // If no WC order ID is given
 		if ( $wc_order_id === null ) {
-			global $post;
-			$wc_order_id = $post->ID;
+		    // Try to get it from the request if doing an AJAX response
+            if ( defined('DOING_AJAX') && DOING_AJAX ) {
+                $wc_order_id = filter_input( INPUT_POST, 'order_id', FILTER_VALIDATE_INT );
+            }
+            // Otherwise get the current post ID
+            else {
+                global $post;
+                $wc_order_id = $post->ID;
+            }
 		}
 
 		$nonce = wp_create_nonce( 'pr_dhl_order_ajax' );
@@ -257,7 +265,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			foreach ( $items as $barcode => $wc_order ) {
 				$order_url = get_edit_post_link( $wc_order );
 				$order_text = sprintf( __( 'Order #%d', 'pr-shipping-dhl' ), $wc_order );
-				$order_text = ($wc_order === $current_wc_order)
+				$order_text = ( (int) $wc_order === (int) $current_wc_order )
 					? sprintf('<b>%s</b>', $order_text)
 					: $order_text;
 				$order_link = sprintf('<a href="%s" target="_blank">%s</a>', $order_url, $order_text);
@@ -323,7 +331,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		foreach ( $items as $barcode => $wc_order ) {
 			$order_url = get_edit_post_link( $wc_order );
 			$order_text = sprintf( __( 'Order #%d', 'pr-shipping-dhl' ), $wc_order );
-			$order_text = ($wc_order === $current_wc_order)
+			$order_text = ( (int) $wc_order === (int) $current_wc_order )
 				? sprintf('<b>%s</b>', $order_text)
 				: $order_text;
 			$order_link = sprintf('<a href="%s" target="_blank">%s</a>', $order_url, $order_text);
