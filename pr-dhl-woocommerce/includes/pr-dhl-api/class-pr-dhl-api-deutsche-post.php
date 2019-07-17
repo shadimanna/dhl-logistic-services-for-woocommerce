@@ -526,4 +526,65 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 */
 	public function dhl_validate_field( $key, $value ) {
 	}
+
+	/**
+	 * Finalizes and creates the current Deutsche Post order.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return string The ID of the created DHL order.
+	 *
+	 * @throws Exception If an error occurred while and the API failed to create the order.
+	 */
+	public function create_order()
+	{
+		// Create the DHL order
+		$response = $this->api_client->create_order();
+
+		$this->get_settings();
+
+		// Get the current DHL order - the one that was just submitted
+		$order = $this->api_client->get_order($response->orderId);
+		$order_items = $order['items'];
+
+		// Get the tracking note type setting
+		$tracking_note_type = $this->get_setting('dhl_tracking_note', 'customer');
+		$tracking_note_type = ($tracking_note_type == 'yes') ? '' : 'customer';
+
+		// Go through the shipments retrieved from the API and save the AWB of the shipment to
+		// each DHL item's associated WooCommerce order in post meta. This will make sure that each
+		// WooCommerce order has a reference to the its DHL shipment AWB.
+		// At the same time, we will be collecting the AWBs to merge the label PDFs later on, as well
+		// as adding order notes for the AWB to each WC order.
+		$awbs = array();
+		foreach ($response->shipments as $shipment) {
+			foreach ($shipment->items as $item) {
+				if ( ! isset( $order_items[ $item->barcode ] ) ) {
+					continue;
+				}
+
+				// Get the WC order for this DHL item
+				$item_wc_order_id = $order_items[ $item->barcode ];
+				$item_wc_order = wc_get_order( $item_wc_order_id );
+
+				// Save the AWB to the WC order
+				update_post_meta( $item_wc_order_id, 'pr_dhl_dp_awb', $shipment->awb );
+
+				// An an order note for the AWB
+				$item_awb_note = __('Shipment AWB: ', 'pr-shipping-dhl') . $shipment->awb;
+				$item_wc_order->add_order_note( $item_awb_note, $tracking_note_type, true );
+
+				// Save the AWB in the list.
+				$awbs[] = $shipment->awb;
+
+				// Save the DHL order ID in the WC order meta
+				update_post_meta( $item_wc_order_id, 'pr_dhl_dp_order', $response->orderId );
+			}
+		}
+
+		// Generate the merged AWB label file
+		$this->create_merged_awb_label( $awbs, $response->orderId );
+
+		return $response->orderId;
+	}
 }
