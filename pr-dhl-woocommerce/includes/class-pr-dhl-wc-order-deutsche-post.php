@@ -882,55 +882,28 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	}
 
 	public function get_bulk_actions() {
-
-		$shop_manager_actions = array();
-	/*
-		$shop_manager_actions = array(
-			'pr_dhl_create_labels' => __( 'DHL Create Labels', 'pr-shipping-dhl' ),
+		return array(
+			'pr_dhl_create_labels' => __( 'Create DHL items', 'pr-shipping-dhl' ),
+			'pr_dhl_create_orders' => __( 'Create DHL order', 'pr-shipping-dhl' ),
 		);
-
-		if ( isset( $this->shipping_dhl_settings['dhl_bulk_product_int'] ) && ( $bulk_product_int = $this->shipping_dhl_settings['dhl_bulk_product_int'] ) ) {
-			// error_log(print_r($bulk_product_int,true));
-			foreach ( $bulk_product_int as $key => $value ) {
-				$shop_manager_actions += array(
-					"pr_dhl_create_labels:int:$value" => __( "DHL Create Labels - $value", 'pr-shipping-dhl' ),
-				);
-			}
-		}
-
-		if ( isset( $this->shipping_dhl_settings['dhl_bulk_product_dom'] ) && ( $bulk_product_dom = $this->shipping_dhl_settings['dhl_bulk_product_dom'] ) ) {
-			// error_log(print_r($bulk_product_dom,true));
-			foreach ( $bulk_product_dom as $key => $value ) {
-				$shop_manager_actions += array(
-					"pr_dhl_create_labels:dom:$value" => __( "DHL Create Labels - $value", 'pr-shipping-dhl' ),
-				);
-			}
-		}
-
-		$shop_manager_actions += array(
-			'pr_dhl_handover' => __( 'DHL Print Handover', 'pr-shipping-dhl' ),
-		);
-	*/
-		return $shop_manager_actions;
-
 	}
 
 	public function validate_bulk_actions( $action, $order_ids ) {
-		$message = '';
-		if ( 'pr_dhl_handover' === $action ) {
-			// Ensure the selected orders have a label created, otherwise don't create handover
+		if ( 'pr_dhl_create_orders' === $action ) {
+			// Ensure the selected orders have a label created, otherwise don't add them to the order
 			foreach ( $order_ids as $order_id ) {
-				$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
-				if ( empty( $label_tracking_info ) ) {
-					$message = __(
-						'One or more orders do not have a DHL label created, please ensure all DHL labels are created for each order before creating a handoff document.',
+				$item_barcode = get_post_meta( $order_id, 'pr_dhl_dp_item_barcode', true );
+				// If item has no barcode, return the error message
+				if ( empty( $item_barcode ) ) {
+					return __(
+						'One or more orders do not have a DHL item label created. Please ensure all DHL labels are created before adding them to the order.',
 						'pr-shipping-dhl'
 					);
 				}
 			}
 		}
 
-		return $message;
+		return '';
 	}
 
 	public function process_bulk_actions(
@@ -966,45 +939,54 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			$is_force_product_dom
 		);
 
-		if ( 'pr_dhl_handover' === $action ) {
-			$redirect_url = admin_url( 'edit.php?post_type=shop_order' );
-			$order_ids_hash = md5( json_encode( $order_ids ) );
-			// Save the order IDs in a option.
-			// Initially we were using a transient, but this seemed to cause issues
-			// on some hosts (mainly GoDaddy) that had difficulty in implementing a
-			// proper object cache override.
-			update_option( "pr_dhl_handover_order_ids_{$order_ids_hash}", $order_ids );
+		if ( 'pr_dhl_create_orders' === $action ) {
+			$instance = PR_DHL()->get_dhl_factory();
+			$client = $instance->api_client;
 
-			$action_url = wp_nonce_url(
-				add_query_arg(
+			foreach ($order_ids as $order_id) {
+				// Get the DHL item barcode for this WC order
+				$item_barcode = get_post_meta( $order_id, 'pr_dhl_dp_item_barcode', true );
+				// Add the DHL item barcode to the current DHL order
+				$client->add_item_to_order($item_barcode, $order_id);
+			}
+
+			try {
+				$order = $instance->api_client->get_order();
+				$items_count = count( $order['items'] );
+
+				// Create the order
+				$dhl_order_id = $instance->create_order();
+				// Get the URL to download the order label file
+				$label_url = $this->generate_download_url( '/' . self::DHL_DOWNLOAD_AWB_LABEL_ENDPOINT . '/' . $dhl_order_id );
+
+				$print_link = sprintf(
+					'<a href="%1$s" target="_blank">%2$s</a>',
+					$label_url,
+					__('Print order label', 'pr-shipping-dhl')
+				);
+
+				$message = sprintf(
+					__( 'Created DHL order for %1$s items. %2$s', 'pr-shipping-dhl' ),
+					$items_count,
+					$print_link
+				);
+
+				array_push(
+					$array_messages,
 					array(
-						'pr_dhl_action' => 'print',
-						'order_id'      => $order_ids[0],
-						'order_ids'     => $order_ids_hash,
-					),
-					'' !== $redirect_url ? $redirect_url : admin_url()
-				),
-				'pr_dhl_handover'
-			);
-
-			$print_link = '<a href="' . $action_url . '" target="_blank">' . __(
-					'Print DHL handover.',
-					'pr-shipping-dhl'
-				) . '</a>';
-
-			$message = sprintf(
-				__( 'DHL handover for %1$s order(s) created. %2$s', 'pr-shipping-dhl' ),
-				$orders_count,
-				$print_link
-			);
-
-			array_push(
-				$array_messages,
-				array(
-					'message' => $message,
-					'type'    => 'success',
-				)
-			);
+						'message' => $message,
+						'type'    => 'success',
+					)
+				);
+			} catch (Exception $exception) {
+				array_push(
+					$array_messages,
+					array(
+						'message' => $exception->getMessage(),
+						'type'    => 'error',
+					)
+				);
+			}
 		}
 
 		return $array_messages;
@@ -1255,14 +1237,13 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			? $wp_query->query_vars[ self::DHL_DOWNLOAD_AWB_LABEL_ENDPOINT ]
 			: null;
 
-		// If the endpoint param (aka hte DHL order ID) is not in the query, we bail
+		// If the endpoint param (aka the DHL order ID) is not in the query, we bail
 		if ( $dhl_order_id === null ) {
 			return;
 		}
 
 		$dhl_obj = PR_DHL()->get_dhl_factory();
-		$label_info = $dhl_obj->get_merged_awb_label_info( $dhl_order_id );
-		$label_path = $label_info['path'];
+		$label_path = $dhl_obj->get_dhl_order_label_file_info( $dhl_order_id )->path;
 
 		$array_messages = get_option( '_pr_dhl_bulk_action_confirmation' );
 		if ( empty( $array_messages ) || !is_array( $array_messages ) ) {
