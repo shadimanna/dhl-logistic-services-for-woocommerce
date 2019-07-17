@@ -403,7 +403,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 *
 	 * @param string $awb The AWB.
 	 *
-	 * @return string The path to the label file.
+	 * @return array An array containing the "path" and "url" to the label file.
 	 *
 	 * @throws Exception
 	 */
@@ -417,7 +417,12 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 			$this->save_awb_label_file( $awb, $label_data );
 		}
 
-		return $label_path;
+		$filename = basename( $label_path );
+
+		return array(
+			'path' => PR_DHL()->get_dhl_label_folder_dir() . $filename,
+			'url' => PR_DHL()->get_dhl_label_folder_url() . $filename,
+		);
 	}
 
 	/**
@@ -464,21 +469,26 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 			throw new Exception(__('No AWBs given', 'pr-shipping-dhl'));
 		}
 
+		// Don't merge if there is only 1 AWB. Just return the info for the single AWB label file
+		if (count($awbs) === 1) {
+			return $this->maybe_create_awb_label_file( $awbs[0] );
+		}
+
 		$pdfMerger = new PDFMerger();
 
 		foreach ( $awbs as $awb ) {
 			$file = $this->maybe_create_awb_label_file( $awb );
 
-			if ( ! file_exists( $file ) ) {
+			if ( ! file_exists( $file['path'] ) ) {
 				continue;
 			}
 
-			$ext = pathinfo($file, PATHINFO_EXTENSION);
+			$ext = pathinfo($file['path'], PATHINFO_EXTENSION);
 			if ( stripos($ext, 'pdf') === false) {
 				throw new Exception( __('Not all the file formats are the same.', 'pr-shipping-dhl') );
 			}
 
-			$pdfMerger->addPDF( $file, 'all' );
+			$pdfMerger->addPDF( $file['path'], 'all' );
 		}
 
 		$label_info = $this->get_merged_awb_label_info( $dhl_order_id );
