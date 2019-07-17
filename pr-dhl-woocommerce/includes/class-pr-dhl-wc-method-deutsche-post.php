@@ -211,17 +211,6 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
                 'options'     => $select_dhl_product_int,
                 'class'       => 'wc-enhanced-select',
             ),
-            'dhl_default_product_dom' => array(
-                'title'       => __( 'Domestic Default Service', 'pr-shipping-dhl' ),
-                'type'        => 'select',
-                'description' => __(
-                    'Please select your default DHL eCommerce shipping service for domestic shippments that you want to offer to your customers (you can always change this within each individual order afterwards)',
-                    'pr-shipping-dhl'
-                ),
-                'desc_tip'    => true,
-                'options'     => $select_dhl_product_dom,
-                'class'       => 'wc-enhanced-select',
-            ),
             'dhl_add_weight_type'   => array(
                 'title'       => __( 'Additional Weight Type', 'pr-shipping-dhl' ),
                 'type'        => 'select',
