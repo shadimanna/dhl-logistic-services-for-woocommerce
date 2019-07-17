@@ -314,10 +314,10 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 		// Get the label for the created item
 		$label_pdf_data = $this->api_client->get_item_label( $item_barcode );
 		// Save the label to a file
-		$this->save_dhl_label_file( $item_barcode, $label_pdf_data );
+		$this->save_dhl_label_file( 'item', $item_barcode, $label_pdf_data );
 
 		return array(
-			'label_path' => $this->get_dhl_label_path( $item_barcode ),
+			'label_path' => $this->get_dhl_item_label_file_info( $item_barcode )->path,
 			'item_barcode' => $item_barcode,
 			'tracking_number' => $item_barcode,
 			'tracking_status' => '',
@@ -346,17 +346,127 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	}
 
 	/**
-	 * Retrieves the path to an item label file.
+	 * Retrieves the filename for DHL item label files.
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @param string $barcode The item barcode.
-	 * @param string $format The label file format.
+	 * @param string $barcode The DHL item barcode.
+	 * @param string $format The file format.
 	 *
 	 * @return string
 	 */
-	public function get_dhl_label_path( $barcode, $format = 'pdf' ) {
-		return PR_DHL()->get_dhl_label_folder_dir() . 'dhl-label-' . $barcode . '.' . $format;
+	public function get_dhl_item_label_file_name( $barcode, $format = 'pdf' ) {
+		return sprintf('dhl-label-%s.%s', $barcode, $format);
+	}
+
+	/**
+	 * Retrieves the filename for DHL AWB label files.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $awb The AWB.
+	 * @param string $format The file format.
+	 *
+	 * @return string
+	 */
+	public function get_dhl_awb_label_file_name( $awb, $format = 'pdf' ) {
+		return sprintf('dhl-label-awb-%s.%s', $awb, $format);
+	}
+
+	/**
+	 * Retrieves the filename for DHL order label files (a.k.a. merged AWB label files).
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $order_id The DHL order ID.
+	 * @param string $format The file format.
+	 *
+	 * @return string
+	 */
+	public function get_dhl_order_label_file_name( $order_id, $format = 'pdf' ) {
+		return sprintf('dhl-label-order-%s.%s', $order_id, $format);
+	}
+
+	/**
+	 * Retrieves the file info for a DHL item label file.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $barcode The DHL item barcode.
+	 * @param string $format The file format.
+	 *
+	 * @return object An object containing the file "path" and "url" strings.
+	 */
+	public function get_dhl_item_label_file_info( $barcode, $format = 'pdf' ) {
+		$file_name = $this->get_dhl_item_label_file_name($barcode, $format);
+
+		return (object) array(
+			'path' => PR_DHL()->get_dhl_label_folder_dir() . $file_name,
+			'url' => PR_DHL()->get_dhl_label_folder_url() . $file_name,
+		);
+	}
+
+	/**
+	 * Retrieves the file info for DHL AWB label files.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $awb The AWB.
+	 * @param string $format The file format.
+	 *
+	 * @return object An object containing the file "path" and "url" strings.
+	 */
+	public function get_dhl_awb_label_file_info( $awb, $format = 'pdf' ) {
+		$file_name = $this->get_dhl_awb_label_file_name($awb, $format);
+
+		return (object) array(
+			'path' => PR_DHL()->get_dhl_label_folder_dir() . $file_name,
+			'url' => PR_DHL()->get_dhl_label_folder_url() . $file_name,
+		);
+	}
+
+	/**
+	 * Retrieves the file info for DHL order label files (a.k.a. merged AWB label files).
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $order_id The DHL order ID.
+	 * @param string $format The file format.
+	 *
+	 * @return object An object containing the file "path" and "url" strings.
+	 */
+	public function get_dhl_order_label_file_info( $order_id, $format = 'pdf') {
+		$file_name = $this->get_dhl_order_label_file_name( $order_id, $format);
+
+		return (object) array(
+			'path' => PR_DHL()->get_dhl_label_folder_dir() . $file_name,
+			'url' => PR_DHL()->get_dhl_label_folder_url() . $file_name,
+		);
+	}
+
+	/**
+	 * Retrieves the file info for any DHL label file, based on type.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $type The label type: "item", "awb" or "order".
+	 * @param string $key The key: barcode for type "item", AWB for type "awb" and order ID for type "order".
+	 *
+	 * @return object An object containing the file "path" and "url" strings.
+	 */
+	public function get_dhl_label_file_info( $type, $key ) {
+		// Return file info for "awb" type
+		if ( $type === 'awb') {
+			return $this->get_dhl_awb_label_file_info( $key );
+		}
+
+		// Return file info for "order" type
+		if ( $type === 'order' ) {
+			return $this->get_dhl_order_label_file_info( $key );
+		}
+
+		// Return info for "item" type
+		return $this->get_dhl_item_label_file_info( $key );
 	}
 
 	/**
@@ -364,36 +474,58 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @param string $barcode The item barcode.
-	 * @param string $label_data The label file data.
+	 * @param string $type The label type: "item", "awb" or "order".
+	 * @param string $key The key: barcode for type "item", AWB for type "awb" and order ID for type "order".
+	 * @param string $data The label file data.
+	 *
+	 * @return object The info for the saved label file, containing the "path" and "url".
 	 *
 	 * @throws Exception If failed to save the label file.
 	 */
-	public function save_dhl_label_file( $barcode, $label_data ) {
-		$label_path = $this->get_dhl_label_path( $barcode );
+	public function save_dhl_label_file( $type, $key, $data ) {
+		// Get the file info based on type
+		$file_info = $this->get_dhl_label_file_info( $type, $key );
 
-		if ( validate_file( $label_path ) > 0 ) {
+		if ( validate_file( $file_info->path ) > 0 ) {
 			throw new Exception( __( 'Invalid file path!', 'pr-shipping-dhl' ) );
 		}
 
-		$file_ret = file_put_contents( $label_path, $label_data );
+		$file_ret = file_put_contents( $file_info->path, $data );
 
 		if ( empty( $file_ret ) ) {
-			throw new Exception( __( 'DHL Item Label file cannot be saved!', 'pr-shipping-dhl' ) );
+			throw new Exception( __( 'DHL label file cannot be saved!', 'pr-shipping-dhl' ) );
 		}
+
+		return $file_info;
 	}
 
 	/**
-	 * Retrieves the path to an AWB label file.
+	 * Deletes an AWB label file.
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @param string $awb The AWB.
+	 * @param string $type The label type: "item", "awb" or "order".
+	 * @param string $key The key: barcode for type "item", AWB for type "awb" and order ID for type "order".
 	 *
-	 * @return string
+	 * @throws Exception If the file could not be deleted.
 	 */
-	public function get_awb_label_file_path( $awb ) {
-		return $this->get_dhl_label_path( 'awb-' . $awb );
+	public function delete_dhl_label_file( $type, $key )
+	{
+		// Get the file info based on type
+		$file_info = $this->get_dhl_label_file_info( $type, $key );
+
+		// Do nothing if file does not exist
+		if ( ! file_exists( $file_info->path ) ) {
+			return;
+		}
+
+		// Attempt to delete the file
+		$res = unlink( $file_info->path );
+
+		// Throw error if the file could not be deleted
+		if (!$res) {
+			throw new Exception(__('DHL AWB Label could not be deleted!', 'pr-shipping-dhl'));
+		}
 	}
 
 	/**
@@ -403,120 +535,78 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 *
 	 * @param string $awb The AWB.
 	 *
-	 * @return array An array containing the "path" and "url" to the label file.
+	 * @return object An object containing the "path" and "url" to the label file.
 	 *
 	 * @throws Exception
 	 */
-	public function maybe_create_awb_label_file( $awb )
+	public function create_dhl_awb_label_file( $awb )
 	{
-		$label_path = $this->get_awb_label_file_path( $awb );
+		$file_info = $this->get_dhl_awb_label_file_info( $awb );
 
-		// Create the file if it does not exist
-		if ( ! file_exists( $label_path ) ) {
-			$label_data = $this->api_client->get_awb_label( $awb );
-			$this->save_awb_label_file( $awb, $label_data );
+		// Skip creating the file if it already exists
+		if ( file_exists( $file_info->path ) ) {
+			return $file_info;
 		}
 
-		$filename = basename( $label_path );
+		// Get the label data from the API client
+		$label_data = $this->api_client->get_awb_label( $awb );
+		// Save the label file
+		$this->save_dhl_label_file( 'awb', $awb, $label_data );
 
-		return array(
-			'path' => PR_DHL()->get_dhl_label_folder_dir() . $filename,
-			'url' => PR_DHL()->get_dhl_label_folder_url() . $filename,
-		);
+		return $file_info;
 	}
 
 	/**
-	 * Saves an AWB label file.
+	 * Checks if an order label file already exist, and if not fetches it from the API and saves it.
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @param string $awb The AWB.
-	 * @param string $label_data The label data.
+	 * @param string $order_id The DHL order ID.
 	 *
-	 * @return string The path to the label file.
+	 * @return object An object containing the "path" and "url" to the label file.
 	 *
 	 * @throws Exception
 	 */
-	public function save_awb_label_file( $awb, $label_data )
+	public function create_dhl_order_label_file( $order_id )
 	{
-		$label_path = $this->get_awb_label_file_path( $awb );
+		$file_info = $this->get_dhl_order_label_file_info( $order_id );
 
-		if ( validate_file( $label_path ) > 0 ) {
-			throw new Exception( __( 'Invalid file path!', 'pr-shipping-dhl' ) );
+		// Skip creating the file if it already exists
+		if ( file_exists( $file_info->path ) ) {
+			return $file_info;
 		}
 
-		$file_ret = file_put_contents( $label_path, $label_data );
-
-		if ( empty( $file_ret ) ) {
-			throw new Exception( __( 'DHL AWB Label file cannot be saved!', 'pr-shipping-dhl' ) );
+		// Get the order with the given ID
+		$order = $this->api_client->get_order( $order_id );
+		if ($order === null) {
+			throw new Exception("DHL order {$order_id} does not exist.");
 		}
 
-		return $label_path;
-	}
-
-	public function get_merged_awb_label_info( $dhl_order_id )
-	{
-		$filename = 'dhl-label-merged-awbs-' . $dhl_order_id . '.pdf';
-
-		return array(
-			'path' => PR_DHL()->get_dhl_label_folder_dir() . $filename,
-			'url' => PR_DHL()->get_dhl_label_folder_url() . $filename,
-		);
-	}
-
-	public function create_merged_awb_label( $awbs, $dhl_order_id ) {
-		if ( empty ($awbs) ) {
-			throw new Exception(__('No AWBs given', 'pr-shipping-dhl'));
-		}
-
-		// Don't merge if there is only 1 AWB. Just return the info for the single AWB label file
-		if (count($awbs) === 1) {
-			return $this->maybe_create_awb_label_file( $awbs[0] );
-		}
-
+		// For multiple shipments, maybe create each label file and then merge them
 		$pdfMerger = new PDFMerger();
+		foreach ( $order['shipments'] as $shipment ) {
+			// Create the single AWB label file
+			$awb_label_info = $this->create_dhl_awb_label_file( $shipment->awb );
 
-		foreach ( $awbs as $awb ) {
-			$file = $this->maybe_create_awb_label_file( $awb );
-
-			if ( ! file_exists( $file['path'] ) ) {
+			// Ensure file exists
+			if ( ! file_exists( $awb_label_info->path ) ) {
 				continue;
 			}
 
-			$ext = pathinfo($file['path'], PATHINFO_EXTENSION);
+			// Ensure it is a PDF file
+			$ext = pathinfo($awb_label_info->path, PATHINFO_EXTENSION);
 			if ( stripos($ext, 'pdf') === false) {
 				throw new Exception( __('Not all the file formats are the same.', 'pr-shipping-dhl') );
 			}
 
-			$pdfMerger->addPDF( $file['path'], 'all' );
+			// Add to merge queue
+			$pdfMerger->addPDF( $awb_label_info->path, 'all' );
 		}
 
-		$label_info = $this->get_merged_awb_label_info( $dhl_order_id );
-		$pdfMerger->merge( 'file',  $label_info['path'] );
+		// Merge all files in the queue
+		$pdfMerger->merge( 'file',  $file_info->path );
 
-		return $label_info;
-	}
-
-	/**
-	 * Deletes an AWB label file.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param string $awb The AWB.
-	 *
-	 * @throws Exception
-	 */
-	public function delete_awb_label( $awb )
-	{
-		$label_path = $this->get_awb_label_file_path( $awb );
-
-		if (file_exists($label_path)) {
-			$res = unlink($label_path);
-
-			if (!$res) {
-				throw new Exception(__('DHL AWB Label could not be deleted!', 'pr-shipping-dhl'));
-			}
-		}
+		return $file_info;
 	}
 
 	/**
@@ -583,7 +673,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 		}
 
 		// Generate the merged AWB label file
-		$this->create_merged_awb_label( $awbs, $response->orderId );
+		$this->create_dhl_order_label_file( $response->orderId );
 
 		return $response->orderId;
 	}
