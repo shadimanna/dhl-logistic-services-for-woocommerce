@@ -288,8 +288,11 @@ class Client extends API_Client {
 		$order = $this->get_order();
 		// Save the response info in the order
 		$order['id'] = $info->orderId;
-		$order['status'] = $info->orderStatus;
 		$order['shipments'] = $info->shipments;
+		// Save the order status if it's given
+		if ( ! empty( $info->orderStatus ) ) {
+			$order['status'] = $info->orderStatus;
+		}
 		// Save the order in a new option
 		update_option( 'pr_dhl_dp_order_' . $info->orderId, $order );
 		// Reset the current order
@@ -372,7 +375,7 @@ class Client extends API_Client {
 				'contentPieceHsCode' => trim( $content_info[ 'hs_code' ] )
 			);
 			// Only include HS code if it's not empty
-			if ( strlen( $content_info[ 'contentPieceHsCode' ] ) === 0 ) {
+			if ( empty( $content_info[ 'contentPieceHsCode' ] ) ) {
 				unset( $data[ 'contentPieceHsCode' ] );
 			}
 			$contents[] = $data;
