@@ -104,58 +104,8 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 * @param $dhl_obj
 	 */
 	public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
-		if( $this->is_crossborder_shipment( $order_id ) ) {
-
-			// Duties drop down
-			$duties_opt = $dhl_obj->get_dhl_duties();
-			woocommerce_wp_select( array(
-				'id'          		=> 'pr_dhl_duties',
-				'label'       		=> __( 'Incoterms:', 'pr-shipping-dhl' ),
-				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_duties'] ) ? $dhl_label_items['pr_dhl_duties'] : $this->shipping_dhl_settings['dhl_duties_default'],
-				'options'			=> $duties_opt,
-				'custom_attributes'	=> array( $is_disabled => $is_disabled )
-			) );
-
-			// Get saved package description, otherwise generate the text based on settings
-			if( ! empty( $dhl_label_items['pr_dhl_description'] ) ) {
-				$selected_dhl_desc = $dhl_label_items['pr_dhl_description'];
-			} else {
-				$selected_dhl_desc = $this->get_package_description( $order_id );
-			}
-
-			woocommerce_wp_textarea_input( array(
-				'id'          		=> 'pr_dhl_description',
-				'label'       		=> __( 'Package description for customs (50 characters max): ', 'pr-shipping-dhl' ),
-				'placeholder' 		=> '',
-				'description'		=> '',
-				'value'       		=> $selected_dhl_desc,
-				'custom_attributes'	=> array( $is_disabled => $is_disabled, 'maxlength' => '50' )
-			) );
-
-		} else {
-			woocommerce_wp_checkbox( array(
-				'id'          		=> 'pr_dhl_return_item_wanted',
-				'label'       		=> __( 'Allow return item: ', 'pr-shipping-dhl' ),
-				'placeholder' 		=> '',
-				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_return_item_wanted'] ) ? $dhl_label_items['pr_dhl_return_item_wanted'] : 'no',
-				'custom_attributes'	=> array( $is_disabled => $is_disabled )
-			) );
-		}
-
-		if( $this->is_cod_payment_method( $order_id ) ) {
-
-			woocommerce_wp_checkbox( array(
-				'id'          		=> 'pr_dhl_is_cod',
-				'label'       		=> __( 'COD Enabled:', 'pr-shipping-dhl' ),
-				'placeholder' 		=> '',
-				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_is_cod'] ) ? $dhl_label_items['pr_dhl_is_cod'] : 'yes',
-				'custom_attributes'	=> array( $is_disabled => $is_disabled )
-			) );
-		}
-	}
+	    
+    }
 
 	/**
 	 * The meta box for managing the current Deutsche Post order.

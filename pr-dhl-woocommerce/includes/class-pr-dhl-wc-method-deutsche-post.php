@@ -99,8 +99,6 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
 
             $dhl_obj = PR_DHL()->get_dhl_factory();
             $select_dhl_product_int = $dhl_obj->get_dhl_products_international();
-            $select_dhl_product_dom = $dhl_obj->get_dhl_products_domestic();
-            $select_dhl_duties = $dhl_obj->get_dhl_duties();
         } catch ( Exception $e ) {
             PR_DHL()->log_msg( __( 'DHL Products not displaying - ', 'pr-shipping-dhl' ) . $e->getMessage() );
         }
@@ -233,14 +231,6 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
                 'default'     => '',
                 'placeholder' => '',
                 'class'       => 'wc_input_decimal',
-            ),
-            'dhl_duties_default'    => array(
-                'title'       => __( 'Incoterms', 'pr-shipping-dhl' ),
-                'type'        => 'select',
-                'description' => __( 'Select default for duties.', 'pr-shipping-dhl' ),
-                'desc_tip'    => true,
-                'options'     => $select_dhl_duties,
-                'class'       => 'wc-enhanced-select',
             ),
             'dhl_tracking_note'     => array(
                 'title'       => __( 'Tracking Note', 'pr-shipping-dhl' ),
