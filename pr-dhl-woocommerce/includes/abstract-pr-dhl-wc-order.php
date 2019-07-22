@@ -1167,8 +1167,10 @@ abstract class PR_DHL_WC_Order {
 	 */
 	protected function download_label( $file_path ) {
 		if ( !empty( $file_path ) && is_string( $file_path ) && file_exists( $file_path ) ) {
-			// Flush any buffered output to prevent it from being included in the file's content
-			ob_clean();
+			// Check if buffer exists, then flush any buffered output to prevent it from being included in the file's content
+			if ( ob_get_contents() ) {
+				ob_clean();
+			}
 
 			$filename = basename( $file_path );
 
