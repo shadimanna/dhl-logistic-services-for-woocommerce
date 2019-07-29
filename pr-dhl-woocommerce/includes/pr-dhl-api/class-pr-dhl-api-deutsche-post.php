@@ -4,6 +4,7 @@ use PR\DHL\REST_API\Deutsche_Post\Auth;
 use PR\DHL\REST_API\Deutsche_Post\Client;
 use PR\DHL\REST_API\Deutsche_Post\Item_Info;
 use PR\DHL\REST_API\Drivers\JSON_API_Driver;
+use PR\DHL\REST_API\Drivers\Logging_Driver;
 use PR\DHL\REST_API\Drivers\WP_API_Driver;
 use PR\DHL\REST_API\Interfaces\API_Auth_Interface;
 use PR\DHL\REST_API\Interfaces\API_Driver_Interface;
@@ -111,8 +112,18 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 * @throws Exception If failed to create the API driver.
 	 */
 	protected function create_api_driver() {
-		// Use a standard WordPress-driven API driver, decorated using the JSON driver decorator class
-		return new JSON_API_Driver( new WP_API_Driver() );
+		// Use a standard WordPress-driven API driver to send requests using WordPress' functions
+		$driver = new WP_API_Driver();
+
+		// This will log requests given to the original driver and log responses returned from it
+		$driver = new Logging_Driver( PR_DHL(), $driver );
+
+		// This will prepare requests given to the previous driver for JSON content
+		// and parse responses returned from it as JSON.
+		$driver = new JSON_API_Driver( $driver );
+
+		//, decorated using the JSON driver decorator class
+		return $driver;
 	}
 
 	/**
