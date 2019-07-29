@@ -59,7 +59,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		add_action( 'manage_shop_order_posts_custom_column', array( $this, 'add_order_status_column_content' ) );
 
 		// Add the DHL order meta box
-		add_action( 'add_meta_boxes', array( $this, 'add_dhl_order_meta_box' ), 20 );
+		add_action( 'add_meta_boxes', array( $this, 'add_dhl_order_meta_box' ), 21 );
 
 		// AJAX handlers for the DHL order meta box
 		add_action( 'wp_ajax_wc_shipment_dhl_get_order_items', array( $this, 'ajax_get_order_items' ) );
@@ -108,7 +108,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			array( $this, 'dhl_order_meta_box' ),
 			'shop_order',
 			'side',
-			'low'
+			'high'
 		);
 	}
 
