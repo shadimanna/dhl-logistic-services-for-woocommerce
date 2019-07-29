@@ -102,6 +102,7 @@
 			var item_barcode = item_row.find('.pr_dhl_item_barcode').val();
 			var data = {
 				action:				'wc_shipment_dhl_remove_order_item',
+				order_id:			woocommerce_admin_meta_boxes.post_id,
 				item_barcode:		item_barcode,
 				pr_dhl_order_nonce:	$( '#pr_dhl_order_nonce' ).val()
 			};
