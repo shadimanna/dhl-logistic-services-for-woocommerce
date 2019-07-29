@@ -20,7 +20,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 *
 	 * @since [*next-version*]
 	 */
-	const API_URL_PRODUCTION = 'https://api-qa.deutschepost.com/';
+	const API_URL_PRODUCTION = 'https://api.deutschepost.com/';
 
 	/**
 	 * The URL to the sandbox API.
@@ -169,6 +169,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 */
 	public function get_api_url() {
 		$is_sandbox = $this->get_setting( 'dhl_sandbox' );
+		$is_sandbox = filter_var($is_sandbox, FILTER_VALIDATE_BOOLEAN);
 		$api_url = ( $is_sandbox ) ? static::API_URL_SANDBOX : static::API_URL_PRODUCTION;
 
 		return $api_url;
