@@ -25,6 +25,27 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	const DHL_DOWNLOAD_AWB_LABEL_ENDPOINT = 'dhl_download_awb_label';
 
 	/**
+	 * Status for WC orders that have an item label created.
+     *
+     * @since [*next-version*]
+	 */
+	const STATUS_HAS_ITEM = 'has_item';
+
+	/**
+	 * Status for WC orders that have been added to the current DHL order.
+     *
+     * @since [*next-version*]
+	 */
+	const STATUS_IN_ORDER = 'in_order';
+
+	/**
+	 * Status for WC orders that have been submitted in an order and are part of a shipment.
+	 *
+	 * @since [*next-version*]
+	 */
+	const STATUS_IN_SHIPMENT = 'in_shipment';
+
+	/**
 	 * Sets up the WordPress and WooCommerce hooks.
 	 *
 	 * @since [*next-version*]
@@ -604,7 +625,8 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		}
 
 		if ( 'dhl_dp_status' === $column ) {
-			echo $this->get_order_status( $order_id );
+			$status = $this->get_order_status( $order_id );
+			echo $this->get_order_status_text( $order_id, $status );
 		}
 
 		if ( 'dhl_tracking_number' === $column ) {
@@ -613,12 +635,23 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		}
 	}
 
+	/**
+	 * Retrieves an WC order's status.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param int|string $order_id The ID of the WC order.
+	 *
+	 * @return string The status string. See the `STATUS_*` constants in this class.
+	 *
+	 * @throws Exception If failed to get the DHL object from the factory.
+	 */
 	private function get_order_status( $order_id ) {
 		$barcode = get_post_meta( $order_id, 'pr_dhl_dp_item_barcode', true );
 		$awb = get_post_meta( $order_id, 'pr_dhl_dp_awb', true );
 
 		if ( !empty( $awb ) ) {
-			return sprintf( __( 'Added to shipment %s', 'pr-shipping-dhl' ), $awb );
+			return self::STATUS_IN_SHIPMENT;
 		}
 
 		$api_client = PR_DHL()->get_dhl_factory()->api_client;
@@ -626,11 +659,38 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		$order_items = $order['items'];
 
 		if ( in_array( $order_id, $order_items ) ) {
-			return __('Added to order', 'pr-shipping-dhl');
+			return self::STATUS_IN_ORDER;
 		}
 
 		if ( ! empty( $barcode ) ) {
-			return __( 'DHL item created', 'pr-shipping-dhl' );
+		return self::STATUS_HAS_ITEM;
+		}
+
+		return '';
+	}
+
+	/**
+	 * Retrieves the human-friendly text for an WC order's status.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param int|string $order_id The ID of the WC order.
+	 * @param string $status The status.
+	 *
+	 * @return string The human-friendly text for the status.
+	 */
+	private function get_order_status_text( $order_id, $status ) {
+		switch ($status) {
+			case 'in_shipment':
+				$awb = get_post_meta( $order_id, 'pr_dhl_dp_awb', true );
+
+				return sprintf( __( 'Added to shipment %s', 'pr-shipping-dhl' ), $awb );
+
+			case 'in_order':
+				return __('Added to order', 'pr-shipping-dhl');
+
+			case 'has_item':
+				return __( 'DHL item created', 'pr-shipping-dhl' );
 		}
 
 		return '';
@@ -699,6 +759,13 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			$client = $instance->api_client;
 
 			foreach ($order_ids as $order_id) {
+				$status = $this->get_order_status($order_id);
+
+				// Only continue if the WC order is still at the item label creation phase
+				if ($status !== self::STATUS_HAS_ITEM) {
+					continue;
+				}
+
 				// Get the DHL item barcode for this WC order
 				$item_barcode = get_post_meta( $order_id, 'pr_dhl_dp_item_barcode', true );
 				// Add the DHL item barcode to the current DHL order
