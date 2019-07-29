@@ -37,16 +37,27 @@ class Item_Info {
 	public $contents;
 
 	/**
+	 * The units of measurement used for weights in the input args.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @var string
+	 */
+	protected $weightUom;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since [*next-version*]
 	 *
 	 * @param array $args The arguments to parse.
+	 * @param string $weightUom The units of measurement used for weights in the input args.
 	 *
 	 * @throws Exception If some data in $args did not pass validation.
 	 */
-	public function __construct( $args ) {
-		$this->parse_args( $args );
+	public function __construct( $args, $weightUom = 'g' ) {
+		$this->weightUom = $weightUom;
+		$this->parse_args( $args, $weightUom );
 	}
 
 	/**
@@ -82,6 +93,10 @@ class Item_Info {
 	 * @return array
 	 */
 	protected function get_shipment_info_schema() {
+		// Closures in PHP 5.3 do not inherit class context
+		// So we need to copy $this into a lexical variable and pass it to closures manually
+		$self = $this;
+
 		return array(
 			'dhl_product'       => array(
 				'rename' => 'product',
@@ -103,6 +118,9 @@ class Item_Info {
 						throw new Exception( __( 'The order "Weight" must be a number', 'pr-shipping-dhl' ) );
 					}
 				},
+				'sanitize' => function ( $weight ) use ($self) {
+					return $self->maybe_convert_to_grams( $weight, $self->weightUom );
+				}
 			),
 			'currency'          => array(
 				'error' => __( 'Shop "Currency" is empty!', 'pr-shipping-dhl' ),
@@ -167,6 +185,10 @@ class Item_Info {
 	 */
 	protected function get_content_item_info_schema()
 	{
+		// Closures in PHP 5.3 do not inherit class context
+		// So we need to copy $this into a lexical variable and pass it to closures manually
+		$self = $this;
+
 		return array(
 			'hs_code'     => array(
 				'default'  => '',
@@ -204,7 +226,37 @@ class Item_Info {
 			'item_weight'      => array(
 				'rename' => 'weight',
 				'default' => 1,
+				'sanitize' => function ( $weight ) use ($self) {
+					return $self->maybe_convert_to_grams( $weight, $self->weightUom );
+				}
 			),
 		);
+	}
+
+	/**
+	 * Converts a given weight into grams, if necessary.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param float $weight The weight amount.
+	 * @param string $uom The unit of measurement of the $weight parameter..
+	 *
+	 * @return float The potentially converted weight.
+	 */
+	protected function maybe_convert_to_grams( $weight, $uom ) {
+		$weight = floatval( $weight );
+
+		switch ( $uom ) {
+			case 'kg':
+				return $weight * 1000;
+
+			case 'lb':
+				return $weight / 2.2;
+
+			case 'oz':
+				return $weight / 35.274;
+		}
+
+		return $weight;
 	}
 }

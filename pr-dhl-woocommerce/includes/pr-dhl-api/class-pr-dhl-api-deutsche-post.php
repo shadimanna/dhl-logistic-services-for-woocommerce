@@ -307,8 +307,9 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 
 		// If order has no saved barcode, create the DHL item and get the barcode
 		if ( empty( $item_barcode ) ) {
+			$uom = get_option( 'woocommerce_weight_unit' );
 			try {
-				$item_info = new Item_Info( $args );
+				$item_info = new Item_Info( $args, $uom );
 			} catch (Exception $e) {
 				throw $e;
 			}
