@@ -147,7 +147,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			'wc-shipment-dhl-dp-label-js',
 			'PR_DHL_DP',
 			array(
-				'create_order_confirmation' => __('Creating an order is final and cannot be undone, so make sure you have added all the desired items before continuing.', 'pr-shipping-dhl')
+				'create_order_confirmation' => __('Finalizing an order cannot be undone, so make sure you have added all the desired items before continuing.', 'pr-shipping-dhl')
 			)
 		);
 	}
@@ -267,7 +267,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			</button>
 
 			<button id="pr_dhl_create_order" class="button button-primary" type="button">
-				<?php _e( 'Create order', 'pr-shipping-dhl' ) ?>
+				<?php _e( 'Finalize order', 'pr-shipping-dhl' ) ?>
 			</button>
 		</p>
 		<p id="pr_dhl_order_gen_label_message">
@@ -324,7 +324,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		</table>
 		<p>
 			<a id="pr_dhl_dp_download_awb_label" href="<?php echo $label_url ?>" class="button button-primary" target="_blank">
-				<?php _e( 'Download Labels', 'pr-shipping-dhl' ); ?>
+				<?php _e( 'Download Waybill', 'pr-shipping-dhl' ); ?>
 			</a>
 		</p>
 
@@ -690,7 +690,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 				return __('Added to order', 'pr-shipping-dhl');
 
 			case 'has_item':
-				return __( 'DHL item created', 'pr-shipping-dhl' );
+				return __( 'Label created', 'pr-shipping-dhl' );
 		}
 
 		return '';
