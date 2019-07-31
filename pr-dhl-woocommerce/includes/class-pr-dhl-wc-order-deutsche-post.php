@@ -104,7 +104,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	public function add_dhl_order_meta_box() {
 		add_meta_box(
 			'woocommerce-dhl-dp-order',
-			__( 'DHL Order', 'pr-shipping-dhl' ),
+			__( 'DHL Waybill', 'pr-shipping-dhl' ),
 			array( $this, 'dhl_order_meta_box' ),
 			'shop_order',
 			'side',
@@ -307,10 +307,6 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		ob_start();
 
 		?>
-		<p>
-			<strong><?php _e('DHL Order ID:', 'pr-shipping-dhl'); ?></strong>
-			<?php echo $dhl_order_id ?>
-		</p>
 		<table class="widefat striped" id="pr_dhl_order_items_table">
 			<thead>
 			<tr>
@@ -607,8 +603,8 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			$new_columns[ $column_name ] = $column_info;
 
 			if ( 'order_total' === $column_name ) {
-				$new_columns['dhl_dp_status'] = __( 'DHL Order Status', 'pr-shipping-dhl' );
-				$new_columns['dhl_tracking_number'] = __( 'DHL Tracking Number', 'pr-shipping-dhl' );
+				$new_columns['dhl_dp_status'] = __( 'DHL Status', 'pr-shipping-dhl' );
+				$new_columns['dhl_tracking_number'] = __( 'DHL Tracking', 'pr-shipping-dhl' );
 			}
 		}
 
@@ -698,8 +694,8 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
 	public function get_bulk_actions() {
 		return array(
-			'pr_dhl_create_labels' => __( 'Create DHL items', 'pr-shipping-dhl' ),
-			'pr_dhl_create_orders' => __( 'Create DHL order', 'pr-shipping-dhl' ),
+			'pr_dhl_create_labels' => __( 'Create DHL Label', 'pr-shipping-dhl' ),
+			'pr_dhl_create_orders' => __( 'Finalize DHL Waybill', 'pr-shipping-dhl' ),
 		);
 	}
 
@@ -788,7 +784,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 				);
 
 				$message = sprintf(
-					__( 'Created DHL order for %1$s items. %2$s', 'pr-shipping-dhl' ),
+					__( 'Finalized DHL waybill for %1$s items. %2$s', 'pr-shipping-dhl' ),
 					$items_count,
 					$print_link
 				);
