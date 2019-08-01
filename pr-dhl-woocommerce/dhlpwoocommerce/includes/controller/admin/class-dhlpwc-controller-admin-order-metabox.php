@@ -97,7 +97,6 @@ class DHLPWC_Controller_Admin_Order_Metabox
             $parcelshop_view = $view->render(array(), false);
         }
 
-
         // Send JSON response
         $json_response = new DHLPWC_Model_Response_JSON();
         $json_response->set_data(array(
@@ -291,6 +290,12 @@ class DHLPWC_Controller_Admin_Order_Metabox
             $default_signature = $option_service->default_signature($order_id, $preselected_options, $to_business);
             if ($default_signature) {
                 $option_service->add_key_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_HANDT, $preselected_options);
+            }
+
+            // Default option settings
+            $default_age_check = $option_service->default_age_check($order_id, $preselected_options, $to_business);
+            if ($default_age_check) {
+                $option_service->add_key_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_AGE_CHECK, $preselected_options);
             }
 
             // Default option settings

@@ -145,7 +145,6 @@ class DHLPWC_Model_Service_Parcelshop extends DHLPWC_Model_Core_Singleton_Abstra
             'closed_period_concatenate' => __('and', 'dhlpwc'),
         );
 
-
         //{distance:"Afstand",search:"Zoek",monday:"Maandag",tuesday:"Dinsdag",wednesday:"Woensdag",thursday:"Donderdag",friday:"Vrijdag",saturday:"Zaterdag",sunday:"Zondag",parcelshop_search:"Zoek naar een ServicePoint...",closed_period:"Gesloten van",closed_period_separator:"tot",closed_period_concatenate:"en"}
     }
 

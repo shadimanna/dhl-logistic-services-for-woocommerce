@@ -83,7 +83,7 @@ jQuery(document).ready(function($) {
                 var dhlpwc_selected_parcelshop_id = event.id;
 
                 if (typeof event.shopType !== 'undefined' && event.shopType === 'packStation') {
-                    var dhlpwc_additional_parcelshop_id = prompt("Postnumber");
+                    var dhlpwc_additional_parcelshop_id = prompt("Add your 'postnumber' for delivery at a DHL Packstation:");
                     if (dhlpwc_additional_parcelshop_id != null && dhlpwc_additional_parcelshop_id != '') {
                         dhlpwc_selected_parcelshop_id = dhlpwc_selected_parcelshop_id + '|' + dhlpwc_additional_parcelshop_id;
                         $(document.body).trigger("dhlpwc:add_parcelshop_component_confirm_button");
