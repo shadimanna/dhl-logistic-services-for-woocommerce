@@ -137,37 +137,6 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'description' => __("Label actions like downloading PDF or opening track & trace will open in a new window.", 'dhlpwc'),
                     'default'     => 'yes',
                 ),
-                'bulk_container' => array(
-                    'type'  => 'dhlpwc_bulk_container',
-                ),
-            ),
-
-            $this->get_bulk_group_fields('bp_only', __('Choose mailbox, skip if unavailable', 'dhlpwc')),
-            $this->get_bulk_group_fields('smallest', __('Choose the smallest available size', 'dhlpwc')),
-            $this->get_bulk_group_fields('small_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), DHLPWC_Model_Service_Translation::instance()->parcelType('PARCELTYPE_SMALL'))),
-            $this->get_bulk_group_fields('medium_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), DHLPWC_Model_Service_Translation::instance()->parcelType('PARCELTYPE_MEDIUM'))),
-            $this->get_bulk_group_fields('large_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), DHLPWC_Model_Service_Translation::instance()->parcelType('PARCELTYPE_LARGE'))),
-            $this->get_bulk_group_fields('xsmall_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), DHLPWC_Model_Service_Translation::instance()->parcelType('PARCELTYPE_XSMALL'))),
-            $this->get_bulk_group_fields('xlarge_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), DHLPWC_Model_Service_Translation::instance()->parcelType('PARCELTYPE_XLARGE'))),
-            $this->get_bulk_group_fields('largest', __('Choose the largest available size', 'dhlpwc')),
-
-            array(
-                'bulk_label_download' => array(
-                    'title'       => __('Bulk label download', 'dhlpwc'),
-                    'type'        => 'checkbox',
-                    'label'       => __('Enable', 'dhlpwc'),
-                    'default'     => 'no',
-                ),
-                'bulk_label_combine' => array(
-                    'title'   => __('Bulk labels combined for page printing', 'dhlpwc'),
-                    'type'    => 'select',
-                    'options' => array(
-                        ''               => __('Default (1 label per page)', 'dhlpwc'),
-                        self::COMBINE_A4 => __("Print 3 labels per page for an A4 paper sheet", 'dhlpwc'),
-                    ),
-                    'description' => __("When downloading labels with the bulk feature, labels can be combined to make it easier to print on a single sheet", 'dhlpwc'),
-                    'default' => '',
-                ),
                 'enable_track_trace_mail' => array(
                     'title'       => __('Track & trace in mail', 'dhlpwc'),
                     'type'        => 'checkbox',
@@ -183,11 +152,11 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'default'     => 'yes',
                 ),
                 'google_maps_key' => array(
-                    'title'       => __('Google Maps key', 'dhlpwc'),
+                    'title'       => __('Google Maps Javascript API key', 'dhlpwc'),
                     'type'        => 'text',
                     'placeholder' => sprintf(__('Example: %s', 'dhlpwc'), '1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f90a'),
                     'description' => sprintf(
-                        __('Please configure your credentials for the Google Maps API. No Google Maps API credentials yet? Get it %shere%s.', 'dhlpwc'),
+                        __('Please configure your credentials for Google Maps. No Google Maps Javascript API credentials yet? Follow the instructions %shere%s on how to get the API key.', 'dhlpwc'),
                         '<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank">',
                         '</a>'
                     ),
@@ -224,6 +193,72 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'placeholder' => sprintf(__('Example: %s', 'dhlpwc'), '01234567'),
                 ),
 
+                // Label settings
+                'label_settings' => array(
+                    'title'       => __('Label Settings', 'dhlpwc'),
+                    'type'        => 'title',
+                    'description' => __('Default label settings.', 'dhlpwc'),
+                ),
+
+                'check_default_send_signature' => array(
+                    'title'       => __('Always enable required signature if available', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Enable', 'dhlpwc'),
+                    'description' => __("When creating a label, always select the signature option by default if the service is available.", 'dhlpwc'),
+                    'default'     => 'no',
+                ),
+                'check_default_age_check' => array(
+                    'title'       => __('Always enable age check 18+ if available', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Enable', 'dhlpwc'),
+                    'description' => __("When creating a label, always select the age check 18+ option by default if the service is available.", 'dhlpwc'),
+                    'default'     => 'no',
+                ),
+                'check_default_order_id_reference' => array(
+                    'title'       => __('Automatically add the order number as a reference, if possible', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Enable', 'dhlpwc'),
+                    'description' => __("When creating a label, always add the order number as reference by default if the service is available.", 'dhlpwc'),
+                    'default'     => 'no',
+                ),
+                'check_default_return' => array(
+                    'title'       => __('Always enable return label if available', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Enable', 'dhlpwc'),
+                    'description' => __("When creating a label, always select the return label option by default if the service is available.", 'dhlpwc'),
+                    'default'     => 'no',
+                ),
+                'bulk_container' => array(
+                    'type'  => 'dhlpwc_bulk_container',
+                ),
+            ),
+
+            $this->get_bulk_group_fields('bp_only', __('Choose mailbox, skip if unavailable', 'dhlpwc')),
+            $this->get_bulk_group_fields('smallest', __('Choose the smallest available size', 'dhlpwc')),
+            $this->get_bulk_group_fields('small_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), DHLPWC_Model_Service_Translation::instance()->parcelType('PARCELTYPE_SMALL'))),
+            $this->get_bulk_group_fields('medium_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), DHLPWC_Model_Service_Translation::instance()->parcelType('PARCELTYPE_MEDIUM'))),
+            $this->get_bulk_group_fields('large_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), DHLPWC_Model_Service_Translation::instance()->parcelType('PARCELTYPE_LARGE'))),
+            $this->get_bulk_group_fields('xsmall_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), DHLPWC_Model_Service_Translation::instance()->parcelType('PARCELTYPE_XSMALL'))),
+            $this->get_bulk_group_fields('xlarge_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), DHLPWC_Model_Service_Translation::instance()->parcelType('PARCELTYPE_XLARGE'))),
+            $this->get_bulk_group_fields('largest', __('Choose the largest available size', 'dhlpwc')),
+
+            array(
+                'bulk_label_download' => array(
+                    'title'       => __('Bulk label download', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Enable', 'dhlpwc'),
+                    'default'     => 'no',
+                ),
+                'bulk_label_combine' => array(
+                    'title'   => __('Bulk labels combined for page printing', 'dhlpwc'),
+                    'type'    => 'select',
+                    'options' => array(
+                        ''               => __('Default (1 label per page)', 'dhlpwc'),
+                        self::COMBINE_A4 => __("Print 3 labels per page for an A4 paper sheet", 'dhlpwc'),
+                    ),
+                    'description' => __("When downloading labels with the bulk feature, labels can be combined to make it easier to print on a single sheet", 'dhlpwc'),
+                    'default' => '',
+                ),
                 // Shipment options
                 'shipment_options_settings' => array(
                     'title'       => __('Shipment options', 'dhlpwc'),
@@ -236,31 +271,6 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'type'        => 'checkbox',
                     'label'       => __('Enable', 'dhlpwc'),
                     'description' => __("When enabled, by default labels will be created for business shipments and the checkout will show business shipping options.", 'dhlpwc'),
-                    'default'     => 'no',
-                ),
-
-                'check_default_send_signature' => array(
-                    'title'       => __('Always enable required signature if available', 'dhlpwc'),
-                    'type'        => 'checkbox',
-                    'label'       => __('Enable', 'dhlpwc'),
-                    'description' => __("When creating a label, always select the signature option by default if the service is available.", 'dhlpwc'),
-                    'default'     => 'no',
-                ),
-
-                'check_default_order_id_reference' => array(
-                    'title'       => __('Automatically add the order number as a reference, if possible', 'dhlpwc'),
-                    'type'        => 'checkbox',
-                    'label'       => __('Enable', 'dhlpwc'),
-                    'description' => __("When creating a label, always add the order number as reference by default if the service is available.", 'dhlpwc'),
-                    'default'     => 'no',
-                ),
-
-                'check_default_return' => array(
-                    'title'       => __('Always enable return label if available', 'dhlpwc'),
-                    'type'        => 'checkbox',
-                    'label'       => __('Enable', 'dhlpwc'),
-                    'description' => __("When creating a label, always select the return label option by default if the service is available.", 'dhlpwc'),
-
                     'default'     => 'no',
                 ),
 

@@ -332,7 +332,6 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
         $cut_off_hour = (int) $shipping_method['delivery_time_cut_off_' . $code];
         $current_hour = (int) current_time('G');
 
-
         $cut_off = (bool) ($current_hour >= $cut_off_hour);
 
         if ($code === 'same_day' || $code === 'no_neighbour_same_day') {

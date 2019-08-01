@@ -74,6 +74,28 @@ class DHLPWC_Model_Service_Order_Meta_Option extends DHLPWC_Model_Core_Singleton
         return true;
     }
 
+    public function default_age_check($order_id, $options, $to_business)
+    {
+        $service = DHLPWC_Model_Service_Access_Control::instance();
+        $send_age_check_checked = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DEFAULT_AGE_CHECK);
+        if (!$send_age_check_checked) {
+            return false;
+        }
+
+        $allowed_shipping_options = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CAPABILITY_ORDER_OPTIONS, array(
+            'order_id' => $order_id,
+            'options' => $options,
+            'to_business' => $to_business,
+        ));
+
+        // Disable automatic checking of age check if there are no parceltypes for it
+        if (!array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_AGE_CHECK, $allowed_shipping_options)) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function default_order_id_reference($order_id, $options, $to_business)
     {
         $service = DHLPWC_Model_Service_Access_Control::instance();

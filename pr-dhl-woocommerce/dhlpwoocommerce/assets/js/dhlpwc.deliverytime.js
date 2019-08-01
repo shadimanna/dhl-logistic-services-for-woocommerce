@@ -108,7 +108,8 @@ jQuery(document).ready(function($) {
         $('.dhlpwc-shipping-method-delivery-times-option select').each(function (i, obj) {
             if (!$(obj).data('select2')) {
                 $('.dhlpwc-shipping-method-delivery-times-option select').select2({
-                    width: '90%'
+                    width: '90%',
+                    minimumResultsForSearch: Infinity
                 });
                 return false;
             }

@@ -23,6 +23,7 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
 
     const ACCESS_DEFAULT_TO_BUSINESS = 'default_to_business';
     const ACCESS_DEFAULT_SEND_SIGNATURE = 'default_send_signature';
+    const ACCESS_DEFAULT_AGE_CHECK = 'default_age_check';
     const ACCESS_DEFAULT_ORDER_ID_REFERENCE = 'default_order_id_reference';
     const ACCESS_DEFAULT_RETURN = 'default_return';
 
@@ -123,6 +124,11 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
             case self::ACCESS_DEFAULT_SEND_SIGNATURE:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
                 return $logic->check_default_send_signature();
+                break;
+
+            case self::ACCESS_DEFAULT_AGE_CHECK:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_default_age_check();
                 break;
 
             case self::ACCESS_DEFAULT_ORDER_ID_REFERENCE:
