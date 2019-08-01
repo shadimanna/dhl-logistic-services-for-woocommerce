@@ -263,11 +263,11 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		</table>
 		<p>
 			<button id="pr_dhl_add_to_order" class="button button-secondary disabled" type="button">
-				<?php _e( 'Add item to order', 'pr-shipping-dhl' ); ?>
+				<?php _e( 'Add to Waybill', 'pr-shipping-dhl' ); ?>
 			</button>
 
 			<button id="pr_dhl_create_order" class="button button-primary" type="button">
-				<?php _e( 'Finalize order', 'pr-shipping-dhl' ) ?>
+				<?php _e( 'Finalize Waybill', 'pr-shipping-dhl' ) ?>
 			</button>
 		</p>
 		<p id="pr_dhl_order_gen_label_message">
@@ -678,12 +678,10 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	private function get_order_status_text( $order_id, $status ) {
 		switch ($status) {
 			case 'in_shipment':
-				$awb = get_post_meta( $order_id, 'pr_dhl_dp_awb', true );
-
-				return sprintf( __( 'Added to shipment %s', 'pr-shipping-dhl' ), $awb );
+				return __( 'Waybill created', 'pr-shipping-dhl' );
 
 			case 'in_order':
-				return __('Added to order', 'pr-shipping-dhl');
+				return __('Added to waybill', 'pr-shipping-dhl');
 
 			case 'has_item':
 				return __( 'Label created', 'pr-shipping-dhl' );
@@ -780,11 +778,11 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 				$print_link = sprintf(
 					'<a href="%1$s" target="_blank">%2$s</a>',
 					$label_url,
-					__('Print order label', 'pr-shipping-dhl')
+					__('download file', 'pr-shipping-dhl')
 				);
 
 				$message = sprintf(
-					__( 'Finalized DHL waybill for %1$s items. %2$s', 'pr-shipping-dhl' ),
+					__( 'Finalized DHL Waybill for %1$s orders - %2$s', 'pr-shipping-dhl' ),
 					$items_count,
 					$print_link
 				);
