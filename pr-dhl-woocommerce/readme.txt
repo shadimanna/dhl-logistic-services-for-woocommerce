@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 5.0
-Stable tag: 1.4.2
+Stable tag: 1.4.3
 WC requires at least: 2.6.0
 WC tested up to: 3.6
 License: GPLv2 or later
@@ -76,6 +76,14 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+
+= 1.4.3 =
+* DHL Parcel: Added the age check 18+ service
+* DHL Parcel: Updated Packstation code input text
+* DHL Parcel: Updated structure of settings with a new tab for label settings
+* DHL Parcel: Updated Google Maps text for more clarification
+* DHL Parcel: Removed input box for delivery times in the checkout
+* DHL Parcel: Added developer methods to update shipment requests
 
 = 1.4.2 =
 * DHL Paket: Verify buffer exists before emptying it
