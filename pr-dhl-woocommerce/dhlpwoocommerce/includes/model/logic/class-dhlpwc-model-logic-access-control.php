@@ -81,10 +81,6 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
             return false;
         }
 
-        if (empty($shipping_method['organization_id'])) {
-            return false;
-        }
-
         return true;
     }
 
@@ -212,13 +208,29 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         return $enabled;
     }
 
-    public function check_bulk_print()
+    public function check_bulk_download()
     {
         $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
         if (empty($shipping_method)) {
             return false;
         }
+
+        if (!isset($shipping_method['bulk_label_download'])) {
+            /** Legacy support, older setting before renaming printing to download */
+            return $this->legacy_check_bulk_download();
+        }
+
+        if ($shipping_method['bulk_label_download'] != 'yes') {
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function legacy_check_bulk_download()
+    {
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
         if (!isset($shipping_method['bulk_label_printing'])) {
             return false;
@@ -231,7 +243,7 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         return true;
     }
 
-    public function check_labels_per_page()
+    public function check_bulk_combine()
     {
         $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
@@ -239,11 +251,11 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
             return false;
         }
 
-        if (empty($shipping_method['labels_per_page'])) {
+        if (empty($shipping_method['bulk_label_combine'])) {
             return false;
         }
 
-        return $shipping_method['labels_per_page'];
+        return $shipping_method['bulk_label_combine'];
     }
 
     public function check_track_trace_mail()
@@ -403,6 +415,25 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         return true;
     }
 
+    public function check_default_age_check()
+    {
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
+
+        if (empty($shipping_method)) {
+            return false;
+        }
+
+        if (!isset($shipping_method['check_default_age_check'])) {
+            return false;
+        }
+
+        if ($shipping_method['check_default_age_check'] != 'yes') {
+            return false;
+        }
+
+        return true;
+    }
+
     public function check_default_order_id_reference()
     {
         $shipping_method = get_option('woocommerce_dhlpwc_settings');
@@ -488,7 +519,13 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
             return false;
         }
 
-        $customer = $cart->get_customer();
+        if (is_callable(array($cart, 'get_customer'))) {
+            // WooCommerce 3.2.0+
+            $customer = $cart->get_customer();
+        } else {
+            // WooCommerce < 3.2.0
+            $customer = WC()->customer;
+        }
 
         if (!$customer) {
             return false;
@@ -573,7 +610,13 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
             return false;
         }
 
-        $customer = $cart->get_customer();
+        if (is_callable(array($cart, 'get_customer'))) {
+            // WooCommerce 3.2.0+
+            $customer = $cart->get_customer();
+        } else {
+            // WooCommerce < 3.2.0
+            $customer = WC()->customer;
+        }
 
         if (!$customer) {
             return false;
@@ -696,6 +739,30 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         }
 
         return true;
+    }
+
+    public function check_printer()
+    {
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
+
+        if (empty($shipping_method)) {
+            return false;
+        }
+
+        if (!isset($shipping_method['enable_printer'])) {
+            return false;
+        }
+
+        if ($shipping_method['enable_printer'] != 'yes') {
+            return false;
+        }
+
+        if (empty($shipping_method['printer_id'])) {
+            return false;
+        }
+
+        return true;
+
     }
 
 }

@@ -15,8 +15,7 @@ class DHLPWC_Model_API_Data_Capability_Check extends DHLPWC_Model_API_Data_Abstr
         'parcel_type',
         'option',
         'to_postal_code',
-        'account_number',
-        'organisation_id',
+        'account_number'
     );
 
     public $from_country;
@@ -27,7 +26,6 @@ class DHLPWC_Model_API_Data_Capability_Check extends DHLPWC_Model_API_Data_Abstr
     public $option;
     public $to_postal_code;
     public $account_number;
-    public $organisation_id;
 
 }
 

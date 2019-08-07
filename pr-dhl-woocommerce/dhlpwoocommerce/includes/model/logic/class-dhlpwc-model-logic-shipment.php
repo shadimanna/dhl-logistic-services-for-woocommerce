@@ -50,6 +50,9 @@ class DHLPWC_Model_Logic_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
             $shipment->on_behalf_of = $this->prepare_address_data($replace_shipping_address, true);
         }
 
+        // Allow developers to update the shipment request
+        $shipment = apply_filters('dhlpwc_shipment_request', $shipment, $order_id, $options);
+
         return $shipment;
     }
 
@@ -220,7 +223,7 @@ class DHLPWC_Model_Logic_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
             // Check if $number has no numbers
             if (preg_match("/\d/", $number) === 0) {
                 // Try a reverse parse
-                preg_match('/([\d]+\w*)\s?(.+)/i', $address['street'], $street_parts);
+                preg_match('/([\d]+[\w.-]*)\s?(.+)/i', $address['street'], $street_parts);
                 $number = trim($street_parts[1]);
                 $street = trim($street_parts[2]);
                 $skip_addition_check = true;

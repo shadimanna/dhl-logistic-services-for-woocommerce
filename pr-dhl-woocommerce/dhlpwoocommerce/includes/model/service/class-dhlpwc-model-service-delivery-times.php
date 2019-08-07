@@ -28,6 +28,8 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
             list($selected, $date, $start_time, $end_time) = array(null, null, null, null);
         }
 
+        unset($selected);
+
         if (empty($date) || empty($start_time) || empty($end_time)) {
             return false;
         }
@@ -91,6 +93,8 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
             list($selected, $date, $start_time, $end_time) = array(null, null, null, null);
         }
 
+        unset($selected);
+
         if (empty($date) || empty($start_time) || empty($end_time)) {
             return false;
         }
@@ -116,10 +120,12 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
             return array();
         }
 
+        $postal_code_trim = preg_replace('/\s+/', '', $postal_code);
+
         $connector = DHLPWC_Model_API_Connector::instance();
         $time_windows = $connector->get('time-windows', array(
             'countryCode' => $country_code,
-            'postalCode' => $postal_code,
+            'postalCode'  => strtoupper($postal_code_trim),
         ), 30 * MINUTE_IN_SECONDS);
 
         if (!$time_windows || !is_array($time_windows) || empty($time_windows)) {
@@ -159,6 +165,12 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
 
         $today_midnight_timestamp = strtotime('today 23:59:59');
 
+        $number_of_days = $this->get_number_of_days_setting();
+        // When setting 'number_of_days' is 1, it should show tomorrow as available. This means its actually 2 days worth showing
+        // Today and tomorrow. Thus number_of_days is always +1
+        $number_of_days += 1;
+        $max_timestamp = intval(strtotime('+' . $number_of_days . ' day', $today_midnight_timestamp));
+
         $access_service = DHLPWC_Model_Service_Access_Control::instance();
         $allowed_shipping_options = $access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CAPABILITY_OPTIONS);
 
@@ -192,6 +204,10 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
         foreach($delivery_times as $delivery_time) {
             /** @var DHLPWC_Model_Data_Delivery_Time $delivery_time */
             $timestamp = strtotime($delivery_time->source->delivery_date . ' ' . $delivery_time->source->start_time);
+
+            if ($timestamp > $max_timestamp) {
+                continue;
+            }
 
             if ($timestamp < $today_midnight_timestamp) {
                 // Today's logic
@@ -316,7 +332,6 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
         $cut_off_hour = (int) $shipping_method['delivery_time_cut_off_' . $code];
         $current_hour = (int) current_time('G');
 
-
         $cut_off = (bool) ($current_hour >= $cut_off_hour);
 
         if ($code === 'same_day' || $code === 'no_neighbour_same_day') {
@@ -339,6 +354,15 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
         $cut_off_timestamp = strtotime('+' . $days . ' days', $current_timestamp);
 
         return $cut_off_timestamp;
+    }
+
+    public function get_number_of_days_setting()
+    {
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
+        if (!isset($shipping_method['delivery_times_number_of_days'])) {
+            return 14;
+        }
+        return intval($shipping_method['delivery_times_number_of_days']);
     }
 
     /**

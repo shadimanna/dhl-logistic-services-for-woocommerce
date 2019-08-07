@@ -37,6 +37,9 @@ class DHLPWC_Model_Service_Parcelshop extends DHLPWC_Model_Core_Singleton_Abstra
         foreach ($parcelshops_data as $parcelshop_data) {
             $parcelshop = new DHLPWC_Model_API_Data_Parcelshop($parcelshop_data);
             $parcelshop->country = $country;
+            if ($parcelshop->shop_type === 'packStation') {
+                $parcelshop->name = $parcelshop->keyword;
+            }
             $parcelshops[] = $parcelshop;
         }
         return $parcelshops;
@@ -52,6 +55,15 @@ class DHLPWC_Model_Service_Parcelshop extends DHLPWC_Model_Core_Singleton_Abstra
             return null;
         }
 
+        if (($position = strpos($parcelshop_id, "|")) !== false) {
+            $post_number = substr($parcelshop_id, $position + 1);
+        } else {
+            $post_number = null;
+        }
+
+        // Remove any additional fields
+        $parcelshop_id = strstr($parcelshop_id, '|', true) ?: $parcelshop_id;
+
         $connector = DHLPWC_Model_API_Connector::instance();
         $parcelshop_data = $connector->get(sprintf('parcel-shop-locations/' . $country . '/%s', $parcelshop_id), null, 1 * HOUR_IN_SECONDS);
         if (!$parcelshop_data) {
@@ -59,6 +71,14 @@ class DHLPWC_Model_Service_Parcelshop extends DHLPWC_Model_Core_Singleton_Abstra
         }
         $parcelshop = new DHLPWC_Model_API_Data_Parcelshop($parcelshop_data);
         $parcelshop->country = $country;
+
+        if ($parcelshop->shop_type === 'packStation') {
+            $parcelshop->name = $parcelshop->keyword;
+            if (!empty($post_number)) {
+                $parcelshop->name = $parcelshop->name . ' ' . $post_number;
+                $parcelshop->id = $parcelshop->id . '|' . $post_number;
+            }
+        }
 
         return $parcelshop;
     }
@@ -76,7 +96,7 @@ class DHLPWC_Model_Service_Parcelshop extends DHLPWC_Model_Core_Singleton_Abstra
         $connector = DHLPWC_Model_API_Connector::instance();
         $parcelshops_data = $connector->get('parcel-shop-locations/' . $country, array(
             'limit'   => 1,
-            'zipCode' => trim($postal_search),
+            'zipCode' => trim(strtoupper($postal_search)),
         ), 1 * HOUR_IN_SECONDS);
 
         if (empty($parcelshops_data) || !is_array($parcelshops_data)) {
@@ -119,12 +139,11 @@ class DHLPWC_Model_Service_Parcelshop extends DHLPWC_Model_Core_Singleton_Abstra
             'friday'                    => __('Friday', 'dhlpwc'),
             'saturday'                  => __('Saturday', 'dhlpwc'),
             'sunday'                    => __('Sunday', 'dhlpwc'),
-            'parcelshop_search'         => __('Search for a ServicePoint...', 'dhlpwc'),
+            'parcelshop_search'         => __('Enter your postal code or city', 'dhlpwc'),
             'closed_period'             => __('Closed from', 'dhlpwc'),
             'closed_period_separator'   => __('till', 'dhlpwc'),
             'closed_period_concatenate' => __('and', 'dhlpwc'),
         );
-
 
         //{distance:"Afstand",search:"Zoek",monday:"Maandag",tuesday:"Dinsdag",wednesday:"Woensdag",thursday:"Donderdag",friday:"Vrijdag",saturday:"Zaterdag",sunday:"Zondag",parcelshop_search:"Zoek naar een ServicePoint...",closed_period:"Gesloten van",closed_period_separator:"tot",closed_period_concatenate:"en"}
     }

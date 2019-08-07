@@ -6,19 +6,11 @@ if (!class_exists('DHLPWC_Model_Service_Settings')) :
 
 class DHLPWC_Model_Service_Settings extends DHLPWC_Model_Core_Singleton_Abstract
 {
-
-    protected $temporary_key = 'AIzaSyAV9qJVXDBnVHWwU01bjHO3wJCUxffYZyw';
-
-    public function get_maps_key($backup_replace = true)
+    public function get_maps_key()
     {
         $shipping_method = get_option('woocommerce_dhlpwc_settings');
-
         if (empty($shipping_method['google_maps_key'])) {
-            if ($backup_replace) {
-                return !empty($this->temporary_key) ? $this->temporary_key : null;
-            } else {
-                return null;
-            }
+            return null;
         }
         return $shipping_method['google_maps_key'];
     }
@@ -30,15 +22,6 @@ class DHLPWC_Model_Service_Settings extends DHLPWC_Model_Core_Singleton_Abstract
             return null;
         }
         return $shipping_method['account_id'];
-    }
-
-    public function get_api_organization()
-    {
-        $shipping_method = get_option('woocommerce_dhlpwc_settings');
-        if (!isset($shipping_method['organization_id'])) {
-            return null;
-        }
-        return $shipping_method['organization_id'];
     }
 
     public function get_api_user()
@@ -105,6 +88,15 @@ class DHLPWC_Model_Service_Settings extends DHLPWC_Model_Core_Singleton_Abstract
     public function get_hide_sender_address()
     {
         return $this->get_default_address('hide_sender_address_');
+    }
+
+    public function get_printer_id()
+    {
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
+        if (!isset($shipping_method['printer_id'])) {
+            return null;
+        }
+        return $shipping_method['printer_id'];
     }
 
 }

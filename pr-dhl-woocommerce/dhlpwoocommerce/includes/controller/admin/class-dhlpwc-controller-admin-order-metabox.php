@@ -30,6 +30,11 @@ class DHLPWC_Controller_Admin_Order_Metabox
 
             add_action('wp_ajax_dhlpwc_metabox_terminal_search', array($this, 'terminal_search'));
             add_action('wp_ajax_dhlpwc_metabox_parcelshop_search', array($this, 'parcelshop_search'));
+
+            $service = DHLPWC_Model_Service_Access_Control::instance();
+            if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_PRINTER)) {
+                add_action('wp_ajax_dhlpwc_label_print',  array($this, 'print_label'));
+            }
         }
     }
 
@@ -91,7 +96,6 @@ class DHLPWC_Controller_Admin_Order_Metabox
             $view = new DHLPWC_Template('order.meta.form.input.parcelshop.none');
             $parcelshop_view = $view->render(array(), false);
         }
-
 
         // Send JSON response
         $json_response = new DHLPWC_Model_Response_JSON();
@@ -156,6 +160,33 @@ class DHLPWC_Controller_Admin_Order_Metabox
         // Set Flash message
         $messages = DHLPWC_Model_Core_Flash_Message::instance();
         $messages->add_warning(__('Label deleted.', 'dhlpwc'), 'dhlpwc_label_meta');
+
+        // Send JSON response
+        $json_response = new DHLPWC_Model_Response_JSON();
+        $json_response->set_data(array(
+            'view' => $this->load_all($post_id)
+        ));
+        wp_send_json($json_response->to_array(), 200);
+    }
+
+    /**
+     * Handler for the label_print AJAX call
+     */
+    public function print_label()
+    {
+        $post_id = wc_clean($_POST['post_id']);
+        $label_id = wc_clean($_POST['label_id']);
+
+        $service = new DHLPWC_Model_Service_Printer();
+        $success = $service->send($label_id);
+
+        // Set Flash message
+        $messages = DHLPWC_Model_Core_Flash_Message::instance();
+        if ($success) {
+            $messages->add_notice(__('Sent to printer successfully.', 'dhlpwc'), 'dhlpwc_label_meta');
+        } else {
+            $messages->add_warning(__('Failed to send to printer.', 'dhlpwc'), 'dhlpwc_label_meta');
+        }
 
         // Send JSON response
         $json_response = new DHLPWC_Model_Response_JSON();
@@ -259,6 +290,12 @@ class DHLPWC_Controller_Admin_Order_Metabox
             $default_signature = $option_service->default_signature($order_id, $preselected_options, $to_business);
             if ($default_signature) {
                 $option_service->add_key_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_HANDT, $preselected_options);
+            }
+
+            // Default option settings
+            $default_age_check = $option_service->default_age_check($order_id, $preselected_options, $to_business);
+            if ($default_age_check) {
+                $option_service->add_key_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_AGE_CHECK, $preselected_options);
             }
 
             // Default option settings

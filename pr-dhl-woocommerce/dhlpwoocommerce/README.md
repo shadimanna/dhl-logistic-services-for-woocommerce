@@ -1,5 +1,39 @@
 # DHL Parcel plugin for WooCommerce
 
+v1.2.12
+
+## Changes
+- Added the age check 18+ service
+- Updated Packstation code input text
+- Updated structure of settings with a new tab for label settings
+- Updated Google Maps text for more clarification
+- Removed input box for delivery times in the checkout
+- Added developer methods to update shipment requests
+
+v1.2.11
+
+## Changes
+- Added support for Direct Label Printing
+- Added setting for maximum number of days shown for delivery times
+- Updated bulk settings to also work with the open in new window setting
+- Updated setting for combined labels to display page options only (A4)
+- Updated translations to no longer use system codes
+- Updated country check in the plugin
+- Updated ServicePoint locator to support Packstation code input
+- Updated code for increased compatibility with WooCommerce 2.6 (or higher)
+- Removed placeholder Google Maps key
+
+v1.2.10
+
+## Changes
+- Fixed delivery times not loading for newest WooCommerce release
+- Fixed an issue where postal code is case sensitive
+
+V1.2.9
+
+## Changes
+- Fixed pricing filters rounding prices
+
 V1.2.8
 
 ## Changes

@@ -19,7 +19,8 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
         $url = $upload_path['url'] . '/' . $file_name;
 
         // TODO, handle errors
-        $file_save_status = file_put_contents($path, $pdf);
+        //$file_save_status = file_put_contents($path, $pdf);
+        file_put_contents($path, $pdf);
 
         return array(
             'url' => $url,
@@ -66,7 +67,6 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
         $upload_dir = wp_upload_dir();
         $path = $upload_dir['path'] . DIRECTORY_SEPARATOR . $file_name;
         $url = $upload_dir['url'] . '/' . $file_name;
-
 
         if (($orientation == 'L' || $orientation == 'P') && $stack > 0) {
             $pdf_merger->groupedMerge('file', $path, $orientation, $stack);

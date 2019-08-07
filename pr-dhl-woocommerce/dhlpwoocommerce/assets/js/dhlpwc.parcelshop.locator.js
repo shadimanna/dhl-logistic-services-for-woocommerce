@@ -80,8 +80,24 @@ jQuery(document).ready(function($) {
             // Create selection function
             window.dhlpwc_select_servicepoint = function(event)
             {
-                $(document.body).trigger("dhlpwc:add_parcelshop_component_confirm_button");
-                $(document.body).trigger("dhlpwc:parcelshop_selection_sync", [event.id, event.address.countryCode]);
+                var dhlpwc_selected_parcelshop_id = event.id;
+
+                if (typeof event.shopType !== 'undefined' && event.shopType === 'packStation') {
+                    var dhlpwc_additional_parcelshop_id = prompt("Add your 'postnumber' for delivery at a DHL Packstation:");
+                    if (dhlpwc_additional_parcelshop_id != null && dhlpwc_additional_parcelshop_id != '') {
+                        dhlpwc_selected_parcelshop_id = dhlpwc_selected_parcelshop_id + '|' + dhlpwc_additional_parcelshop_id;
+                        $(document.body).trigger("dhlpwc:add_parcelshop_component_confirm_button");
+                        console.log(dhlpwc_selected_parcelshop_id);
+                        event.name = event.keyword + ' ' + dhlpwc_additional_parcelshop_id;
+                        $(document.body).trigger("dhlpwc:parcelshop_selection_sync", [dhlpwc_selected_parcelshop_id, event.address.countryCode]);
+                    } else {
+                        $(document.body).trigger("dhlpwc:parcelshop_selection_sync", [null, null]);
+                        $(document.body).trigger('dhlpwc:hide_parcelshop_selection_modal');
+                    }
+                } else {
+                    $(document.body).trigger("dhlpwc:add_parcelshop_component_confirm_button");
+                    $(document.body).trigger("dhlpwc:parcelshop_selection_sync", [dhlpwc_selected_parcelshop_id, event.address.countryCode]);
+                }
             };
 
             // Disable getScript from adding a custom timestamp

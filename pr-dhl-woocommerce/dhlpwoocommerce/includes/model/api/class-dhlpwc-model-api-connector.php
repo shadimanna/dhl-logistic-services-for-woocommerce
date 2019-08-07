@@ -16,16 +16,10 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
     protected $url = 'https://api-gw.dhlparcel.nl/'; // TODO generic environment setting
 
     protected $auth_api = 'authenticate/api-key';
-    protected $refresh_api = 'authenticate/refresh-token';
-
     protected $access_token;
-    protected $access_token_expiration;
-    protected $refresh_token;
-    protected $refresh_token_expiration;
 
     /* Experimental */
     protected $accounts = array();
-    protected $organization_id;
 
     protected $available_methods = [
         self::POST,
@@ -92,7 +86,7 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
         return json_decode($response['body'], true);
     }
 
-    protected function request($method, $endpoint, $params = null, $retry = false)
+    protected function request($method, $endpoint, $params = null)
     {
         // Assume there's always an error, until this method manages to return correctly and set the boolean to true.
         $this->is_error = true;
@@ -101,6 +95,10 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
         $this->error_message = null;
 
         $this->url = trailingslashit($this->url);
+
+        if (!isset($this->access_token) && $endpoint != $this->auth_api) {
+            $this->authenticate();
+        }
 
         $add_bearer = ($endpoint != $this->auth_api && isset($this->access_token)) ? true : false;
         $request_params = $this->generate_params($params, $add_bearer);
@@ -116,12 +114,6 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
 
         if ($request instanceof WP_Error) {
             return false;
-        }
-
-        if ($request['response']['code'] == 401 && $endpoint != $this->auth_api && $retry === false) {
-            // Try again after an auth
-            $this->authenticate();
-            $request = $this->request($method, $endpoint, $params, true);
         }
 
         if ($request['response']['code'] >= 200 && $request['response']['code'] < 300) {
@@ -193,10 +185,9 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
             'key' => $this->key,
         ));
 
-        $this->access_token = $response['accessToken'];
-        $this->access_token_expiration = $response['accessTokenExpiration'];
-        $this->refresh_token = $response['refreshToken'];
-        $this->refresh_token_expiration = $response['refreshTokenExpiration'];
+        if (!empty($response['accessToken'])) {
+            $this->access_token = $response['accessToken'];
+        }
     }
 
     public function test_authenticate($user_id, $key)
@@ -210,12 +201,6 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
         }
 
         /* Experimental */
-        if (isset($response['organizationId'])) {
-            $this->organization_id = $response['organizationId'];
-        } else {
-            $this->organization_id = $this->parse_token($response['accessToken'], 'organizationId');
-        }
-
         if (isset($response['accounts'])) {
             $this->accounts = $response['accounts'];
         } else {
@@ -223,8 +208,7 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
         }
 
         return array(
-            'accounts' => $this->accounts,
-            'organization_id' => $this->organization_id,
+            'accounts' => $this->accounts
         );
     }
 
