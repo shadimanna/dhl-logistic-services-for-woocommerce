@@ -175,7 +175,9 @@ class PR_DHL_WC {
 	*/
 	public function load_plugin() {
 		// Checks if WooCommerce is installed.
-		if ( class_exists( 'WC_Shipping_Method' ) ) {			
+		if ( class_exists( 'WC_Shipping_Method' ) ) {
+            $this->base_country_code = $this->get_base_country();
+
 			// Load DHL Parcel countries as well if supported by DPI
             $this->define_constants();
             $this->includes();
@@ -581,7 +583,6 @@ class PR_DHL_WC {
 	 * Function return whether the sender and receiver country is the same territory
 	 */
 	public function is_shipping_domestic( $country_receiver ) {   	 
-		// $this->base_country_code = PR_DHL()->get_base_country();
 
 		// If base is US territory
 		if( in_array( $this->base_country_code, $this->us_territories ) ) {
@@ -604,7 +605,7 @@ class PR_DHL_WC {
 	 * Function return whether the sender and receiver country is "crossborder" i.e. needs CUSTOMS declarations (outside EU)
 	 */
 	public function is_crossborder_shipment( $country_receiver ) {
-		
+
 		if ($this->is_shipping_domestic( $country_receiver )) {
 			return false;
 		}
