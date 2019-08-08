@@ -56,9 +56,9 @@ class PR_DHL_API_Factory {
 					$dhl_obj = new PR_DHL_API_Ecomm( $country_code);
 					break;
 				case 'DE':
-				case 'AT':
 					$dhl_obj = new PR_DHL_API_Paket( $country_code );
 					break;
+                case 'AT':
 				case 'AL':
 				case 'AD':
 				case 'AM':
