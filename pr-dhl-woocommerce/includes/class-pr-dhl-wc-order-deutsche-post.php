@@ -592,8 +592,31 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		$args['dhl_settings']['dhl_api_key'] = $this->shipping_dhl_settings['dhl_api_key'];
 		$args['dhl_settings']['dhl_api_secret'] = $this->shipping_dhl_settings['dhl_api_secret'];
 
+		$args['dhl_settings']['dhl_label_ref'] = $this->replace_references( $this->shipping_dhl_settings['dhl_label_ref'], $order_id );
+		$args['dhl_settings']['dhl_label_ref_2'] = $this->replace_references( $this->shipping_dhl_settings['dhl_label_ref_2'], $order_id );
+
+		error_log(print_r($args,true));
 		return $args;
 	}
+
+	protected function replace_references( $reference, $order_id ) {
+        $order = wc_get_order( $order_id );
+        $billing_address = $order->get_address( );
+        $shipping_address = $order->get_address( 'shipping' );
+
+        $shipping_address_email = '';
+        // If shipping email doesn't exist, try to get billing email
+        if( ! isset( $shipping_address['email'] ) && isset( $billing_address['email'] ) ) {
+            $shipping_address_email = $billing_address['email'];
+        } else {
+            $shipping_address_email = $shipping_address['email'];
+        }
+
+        $reference = str_replace( '{order_id}', $order_id, $reference );
+        $reference = str_replace( '{email}', $shipping_address_email, $reference );
+
+        return $reference;
+    }
 
 	public function add_order_status_column_header( $columns ) {
 
