@@ -265,7 +265,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
 		        'title'             => __( 'Label Reference', 'pr-shipping-dhl' ),
 		        'type'              => 'text',
 		        'custom_attributes'	=> array( 'maxlength' => '35' ),
-		        'description'       => sprintf( __( 'Use "%s" to send the order id as a reference, "%s" to send the customer email and "%s" to send the user id. This text is limited to 35 characters.', 'pr-shipping-dhl' ), '{order_id}' , '{email}', '{user_id}' ),
+		        'description'       => sprintf( __( 'Use "%s" to send the order id as a reference and "%s" to send the customer email. This text is limited to 35 characters.', 'pr-shipping-dhl' ), '{order_id}' , '{email}', '{user_id}' ),
 		        'desc_tip'          => true,
 		        'default'           => '{order_id}'
 	        ),
@@ -273,7 +273,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
 		        'title'             => __( 'Label Reference 2', 'pr-shipping-dhl' ),
 		        'type'              => 'text',
 		        'custom_attributes'	=> array( 'maxlength' => '35' ),
-		        'description'       => sprintf( __( 'Use "%s" to send the order id as a reference, "%s" to send the customer email and "%s" to send the user id. This text is limited to 35 characters.', 'pr-shipping-dhl' ), '{order_id}' , '{email}', '{user_id}' ),
+		        'description'       => sprintf( __( 'Use "%s" to send the order id as a reference and "%s" to send the customer email. This text is limited to 35 characters.', 'pr-shipping-dhl' ), '{order_id}' , '{email}', '{user_id}' ),
 		        'desc_tip'          => true,
 		        'default'           => '{email}'
 	        ),
