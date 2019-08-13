@@ -98,7 +98,13 @@ class Item_Info {
 		$self = $this;
 
 		return array(
-			'dhl_product'       => array(
+			'dhl_label_ref'       => array(
+				'rename' => 'label_ref',
+			),
+            'dhl_label_ref_2'       => array(
+				'rename' => 'label_ref_2',
+			),
+            'dhl_product'       => array(
 				'rename' => 'product',
 				'error'  => __( 'DHL "Product" is empty!', 'pr-shipping-dhl' ),
 			),

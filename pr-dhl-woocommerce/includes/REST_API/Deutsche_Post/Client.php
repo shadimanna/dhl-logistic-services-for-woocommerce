@@ -384,6 +384,8 @@ class Client extends API_Client {
 		return array(
 			'serviceLevel'        => 'PRIORITY',
 			'product'             => $item_info->shipment[ 'product' ],
+			'custRef'             => $item_info->shipment[ 'label_ref' ],
+			'custRef2'            => $item_info->shipment[ 'label_ref_2' ],
 			'shipmentAmount'      => $item_info->shipment[ 'value' ],
 			'shipmentCurrency'    => $item_info->shipment[ 'currency' ],
 			'shipmentGrossWeight' => $item_info->shipment[ 'weight' ],
