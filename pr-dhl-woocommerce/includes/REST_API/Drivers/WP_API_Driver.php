@@ -21,6 +21,8 @@ use RuntimeException;
  * @see API_Driver_Interface
  */
 class WP_API_Driver implements API_Driver_Interface {
+    // Set request timeout to 30 seconds, default of 5 is to small
+    const WP_REQUEST_TIMEOUT = 30;
 	/**
 	 * {@inheritdoc}
 	 *
@@ -35,6 +37,7 @@ class WP_API_Driver implements API_Driver_Interface {
 				'body'    => $request->body,
 				'headers' => $request->headers,
 				'cookies' => $request->cookies,
+                'timeout' => self::WP_REQUEST_TIMEOUT,
 			)
 		);
 
