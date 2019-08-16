@@ -12,15 +12,13 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
     public function __construct( $instance_id = 0 ) {
         $this->id = 'pr_dhl_dp';
         $this->instance_id = absint( $instance_id );
-        $this->method_title = __( 'DHL Deutsche Post', 'pr-shipping-dhl' );
+        $this->method_title = __( 'Deutsche Post', 'pr-shipping-dhl' );
         $this->method_description = sprintf(
             __(
-                'To start creating DHL Deutsche Post shipping labels and return back a DHL Tracking number to your customers, please fill in your user credentials as shown in your contracts provided by DHL. Not yet a customer? Please get a quote %shere%s or find out more on how to set up this plugin and get some more support %shere%s.',
+                'To start creating Deutsche Post shipping labels and return back a tracking number to your customers, please fill in your user credentials as provided by Deutsche Post. Not yet a customer? Please get a quote %shere%s.',
                 'pr-shipping-dhl'
             ),
-            '<a href="https://www.logistics.dhl/global-en/home/our-divisions/ecommerce/integration/contact-ecommerce-integration-get-a-quote.html?cid=referrer_3pv-signup_woocommerce_ecommerce-integration&SFL=v_signup-woocommerce" target="_blank">',
-            '</a>',
-            '<a href="https://www.logistics.dhl/global-en/home/our-divisions/ecommerce/integration/integration-channels/third-party-solutions/woocommerce.html?cid=referrer_docu_woocommerce_ecommerce-integration&SFL=v_woocommerce" target="_blank">',
+            '<a href="https://www.deutschepost.com/en/business-customers/contact.html" target="_blank">',
             '</a>'
         );
 
@@ -100,7 +98,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
             $dhl_obj = PR_DHL()->get_dhl_factory();
             $select_dhl_product_int = $dhl_obj->get_dhl_products_international();
         } catch ( Exception $e ) {
-            PR_DHL()->log_msg( __( 'DHL Products not displaying - ', 'pr-shipping-dhl' ) . $e->getMessage() );
+            PR_DHL()->log_msg( __( 'Deutsche Post Products not displaying - ', 'pr-shipping-dhl' ) . $e->getMessage() );
         }
 
         $weight_units = get_option( 'woocommerce_weight_unit' );
@@ -118,7 +116,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
             'dhl_account_num' => array(
 	            'title'             => __( 'Account Number (EKP)', 'pr-shipping-dhl' ),
 	            'type'              => 'text',
-	            'description'       => __( 'Your DHL account number (10 digits - numerical), also called "EKP“. This will be provided by your local DHL sales organization.', 'pr-shipping-dhl' ),
+	            'description'       => __( 'Your Deutsche Post account number (10 digits - numerical), also called "EKP“. This will be provided by your local Deutsche Post sales organization.', 'pr-shipping-dhl' ),
 	            'desc_tip'          => true,
 	            'default'           => '',
 	            'placeholder'		=> '1234567890',
@@ -127,7 +125,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
 	        'dhl_contact_name' => array(
 		        'title'             => __( 'Contact Name', 'pr-shipping-dhl' ),
 		        'type'              => 'text',
-		        'description'       => __( 'The name of the merchant, used as contact information when creating DHL orders.', 'pr-shipping-dhl' ),
+		        'description'       => __( 'The name of the merchant, used as contact information when creating Deutsche Post orders.', 'pr-shipping-dhl' ),
 		        'desc_tip'          => true,
 		        'default'           => '',
 		        'placeholder'		=> 'Contact Name',
@@ -146,7 +144,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
                 'title'       => __( 'Client Secret', 'pr-shipping-dhl' ),
                 'type'        => 'text',
                 'description' => __(
-                    'The client secret (also a 36 digits alphanumerical string made from 5 blocks) is required for authentication (together with the client ID) and creates the tokens needed to ensure secure access. It is part of your contract provided by your DHL sales partner.',
+                    'The client secret (also a 36 digits alphanumerical string made from 5 blocks) is required for authentication (together with the client ID) and creates the tokens needed to ensure secure access. It is part of your contract provided by your Deutsche Post sales partner.',
                     'pr-shipping-dhl'
                 ),
                 'desc_tip'    => true,
@@ -158,7 +156,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
                 'label'       => __( 'Enable Sandbox Mode', 'pr-shipping-dhl' ),
                 'default'     => 'no',
                 'description' => __(
-                    'Please, tick here if you want to test the plug-in installation against the DHL Sandbox Environment. Labels generated via Sandbox cannot be used for shipping and you need to enter your client ID and client secret for the Sandbox environment instead of the ones for production!',
+                    'Please, tick here if you want to test the plug-in installation against the Deutsche Post Sandbox Environment. Labels generated via Sandbox cannot be used for shipping and you need to enter your client ID and client secret for the Sandbox environment instead of the ones for production!',
                     'pr-shipping-dhl'
                 ),
                 'desc_tip'    => true,
@@ -170,7 +168,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
                     'onclick' => "dhlTestConnection('#woocommerce_pr_dhl_dp_dhl_test_connection_button');",
                 ),
                 'description'       => __(
-                    'Press the button for testing the connection against our DHL eCommerce Gateways (depending on the selected environment this test is being done against the Sandbox or the Production Environment).',
+                    'Press the button for testing the connection against our Deutsche Post (depending on the selected environment this test is being done against the Sandbox or the Production Environment).',
                     'pr-shipping-dhl'
                 ),
                 'desc_tip'          => true,
@@ -182,7 +180,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
                 'default'     => 'yes',
                 'description' => sprintf(
                     __(
-                        'A log file containing the communication to the DHL server will be maintained if this option is checked. This can be used in case of technical issues and can be found %shere%s.',
+                        'A log file containing the communication to the Deutsche Post server will be maintained if this option is checked. This can be used in case of technical issues and can be found %shere%s.',
                         'pr-shipping-dhl'
                     ),
                     '<a href="' . $log_path . '" target = "_blank">',
@@ -202,7 +200,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
                 'title'       => __( 'International Default Service', 'pr-shipping-dhl' ),
                 'type'        => 'select',
                 'description' => __(
-                    'Please select your default DHL eCommerce shipping service for cross-border shippments that you want to offer to your customers (you can always change this within each individual order afterwards).',
+                    'Please select your default Deutsche Post shipping service for cross-border shippments that you want to offer to your customers (you can always change this within each individual order afterwards).',
                     'pr-shipping-dhl'
                 ),
                 'desc_tip'    => true,
@@ -251,7 +249,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
                     'pr-shipping-dhl'
                 ),
                 'desc_tip'    => false,
-                'default'     => __( 'DHL Tracking Number: {tracking-link}', 'pr-shipping-dhl' ),
+                'default'     => __( 'Deutsche Post Tracking Number: {tracking-link}', 'pr-shipping-dhl' ),
             ),
         );
 

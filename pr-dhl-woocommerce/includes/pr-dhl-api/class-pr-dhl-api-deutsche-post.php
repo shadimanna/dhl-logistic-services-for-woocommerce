@@ -397,7 +397,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 * @return string
 	 */
 	public function get_dhl_order_label_file_name( $order_id, $format = 'pdf' ) {
-		return sprintf('dhl-label-order-%s.%s', $order_id, $format);
+		return sprintf('dhl-waybill-order-%s.%s', $order_id, $format);
 	}
 
 	/**
