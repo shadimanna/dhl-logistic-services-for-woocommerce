@@ -374,7 +374,9 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		// If shipping email doesn't exist, try to get billing email
 		if( ! isset( $shipping_address['email'] ) && isset( $billing_address['email'] ) ) {
 			$shipping_address_email = $billing_address['email'];
-		}
+		} else {
+            $shipping_address_email = $shipping_address['email'];
+        }
 
 		// Get services etc.
 		$meta_box_ids = $this->get_additional_meta_ids();

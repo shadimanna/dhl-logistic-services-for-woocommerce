@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 5.0
-Stable tag: 1.4.3
+Stable tag: 1.5
 WC requires at least: 2.6.0
 WC tested up to: 3.6
 License: GPLv2 or later
@@ -20,6 +20,7 @@ DHL’s official extension for WooCommerce on Wordpress. Manage your national an
 * DHL Paket (Germany and Austria)
 * DHL Parcel Europe
 * DHL eCommerce
+* Deutsche Post International 
 
 
 == Features ==
@@ -44,6 +45,7 @@ Based on your sender country and shipping preference, different access credentia
 
 **DHL Parcel Europe** for BeNeLux, Iberia and Switzerland please self-generate your API credentials with your business customer portal account.  (not a customer yet? Click [here](https://www.dhlparcel.nl/en/get-quote) for **DHL Parcel Netherlands**, [here](https://www.dhlparcel.ch/de/geschaeftskunden/kunde-werden.html) for **DHL Parcel Switzerland** and [here](https://www.dhlparcel.be/nl/offerte-aanvragen) for **DHL Parcel Belgium**). 
 **DHL eCommerce**: send us your company name and customer account number via the form [here](https://www.logistics.dhl/us-en/home/all-products-and-solutions/technology-platform-integration/request-api-access.html) and we will provide you the credentials for this plugin. (not a customer yet? Click [here](http://www.dhl.com/signup-wooCommerce)). 
+**Deutsche Post International**: ask your sales contact for credentials for this plugin. (not a customer yet? Click [here](https://www.deutschepost.com/en/business-customers/contact/email.html)).
 
 == Installation & Configuration ==
 
@@ -54,6 +56,7 @@ Based on your sender country and shipping preference, different access credentia
 ...for **DHL Paket (Germany, Austria)**: you need your EKP number (10 digits) and add the participation numbers to the respective products available (you will find the participation numbers in the DHL business customer portal).
 ...for **DHL Parcel Europe (BeNeLux, Iberia, Switzerland)**: you need your self-generated API credentials (UserID and Key). Push the “Test connection” and the fields below will be prefilled automatically. 
 ...for **DHL eCommerce**: you need your customer account number, the distribution center you are using, your client-ID and client-secret. 
+...for **Deutsche Post International**: you need your customer account number (EKP) and API credentials.
 
 
 == Support ==
@@ -76,6 +79,10 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+
+= 1.5 =
+* Add Deutsche Post International (DPI) for European countries
+* DHL Paket: Austria is no longer supported by DHL Paket, added to DPI
 
 = 1.4.3 =
 * DHL Parcel: Added the age check 18+ service

@@ -50,6 +50,7 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 	    
       $test_con_data = array( 
     					'ajax_url' => admin_url( 'admin-ajax.php' ),
+					    'loader_image'   => admin_url( 'images/loading.gif' ),
     					'test_con_nonce' => wp_create_nonce( 'pr-dhl-test-con' ) 
     				);
 

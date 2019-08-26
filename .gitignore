@@ -1,5 +1,5 @@
 /vendor
 /.idea
 .DS_Store
-pr-dhl-woocommerce/.idea
-pr-dhl-woocommerce/vendor
+/pr-dhl-woocommerce/vendor
+/pr-dhl-woocommerce/.idea
