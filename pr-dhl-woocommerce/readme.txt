@@ -35,7 +35,7 @@ DHL’s official extension for WooCommerce on Wordpress. Manage your national an
 1. The **“print only if codeable”** – option you can activate in the DHL settings will check whether the address is correct or not before generating the label.
 1. **Bulk Label Creation** allows you to create multiple DHL Labels at once. 
 1. **Return Parcel Handling** allows you to print a return label with a “return address” so your customer can return the shipment easily. 
-1. For Parcel Benelux, this plugin has certified compatibility with WMPL that enables you to leverage multilingual capabilities. Click [here](https://wpml.org/plugin/dhl-for-woocommerce-2/) for further information. 
+1. **For Parcel Benelux**, this plugin has certified compatibility with WMPL that enables you to leverage multilingual capabilities. Click [here](https://wpml.org/plugin/dhl-for-woocommerce-2/) for further information. 
 
 
 == Availability by countries and prerequisites == 
