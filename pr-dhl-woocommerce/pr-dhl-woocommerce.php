@@ -176,15 +176,15 @@ class PR_DHL_WC {
 	public function load_plugin() {
 		// Checks if WooCommerce is installed.
 		if ( class_exists( 'WC_Shipping_Method' ) ) {
-            $this->base_country_code = $this->get_base_country();
+			$this->base_country_code = $this->get_base_country();
 
-            // Load plugin except for DHL Parcel countries
-            $dhl_parcel_countries = array('NL', 'BE', 'LU');
+			// Load plugin except for DHL Parcel countries
+			$dhl_parcel_countries = array('NL', 'BE', 'LU');
 
-            if (!in_array($this->base_country_code, $dhl_parcel_countries)) {
-                $this->define_constants();
-                $this->includes();
-                $this->init_hooks();
+			if (!in_array($this->base_country_code, $dhl_parcel_countries)) {
+				$this->define_constants();
+				$this->includes();
+				$this->init_hooks();
             }
 		} else {
 			// Throw an admin error informing the user this plugin needs WooCommerce to function
