@@ -5,7 +5,7 @@
  * Description: WooCommerce integration for DHL eCommerce, DHL Paket, DHL Parcel Europe (Benelux and Iberia) and Deutsche Post International
  * Author: DHL
  * Author URI: http://dhl.com/woocommerce
- * Version: 1.5
+ * Version: 1.5.1
  * WC requires at least: 2.6.14
  * WC tested up to: 3.7
  *
@@ -32,7 +32,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "1.5";
+	private $version = "1.5.1";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -176,13 +176,16 @@ class PR_DHL_WC {
 	public function load_plugin() {
 		// Checks if WooCommerce is installed.
 		if ( class_exists( 'WC_Shipping_Method' ) ) {
-            $this->base_country_code = $this->get_base_country();
+			$this->base_country_code = $this->get_base_country();
 
-			// Load DHL Parcel countries as well if supported by DPI
-            $this->define_constants();
-            $this->includes();
-            $this->init_hooks();
+			// Load plugin except for DHL Parcel countries
+			$dhl_parcel_countries = array('NL', 'BE', 'LU');
 
+			if (!in_array($this->base_country_code, $dhl_parcel_countries)) {
+				$this->define_constants();
+				$this->includes();
+				$this->init_hooks();
+			}
 		} else {
 			// Throw an admin error informing the user this plugin needs WooCommerce to function
 			add_action( 'admin_notices', array( $this, 'notice_wc_required' ) );
