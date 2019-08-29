@@ -185,7 +185,7 @@ class PR_DHL_WC {
 				$this->define_constants();
 				$this->includes();
 				$this->init_hooks();
-            }
+			}
 		} else {
 			// Throw an admin error informing the user this plugin needs WooCommerce to function
 			add_action( 'admin_notices', array( $this, 'notice_wc_required' ) );
