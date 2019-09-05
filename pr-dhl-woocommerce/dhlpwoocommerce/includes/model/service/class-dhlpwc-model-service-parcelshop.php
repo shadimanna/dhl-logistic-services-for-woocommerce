@@ -37,7 +37,7 @@ class DHLPWC_Model_Service_Parcelshop extends DHLPWC_Model_Core_Singleton_Abstra
         foreach ($parcelshops_data as $parcelshop_data) {
             $parcelshop = new DHLPWC_Model_API_Data_Parcelshop($parcelshop_data);
             $parcelshop->country = $country;
-            if ($parcelshop->shop_type === 'packStation') {
+            if ($parcelshop->shop_type === 'packStation' && empty($parcelshop->name)) {
                 $parcelshop->name = $parcelshop->keyword;
             }
             $parcelshops[] = $parcelshop;
@@ -73,7 +73,9 @@ class DHLPWC_Model_Service_Parcelshop extends DHLPWC_Model_Core_Singleton_Abstra
         $parcelshop->country = $country;
 
         if ($parcelshop->shop_type === 'packStation') {
-            $parcelshop->name = $parcelshop->keyword;
+            if (empty($parcelshop->name)) {
+                $parcelshop->name = $parcelshop->keyword;
+            }
             if (!empty($post_number)) {
                 $parcelshop->name = $parcelshop->name . ' ' . $post_number;
                 $parcelshop->id = $parcelshop->id . '|' . $post_number;

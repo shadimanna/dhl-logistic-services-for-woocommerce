@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 5.0
-Stable tag: 1.5.1
+Stable tag: 1.5.2
 WC requires at least: 2.6.0
 WC tested up to: 3.6
 License: GPLv2 or later
@@ -80,6 +80,12 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+
+= 1.5.2 =
+* DHL Parcel: Updated delivery times to correctly calculate with timezone settings
+* DHL Parcel: Packstation postnumber input limited to DE
+* DHL Parcel: Fixed sort position setting not working for shipping zones
+* DHL Parcel: Fixed an issue where orders weren't linked with DHL order data
 
 = 1.5.1 =
 * Disabled Deutsche Post International (DPI) for DHL Parcel countries

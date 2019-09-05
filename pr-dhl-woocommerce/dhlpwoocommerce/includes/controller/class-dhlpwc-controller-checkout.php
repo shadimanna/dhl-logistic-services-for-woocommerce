@@ -66,10 +66,12 @@ class DHLPWC_Controller_Checkout
                     if ($option === DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS) {
                         $sync = WC()->session->get('dhlpwc_parcelshop_selection_sync');
                         if ($sync) {
-                            list($parcelshop_id) = $sync;
+                            list($parcelshop_id, $country_code, $search_value_memory) = $sync;
                         } else {
-                            list($parcelshop_id) = array(null, null, null);
+                            list($parcelshop_id, $country_code, $search_value_memory) = array(null, null, null);
                         }
+                        unset($country_code, $search_value_memory);
+
                         $meta_service->save_option_preference($order_id, $option, $parcelshop_id);
                     } else {
                         $meta_service->save_option_preference($order_id, $option);
@@ -84,10 +86,11 @@ class DHLPWC_Controller_Checkout
         if (isset($data['shipping_method']) && is_array($data['shipping_method']) && in_array('dhlpwc-parcelshop', $data['shipping_method'])) {
             $sync = WC()->session->get('dhlpwc_parcelshop_selection_sync');
             if ($sync) {
-                list($parcelshop_id, $country_code) = $sync;
+                list($parcelshop_id, $country_code, $search_value_memory) = $sync;
             } else {
-                list($parcelshop_id, $country_code) = array(null, null, null);
+                list($parcelshop_id, $country_code, $search_value_memory) = array(null, null, null);
             }
+            unset($search_value_memory);
 
             if (empty($parcelshop_id) || empty($country_code)) {
                 $errors->add('dhlpwc_parcelshop_selection_sync', __('Choose a DHL ServicePoint', 'dhlpwc'));

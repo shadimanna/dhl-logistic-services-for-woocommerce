@@ -146,7 +146,7 @@ class DHLPWC_Model_Service_Order_Meta_Option extends DHLPWC_Model_Core_Singleton
         $order = new WC_Order($order_id);
 
         $service = DHLPWC_Model_Service_Order_Meta_Option::instance();
-        $parcelshop_meta = $service->get_option_preference($order->get_order_number(), DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS);
+        $parcelshop_meta = $service->get_option_preference($order->get_id(), DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS);
 
         if (!$parcelshop_meta) {
             return null;

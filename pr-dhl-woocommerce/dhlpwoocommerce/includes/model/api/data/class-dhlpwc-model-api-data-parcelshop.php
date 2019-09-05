@@ -23,8 +23,8 @@ class DHLPWC_Model_API_Data_Parcelshop extends DHLPWC_Model_API_Data_Abstract
     public $address;
     /** @var DHLPWC_Model_API_Data_GeoLocation $geo_location */
     public $geo_location;
-    /** @var DHLPWC_Model_API_Data_ParcelShop_OpeningTimes[] $opening_times */
     public $distance;
+    /** @var DHLPWC_Model_API_Data_ParcelShop_OpeningTimes[] $opening_times */
     public $opening_times;
     public $shop_type;
 
