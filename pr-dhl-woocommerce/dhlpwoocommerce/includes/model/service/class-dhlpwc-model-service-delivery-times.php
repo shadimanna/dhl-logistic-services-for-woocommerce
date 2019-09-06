@@ -38,7 +38,7 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
             'date'       => $date,
             'start_time' => $start_time,
             'end_time'   => $end_time,
-            'timestamp' => strtotime($date . ' ' . $start_time),
+            'timestamp' => strtotime($date . ' ' . $start_time . ' ' . wc_timezone_string()),
         ));
 
         return update_post_meta($order_id, self::ORDER_TIME_SELECTION, $meta_object->to_array());
@@ -160,16 +160,20 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
             $code_home = 'home';
         }
 
-        $timestamp_same_day = $this->get_timestamp_setting($code_same_day);
-        $timestamp_home = $this->get_timestamp_setting($code_home);
+        $timestamp_same_day = $this->get_minimum_timestamp($code_same_day);
+        $timestamp_home = $this->get_minimum_timestamp($code_home);
 
-        $today_midnight_timestamp = strtotime('today 23:59:59');
+        $datetime = new DateTime('today 23:59:59', new DateTimeZone(wc_timezone_string()));
+        $today_midnight_timestamp = $datetime->getTimestamp();
 
         $number_of_days = $this->get_number_of_days_setting();
         // When setting 'number_of_days' is 1, it should show tomorrow as available. This means its actually 2 days worth showing
         // Today and tomorrow. Thus number_of_days is always +1
         $number_of_days += 1;
         $max_timestamp = intval(strtotime('+' . $number_of_days . ' day', $today_midnight_timestamp));
+
+        $datetime = new DateTime('yesterday 23:59:59', new DateTimeZone(wc_timezone_string()));
+        $min_timestamp = $datetime->getTimestamp();
 
         $access_service = DHLPWC_Model_Service_Access_Control::instance();
         $allowed_shipping_options = $access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CAPABILITY_OPTIONS);
@@ -203,9 +207,9 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
 
         foreach($delivery_times as $delivery_time) {
             /** @var DHLPWC_Model_Data_Delivery_Time $delivery_time */
-            $timestamp = strtotime($delivery_time->source->delivery_date . ' ' . $delivery_time->source->start_time);
+            $timestamp = strtotime($delivery_time->source->delivery_date . ' ' . $delivery_time->source->start_time . ' ' . wc_timezone_string());
 
-            if ($timestamp > $max_timestamp) {
+            if ($timestamp < $min_timestamp || $timestamp > $max_timestamp) {
                 continue;
             }
 
@@ -213,7 +217,7 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
                 // Today's logic
                 if ($timestamp_same_day !== null && $timestamp_same_day < $timestamp) {
                     // Check if today is a shipping day
-                    if ($shipping_days[date('N')] === true) {
+                    if ($shipping_days[date_i18n('N')] === true) {
                         // Check if same day shipping is allowed
                         if ($same_day_enabled && $same_day_allowed) {
                             $delivery_time->preset_frontend_id = $same_day_id;
@@ -225,10 +229,11 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
             } else {
                 // All other day's logic
                 if ($timestamp_home !== null) {
+                    $system_timestamp = strtotime($delivery_time->source->delivery_date . ' ' . $delivery_time->source->start_time);
 
-                    if ($this->validate_with_shipping_days($timestamp_home, $timestamp, $shipping_days)) {
-
+                    if ($this->validate_with_shipping_days($timestamp_home, $timestamp, $system_timestamp, $shipping_days)) {
                         if ($delivery_time->source->start_time == '1800') { // This is an intentional ambiguous check, due to no strict regulations on the type of input from the Time Window API
+
                             if ($evening_enabled && $evening_allowed) {
                                 $delivery_time->preset_frontend_id = $evening_id;
                                 $filtered_times[] = $delivery_time;
@@ -238,7 +243,7 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
                             if ($home_enabled && $home_allowed) {
                                 $delivery_time->preset_frontend_id = $home_id;
 
-                                // Auto-select first default entry if no selection has been made
+                                // Auto-select first default entry (non-evening) if no selection has been made
                                 if ($selected === null) {
                                     $selected = true;
                                     $delivery_time->selected = true;
@@ -247,7 +252,6 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
                                 $filtered_times[] = $delivery_time;
                             }
                         }
-
                     }
                 }
             }
@@ -256,17 +260,19 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
         return $filtered_times;
     }
 
-    protected function validate_with_shipping_days($minimum_timestamp, $timestamp, $shipping_days)
+    protected function validate_with_shipping_days($minimum_timestamp, $timestamp, $system_timestamp, $shipping_days)
     {
         // First check if the day before the select date is a shipping day. It will be impossible to deliver on time if not delivered the day before.
         // TODO Note, currently using a hardcoded check for Sundays. Drop off timing does not work for Sundays.
-        $day_before_timestamp = intval(strtotime('-1 day', $timestamp));
+        $day_before_timestamp = intval(strtotime('-1 day', $system_timestamp));
         $day_before = date('N', $day_before_timestamp);
         if (($shipping_days[$day_before] !== true && $day_before != 7) || ($day_before == 7 && $shipping_days[6] !== true)) {
             return false;
         }
 
-        $timestamp_today = strtotime('yesterday 23:59:59');
+        $datetime = new DateTime('yesterday 23:59:59', new DateTimeZone(wc_timezone_string()));
+        $timestamp_today = $datetime->getTimestamp();
+
         $timestamp_difference = $timestamp - $timestamp_today;
         if ($timestamp_difference < 0) {
             // Unknown validation, shipping day is lower than current timestamp
@@ -282,7 +288,7 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
 
         $additional_days = 0;
         for($day_check = 0; $day_check < $days_between; $day_check++) {
-            $the_day = date('N', strtotime('+' . $day_check . ' day'));
+            $the_day = date_i18n('N', strtotime('+' . $day_check . ' day', current_time( 'timestamp')));
             if ($shipping_days[$the_day] !== true) {
                 $additional_days++;
             }
@@ -309,7 +315,7 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
         return $check_allowed;
     }
 
-    protected function get_timestamp_setting($code)
+    protected function get_minimum_timestamp($code)
     {
         $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
@@ -339,7 +345,8 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
                 return null;
             } else {
                 // Hardcode evening time for now, because the API shows evening hours when it shouldn't
-                return strtotime('today 17:59');
+                $datetime = new DateTime('today 17:59:59', new DateTimeZone(wc_timezone_string()));
+                return $datetime->getTimestamp();
             }
         }
 
@@ -350,8 +357,10 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
         $days = (int) $shipping_method['delivery_day_cut_off_' . $code];
         $days += $cut_off ? 1 : 0;
 
-        $current_timestamp = strtotime('yesterday 23:59:59');
-        $cut_off_timestamp = strtotime('+' . $days . ' days', $current_timestamp);
+        $datetime = new DateTime('yesterday 23:59:59', new DateTimeZone(wc_timezone_string()));
+        $current_day_timestamp = $datetime->getTimestamp();
+
+        $cut_off_timestamp = strtotime('+' . $days . ' days', $current_day_timestamp);
 
         return $cut_off_timestamp;
     }
@@ -405,9 +414,9 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
         ));
     }
 
-    public function get_shipping_advice_class($current_timestamp, $selected_timestamp)
+    public function get_shipping_advice_class($selected_timestamp)
     {
-        $shipping_priority = $this->get_shipping_priority($current_timestamp, $selected_timestamp);
+        $shipping_priority = $this->get_shipping_priority($selected_timestamp);
 
         switch ($shipping_priority) {
             case self::SHIPPING_PRIORITY_TODAY:
@@ -427,9 +436,9 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
         }
     }
 
-    public function get_shipping_advice($current_timestamp, $selected_timestamp)
+    public function get_shipping_advice($selected_timestamp)
     {
-        $shipping_priority = $this->get_shipping_priority($current_timestamp, $selected_timestamp);
+        $shipping_priority = $this->get_shipping_priority($selected_timestamp);
 
         switch ($shipping_priority) {
             case self::SHIPPING_PRIORITY_ASAP:
@@ -441,9 +450,13 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
                 break;
 
             case self::SHIPPING_PRIORITY_BACKLOG:
-                $current_day_timestamp = strtotime(date("Y-m-d", $current_timestamp));
-                $tomorrow_day_timestamp = strtotime('+1 day', $current_day_timestamp);
-                $selected_day_timestamp = strtotime(date("Y-m-d", $selected_timestamp));
+                $datetime = new DateTime('tomorrow', new DateTimeZone(wc_timezone_string()));
+                $tomorrow_day_timestamp = $datetime->getTimestamp();
+
+                $datetime = new DateTime('@' . $selected_timestamp);
+                $datetime->setTimezone(new DateTimeZone(wc_timezone_string()));
+                $datetime->setTime(0, 0, 0);
+                $selected_day_timestamp = $datetime->getTimestamp();
 
                 $days_difference_timestamp = $selected_day_timestamp - $tomorrow_day_timestamp;
                 $days_between = floor($days_difference_timestamp / DAY_IN_SECONDS);
@@ -455,15 +468,22 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
         }
     }
 
-    protected function get_shipping_priority($current_timestamp, $selected_timestamp)
+    protected function get_shipping_priority($selected_timestamp)
     {
-        if ($current_timestamp > $selected_timestamp) {
+        if (time() > $selected_timestamp) {
             return self::SHIPPING_PRIORITY_ASAP;
         }
 
-        $current_day_timestamp = strtotime(date("Y-m-d", $current_timestamp));
-        $tomorrow_day_timestamp = strtotime('+1 day', $current_day_timestamp);
-        $selected_day_timestamp = strtotime(date("Y-m-d", $selected_timestamp));
+        $datetime = new DateTime('today', new DateTimeZone(wc_timezone_string()));
+        $current_day_timestamp = $datetime->getTimestamp();
+
+        $datetime = new DateTime('tomorrow', new DateTimeZone(wc_timezone_string()));
+        $tomorrow_day_timestamp = $datetime->getTimestamp();
+
+        $datetime = new DateTime('@' . $selected_timestamp);
+        $datetime->setTimezone(new DateTimeZone(wc_timezone_string()));
+        $datetime->setTime(0, 0, 0);
+        $selected_day_timestamp = $datetime->getTimestamp();
 
         if ($current_day_timestamp >= $selected_day_timestamp) {
             return self::SHIPPING_PRIORITY_ASAP;

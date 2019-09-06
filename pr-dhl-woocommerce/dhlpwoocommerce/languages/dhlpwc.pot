@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2019-08-01 12:18+0200\n"
+"POT-Creation-Date: 2019-09-05 14:32+0200\n"
 "PO-Revision-Date: 2017-10-06 12:50+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -219,11 +219,11 @@ msgid ""
 "please add a Google Maps Javascript API key."
 msgstr ""
 
-#: includes/controller/class-dhlpwc-controller-checkout.php:93
+#: includes/controller/class-dhlpwc-controller-checkout.php:96
 msgid "Choose a DHL ServicePoint"
 msgstr ""
 
-#: includes/controller/class-dhlpwc-controller-checkout.php:97
+#: includes/controller/class-dhlpwc-controller-checkout.php:100
 msgid ""
 "The DHL ServicePoint country cannot be different than the shipping "
 "address country."
@@ -253,26 +253,26 @@ msgstr ""
 msgid "Add fee (keep repeating)"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-delivery-times.php:436
+#: includes/model/service/class-dhlpwc-model-service-delivery-times.php:445
 msgid ""
 "Send\n"
 "ASAP"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-delivery-times.php:440
+#: includes/model/service/class-dhlpwc-model-service-delivery-times.php:449
 msgid ""
 "Send\n"
 "tomorrow"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-delivery-times.php:450
+#: includes/model/service/class-dhlpwc-model-service-delivery-times.php:463
 #, php-format
 msgid ""
 "Send in\n"
 "%s days"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-delivery-times.php:454
+#: includes/model/service/class-dhlpwc-model-service-delivery-times.php:467
 msgid ""
 "Send\n"
 "today"
@@ -308,62 +308,62 @@ msgstr ""
 msgid "Delete PDF label"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:133
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:135
 msgid "Distance"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:134
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:136
 msgid "Search"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:135
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:137
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:612
 msgid "Monday"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:136
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:138
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:613
 msgid "Tuesday"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:137
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:139
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:614
 msgid "Wednesday"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:138
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:140
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:615
 msgid "Thursday"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:139
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:141
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:616
 msgid "Friday"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:140
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:142
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:617
 msgid "Saturday"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:141
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:143
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:618
 msgid "Sunday"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:142
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:144
 msgid "Enter your postal code or city"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:143
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:145
 msgid "Closed from"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:144
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:146
 msgid "till"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:145
+#: includes/model/service/class-dhlpwc-model-service-parcelshop.php:147
 msgid "and"
 msgstr ""
 

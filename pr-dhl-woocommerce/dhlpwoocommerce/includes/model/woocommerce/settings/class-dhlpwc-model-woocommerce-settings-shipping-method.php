@@ -876,11 +876,18 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     }
                 }
 
+                // Pass sort position meta data if available
+                $meta_data = array();
+                if ($sort_position = $this->get_option('sort_position_' . $preset->setting_id)) {
+                    $meta_data = array('sort_position' => $sort_position);
+                }
+
                 if (!$this->disable_condition($preset->setting_id, $package)) {
                     $this->add_rate(array(
-                        'id'    => 'dhlpwc-' . $preset->frontend_id,
-                        'label' => $title,
-                        'cost'  => $cost,
+                        'id'        => 'dhlpwc-' . $preset->frontend_id,
+                        'label'     => $title,
+                        'cost'      => $cost,
+                        'meta_data' => $meta_data,
                     ));
                 }
 

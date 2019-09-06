@@ -32,6 +32,10 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
     {
         $loader = DHLPWC_Libraryloader::instance();
         $pdf_merger = $loader->get_pdf_merger();
+        if ($pdf_merger === null) {
+            return null;
+        }
+
         $files = 0;
 
         foreach ($order_ids as $order_id) {
