@@ -18,7 +18,7 @@ class DHLPWC_Controller_Mail
     public function add_track_trace_to_completed_order_mail($order, $sent_to_admin, $plain_text, $email )
     {
         // Continue only if it's a completed order email
-        if (!$email || !isset($email->id) || $email->id != 'customer_completed_order') {
+        if(!$email || !isset($email->id) || $email->id != 'customer_completed_order') {
             return;
         }
 

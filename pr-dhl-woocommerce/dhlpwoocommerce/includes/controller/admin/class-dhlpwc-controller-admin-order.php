@@ -118,14 +118,14 @@ class DHLPWC_Controller_Admin_Order
         $service = DHLPWC_Model_Service_Delivery_Times::instance();
         $time_selection = $service->get_order_time_selection($order_id);
         if ($time_selection) {
-            $current_timestamp = current_time('timestamp');
+            $current_timestamp = time();
             $time_left = human_time_diff($current_timestamp, $time_selection->timestamp);
             if ($current_timestamp > $time_selection->timestamp) {
                 $time_left = null;
             }
             $delivery_time = $service->parse_time_frame($time_selection->date, $time_selection->start_time, $time_selection->end_time);
-            $shipping_advice = $service->get_shipping_advice($current_timestamp, $time_selection->timestamp);
-            $shipping_advice_class = $service->get_shipping_advice_class($current_timestamp, $time_selection->timestamp);
+            $shipping_advice = $service->get_shipping_advice($time_selection->timestamp);
+            $shipping_advice_class = $service->get_shipping_advice_class($time_selection->timestamp);
 
             if (!empty($delivery_time)) {
                 $view = new DHLPWC_Template('admin.order.delivery-times');
@@ -366,7 +366,7 @@ class DHLPWC_Controller_Admin_Order
     public function parcelshop_info($order, $compact = false)
     {
         $service = new DHLPWC_Model_Service_Order_Meta_Option();
-        $parcelshop_meta = $service->get_option_preference($order->get_order_number(), DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS);
+        $parcelshop_meta = $service->get_option_preference($order->get_id(), DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS);
 
         if ($parcelshop_meta) {
             $service = new DHLPWC_Model_Service_Parcelshop();

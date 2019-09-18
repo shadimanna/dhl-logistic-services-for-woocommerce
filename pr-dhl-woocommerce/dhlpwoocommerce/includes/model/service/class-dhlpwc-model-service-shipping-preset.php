@@ -147,7 +147,7 @@ class DHLPWC_Model_Service_Shipping_Preset extends DHLPWC_Model_Core_Singleton_A
             } else {
                 $preset = $this->find_rate($rate->get_id());
                 if ($preset) {
-                    $filter[] = $this->get_sort_position($preset->setting_id);
+                    $filter[] = $this->get_sort_position($rate);
                 } else {
                     $filter[] = 0;
                 }
@@ -173,23 +173,23 @@ class DHLPWC_Model_Service_Shipping_Preset extends DHLPWC_Model_Core_Singleton_A
         return $rates;
     }
 
-    protected function get_sort_position($setting_id)
+    /**
+     * @param WC_Shipping_Rate $rate
+     * @return int
+     */
+    protected function get_sort_position($rate)
     {
-        if (!$setting_id) {
+        $meta_data = $rate->get_meta_data();
+
+        if (empty($meta_data) || !is_array($meta_data)) {
             return 0;
         }
 
-        $shipping_method = get_option('woocommerce_dhlpwc_settings');
-
-        if (empty($shipping_method)) {
+        if (!array_key_exists('sort_position', $meta_data)) {
             return 0;
         }
 
-        if (empty($shipping_method['sort_position_' . $setting_id])) {
-            return 0;
-        }
-
-        return intval($shipping_method['sort_position_' . $setting_id]);
+        return intval($meta_data['sort_position']);
     }
 
     /**

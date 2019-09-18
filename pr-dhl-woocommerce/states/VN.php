@@ -6,8 +6,6 @@
  * @version 2.0.0
  */
 
-global $states;
-
 defined( 'ABSPATH' ) || exit;
 
 $states['VN'] = array(

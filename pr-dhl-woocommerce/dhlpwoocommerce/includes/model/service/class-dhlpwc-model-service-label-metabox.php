@@ -36,6 +36,7 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
         DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SDD,
         DHLPWC_Model_Meta_Order_Option_Preference::OPTION_S,
         //DHLPWC_Model_Meta_Order_Option_Preference::OPTION_IS_BULKY,
+        DHLPWC_Model_Meta_Order_Option_Preference::OPTION_AGE_CHECK,
     );
 
     public function order_labels($order_id, $labels)

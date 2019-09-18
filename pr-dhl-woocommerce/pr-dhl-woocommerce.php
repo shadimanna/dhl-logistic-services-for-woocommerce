@@ -2,12 +2,12 @@
 /**
  * Plugin Name: DHL for WooCommerce
  * Plugin URI: https://github.com/shadimanna/dhl-logistic-services-for-woocommerce
- * Description: WooCommerce integration for DHL eCommerce, DHL Paket and DHL Parcel Europe (Benelux and Iberia)
+ * Description: WooCommerce integration for DHL eCommerce, DHL Paket, DHL Parcel Europe (Benelux and Iberia) and Deutsche Post International
  * Author: DHL
  * Author URI: http://dhl.com/woocommerce
- * Version: 1.4.1
+ * Version: 1.5.2
  * WC requires at least: 2.6.14
- * WC tested up to: 3.6
+ * WC tested up to: 3.7
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "1.4.1";
+	private $version = "1.5.2";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -81,7 +81,7 @@ class PR_DHL_WC {
 	protected $base_country_code = '';
 
 	// 'LI', 'CH', 'NO'
-	protected $eu_iso2 = array( 'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'RO', 'SI', 'SK', 'ES', 'SE', 'GB');
+	protected $eu_iso2 = array( 'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SI', 'SK', 'ES', 'SE', 'GB');
 
 	// These are all considered domestic by DHL
 	protected $us_territories = array( 'US', 'GU', 'AS', 'PR', 'UM', 'VI' );
@@ -102,7 +102,7 @@ class PR_DHL_WC {
 	 *
 	 * @static
 	 * @see PR_DHL()
-	 * @return PR DHL - Main instance.
+	 * @return self Main instance.
 	 */
 	public static function instance() {
 		if ( is_null( self::$_instance ) ) {
@@ -166,6 +166,8 @@ class PR_DHL_WC {
 		include_once( 'includes/abstract-pr-dhl-wc-product.php' );
 		// Load PDF Merger
 		include_once( 'lib/PDFMerger/PDFMerger.php' );
+		// Composer autoloader
+		include_once( 'vendor/autoload.php' );
 	}
 
 	/**
@@ -173,18 +175,17 @@ class PR_DHL_WC {
 	*/
 	public function load_plugin() {
 		// Checks if WooCommerce is installed.
-		if ( class_exists( 'WC_Shipping_Method' ) ) {			
+		if ( class_exists( 'WC_Shipping_Method' ) ) {
 			$this->base_country_code = $this->get_base_country();
 
 			// Load plugin except for DHL Parcel countries
-			$dhl_parcel_countries = array( 'NL', 'BE', 'LU' );
+			$dhl_parcel_countries = array('NL', 'BE', 'LU');
 
-            if ( !in_array( $this->base_country_code, $dhl_parcel_countries ) ) {
-                $this->define_constants();
-                $this->includes();
-			    $this->init_hooks();
+			if (!in_array($this->base_country_code, $dhl_parcel_countries)) {
+				$this->define_constants();
+				$this->includes();
+				$this->init_hooks();
 			}
-
 		} else {
 			// Throw an admin error informing the user this plugin needs WooCommerce to function
 			add_action( 'admin_notices', array( $this, 'notice_wc_required' ) );
@@ -228,7 +229,9 @@ class PR_DHL_WC {
 				} elseif( $dhl_obj->is_dhl_ecomm() ) {
 					$this->shipping_dhl_order = new PR_DHL_WC_Order_Ecomm();
 					// $this->shipping_dhl_notice = new PR_DHL_WC_Notice();
-				}
+				} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
+				    $this->shipping_dhl_order = new PR_DHL_WC_Order_Deutsche_Post();
+                }
 				
 				// Ensure DHL Labels folder exists
 				$this->dhl_label_folder_check();
@@ -290,7 +293,7 @@ class PR_DHL_WC {
 			define( $name, $value );
 		}
 	}
-	
+
 	/**
 	 * Add a new integration to WooCommerce.
 	 */
@@ -304,6 +307,9 @@ class PR_DHL_WC {
 				$shipping_method['pr_dhl_paket'] = $pr_dhl_ship_meth;
 			} elseif( $dhl_obj->is_dhl_ecomm() ) {
 				$pr_dhl_ship_meth = 'PR_DHL_WC_Method_Ecomm';
+				$shipping_method['pr_dhl_ecomm'] = $pr_dhl_ship_meth;
+			} elseif( $dhl_obj->is_dhl_deutsche_post() ) {
+				$pr_dhl_ship_meth = 'PR_DHL_WC_Method_Deutsche_Post';
 				$shipping_method['pr_dhl_ecomm'] = $pr_dhl_ship_meth;
 			}
 
@@ -392,7 +398,9 @@ class PR_DHL_WC {
 					return PR_DHL_REST_AUTH_URL;
 				}
 
-			}
+			} elseif( $dhl_obj->is_dhl_deutsche_post() ) {
+			    return $dhl_obj->get_api_url();
+            }
 			
 			
 		} catch (Exception $e) {
@@ -410,7 +418,9 @@ class PR_DHL_WC {
 				$dhl_settings = get_option('woocommerce_pr_dhl_paket_settings');
 			} elseif( $dhl_obj->is_dhl_ecomm() ) {
 				$dhl_settings = get_option('woocommerce_pr_dhl_ecomm_settings');
-			}
+			} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
+			    $dhl_settings = $dhl_obj->get_settings();
+            }
 
 		} catch (Exception $e) {
 			throw $e;
@@ -431,8 +441,10 @@ class PR_DHL_WC {
 				$api_user = $shipping_dhl_settings['dhl_api_user']; 
 				$api_pwd = $shipping_dhl_settings['dhl_api_pwd'];
 			} elseif( $dhl_obj->is_dhl_ecomm() ) {
-				$api_user = $shipping_dhl_settings['dhl_api_key']; 
+				$api_user = $shipping_dhl_settings['dhl_api_key'];
 				$api_pwd = $shipping_dhl_settings['dhl_api_secret'];
+			} elseif( $dhl_obj->is_dhl_deutsche_post() ) {
+			    list($api_user, $api_pwd) = $dhl_obj->get_api_creds();
 			} else {
 				throw new Exception( __('Country not supported', 'pr-shipping-dhl') );
 				
@@ -574,7 +586,6 @@ class PR_DHL_WC {
 	 * Function return whether the sender and receiver country is the same territory
 	 */
 	public function is_shipping_domestic( $country_receiver ) {   	 
-		// $this->base_country_code = PR_DHL()->get_base_country();
 
 		// If base is US territory
 		if( in_array( $this->base_country_code, $this->us_territories ) ) {
@@ -597,7 +608,7 @@ class PR_DHL_WC {
 	 * Function return whether the sender and receiver country is "crossborder" i.e. needs CUSTOMS declarations (outside EU)
 	 */
 	public function is_crossborder_shipment( $country_receiver ) {
-		
+
 		if ($this->is_shipping_domestic( $country_receiver )) {
 			return false;
 		}

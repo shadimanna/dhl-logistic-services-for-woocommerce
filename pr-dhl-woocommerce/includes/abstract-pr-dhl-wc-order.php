@@ -112,8 +112,11 @@ abstract class PR_DHL_WC_Order {
 
 			echo '<p class="wc_dhl_error">' . $e->getMessage() . '</p>';
 		}
-		
-		$delete_label = '<span class="wc_dhl_delete"><a href="#" id="dhl_delete_label">' . __('Delete Label', 'pr-shipping-dhl') . '</a></span>';
+
+		$delete_label = '';
+		if ($this->can_delete_label($order_id)) {
+			$delete_label = '<span class="wc_dhl_delete"><a href="#" id="dhl_delete_label">' . __('Delete Label', 'pr-shipping-dhl') . '</a></span>';
+		}
 
 		$main_button = '<button id="dhl-label-button" class="button button-primary button-save-form">' . __( 'Generate Label', 'pr-shipping-dhl' ) . '</button>';
 
@@ -189,7 +192,11 @@ abstract class PR_DHL_WC_Order {
 		echo '</div>';
 		
 	}
-	
+
+	protected function can_delete_label($order_id) {
+		return true;
+	}
+
 	abstract public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj );
 
 
@@ -1167,8 +1174,10 @@ abstract class PR_DHL_WC_Order {
 	 */
 	protected function download_label( $file_path ) {
 		if ( !empty( $file_path ) && is_string( $file_path ) && file_exists( $file_path ) ) {
-			// Flush any buffered output to prevent it from being included in the file's content
-			ob_clean();
+			// Check if buffer exists, then flush any buffered output to prevent it from being included in the file's content
+			if ( ob_get_contents() ) {
+				ob_clean();
+			}
 
 			$filename = basename( $file_path );
 

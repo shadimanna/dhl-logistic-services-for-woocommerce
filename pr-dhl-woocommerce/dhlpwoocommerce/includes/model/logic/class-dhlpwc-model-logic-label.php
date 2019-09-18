@@ -32,6 +32,10 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
     {
         $loader = DHLPWC_Libraryloader::instance();
         $pdf_merger = $loader->get_pdf_merger();
+        if ($pdf_merger === null) {
+            return null;
+        }
+
         $files = 0;
 
         foreach ($order_ids as $order_id) {
@@ -67,7 +71,6 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
         $upload_dir = wp_upload_dir();
         $path = $upload_dir['path'] . DIRECTORY_SEPARATOR . $file_name;
         $url = $upload_dir['url'] . '/' . $file_name;
-
 
         if (($orientation == 'L' || $orientation == 'P') && $stack > 0) {
             $pdf_merger->groupedMerge('file', $path, $orientation, $stack);

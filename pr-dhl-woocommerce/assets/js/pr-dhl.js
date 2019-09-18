@@ -197,6 +197,7 @@ jQuery( function( $ ) {
 						});							
 					}
 
+					$( document ).trigger( 'pr_dhl_saved_label' );
 				}
 			});		
 
@@ -281,12 +282,14 @@ jQuery( function( $ ) {
 							}
 						});
 					}
+
+					$( document ).trigger( 'pr_dhl_deleted_label' );
 				}
 			});
 
 			return false;
-		}
-	}
+		},
+	};
 	
 	wc_shipment_dhl_label_items.init();
 

@@ -1,5 +1,23 @@
 # DHL Parcel plugin for WooCommerce
 
+v1.2.13
+
+## Changes
+- Updated delivery times to correctly calculate with timezone settings
+- Packstation postnumber input limited to DE
+- Fixed sort position setting not working for shipping zones
+- Fixed an issue where orders weren't linked with DHL order data
+
+v1.2.12
+
+## Changes
+- Added the age check 18+ service
+- Updated Packstation code input text
+- Updated structure of settings with a new tab for label settings
+- Updated Google Maps text for more clarification
+- Removed input box for delivery times in the checkout
+- Added developer methods to update shipment requests
+
 v1.2.11
 
 ## Changes

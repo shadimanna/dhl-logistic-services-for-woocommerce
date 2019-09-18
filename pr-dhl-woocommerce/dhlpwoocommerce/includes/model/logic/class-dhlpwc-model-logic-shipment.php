@@ -50,6 +50,9 @@ class DHLPWC_Model_Logic_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
             $shipment->on_behalf_of = $this->prepare_address_data($replace_shipping_address, true);
         }
 
+        // Allow developers to update the shipment request
+        $shipment = apply_filters('dhlpwc_shipment_request', $shipment, $order_id, $options);
+
         return $shipment;
     }
 
