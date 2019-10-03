@@ -540,6 +540,17 @@ abstract class PR_DHL_WC_Order {
 		if( $this->is_cod_payment_method( $order_id ) ) {
 			$args['order_details']['cod_value']	= $order->get_total();			
 		}
+
+		// calculate the additional fee
+		$additional_fees = 0;
+		if( count( $order->get_fees() ) > 0 ){
+			foreach( $order->get_fees() as $fee ){
+				$additional_fees += floatval( $fee->get_total() );
+			}
+		}
+
+		$args['order_details']['additional_fee'] 	= $additional_fees;
+		$args['order_details']['shipping_fee'] 		= $order->get_shipping_total();
 		
 		$args['order_details']['total_value'] = $order->get_total();			
 		

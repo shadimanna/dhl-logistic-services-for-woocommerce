@@ -788,7 +788,10 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			// Ensure Export Document is set before adding additional fee
 			if( isset( $this->body_request['ShipmentOrder']['Shipment']['ExportDocument'] ) ) {
 				// Additional fees, required and 0 so place after check
-				$this->body_request['ShipmentOrder']['Shipment']['ExportDocument']['additionalFee'] = 0;
+				$additional_fee 	= floatval( $this->args['order_details']['additional_fee'] );
+				$shipping_fee 		= floatval( $this->args['order_details']['shipping_fee'] );
+				$total_add_fee 		= $additional_fee + $shipping_fee;
+				$this->body_request['ShipmentOrder']['Shipment']['ExportDocument']['additionalFee'] = $total_add_fee;
 			}
 			
 			// If "Ident-Check" enabled, then ensure both fields are passed even if empty
