@@ -16,6 +16,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Ecomm' ) ) :
 
 class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 	
+	protected $carrier = 'DHL eCommerce';
 
 	public function init_hooks() {
 		parent::init_hooks();

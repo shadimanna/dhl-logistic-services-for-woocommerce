@@ -45,6 +45,8 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 */
 	const STATUS_IN_SHIPMENT = 'in_shipment';
 
+	protected $carrier 	= 'Deutsche Post DHL';
+
 	/**
 	 * Sets up the WordPress and WooCommerce hooks.
 	 *

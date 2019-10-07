@@ -20,6 +20,8 @@ abstract class PR_DHL_WC_Order {
 
 	protected $shipping_dhl_settings = array();
 
+	protected $carrier 	= '';
+
 	/**
 	 * Init and hook in the integration.
 	 */
@@ -365,7 +367,16 @@ abstract class PR_DHL_WC_Order {
 	 * @return void
 	 */
 	public function save_dhl_label_tracking( $order_id, $tracking_items ) {
+		
 		update_post_meta( $order_id, '_pr_shipment_dhl_label_tracking', $tracking_items );
+
+		$tracking_details = array(
+			'carrier' 			=> $this->carrier,
+			'tracking_number' 	=> $tracking_items['tracking_number'],
+			'ship_date' 		=> time()
+		);
+
+		do_action( 'pr_save_dhl_label_tracking', $order_id, $tracking_details );
 	}
 
 	/*

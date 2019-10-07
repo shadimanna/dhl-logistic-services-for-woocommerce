@@ -15,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 
 class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
+
+	protected $carrier = 'DHL Paket';
 	
 	public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
 
