@@ -606,7 +606,21 @@ class PR_DHL_Front_End_Paket {
 		}
 	}
 
+	protected function is_google_maps_enabled() {
+
+		if( ( isset( $this->shipping_dhl_settings['dhl_display_google_maps'] ) && 
+			( $this->shipping_dhl_settings['dhl_display_google_maps'] == 'yes' ) ) ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	protected function is_packstation_enabled() {
+
+		if( !$this->is_google_maps_enabled() ){
+			return false;
+		}
 
 		if( ( isset( $this->shipping_dhl_settings['dhl_display_packstation'] ) && 
 			( $this->shipping_dhl_settings['dhl_display_packstation'] == 'yes' ) ) ) {
@@ -618,6 +632,10 @@ class PR_DHL_Front_End_Paket {
 
 	protected function is_parcelshop_enabled() {
 
+		if( !$this->is_google_maps_enabled() ){
+			return false;
+		}
+
 		if( ( isset( $this->shipping_dhl_settings['dhl_display_parcelshop'] ) && 
 			( $this->shipping_dhl_settings['dhl_display_parcelshop'] == 'yes' ) ) ) {
 			return true;
@@ -627,6 +645,10 @@ class PR_DHL_Front_End_Paket {
 	}
 
 	protected function is_post_office_enabled() {
+
+		if( !$this->is_google_maps_enabled() ){
+			return false;
+		}
 
 		if( ( isset( $this->shipping_dhl_settings['dhl_display_post_office'] ) && 
 			( $this->shipping_dhl_settings['dhl_display_post_office'] == 'yes' ) ) ) {

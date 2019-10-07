@@ -464,6 +464,14 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'description'       => __( 'Enabling this will display Post Office locations on Google Maps when searching for drop off locations on the front-end.', 'pr-shipping-dhl' ),
 					'desc_tip'          => true,
 				),
+				'dhl_display_google_maps' => array(
+					'title'             => __( 'Google Maps', 'pr-shipping-dhl' ),
+					'type'              => 'checkbox',
+					'label'             => __( 'Enable Google Maps', 'pr-shipping-dhl' ),
+					'default'           => 'yes',
+					'description'       => __( 'Enabling this will display Google Maps on the front-end.', 'pr-shipping-dhl' ),
+					'desc_tip'          => true,
+				),
 				'dhl_parcel_limit' => array(
 					'title'             => __( 'Limit Results', 'pr-shipping-dhl' ),
 					'type'              => 'number',
@@ -839,6 +847,14 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 	 */
 	protected function validate_location_enabled_field( $key, $location_type ) {
 		if ( ! isset( $_POST[ $this->plugin_id . $this->id . '_' . $key ] ) ) {
+			return 'no';
+		}
+
+		if( ! isset( $_POST[ $this->plugin_id . $this->id . '_dhl_display_google_maps' ] ) ){
+
+			$error_message = sprintf( __('In order to show %s on a map, you need to enable a Google Maps first.', 'pr-shipping-dhl'), $location_type );
+			echo $this->get_message( $error_message );
+
 			return 'no';
 		}
 
