@@ -60,7 +60,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 					'label'       		=> __( 'Create return label: ', 'pr-shipping-dhl' ),
 					'placeholder' 		=> '',
 					'description'		=> '',
-					'value'       		=> isset( $dhl_label_items['pr_dhl_return_address_enabled'] ) ? $dhl_label_items['pr_dhl_return_address_enabled'] : '',
+					'value'       		=> isset( $dhl_label_items['pr_dhl_return_address_enabled'] ) ? $dhl_label_items['pr_dhl_return_address_enabled'] : $this->shipping_dhl_settings['dhl_default_return_address_enabled'],
 					'custom_attributes'	=> array( $is_disabled => $is_disabled )
 				) );
 				
@@ -209,15 +209,14 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 					'value'       		=> $neighbor_info,
 					'custom_attributes'	=> array( $is_disabled => $is_disabled, 'maxlength' => '80' )
 				) );
-			}
-
+			} 
 			// Visual age, need 16 or 18, drop down
 			$visual_age = $dhl_obj->get_dhl_visual_age();
 			woocommerce_wp_select( array(
 				'id'          		=> 'pr_dhl_age_visual',
 				'label'       		=> __( 'Visual Age Check:', 'pr-shipping-dhl' ),
 				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_age_visual'] ) ? $dhl_label_items['pr_dhl_age_visual'] : '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_age_visual'] ) ? $dhl_label_items['pr_dhl_age_visual'] : $this->shipping_dhl_settings['dhl_default_age_visual'],
 				'options'			=> $visual_age,
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
@@ -227,7 +226,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				'label'       		=> __( 'Email Notification:', 'pr-shipping-dhl' ),
 				'placeholder' 		=> '',
 				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_email_notification'] ) ? $dhl_label_items['pr_dhl_email_notification'] : '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_email_notification'] ) ? $dhl_label_items['pr_dhl_email_notification'] : $this->shipping_dhl_settings['dhl_default_email_notification'],
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
 
@@ -236,7 +235,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				'label'       		=> __( 'Additional Insurance:', 'pr-shipping-dhl' ),
 				'placeholder' 		=> '',
 				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_additional_insurance'] ) ? $dhl_label_items['pr_dhl_additional_insurance'] : '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_additional_insurance'] ) ? $dhl_label_items['pr_dhl_additional_insurance'] : $this->shipping_dhl_settings['dhl_default_additional_insurance'],
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
 /*
@@ -254,7 +253,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				'label'       		=> __( 'No Neighbour Delivery: ', 'pr-shipping-dhl' ),
 				'placeholder' 		=> '',
 				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_no_neighbor'] ) ? $dhl_label_items['pr_dhl_no_neighbor'] : '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_no_neighbor'] ) ? $dhl_label_items['pr_dhl_no_neighbor'] : $this->shipping_dhl_settings['dhl_default_no_neighbor'],
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
 
@@ -263,7 +262,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				'label'       		=> __( 'Named Person Only: ', 'pr-shipping-dhl' ),
 				'placeholder' 		=> '',
 				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_named_person'] ) ? $dhl_label_items['pr_dhl_named_person'] : '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_named_person'] ) ? $dhl_label_items['pr_dhl_named_person'] : $this->shipping_dhl_settings['dhl_default_named_person'],
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
 
@@ -272,7 +271,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				'label'       		=> __( 'Premium: ', 'pr-shipping-dhl' ),
 				'placeholder' 		=> '',
 				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_premium'] ) ? $dhl_label_items['pr_dhl_premium'] : '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_premium'] ) ? $dhl_label_items['pr_dhl_premium'] : $this->shipping_dhl_settings['dhl_default_premium'],
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
 
@@ -283,7 +282,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				'label'       		=> __( 'Bulky Goods: ', 'pr-shipping-dhl' ),
 				'placeholder' 		=> '',
 				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_bulky_goods'] ) ? $dhl_label_items['pr_dhl_bulky_goods'] : '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_bulky_goods'] ) ? $dhl_label_items['pr_dhl_bulky_goods'] : $this->shipping_dhl_settings['dhl_default_bulky_goods'],
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
 
@@ -294,7 +293,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				'label'       		=> __( 'Ident-Check: ', 'pr-shipping-dhl' ),
 				'placeholder' 		=> '',
 				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck'] ) ? $dhl_label_items['pr_dhl_identcheck'] : '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck'] ) ? $dhl_label_items['pr_dhl_identcheck'] : $this->shipping_dhl_settings['dhl_default_identcheck'],
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
 /*
@@ -321,7 +320,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				'label'       		=> __( 'Ident-Check - Date of Birth: ', 'pr-shipping-dhl' ),
 				'placeholder' 		=> '',
 				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_dob'] ) ? $dhl_label_items['pr_dhl_identcheck_dob'] : '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_dob'] ) ? $dhl_label_items['pr_dhl_identcheck_dob'] : $this->shipping_dhl_settings['dhl_default_identcheck_dob'],
 				'custom_attributes'	=> array( $is_disabled => $is_disabled ),
 				'class'				=> 'short date-picker'
 			) );
@@ -331,7 +330,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				'id'          		=> 'pr_dhl_identcheck_age',
 				'label'       		=> __( 'Ident-Check - Minimum Age: ', 'pr-shipping-dhl' ),
 				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_age'] ) ? $dhl_label_items['pr_dhl_identcheck_age'] : '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_age'] ) ? $dhl_label_items['pr_dhl_identcheck_age'] : $this->shipping_dhl_settings['dhl_default_identcheck_age'],
 				'options'			=> $visual_age,
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
@@ -453,6 +452,28 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		
 		if( empty( $dhl_label_items['pr_dhl_is_codeable'] ) ) {
 			$dhl_label_items['pr_dhl_is_codeable'] = $this->get_default_dhl_print_codeable();
+		}
+
+		$settings_default_ids = array(
+			'pr_dhl_return_address_enabled',
+			'pr_dhl_age_visual',
+			'pr_dhl_email_notification',
+			'pr_dhl_additional_insurance',
+			'pr_dhl_no_neighbor',
+			'pr_dhl_named_person',
+			'pr_dhl_premium',
+			'pr_dhl_bulky_goods',
+			'pr_dhl_identcheck',
+			'pr_dhl_identcheck_age',
+			'pr_dhl_identcheck_dob',
+		);
+
+		foreach( $settings_default_ids as $default_id ){
+			$id_name = str_replace("pr_dhl_", '', $default_id );
+
+			if( empty( $dhl_label_items[$default_id] ) ) {
+				$dhl_label_items[$default_id] = $this->shipping_dhl_settings['dhl_default_' . $id_name];
+			}
 		}
 		
 		$order = wc_get_order( $order_id );

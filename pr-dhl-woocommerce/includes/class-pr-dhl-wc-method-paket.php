@@ -40,6 +40,8 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'process_admin_options' ) );
 		// add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_scripts' ) );
 		
+		add_action('admin_footer', array( $this, 'add_datepicker' ), 10);
+		
 	}
 
 	public function load_admin_scripts( $hook ) {
@@ -95,7 +97,8 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			$dhl_obj = PR_DHL()->get_dhl_factory();
 			$select_dhl_product_int = $dhl_obj->get_dhl_products_international();
 			$select_dhl_product_dom = $dhl_obj->get_dhl_products_domestic();
-
+			$select_dhl_visual_age 	= $dhl_obj->get_dhl_visual_age();
+			
 		} catch (Exception $e) {
 			PR_DHL()->log_msg( __('DHL Products not displaying - ', 'pr-shipping-dhl') . $e->getMessage() );
 		}
@@ -174,13 +177,94 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'desc_tip'          => true,
 				'options'           => $select_dhl_product_int,
 				'class'          => 'wc-enhanced-select',
-			),	
+			),
 			'dhl_default_print_codeable' => array(
 				'title'             => __( 'Print Only If Codeable default', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
 				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
 				'default'           => 'no',
 				'description'       => __( 'Please, tick here if you want the "Print Only If Codeable" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
+			'dhl_default_age_visual' => array(
+				'title'             => __( 'Visual Age Check default', 'pr-shipping-dhl' ),
+				'type'              => 'select',
+				'options' 			=> $select_dhl_visual_age,
+				'description'       => __( 'Please, tick here if you want the "Visual Age Check" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'class'          	=> 'wc-enhanced-select',
+			),
+			'dhl_default_email_notification' => array(
+				'title'             => __( 'Email Notification default', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here if you want the "Email Notification" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
+			'dhl_default_additional_insurance' => array(
+				'title'             => __( 'Additional Insurance default', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here if you want the "Additional Insurance" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
+			'dhl_default_no_neighbor' => array(
+				'title'             => __( 'No Neighbor Delivery default', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here if you want the "No Neighbor Delivery" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
+			'dhl_default_named_person' => array(
+				'title'             => __( 'Named Person Only default', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here if you want the "Named Person Only" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
+			'dhl_default_premium' => array(
+				'title'             => __( 'Premium default', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here if you want the "Premium" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
+			'dhl_default_bulky_goods' => array(
+				'title'             => __( 'Bulky Goods default', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here if you want the "Bulky Goods" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
+			'dhl_default_identcheck' => array(
+				'title'             => __( 'Ident Check default', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here if you want the "Ident Check" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
+			'dhl_default_identcheck_dob' => array(
+				'title'             => __( 'Ident Check Date of Birth default', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
+				'description'       => __( 'Please, tick here if you want the "Ident Check" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'class' 			=> 'short pr-dhl-date-picker'
+			),
+			'dhl_default_identcheck_age' => array(
+				'title'             => __( 'Ident Check Age default', 'pr-shipping-dhl' ),
+				'type'              => 'select',
+				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
+				'default'           => '',
+				'options' 			=> $select_dhl_visual_age,
+				'description'       => __( 'Please, tick here if you want the "Ident Check" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 			),
 			'dhl_tracking_note' => array(
@@ -473,6 +557,14 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'type'            => 'title',
 				'description'     => __( 'Enter Return Address below.', 'pr-shipping-dhl' ),
 			),
+			'dhl_default_return_address_enabled' => array(
+				'title'             => __( 'Create Return Label default', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here if you want the "Create Return Label" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
 			'dhl_return_name' => array(
 				'title'             => __( 'Name', 'pr-shipping-dhl' ),
 				'type'              => 'text',
@@ -582,6 +674,19 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'custom_attributes'	=> array( 'maxlength' => '35' )
 			),*/
 		);
+	}
+
+	public function add_datepicker(){ 
+		var_dump('test');
+		?>
+		<script type="text/javascript">
+		jQuery(document).ready(function(){
+			jQuery('.pr-dhl-date-picker').datepicker({
+				dateFormat: 'yy-mm-dd'
+			});
+		});
+		</script>
+		<?php
 	}
 
 	/**
