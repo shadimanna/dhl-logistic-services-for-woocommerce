@@ -399,6 +399,8 @@ abstract class PR_DHL_WC_Order {
 	 */
 	public function delete_dhl_label_tracking( $order_id ) {
 		delete_post_meta( $order_id, '_pr_shipment_dhl_label_tracking' );
+
+		do_action( 'pr_delete_dhl_label_tracking', $order_id );
 	}
 
 	/**
