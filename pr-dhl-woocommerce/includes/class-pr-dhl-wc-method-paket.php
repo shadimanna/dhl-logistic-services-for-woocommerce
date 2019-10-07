@@ -178,14 +178,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'options'           => $select_dhl_product_int,
 				'class'          => 'wc-enhanced-select',
 			),
-			'dhl_default_print_codeable' => array(
-				'title'             => __( 'Print Only If Codeable default', 'pr-shipping-dhl' ),
-				'type'              => 'checkbox',
-				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
-				'default'           => 'no',
-				'description'       => __( 'Please, tick here if you want the "Print Only If Codeable" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
-			),
 			'dhl_default_age_visual' => array(
 				'title'             => __( 'Visual Age Check default', 'pr-shipping-dhl' ),
 				'type'              => 'select',
@@ -265,6 +257,14 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'default'           => '',
 				'options' 			=> $select_dhl_visual_age,
 				'description'       => __( 'Please, tick here if you want the "Ident Check" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
+			'dhl_default_is_codeable' => array(
+				'title'             => __( 'Print Only If Codeable default', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here if you want the "Print Only If Codeable" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 			),
 			'dhl_tracking_note' => array(
@@ -677,7 +677,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 	}
 
 	public function add_datepicker(){ 
-		var_dump('test');
 		?>
 		<script type="text/javascript">
 		jQuery(document).ready(function(){

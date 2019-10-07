@@ -342,7 +342,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				'label'       		=> __( 'Print Only If Codeable: ', 'pr-shipping-dhl' ),
 				'placeholder' 		=> '',
 				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_is_codeable'] ) ? $dhl_label_items['pr_dhl_is_codeable'] : $this->get_default_dhl_print_codeable(),
+				'value'       		=> isset( $dhl_label_items['pr_dhl_is_codeable'] ) ? $dhl_label_items['pr_dhl_is_codeable'] : $this->shipping_dhl_settings['dhl_default_is_codeable'],
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
 
@@ -449,12 +449,9 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		parent::save_default_dhl_label_items( $order_id );
 
 		$dhl_label_items = $this->get_dhl_label_items( $order_id );
-		
-		if( empty( $dhl_label_items['pr_dhl_is_codeable'] ) ) {
-			$dhl_label_items['pr_dhl_is_codeable'] = $this->get_default_dhl_print_codeable();
-		}
 
 		$settings_default_ids = array(
+			'pr_dhl_is_codeable',
 			'pr_dhl_return_address_enabled',
 			'pr_dhl_age_visual',
 			'pr_dhl_email_notification',
@@ -483,11 +480,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 		$this->save_dhl_label_items( $order_id, $dhl_label_items );
 
-	}
-
-	protected function get_default_dhl_print_codeable() {
-		// $this->shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
-		return $this->shipping_dhl_settings['dhl_default_print_codeable'];
 	}
 
 	protected function get_default_dhl_rounting_email( $order_id ) {
