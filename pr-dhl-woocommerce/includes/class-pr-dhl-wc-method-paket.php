@@ -841,6 +841,14 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 	}
 
 	/**
+	 * Validate the Google Maps enabled field
+	 * @see validate_settings_fields()
+	 */
+	public function validate_dhl_display_google_maps_field( $key ) {
+		return $this->validate_location_enabled_field( $key, __( 'Google Maps', 'pr-shipping-dhl' ) );
+	}
+
+	/**
 	 * Validate the any location enabled field
 	 * @see validate_settings_fields()
 	 * @return return 'no' or 'yes' (not exception) to 'disable' locations as opposed to NOT save them
@@ -850,21 +858,18 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			return 'no';
 		}
 
-		if( ! isset( $_POST[ $this->plugin_id . $this->id . '_dhl_display_google_maps' ] ) ){
-
-			$error_message = sprintf( __('In order to show %s on a map, you need to enable a Google Maps first.', 'pr-shipping-dhl'), $location_type );
-			echo $this->get_message( $error_message );
-
-			return 'no';
-		}
-
 		// Verify whether Google API key set
 		$google_maps_api_key = $_POST[ $this->plugin_id . $this->id . '_dhl_google_maps_api_key' ];
 
 		// If not return 'no'
 		if ( empty( $google_maps_api_key ) ) {
-
-			$error_message = sprintf( __('In order to show %s on a map, you need to set a Google API Key first.', 'pr-shipping-dhl'), $location_type );
+			
+			if( $key == 'dhl_display_google_maps' ){ 
+				$error_message = sprintf( __('In order to show %s, you need to set a Google API Key first.', 'pr-shipping-dhl'), $location_type );	
+			}else{
+				$error_message = sprintf( __('In order to show %s on a map, you need to set a Google API Key first.', 'pr-shipping-dhl'), $location_type );
+			}
+			
 			echo $this->get_message( $error_message );
 			
 			return 'no';

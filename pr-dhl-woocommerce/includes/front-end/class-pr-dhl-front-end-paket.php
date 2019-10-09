@@ -470,6 +470,10 @@ class PR_DHL_Front_End_Paket {
 	public function add_parcel_finder_btn() {
 		// echo '<a id="dhl_parcel_finder" class="button" href="#dhl_parcel_finder_form">' . __('Parcel Finder', 'pr-shipping-dhl') . '</a>';
 
+		if( !$this->is_google_maps_enabled() ){
+			return ;
+		}
+		
 		$button_text = $this->get_branch_location_text();
 
 		$dhl_logo = PR_DHL_PLUGIN_DIR_URL . '/assets/img/dhl-official.png';
@@ -618,10 +622,6 @@ class PR_DHL_Front_End_Paket {
 
 	protected function is_packstation_enabled() {
 
-		if( !$this->is_google_maps_enabled() ){
-			return false;
-		}
-
 		if( ( isset( $this->shipping_dhl_settings['dhl_display_packstation'] ) && 
 			( $this->shipping_dhl_settings['dhl_display_packstation'] == 'yes' ) ) ) {
 			return true;
@@ -632,10 +632,6 @@ class PR_DHL_Front_End_Paket {
 
 	protected function is_parcelshop_enabled() {
 
-		if( !$this->is_google_maps_enabled() ){
-			return false;
-		}
-
 		if( ( isset( $this->shipping_dhl_settings['dhl_display_parcelshop'] ) && 
 			( $this->shipping_dhl_settings['dhl_display_parcelshop'] == 'yes' ) ) ) {
 			return true;
@@ -645,10 +641,6 @@ class PR_DHL_Front_End_Paket {
 	}
 
 	protected function is_post_office_enabled() {
-
-		if( !$this->is_google_maps_enabled() ){
-			return false;
-		}
 
 		if( ( isset( $this->shipping_dhl_settings['dhl_display_post_office'] ) && 
 			( $this->shipping_dhl_settings['dhl_display_post_office'] == 'yes' ) ) ) {
