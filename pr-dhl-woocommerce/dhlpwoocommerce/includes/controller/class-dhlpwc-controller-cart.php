@@ -11,7 +11,7 @@ class DHLPWC_Controller_Cart
     {
         add_action('wp_loaded', array($this, 'set_parcelshop_hooks'));
         add_action('wp_loaded', array($this, 'set_delivery_time_hooks'));
-        add_action('wp_loaded', array($this, 'set_sort_hooks'));
+        add_filter('woocommerce_package_rates', array($this, 'sort_rates'), 10, 2);
     }
 
     public function set_parcelshop_hooks()
@@ -46,16 +46,13 @@ class DHLPWC_Controller_Cart
         }
     }
 
-    public function set_sort_hooks()
-    {
-        $service = DHLPWC_Model_Service_Access_Control::instance();
-        if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CHECKOUT_SORT)) {
-            add_filter('woocommerce_package_rates', array($this, 'sort_rates'), 10, 2);
-        }
-    }
-
     public function sort_rates($rates, $package)
     {
+        $service = DHLPWC_Model_Service_Access_Control::instance();
+        if (!$service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CHECKOUT_SORT)) {
+            return $rates;
+        }
+
         $service = DHLPWC_Model_Service_Shipping_Preset::instance();
         return $service->sort_rates($rates);
     }

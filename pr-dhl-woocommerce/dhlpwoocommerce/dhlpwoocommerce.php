@@ -19,10 +19,15 @@ class DHLPWC
     {
         // Only load this plugin if WooCommerce is loaded
         if (
-            in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))
-            || array_key_exists('woocommerce/woocommerce.php', apply_filters('active_plugins', get_site_option('active_sitewide_plugins')))
+            (
+                is_array($active_plugins = apply_filters('active_plugins', get_option('active_plugins')))
+                && in_array('woocommerce/woocommerce.php', $active_plugins)
+            ) || (
+                is_array($active_sitewide_plugins = apply_filters('active_plugins', get_site_option('active_sitewide_plugins')))
+                && array_key_exists('woocommerce/woocommerce.php', $active_sitewide_plugins)
+            )
         ) {
-            add_action('init', array($this, 'init'));
+            add_action('plugins_loaded', array($this, 'init'));
         }
     }
 
