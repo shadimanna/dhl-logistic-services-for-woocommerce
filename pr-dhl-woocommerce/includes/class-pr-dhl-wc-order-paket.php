@@ -212,6 +212,15 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 					'custom_attributes'	=> array( $is_disabled => $is_disabled, 'maxlength' => '80' )
 				) );
 			} 
+
+			woocommerce_wp_hidden_input( array(
+				'id'          		=> 'pr_dhl_email_notification',
+				'label'       		=> __( 'Email Notification:', 'pr-shipping-dhl' ),
+				'placeholder' 		=> '',
+				'description'		=> '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_email_notification'] ) ? $dhl_label_items['pr_dhl_email_notification'] : false,
+			) );
+
 			// Visual age, need 16 or 18, drop down
 			$visual_age = $dhl_obj->get_dhl_visual_age();
 			woocommerce_wp_select( array(
@@ -220,15 +229,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				'description'		=> '',
 				'value'       		=> isset( $dhl_label_items['pr_dhl_age_visual'] ) ? $dhl_label_items['pr_dhl_age_visual'] : $this->shipping_dhl_settings['dhl_default_age_visual'],
 				'options'			=> $visual_age,
-				'custom_attributes'	=> array( $is_disabled => $is_disabled )
-			) );
-
-			woocommerce_wp_checkbox( array(
-				'id'          		=> 'pr_dhl_email_notification',
-				'label'       		=> __( 'Email Notification:', 'pr-shipping-dhl' ),
-				'placeholder' 		=> '',
-				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_email_notification'] ) ? $dhl_label_items['pr_dhl_email_notification'] : $this->shipping_dhl_settings['dhl_default_email_notification'],
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
 
@@ -456,7 +456,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			'pr_dhl_is_codeable',
 			'pr_dhl_return_address_enabled',
 			'pr_dhl_age_visual',
-			'pr_dhl_email_notification',
 			'pr_dhl_additional_insurance',
 			'pr_dhl_no_neighbor',
 			'pr_dhl_named_person',

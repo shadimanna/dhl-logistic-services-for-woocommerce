@@ -79,6 +79,12 @@ class PR_DHL_Front_End_Paket {
 			add_filter( 'woocommerce_localisation_address_formats', array( $this, 'set_format_post_number' ) );
 			add_filter( 'woocommerce_formatted_address_replacements', array( $this, 'add_format_post_number' ), 10, 2 );
 		}
+		
+		if( $this->is_email_notification_enabled() ){
+			add_action( 'woocommerce_review_order_before_submit', array( $this, 'add_email_notification_checkbox' ), 10 );
+			add_action('woocommerce_checkout_order_processed', array( $this, 'process_email_notification_fields'), 30, 2 );
+		}
+		
 	}
 
 	protected function is_tracking_enabled() {
@@ -650,6 +656,16 @@ class PR_DHL_Front_End_Paket {
 		}
 	}
 
+	protected function is_email_notification_enabled() {
+		
+		if( ( isset( $this->shipping_dhl_settings['dhl_email_notification'] ) && 
+			( $this->shipping_dhl_settings['dhl_email_notification'] == 'yes' ) ) ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public function add_postnum_field( $checkout_fields ) {
 
 		$shipping_dhl_address_type = array(
@@ -681,6 +697,28 @@ class PR_DHL_Front_End_Paket {
 		}
 
 		return $checkout_fields;
+	}
+
+	public function add_email_notification_checkbox(){
+
+		woocommerce_form_field('pr_dhl_email_notification', array(
+			'type' => 'checkbox',
+			'class' => array( 'pr-dhl-email-notification form-row-wide' ),
+			'label' => __('Enable Email Notification'),
+			),
+			'yes'
+		);
+	}
+
+	public function process_email_notification_fields( $order_id, $posted ) {
+
+		$dhl_label_items = PR_DHL()->get_pr_dhl_wc_order()->get_dhl_label_items( $order_id );
+		if ( isset($_POST['pr_dhl_email_notification']) ) {
+
+			$dhl_label_items['pr_dhl_email_notification'] = $_POST['pr_dhl_email_notification'];
+			PR_DHL()->get_pr_dhl_wc_order()->save_dhl_label_items( $order_id, $dhl_label_items );
+
+		}
 	}
 
 	/*
