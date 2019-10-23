@@ -4,7 +4,7 @@ Plugin Name: DHL Parcel for WooCommmerce
 Plugin URI: https://www.dhlparcel.nl
 Description: This is the official DHL Parcel for WooCommerce plugin.
 Author: DHL Parcel
-Version: 1.2.13
+Version: 1.2.14
 WC requires at least: 3.0.0
 WC tested up to: 3.5.3
 */
@@ -51,6 +51,11 @@ class DHLPWC
         // Load translation
         load_plugin_textdomain('dhlpwc', false, DHLPWC_RELATIVE_PLUGIN_DIR . DIRECTORY_SEPARATOR .'languages' );
 
+        //  Fix for WPML
+        if (function_exists('wp_cache_add_global_groups')) {
+            wp_cache_add_global_groups( 'options' );
+        }
+
         // Load controllers
 
         // These controllers will not be encapsulated in an availability check, due to it providing screens
@@ -62,6 +67,7 @@ class DHLPWC
         if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_API)) {
             new DHLPWC_Controller_Admin_Order_Metabox();
             new DHLPWC_Controller_Admin_Order();
+            new DHLPWC_Controller_Admin_Product();
 
             new DHLPWC_Controller_Checkout();
             new DHLPWC_Controller_Cart();

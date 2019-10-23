@@ -108,6 +108,8 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'title'       => __('Plugin Settings', 'dhlpwc'),
                     'type'        => 'title',
                     'description' => __('Enable features of this plugin.', 'dhlpwc'),
+                    'id'          => 'plugin_settings',
+                    'name'        => 'plugin_settings'
                 ),
                 'enable_all'                   => array(
                     'title'       => __('Enable plugin', 'dhlpwc'),
@@ -839,6 +841,18 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                 if (array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SDD, $allowed_shipping_options)) {
                     $allowed_shipping_options[DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SDD] = null;
                     unset($allowed_shipping_options[DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SDD]);
+                }
+            }
+        }
+
+        // remove methods that have not been allowed for products which have restriction turned on
+        foreach ($package['contents'] as $item_id => $item) {
+            if (get_post_meta($item['product_id'], 'dhlpwc_enable_method_limit', true) === 'yes') {
+                $allowed_methods = get_post_meta($item['product_id'], 'dhlpwc_selected_method_limit', true);
+                foreach ($presets as $method_key => $method) {
+                    if (in_array($method['frontend_id'], $allowed_methods) === false) {
+                        unset($presets[$method_key]);
+                    }
                 }
             }
         }
