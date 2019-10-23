@@ -558,7 +558,13 @@ abstract class PR_DHL_WC_Order {
 		$additional_fees = 0;
 		if( count( $order->get_fees() ) > 0 ){
 			foreach( $order->get_fees() as $fee ){
-				$additional_fees += floatval( $fee->get_total() );
+
+				if( class_exists( 'WC_Order_Item_Fee' ) ){
+					$additional_fees += floatval( $fee->get_total() );
+				}else{
+					$additional_fees += floatval( $fee['line_total'] );
+				}
+				
 			}
 		}
 

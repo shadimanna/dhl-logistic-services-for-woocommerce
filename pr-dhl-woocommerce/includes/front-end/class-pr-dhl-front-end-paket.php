@@ -48,7 +48,7 @@ class PR_DHL_Front_End_Paket {
 	public function init_hooks() {
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_styles_scripts' ) );
-
+		
 		if( $this->is_tracking_enabled() &&  ( $this->is_preferredservice_enabled() || $this->is_parcelfinder_enabled() ) ) {
 			// Add DHL meta tag
 			add_action( 'wp_head', array( $this, 'dhl_add_meta_tags') );
@@ -713,8 +713,13 @@ class PR_DHL_Front_End_Paket {
 	public function process_email_notification_fields( $order_id, $posted ) {
 
 		$dhl_label_items = PR_DHL()->get_pr_dhl_wc_order()->get_dhl_label_items( $order_id );
+		
 		if ( isset($_POST['pr_dhl_email_notification']) ) {
 
+			if( !is_array( $dhl_label_items ) ){
+				$dhl_label_items = array();
+			}
+			
 			$dhl_label_items['pr_dhl_email_notification'] = $_POST['pr_dhl_email_notification'];
 			PR_DHL()->get_pr_dhl_wc_order()->save_dhl_label_items( $order_id, $dhl_label_items );
 
