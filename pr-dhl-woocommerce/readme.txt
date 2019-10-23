@@ -4,10 +4,10 @@ Donate link:
 Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL Parcel Benelux, DHL Parcel Luxembourg, DHL Paket Germany, WooCommerce, Woocom, Woo Commerce, Shipping, shiping, label creation, label printing, shipping rates, DHL Paket
 Requires at least: 4.1
 Requires PHP: 5.6
-Tested up to: 5.0
-Stable tag: 1.5.2
-WC requires at least: 2.6.0
-WC tested up to: 3.6
+Tested up to: 5.2
+Stable tag: 1.5.6
+WC requires at least: 2.6.14
+WC tested up to: 3.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -80,6 +80,22 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+
+= 1.5.6 =
+* DHL Parcel: Fixed issue with package rate not being properly calculated based on logged in users
+* DHL Parcel: Added product based shipping restrictions
+* DHL Parcel: Fixed an issue with shipping time windows
+
+= 1.5.5 =
+* DHL Parcel: Fixed custom shipping methods not sorting after logging in
+* DHL Parcel: Fixed an issue with certain sites not saving the settings
+* DHL Parcel: Fixed an issue causing a warning error
+
+= 1.5.4 =
+* DHL Paket: Add filters to override DHL products
+
+= 1.5.3 =
+* DHL Paket: Add filter to override base country
 
 = 1.5.2 =
 * DHL Parcel: Updated delivery times to correctly calculate with timezone settings

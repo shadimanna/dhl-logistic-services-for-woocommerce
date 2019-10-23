@@ -5,7 +5,7 @@
  * Description: WooCommerce integration for DHL eCommerce, DHL Paket, DHL Parcel Europe (Benelux and Iberia) and Deutsche Post International
  * Author: DHL
  * Author URI: http://dhl.com/woocommerce
- * Version: 1.5.2
+ * Version: 1.5.6
  * WC requires at least: 2.6.14
  * WC tested up to: 3.7
  *
@@ -32,7 +32,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "1.5.2";
+	private $version = "1.5.6";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -140,11 +140,7 @@ class PR_DHL_WC {
 		$this->define( 'PR_DHL_CIG_PWD', 'Iw4zil3jFJTOXHA6AuWP4ykGkXKLee' );
 		$this->define( 'PR_DHL_CIG_AUTH', 'https://cig.dhl.de/services/production/soap' );
 
-		// Flag for sandbox testing
-		// $this->define( 'PR_DHL_SANDBOX', true );
-
-		$this->define( 'PR_DHL_CIG_USR_QA', 'shadim' );
-		$this->define( 'PR_DHL_CIG_PWD_QA', 'm6jvtj{U)zH;\']' );
+		// To use Sandbox, define 'PR_DHL_SANDBOX' to be 'true' and set 'PR_DHL_CIG_USR_QA' and 'PR_DHL_CIG_PWD_QA' outside this plugin
 		$this->define( 'PR_DHL_CIG_AUTH_QA', 'https://cig.dhl.de/services/sandbox/soap' );
 
 		$this->define( 'PR_DHL_PAKET_TRACKING_URL', 'https://nolp.dhl.de/nextt-online-public/report_popup.jsp?idc=' );
@@ -345,7 +341,7 @@ class PR_DHL_WC {
 
 	public function get_base_country() {
 		$country_code = wc_get_base_location();
-		return $country_code['country'];
+		return apply_filters( 'pr_shipping_dhl_base_country', $country_code['country'] );
 	}
 
 	/**

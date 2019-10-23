@@ -1,5 +1,12 @@
 # DHL Parcel plugin for WooCommerce
 
+v1.2.14
+
+## Changes
+- Fixed issue with package rate not being properly calculated based on logged in users
+- Added product based shipping restrictions
+- Fixed an issue with shipping time windows
+
 v1.2.13
 
 ## Changes

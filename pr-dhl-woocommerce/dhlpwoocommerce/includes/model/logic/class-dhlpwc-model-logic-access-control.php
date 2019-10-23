@@ -606,9 +606,6 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         }
 
         // Do not show for carts with no shipping required
-        if (!$cart->needs_shipping()) {
-            return false;
-        }
 
         if (is_callable(array($cart, 'get_customer'))) {
             // WooCommerce 3.2.0+

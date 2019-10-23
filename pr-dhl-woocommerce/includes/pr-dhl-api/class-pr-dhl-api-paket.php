@@ -45,7 +45,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 				break;
 		}
 
-		return $dhl_prod_int;
+        return apply_filters( 'pr_shipping_dhl_paket_products_international', $dhl_prod_int );
 	}
 
 	public function get_dhl_products_domestic() {
@@ -67,7 +67,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 				break;
 		}
 
-		return $dhl_prod_dom;
+        return apply_filters( 'pr_shipping_dhl_paket_products_domestic', $dhl_prod_dom );
 	}
 
 	public function get_dhl_preferred_day_time( $postcode, $account_num, $cutoff_time = '12:00', $exclude_working_days = array() ) {
