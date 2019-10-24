@@ -373,7 +373,7 @@ abstract class PR_DHL_WC_Order {
 		$tracking_details = array(
 			'carrier' 			=> $this->carrier,
 			'tracking_number' 	=> $tracking_items['tracking_number'],
-			'ship_date' 		=> time()
+			'ship_date' 		=> date( "Y-m-d", time() )
 		);
 
 		do_action( 'pr_save_dhl_label_tracking', $order_id, $tracking_details );
