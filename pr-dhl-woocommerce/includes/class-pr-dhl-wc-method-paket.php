@@ -267,6 +267,14 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'description'       => __( 'Please, tick here if you want the "Print Only If Codeable" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 			),
+			'dhl_default_routing' => array(
+				'title'             => __( 'Parcel Outlet Routing default', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here if you want the "Parcel Outlet Routing" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
 			'dhl_tracking_note' => array(
 				'title'             => __( 'Tracking Note', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',

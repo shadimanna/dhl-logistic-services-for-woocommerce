@@ -355,7 +355,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				'label'       		=> __( 'Parcel Outlet Routing: ', 'pr-shipping-dhl' ),
 				'placeholder' 		=> '',
 				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_routing'] ) ? $dhl_label_items['pr_dhl_routing'] : '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_routing'] ) ? $dhl_label_items['pr_dhl_routing'] : $this->shipping_dhl_settings['dhl_default_routing'],
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
 
@@ -464,6 +464,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			'pr_dhl_identcheck',
 			'pr_dhl_identcheck_age',
 			'pr_dhl_identcheck_dob',
+			'pr_dhl_routing'
 		);
 
 		foreach( $settings_default_ids as $default_id ){
