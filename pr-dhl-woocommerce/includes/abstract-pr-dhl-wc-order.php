@@ -982,6 +982,8 @@ abstract class PR_DHL_WC_Order {
                                 'type' => 'success',
                             ));
 
+                            do_action( 'pr_shipping_dhl_label_created', $order_id );
+
 					}
 
 					if( ! empty( $label_tracking_info['label_path'] ) ) {
