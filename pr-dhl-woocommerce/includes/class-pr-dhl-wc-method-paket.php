@@ -438,6 +438,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'dhl_payment_gateway' => array(
 					'title'             => __( 'Exclude Payment Gateways', 'pr-shipping-dhl' ),
 					'type'              => 'multiselect',
+					'default' 			=> 'cod',
 					'description'       => __( 'Select the Payment Gateways to hide the enabled DHL Paket preferred services and Location Finder below. You can press "ctrl" to select multiple options or click on a selected option to deselect it.', 'pr-shipping-dhl' ),
 					'desc_tip'          => true,
 					'options'           => $payment_gateway_titles,

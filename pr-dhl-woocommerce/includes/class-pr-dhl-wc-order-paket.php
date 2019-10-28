@@ -20,8 +20,11 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	
 	public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
 
-		$order = wc_get_order( $order_id );
-		if( $this->is_cod_payment_method( $order_id ) ) {
+		$order 				= wc_get_order( $order_id );
+		$base_country_code 	= PR_DHL()->get_base_country();
+
+		if( $order->get_shipping_country() == $base_country_code && $this->is_cod_payment_method( $order_id ) ) {
+		//if( $this->is_cod_payment_method( $order_id ) ) {
 
 			woocommerce_wp_text_input( array(
 					'id'          		=> 'pr_dhl_cod_value',
@@ -33,8 +36,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 					'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
 		}
-
-		$base_country_code = PR_DHL()->get_base_country();
 		
 		echo '<hr/>';
 
