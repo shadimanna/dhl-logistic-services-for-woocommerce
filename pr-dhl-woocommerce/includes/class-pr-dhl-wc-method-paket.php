@@ -103,6 +103,8 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			PR_DHL()->log_msg( __('DHL Products not displaying - ', 'pr-shipping-dhl') . $e->getMessage() );
 		}
 
+		$weight_units = get_option( 'woocommerce_weight_unit' );
+
 		$this->form_fields = array(
 			'dhl_pickup_dist'     => array(
 				'title'           => __( 'Shipping and Pickup', 'pr-shipping-dhl' ),
@@ -274,6 +276,23 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'default'           => 'no',
 				'description'       => __( 'Please, tick here if you want the "Parcel Outlet Routing" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
+			),
+			'dhl_add_weight_type' => array(
+				'title'             => __( 'Additional Weight Type', 'pr-shipping-dhl' ),
+				'type'              => 'select',
+				'description'       => __( 'Select whether to add an absolute weight amount or percentage amount to the total product weight.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'options'           => array( 'absolute' => 'Absolute', 'percentage' => 'Percentage'),
+				'class'				=> 'wc-enhanced-select'
+			),
+			'dhl_add_weight' => array(
+				'title'             => sprintf( __( 'Additional Weight (%s or %%)', 'pr-shipping-dhl' ), $weight_units),
+				'type'              => 'text',
+				'description'       => __( 'Add extra weight in addition to the products.  Either an absolute amount or percentage (e.g. 10 for 10%).', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => '',
+				'placeholder'		=> '',
+				'class'				=> 'wc_input_decimal'
 			),
 			'dhl_tracking_note' => array(
 				'title'             => __( 'Tracking Note', 'pr-shipping-dhl' ),
