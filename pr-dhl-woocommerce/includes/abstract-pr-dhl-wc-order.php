@@ -559,7 +559,7 @@ abstract class PR_DHL_WC_Order {
 		if( count( $order->get_fees() ) > 0 ){
 			foreach( $order->get_fees() as $fee ){
 
-				if( version_compare( WC()->version, '3.0.0', '>=' ) ){
+				if( defined( 'WOOCOMMERCE_VERSION' ) && version_compare( WOOCOMMERCE_VERSION, '3.0.0', '>=' ) ){
 
 					$additional_fees += floatval( $fee->get_total() );
 
@@ -574,7 +574,7 @@ abstract class PR_DHL_WC_Order {
 
 		$args['order_details']['additional_fee'] 	= $additional_fees;
 
-		if( version_compare( WC()->version, '3.0.0', '>=' ) ){
+		if( defined( 'WOOCOMMERCE_VERSION' ) && version_compare( WOOCOMMERCE_VERSION, '3.0.0', '>=' ) ){
 
 			$args['order_details']['shipping_fee'] 		= $order->get_shipping_total();
 
