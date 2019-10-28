@@ -85,6 +85,8 @@ class PR_DHL_Front_End_Paket {
 			add_action('woocommerce_checkout_order_processed', array( $this, 'process_email_notification_fields'), 30, 2 );
 		}
 		
+		add_filter('woocommerce_available_payment_gateways', array( $this, 'remove_cod_payment') );
+		
 	}
 
 	protected function is_tracking_enabled() {
@@ -867,6 +869,17 @@ class PR_DHL_Front_End_Paket {
 		}
 
 		return $address_format;
+	}
+    
+	public function remove_cod_payment( $available_gateways ){
+		// PR_DHL()->is_shipping_domestic( WC()->customer->get_shipping_country() );
+		// PR_DHL()->is_crossborder_shipment( $shipping_country );
+
+		if ( isset( $available_gateways['cod'] ) && WC()->customer->get_shipping_country() != 'DE' ) {
+			unset( $available_gateways['cod'] );
+		} 
+
+		return $available_gateways;
 	}
 }
 
