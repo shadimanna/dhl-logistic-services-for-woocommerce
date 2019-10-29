@@ -469,8 +469,8 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		foreach( $settings_default_ids as $default_id ){
 			$id_name = str_replace("pr_dhl_", '', $default_id );
 
-			if( empty( $dhl_label_items[$default_id] ) ) {
-				$dhl_label_items[$default_id] = $this->shipping_dhl_settings['dhl_default_' . $id_name];
+			if( empty( $dhl_label_items[ $default_id ] ) ) {
+				$dhl_label_items[ $default_id ] = $this->shipping_dhl_settings['dhl_default_' . $id_name];
 			}
 		}
 		
@@ -498,6 +498,14 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		);
 
 		return $shop_manager_actions;
+	}
+
+	protected function is_cod_payment_method( $order_id ) {
+		$base_country_code 	= PR_DHL()->get_base_country();
+
+		if( ( $base_country_code == 'DE' ) && ( $this->is_shipping_domestic( $order_id ) ) ) {
+			parent::is_cod_payment_method( $order_id );
+		}
 	}
 }
 
