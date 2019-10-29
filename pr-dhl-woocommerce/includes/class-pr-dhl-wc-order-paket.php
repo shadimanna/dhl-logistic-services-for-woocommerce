@@ -23,22 +23,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$order 				= wc_get_order( $order_id );
 		$base_country_code 	= PR_DHL()->get_base_country();
 
-		if( $order->get_shipping_country() == $base_country_code && $this->is_cod_payment_method( $order_id ) ) {
-		//if( $this->is_cod_payment_method( $order_id ) ) {
-
-			woocommerce_wp_text_input( array(
-					'id'          		=> 'pr_dhl_cod_value',
-					'class'          	=> 'wc_input_decimal',
-					'label'       		=> __( 'COD Amount:', 'pr-shipping-dhl' ),
-					'placeholder' 		=> '',
-					'description'		=> '',
-					'value'       		=> isset( $dhl_label_items['pr_dhl_cod_value'] ) ? $dhl_label_items['pr_dhl_cod_value'] : $order->get_total(),
-					'custom_attributes'	=> array( $is_disabled => $is_disabled )
-			) );
-		}
-		
-		echo '<hr/>';
-
 		if( $this->is_crossborder_shipment( $order_id ) ) {
 
 			// Duties drop down
@@ -56,7 +40,21 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		// Preferred options for Germany only
 		if( ( $base_country_code == 'DE' ) && ( $this->is_shipping_domestic( $order_id ) ) ) {
 
+			if( $this->is_cod_payment_method( $order_id ) ) {
+				woocommerce_wp_text_input( array(
+						'id'          		=> 'pr_dhl_cod_value',
+						'class'          	=> 'wc_input_decimal',
+						'label'       		=> __( 'COD Amount:', 'pr-shipping-dhl' ),
+						'placeholder' 		=> '',
+						'description'		=> '',
+						'value'       		=> isset( $dhl_label_items['pr_dhl_cod_value'] ) ? $dhl_label_items['pr_dhl_cod_value'] : $order->get_total(),
+						'custom_attributes'	=> array( $is_disabled => $is_disabled )
+				) );
+			}
+
 			if( ! empty( $this->shipping_dhl_settings['dhl_participation_return'] ) ) {
+
+				echo '<hr/>';
 
 				woocommerce_wp_checkbox( array(
 					'id'          		=> 'pr_dhl_return_address_enabled',
