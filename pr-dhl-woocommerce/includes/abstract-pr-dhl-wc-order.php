@@ -252,6 +252,8 @@ abstract class PR_DHL_WC_Order {
 			$tracking_note_type = $this->get_tracking_note_type();
 			$label_url = $this->get_download_label_url( $order_id );
 
+			do_action( 'pr_shipping_dhl_label_created', $order_id );
+
 			wp_send_json( array( 
 				'download_msg' => __('Your DHL label is ready to download, click the "Download Label" button above"', 'pr-shipping-dhl'),
 				'button_txt' => __( 'Download Label', 'pr-shipping-dhl' ),
@@ -259,8 +261,6 @@ abstract class PR_DHL_WC_Order {
 				'tracking_note'	  => $tracking_note,
 				'tracking_note_type' => $tracking_note_type,
 				) );
-
-			do_action( 'pr_shipping_dhl_label_created', $order_id );
 
 		} catch ( Exception $e ) {
 

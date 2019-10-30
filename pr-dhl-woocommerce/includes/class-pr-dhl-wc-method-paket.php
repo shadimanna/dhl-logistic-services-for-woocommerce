@@ -294,6 +294,24 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'placeholder'		=> '',
 				'class'				=> 'wc_input_decimal'
 			),
+			'dhl_add_tracking_info_completed' => array(
+				'title'             => __( 'Add Tracking Info', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label' 			=> __( 'Add tracking info in completed email', 'pr-shipping-dhl'),
+				'description'       => __( 'Please, tick here to add tracking info when completed email is sent.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => 'no',
+				'class'				=> ''
+			),
+			'dhl_change_order_status_completed' => array(
+				'title'             => __( 'Change Order Status', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label' 			=> __( 'Check Order Status', 'pr-shipping-dhl'),
+				'description'       => __( 'Please, tick here to change the order status when label is generated.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => 'no',
+				'class'				=> ''
+			),
 			'dhl_tracking_note' => array(
 				'title'             => __( 'Tracking Note', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',

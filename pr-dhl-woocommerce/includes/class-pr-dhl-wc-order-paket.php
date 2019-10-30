@@ -17,6 +17,14 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 	protected $carrier = 'DHL Paket';
+
+	public function init_hooks(){
+
+		parent::init_hooks();
+
+		add_action( 'pr_shipping_dhl_label_created', array( $this, 'change_order_status' ), 10, 1 );
+
+	}
 	
 	public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
 
@@ -505,6 +513,16 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 		if( ( $base_country_code == 'DE' ) && ( $this->is_shipping_domestic( $order_id ) ) ) {
 			parent::is_cod_payment_method( $order_id );
+		}
+	}
+	
+	public function change_order_status( $order_id ){
+		
+		if( isset( $this->shipping_dhl_settings['dhl_change_order_status_completed'] ) && ( $this->shipping_dhl_settings['dhl_change_order_status_completed'] == 'yes' ) ) {
+			error_log( 'testchange order status');
+			$order = wc_get_order( $order_id );
+			$order->update_status('completed');
+
 		}
 	}
 }
