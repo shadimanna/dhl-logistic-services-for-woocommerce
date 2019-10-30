@@ -294,24 +294,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'placeholder'		=> '',
 				'class'				=> 'wc_input_decimal'
 			),
-			'dhl_add_tracking_info_completed' => array(
-				'title'             => __( 'Add Tracking Info', 'pr-shipping-dhl' ),
-				'type'              => 'checkbox',
-				'label' 			=> __( 'Add tracking info in completed email', 'pr-shipping-dhl'),
-				'description'       => __( 'Please, tick here to add tracking info when completed email is sent.', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
-				'default'           => 'no',
-				'class'				=> ''
-			),
-			'dhl_change_order_status_completed' => array(
-				'title'             => __( 'Change Order Status', 'pr-shipping-dhl' ),
-				'type'              => 'checkbox',
-				'label' 			=> __( 'Check Order Status', 'pr-shipping-dhl'),
-				'description'       => __( 'Please, tick here to change the order status when label is generated.', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
-				'default'           => 'no',
-				'class'				=> ''
-			),
 			'dhl_tracking_note' => array(
 				'title'             => __( 'Tracking Note', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
@@ -319,6 +301,31 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'default'           => 'no',
 				'description'       => __( 'Please, tick here to not send an email to the customer when the tracking number is added to the order.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
+			),
+			'dhl_tracking_note_txt' => array(
+				'title'             => __( 'Tracking Text', 'pr-shipping-dhl' ),
+				'type'              => 'textarea',
+				'description'       => __( 'Set the custom text when adding the tracking number to the order notes or completed email. {tracking-link} is where the tracking number will be set.', 'pr-shipping-dhl' ),
+				'desc_tip'          => false,
+				'default'           => __( 'DHL Tracking Number: {tracking-link}', 'pr-shipping-dhl')
+			),
+			'dhl_add_tracking_info_completed' => array(
+				'title'             => __( 'Tracking Email', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label' 			=> __( 'Add tracking text in completed email', 'pr-shipping-dhl'),
+				'description'       => __( 'Please, tick here to add tracking text when completed email is sent.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => 'no',
+				'class'				=> ''
+			),
+			'dhl_change_order_status_completed' => array(
+				'title'             => __( 'Order Status', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label' 			=> __( 'Change to Completed', 'pr-shipping-dhl'),
+				'description'       => __( 'Please, tick here to change the order status when label is generated.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => 'no',
+				'class'				=> ''
 			),
 			'dhl_api'           => array(
 				'title'           => __( 'API Settings', 'pr-shipping-dhl' ),
