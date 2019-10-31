@@ -528,25 +528,31 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 	public function add_tracking_info( $order, $sent_to_admin, $plain_text, $email ){
 
-		if( $order->get_status() != 'completed' ){
+		if( $email->id != 'customer_completed_order' ){
 			return;
 		}
 		
 		if( isset( $this->shipping_dhl_settings['dhl_add_tracking_info_completed'] ) && ( $this->shipping_dhl_settings['dhl_add_tracking_info_completed'] == 'yes' ) ) {
 			
 			$tracking_info = PR_DHL()->get_pr_dhl_wc_order()->get_dhl_label_tracking( $order->get_id() );
+
+			if( isset( $tracking_info['tracking_number']) ){
 			?>
 			<p class="pr-dhl-tracking-info">
 				<?php echo __( 'Tracking Number : ', 'pr-shipping-dhl' ) . '<a href="'. esc_url( 'https://webtrack.dhlglobalmail.com/?trackingnumber=' . $tracking_info['tracking_number'] ) .'">' . $tracking_info['tracking_number'] . '</a>'; ?>
 
 			</p>
+			<?php 
+			}//end if
 
+			if( isset( $tracking_info['label_url']) ){
+			?>
 			<p class="pr-dhl-tracking-info">
 				<?php echo __( 'Label URL : ', 'pr-shipping-dhl' ) . '<a href="'. esc_url( $tracking_info['label_url'] ) .'">' . $tracking_info['label_url'] . '</a>'; ?>
 
 			</p>
 			<?php
-
+			}// end if
 		}
 
 	} 
