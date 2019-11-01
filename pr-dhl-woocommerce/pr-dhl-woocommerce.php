@@ -161,7 +161,7 @@ class PR_DHL_WC {
 		include_once( 'includes/abstract-pr-dhl-wc-order.php' );
 		include_once( 'includes/abstract-pr-dhl-wc-product.php' );
 		// Load PDF Merger
-		include_once( 'lib/PDFMerger/PDFMerger.php' );
+		include_once( 'lib/PRPDFMerger.php' );
 		// Composer autoloader
 		include_once( 'vendor/autoload.php' );
 	}
