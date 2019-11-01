@@ -48,7 +48,7 @@ class DHLPWC_Libraryloader extends DHLPWC_Model_Core_Singleton_Abstract
             return null;
         }
 
-        return new PRPDFMerger();
+        return new PDFMerger();
     }
 
     /**

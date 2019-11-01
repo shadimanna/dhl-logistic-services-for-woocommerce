@@ -1095,7 +1095,7 @@ abstract class PR_DHL_WC_Order {
 			throw new Exception( __('There are no files to merge.', 'pr-shipping-dhl') );
 		}
 
-		$pdfMerger = new PRPDFMerger;
+		$pdfMerger = new PDFMerger;
 		foreach ($files as $key => $value) {
 
 			if ( ! file_exists( $value ) ) {

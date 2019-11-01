@@ -166,7 +166,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			$export_info = $this->save_data_file( 'export', $order_id, $export_data );
 
 			// Merge PDF files
-			$pdfMerger = new PRPDFMerger;
+			$pdfMerger = new PDFMerger;
 			$pdfMerger->addPDF( $label_info['data_path'], 'all' );
 			$pdfMerger->addPDF( $export_info['data_path'], 'all' );
 
