@@ -596,7 +596,9 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 		}
 
 		// For multiple shipments, maybe create each label file and then merge them
-		$pdfMerger = new PDFMerger();
+		$loader = PR_DHL_Libraryloader::instance();
+		$pdfMerger = $loader->get_pdf_merger();
+
 		foreach ( $order['shipments'] as $shipment ) {
 			// Create the single AWB label file
 			$awb_label_info = $this->create_dhl_awb_label_file( $shipment->awb );
