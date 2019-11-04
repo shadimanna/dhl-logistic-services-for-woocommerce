@@ -42,13 +42,13 @@ Please choose your preferred delivery option.', 'pr-shipping-dhl'); ?></td>
     </tr>
     <tr class="dhl-co-tr">
       <td colspan="2">
-        
-        <ul class="dhl-co-times">
 
             <?php
 
-              if ( isset( $preferred_day_time['preferred_day'] ) ) {
+              if ( !empty( $preferred_day_time['preferred_day'] ) ) {
                 
+                echo '<ul class="dhl-co-times">';
+
                 $preferred_days = $preferred_day_time['preferred_day'];
               
                 if ( empty( $pr_dhl_preferred_day_selected ) && ! empty( $preferred_days ) ) {
@@ -67,9 +67,16 @@ Please choose your preferred delivery option.', 'pr-shipping-dhl'); ?></td>
 
                 <?php
                 }
-              }
-             
-          ?>
+                
+                echo '</ul>';
+
+              } else { ?>
+
+                <i>
+                  <?php esc_html_e('Unfortunately, for the selected delivery address the service Preferred Day is not available', 'pr-shipping-dhl' ); ?>
+                </i>
+              
+              <?php } ?>
         </ul>
       </td>
     </tr>
@@ -93,8 +100,8 @@ Please choose your preferred delivery option.', 'pr-shipping-dhl'); ?></td>
     </tr>
     <tr class="dhl-co-tr">
       <td colspan="2">
-      <?php if ( isset( $preferred_day_time['preferred_time'] ) ) { ?>
-
+      <?php if ( !empty( $preferred_day_time['preferred_time'] ) ) { ?>
+        
           <ul class="dhl-co-preffered-time">
                 <?php
             
@@ -119,12 +126,11 @@ Please choose your preferred delivery option.', 'pr-shipping-dhl'); ?></td>
                 ?>
           </ul>
 
-      <?php }else{
-
-              esc_html_e('Unfortunately, for the selected delivery address the service Preferred Time (Preferred Day) is not available', 'pr-shipping-dhl' );
-
-            }
-      ?>
+      <?php }else{ ?>
+            <i>
+              <?php esc_html_e('Unfortunately, for the selected delivery address the service Preferred Time is not available', 'pr-shipping-dhl' ); ?>
+            </i>
+      <?php } ?>
       </td>
     </tr>
 
