@@ -6,10 +6,12 @@ if (!defined('ABSPATH')) {
 
 if( !class_exists( 'PR_DHL_Libraryloader' ) ){
 
-    class PR_DHL_Libraryloader extends PR_DHL_Singleton{
+    class PR_DHL_Libraryloader{
 
 
         const CLASS_PDF_MERGER = 'pdf_merger';
+
+        private static $instances = array();
 
         protected $include_path = null;
         protected $file_path = null;
@@ -23,6 +25,20 @@ if( !class_exists( 'PR_DHL_Libraryloader' ) ){
             $this->include_path     = PR_DHL_PLUGIN_DIR_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR;
             $this->file_path        = $this->include_path . 'PDFMerger' . DIRECTORY_SEPARATOR . 'PDFMerger.php';
             $this->file_path        = str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $this->file_path);
+        }
+
+        /**
+         * Returns a singleton instance of the called class
+         * @return static
+         */
+        public static function instance(){
+
+            $class = get_called_class();
+            if (!isset(self::$instances[$class])) {
+                self::$instances[$class] = new static();
+            }
+            return self::$instances[$class];
+            
         }
 
         public function get_pdf_merger()

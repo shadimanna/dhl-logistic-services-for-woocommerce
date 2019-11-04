@@ -158,7 +158,6 @@ class PR_DHL_WC {
 		// Auto loader class
 		include_once( 'includes/class-pr-dhl-autoloader.php' );
 		// Load abstract classes
-		include_once( 'includes/abstract-pr-dhl-singleton.php' );
 		include_once( 'includes/abstract-pr-dhl-wc-order.php' );
 		include_once( 'includes/abstract-pr-dhl-wc-product.php' );
 		
