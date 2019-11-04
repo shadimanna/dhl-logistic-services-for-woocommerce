@@ -715,7 +715,7 @@ class PR_DHL_Front_End_Paket {
 			woocommerce_form_field('pr_dhl_email_notification', array(
 				'type' => 'checkbox',
 				'class' => array( 'pr-dhl-email-notification form-row-wide' ),
-				'label' => __('Enable Email Notification'),
+				'label' => __('Activate Shipment Notification. When activated DHL will inform you via email about the shipment status of your order.', 'pr-shipping-dhl' ),
 				),
 				'yes'
 			);

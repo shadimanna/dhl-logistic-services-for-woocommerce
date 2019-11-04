@@ -93,33 +93,38 @@ Please choose your preferred delivery option.', 'pr-shipping-dhl'); ?></td>
     </tr>
     <tr class="dhl-co-tr">
       <td colspan="2">
-         <ul class="dhl-co-preffered-time">
+      <?php if ( isset( $preferred_day_time['preferred_time'] ) ) { ?>
 
-          <?php 
+          <ul class="dhl-co-preffered-time">
+                <?php
+            
+                
+                $preferred_times = $preferred_day_time['preferred_time'];
 
-            if ( isset( $preferred_day_time['preferred_time'] ) ) {
-              
-              $preferred_times = $preferred_day_time['preferred_time'];
+                if ( empty( $pr_dhl_preferred_time_selected ) && ! empty( $preferred_times ) ) {
+                    $pr_dhl_preferred_time_selected = current( $preferred_times );
+                }
 
-              if ( empty( $pr_dhl_preferred_time_selected ) && ! empty( $preferred_times ) ) {
-                  $pr_dhl_preferred_time_selected = current( $preferred_times );
-              }
+                foreach ($preferred_times as $key => $value) {
+                    $is_selected = $pr_dhl_preferred_time_selected == $key ? 'checked="checked"' : '';
+                ?>
 
-              foreach ($preferred_times as $key => $value) {
-                  $is_selected = $pr_dhl_preferred_time_selected == $key ? 'checked="checked"' : '';
-              ?>
+                  <li>
+                    <input type="radio" name="pr_dhl_preferred_time" class="pr_dhl_preferred_time" data-index="0" id="pr_dhl_preferred_time_<?php echo $key; ?>" value="<?php echo $key; ?>" <?php echo $is_selected; ?> >
+                    <label for="pr_dhl_preferred_time_<?php echo $key; ?>"><?php echo $value; ?></label>
+                  </li>
 
-                <li>
-                  <input type="radio" name="pr_dhl_preferred_time" class="pr_dhl_preferred_time" data-index="0" id="pr_dhl_preferred_time_<?php echo $key; ?>" value="<?php echo $key; ?>" <?php echo $is_selected; ?> >
-                  <label for="pr_dhl_preferred_time_<?php echo $key; ?>"><?php echo $value; ?></label>
-                </li>
+                <?php
+                }
+                ?>
+          </ul>
 
-              <?php
-              }
+      <?php }else{
+
+              esc_html_e('Unfortunately, for the selected delivery address the service Preferred Time (Preferred Day) is not available', 'pr-shipping-dhl' );
+
             }
-          ?>
-
-        </ul>
+      ?>
       </td>
     </tr>
 
