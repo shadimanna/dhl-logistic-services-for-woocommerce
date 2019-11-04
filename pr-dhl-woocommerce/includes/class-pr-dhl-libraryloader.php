@@ -20,7 +20,7 @@ if( !class_exists( 'PR_DHL_Libraryloader' ) ){
          */
         public function __construct(){
             // Set paths
-            $this->include_path     = PR_DHL_PLUGIN_DIR_PATH . 'lib' . DIRECTORY_SEPARATOR;
+            $this->include_path     = PR_DHL_PLUGIN_DIR_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR;
             $this->file_path        = $this->include_path . 'PDFMerger' . DIRECTORY_SEPARATOR . 'PDFMerger.php';
             $this->file_path        = str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $this->file_path);
         }
@@ -34,8 +34,8 @@ if( !class_exists( 'PR_DHL_Libraryloader' ) ){
                 // (can't imagine always loading a full on PDFMerger class without actually using PDF merges)
                 return null;
             }
-
-            if (!class_exists('PDFMerger')) {
+			
+            if (!class_exists('PDFMerger')) { 
                 $loaded = $this->include_file($this->file_path);
 
                 if (!$loaded) {
