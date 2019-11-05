@@ -1100,7 +1100,7 @@ abstract class PR_DHL_WC_Order {
 
 		if( $pdfMerger === null ){
 
-			throw new Exception( __('Could not merge PDF files. Please download pdf individually.', 'pr-shipping-dhl') );
+			throw new Exception( __('Library conflict, could not merge PDF files. Please download PDF files individually.', 'pr-shipping-dhl') );
 		}
 		
 		foreach ($files as $key => $value) {

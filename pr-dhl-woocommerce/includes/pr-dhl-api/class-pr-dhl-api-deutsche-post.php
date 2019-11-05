@@ -601,7 +601,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 
 		if( $pdfMerger === null ){
 
-			throw new Exception( __('Could not merge PDF files. Please download pdf individually.', 'pr-shipping-dhl') );
+			throw new Exception( __('Library conflict, could not merge PDF files. Please download PDF files individually.', 'pr-shipping-dhl') );
 		}
 
 		foreach ( $order['shipments'] as $shipment ) {
