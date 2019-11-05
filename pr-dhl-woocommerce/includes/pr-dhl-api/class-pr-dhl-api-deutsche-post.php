@@ -599,6 +599,11 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 		$loader = PR_DHL_Libraryloader::instance();
 		$pdfMerger = $loader->get_pdf_merger();
 
+		if( $pdfMerger === null ){
+
+			throw new Exception( __('Could not merge PDF files. Please download pdf individually.', 'pr-shipping-dhl') );
+		}
+
 		foreach ( $order['shipments'] as $shipment ) {
 			// Create the single AWB label file
 			$awb_label_info = $this->create_dhl_awb_label_file( $shipment->awb );

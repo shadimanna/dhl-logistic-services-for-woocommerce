@@ -43,7 +43,7 @@ if( !class_exists( 'PR_DHL_Libraryloader' ) ){
 
         public function get_pdf_merger()
         {
-            if (class_exists('PDFMerger') && !in_array(self::CLASS_PDF_MERGER, $this->loaded)) {
+            if ( ( class_exists('PDFMerger') || class_exists('FPDF') ) && !in_array(self::CLASS_PDF_MERGER, $this->loaded)) {
                 // The class exists but we never loaded it. There's too high chance of a conflict
                 // we have to exit. We are using PDFMerger 2.0 which works differently than 1.0
                 // The site owner needs to check which plugin is trying to load PDFMerger without lazy loading

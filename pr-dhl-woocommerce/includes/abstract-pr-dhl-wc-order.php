@@ -1097,6 +1097,11 @@ abstract class PR_DHL_WC_Order {
 
 		$loader = PR_DHL_Libraryloader::instance();
 		$pdfMerger = $loader->get_pdf_merger();
+
+		if( $pdfMerger === null ){
+
+			throw new Exception( __('Could not merge PDF files. Please download pdf individually.', 'pr-shipping-dhl') );
+		}
 		
 		foreach ($files as $key => $value) {
 

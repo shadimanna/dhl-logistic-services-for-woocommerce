@@ -168,6 +168,12 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			// Merge PDF files
 			$loader = PR_DHL_Libraryloader::instance();
 			$pdfMerger = $loader->get_pdf_merger();
+
+			if( $pdfMerger === null ){
+
+				throw new Exception( __('DHL Label could not be created.', 'pr-shipping-dhl') );
+			}
+
 			$pdfMerger->addPDF( $label_info['data_path'], 'all' );
 			$pdfMerger->addPDF( $export_info['data_path'], 'all' );
 
