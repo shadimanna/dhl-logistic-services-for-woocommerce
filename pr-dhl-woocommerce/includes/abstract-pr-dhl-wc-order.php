@@ -378,6 +378,7 @@ abstract class PR_DHL_WC_Order {
 			'ship_date' 		=> date( "Y-m-d", time() )
 		);
 
+		// Primarily added for "Advanced Tracking" plugin integration
 		do_action( 'pr_save_dhl_label_tracking', $order_id, $tracking_details );
 	}
 

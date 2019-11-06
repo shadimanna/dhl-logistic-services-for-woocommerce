@@ -512,8 +512,10 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$base_country_code 	= PR_DHL()->get_base_country();
 
 		if( ( $base_country_code == 'DE' ) && ( $this->is_shipping_domestic( $order_id ) ) ) {
-			parent::is_cod_payment_method( $order_id );
-		}
+			return parent::is_cod_payment_method( $order_id );
+		} else {
+		    return false;
+        }
 	}
 	
 	public function change_order_status( $order_id ){
