@@ -725,7 +725,6 @@ class PR_DHL_WC {
 		} catch (Exception $e) {
 			// add_action( 'admin_notices', array( $this, 'environment_check' ) );
 		}
-		// error_log(print_r($states,true));
         return $states;
     }
 }

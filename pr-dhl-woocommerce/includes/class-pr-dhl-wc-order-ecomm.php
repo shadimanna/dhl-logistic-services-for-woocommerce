@@ -346,7 +346,6 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 		);
 
 		if ( isset( $this->shipping_dhl_settings['dhl_bulk_product_int']) && ($bulk_product_int = $this->shipping_dhl_settings['dhl_bulk_product_int'] ) ) {
-			// error_log(print_r($bulk_product_int,true));
 			foreach ($bulk_product_int as $key => $value) {
 				$shop_manager_actions += array(
 					"pr_dhl_create_labels:int:$value"      => __( "DHL Create Labels - $value", 'pr-shipping-dhl' )
@@ -355,7 +354,6 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 		}
 
 		if ( isset($this->shipping_dhl_settings['dhl_bulk_product_dom']) && ($bulk_product_dom = $this->shipping_dhl_settings['dhl_bulk_product_dom'] ) ) {
-			// error_log(print_r($bulk_product_dom,true));
 			foreach ($bulk_product_dom as $key => $value) {
 				$shop_manager_actions += array(
 					"pr_dhl_create_labels:dom:$value"      => __( "DHL Create Labels - $value", 'pr-shipping-dhl' )
@@ -612,7 +610,6 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 			}
 
 			$ext = pathinfo($value, PATHINFO_EXTENSION);
-			// error_log($ext);
 			if ( stripos($ext, 'png') === false) {
 				throw new Exception( __('Not all the file formats are the same.', 'pr-shipping-dhl') );
 			}
@@ -650,7 +647,6 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 			}
 
 			$ext = pathinfo($value, PATHINFO_EXTENSION);
-			// error_log($ext);
 			if ( stripos($ext, 'zpl') === false) {
 				throw new Exception( __('Not all the file formats are the same.', 'pr-shipping-dhl') );
 			}

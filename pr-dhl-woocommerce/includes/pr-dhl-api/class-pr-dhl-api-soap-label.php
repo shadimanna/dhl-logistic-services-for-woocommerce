@@ -69,7 +69,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			$response_body = $soap_client->createShipmentOrder($soap_request);
 
-			error_log(print_r($response_body,true));
 			PR_DHL()->log_msg( 'Response: Successful');
 
 		} catch (Exception $e) {
@@ -412,7 +411,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 	protected function set_message() {
 
-	    error_log(print_r($this->args,true));
 		if( ! empty( $this->args ) ) {
 			// Set date related functions to German time
 			// date_default_timezone_set('Europe/Berlin');

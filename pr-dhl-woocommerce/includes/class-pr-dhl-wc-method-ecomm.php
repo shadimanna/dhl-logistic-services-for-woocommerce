@@ -416,9 +416,7 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 	public function validate_dhl_label_format_field( $key, $value ) {
 		// $value = wc_clean( $_POST[ $this->plugin_id . $this->id . '_' . $key ] );
 		$post_data = $this->get_post_data();
-		// error_log($value);
 		$label_page = $post_data[ $this->plugin_id . $this->id . '_' . 'dhl_label_page' ];
-		// error_log($label_page);
 
 		if( ( $value == 'PNG' || $value == 'ZPL' ) && ( $label_page == 'A4' ) ) {
 			$msg = __('The selected format does not support "A4"', 'pr-shipping-dhl');
@@ -437,12 +435,9 @@ class PR_DHL_WC_Method_Ecomm extends WC_Shipping_Method {
 		// $value = wc_clean( $_POST[ $this->plugin_id . $this->id . '_' . $key ] );
 		$distribution_centers = array('HKHKG1', 'CNSHA1', 'CNSZX1');
 		$post_data = $this->get_post_data();
-		// error_log($value);
 
 		$distribution = $post_data[ $this->plugin_id . $this->id . '_' . 'dhl_distribution' ];
-		// error_log($distribution);
 		$label_page = $post_data[ $this->plugin_id . $this->id . '_' . 'dhl_label_page' ];
-		// error_log($label_page);
 
 		if( ! in_array( $distribution, $distribution_centers )  && ( $value == '4x4' ) ) {
 			$msg = __('Your distribution center does not support "4x4" label size.', 'pr-shipping-dhl');

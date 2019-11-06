@@ -185,7 +185,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'type'              => 'checkbox',
 				'label'             => __( 'Enabled', 'pr-shipping-dhl' ),
 				'default'           => 'no',
-				'description'       => __( 'Please, tick here if you want the "Email Notification" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
+				'description'       => __( 'Please, tick here if you want the "Email Notification" service to be displayed as an option on the checkout page', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 			),
 			'dhl_default_age_visual' => array(
@@ -737,7 +737,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		);
 	}
 
-	public function add_datepicker(){ 
+	public function add_datepicker(){
 		?>
 		<script type="text/javascript">
 		jQuery(document).ready(function(){

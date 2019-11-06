@@ -519,7 +519,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	public function change_order_status( $order_id ){
 		
 		if( isset( $this->shipping_dhl_settings['dhl_change_order_status_completed'] ) && ( $this->shipping_dhl_settings['dhl_change_order_status_completed'] == 'yes' ) ) {
-			error_log( 'testchange order status');
 			$order = wc_get_order( $order_id );
 			$order->update_status('completed');
 
@@ -533,8 +532,14 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		}
 		
 		if( isset( $this->shipping_dhl_settings['dhl_add_tracking_info_completed'] ) && ( $this->shipping_dhl_settings['dhl_add_tracking_info_completed'] == 'yes' ) ) {
-			
-			echo $this->get_tracking_note( $order->get_id() );
+
+            if ( defined( 'WOOCOMMERCE_VERSION' ) && version_compare( WOOCOMMERCE_VERSION, '3.0', '>=' ) ) {
+                $order_id = $order->get_id();
+            } else {
+                $order_id = $order->id;
+            }
+
+			echo $this->get_tracking_note( $order_id );
 			
 		}
 
