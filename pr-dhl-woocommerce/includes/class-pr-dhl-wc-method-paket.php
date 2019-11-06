@@ -43,8 +43,8 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 	}
 
 	public function load_admin_scripts( $hook ) {
-
-		if( 'woocommerce_page_wc-settings' != $hook ) {
+		
+		if( 'woocommerce_page_wc-settings' != $hook || !(isset( $_GET['section'] ) && $_GET['section'] == $this->id) ) {
 			// Only applies to WC Settings panel
 			return;
 		}
