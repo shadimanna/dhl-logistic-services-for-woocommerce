@@ -214,7 +214,9 @@ abstract class PR_DHL_WC_Order {
 			// Save value if it exists
 			if ( isset( $_POST[ $value ] ) ) {
 				$args[ $value ]	 = wc_clean( $_POST[ $value ] );
-			}
+			} else {
+                $args[ $value ]	 = '';
+            }
 		}		
 
 		if( isset( $args ) ) {
