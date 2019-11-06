@@ -49,6 +49,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		if( ( $base_country_code == 'DE' ) && ( $this->is_shipping_domestic( $order_id ) ) ) {
 
 			if( $this->is_cod_payment_method( $order_id ) ) {
+
 				woocommerce_wp_text_input( array(
 						'id'          		=> 'pr_dhl_cod_value',
 						'class'          	=> 'wc_input_decimal',
@@ -455,39 +456,43 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 	protected function save_default_dhl_label_items( $order_id ) {
 
-		parent::save_default_dhl_label_items( $order_id );
+	    parent::save_default_dhl_label_items( $order_id );
 
-		$dhl_label_items = $this->get_dhl_label_items( $order_id );
+        $base_country_code 	= PR_DHL()->get_base_country();
+	    // Services and COD only for Germany
+        if( ( $base_country_code == 'DE' ) && ( $this->is_shipping_domestic( $order_id ) ) ) {
+            $dhl_label_items = $this->get_dhl_label_items($order_id);
 
-		$settings_default_ids = array(
-			'pr_dhl_is_codeable',
-			'pr_dhl_return_address_enabled',
-			'pr_dhl_age_visual',
-			'pr_dhl_additional_insurance',
-			'pr_dhl_no_neighbor',
-			'pr_dhl_named_person',
-			'pr_dhl_premium',
-			'pr_dhl_bulky_goods',
-			'pr_dhl_identcheck',
-			'pr_dhl_identcheck_age',
-			'pr_dhl_identcheck_dob',
-			'pr_dhl_routing'
-		);
+            $settings_default_ids = array(
+                'pr_dhl_is_codeable',
+                'pr_dhl_return_address_enabled',
+                'pr_dhl_age_visual',
+                'pr_dhl_additional_insurance',
+                'pr_dhl_no_neighbor',
+                'pr_dhl_named_person',
+                'pr_dhl_premium',
+                'pr_dhl_bulky_goods',
+                'pr_dhl_identcheck',
+                'pr_dhl_identcheck_age',
+                'pr_dhl_identcheck_dob',
+                'pr_dhl_routing'
+            );
 
-		foreach( $settings_default_ids as $default_id ){
-			$id_name = str_replace("pr_dhl_", '', $default_id );
+            foreach ($settings_default_ids as $default_id) {
+                $id_name = str_replace("pr_dhl_", '', $default_id);
 
-			if( !isset( $dhl_label_items[ $default_id ] ) ) {
-				$dhl_label_items[ $default_id ] = $this->shipping_dhl_settings['dhl_default_' . $id_name];
-			}
-		}
-		
-		$order = wc_get_order( $order_id );
-		if( $this->is_cod_payment_method( $order_id ) && empty( $dhl_label_items['pr_dhl_cod_value'] ) ) {
-			$dhl_label_items['pr_dhl_cod_value'] = $order->get_total();
-		}
+                if (!isset($dhl_label_items[$default_id])) {
+                    $dhl_label_items[$default_id] = $this->shipping_dhl_settings['dhl_default_' . $id_name];
+                }
+            }
 
-		$this->save_dhl_label_items( $order_id, $dhl_label_items );
+            $order = wc_get_order($order_id);
+            if ($this->is_cod_payment_method($order_id) && empty($dhl_label_items['pr_dhl_cod_value'])) {
+                $dhl_label_items['pr_dhl_cod_value'] = $order->get_total();
+            }
+
+            $this->save_dhl_label_items($order_id, $dhl_label_items);
+        }
 
 	}
 
