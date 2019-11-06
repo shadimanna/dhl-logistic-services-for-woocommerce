@@ -464,7 +464,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				if ( ! empty( $this->args['order_details'][ $key ] ) ) {
 
 				    // If checkbox not checked
-					if ( $this->args['order_details'][ $key ] == 'no' ) {
+					if ( empty( $this->args['order_details'][ $key ] ) || ($this->args['order_details'][ $key ] == 'no' ) ) {
 						continue;
 					}
 
@@ -507,7 +507,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			// COD DATA
 			$bank_data = array();
-			if( isset( $this->args['order_details']['cod_value'] ) ) {
+
+			if( ! empty( $this->args['order_details']['cod_value'] ) ) {
 
 				$services[ 'CashOnDelivery' ] = array(
 							'active' => 1
