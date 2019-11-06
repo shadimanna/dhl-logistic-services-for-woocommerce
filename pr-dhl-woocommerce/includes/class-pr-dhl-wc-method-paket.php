@@ -38,18 +38,18 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		$this->init_settings();
 
 		add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'process_admin_options' ) );
-		// add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_scripts' ) );
-		
-		add_action('admin_footer', array( $this, 'add_datepicker' ), 10);
+		add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_scripts' ) );
 		
 	}
 
 	public function load_admin_scripts( $hook ) {
-	    if( 'woocommerce_page_wc-settings' != $hook ) {
+
+		if( 'woocommerce_page_wc-settings' != $hook ) {
 			// Only applies to WC Settings panel
 			return;
-	    }
-
+		}
+		
+		/*
 	    $test_con_data = array( 
 	    					'ajax_url' => admin_url( 'admin-ajax.php' ),
 						    'loader_image'   => admin_url( 'images/loading.gif' ),
@@ -60,6 +60,10 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		wp_enqueue_script( 'wc-shipment-dhl-testcon-js', PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-test-connection.js', array('jquery'), PR_DHL_VERSION );
 		// in JavaScript, object properties are accessed as ajax_object.ajax_url, ajax_object.we_value
 		wp_localize_script( 'wc-shipment-dhl-testcon-js', 'dhl_test_con_obj', $test_con_data );
+		*/
+
+		wp_enqueue_script('jquery-ui-datepicker');
+		wp_enqueue_script('pr-dhl-admin-settings',  PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-admin-settings.js', array('jquery', 'jquery-ui-core', 'jquery-ui-datepicker' ), time(), true );
 	}
 
 	/**
@@ -735,18 +739,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'custom_attributes'	=> array( 'maxlength' => '35' )
 			),*/
 		);
-	}
-
-	public function add_datepicker(){
-		?>
-		<script type="text/javascript">
-		jQuery(document).ready(function(){
-			jQuery('.pr-dhl-date-picker').datepicker({
-				dateFormat: 'yy-mm-dd'
-			});
-		});
-		</script>
-		<?php
 	}
 
 	/**
