@@ -42,7 +42,7 @@
     <?php endif ?>
 />
 
-<label class="dhlpwc-metabox-adress-label"><?php _e('Number', 'dhlpwc') ?></label> <div class="dhlpwc-required-field-star">*</div>
+<label class="dhlpwc-metabox-adress-label"><?php _e('Number', 'dhlpwc') ?></label>
 <input type="text" class="dhlpwc-metabox-address-input" id="dhlpwc-metabox-address-number"
     <?php if (!empty($address) && !empty($address->number)) : ?>
         value="<?php echo esc_attr($address->number) ?>"

@@ -247,8 +247,7 @@ input#woocommerce_dhlpwc_search_printers.dhlpwc_button_fail {
     display: none;
     margin-right: -240px;
     padding: 0 20px;
-    border-top: solid 5px #ffffff;
-    border-bottom: solid 5px #ffffff;
+    height: 0;
 }
 
 #mainform > #dhlpwc_shipping_method_settings > h3,

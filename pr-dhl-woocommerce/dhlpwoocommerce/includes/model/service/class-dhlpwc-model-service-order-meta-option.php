@@ -61,13 +61,16 @@ class DHLPWC_Model_Service_Order_Meta_Option extends DHLPWC_Model_Core_Singleton
         }
 
         $allowed_shipping_options = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CAPABILITY_ORDER_OPTIONS, array(
-            'order_id' => $order_id,
-            'options' => $options,
+            'order_id'    => $order_id,
+            'options'     => $options,
             'to_business' => $to_business,
         ));
 
+        $exclusions = $this->get_exclusions($allowed_shipping_options, $options);
+
         // Disable automatic checking of send signature if there are no parceltypes for it
-        if (!array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_HANDT, $allowed_shipping_options)) {
+        if (!array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_HANDT, $allowed_shipping_options)
+            || in_array(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_HANDT, $exclusions)) {
             return false;
         }
 
@@ -83,13 +86,16 @@ class DHLPWC_Model_Service_Order_Meta_Option extends DHLPWC_Model_Core_Singleton
         }
 
         $allowed_shipping_options = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CAPABILITY_ORDER_OPTIONS, array(
-            'order_id' => $order_id,
-            'options' => $options,
+            'order_id'    => $order_id,
+            'options'     => $options,
             'to_business' => $to_business,
         ));
 
+        $exclusions = $this->get_exclusions($allowed_shipping_options, $options);
+
         // Disable automatic checking of age check if there are no parceltypes for it
-        if (!array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_AGE_CHECK, $allowed_shipping_options)) {
+        if (!array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_AGE_CHECK, $allowed_shipping_options)
+            || in_array(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_AGE_CHECK, $exclusions)) {
             return false;
         }
 
@@ -105,13 +111,16 @@ class DHLPWC_Model_Service_Order_Meta_Option extends DHLPWC_Model_Core_Singleton
         }
 
         $allowed_shipping_options = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CAPABILITY_ORDER_OPTIONS, array(
-            'order_id' => $order_id,
-            'options' => $options,
+            'order_id'    => $order_id,
+            'options'     => $options,
             'to_business' => $to_business,
         ));
 
+        $exclusions = $this->get_exclusions($allowed_shipping_options, $options);
+
         // Disable automatic checking of order id reference if there are no parceltypes for it
-        if (!array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE, $allowed_shipping_options)) {
+        if (!array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE, $allowed_shipping_options)
+            || in_array(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE, $exclusions)) {
             return false;
         }
 
@@ -127,13 +136,16 @@ class DHLPWC_Model_Service_Order_Meta_Option extends DHLPWC_Model_Core_Singleton
         }
 
         $allowed_shipping_options = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CAPABILITY_ORDER_OPTIONS, array(
-            'order_id' => $order_id,
-            'options' => $options,
+            'order_id'    => $order_id,
+            'options'     => $options,
             'to_business' => $to_business,
         ));
 
+        $exclusions = $this->get_exclusions($allowed_shipping_options, $options);
+
         // Disable automatic checking of add return label if there are no parceltypes for it
-        if (!array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_ADD_RETURN_LABEL, $allowed_shipping_options)) {
+        if (!array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_ADD_RETURN_LABEL, $allowed_shipping_options)
+            || in_array(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_ADD_RETURN_LABEL, $exclusions)) {
             return false;
         }
 
@@ -197,6 +209,20 @@ class DHLPWC_Model_Service_Order_Meta_Option extends DHLPWC_Model_Core_Singleton
             $array[] = $key;
         }
         return $array;
+    }
+
+    protected function get_exclusions($allowed_shipping_options, $options)
+    {
+        $exclusions = [];
+        foreach ($options as $option){
+            foreach ($allowed_shipping_options[$option]->exclusions as $exclusion)
+            {
+                if(!in_array($exclusion,$exclusions)){
+                    $exclusions[]=$exclusion->key;
+                }
+            }
+        }
+        return $exclusions;
     }
 
 }

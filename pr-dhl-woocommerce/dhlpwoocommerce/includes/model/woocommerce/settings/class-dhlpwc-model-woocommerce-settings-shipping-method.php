@@ -163,6 +163,31 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                         '</a>'
                     ),
                 ),
+                'change_order_status_from_wc-pending' => array(
+                    'title'       => __('Apply status change when creating a label', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Change status if order is: Pending payment', 'dhlpwc'),
+                    'default'     => 'no',
+                    'class'       => 'change_order_status_from'
+                ),
+                'change_order_status_from_wc-processing' => array(
+                    'type'        => 'checkbox',
+                    'label'       => __('Change status if order is: Processing', 'dhlpwc'),
+                    'default'     => 'no',
+                ),
+                'change_order_status_from_wc-on-hold' => array(
+                    'type'        => 'checkbox',
+                    'label'       => __('Change status if order is: On hold', 'dhlpwc'),
+                    'default'     => 'no',
+                ),
+                'change_order_status_to' => array(
+                    'type'    => 'select',
+                    'options' => array_merge(
+                        array('null' => __('Do not change order status')),
+                        array_map(array($this, 'change_order_status_to_option_update'), wc_get_order_statuses())
+                    ),
+                    'default' => 'null',
+                ),
 
                 // API settings
                 'api_settings'                      => array(
@@ -999,6 +1024,10 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
         return $package['cart_subtotal'];
     }
 
+    protected function change_order_status_to_option_update($option)
+    {
+        return __('Change status to: ') . $option;
+    }
 }
 
 endif;
