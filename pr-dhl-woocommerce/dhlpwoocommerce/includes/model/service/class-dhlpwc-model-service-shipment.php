@@ -19,6 +19,7 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
      *
      * @param $order_id
      * @param null $label_size
+     * @return boolean
      */
     public function create($order_id, $label_size = null, $shipment_options = array(), $shipment_option_data = array(), $to_business = false)
     {
@@ -51,18 +52,8 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
             return false;
         }
 
-        if (empty($shipment_data->shipper->address->number)) {
-            $this->set_error(self::CREATE_ERROR, ucfirst(sprintf(__('Shipper %s field is required.', 'dhlpwc'), __('house number', 'dhlpwc'))));
-            return false;
-        }
-
         if (empty($shipment_data->receiver->address->street)) {
             $this->set_error(self::CREATE_ERROR, ucfirst(sprintf(__('Receiver %s field is required.', 'dhlpwc'), __('street', 'dhlpwc'))));
-            return false;
-        }
-
-        if (empty($shipment_data->receiver->address->number)) {
-            $this->set_error(self::CREATE_ERROR, ucfirst(sprintf(__('Receiver %s field is required.', 'dhlpwc'), __('house number', 'dhlpwc'))));
             return false;
         }
 
@@ -80,11 +71,6 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
 
             if (empty($shipment_data->on_behalf_of->address->city)) {
                 $this->set_error(self::CREATE_ERROR, ucfirst(sprintf(__('Hide shipper %s field is required.', 'dhlpwc'), __('city', 'dhlpwc'))));
-                return false;
-            }
-
-            if (empty($shipment_data->on_behalf_of->address->number)) {
-                $this->set_error(self::CREATE_ERROR, ucfirst(sprintf(__('Hide shipper %s field is required.', 'dhlpwc'), __('house number', 'dhlpwc'))));
                 return false;
             }
         }
@@ -151,6 +137,8 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
                 ),
             ));
         }
+
+        $this->update_order_status($order_id);
 
         return true;
     }
@@ -389,6 +377,21 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
         return $this->errors[$key];
     }
 
+    protected function update_order_status($order_id)
+    {
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
+        if (!$shipping_method['change_order_status_to'] || $shipping_method['change_order_status_to'] === 'null') {
+            return;
+        }
+
+        $order = wc_get_order($order_id);
+        if ($order->get_status() === 'pending' && $shipping_method['change_order_status_from_wc-pending'] === 'yes'
+            || $order->get_status() === 'processing' && $shipping_method['change_order_status_from_wc-processing'] === 'yes'
+            || $order->get_status() === 'on-hold' && $shipping_method['change_order_status_from_wc-on-hold'] === 'yes') {
+            $order->update_status($shipping_method['change_order_status_to']);
+        }
+        return;
+    }
 }
 
 endif;

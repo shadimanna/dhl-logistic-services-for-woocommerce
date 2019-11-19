@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 5.2
-Stable tag: 1.5.6
+Stable tag: 1.5.7
 WC requires at least: 2.6.14
 WC tested up to: 3.7
 License: GPLv2 or later
@@ -80,6 +80,12 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+
+= 1.5.7 =
+- Added a setting to change order status after label creation
+- Fixed an issue with the settings menu jumping on certain browsers
+- Fixed an issue with unavailable service combinations on bulk creation
+- Removed number validation on addresses due to some addresses not requiring it
 
 = 1.5.6 =
 * DHL Parcel: Fixed issue with package rate not being properly calculated based on logged in users
