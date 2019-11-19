@@ -82,10 +82,10 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 == Changelog ==
 
 = 1.5.7 =
-- Added a setting to change order status after label creation
-- Fixed an issue with the settings menu jumping on certain browsers
-- Fixed an issue with unavailable service combinations on bulk creation
-- Removed number validation on addresses due to some addresses not requiring it
+- DHL Parcel: Added a setting to change order status after label creation
+- DHL Parcel: Fixed an issue with the settings menu jumping on certain browsers
+- DHL Parcel: Fixed an issue with unavailable service combinations on bulk creation
+- DHL Parcel: Removed number validation on addresses due to some addresses not requiring it
 
 = 1.5.6 =
 * DHL Parcel: Fixed issue with package rate not being properly calculated based on logged in users
