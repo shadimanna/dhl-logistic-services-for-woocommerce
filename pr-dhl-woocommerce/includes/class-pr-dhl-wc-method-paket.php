@@ -62,8 +62,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		wp_localize_script( 'wc-shipment-dhl-testcon-js', 'dhl_test_con_obj', $test_con_data );
 		*/
 
-		wp_enqueue_script('jquery-ui-datepicker');
-		wp_enqueue_script('pr-dhl-admin-settings',  PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-admin-settings.js', array('jquery', 'jquery-ui-core', 'jquery-ui-datepicker' ), time(), true );
 	}
 
 	/**
@@ -247,14 +245,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'default'           => 'no',
 				'description'       => __( 'Please, tick here if you want the "Ident Check" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
-			),
-			'dhl_default_identcheck_dob' => array(
-				'title'             => __( 'Ident Check Date of Birth default', 'pr-shipping-dhl' ),
-				'type'              => 'text',
-				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
-				'description'       => __( 'Please, tick here if you want the "Ident Check" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
-				'class' 			=> 'short pr-dhl-date-picker'
 			),
 			'dhl_default_identcheck_age' => array(
 				'title'             => __( 'Ident Check Age default', 'pr-shipping-dhl' ),
