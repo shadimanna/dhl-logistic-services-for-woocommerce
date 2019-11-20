@@ -1197,8 +1197,8 @@ abstract class PR_DHL_WC_Order {
 
 	    // If there are errors redirect to the shop_orders and display error
 	    if ( $this->has_error_message( $array_messages ) ) {
-			wp_redirect( $redirect_url );
-			exit;
+            wp_redirect( remove_query_arg( array( '_wp_http_referer', '_wpnonce' ), $redirect_url ) );
+            exit;
 		}
 	}
 
