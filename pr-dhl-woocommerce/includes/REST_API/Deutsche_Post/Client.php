@@ -368,7 +368,7 @@ class Client extends API_Client {
 			$data = array(
 				'contentPieceAmount' => $content_info[ 'qty' ],
 				'contentPieceDescription' => $content_info[ 'description' ],
-				'contentPieceIndexNumber' => $content_info[ 'sku' ],
+				'contentPieceIndexNumber' => $content_info[ 'product_id' ],
 				'contentPieceNetweight' => $content_info[ 'weight' ],
 				'contentPieceOrigin' => $content_info[ 'origin' ],
 				'contentPieceValue' => $content_info[ 'value' ],

@@ -216,6 +216,9 @@ class Item_Info {
 				'rename' => 'description',
 				'default' => '',
 			),
+			'product_id'  => array(
+				'default' => ''
+			),
 			'sku'         => array(
 				'default' => '',
 			),

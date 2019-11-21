@@ -635,6 +635,7 @@ abstract class PR_DHL_WC_Order {
 				// place 'sku' in a variable before validating using 'empty' to be compatible with PHP v5.4
 				$product_sku = $product_variation->get_sku();
 				// Ensure id is string and not int
+				$new_item['product_id'] = intval( $item['variation_id'] );
 				$new_item['sku'] = empty( $product_sku ) ? strval( $item['variation_id'] ) : $product_sku;
 				// $new_item['item_value'] = $product_variation->get_price();
 				$new_item['item_weight'] = $product_variation->get_weight();
@@ -646,6 +647,7 @@ abstract class PR_DHL_WC_Order {
 				// place 'sku' in a variable before validating using 'empty' to be compatible with PHP v5.4
 				$product_sku = $product->get_sku();
 				// Ensure id is string and not int
+				$new_item['product_id'] = intval( $item['product_id'] );
 				$new_item['sku'] = empty( $product_sku ) ? strval( $item['product_id'] ) : $product_sku;
 				// $new_item['item_value'] = $product->get_price();
 				$new_item['item_weight'] = $product->get_weight();
