@@ -38,7 +38,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		$this->init_settings();
 
 		add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'process_admin_options' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_scripts' ) );
+		// add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_scripts' ) );
 		
 	}
 
