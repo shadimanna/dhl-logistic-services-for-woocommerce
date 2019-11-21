@@ -215,9 +215,17 @@ class Item_Info {
 			'item_description' => array(
 				'rename' => 'description',
 				'default' => '',
+				'sanitize' => function( $description ) use ($self) {
+
+					return $self->string_length_sanitization( $description, 33 );
+				}
 			),
 			'product_id'  => array(
-				'default' => ''
+				'default' => '',
+				'sanitize' => function( $product_id ) use ($self) {
+
+					return $self->int_min_max_sanitization( $product_id, 1, 999999999 );
+				}
 			),
 			'sku'         => array(
 				'default' => '',
@@ -225,18 +233,30 @@ class Item_Info {
 			'item_value'       => array(
 				'rename' => 'value',
 				'default' => 0,
+				'sanitize' => function( $value ) use ($self) {
+
+					return $self->float_round_sanitization( $value, 2 );
+				}
 			),
 			'origin'      => array(
 				'default' => PR_DHL()->get_base_country(),
 			),
 			'qty'         => array(
 				'default' => 1,
+				'sanitize' => function( $qty ) use ($self) {
+
+					return $self->int_min_max_sanitization( $qty, 1, 99 );
+				}
 			),
 			'item_weight'      => array(
 				'rename' => 'weight',
 				'default' => 1,
 				'sanitize' => function ( $weight ) use ($self) {
-					return $self->maybe_convert_to_grams( $weight, $self->weightUom );
+
+					$weight = $self->maybe_convert_to_grams( $weight, $self->weightUom );
+					$weight = $self->int_min_max_sanitization( $weight, 1, 2000 );
+
+					return $weight;
 				}
 			),
 		);
@@ -267,5 +287,45 @@ class Item_Info {
 		}
 
 		return $weight;
+	}
+
+	protected function float_round_sanitization( $float, $numcomma ) {
+
+		$float = floatval( $float );
+
+		return round( $float, $numcomma);
+	}
+
+	protected function string_length_sanitization( $string, $max ) {
+
+		$max = intval( $max );
+
+		if( strlen( $string ) <= $max ){
+
+			return $string;
+		}
+
+		return substr( $string, 0, ( $max-1 ));
+	}
+
+	protected function int_min_max_sanitization( $int, $min, $max ) {
+
+		if( !is_numeric( $int ) ){
+
+			$int = intval( $int );
+
+		}
+
+		if( $int > intval( $max ) ){
+
+			$int = $max;
+
+		}elseif( $int < intval( $min ) ){
+
+			$int = $min;
+
+		}
+
+		return $int;
 	}
 }
