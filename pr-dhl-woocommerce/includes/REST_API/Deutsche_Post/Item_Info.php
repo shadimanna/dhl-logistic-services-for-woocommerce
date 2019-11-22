@@ -100,9 +100,17 @@ class Item_Info {
 		return array(
 			'dhl_label_ref'       => array(
 				'rename' => 'label_ref',
+				'sanitize' => function( $label_ref ) use ($self) {
+
+					return $self->string_length_sanitization( $label_ref, 28 );
+				}
 			),
             'dhl_label_ref_2'       => array(
 				'rename' => 'label_ref_2',
+				'sanitize' => function( $label_ref_2 ) use ($self) {
+
+					return $self->string_length_sanitization( $label_ref_2, 28 );
+				}
 			),
             'dhl_product'       => array(
 				'rename' => 'product',
@@ -125,7 +133,11 @@ class Item_Info {
 					}
 				},
 				'sanitize' => function ( $weight ) use ($self) {
-					return $self->maybe_convert_to_grams( $weight, $self->weightUom );
+
+					$weight = $self->maybe_convert_to_grams( $weight, $self->weightUom );
+					$weight = $self->int_min_max_sanitization( $weight, 1, 2000 );
+
+					return $weight;
 				}
 			),
 			'currency'          => array(
@@ -139,6 +151,10 @@ class Item_Info {
 						throw new Exception( __( 'The order "value" must be a number', 'pr-shipping-dhl' ) );
 					}
 				},
+				'sanitize' => function( $value ) use ($self) {
+
+					return $self->float_round_sanitization( $value, 1 );
+				}
 			),
 		);
 	}
@@ -154,30 +170,67 @@ class Item_Info {
 		return array(
 			'name'      => array(
 				'default' => '',
+				'error'  => __( 'Recipient is empty!', 'pr-shipping-dhl' ),
+				'sanitize' => function( $name ) use ($self) {
+
+					return $self->string_length_sanitization( $name, 30 );
+				}
 			),
 			'phone'     => array(
 				'default' => '',
+				'sanitize' => function( $phone ) use ($self) {
+
+					return $self->string_length_sanitization( $phone, 15 );
+				}
 			),
 			'email'     => array(
 				'default' => '',
+				'sanitize' => function( $email ) use ($self) {
+
+					return $self->string_length_sanitization( $email, 50 );
+				}
 			),
 			'address_1' => array(
 				'error' => __( 'Shipping "Address 1" is empty!', 'pr-shipping-dhl' ),
+				'sanitize' => function( $address_1 ) use ($self) {
+
+					return $self->string_length_sanitization( $address_1, 30 );
+				}
 			),
 			'address_2' => array(
 				'default' => '',
+				'sanitize' => function( $address_2 ) use ($self) {
+
+					return $self->string_length_sanitization( $address_2, 30 );
+				}
 			),
 			'city'      => array(
 				'error' => __( 'Shipping "City" is empty!', 'pr-shipping-dhl' ),
+				'sanitize' => function( $city ) use ($self) {
+
+					return $self->string_length_sanitization( $$city, 30 );
+				}
 			),
 			'postcode'  => array(
 				'default' => '',
+				'sanitize' => function( $postcode ) use ($self) {
+
+					return $self->string_length_sanitization( $postcode, 20 );
+				}
 			),
 			'state'     => array(
 				'default' => '',
+				'sanitize' => function( $state ) use ($self) {
+
+					return $self->string_length_sanitization( $state, 20 );
+				}
 			),
 			'country'   => array(
 				'error' => __( 'Shipping "Country" is empty!', 'pr-shipping-dhl' ),
+				'sanitize' => function( $country ) use ($self) {
+
+					return $self->string_length_sanitization( $country, 2 );
+				}
 			),
 		);
 	}
