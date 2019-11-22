@@ -167,6 +167,11 @@ class Item_Info {
 	 * @return array
 	 */
 	protected function get_recipient_info_schema() {
+
+		// Closures in PHP 5.3 do not inherit class context
+		// So we need to copy $this into a lexical variable and pass it to closures manually
+		$self = $this;
+		
 		return array(
 			'name'      => array(
 				'default' => '',
