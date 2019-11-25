@@ -328,24 +328,4 @@ class Item_Info {
 		return substr( $string, 0, ( $max-1 ));
 	}
 
-	protected function int_min_max_sanitization( $int, $min, $max ) {
-
-		if( !is_numeric( $int ) ){
-
-			$int = intval( $int );
-
-		}
-
-		if( $int > intval( $max ) ){
-
-			$int = $max;
-
-		}elseif( $int < intval( $min ) ){
-
-			$int = $min;
-
-		}
-
-		return $int;
-	}
 }
