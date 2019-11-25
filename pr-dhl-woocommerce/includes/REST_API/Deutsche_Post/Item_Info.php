@@ -213,7 +213,7 @@ class Item_Info {
 				'error' => __( 'Shipping "City" is empty!', 'pr-shipping-dhl' ),
 				'sanitize' => function( $city ) use ($self) {
 
-					return $self->string_length_sanitization( $$city, 30 );
+					return $self->string_length_sanitization( $city, 30 );
 				}
 			),
 			'postcode'  => array(
@@ -293,7 +293,7 @@ class Item_Info {
 				'default' => 0,
 				'sanitize' => function( $value ) use ($self) {
 
-					return $self->float_round_sanitization( $value, 2 );
+					return (string)$self->float_round_sanitization( $value, 2 );
 				}
 			),
 			'origin'      => array(
