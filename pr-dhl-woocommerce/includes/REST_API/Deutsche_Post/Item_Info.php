@@ -135,7 +135,6 @@ class Item_Info {
 				'sanitize' => function ( $weight ) use ($self) {
 
 					$weight = $self->maybe_convert_to_grams( $weight, $self->weightUom );
-					$weight = $self->int_min_max_sanitization( $weight, 1, 2000 );
 
 					return $weight;
 				}
@@ -153,7 +152,7 @@ class Item_Info {
 				},
 				'sanitize' => function( $value ) use ($self) {
 
-					return $self->float_round_sanitization( $value, 1 );
+					return $self->float_round_sanitization( $value, 2 );
 				}
 			),
 		);
@@ -190,52 +189,24 @@ class Item_Info {
 			),
 			'email'     => array(
 				'default' => '',
-				'sanitize' => function( $email ) use ($self) {
-
-					return $self->string_length_sanitization( $email, 50 );
-				}
 			),
 			'address_1' => array(
 				'error' => __( 'Shipping "Address 1" is empty!', 'pr-shipping-dhl' ),
-				'sanitize' => function( $address_1 ) use ($self) {
-
-					return $self->string_length_sanitization( $address_1, 30 );
-				}
 			),
 			'address_2' => array(
 				'default' => '',
-				'sanitize' => function( $address_2 ) use ($self) {
-
-					return $self->string_length_sanitization( $address_2, 30 );
-				}
 			),
 			'city'      => array(
 				'error' => __( 'Shipping "City" is empty!', 'pr-shipping-dhl' ),
-				'sanitize' => function( $city ) use ($self) {
-
-					return $self->string_length_sanitization( $city, 30 );
-				}
 			),
 			'postcode'  => array(
 				'default' => '',
-				'sanitize' => function( $postcode ) use ($self) {
-
-					return $self->string_length_sanitization( $postcode, 20 );
-				}
 			),
 			'state'     => array(
 				'default' => '',
-				'sanitize' => function( $state ) use ($self) {
-
-					return $self->string_length_sanitization( $state, 20 );
-				}
 			),
 			'country'   => array(
 				'error' => __( 'Shipping "Country" is empty!', 'pr-shipping-dhl' ),
-				'sanitize' => function( $country ) use ($self) {
-
-					return $self->string_length_sanitization( $country, 2 );
-				}
 			),
 		);
 	}
@@ -280,10 +251,6 @@ class Item_Info {
 			),
 			'product_id'  => array(
 				'default' => '',
-				'sanitize' => function( $product_id ) use ($self) {
-
-					return $self->int_min_max_sanitization( $product_id, 1, 999999999 );
-				}
 			),
 			'sku'         => array(
 				'default' => '',
@@ -293,7 +260,7 @@ class Item_Info {
 				'default' => 0,
 				'sanitize' => function( $value ) use ($self) {
 
-					return (string)$self->float_round_sanitization( $value, 2 );
+					return (string) $self->float_round_sanitization( $value, 2 );
 				}
 			),
 			'origin'      => array(
@@ -301,10 +268,6 @@ class Item_Info {
 			),
 			'qty'         => array(
 				'default' => 1,
-				'sanitize' => function( $qty ) use ($self) {
-
-					return $self->int_min_max_sanitization( $qty, 1, 99 );
-				}
 			),
 			'item_weight'      => array(
 				'rename' => 'weight',
@@ -312,7 +275,6 @@ class Item_Info {
 				'sanitize' => function ( $weight ) use ($self) {
 
 					$weight = $self->maybe_convert_to_grams( $weight, $self->weightUom );
-					$weight = $self->int_min_max_sanitization( $weight, 1, 2000 );
 
 					return $weight;
 				}
