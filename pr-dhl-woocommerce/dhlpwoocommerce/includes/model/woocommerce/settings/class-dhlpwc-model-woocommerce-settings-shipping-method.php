@@ -286,6 +286,14 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'description' => __("When downloading labels with the bulk feature, labels can be combined to make it easier to print on a single sheet", 'dhlpwc'),
                     'default' => '',
                 ),
+                'validation_rule_address_number' => array(
+                    'title'       => __('Validation rule: addresses require street number', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Enable', 'dhlpwc'),
+                    'description' => __("When activated, labels cannot be created for addresses without street number.", 'dhlpwc'),
+                    'default'     => 'yes',
+                ),
+
                 // Shipment options
                 'shipment_options_settings' => array(
                     'title'       => __('Shipment options', 'dhlpwc'),
