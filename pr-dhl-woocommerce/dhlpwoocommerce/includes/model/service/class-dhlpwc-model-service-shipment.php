@@ -46,14 +46,26 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
             'to_business' => $to_business,
         ), $hide_sender_data);
 
+        // Get validation rules
+        $access_service = DHLPWC_Model_Service_Access_Control::instance();
+        $validate_address_number = $access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_VALIDATION_RULE, 'address_number');
+
         // Cancel request if no street and housenumber are set
         if (empty($shipment_data->shipper->address->street)) {
             $this->set_error(self::CREATE_ERROR, ucfirst(sprintf(__('Shipper %s field is required.', 'dhlpwc'), __('street', 'dhlpwc'))));
             return false;
         }
+        if (empty($shipment_data->shipper->address->number) && $validate_address_number) {
+            $this->set_error(self::CREATE_ERROR, ucfirst(sprintf(__('Shipper %s field is required.', 'dhlpwc'), __('house number', 'dhlpwc'))));
+            return false;
+        }
 
         if (empty($shipment_data->receiver->address->street)) {
             $this->set_error(self::CREATE_ERROR, ucfirst(sprintf(__('Receiver %s field is required.', 'dhlpwc'), __('street', 'dhlpwc'))));
+            return false;
+        }
+        if (empty($shipment_data->receiver->address->number) && $validate_address_number) {
+            $this->set_error(self::CREATE_ERROR, ucfirst(sprintf(__('Receiver %s field is required.', 'dhlpwc'), __('house number', 'dhlpwc'))));
             return false;
         }
 
@@ -63,14 +75,16 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
                 $this->set_error(self::CREATE_ERROR, ucfirst(sprintf(__('Hide shipper %s field is required.', 'dhlpwc'), __('company', 'dhlpwc'))));
                 return false;
             }
-
             if (empty($shipment_data->on_behalf_of->address->street)) {
                 $this->set_error(self::CREATE_ERROR, ucfirst(printf(__('Hide shipper %s field is required.', 'dhlpwc'), __('street', 'dhlpwc'))));
                 return false;
             }
-
             if (empty($shipment_data->on_behalf_of->address->city)) {
                 $this->set_error(self::CREATE_ERROR, ucfirst(sprintf(__('Hide shipper %s field is required.', 'dhlpwc'), __('city', 'dhlpwc'))));
+                return false;
+            }
+            if (empty($shipment_data->on_behalf_of->address->number) && $validate_address_number) {
+                $this->set_error(self::CREATE_ERROR, ucfirst(sprintf(__('Hide shipper %s field is required.', 'dhlpwc'), __('house number', 'dhlpwc'))));
                 return false;
             }
         }

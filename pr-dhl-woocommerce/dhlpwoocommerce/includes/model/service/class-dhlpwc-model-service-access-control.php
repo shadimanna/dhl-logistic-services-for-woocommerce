@@ -47,6 +47,7 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
     const ACCESS_CAPABILITY_ORDER_OPTIONS = 'capability_order_options';
 
     const ACCESS_CREATE_LABEL = 'create_label';
+    const ACCESS_VALIDATION_RULE = 'validation_rule';
 
     const ACCESS_PRINTER = 'printer';
 
@@ -84,6 +85,11 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
                 }
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
                 return $logic->check_default_shipping_address();
+                break;
+
+            case self::ACCESS_VALIDATION_RULE:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_validation_rule($args);
                 break;
 
             case self::ACCESS_COLUMN_INFO:
