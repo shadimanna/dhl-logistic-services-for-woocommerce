@@ -42,13 +42,13 @@ Please choose your preferred delivery option.', 'pr-shipping-dhl'); ?></td>
     </tr>
     <tr class="dhl-co-tr">
       <td colspan="2">
-        
-        <ul class="dhl-co-times">
 
             <?php
 
-              if ( isset( $preferred_day_time['preferred_day'] ) ) {
+              if ( !empty( $preferred_day_time['preferred_day'] ) ) {
                 
+                echo '<ul class="dhl-co-times">';
+
                 $preferred_days = $preferred_day_time['preferred_day'];
               
                 if ( empty( $pr_dhl_preferred_day_selected ) && ! empty( $preferred_days ) ) {
@@ -67,9 +67,16 @@ Please choose your preferred delivery option.', 'pr-shipping-dhl'); ?></td>
 
                 <?php
                 }
-              }
-             
-          ?>
+                
+                echo '</ul>';
+
+              } else { ?>
+
+                <i>
+                  <?php esc_html_e('Unfortunately, for the selected delivery address the service Preferred Day is not available', 'pr-shipping-dhl' ); ?>
+                </i>
+              
+              <?php } ?>
         </ul>
       </td>
     </tr>
@@ -93,33 +100,37 @@ Please choose your preferred delivery option.', 'pr-shipping-dhl'); ?></td>
     </tr>
     <tr class="dhl-co-tr">
       <td colspan="2">
-         <ul class="dhl-co-preffered-time">
+      <?php if ( !empty( $preferred_day_time['preferred_time'] ) ) { ?>
+        
+          <ul class="dhl-co-preffered-time">
+                <?php
+            
+                
+                $preferred_times = $preferred_day_time['preferred_time'];
 
-          <?php 
+                if ( empty( $pr_dhl_preferred_time_selected ) && ! empty( $preferred_times ) ) {
+                    $pr_dhl_preferred_time_selected = current( $preferred_times );
+                }
 
-            if ( isset( $preferred_day_time['preferred_time'] ) ) {
-              
-              $preferred_times = $preferred_day_time['preferred_time'];
+                foreach ($preferred_times as $key => $value) {
+                    $is_selected = $pr_dhl_preferred_time_selected == $key ? 'checked="checked"' : '';
+                ?>
 
-              if ( empty( $pr_dhl_preferred_time_selected ) && ! empty( $preferred_times ) ) {
-                  $pr_dhl_preferred_time_selected = current( $preferred_times );
-              }
+                  <li>
+                    <input type="radio" name="pr_dhl_preferred_time" class="pr_dhl_preferred_time" data-index="0" id="pr_dhl_preferred_time_<?php echo $key; ?>" value="<?php echo $key; ?>" <?php echo $is_selected; ?> >
+                    <label for="pr_dhl_preferred_time_<?php echo $key; ?>"><?php echo $value; ?></label>
+                  </li>
 
-              foreach ($preferred_times as $key => $value) {
-                  $is_selected = $pr_dhl_preferred_time_selected == $key ? 'checked="checked"' : '';
-              ?>
+                <?php
+                }
+                ?>
+          </ul>
 
-                <li>
-                  <input type="radio" name="pr_dhl_preferred_time" class="pr_dhl_preferred_time" data-index="0" id="pr_dhl_preferred_time_<?php echo $key; ?>" value="<?php echo $key; ?>" <?php echo $is_selected; ?> >
-                  <label for="pr_dhl_preferred_time_<?php echo $key; ?>"><?php echo $value; ?></label>
-                </li>
-
-              <?php
-              }
-            }
-          ?>
-
-        </ul>
+      <?php }else{ ?>
+            <i>
+              <?php esc_html_e('Unfortunately, for the selected delivery address the service Preferred Time is not available', 'pr-shipping-dhl' ); ?>
+            </i>
+      <?php } ?>
       </td>
     </tr>
 

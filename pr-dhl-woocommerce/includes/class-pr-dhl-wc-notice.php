@@ -68,7 +68,6 @@ class PR_DHL_WC_Notice {
 	}
 
 	public function dhl_optin_user() {
-		// error_log(print_r($_POST,true));
 
 		if ( isset( $_POST['dhl-optin-user'] ) ) {
 

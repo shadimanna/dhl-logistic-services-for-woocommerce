@@ -364,7 +364,6 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 
 					array_push($customsDetails, $json_item);
 				}
-				// error_log(print_r($dhl_label_body,true));
 				// Add customs info
 				$dhl_label_body['shipments'][0]['packages'][0]['customsDetails'] = $customsDetails;
 
@@ -374,7 +373,6 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 				// Declared info
 				$dhl_label_body['shipments'][0]['packages'][0]['packageDetails']['declaredValue'] = round( floatval( $this->args['order_details']['items_value'] ), 2);
 
-				// error_log(print_r($dhl_label_body,true));
 			}
 
 			// Unset/remove any items that are empty strings or 0, even if required!

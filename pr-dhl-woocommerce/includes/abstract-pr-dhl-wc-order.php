@@ -20,6 +20,8 @@ abstract class PR_DHL_WC_Order {
 
 	protected $shipping_dhl_settings = array();
 
+	protected $carrier 	= '';
+
 	/**
 	 * Init and hook in the integration.
 	 */
@@ -212,7 +214,9 @@ abstract class PR_DHL_WC_Order {
 			// Save value if it exists
 			if ( isset( $_POST[ $value ] ) ) {
 				$args[ $value ]	 = wc_clean( $_POST[ $value ] );
-			}
+			} else {
+                $args[ $value ]	 = '';
+            }
 		}		
 
 		if( isset( $args ) ) {
@@ -250,6 +254,8 @@ abstract class PR_DHL_WC_Order {
 			$tracking_note_type = $this->get_tracking_note_type();
 			$label_url = $this->get_download_label_url( $order_id );
 
+			do_action( 'pr_shipping_dhl_label_created', $order_id );
+
 			wp_send_json( array( 
 				'download_msg' => __('Your DHL label is ready to download, click the "Download Label" button above"', 'pr-shipping-dhl'),
 				'button_txt' => __( 'Download Label', 'pr-shipping-dhl' ),
@@ -257,8 +263,6 @@ abstract class PR_DHL_WC_Order {
 				'tracking_note'	  => $tracking_note,
 				'tracking_note_type' => $tracking_note_type,
 				) );
-
-			do_action( 'pr_shipping_dhl_label_created', $order_id );
 
 		} catch ( Exception $e ) {
 
@@ -365,7 +369,17 @@ abstract class PR_DHL_WC_Order {
 	 * @return void
 	 */
 	public function save_dhl_label_tracking( $order_id, $tracking_items ) {
+		
 		update_post_meta( $order_id, '_pr_shipment_dhl_label_tracking', $tracking_items );
+
+		$tracking_details = array(
+			'carrier' 			=> $this->carrier,
+			'tracking_number' 	=> $tracking_items['tracking_number'],
+			'ship_date' 		=> date( "Y-m-d", time() )
+		);
+
+		// Primarily added for "Advanced Tracking" plugin integration
+		do_action( 'pr_save_dhl_label_tracking', $order_id, $tracking_details );
 	}
 
 	/*
@@ -388,6 +402,8 @@ abstract class PR_DHL_WC_Order {
 	 */
 	public function delete_dhl_label_tracking( $order_id ) {
 		delete_post_meta( $order_id, '_pr_shipment_dhl_label_tracking' );
+
+		do_action( 'pr_delete_dhl_label_tracking', $order_id );
 	}
 
 	/**
@@ -540,6 +556,37 @@ abstract class PR_DHL_WC_Order {
 		if( $this->is_cod_payment_method( $order_id ) ) {
 			$args['order_details']['cod_value']	= $order->get_total();			
 		}
+
+		// calculate the additional fee
+		$additional_fees = 0;
+		if( count( $order->get_fees() ) > 0 ){
+			foreach( $order->get_fees() as $fee ){
+
+				if( defined( 'WOOCOMMERCE_VERSION' ) && version_compare( WOOCOMMERCE_VERSION, '3.0.0', '>=' ) ){
+
+					$additional_fees += floatval( $fee->get_total() );
+
+				}else{
+					
+					$additional_fees += floatval( $fee['line_total'] );
+					
+				}
+				
+			}
+		}
+
+		$args['order_details']['additional_fee'] 	= $additional_fees;
+
+		if( defined( 'WOOCOMMERCE_VERSION' ) && version_compare( WOOCOMMERCE_VERSION, '3.0.0', '>=' ) ){
+
+			$args['order_details']['shipping_fee'] 		= $order->get_shipping_total();
+
+		}else{
+
+			$args['order_details']['shipping_fee'] 		= $order->get_total_shipping();
+
+		}
+		
 		
 		$args['order_details']['total_value'] = $order->get_total();			
 		
@@ -938,6 +985,8 @@ abstract class PR_DHL_WC_Order {
                                 'type' => 'success',
                             ));
 
+                            do_action( 'pr_shipping_dhl_label_created', $order_id );
+
 					}
 
 					if( ! empty( $label_tracking_info['label_path'] ) ) {
@@ -1049,7 +1098,14 @@ abstract class PR_DHL_WC_Order {
 			throw new Exception( __('There are no files to merge.', 'pr-shipping-dhl') );
 		}
 
-		$pdfMerger = new PDFMerger;
+		$loader = PR_DHL_Libraryloader::instance();
+		$pdfMerger = $loader->get_pdf_merger();
+
+		if( $pdfMerger === null ){
+
+			throw new Exception( __('Library conflict, could not merge PDF files. Please download PDF files individually.', 'pr-shipping-dhl') );
+		}
+		
 		foreach ($files as $key => $value) {
 
 			if ( ! file_exists( $value ) ) {
@@ -1141,8 +1197,8 @@ abstract class PR_DHL_WC_Order {
 
 	    // If there are errors redirect to the shop_orders and display error
 	    if ( $this->has_error_message( $array_messages ) ) {
-			wp_redirect( $redirect_url );
-			exit;
+            wp_redirect( remove_query_arg( array( '_wp_http_referer', '_wpnonce' ), $redirect_url ) );
+            exit;
 		}
 	}
 

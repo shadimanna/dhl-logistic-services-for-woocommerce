@@ -7,7 +7,7 @@
  * Author URI: http://dhl.com/woocommerce
  * Version: 1.5.8
  * WC requires at least: 2.6.14
- * WC tested up to: 3.7
+ * WC tested up to: 3.8
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -160,8 +160,7 @@ class PR_DHL_WC {
 		// Load abstract classes
 		include_once( 'includes/abstract-pr-dhl-wc-order.php' );
 		include_once( 'includes/abstract-pr-dhl-wc-product.php' );
-		// Load PDF Merger
-		include_once( 'lib/PDFMerger/PDFMerger.php' );
+		
 		// Composer autoloader
 		include_once( 'vendor/autoload.php' );
 	}
@@ -726,7 +725,6 @@ class PR_DHL_WC {
 		} catch (Exception $e) {
 			// add_action( 'admin_notices', array( $this, 'environment_check' ) );
 		}
-		// error_log(print_r($states,true));
         return $states;
     }
 }

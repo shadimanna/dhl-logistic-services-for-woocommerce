@@ -112,7 +112,7 @@ jQuery(document).ready(function($) {
     },
     address_type: function() {
         var address_type = $('.woocommerce-checkout #shipping_dhl_address_type').val();
-
+		
         if (address_type == 'dhl_packstation') {
           $( '.woocommerce-checkout #shipping_dhl_postnum_field' ).show();
           // If does not have span or span with "required" class, add it
@@ -411,8 +411,9 @@ jQuery(document).ready(function($) {
     jQuery("[data-fancybox]").fancybox({
       modal: true
     });
-    
-    wc_checkout_dhl_parcelfinder.init();
+      
   }
+
+  wc_checkout_dhl_parcelfinder.init();
 
 });

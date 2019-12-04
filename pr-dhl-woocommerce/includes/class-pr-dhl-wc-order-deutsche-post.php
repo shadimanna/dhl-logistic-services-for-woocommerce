@@ -45,6 +45,8 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 */
 	const STATUS_IN_SHIPMENT = 'in_shipment';
 
+	protected $carrier 	= 'Deutsche Post DHL';
+
 	/**
 	 * Sets up the WordPress and WooCommerce hooks.
 	 *
@@ -595,7 +597,6 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		$args['dhl_settings']['dhl_label_ref'] = $this->replace_references( $this->shipping_dhl_settings['dhl_label_ref'], $order_id );
 		$args['dhl_settings']['dhl_label_ref_2'] = $this->replace_references( $this->shipping_dhl_settings['dhl_label_ref_2'], $order_id );
 
-		error_log(print_r($args,true));
 		return $args;
 	}
 
@@ -867,7 +868,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
 		// If there are errors redirect to the shop_orders and display error
 		if ( $this->has_error_message( $array_messages ) ) {
-			wp_redirect( $redirect_url );
+            wp_redirect( remove_query_arg( array( '_wp_http_referer', '_wpnonce' ), $redirect_url ) );
 			exit;
 		}
 	}
