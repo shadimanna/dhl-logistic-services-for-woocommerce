@@ -77,6 +77,25 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 == Changelog ==
 
+= 1.6.0 =
+* DHL Paket: Paket SOAP API v3.0 update
+* DHL Paket: Added Parcel Outlet Routing
+* DHL Paket: Added default setting for each service
+* DHL Paket: Added "Email Notification" setting to enable user optin on the checkout page
+* DHL Paket: Added Google Maps enable/disable option on frontend
+* DHL Paket: Added setting to set an order to "Completed" once a label is generated
+* DHL Paket: Added setting to add tracking information in "Completed" email
+* DHL Paket: Added setting for additional weight
+* DHL Paket: Added hook to support "Advanced Shipment Tracking for WooCommerce" plugin
+* DHL Paket: Added order id as reference in the label
+* DHL Paket: Added text to preferred day and time if no options returned from the API
+* DHL Paket: Bug fix - added shipping fees to customs info
+* DHL Paket: Bug fix - COD outside Germany
+* DHL Paket: Bug fix - bulk label causing 500 error when hundreds of orders selected
+* DHL Paket: Bug fix - created "FPDF" loader to avoid conflict with other plugins loading same library
+* DHL Paket: Bug fix - "pr_shipping_dhl_label_created" being called incorrectly
+
+
 = 1.5.8 =
 * DHL Parcel:  Restored street number validation on addresses based on feedback
 * DHL Parcel:  Added a setting to turn off street number validation (by default on)
