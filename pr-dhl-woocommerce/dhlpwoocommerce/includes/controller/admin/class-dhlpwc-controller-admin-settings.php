@@ -133,6 +133,10 @@ class DHLPWC_Controller_Admin_Settings
         if ($this->is_plugin_screen() || $this->is_shipping_zone_screen()) {
             wp_enqueue_style('dhlpwc-admin-style', DHLPWC_PLUGIN_URL . 'assets/css/dhlpwc.admin.css');
         }
+
+        if ($this->is_plugin_screen()) {
+            wp_enqueue_style('dhlpwc-admin_settings_only-style', DHLPWC_PLUGIN_URL . 'assets/css/dhlpwc.admin_settings_only.css');
+        }
     }
 
     public function load_scripts()

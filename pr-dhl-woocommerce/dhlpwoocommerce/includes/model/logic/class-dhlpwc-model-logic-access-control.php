@@ -550,7 +550,6 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         $continue = false;
         foreach($shipping_methods as $shipping_method) {
             if ($shipping_method->id === 'dhlpwc') {
-
                 $continue = true;
                 break;
             }
@@ -759,9 +758,52 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         }
 
         return true;
-
     }
 
+    public function check_validation_rule($identifier)
+    {
+        if (!is_string($identifier)) {
+            return false;
+        }
+
+        $default_on = array(
+            'address_number',
+            'address_country',
+        );
+
+        $default_off = array(
+        );
+
+        if (!in_array($identifier, $default_on) && !in_array($identifier, $default_off)) {
+            return false;
+        }
+
+        $return_boolean = boolval(in_array($identifier, $default_on));
+
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
+
+        if (empty($shipping_method)) {
+            return $return_boolean;
+        }
+
+        if (!isset($shipping_method['validation_rule_' . $identifier])) {
+            return $return_boolean;
+        }
+
+        if ($return_boolean) {
+            if ($shipping_method['validation_rule_' . $identifier] != 'no') {
+                return true;
+            }
+
+            return false;
+        }
+
+        if ($shipping_method['validation_rule_' . $identifier] != 'yes') {
+            return false;
+        }
+
+        return true;
+    }
 }
 
 endif;

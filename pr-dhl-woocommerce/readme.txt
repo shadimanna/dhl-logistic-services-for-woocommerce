@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 5.2
-Stable tag: 1.5.6
+Stable tag: 1.5.8
 WC requires at least: 2.6.14
 WC tested up to: 3.7
 License: GPLv2 or later
@@ -80,6 +80,17 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+
+= 1.5.8 =
+* DHL Parcel:  Restored street number validation on addresses based on feedback
+* DHL Parcel:  Added a setting to turn off street number validation (by default on)
+* DHL Parcel:  Updated delivery times to show evening times based on starting time 17:00 and higher
+
+= 1.5.7 =
+- DHL Parcel: Added a setting to change order status after label creation
+- DHL Parcel: Fixed an issue with the settings menu jumping on certain browsers
+- DHL Parcel: Fixed an issue with unavailable service combinations on bulk creation
+- DHL Parcel: Removed number validation on addresses due to some addresses not requiring it
 
 = 1.5.6 =
 * DHL Parcel: Fixed issue with package rate not being properly calculated based on logged in users

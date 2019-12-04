@@ -1,5 +1,20 @@
 # DHL Parcel plugin for WooCommerce
 
+v1.2.16
+
+## Changes
+- Restored street number validation on addresses based on feedback
+- Added a setting to turn off street number validation (by default on)
+- Updated delivery times to show evening times based on starting time 17:00 and higher
+
+v1.2.15
+
+## Changes
+- Added a setting to change order status after label creation
+- Fixed an issue with the settings menu jumping on certain browsers
+- Fixed an issue with unavailable service combinations on bulk creation
+- Removed number validation on addresses due to some addresses not requiring it
+
 v1.2.14
 
 ## Changes
