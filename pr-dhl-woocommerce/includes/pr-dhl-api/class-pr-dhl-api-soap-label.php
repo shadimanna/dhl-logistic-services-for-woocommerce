@@ -106,8 +106,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		$soap_request =	array(
 					'Version' =>
 						array(
-								'majorRelease' => '2',
-								'minorRelease' => '2'
+								'majorRelease' => '3',
+								'minorRelease' => '0'
 						),
 					'shipmentNumber' => $args['tracking_number']
 				);
@@ -576,8 +576,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				array(
 					'Version' =>
 						array(
-								'majorRelease' => '2',
-								'minorRelease' => '2'
+								'majorRelease' => '3',
+								'minorRelease' => '0'
 						),
 					'ShipmentOrder' => 
 						array (
