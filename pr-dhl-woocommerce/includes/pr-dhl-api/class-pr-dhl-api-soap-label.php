@@ -106,8 +106,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		$soap_request =	array(
 					'Version' =>
 						array(
-								'majorRelease' => '2',
-								'minorRelease' => '2'
+								'majorRelease' => '3',
+								'minorRelease' => '0'
 						),
 					'shipmentNumber' => $args['tracking_number']
 				);
@@ -177,6 +177,9 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				$label_url = PR_DHL()->get_dhl_label_folder_url() . $filename;
 				$label_path = PR_DHL()->get_dhl_label_folder_dir() . $filename;
 				$pdfMerger->merge( 'file',  $label_path );
+			} else {
+				$label_url = $label_info['data_url'];
+				$label_path = $label_info['data_path'];
 			}
 
 		} else {
@@ -576,8 +579,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				array(
 					'Version' =>
 						array(
-								'majorRelease' => '2',
-								'minorRelease' => '2'
+								'majorRelease' => '3',
+								'minorRelease' => '0'
 						),
 					'ShipmentOrder' => 
 						array (
@@ -791,7 +794,11 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			// Unset/remove any items that are empty strings or 0, even if required!
 			$this->body_request = $this->walk_recursive_remove( $dhl_label_body );
-			
+
+			if( !isset( $this->body_request['Version']['minorRelease'] ) ) {
+                $this->body_request['Version']['minorRelease'] = 0;
+            }
+
 			// Ensure Export Document is set before adding additional fee
 			if( isset( $this->body_request['ShipmentOrder']['Shipment']['ExportDocument'] ) ) {
 				// Additional fees, required and 0 so place after check

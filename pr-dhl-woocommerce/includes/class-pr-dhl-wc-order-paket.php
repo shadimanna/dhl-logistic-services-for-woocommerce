@@ -481,8 +481,8 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
             foreach ($settings_default_ids as $default_id) {
                 $id_name = str_replace("pr_dhl_", '', $default_id);
 
-                if (!isset($dhl_label_items[$default_id])) {
-                    $dhl_label_items[$default_id] = $this->shipping_dhl_settings['dhl_default_' . $id_name];
+                if ( !isset($dhl_label_items[$default_id]) ) {
+                    $dhl_label_items[$default_id] = isset( $this->shipping_dhl_settings['dhl_default_' . $id_name] ) ? $this->shipping_dhl_settings['dhl_default_' . $id_name] : '';
                 }
             }
 
