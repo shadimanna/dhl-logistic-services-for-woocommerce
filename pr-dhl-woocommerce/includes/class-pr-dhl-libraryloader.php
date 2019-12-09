@@ -1,5 +1,7 @@
 <?php
 
+use PR_DHL\lib\PDFMerger\PDFMerger;
+
 if (!defined('ABSPATH')) { 
     exit; 
 }
@@ -7,7 +9,6 @@ if (!defined('ABSPATH')) {
 if( !class_exists( 'PR_DHL_Libraryloader' ) ){
 
     class PR_DHL_Libraryloader{
-
 
         const CLASS_PDF_MERGER = 'pdf_merger';
 
@@ -43,12 +44,7 @@ if( !class_exists( 'PR_DHL_Libraryloader' ) ){
 
         public function get_pdf_merger()
         {
-            // The class exists but we never loaded it. There's too high chance of a conflict
-            if ( ( class_exists('PDFMerger') || class_exists('FPDF') || class_exists('FPDI')) && !in_array(self::CLASS_PDF_MERGER, $this->loaded) ) {
-                return null;
-            }
-			
-            if (!class_exists('PDFMerger')) { 
+            if (!class_exists('PR_DHL\lib\PDFMerger\PDFMerger')) {
                 $loaded = $this->include_file($this->file_path);
 
                 if (!$loaded) {
@@ -58,7 +54,7 @@ if( !class_exists( 'PR_DHL_Libraryloader' ) ){
             }
 
             // Something very unexpected happened, return
-            if (!class_exists('PDFMerger')) {
+            if (!class_exists('PR_DHL\lib\PDFMerger\PDFMerger')) {
                 return null;
             }
 
