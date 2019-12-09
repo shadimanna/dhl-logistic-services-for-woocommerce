@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 5.2
-Stable tag: 1.6.0
+Stable tag: 1.6.1
 WC requires at least: 2.6.14
 WC tested up to: 3.8
 License: GPLv2 or later
@@ -76,6 +76,11 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+
+= 1.6.1 =
+* DHL Paket: Bug fix - If PDFMerge does not exist for cross-border label return without customs docs
+* DHL Paket: Bug fix - Verify setting exists to not cause errors
+* DHL Paket: Bug fix - Add new version in SOAP call
 
 = 1.6.0 =
 * DHL Paket: Paket SOAP API v3.0 update
