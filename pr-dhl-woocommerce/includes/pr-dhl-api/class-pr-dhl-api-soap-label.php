@@ -794,7 +794,11 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			// Unset/remove any items that are empty strings or 0, even if required!
 			$this->body_request = $this->walk_recursive_remove( $dhl_label_body );
-			
+
+			if( !isset( $this->body_request['Version']['minorRelease'] ) ) {
+                $this->body_request['Version']['minorRelease'] = 0;
+            }
+
 			// Ensure Export Document is set before adding additional fee
 			if( isset( $this->body_request['ShipmentOrder']['Shipment']['ExportDocument'] ) ) {
 				// Additional fees, required and 0 so place after check
