@@ -241,7 +241,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		if (empty($items)) {
 			$table_rows[] = sprintf(
 				'<tr id="pr_dhl_no_items_msg"><td colspan="2"><i>%s</i></td></tr>',
-				__( 'There are no items in your DHL Waybill', 'pr-shipping-dhl' )
+				__( 'There are no items in your Waybill', 'pr-shipping-dhl' )
 			);
 		} else {
 			foreach ( $items as $barcode => $wc_order ) {
