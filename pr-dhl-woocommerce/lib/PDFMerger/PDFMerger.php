@@ -21,6 +21,12 @@
  * such as form fields, links or page annotations (anything not a part of the page content stream).
  * 
  */
+
+namespace PR_DHL\lib\PDFMerger;
+
+use Exception;
+use PR_DHL\lib\PDFMerger\fpdi\FPDI;
+
 class PDFMerger
 {
 	private $_files;	//['form.pdf']  ["1,2,4, 5-19"]

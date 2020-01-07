@@ -10,8 +10,9 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 	/**
 	 * WSDL definitions
 	 */
-	const PR_DHL_WSDL_LINK = 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/2.2/geschaeftskundenversand-api-2.2.wsdl';
-	
+	const PR_DHL_WSDL_LINK = 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/3.0/geschaeftskundenversand-api-3.0.wsdl';
+//	const PR_DHL_WSDL_LINK = 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/2.2/geschaeftskundenversand-api-2.2.wsdl';
+
 	const DHL_MAX_ITEMS = '6';
 	const DHL_RETURN_PRODUCT = '07';
 
@@ -76,7 +77,13 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		}
 
 		if( $response_body->Status->statusCode != 0 ) {
-			throw new Exception( sprintf( __('Could not create label - %s', 'pr-shipping-dhl'), $response_body->Status->statusMessage ) );
+		    if( isset( $response_body->Status->statusMessage ) ) {
+                $status_message = $response_body->Status->statusMessage;
+            } elseif( isset( $response_body->CreationState->LabelData->Status->statusMessage[0] ) ) {
+                $status_message = $response_body->CreationState->LabelData->Status->statusMessage[0];
+            }
+
+		    throw new Exception( sprintf( __('Could not create label - %s', 'pr-shipping-dhl'), $status_message ) );
 		} else {
 			// Give the server 1 second to create the PDF before downloading it
 			sleep(1);
@@ -88,7 +95,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			$label_tracking_info = $this->save_data_files( $response_body->CreationState->sequenceNumber, $response_body->CreationState->LabelData->labelData, $export_data );
 
-			$tracking_number = isset( $response_body->CreationState->LabelData->shipmentNumber ) ? $response_body->CreationState->LabelData->shipmentNumber : '';
+			$tracking_number = isset( $response_body->CreationState->shipmentNumber ) ? $response_body->CreationState->shipmentNumber : '';
 			$label_tracking_info['tracking_number'] = $tracking_number;
 
 			return $label_tracking_info;
@@ -99,8 +106,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		$soap_request =	array(
 					'Version' =>
 						array(
-								'majorRelease' => '2',
-								'minorRelease' => '2'
+								'majorRelease' => '3',
+								'minorRelease' => '0'
 						),
 					'shipmentNumber' => $args['tracking_number']
 				);
@@ -158,14 +165,23 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			$export_info = $this->save_data_file( 'export', $order_id, $export_data );
 
 			// Merge PDF files
-			$pdfMerger = new PDFMerger;
-			$pdfMerger->addPDF( $label_info['data_path'], 'all' );
-			$pdfMerger->addPDF( $export_info['data_path'], 'all' );
+			$loader = PR_DHL_Libraryloader::instance();
+			$pdfMerger = $loader->get_pdf_merger();
 
-			$filename = 'dhl-label-export-' . $order_id . '.pdf';
-			$label_url = PR_DHL()->get_dhl_label_folder_url() . $filename;
-			$label_path = PR_DHL()->get_dhl_label_folder_dir() . $filename;
-			$pdfMerger->merge( 'file',  $label_path );
+			if( $pdfMerger ){
+
+				$pdfMerger->addPDF( $label_info['data_path'], 'all' );
+				$pdfMerger->addPDF( $export_info['data_path'], 'all' );
+
+				$filename = 'dhl-label-export-' . $order_id . '.pdf';
+				$label_url = PR_DHL()->get_dhl_label_folder_url() . $filename;
+				$label_path = PR_DHL()->get_dhl_label_folder_dir() . $filename;
+				$pdfMerger->merge( 'file',  $label_path );
+			} else {
+				$label_url = $label_info['data_url'];
+				$label_path = $label_info['data_path'];
+			}
+
 		} else {
 			$label_url = $label_info['data_url'];
 			$label_path = $label_info['data_path'];
@@ -174,7 +190,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		return array( 'label_url' => $label_url, 'label_path' => $label_path);
 	}
 
-	protected function save_data_file( $prefix, $order_id, $data_decoded ) {
+	protected function save_data_file( $prefix, $order_id, $label_data ) {
 		$data_name = 'dhl-' . $prefix . '-' . $order_id . '.pdf';
 		$data_path = PR_DHL()->get_dhl_label_folder_dir() . $data_name;
 		$data_url = PR_DHL()->get_dhl_label_folder_url() . $data_name;
@@ -183,8 +199,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			throw new Exception( __('Invalid file path!', 'pr-shipping-dhl' ) );
 		}
 
-		// SOAP client decodes (base64) on its own so no need to do it here
-		$file_ret = file_put_contents( $data_path, $data_decoded );
+        $label_data_decoded = base64_decode($label_data);
+		$file_ret = file_put_contents( $data_path, $label_data_decoded );
 		
 		if( empty( $file_ret ) ) {
 			throw new Exception( __('File cannot be saved!', 'pr-shipping-dhl' ) );
@@ -397,7 +413,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 	}
 
 	protected function set_message() {
-		
+
 		if( ! empty( $this->args ) ) {
 			// Set date related functions to German time
 			// date_default_timezone_set('Europe/Berlin');
@@ -440,6 +456,9 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 								'identcheck' => array(
 													'name' => 'IdentCheck'
 													),
+                                'routing'   => array(
+                                                    'name' => 'ParcelOutletRouting'
+                                )
 								);
 
 			$services = array();
@@ -447,10 +466,12 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 				if ( ! empty( $this->args['order_details'][ $key ] ) ) {
 
-					if ( $this->args['order_details'][ $key ] == 'no' ) {
+				    // If checkbox not checked
+					if ( empty( $this->args['order_details'][ $key ] ) || ($this->args['order_details'][ $key ] == 'no' ) ) {
 						continue;
 					}
-					
+
+					// If a checkbox is checked, check specific structure
 					if ( $this->args['order_details'][ $key ] == 'yes' ) {
 
 						$services[ $value['name'] ] = array(
@@ -466,7 +487,10 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 								$services[ $value['name'] ]['Ident']['givenName'] = isset( $this->args['shipping_address']['last_name'] ) ? $this->args['shipping_address']['last_name'] : '';
 								$services[ $value['name'] ]['Ident']['dateOfBirth'] = isset( $this->args['order_details']['identcheck_dob'] ) ? $this->args['order_details']['identcheck_dob'] : '';
 								$services[ $value['name'] ]['Ident']['minimumAge'] = isset( $this->args['order_details']['identcheck_age'] ) ? $this->args['order_details']['identcheck_age'] : '';
-								break;							
+								break;
+							case 'routing':
+								$services[ $value['name'] ]['details'] = isset( $this->args['order_details']['routing_email'] ) ? $this->args['order_details']['routing_email'] : '';
+								break;
 						}
 
 					} else {
@@ -480,13 +504,14 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			// EMAIL NOTIFCATION
 			$notification_email = array();
-			if ( isset( $this->args['order_details'][ 'email_notification' ] ) && $this->args['order_details'][ 'email_notification' ] == 'yes' ) {
+			if ( isset( $this->args['order_details'][ 'email_notification' ] ) && ( $this->args['order_details'][ 'email_notification' ] == 'yes' || $this->args['order_details'][ 'email_notification' ] == '1' ) ) {
 				$notification_email['recipientEmailAddress'] = $this->args['shipping_address']['email'];
 			}
 
 			// COD DATA
 			$bank_data = array();
-			if( isset( $this->args['order_details']['cod_value'] ) ) {
+
+			if( ! empty( $this->args['order_details']['cod_value'] ) ) {
 
 				$services[ 'CashOnDelivery' ] = array(
 							'active' => 1
@@ -554,8 +579,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				array(
 					'Version' =>
 						array(
-								'majorRelease' => '2',
-								'minorRelease' => '2'
+								'majorRelease' => '3',
+								'minorRelease' => '0'
 						),
 					'ShipmentOrder' => 
 						array (
@@ -575,6 +600,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 												'Service' => $services,
 												'Notification' => $notification_email,
 												'BankData' => $bank_data,
+												'customerReference' => $this->args['order_details']['order_id'],
+												'returnShipmentReference' => $this->args['order_details']['order_id']
 											),
 										'Shipper' =>
 											array(
@@ -626,9 +653,9 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 														)
 											)											
 									),
-								'labelResponseType' => 'B64'
 
-						)
+						),
+						'labelResponseType' => 'B64'
 				);
 
 
@@ -767,11 +794,18 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			// Unset/remove any items that are empty strings or 0, even if required!
 			$this->body_request = $this->walk_recursive_remove( $dhl_label_body );
-			
+
+			if( !isset( $this->body_request['Version']['minorRelease'] ) ) {
+                $this->body_request['Version']['minorRelease'] = 0;
+            }
+
 			// Ensure Export Document is set before adding additional fee
 			if( isset( $this->body_request['ShipmentOrder']['Shipment']['ExportDocument'] ) ) {
 				// Additional fees, required and 0 so place after check
-				$this->body_request['ShipmentOrder']['Shipment']['ExportDocument']['additionalFee'] = 0;
+				$additional_fee 	= floatval( $this->args['order_details']['additional_fee'] );
+				$shipping_fee 		= floatval( $this->args['order_details']['shipping_fee'] );
+				$total_add_fee 		= $additional_fee + $shipping_fee;
+				$this->body_request['ShipmentOrder']['Shipment']['ExportDocument']['additionalFee'] = $total_add_fee;
 			}
 			
 			// If "Ident-Check" enabled, then ensure both fields are passed even if empty

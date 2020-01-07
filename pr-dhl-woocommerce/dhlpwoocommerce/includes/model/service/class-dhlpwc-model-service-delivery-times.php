@@ -232,7 +232,7 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
                     $system_timestamp = strtotime($delivery_time->source->delivery_date . ' ' . $delivery_time->source->start_time);
 
                     if ($this->validate_with_shipping_days($timestamp_home, $timestamp, $system_timestamp, $shipping_days)) {
-                        if ($delivery_time->source->start_time == '1800') { // This is an intentional ambiguous check, due to no strict regulations on the type of input from the Time Window API
+                        if (intval($delivery_time->source->start_time) >= 1700) { // This is an intentional ambiguous check, due to no strict regulations on the type of input from the Time Window API
 
                             if ($evening_enabled && $evening_allowed) {
                                 $delivery_time->preset_frontend_id = $evening_id;

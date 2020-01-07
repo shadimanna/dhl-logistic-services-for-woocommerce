@@ -19,6 +19,10 @@ jQuery( function( $ ) {
 			wc_shipment_dhl_label_items.show_hide_ident();
 
 			$( '#woocommerce-shipment-dhl-label' )
+				.on( 'change', '#pr_dhl_routing', this.show_hide_routing);
+			wc_shipment_dhl_label_items.show_hide_routing();
+
+			$( '#woocommerce-shipment-dhl-label' )
 				.on( 'change', '#pr_dhl_product', this.validate_product_return );
 		},
 	
@@ -65,6 +69,26 @@ jQuery( function( $ ) {
 			    	( $(this).attr("class").indexOf('pr_dhl_identcheck') >= 0 ) 
 			    ) {
 			    	
+			    	if ( is_checked ) {
+			    		$(this).show();
+			    	} else {
+			    		$(this).hide();
+			    	}
+			    }
+			});
+		},
+
+		show_hide_routing: function () {
+			var is_checked = $( '#pr_dhl_routing' ).prop('checked');
+
+			$( '#shipment-dhl-label-form' ).children().each( function () {
+
+				// If class exists, and is not 'pr_dhl_return_address_enabled' but is 'pr_dhl_return_' field
+			    if( ( $(this).attr("class") ) &&
+			    	( $(this).attr("class").indexOf('pr_dhl_routing_field ') == -1 ) &&
+			    	( $(this).attr("class").indexOf('pr_dhl_routing') >= 0 )
+			    ) {
+
 			    	if ( is_checked ) {
 			    		$(this).show();
 			    	} else {

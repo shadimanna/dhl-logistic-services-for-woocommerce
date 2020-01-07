@@ -48,7 +48,7 @@ class PR_DHL_Front_End_Paket {
 	public function init_hooks() {
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_styles_scripts' ) );
-
+		
 		if( $this->is_tracking_enabled() &&  ( $this->is_preferredservice_enabled() || $this->is_parcelfinder_enabled() ) ) {
 			// Add DHL meta tag
 			add_action( 'wp_head', array( $this, 'dhl_add_meta_tags') );
@@ -79,6 +79,12 @@ class PR_DHL_Front_End_Paket {
 			add_filter( 'woocommerce_localisation_address_formats', array( $this, 'set_format_post_number' ) );
 			add_filter( 'woocommerce_formatted_address_replacements', array( $this, 'add_format_post_number' ), 10, 2 );
 		}
+		
+		if( $this->is_email_notification_enabled() ){
+			add_action( 'woocommerce_review_order_before_submit', array( $this, 'add_email_notification_checkbox' ), 10 );
+			add_action('woocommerce_checkout_order_processed', array( $this, 'process_email_notification_fields'), 30, 2 );
+		}
+		
 	}
 
 	protected function is_tracking_enabled() {
@@ -181,11 +187,7 @@ class PR_DHL_Front_End_Paket {
 		}
 	}
 	
-	protected function validate_extra_services_available( $check_day_transfer = false ) {
-		// woocommerce_form_field('pr_dhl_paket_preferred_location');
-		$chosen_shipping_methods = WC()->session->get( 'chosen_shipping_methods' );
-		$chosen_payment_method = WC()->session->get( 'chosen_payment_method' );
-
+	protected function validate_is_german_customer() {
 		// WC 3.0 comaptibilty
 		if ( defined( 'WOOCOMMERCE_VERSION' ) && version_compare( WOOCOMMERCE_VERSION, '3.0', '>=' ) ) {
 			$customer_country = WC()->customer->get_billing_country();
@@ -198,6 +200,20 @@ class PR_DHL_Front_End_Paket {
 		$display_preferred = false;
 		// Preferred options are only for Germany customers
 		if( $base_country_code == 'DE' && $customer_country == 'DE' ) {
+			return true;
+		} else { 
+			return false;
+		}
+	}
+
+	protected function validate_extra_services_available( $check_day_transfer = false ) {
+		// woocommerce_form_field('pr_dhl_paket_preferred_location');
+		$chosen_shipping_methods = WC()->session->get( 'chosen_shipping_methods' );
+		$chosen_payment_method = WC()->session->get( 'chosen_payment_method' );
+
+		$display_preferred = false;
+		// Preferred options are only for Germany customers
+		if( $this->validate_is_german_customer() ) {
 
 			if ($check_day_transfer) {
 				foreach ( WC()->cart->get_cart() as $cart_item_key => $values ) {
@@ -470,6 +486,10 @@ class PR_DHL_Front_End_Paket {
 	public function add_parcel_finder_btn() {
 		// echo '<a id="dhl_parcel_finder" class="button" href="#dhl_parcel_finder_form">' . __('Parcel Finder', 'pr-shipping-dhl') . '</a>';
 
+		if( !$this->is_google_maps_enabled() ){
+			return ;
+		}
+		
 		$button_text = $this->get_branch_location_text();
 
 		$dhl_logo = PR_DHL_PLUGIN_DIR_URL . '/assets/img/dhl-official.png';
@@ -606,6 +626,16 @@ class PR_DHL_Front_End_Paket {
 		}
 	}
 
+	protected function is_google_maps_enabled() {
+
+		if( ( isset( $this->shipping_dhl_settings['dhl_display_google_maps'] ) && 
+			( $this->shipping_dhl_settings['dhl_display_google_maps'] == 'yes' ) ) ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	protected function is_packstation_enabled() {
 
 		if( ( isset( $this->shipping_dhl_settings['dhl_display_packstation'] ) && 
@@ -630,6 +660,16 @@ class PR_DHL_Front_End_Paket {
 
 		if( ( isset( $this->shipping_dhl_settings['dhl_display_post_office'] ) && 
 			( $this->shipping_dhl_settings['dhl_display_post_office'] == 'yes' ) ) ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	protected function is_email_notification_enabled() {
+		
+		if( ( isset( $this->shipping_dhl_settings['dhl_email_notification'] ) && 
+			( $this->shipping_dhl_settings['dhl_email_notification'] == 'yes' ) ) ) {
 			return true;
 		} else {
 			return false;
@@ -667,6 +707,35 @@ class PR_DHL_Front_End_Paket {
 		}
 
 		return $checkout_fields;
+	}
+
+	public function add_email_notification_checkbox(){
+
+		if( $this->validate_is_german_customer() ) {
+			woocommerce_form_field('pr_dhl_email_notification', array(
+				'type' => 'checkbox',
+				'class' => array( 'pr-dhl-email-notification form-row-wide' ),
+				'label' => __('Activate Shipment Notification. When activated DHL will inform you via email about the shipment status of your order.', 'pr-shipping-dhl' ),
+				),
+				'yes'
+			);
+		}
+	}
+
+	public function process_email_notification_fields( $order_id, $posted ) {
+
+		$dhl_label_items = PR_DHL()->get_pr_dhl_wc_order()->get_dhl_label_items( $order_id );
+		
+		if ( isset($_POST['pr_dhl_email_notification']) ) {
+
+			if( !is_array( $dhl_label_items ) ){
+				$dhl_label_items = array();
+			}
+			
+			$dhl_label_items['pr_dhl_email_notification'] = $_POST['pr_dhl_email_notification'];
+			PR_DHL()->get_pr_dhl_wc_order()->save_dhl_label_items( $order_id, $dhl_label_items );
+
+		}
 	}
 
 	/*

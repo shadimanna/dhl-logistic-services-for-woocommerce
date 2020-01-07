@@ -43,11 +43,13 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 	}
 
 	public function load_admin_scripts( $hook ) {
-	    if( 'woocommerce_page_wc-settings' != $hook ) {
+		
+		if( 'woocommerce_page_wc-settings' != $hook || !(isset( $_GET['section'] ) && $_GET['section'] == $this->id) ) {
 			// Only applies to WC Settings panel
 			return;
-	    }
-
+		}
+		
+		/*
 	    $test_con_data = array( 
 	    					'ajax_url' => admin_url( 'admin-ajax.php' ),
 						    'loader_image'   => admin_url( 'images/loading.gif' ),
@@ -58,6 +60,8 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		wp_enqueue_script( 'wc-shipment-dhl-testcon-js', PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-test-connection.js', array('jquery'), PR_DHL_VERSION );
 		// in JavaScript, object properties are accessed as ajax_object.ajax_url, ajax_object.we_value
 		wp_localize_script( 'wc-shipment-dhl-testcon-js', 'dhl_test_con_obj', $test_con_data );
+		*/
+
 	}
 
 	/**
@@ -95,10 +99,13 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			$dhl_obj = PR_DHL()->get_dhl_factory();
 			$select_dhl_product_int = $dhl_obj->get_dhl_products_international();
 			$select_dhl_product_dom = $dhl_obj->get_dhl_products_domestic();
-
+			$select_dhl_visual_age 	= $dhl_obj->get_dhl_visual_age();
+			
 		} catch (Exception $e) {
 			PR_DHL()->log_msg( __('DHL Products not displaying - ', 'pr-shipping-dhl') . $e->getMessage() );
 		}
+
+		$weight_units = get_option( 'woocommerce_weight_unit' );
 
 		$this->form_fields = array(
 			'dhl_pickup_dist'     => array(
@@ -174,14 +181,112 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'desc_tip'          => true,
 				'options'           => $select_dhl_product_int,
 				'class'          => 'wc-enhanced-select',
-			),	
-			'dhl_default_print_codeable' => array(
+			),
+			'dhl_email_notification' => array(
+				'title'             => __( 'Email Notification', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Enabled', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here if you want the "Email Notification" service to be displayed as an option on the checkout page', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
+			'dhl_default_age_visual' => array(
+				'title'             => __( 'Visual Age Check default', 'pr-shipping-dhl' ),
+				'type'              => 'select',
+				'options' 			=> $select_dhl_visual_age,
+				'description'       => __( 'Please, tick here if you want the "Visual Age Check" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'class'          	=> 'wc-enhanced-select',
+			),
+			'dhl_default_additional_insurance' => array(
+				'title'             => __( 'Additional Insurance default', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here if you want the "Additional Insurance" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
+			'dhl_default_no_neighbor' => array(
+				'title'             => __( 'No Neighbor Delivery default', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here if you want the "No Neighbor Delivery" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
+			'dhl_default_named_person' => array(
+				'title'             => __( 'Named Person Only default', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here if you want the "Named Person Only" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
+			'dhl_default_premium' => array(
+				'title'             => __( 'Premium default', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here if you want the "Premium" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
+			'dhl_default_bulky_goods' => array(
+				'title'             => __( 'Bulky Goods default', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here if you want the "Bulky Goods" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
+			'dhl_default_identcheck' => array(
+				'title'             => __( 'Ident Check default', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here if you want the "Ident Check" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
+			'dhl_default_identcheck_age' => array(
+				'title'             => __( 'Ident Check Age default', 'pr-shipping-dhl' ),
+				'type'              => 'select',
+				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
+				'default'           => '',
+				'options' 			=> $select_dhl_visual_age,
+				'description'       => __( 'Please, tick here if you want the "Ident Check" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
+			'dhl_default_is_codeable' => array(
 				'title'             => __( 'Print Only If Codeable default', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
 				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
 				'default'           => 'no',
 				'description'       => __( 'Please, tick here if you want the "Print Only If Codeable" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
+			),
+			'dhl_default_routing' => array(
+				'title'             => __( 'Parcel Outlet Routing default', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here if you want the "Parcel Outlet Routing" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
+			'dhl_add_weight_type' => array(
+				'title'             => __( 'Additional Weight Type', 'pr-shipping-dhl' ),
+				'type'              => 'select',
+				'description'       => __( 'Select whether to add an absolute weight amount or percentage amount to the total product weight.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'options'           => array( 'absolute' => 'Absolute', 'percentage' => 'Percentage'),
+				'class'				=> 'wc-enhanced-select'
+			),
+			'dhl_add_weight' => array(
+				'title'             => sprintf( __( 'Additional Weight (%s or %%)', 'pr-shipping-dhl' ), $weight_units),
+				'type'              => 'text',
+				'description'       => __( 'Add extra weight in addition to the products.  Either an absolute amount or percentage (e.g. 10 for 10%).', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => '',
+				'placeholder'		=> '',
+				'class'				=> 'wc_input_decimal'
 			),
 			'dhl_tracking_note' => array(
 				'title'             => __( 'Tracking Note', 'pr-shipping-dhl' ),
@@ -190,6 +295,31 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'default'           => 'no',
 				'description'       => __( 'Please, tick here to not send an email to the customer when the tracking number is added to the order.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
+			),
+			'dhl_tracking_note_txt' => array(
+				'title'             => __( 'Tracking Text', 'pr-shipping-dhl' ),
+				'type'              => 'textarea',
+				'description'       => __( 'Set the custom text when adding the tracking number to the order notes or completed email. {tracking-link} is where the tracking number will be set.', 'pr-shipping-dhl' ),
+				'desc_tip'          => false,
+				'default'           => __( 'DHL Tracking Number: {tracking-link}', 'pr-shipping-dhl')
+			),
+			'dhl_add_tracking_info_completed' => array(
+				'title'             => __( 'Tracking Email', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label' 			=> __( 'Add tracking text in completed email', 'pr-shipping-dhl'),
+				'description'       => __( 'Please, tick here to add tracking text when completed email is sent.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => 'no',
+				'class'				=> ''
+			),
+			'dhl_change_order_status_completed' => array(
+				'title'             => __( 'Order Status', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label' 			=> __( 'Change to Completed', 'pr-shipping-dhl'),
+				'description'       => __( 'Please, tick here to change the order status when label is generated.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => 'no',
+				'class'				=> ''
 			),
 			'dhl_api'           => array(
 				'title'           => __( 'API Settings', 'pr-shipping-dhl' ),
@@ -346,6 +476,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'dhl_payment_gateway' => array(
 					'title'             => __( 'Exclude Payment Gateways', 'pr-shipping-dhl' ),
 					'type'              => 'multiselect',
+					'default' 			=> 'cod',
 					'description'       => __( 'Select the Payment Gateways to hide the enabled DHL Paket preferred services and Location Finder below. You can press "ctrl" to select multiple options or click on a selected option to deselect it.', 'pr-shipping-dhl' ),
 					'desc_tip'          => true,
 					'options'           => $payment_gateway_titles,
@@ -378,6 +509,14 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'label'             => __( 'Enable Post Office', 'pr-shipping-dhl' ),
 					'default'           => 'yes',
 					'description'       => __( 'Enabling this will display Post Office locations on Google Maps when searching for drop off locations on the front-end.', 'pr-shipping-dhl' ),
+					'desc_tip'          => true,
+				),
+				'dhl_display_google_maps' => array(
+					'title'             => __( 'Google Maps', 'pr-shipping-dhl' ),
+					'type'              => 'checkbox',
+					'label'             => __( 'Enable Google Maps', 'pr-shipping-dhl' ),
+					'default'           => 'yes',
+					'description'       => __( 'Enabling this will display Google Maps on the front-end.', 'pr-shipping-dhl' ),
 					'desc_tip'          => true,
 				),
 				'dhl_parcel_limit' => array(
@@ -472,6 +611,14 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'title'           => __( 'Return Address', 'pr-shipping-dhl' ),
 				'type'            => 'title',
 				'description'     => __( 'Enter Return Address below.', 'pr-shipping-dhl' ),
+			),
+			'dhl_default_return_address_enabled' => array(
+				'title'             => __( 'Create Return Label default', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Checked', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here if you want the "Create Return Label" option to be checked in the "Edit Order" before printing a label.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
 			),
 			'dhl_return_name' => array(
 				'title'             => __( 'Name', 'pr-shipping-dhl' ),
@@ -729,6 +876,14 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 	}
 
 	/**
+	 * Validate the Google Maps enabled field
+	 * @see validate_settings_fields()
+	 */
+	public function validate_dhl_display_google_maps_field( $key ) {
+		return $this->validate_location_enabled_field( $key, __( 'Google Maps', 'pr-shipping-dhl' ) );
+	}
+
+	/**
 	 * Validate the any location enabled field
 	 * @see validate_settings_fields()
 	 * @return return 'no' or 'yes' (not exception) to 'disable' locations as opposed to NOT save them
@@ -743,8 +898,13 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 		// If not return 'no'
 		if ( empty( $google_maps_api_key ) ) {
-
-			$error_message = sprintf( __('In order to show %s on a map, you need to set a Google API Key first.', 'pr-shipping-dhl'), $location_type );
+			
+			if( $key == 'dhl_display_google_maps' ){ 
+				$error_message = sprintf( __('In order to show %s, you need to set a Google API Key first.', 'pr-shipping-dhl'), $location_type );	
+			}else{
+				$error_message = sprintf( __('In order to show %s on a map, you need to set a Google API Key first.', 'pr-shipping-dhl'), $location_type );
+			}
+			
 			echo $this->get_message( $error_message );
 			
 			return 'no';
