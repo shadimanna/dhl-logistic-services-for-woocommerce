@@ -20,6 +20,8 @@ abstract class PR_DHL_WC_Order {
 
 	protected $shipping_dhl_settings = array();
 
+    protected $service 	= 'DHL';
+
 	protected $carrier 	= '';
 
 	/**
@@ -71,7 +73,7 @@ abstract class PR_DHL_WC_Order {
 	 * @access public
 	 */
 	public function add_meta_box() {
-		add_meta_box( 'woocommerce-shipment-dhl-label', __( 'DHL Label & Tracking', 'pr-shipping-dhl' ), array( $this, 'meta_box' ), 'shop_order', 'side', 'high' );
+		add_meta_box( 'woocommerce-shipment-dhl-label', sprintf( __( '%s Label & Tracking', 'pr-shipping-dhl' ), $this->service), array( $this, 'meta_box' ), 'shop_order', 'side', 'high' );
 	}
 
 	/**
@@ -154,7 +156,7 @@ abstract class PR_DHL_WC_Order {
 
 			woocommerce_wp_select ( array(
 				'id'          		=> 'pr_dhl_product',
-				'label'       		=> __( 'DHL service selected:', 'pr-shipping-dhl' ),
+				'label'       		=> __( 'Service selected:', 'pr-shipping-dhl' ),
 				'description'		=> '',
 				'value'       		=> $selected_dhl_product,
 				'options'			=> $dhl_product_list,
@@ -326,7 +328,7 @@ abstract class PR_DHL_WC_Order {
 		if( ! empty( $this->shipping_dhl_settings['dhl_tracking_note_txt'] ) ) {
 			$tracking_note = $this->shipping_dhl_settings['dhl_tracking_note_txt'];
 		} else {
-			$tracking_note = __( 'DHL Tracking Number: {tracking-link}', 'pr-shipping-dhl' );
+			$tracking_note = sprintf( __( '%s Tracking Number: {tracking-link}', 'pr-shipping-dhl' ), $this->service);
 		}
 		
 		$tracking_link = $this->get_tracking_link( $order_id );

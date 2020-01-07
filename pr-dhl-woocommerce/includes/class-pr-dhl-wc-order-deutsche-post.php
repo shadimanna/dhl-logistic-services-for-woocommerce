@@ -45,6 +45,8 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 */
 	const STATUS_IN_SHIPMENT = 'in_shipment';
 
+    protected $service 	= 'Deutsche Post';
+
 	protected $carrier 	= 'Deutsche Post DHL';
 
 	/**
@@ -106,7 +108,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	public function add_dhl_order_meta_box() {
 		add_meta_box(
 			'woocommerce-dhl-dp-order',
-			__( 'DHL Waybill', 'pr-shipping-dhl' ),
+            sprintf( __( '%s Waybill', 'pr-shipping-dhl' ), $this->service),
 			array( $this, 'dhl_order_meta_box' ),
 			'shop_order',
 			'side',
@@ -288,7 +290,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			</button>
 		</p>
 		<p id="pr_dhl_order_gen_label_message">
-			<?php _e( 'Please generate a label before adding the item to the DHL Waybill', 'pr-shipping-dhl' ); ?>
+			<?php _e( 'Please generate a label before adding the item to the Waybill', 'pr-shipping-dhl' ); ?>
 		</p>
 		<?php
 
