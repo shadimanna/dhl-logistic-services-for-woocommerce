@@ -697,4 +697,16 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 
 		return $response->orderId;
 	}
+
+    public function get_dhl_nature_type() {
+        return array(
+            'SALE_GOODS' => __( 'Sale Goods', 'pr-shipping-dhl' ),
+            'RETURN_GOODS' => __( 'Return Goods', 'pr-shipping-dhl' ),
+            'GIFT' => __( 'Gift', 'pr-shipping-dhl' ),
+            'COMMERCIAL_SAMPLE' => __( 'Commercial Sample', 'pr-shipping-dhl' ),
+            'DOCUMENTS' => __( 'Documents', 'pr-shipping-dhl' ),
+            'MIXED_CONTENTS' => __( 'Mixed Contents', 'pr-shipping-dhl' ),
+            'OTHERS' => __( 'Others', 'pr-shipping-dhl' ),
+        );
+    }
 }

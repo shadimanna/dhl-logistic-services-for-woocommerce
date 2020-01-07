@@ -128,6 +128,21 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 */
 	public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
 	    
+
+        if( $this->is_crossborder_shipment( $order_id ) ) {
+            $dhl_obj = PR_DHL()->get_dhl_factory();
+
+            $nature_type = $dhl_obj->get_dhl_nature_type();
+
+            woocommerce_wp_select(array(
+                'id' => 'pr_dhl_nature_type',
+                'label' => __('Nature Type:', 'pr-shipping-dhl'),
+                'description' => '',
+                'value' => isset($dhl_label_items['pr_dhl_nature_type']) ? $dhl_label_items['pr_dhl_nature_type'] : '',
+                'options' => $nature_type,
+                'custom_attributes' => array($is_disabled => $is_disabled)
+            ));
+        }
     }
 
 	/**
