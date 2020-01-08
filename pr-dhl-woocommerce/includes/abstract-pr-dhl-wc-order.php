@@ -207,7 +207,7 @@ abstract class PR_DHL_WC_Order {
 	public function save_meta_box( $post_id, $post = null ) {
 		// loop through inputs within id 'shipment-dhl-label-form'
 		$meta_box_ids = array( 'pr_dhl_product', 'pr_dhl_weight');
-		
+
 		$additional_meta_box_ids = $this->get_additional_meta_ids( );
 
 		// $meta_box_ids += $additional_meta_box_ids;
@@ -219,7 +219,7 @@ abstract class PR_DHL_WC_Order {
 			} else {
                 $args[ $value ]	 = '';
             }
-		}		
+		}
 
 		if( isset( $args ) ) {
 			$this->save_dhl_label_items( $post_id, $args );

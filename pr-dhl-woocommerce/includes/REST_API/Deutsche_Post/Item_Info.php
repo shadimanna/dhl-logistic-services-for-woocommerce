@@ -155,6 +155,10 @@ class Item_Info {
 					return $self->float_round_sanitization( $value, 2 );
 				}
 			),
+            'nature_type'          => array(
+                'rename' => 'nature_type',
+                'default' => 'SALE_GOODS',
+            ),
 		);
 	}
 

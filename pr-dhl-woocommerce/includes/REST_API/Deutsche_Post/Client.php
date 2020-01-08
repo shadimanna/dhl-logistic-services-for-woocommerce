@@ -389,6 +389,7 @@ class Client extends API_Client {
 			'shipmentAmount'      => $item_info->shipment[ 'value' ],
 			'shipmentCurrency'    => $item_info->shipment[ 'currency' ],
 			'shipmentGrossWeight' => $item_info->shipment[ 'weight' ],
+			'shipmentNaturetype'  => $item_info->shipment[ 'nature_type' ],
 			'recipient'           => $item_info->recipient[ 'name' ],
 			'recipientPhone'      => $item_info->recipient[ 'phone' ],
 			'recipientEmail'      => $item_info->recipient[ 'email' ],

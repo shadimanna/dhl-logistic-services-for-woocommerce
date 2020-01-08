@@ -559,7 +559,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 * Function for saving tracking items
 	 */
 	public function get_additional_meta_ids() {
-		return array();
+		return array( 'pr_dhl_nature_type' );
 	}
 
 	/**
@@ -613,6 +613,10 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
 		$args['dhl_settings']['dhl_label_ref'] = $this->replace_references( $this->shipping_dhl_settings['dhl_label_ref'], $order_id );
 		$args['dhl_settings']['dhl_label_ref_2'] = $this->replace_references( $this->shipping_dhl_settings['dhl_label_ref_2'], $order_id );
+
+		if ($dhl_label_items['pr_dhl_nature_type']) {
+            $args['order_details']['nature_type'] = $dhl_label_items['pr_dhl_nature_type'];
+        }
 
 		return $args;
 	}
