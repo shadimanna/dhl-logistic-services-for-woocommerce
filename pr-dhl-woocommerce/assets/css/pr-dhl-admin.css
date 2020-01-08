@@ -52,3 +52,11 @@ span.wc_dhl_error {
 #pr_dhl_dp_error {
     color: red;
 }
+
+#woocommerce-shipment-dhl-label,
+#woocommerce-dhl-dp-order {
+	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(50%,#fc0),to(rgba(255,204,0,0)));
+	background-image: linear-gradient(#fc0 50%,rgba(255,204,0,0));
+	background-size: auto 36px;
+	background-repeat:repeat-x;
+}
