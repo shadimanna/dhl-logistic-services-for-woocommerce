@@ -28,7 +28,14 @@ class DHLPWC
             )
         ) {
             add_action('plugins_loaded', array($this, 'init'));
+            add_action('wpml_loaded', array($this, 'add_wpml_compatibility'));
         }
+    }
+    	
+    //  Fix for WPML
+    public function add_wpml_compatibility()
+    {
+        wp_cache_add_global_groups( 'options' );
     }
 
     public function init()
@@ -50,11 +57,6 @@ class DHLPWC
 
         // Load translation
         load_plugin_textdomain('dhlpwc', false, DHLPWC_RELATIVE_PLUGIN_DIR . DIRECTORY_SEPARATOR .'languages' );
-
-        //  Fix for WPML
-        if (function_exists('wp_cache_add_global_groups')) {
-            wp_cache_add_global_groups( 'options' );
-        }
 
         // Load controllers
 
