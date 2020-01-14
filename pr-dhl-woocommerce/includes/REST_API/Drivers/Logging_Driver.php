@@ -101,7 +101,7 @@ class Logging_Driver implements API_Driver_Interface {
 	 * @param Response $response The response to log.
 	 */
 	protected function log_response( $message, Response $response ) {
-		$body = ($response->headers['Content-Type'] === 'application/pdf')
+		$body = ( isset($response->headers['Content-Type']) && ($response->headers['Content-Type'] === 'application/pdf') )
 			? '[PDF data]'
 			: $response->body;
 
