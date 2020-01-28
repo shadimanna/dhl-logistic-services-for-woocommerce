@@ -138,7 +138,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
             woocommerce_wp_select(array(
                 'id' => 'pr_dhl_nature_type',
-                'label' => __('Nature Type:', 'pr-shipping-dhl'),
+                'label' => __('Contents Type:', 'pr-shipping-dhl'),
                 'description' => '',
                 'value' => isset($dhl_label_items['pr_dhl_nature_type']) ? $dhl_label_items['pr_dhl_nature_type'] : '',
                 'options' => $nature_type,
