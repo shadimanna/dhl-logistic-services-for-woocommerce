@@ -77,6 +77,13 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 == Changelog ==
 
+= 1.6.3 =
+* Deutsche Post: Addition of the “Contents Type” required for international orders outside of EU.
+* Deutsche Post: Addition of yellow brand color on order metaboxes.
+* Deutsche Post: Small changes in the text on the order metaboxes.
+* Deutsche Post: Sanitization of fields to the API to ensure they comply with the API specs.
+* Deutsche Post: Pass product id instead of product SKU to API.
+
 = 1.6.2 =
 * DHL Paket: Fix conflict with PDFMerger libraries
 
