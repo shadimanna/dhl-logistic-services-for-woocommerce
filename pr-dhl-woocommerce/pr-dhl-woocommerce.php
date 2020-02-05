@@ -301,6 +301,9 @@ class PR_DHL_WC {
 				$pr_dhl_ship_meth = 'PR_DHL_WC_Method_Paket';
 				$shipping_method['pr_dhl_paket'] = $pr_dhl_ship_meth;
 			} elseif( $dhl_obj->is_dhl_ecomm() ) {
+				$pr_dhl_ship_meth = 'PR_DHL_WC_Method_ECS';
+				$shipping_method['pr_dhl_ecs'] = $pr_dhl_ship_meth;
+			} elseif( $dhl_obj->is_dhl_ecomm() ) {
 				$pr_dhl_ship_meth = 'PR_DHL_WC_Method_Ecomm';
 				$shipping_method['pr_dhl_ecomm'] = $pr_dhl_ship_meth;
 			} elseif( $dhl_obj->is_dhl_deutsche_post() ) {
