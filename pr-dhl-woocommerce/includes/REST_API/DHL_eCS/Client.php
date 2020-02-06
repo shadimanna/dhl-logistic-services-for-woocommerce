@@ -183,13 +183,13 @@ class Client extends API_Client {
 	 */
 	public function get_order($orderId = null)
 	{
-		$current = get_option( 'pr_dhl_dp_order', $this->get_default_order_info() );
+		$current = get_option( 'pr_dhl_ecs_order', $this->get_default_order_info() );
 
 		if (empty($orderId)) {
 			return $current;
 		}
 
-		return get_option( 'pr_dhl_dp_order_' . $orderId, $current );
+		return get_option( 'pr_dhl_ecs_order_' . $orderId, $current );
 	}
 
 	/**
@@ -206,7 +206,7 @@ class Client extends API_Client {
 
 		$order['items'][$item_barcode] = $wc_order;
 
-		update_option( 'pr_dhl_dp_order', $order );
+		update_option( 'pr_dhl_ecs_order', $order );
 	}
 
 	/**
@@ -222,7 +222,7 @@ class Client extends API_Client {
 
 		unset( $order['items'][$item_barcode] );
 
-		update_option( 'pr_dhl_dp_order', $order );
+		update_option( 'pr_dhl_ecs_order', $order );
 	}
 
 	/**
@@ -232,7 +232,7 @@ class Client extends API_Client {
 	 */
 	public function reset_current_order()
 	{
-		update_option( 'pr_dhl_dp_order', $this->get_default_order_info() );
+		update_option( 'pr_dhl_ecs_order', $this->get_default_order_info() );
 	}
 
 	/**
@@ -297,34 +297,6 @@ class Client extends API_Client {
 		update_option( 'pr_dhl_dp_order_' . $info->orderId, $order );
 		// Reset the current order
 		$this->reset_current_order();
-	}
-
-	/**
-	 * Retrieves the label for a given AWB
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param string $awb The AWB of the shipment.
-	 *
-	 * @return string The raw PDF data for the AWB label.
-	 *
-	 * @throws Exception
-	 */
-	public function get_awb_label( $awb )
-	{
-		$response = $this->get(sprintf('dpi/shipping/v1/shipments/%s/awblabels', $awb));
-
-		if ($response->status === 200) {
-			return $response->body;
-		}
-
-		$message = !empty($response->body->messages)
-			? implode(', ', $response->body->messages)
-			: strval($response->body);
-
-		throw new Exception(
-			sprintf(__('API error: %s', 'pr-shipping-dhl'), $message)
-		);
 	}
 
 	/**

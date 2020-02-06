@@ -373,20 +373,6 @@ class PR_DHL_API_ECS extends PR_DHL_API {
 	}
 
 	/**
-	 * Retrieves the filename for DHL AWB label files.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param string $awb The AWB.
-	 * @param string $format The file format.
-	 *
-	 * @return string
-	 */
-	public function get_dhl_awb_label_file_name( $awb, $format = 'pdf' ) {
-		return sprintf('dhl-label-awb-%s.%s', $awb, $format);
-	}
-
-	/**
 	 * Retrieves the filename for DHL order label files (a.k.a. merged AWB label files).
 	 *
 	 * @since [*next-version*]
@@ -420,25 +406,6 @@ class PR_DHL_API_ECS extends PR_DHL_API {
 	}
 
 	/**
-	 * Retrieves the file info for DHL AWB label files.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param string $awb The AWB.
-	 * @param string $format The file format.
-	 *
-	 * @return object An object containing the file "path" and "url" strings.
-	 */
-	public function get_dhl_awb_label_file_info( $awb, $format = 'pdf' ) {
-		$file_name = $this->get_dhl_awb_label_file_name($awb, $format);
-
-		return (object) array(
-			'path' => PR_DHL()->get_dhl_label_folder_dir() . $file_name,
-			'url' => PR_DHL()->get_dhl_label_folder_url() . $file_name,
-		);
-	}
-
-	/**
 	 * Retrieves the file info for DHL order label files (a.k.a. merged AWB label files).
 	 *
 	 * @since [*next-version*]
@@ -462,16 +429,12 @@ class PR_DHL_API_ECS extends PR_DHL_API {
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @param string $type The label type: "item", "awb" or "order".
-	 * @param string $key The key: barcode for type "item", AWB for type "awb" and order ID for type "order".
+	 * @param string $type The label type: "item" or "order".
+	 * @param string $key The key: barcode for type "item", and order ID for type "order".
 	 *
 	 * @return object An object containing the file "path" and "url" strings.
 	 */
 	public function get_dhl_label_file_info( $type, $key ) {
-		// Return file info for "awb" type
-		if ( $type === 'awb') {
-			return $this->get_dhl_awb_label_file_info( $key );
-		}
 
 		// Return file info for "order" type
 		if ( $type === 'order' ) {
@@ -487,8 +450,8 @@ class PR_DHL_API_ECS extends PR_DHL_API {
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @param string $type The label type: "item", "awb" or "order".
-	 * @param string $key The key: barcode for type "item", AWB for type "awb" and order ID for type "order".
+	 * @param string $type The label type: "item", or "order".
+	 * @param string $key The key: barcode for type "item", and order ID for type "order".
 	 * @param string $data The label file data.
 	 *
 	 * @return object The info for the saved label file, containing the "path" and "url".
@@ -539,34 +502,6 @@ class PR_DHL_API_ECS extends PR_DHL_API {
 		if (!$res) {
 			throw new Exception(__('DHL AWB Label could not be deleted!', 'pr-shipping-dhl'));
 		}
-	}
-
-	/**
-	 * Checks if an AWB label file already exist, and if not fetches it from the API and saves it.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param string $awb The AWB.
-	 *
-	 * @return object An object containing the "path" and "url" to the label file.
-	 *
-	 * @throws Exception
-	 */
-	public function create_dhl_awb_label_file( $awb )
-	{
-		$file_info = $this->get_dhl_awb_label_file_info( $awb );
-
-		// Skip creating the file if it already exists
-		if ( file_exists( $file_info->path ) ) {
-			return $file_info;
-		}
-
-		// Get the label data from the API client
-		$label_data = $this->api_client->get_awb_label( $awb );
-		// Save the label file
-		$this->save_dhl_label_file( 'awb', $awb, $label_data );
-
-		return $file_info;
 	}
 
 	/**
@@ -688,7 +623,7 @@ class PR_DHL_API_ECS extends PR_DHL_API {
 				$awbs[] = $shipment->awb;
 
 				// Save the DHL order ID in the WC order meta
-				update_post_meta( $item_wc_order_id, 'pr_dhl_dp_order', $response->orderId );
+				update_post_meta( $item_wc_order_id, 'pr_dhl_ecs_order', $response->orderId );
 			}
 		}
 
