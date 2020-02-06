@@ -129,6 +129,14 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
 		        'desc_tip'          => true,
 		        'default'           => '',
 		        'placeholder'		=> 'Contact Name',
+			),
+			'dhl_contact_phone_number' => array(
+		        'title'             => __( 'Contact Phone Number', 'pr-shipping-dhl' ),
+		        'type'              => 'text',
+		        'description'       => __( 'The phone number of the merchant, used as contact information when creating Deutsche Post orders.', 'pr-shipping-dhl' ),
+		        'desc_tip'          => true,
+		        'default'           => '',
+		        'placeholder'		=> 'Contact Phone Number',
 	        ),
             'dhl_api_key'                => array(
                 'title'       => __( 'Client Id', 'pr-shipping-dhl' ),
@@ -331,7 +339,34 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
         <?php
 
         return ob_get_clean();
-    }
+	}
+	
+	/**
+	 * Validate the contact phone number field
+	 * @see validate_settings_fields()
+	 */
+	public function validate_dhl_contact_phone_number_field( $key, $value ) {
+		
+		$post_data 		= $this->get_post_data();
+		$account_num 	= $post_data[ $this->plugin_id . $this->id . '_' . 'dhl_account_num' ];
+
+		$first_nums = array( "1", "3", "4" );
+		
+		foreach( $first_nums as $num ){
+			if( substr( $account_num, 0, 1 ) == $num ){
+
+				if( empty( $value ) ){
+
+					$msg = __( 'Contact Phone Number required, please add in settings.', 'pr-shipping-dhl' );
+					echo $this->get_message( $msg );
+					throw new Exception( $msg );
+					break;
+				}
+			}
+		}
+
+		return $value;
+	}
 
     /**
      * Processes and saves options.
@@ -342,13 +377,13 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
         try {
 
             $dhl_obj = PR_DHL()->get_dhl_factory();
-            $dhl_obj->dhl_reset_connection();
+			$dhl_obj->dhl_reset_connection();
         } catch ( Exception $e ) {
 
             echo $this->get_message( __( 'Could not reset connection: ', 'pr-shipping-dhl' ) . $e->getMessage() );
             // throw $e;
         }
-
+		
         return parent::process_admin_options();
     }
 }
