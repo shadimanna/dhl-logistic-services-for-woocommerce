@@ -241,7 +241,7 @@ class PR_DHL_API_ECS extends PR_DHL_API {
 	 * @return array An associative array of the settings keys mapping to their values.
 	 */
 	public function get_settings() {
-		return get_option( 'woocommerce_pr_dhl_dp_settings', array() );
+		return get_option( 'woocommerce_pr_dhl_ecs_settings', array() );
 	}
 
 	/**
