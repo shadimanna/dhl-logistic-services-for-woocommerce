@@ -133,10 +133,10 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
 			'dhl_contact_phone_number' => array(
 		        'title'             => __( 'Contact Phone Number', 'pr-shipping-dhl' ),
 		        'type'              => 'text',
-		        'description'       => __( 'The phone number of the merchant, used as contact information when creating Deutsche Post orders.', 'pr-shipping-dhl' ),
+		        'description'       => __( 'Required for "Express" customers.  The phone number of the merchant, used as contact information when creating Deutsche Post orders.', 'pr-shipping-dhl' ),
 		        'desc_tip'          => true,
 		        'default'           => '',
-		        'placeholder'		=> 'Contact Phone Number',
+		        'placeholder'		=> '+4935120681234',
 	        ),
             'dhl_api_key'                => array(
                 'title'       => __( 'Client Id', 'pr-shipping-dhl' ),

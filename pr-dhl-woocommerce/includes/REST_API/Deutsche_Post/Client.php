@@ -33,18 +33,29 @@ class Client extends API_Client {
 	protected $contact_name;
 
 	/**
+	 * The contact phone number to use for creating orders for "Express" customers
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @var string
+	 */
+	protected $contact_phone;
+
+	/**
 	 * {@inheritdoc}
 	 *
 	 * @since [*next-version*]
 	 *
 	 * @param string $ekp The customer EKP.
 	 * @param string $contact_name The contact name to use for creating orders.
+	 * @param string $contact_phone The contact phone number to use for creating orders.
 	 */
-	public function __construct( $ekp, $contact_name, $base_url, API_Driver_Interface $driver, API_Auth_Interface $auth = null ) {
+	public function __construct( $ekp, $contact_name, $contact_phone, $base_url, API_Driver_Interface $driver, API_Auth_Interface $auth = null ) {
 		parent::__construct( $base_url, $driver, $auth );
 
 		$this->ekp = $ekp;
 		$this->contact_name = $contact_name;
+		$this->contact_phone = $contact_phone;
 	}
 
 	/**
@@ -256,6 +267,7 @@ class Client extends API_Client {
 			'paperwork' => array(
 				'awbCopyCount' => 1,
 				'contactName' => $this->contact_name,
+				'telephoneNumber' => $this->contact_phone,
 			),
 		);
 
