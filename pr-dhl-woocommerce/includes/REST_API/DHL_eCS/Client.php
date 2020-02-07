@@ -14,37 +14,27 @@ use stdClass;
  * @since [*next-version*]
  */
 class Client extends API_Client {
-	/**
-	 * The customer EKP.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @var string
-	 */
-	protected $ekp;
 
 	/**
-	 * The contact name to use for creating orders.
+	 * The api auth.
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @var string
+	 * @var API_Auth_Interface
 	 */
-	protected $contact_name;
+	protected $auth;
 
 	/**
 	 * {@inheritdoc}
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @param string $ekp The customer EKP.
 	 * @param string $contact_name The contact name to use for creating orders.
 	 */
-	public function __construct( $ekp, $contact_name, $base_url, API_Driver_Interface $driver, API_Auth_Interface $auth = null ) {
+	public function __construct( $base_url, API_Driver_Interface $driver, API_Auth_Interface $auth = null ) {
 		parent::__construct( $base_url, $driver, $auth );
 
-		$this->ekp = $ekp;
-		$this->contact_name = $contact_name;
+		$this->auth 		= $auth;
 	}
 
 	/**
@@ -65,39 +55,6 @@ class Client extends API_Client {
 
 		// Send the request and get the response
 		$response = $this->post( $route, $data );
-
-		// Return the response body on success
-		if ( $response->status === 200 ) {
-			return $response->body;
-		}
-
-		// Otherwise throw an exception using the response's error messages
-		$message = ! empty( $response->body->messages )
-			? implode( ', ', $response->body->messages )
-			: strval( $response->body );
-
-		throw new Exception(
-			sprintf( __( 'API error: %s', 'pr-shipping-dhl' ), $message )
-		);
-	}
-
-	/**
-	 * Deletes an item from the remote API.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param int $item_id The ID of the item to delete.
-	 *
-	 * @return stdClass The response.
-	 *
-	 * @throws Exception
-	 */
-	public function delete_item( $item_id ) {
-		// Compute the route to the API endpoint
-		$route = $this->customer_route( 'items/' . $item_id );
-
-		// Send the DELETE request
-		$response = $this->delete( $route );
 
 		// Return the response body on success
 		if ( $response->status === 200 ) {
@@ -246,18 +203,43 @@ class Client extends API_Client {
 	 */
 	public function create_order()
 	{
+		$token 	= $this->auth->load_token();
 		$order = $this->get_order();
 		$items = $order['items'];
 		$barcodes = array_keys( $items );
 
 		$route = $this->customer_route( 'orders' );
-		$data = array(
-			'itemBarcodes' => $barcodes,
-			'paperwork' => array(
-				'awbCopyCount' => 1,
-				'contactName' => $this->contact_name,
-			),
+
+		$data = array( 'labelRequest' => array() );
+		
+		/* Header */
+		$header = array(
+			'messageType' 		=> 'LABEL',
+			'messageDateTime' 	=> date( "c", time() ),
+			'messageVersion' 	=> '1.4',
+			'accessToken'		=> $token->token,
+			'messageLanguage' 	=> 'en'
 		);
+
+		/* Body */
+		$body = array(
+			'pickupAccountId' 	=> '',
+			'soldToAccountId'	=> '',
+			'shipmentItems' 	=> array(
+				'name' 		=> '',
+				'address1' 	=> '',
+				'country' 	=> ''
+			),
+			'label' 			=> array(
+				'format' 	=> 'PDF',
+				'layout' 	=> '1x1',
+				'pageSize' 	=> '400x600'
+			)
+		);
+
+
+		$data['labelRequest']['hdr'] 	= $header;
+		$data['labelRequest']['bd'] 	= $body;
 
 		$response = $this->post($route, $data);
 
@@ -294,7 +276,7 @@ class Client extends API_Client {
 			$order['status'] = $info->orderStatus;
 		}
 		// Save the order in a new option
-		update_option( 'pr_dhl_dp_order_' . $info->orderId, $order );
+		update_option( 'pr_dhl_ecs_order_' . $info->orderId, $order );
 		// Reset the current order
 		$this->reset_current_order();
 	}
@@ -387,16 +369,4 @@ class Client extends API_Client {
 		);
 	}
 
-	/**
-	 * Prepares an API route with the customer namespace and EKP.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param string $route The route to prepare.
-	 *
-	 * @return string
-	 */
-	protected function customer_route( $route ) {
-		return sprintf( 'dpi/shipping/v1/customers/%s/%s', $this->ekp, $route );
-	}
 }

@@ -94,8 +94,6 @@ class PR_DHL_API_ECS extends PR_DHL_API {
 	protected function create_api_client() {
 		// Create the API client, using this instance's driver and auth objects
 		return new Client(
-			$this->get_ekp(),
-			$this->get_contact_name(),
 			$this->get_api_url(),
 			$this->api_driver,
 			$this->api_auth
@@ -192,32 +190,6 @@ class PR_DHL_API_ECS extends PR_DHL_API {
 	}
 
 	/**
-	 * Retrieves the DHL account number, or "EKP".
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @return string
-	 *
-	 * @throws Exception If failed to retrieve the EKP from the settings.
-	 */
-	public function get_ekp() {
-		return $this->get_setting( 'dhl_account_num' );
-	}
-
-	/**
-	 * Retrieves the DHL contact name for orders.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @return string
-	 *
-	 * @throws Exception If failed to retrieve the contact name from the settings.
-	 */
-	public function get_contact_name() {
-		return $this->get_setting( 'dhl_contact_name' );
-	}
-
-	/**
 	 * Retrieves a single setting.
 	 *
 	 * @since [*next-version*]
@@ -279,9 +251,14 @@ class PR_DHL_API_ECS extends PR_DHL_API {
 	 */
 	public function get_dhl_products_international() {
 		return array(
-			'GMP' => __( 'Packet', 'pr-shipping-dhl' ),
-			'GPP' => __( 'Packet Plus', 'pr-shipping-dhl' ),
-			'GPT' => __( 'Packet Tracked', 'pr-shipping-dhl' ),
+			'PPM' => __( 'Packet Plus International Priority Manifest', 'pr-shipping-dhl' ),
+			'PPS' => __( 'Packet Plus International Standard', 'pr-shipping-dhl' ),
+			'PKM' => __( 'Packet International Priority Manifest', 'pr-shipping-dhl' ),
+			'PKD' => __( 'Packet International Standard', 'pr-shipping-dhl' ),
+			'PLT' => __( 'Parcel International Direct Standard', 'pr-shipping-dhl' ),
+			'PLE' => __( 'Parcel International Direct Expedited', 'pr-shipping-dhl' ),
+			'PLD' => __( 'Parcel International Standard', 'pr-shipping-dhl' ),
+			'PKG' => __( 'Packet International Economy', 'pr-shipping-dhl' ),
 		);
 	}
 
@@ -291,7 +268,12 @@ class PR_DHL_API_ECS extends PR_DHL_API {
 	 * @since [*next-version*]
 	 */
 	public function get_dhl_products_domestic() {
-		return $this->get_dhl_products_international();
+		return array(
+			'PDO' => __( 'Parcel Domestic', 'pr-shipping-dhl' ),
+			'PDE' => __( 'Parcel Domestic Expedited', 'pr-shipping-dhl' ),
+			'PDR' => __( 'Parcel Return', 'pr-shipping-dhl' ),
+			'SDP' => __( 'DHL Parcel Metro', 'pr-shipping-dhl' ),
+		);
 	}
 
 	/**

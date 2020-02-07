@@ -33,13 +33,6 @@ class Auth implements API_Auth_Interface {
 	const AUTH_ROUTE = 'rest/v1/OAuth/AccessToken';
 
 	/**
-	 * The DHL eCommerce route for revoking an access token.
-	 *
-	 * @since [*next-version*]
-	 */
-	const REVOKE_ROUTE = 'rest/v1/OAuth/AccessToken/revoke';
-
-	/**
 	 * The DHL eCommerce header where the client ID and secret are included when fetching the access token.
 	 *
 	 * @since [*next-version*]
@@ -59,13 +52,6 @@ class Auth implements API_Auth_Interface {
 	 * @since [*next-version*]
 	 */
 	const H_3PV_ID = 'ThirdPartyVendor-ID';
-
-	/**
-	 * The DHL eCommerce 3rd party vendor ID to include in the corresponding header.
-	 *
-	 * @since [*next-version*]
-	 */
-	const V_3PV_ID = '3pv_woocommerce';
 
 	/**
 	 * The driver to use for obtaining and revoking the access token.
@@ -145,10 +131,9 @@ class Auth implements API_Auth_Interface {
 		}
 
 		$type = $this->token->token_type;
-		$code = $this->token->access_token;
+		$code = $this->token->token;
 
 		$request->headers[ static::H_AUTH_TOKEN ] = $type . ' ' . $code;
-		$request->headers[ static::H_3PV_ID ] = static::V_3PV_ID;
 
 		return $request;
 	}
@@ -189,7 +174,7 @@ class Auth implements API_Auth_Interface {
 			throw new RuntimeException( $response->body->error_description );
 		}
 
-		return $response->body;
+		return $response->body->accessTokenResponse;
 	}
 
 	/**
@@ -205,23 +190,8 @@ class Auth implements API_Auth_Interface {
 			return '';
 		}
 
-		// Prepare the full request URL
-		$full_url = URL_Utils::merge_url_and_route( $this->api_url, static::REVOKE_ROUTE );
-		// Create the request
-		$params = array( 'token' => $this->token->access_token );
-		$request = new Request( Request::TYPE_GET, $full_url, $params );
-
-		// Send the request
-		$response = $this->driver->send( $request );
-
-		if ( $response->status !== 200 && $response->status !== 401 ) {
-			throw new RuntimeException( 'Failed to revoke the DHL eCommerce access token' );
-		}
-
 		// Delete the cached token
-		$this->delete_token();
-
-		return $response->body;
+		return $this->delete_token();
 	}
 
 	/**
@@ -259,8 +229,8 @@ class Auth implements API_Auth_Interface {
 	 * @param object $token The token to save.
 	 */
 	public function save_token( $token ) {
-		$expires_in = isset($token->expires_in)
-			? $token->expires_in
+		$expires_in = isset($token->expires_in_seconds )
+			? $token->expires_in_seconds
 			: time() + DAY_IN_SECONDS;
 
 		set_transient( $this->transient, $token, $expires_in );
