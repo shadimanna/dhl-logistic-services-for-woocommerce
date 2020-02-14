@@ -116,7 +116,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
             'dhl_account_num' => array(
 	            'title'             => __( 'Account Number (EKP)', 'pr-shipping-dhl' ),
 	            'type'              => 'text',
-	            'description'       => __( 'Your Deutsche Post account number (10 digits - numerical), also called "EKP“. This will be provided by your local Deutsche Post sales organization.', 'pr-shipping-dhl' ),
+	            'description'       => __( 'Your account number (9; 10 or 15 digits, numerical), also called "EKP“. This will be provided by your local Deutsche Post sales organization.', 'pr-shipping-dhl' ),
 	            'desc_tip'          => true,
 	            'default'           => '',
 	            'placeholder'		=> '1234567890',
@@ -125,7 +125,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
 	        'dhl_contact_name' => array(
 		        'title'             => __( 'Contact Name', 'pr-shipping-dhl' ),
 		        'type'              => 'text',
-		        'description'       => __( 'The name of the merchant, used as contact information when creating Deutsche Post orders.', 'pr-shipping-dhl' ),
+		        'description'       => __( 'Required for all customers. The name of the merchant, used as contact information on the Waybill.', 'pr-shipping-dhl' ),
 		        'desc_tip'          => true,
 		        'default'           => '',
 		        'placeholder'		=> 'Contact Name',
@@ -133,7 +133,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
 			'dhl_contact_phone_number' => array(
 		        'title'             => __( 'Contact Phone Number', 'pr-shipping-dhl' ),
 		        'type'              => 'text',
-		        'description'       => __( 'Required for "Express" customers.  The phone number of the merchant, used as contact information when creating Deutsche Post orders.', 'pr-shipping-dhl' ),
+		        'description'       => __( 'Required for DHL Express customers. The phone number of the merchant, used as contact information on the Waybill.', 'pr-shipping-dhl' ),
 		        'desc_tip'          => true,
 		        'default'           => '',
 		        'placeholder'		=> '+4935120681234',
