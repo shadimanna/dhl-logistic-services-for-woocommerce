@@ -25,6 +25,24 @@ class Client extends API_Client {
 	protected $auth;
 
 	/**
+	 * The pickup address data.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @var array
+	 */
+	protected $pickup_address;
+
+	/**
+	 * The shipper address data.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @var array
+	 */
+	protected $shipper_address;
+
+	/**
 	 * {@inheritdoc}
 	 *
 	 * @since [*next-version*]
@@ -35,6 +53,129 @@ class Client extends API_Client {
 		parent::__construct( $base_url, $driver, $auth );
 
 		$this->auth 		= $auth;
+	}
+
+	/**
+	 * Creates the DHL eCS order for the current local order of items.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return object The response data.
+	 *
+	 * @throws Exception
+	 */
+	public function get_shipping_label_x(){
+
+		$token 	= $this->auth->load_token();
+		$order = $this->get_order();
+		$items = $order['items'];
+		$barcodes = array_keys( $items );
+
+		$route = $this->shipping_label_route();
+
+		$data = array( 'labelRequest' => array() );
+		
+		/* Header */
+		$header = array(
+			'messageType' 		=> 'LABEL',
+			'messageDateTime' 	=> date( "c", time() ),
+			'messageVersion' 	=> '1.4',
+			'accessToken'		=> $token->token,
+			'messageLanguage' 	=> 'en'
+		);
+
+		/* Body */
+		$body = array(
+			'pickupAccountId' 	=> '',
+			'soldToAccountId'	=> '',
+			'shipmentItems' 	=> array(
+				array(
+					"consigneeAddress" 	=> array(
+						"name" 		=> "",
+						"address1" 	=> "",
+						"address2" 	=> "",
+						"city" 		=> "",
+						"state" 	=> "",
+						"district" 	=> "",
+						"country" 	=> "",
+						"postCode" 	=> "",
+						"phone"		=> "",
+						"email" 	=> "",
+						"idNumber" 	=> "",
+						"idType" 	=> ""
+					),
+					"returnAddress" 	=> null
+				),
+				"shipmentID" 				=> "",
+				"deliveryConfirmationNo" 	=> "",
+				"packageDesc" 				=> "",
+				"totalWeight" 				=> "",
+				"totalWeightUOM" 			=> "G",
+				"dimensionUOM" 				=> "cm",
+				"height" 					=> "",
+				"length" 					=> "",
+				"width" 					=> "",
+				"productCode" 				=> "PDO",
+				"incoTerm" 					=> "",
+				"totalValue" 				=> "",
+				"currency" 					=> "",
+				"isMult"					=> "true",
+				"deliveryOption"			=> "P",
+				"shipmentPieces" 			=> array(
+					array(
+						"pieceID" 			=> 11,
+						"announcedWeight" 	=> array(
+							"weight" 	=> null,
+							"unit" 		=> null
+						),
+						"codAmount" 		=> 5,
+						"insuranceAmount" 	=> null,
+						"billingReference1"	=> "123",
+						"billingReference2" => "123",
+						"pieceDescription"	=> "Air Conditioner"
+					),
+					array(
+						"pieceID" 			=> 11,
+						"announcedWeight" 	=> array(
+							"weight" 	=> null,
+							"unit" 		=> null
+						),
+						"codAmount" 		=> 5,
+						"insuranceAmount" 	=> null,
+						"billingReference1"	=> "123",
+						"billingReference2" => "123",
+						"pieceDescription"	=> "Air Conditioner"
+					),
+				)
+			),
+			'label' 			=> array(
+				'format' 	=> 'PDF',
+				'layout' 	=> '1x1',
+				'pageSize' 	=> '400x600'
+			)
+		);
+
+		$body['pickupAddress'] 		= $this->pickup_address;
+		$body['shipperAddress'] 	= $this->shipper_address;
+
+
+		$data['labelRequest']['hdr'] 	= $header;
+		$data['labelRequest']['bd'] 	= $body;
+
+		$response = $this->post($route, $data);
+
+		if ( $response->status === 200 ) {
+			
+			return $response->body;
+
+		}
+
+		throw new Exception(
+			sprintf(
+				__( 'Failed to create order: %s', 'pr-shipping-dhl' ),
+				implode( ', ', $response->body->messages )
+			)
+		);
 	}
 
 	/**
@@ -49,26 +190,10 @@ class Client extends API_Client {
 	 * @throws Exception
 	 */
 	public function create_item( Item_Info $item_info ) {
+
 		// Prepare the request route and data
-		$route = $this->customer_route( 'items' );
 		$data = $this->item_info_to_request_data( $item_info );
 
-		// Send the request and get the response
-		$response = $this->post( $route, $data );
-
-		// Return the response body on success
-		if ( $response->status === 200 ) {
-			return $response->body;
-		}
-
-		// Otherwise throw an exception using the response's error messages
-		$message = ! empty( $response->body->messages )
-			? implode( ', ', $response->body->messages )
-			: strval( $response->body );
-
-		throw new Exception(
-			sprintf( __( 'API error: %s', 'pr-shipping-dhl' ), $message )
-		);
 	}
 
 	/**
@@ -193,123 +318,6 @@ class Client extends API_Client {
 	}
 
 	/**
-	 * Creates the DHL eCS order for the current local order of items.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @return object The response data.
-	 *
-	 * @throws Exception
-	 */
-	public function create_order()
-	{
-		$token 	= $this->auth->load_token();
-		$order = $this->get_order();
-		$items = $order['items'];
-		$barcodes = array_keys( $items );
-
-		$route = $this->customer_route( 'orders' );
-
-		$data = array( 'labelRequest' => array() );
-		
-		/* Header */
-		$header = array(
-			'messageType' 		=> 'LABEL',
-			'messageDateTime' 	=> date( "c", time() ),
-			'messageVersion' 	=> '1.4',
-			'accessToken'		=> $token->token,
-			'messageLanguage' 	=> 'en'
-		);
-
-		/* Body */
-		$body = array(
-			'pickupAccountId' 	=> '',
-			'soldToAccountId'	=> '',
-			'shipmentItems' 	=> array(
-				'name' 		=> '',
-				'address1' 	=> '',
-				'country' 	=> ''
-			),
-			'label' 			=> array(
-				'format' 	=> 'PDF',
-				'layout' 	=> '1x1',
-				'pageSize' 	=> '400x600'
-			)
-		);
-
-
-		$data['labelRequest']['hdr'] 	= $header;
-		$data['labelRequest']['bd'] 	= $body;
-
-		$response = $this->post($route, $data);
-
-		if ( $response->status === 200 ) {
-			$this->close_order( $response->body );
-
-			return $response->body;
-		}
-
-		throw new Exception(
-			sprintf(
-				__( 'Failed to create order: %s', 'pr-shipping-dhl' ),
-				implode( ', ', $response->body->messages )
-			)
-		);
-	}
-
-	/**
-	 * Closes the current order with information received from the REST API.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param object $info The information received from the REST API.
-	 */
-	protected function close_order($info)
-	{
-		// Get the current order from the options
-		$order = $this->get_order();
-		// Save the response info in the order
-		$order['id'] = $info->orderId;
-		$order['shipments'] = $info->shipments;
-		// Save the order status if it's given
-		if ( ! empty( $info->orderStatus ) ) {
-			$order['status'] = $info->orderStatus;
-		}
-		// Save the order in a new option
-		update_option( 'pr_dhl_ecs_order_' . $info->orderId, $order );
-		// Reset the current order
-		$this->reset_current_order();
-	}
-
-	/**
-	 * Retrieves tracking info for a shipment by its AWB
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param string $awb The AWB of the shipment.
-	 *
-	 * @return object The tracking info as returned by the remote API.
-	 *
-	 * @throws Exception
-	 */
-	public function get_shipment_tracking_info( $awb )
-	{
-		$response = $this->get( sprintf( 'dpi/tracking/v1/trackings/awb/%s', $awb ) );
-
-		if ( $response->status === 200 ) {
-			return $response->body;
-		}
-
-		$message = ! empty( $response->body->messages )
-			? implode( ', ', $response->body->messages )
-			: strval( $response->body );
-
-		throw new Exception(
-			sprintf( __( 'API error: %s', 'pr-shipping-dhl' ), $message )
-		);
-	}
-
-	/**
 	 * Transforms an item info object into a request data array.
 	 *
 	 * @param Item_Info $item_info The item info object to transform.
@@ -367,6 +375,146 @@ class Client extends API_Client {
 			'items' => array(),
 			'shipments' => array(),
 		);
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function get_default_label_info() {
+
+		return array(
+			'labelRequest' 	=> array(
+				'hdr' 	=> array(
+					'messageType' 		=> 'LABEL',
+					'messageDateTime' 	=> date( "c", time() ),
+					'messageVersion' 	=> '1.4',
+					'accessToken'		=> '',
+					'messageLanguage' 	=> 'en'
+				),
+				'bd' 	=> array(
+					'pickupAccountId' 	=> '',
+					'soldToAccountId'	=> '',
+				)
+			)
+		);
+	}
+
+	/**
+	 * Retrieves the current DHL order, or an existing one if an ID is given.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param int|null $orderId Optional DHL order ID.
+	 *
+	 * @return array
+	 */
+	public function get_shipping_label($orderId = null)
+	{
+		$current = get_option( 'pr_dhl_ecs_label', $this->get_default_label_info() );
+
+		if (empty($orderId)) {
+			return $current;
+		}
+
+		return get_option( 'pr_dhl_ecs_label_' . $orderId, $current );
+	}
+
+	/**
+	 * Get pickup address data from the settings
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param array $args The arguments to parse.
+	 *
+	 */
+	public function get_pickup_address( $args ){
+
+		$settings = $args[ 'dhl_settings' ];
+
+		$this->pickup_address =  array(
+			"name" 		=> $settings['dhl_contact_name'],
+			"address1" 	=> $settings['dhl_address_1'],
+			"address2" 	=> $settings['dhl_address_2'],
+			"city" 		=> $settings['dhl_city'],
+			"state" 	=> $settings['dhl_state'],
+			"district" 	=> $settings['dhl_district'],
+			"country" 	=> $settings['dhl_country'],
+			"postCode" 	=> $settings['dhl_postcode'],
+			"phone"		=> $settings['dhl_phone'],
+			"email" 	=> $settings['dhl_email']	
+		);
+
+
+	}
+
+	/**
+	 * Get shipper address data from the settings
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param array $args The arguments to parse.
+	 *
+	 */
+	public function get_shipper_address( $args ){
+
+		$settings = $args[ 'dhl_settings' ];
+
+		$this->shipper_address =  array(
+			"name" 		=> $settings['dhl_contact_name'],
+			"address1" 	=> $settings['dhl_address_1'],
+			"address2" 	=> $settings['dhl_address_2'],
+			"city" 		=> $settings['dhl_city'],
+			"state" 	=> $settings['dhl_state'],
+			"district" 	=> $settings['dhl_district'],
+			"country" 	=> $settings['dhl_country'],
+			"postCode" 	=> $settings['dhl_postcode'],
+			"phone"		=> $settings['dhl_phone'],
+			"email" 	=> $settings['dhl_email']	
+		);
+
+
+	}
+
+	/**
+	 * Update the token to the current DHL shipping label.
+	 *
+	 * @since [*next-version*]
+	 *
+	 */
+	protected function update_access_token(){
+
+		$token 	= $this->auth->load_token();
+
+		$label = $this->get_shipping_label();
+
+		$label['labelRequest']['hdr']['accessToken'] = $token->token;
+
+		update_option( 'pr_dhl_ecs_label', $label );
+
+	}
+
+	/**
+	 * Resets the current shipping label.
+	 *
+	 * @since [*next-version*]
+	 */
+	public function reset_current_shipping_label(){
+
+		update_option( 'pr_dhl_ecs_label', $this->get_default_label_info() );
+		
+	}
+
+	/**
+	 * Prepares an API route with the customer namespace and EKP.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $route The route to prepare.
+	 *
+	 * @return string
+	 */
+	protected function shipping_label_route() {
+		return 'rest/v2/Label';
 	}
 
 }

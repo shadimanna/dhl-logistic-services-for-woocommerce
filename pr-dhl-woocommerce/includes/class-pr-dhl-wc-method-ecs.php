@@ -122,6 +122,94 @@ class PR_DHL_WC_Method_ECS extends WC_Shipping_Method {
 					'default'           => '',
 					'placeholder'		=> '0000500000'
 				),
+				'dhl_company_name' => array(
+					'title'             => __( 'Company Name', 'pr-shipping-dhl' ),
+					'type'              => 'text',
+					'description'       => __( 'The name of the company.', 'pr-shipping-dhl' ),
+					'desc_tip'          => true,
+					'default'           => '',
+					'placeholder'		=> 'Company Name'
+				),
+				'dhl_contact_name' => array(
+					'title'             => __( 'Contact Name', 'pr-shipping-dhl' ),
+					'type'              => 'text',
+					'description'       => __( 'The name of the merchant, used as contact information when creating DHL eCommerce orders.', 'pr-shipping-dhl' ),
+					'desc_tip'          => true,
+					'default'           => '',
+					'placeholder'		=> 'Contact Name'
+				),
+				'dhl_address_1' => array(
+					'title'             => __( 'Address 1', 'pr-shipping-dhl' ),
+					'type'              => 'text',
+					'description'       => __( 'The address of the merchant, used as contact information when creating DHL eCommerce orders.', 'pr-shipping-dhl' ),
+					'desc_tip'          => true,
+					'default'           => '',
+					'placeholder'		=> 'Address 1'
+				),
+				'dhl_address_2' => array(
+					'title'             => __( 'Address 2', 'pr-shipping-dhl' ),
+					'type'              => 'text',
+					'description'       => __( 'The address of the merchant, used as contact information when creating DHL eCommerce orders.', 'pr-shipping-dhl' ),
+					'desc_tip'          => true,
+					'default'           => '',
+					'placeholder'		=> 'Address 2'
+				),
+				'dhl_city' => array(
+					'title'             => __( 'City', 'pr-shipping-dhl' ),
+					'type'              => 'text',
+					'description'       => __( 'The city of the merchant, used as contact information when creating DHL eCommerce orders.', 'pr-shipping-dhl' ),
+					'desc_tip'          => true,
+					'default'           => '',
+					'placeholder'		=> 'City'
+				),
+				'dhl_state' => array(
+					'title'             => __( 'State', 'pr-shipping-dhl' ),
+					'type'              => 'text',
+					'description'       => __( 'The state of the merchant, used as contact information when creating DHL eCommerce orders.', 'pr-shipping-dhl' ),
+					'desc_tip'          => true,
+					'default'           => '',
+					'placeholder'		=> 'State'
+				),
+				'dhl_district' => array(
+					'title'             => __( 'District', 'pr-shipping-dhl' ),
+					'type'              => 'text',
+					'description'       => __( 'The district of the merchant, used as contact information when creating DHL eCommerce orders.', 'pr-shipping-dhl' ),
+					'desc_tip'          => true,
+					'default'           => '',
+					'placeholder'		=> 'District'
+				),
+				'dhl_country' => array(
+					'title'             => __( 'Country', 'pr-shipping-dhl' ),
+					'type'              => 'text',
+					'description'       => __( 'The country of the merchant, used as contact information when creating DHL eCommerce orders.', 'pr-shipping-dhl' ),
+					'desc_tip'          => true,
+					'default'           => '',
+					'placeholder'		=> 'Country'
+				),
+				'dhl_postcode' => array(
+					'title'             => __( 'Post Code', 'pr-shipping-dhl' ),
+					'type'              => 'text',
+					'description'       => __( 'The post code of the merchant, used as contact information when creating DHL eCommerce orders.', 'pr-shipping-dhl' ),
+					'desc_tip'          => true,
+					'default'           => '',
+					'placeholder'		=> 'Post Code'
+				),
+				'dhl_phone' => array(
+					'title'             => __( 'Phone Number', 'pr-shipping-dhl' ),
+					'type'              => 'text',
+					'description'       => __( 'The phone number of the merchant, used as contact information when creating DHL eCommerce orders.', 'pr-shipping-dhl' ),
+					'desc_tip'          => true,
+					'default'           => '',
+					'placeholder'		=> 'Phone Number'
+				),
+				'dhl_email' => array(
+					'title'             => __( 'Email', 'pr-shipping-dhl' ),
+					'type'              => 'text',
+					'description'       => __( 'The email of the merchant, used as contact information when creating DHL eCommerce orders.', 'pr-shipping-dhl' ),
+					'desc_tip'          => true,
+					'default'           => '',
+					'placeholder'		=> 'Email'
+				),
 
 
             'dhl_api'                    => array(
@@ -133,14 +221,6 @@ class PR_DHL_WC_Method_ECS extends WC_Shipping_Method {
                 ),
                 'class'       => '',
             ),
-				'dhl_contact_name' => array(
-					'title'             => __( 'Contact Name', 'pr-shipping-dhl' ),
-					'type'              => 'text',
-					'description'       => __( 'The name of the merchant, used as contact information when creating DHL eCommerce orders.', 'pr-shipping-dhl' ),
-					'desc_tip'          => true,
-					'default'           => '',
-					'placeholder'		=> 'Contact Name',
-				),
 				'dhl_api_key'                => array(
 					'title'       => __( 'Client Id', 'pr-shipping-dhl' ),
 					'type'        => 'text',

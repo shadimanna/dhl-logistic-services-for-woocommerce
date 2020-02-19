@@ -11,6 +11,16 @@ use PR\DHL\Utils\Args_Parser;
  * @since [*next-version*]
  */
 class Item_Info {
+
+	/**
+	 * The order id
+	 * 
+	 * @since [*next-version*]
+	 * 
+	 * @var int
+	 */
+	public $order_id;
+
 	/**
 	 * The array of shipment information.
 	 *
@@ -75,9 +85,10 @@ class Item_Info {
 		$shipping_info = $args[ 'order_details' ] + $settings;
 		$items_info = $args['items'];
 
-		$this->shipment = Args_Parser::parse_args( $shipping_info, $this->get_shipment_info_schema() );
-		$this->recipient = Args_Parser::parse_args( $recipient_info, $this->get_recipient_info_schema() );
-		$this->contents = array();
+		$this->order 		= $args[ 'order_details' ][ 'order_id' ];
+		$this->shipment 	= Args_Parser::parse_args( $shipping_info, $this->get_shipment_info_schema() );
+		$this->recipient 	= Args_Parser::parse_args( $recipient_info, $this->get_recipient_info_schema() );
+		$this->contents 	= array();
 
 		$this->contents = array();
 		foreach ( $items_info as $item_info ) {
