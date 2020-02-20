@@ -91,7 +91,8 @@ class PR_DHL_WC_Method_ECS extends WC_Shipping_Method {
         try {
 
             $dhl_obj = PR_DHL()->get_dhl_factory();
-            $select_dhl_product_int = $dhl_obj->get_dhl_products_international();
+			$select_dhl_product_int = $dhl_obj->get_dhl_products_international();
+			$select_dhl_product_dom = $dhl_obj->get_dhl_products_domestic();
         } catch ( Exception $e ) {
             PR_DHL()->log_msg( __( 'DHL eCS Products not displaying - ', 'pr-shipping-dhl' ) . $e->getMessage() );
         }
@@ -291,36 +292,21 @@ class PR_DHL_WC_Method_ECS extends WC_Shipping_Method {
                 'title'       => __( 'International Default Service', 'pr-shipping-dhl' ),
                 'type'        => 'select',
                 'description' => __(
-                    'Please select your default Deutsche Post shipping service for cross-border shippments that you want to offer to your customers (you can always change this within each individual order afterwards).',
+                    'Please select your default DHL eCommerce shipping service for cross-border shippments that you want to offer to your customers (you can always change this within each individual order afterwards).',
                     'pr-shipping-dhl'
                 ),
                 'desc_tip'    => true,
                 'options'     => $select_dhl_product_int,
                 'class'       => 'wc-enhanced-select',
-            ),
-            'dhl_add_weight_type'   => array(
-                'title'       => __( 'Additional Weight Type', 'pr-shipping-dhl' ),
-                'type'        => 'select',
-                'description' => __(
-                    'Select whether to add an absolute weight amount or percentage amount to the total product weight.',
-                    'pr-shipping-dhl'
-                ),
-                'desc_tip'    => true,
-                'options'     => array( 'absolute' => 'Absolute', 'percentage' => 'Percentage' ),
-                'class'       => 'wc-enhanced-select',
-            ),
-            'dhl_add_weight'        => array(
-                'title'       => sprintf( __( 'Additional Weight (%s or %%)', 'pr-shipping-dhl' ), $weight_units ),
-                'type'        => 'text',
-                'description' => __(
-                    'Add extra weight in addition to the products.  Either an absolute amount or percentage (e.g. 10 for 10%).',
-                    'pr-shipping-dhl'
-                ),
-                'desc_tip'    => true,
-                'default'     => '',
-                'placeholder' => '',
-                'class'       => 'wc_input_decimal',
-            ),
+			),
+			'dhl_default_product_dom' => array(
+				'title'             => __( 'Domestic Default Service', 'pr-shipping-dhl' ),
+				'type'              => 'select',
+				'description'       => __( 'Please select your default DHL eCommerce shipping service for domestic shippments that you want to offer to your customers (you can always change this within each individual order afterwards)', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'options'           => $select_dhl_product_dom,
+				'class'				=> 'wc-enhanced-select'
+			),
             'dhl_tracking_note'     => array(
                 'title'       => __( 'Tracking Note', 'pr-shipping-dhl' ),
                 'type'        => 'checkbox',
@@ -351,7 +337,7 @@ class PR_DHL_WC_Method_ECS extends WC_Shipping_Method {
 			    'description'     => __( 'Options for configuring your label preferences', 'pr-shipping-dhl' ),
 		    ),
 	        'dhl_label_ref' => array(
-		        'title'             => __( 'Label Reference', 'pr-shipping-dhl' ),
+		        'title'             => __( 'Customer Reference', 'pr-shipping-dhl' ),
 		        'type'              => 'text',
 		        'custom_attributes'	=> array( 'maxlength' => '35' ),
 		        'description'       => sprintf( __( 'Use "%s" to send the order id as a reference and "%s" to send the customer email. This text is limited to 35 characters.', 'pr-shipping-dhl' ), '{order_id}' , '{email}', '{user_id}' ),
@@ -359,7 +345,7 @@ class PR_DHL_WC_Method_ECS extends WC_Shipping_Method {
 		        'default'           => '{order_id}'
 	        ),
 	        'dhl_label_ref_2' => array(
-		        'title'             => __( 'Label Reference 2', 'pr-shipping-dhl' ),
+		        'title'             => __( 'Customer Reference 2', 'pr-shipping-dhl' ),
 		        'type'              => 'text',
 		        'custom_attributes'	=> array( 'maxlength' => '35' ),
 		        'description'       => sprintf( __( 'Use "%s" to send the order id as a reference and "%s" to send the customer email. This text is limited to 35 characters.', 'pr-shipping-dhl' ), '{order_id}' , '{email}', '{user_id}' ),
