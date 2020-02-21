@@ -222,7 +222,7 @@ class PR_DHL_WC {
 					$this->shipping_dhl_order = new PR_DHL_WC_Order_Paket();
 					$this->shipping_dhl_frontend = new PR_DHL_Front_End_Paket();
 				} elseif( $dhl_obj->is_dhl_ecs() ) {
-					$this->shipping_dhl_order = new PR_DHL_WC_Order_Ecomm();
+					$this->shipping_dhl_order = new PR_DHL_WC_Order_ECS();
 					// $this->shipping_dhl_notice = new PR_DHL_WC_Notice();
 				} elseif( $dhl_obj->is_dhl_ecomm() ) {
 					$this->shipping_dhl_order = new PR_DHL_WC_Order_Ecomm();

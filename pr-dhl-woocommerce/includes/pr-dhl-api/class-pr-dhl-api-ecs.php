@@ -285,36 +285,30 @@ class PR_DHL_API_ECS extends PR_DHL_API {
 		$order_id = isset( $args[ 'order_details' ][ 'order_id' ] )
 			? $args[ 'order_details' ][ 'order_id' ]
 			: null;
-		$item_barcode = get_post_meta( $order_id, 'pr_dhl_ecs_item_barcode', true );
 
-		// If order has no saved barcode, create the DHL item and get the barcode
-		if ( empty( $item_barcode ) ) {
-			$uom = get_option( 'woocommerce_weight_unit' );
-			try {
-				$item_info = new Item_Info( $args, $uom );
-			} catch (Exception $e) {
-				throw $e;
-			}
-
-			// Create the item and get the barcode
-			$item_response = $this->api_client->create_item( $item_info );
-			$item_barcode = $item_response->barcode;
-			$item_id = $item_response->id;
-
-			// Save it in the order
-			update_post_meta( $order_id, 'pr_dhl_ecs_item_barcode', $item_barcode );
-			update_post_meta( $order_id, 'pr_dhl_ecs_item_id', $item_id );
+		$uom = get_option( 'woocommerce_weight_unit' );
+		try {
+			$item_info = new Item_Info( $args, $uom );
+		} catch (Exception $e) {
+			throw $e;
 		}
 
-		// Get the label for the created item
-		$label_pdf_data = $this->api_client->get_item_label( $item_barcode );
-		// Save the label to a file
-		$this->save_dhl_label_file( 'item', $item_barcode, $label_pdf_data );
+		// Create the shipping label
+		$this->api_client->add_item( $item_info );
+		$this->api_client->update_account_id( $args );
+		$this->api_client->update_pickup_address( $args );
+		$this->api_client->update_shipper_address( $args );
+		$this->api_client->update_shipper_address( $args );
+		$this->api_client->update_access_token();
+		
+		$label_response 	= $this->api_client->create_shipping_label( $order_id );
+
+		//$this->save_dhl_label_file( 'item', $item_barcode, $label_pdf_data );
 
 		return array(
-			'label_path' => $this->get_dhl_item_label_file_info( $item_barcode )->path,
-			'item_barcode' => $item_barcode,
-			'tracking_number' => $item_barcode,
+			'label_path' => '',
+			'item_barcode' => '',
+			'tracking_number' => '',
 			'tracking_status' => '',
 		);
 	}
@@ -614,16 +608,4 @@ class PR_DHL_API_ECS extends PR_DHL_API {
 
 		return $response->orderId;
 	}
-
-    public function get_dhl_nature_type() {
-        return array(
-            'SALE_GOODS' => __( 'Sale Goods', 'pr-shipping-dhl' ),
-            'RETURN_GOODS' => __( 'Return Goods', 'pr-shipping-dhl' ),
-            'GIFT' => __( 'Gift', 'pr-shipping-dhl' ),
-            'COMMERCIAL_SAMPLE' => __( 'Commercial Sample', 'pr-shipping-dhl' ),
-            'DOCUMENTS' => __( 'Documents', 'pr-shipping-dhl' ),
-            'MIXED_CONTENTS' => __( 'Mixed Contents', 'pr-shipping-dhl' ),
-            'OTHERS' => __( 'Others', 'pr-shipping-dhl' ),
-        );
-    }
 }
