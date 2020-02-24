@@ -133,7 +133,7 @@ class Auth implements API_Auth_Interface {
 		$type = $this->token->token_type;
 		$code = $this->token->token;
 
-		$request->headers[ static::H_AUTH_TOKEN ] = $type . ' ' . $code;
+		//$request->headers[ static::H_AUTH_TOKEN ] = $type . ' ' . $code;
 
 		return $request;
 	}
@@ -159,22 +159,24 @@ class Auth implements API_Auth_Interface {
 		$full_url 	= URL_Utils::merge_url_and_route( $this->api_url, static::AUTH_ROUTE );
 
 		// Add URL query in the request URL
-		$req_url 	= add_query_arg( array(
-			'clientId' 		=> $this->client_id,
-			'password' 		=> $this->client_secret,
-			'returnFormat'	=> 'json'
-		), $full_url );
+		$parameter 	= '';
+		$parameter .= 'clientId=' . $this->client_id;
+		$parameter .= '&password=' . $this->client_secret;
+		$parameter .= '&returnFormat=json';
+
+		$req_url 	= $full_url . '?' . $parameter;
 
 		// Send the authorization request to obtain the access token
 		$request = new Request( Request::TYPE_GET, $req_url, array(), '', $headers );
 		$response = $this->driver->send( $request );
-
+		
 		// If the status code is not 200, throw an error with the raw response body
 		if ( $response->status !== 200 ) {
 			throw new RuntimeException( $response->body->error_description );
 		}
 
-		return $response->body->accessTokenResponse;
+		$token_response 	= json_decode( $response->body );
+		return $token_response->accessTokenResponse;
 	}
 
 	/**
@@ -215,7 +217,7 @@ class Auth implements API_Auth_Interface {
 
 		// Send the request
 		$token = $this->request_token();
-
+		
 		// Restore the credentials
 		$this->client_id = $backup_client_id;
 		$this->client_secret = $backup_client_secret;

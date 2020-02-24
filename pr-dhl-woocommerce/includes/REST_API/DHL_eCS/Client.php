@@ -114,12 +114,11 @@ class Client extends API_Client {
 	 */
 	public function create_shipping_label( $order_id ){
 
-		$token 	= $this->auth->load_token();
 		$route 	= $this->shipping_label_route();
 		$data 	= $this->get_shipping_label( $order_id );
-
+		
 		$response = $this->post($route, $data);
-
+		
 		if ( $response->status === 200 ) {
 			
 			return $response->body;
@@ -247,7 +246,7 @@ class Client extends API_Client {
 	 * @since [*next-version*]
 	 *
 	 */
-	protected function update_access_token(){
+	public function update_access_token(){
 
 		$token 	= $this->auth->load_token();
 
