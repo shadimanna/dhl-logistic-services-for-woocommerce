@@ -137,7 +137,6 @@ class Item_Info {
 			"length" 					=> 0.0,
 			"width" 					=> 0.0,
 			"productCode" 				=> "PDO",
-			"incoTerm" 					=> "",
 			"totalValue" 				=> "",
 			"currency" 					=> "",
 			"isMult"					=> "true",
@@ -173,22 +172,23 @@ class Item_Info {
 		$item["customerReference1"] = $settings['dhl_label_ref'];
 		$item["customerReference2"] = $settings['dhl_label_ref_2'];
 		$item["productCode"] 		= $settings['dhl_default_product_int'];
-		$item["incoterm"] 			= null;
 		$item["contentIndicator"] 	= null;
 		$item["codValue"] 			= null;
 		$item["insuranceValue"] 	= null;
 		$item["freightCharge"] 		= null;
 		$item["totalValue"] 		= null;
 		$item["currency"] 			= get_woocommerce_currency();
-		$item["remarks"] 			= "";
+		$item["remarks"] 			= $settings['dhl_remarks'];
 		$item["valueAddedServices"] = array(
-
-			array( "vasCode" => "PPOD" )
+			'valueAddedService' => array(
+				array( "vasCode" => "PPOD" )
+			)
 
 		);
 		$item["isMult"] 			= "TRUE";
 		$item["deliveryOption"] 	= "C"; // only supported C
 
+		$this->item = array_merge( $this->item, $item );
 	}
 
 	/**
@@ -204,23 +204,26 @@ class Item_Info {
 		$item 		= $this->item;
 		$order_id 	= $args[ 'order_details' ][ 'order_id' ];
 		$order 		= wc_get_order( $order_id );
+		$address 	= $this->order_address( $order_id );
+		$user 		= get_user_by( 'ID', $order->get_customer_id() );
+		$id_number 	= $user->user_login . '-' . $order->get_customer_id();
 
 		$item["consigneeAddress"] = array(
-			"name" 		=> $order->get_shipping_first_name() . ' ' . $order->get_shipping_last_name(),
-			"address1" 	=> $order->get_shipping_address_1(),
-			"address2" 	=> $order->get_shipping_address_2(),
-			"city" 		=> $order->get_shipping_city(),
-			"state" 	=> $order->get_shipping_state(),
-			"district" 	=> $order->get_shipping_state(),
-			"country" 	=> $order->get_shipping_country(),
-			"postCode" 	=> $order->get_shipping_postcode(),
+			"name" 		=> $address['name'],
+			"address1" 	=> $address['address1'],
+			"address2" 	=> $address['address2'],
+			"city" 		=> $address['city'],
+			"state" 	=> $address['state'],
+			"district" 	=> $address['state'],
+			"country" 	=> $address['country'],
+			"postCode" 	=> $address['postcode'],
 			"phone"		=> $order->get_billing_phone(),
 			"email" 	=> $order->get_billing_email(),
-			"idNumber" 	=> $order->get_customer_id(),
+			"idNumber" 	=> $id_number,
 			"idType" 	=> "4"
 		);
 
-		$this->item 	= $item;
+		$this->item = array_merge( $this->item, $item );
 
 	}
 
@@ -248,11 +251,9 @@ class Item_Info {
 			"postCode" 	=> $settings['dhl_postcode'],
 			"phone"		=> $settings['dhl_phone'],
 			"email" 	=> $settings['dhl_email'],	
-			"idNumber" 	=> $settings['dhl_email'],
-			"idType" 	=> "4"
 		);
 
-		$this->item 	= $item;
+		$this->item = array_merge( $this->item, $item );
 
 	}
 
@@ -280,13 +281,13 @@ class Item_Info {
 			$product_id 	= $item_line->get_product_id();
 			$product 		= wc_get_product( $product_id );
 
-			$weight 		= $product->get_weight();
+			$weight 		= absint( $product->get_weight() ) < 1? 1 : absint( $product->get_weight() );
 			$weight_uom 	= $this->weightUom;
 			$weight_gr		= $this->maybe_convert_to_grams( $weight, $weight_uom );
 
-			$height 		= $product->get_height();
-			$width 			= $product->get_width();
-			$length 		= $product->get_length();
+			$height 		= absint( $product->get_height() ) < 1? 1 : absint( $product->get_height() );
+			$width 			= absint( $product->get_width() ) < 1? 1 : absint( $product->get_width() );
+			$length 		= absint( $product->get_length() ) < 1? 1 : absint( $product->get_length() );
 
 			$total_weight 	+= $weight;
 			$total_height 	+= $height;
@@ -313,7 +314,7 @@ class Item_Info {
 		$item["length"] 		= $total_length;
 		$item["width"] 			= $total_width;
 
-		$this->item 	= $item;
+		$this->item = array_merge( $this->item, $item );
 
 	}
 
@@ -343,13 +344,13 @@ class Item_Info {
 
 			$quantity 		= $item_line->get_quantity();
 
-			$weight 		= $product->get_weight();
+			$weight 		= absint( $product->get_weight() ) < 1? 1 : absint( $product->get_weight() );
 			$weight_uom 	= $this->weightUom;
 			$weight_gr		= $this->maybe_convert_to_grams( $weight, $weight_uom );
 
-			$height 		= $product->get_height();
-			$width 			= $product->get_width();
-			$length 		= $product->get_length();
+			$height 		= absint( $product->get_height() ) < 1? 1 : absint( $product->get_height() );
+			$width 			= absint( $product->get_width() ) < 1? 1 : absint( $product->get_width() );
+			$length 		= absint( $product->get_length() ) < 1? 1 : absint( $product->get_length() );
 
 			$total_weight 	+= ( $weight * $quantity );
 			$total_height 	+= ( $height * $quantity );
@@ -363,7 +364,7 @@ class Item_Info {
 		$item["length"] 		= $total_length;
 		$item["width"] 			= $total_width;
 
-		$this->item 	= $item;
+		$this->item = array_merge( $this->item, $item );
 	}
 
 	/**
@@ -375,7 +376,9 @@ class Item_Info {
 	 * 
 	 */
 	public function update_item_shipment_contents( $args ){
-
+		
+		$settings 	= $args['dhl_settings'];
+		
 		$item 		= $this->item;
 		$order_id 	= $args[ 'order_details' ][ 'order_id' ];
 		$order 		= wc_get_order( $order_id );
@@ -384,17 +387,17 @@ class Item_Info {
 
 			$product_id 	= $item_line->get_product_id();
 			$product 		= wc_get_product( $product_id );
-
+			$product_sku 	= empty( $product->get_sku() )? "product_id-".$product_id : $product->get_sku();
 			$weight 		= $product->get_weight();
 			$weight_uom 	= $this->weightUom;
 			$weight_gr		= $this->maybe_convert_to_grams( $weight, $weight_uom );
 
 			$item["shipmentContents"][] = array(
-				"skuNumber" 			=> $product_id,
+				"skuNumber" 			=> $product_sku,
 				"description"			=> $item_line->get_name(),
 				"descriptionImport" 	=> $item_line->get_name(),
 				"descriptionExport" 	=> $item_line->get_name(),
-				"itemValue" 			=> $product->get_price(),
+				"itemValue" 			=> round( $product->get_price(), 2),
 				"itemQuantity" 			=> $item_line->get_quantity(),
 				"grossWeight" 			=> $weight_gr,
 				"netWeight" 			=> $weight_gr,
@@ -405,7 +408,7 @@ class Item_Info {
 
 		}
 
-		$this->item 	= $item;
+		$this->item = array_merge( $this->item, $item );
 
 	}
 
@@ -461,6 +464,33 @@ class Item_Info {
 		}
 
 		return substr( $string, 0, ( $max-1 ));
+	}
+
+	public function order_address( $order_id ){
+
+		$order 		= wc_get_order( $order_id );
+		
+		$name 		= empty( $order->get_shipping_first_name() )? $order->get_billing_first_name() . ' ' . $order->get_billing_last_name() : $order->get_shipping_first_name() . ' ' . $order->get_shipping_last_name();
+		$address1 	= empty( $order->get_shipping_address_1() )? $order->get_billing_address_1() : $order->get_shipping_address_1();
+		$address2 	= empty( $order->get_shipping_address_2() )? $order->get_billing_address_2() : $order->get_shipping_address_2();
+		$city 		= empty( $order->get_shipping_city() )? $order->get_billing_city() : $order->get_shipping_city();
+		$state 		= empty( $order->get_shipping_state() )? $order->get_billing_state() : $order->get_shipping_state();
+		$district 	= empty( $order->get_shipping_state() )? $order->get_billing_state() : $order->get_shipping_state();
+		$country 	= empty( $order->get_shipping_country() )? $order->get_billing_country() : $order->get_shipping_country();
+		$postcode 	= empty( $order->get_shipping_postcode() )? $order->get_billing_postcode() : $order->get_shipping_postcode();
+
+		$address_info = array(
+			"name" 		=> $name,
+			"address1" 	=> $address1,
+			"address2" 	=> $address2,
+			"city" 		=> $city,
+			"state" 	=> $state,
+			"district" 	=> $district,
+			"country" 	=> $country,
+			"postcode" 	=> $postcode,
+		);
+		
+		return $address_info;
 	}
 
 }

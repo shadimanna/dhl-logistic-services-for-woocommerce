@@ -136,7 +136,7 @@ class PR_DHL_API_ECS extends PR_DHL_API {
 	protected function create_api_auth() {
 		// Get the saved DHL customer API credentials
 		list( $client_id, $client_secret ) = $this->get_api_creds();
-
+		
 		// Create the auth object using this instance's API driver and URL
 		return new Auth(
 			$this->api_driver,
@@ -227,7 +227,7 @@ class PR_DHL_API_ECS extends PR_DHL_API {
 			$token = $this->api_auth->test_connection( $client_id, $client_secret );
 			// Save the token if successful
 			$this->api_auth->save_token( $token );
-
+			
 			return $token;
 		} catch ( Exception $e ) {
 			$this->api_auth->save_token( null );
@@ -282,6 +282,26 @@ class PR_DHL_API_ECS extends PR_DHL_API {
 	 * @since [*next-version*]
 	 */
 	public function get_dhl_label( $args ) {
+		$args[ 'dhl_settings' ]['dhl_contact_name'] 	= 'test';
+		$args[ 'dhl_settings' ]['dhl_address_1'] 		= 'Petronas Twin Towers';
+		$args[ 'dhl_settings' ]['dhl_address_2'] 		= 'Kuala Lumpur City Centre';
+		$args[ 'dhl_settings' ]['dhl_city'] 			= 'Kuala Lumpur';
+		$args[ 'dhl_settings' ]['dhl_state'] 			= 'KLumpur';
+		$args[ 'dhl_settings' ]['dhl_district'] 		= 'KLumpur';
+		$args[ 'dhl_settings' ]['dhl_country'] 			= 'MY';
+		$args[ 'dhl_settings' ]['dhl_postcode'] 		= '50088';
+		$args[ 'dhl_settings' ]['dhl_phone'] 			= '1212121212';
+		$args[ 'dhl_settings' ]['dhl_email'] 			= 'test@email.com';
+
+		$args[ 'dhl_settings' ]['dhl_label_ref']		= 'test';
+		$args[ 'dhl_settings' ]['dhl_label_ref_2']		= 'test2';
+		$args[ 'dhl_settings' ]['dhl_default_product_int'] = 'PKG';
+		$args[ 'dhl_settings' ]['dhl_remarks'] = 'test remarks';
+
+		$args[ 'dhl_settings' ]['dhl_pickup_id'] 		= '5999999108';
+		$args[ 'dhl_settings' ]['dhl_soldto_id']		= '5999999108';
+		$settings = $args[ 'dhl_settings' ];
+
 		$order_id = isset( $args[ 'order_details' ][ 'order_id' ] )
 			? $args[ 'order_details' ][ 'order_id' ]
 			: null;
@@ -294,15 +314,16 @@ class PR_DHL_API_ECS extends PR_DHL_API {
 		}
 
 		// Create the shipping label
+		$this->api_client->reset_current_shipping_label();
 		$this->api_client->add_item( $item_info );
 		$this->api_client->update_account_id( $args );
 		$this->api_client->update_pickup_address( $args );
 		$this->api_client->update_shipper_address( $args );
 		$this->api_client->update_shipper_address( $args );
 		$this->api_client->update_access_token();
-		
+		error_log( print_r( get_option( 'pr_dhl_ecs_label'), true ) );
 		$label_response 	= $this->api_client->create_shipping_label( $order_id );
-
+		error_log( print_r( $label_response, true ) );
 		//$this->save_dhl_label_file( 'item', $item_barcode, $label_pdf_data );
 
 		return array(

@@ -37,6 +37,7 @@ class PR_DHL_WC_Order_ECS extends PR_DHL_WC_Order {
 
 	public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
 
+		/*
 		if( $this->is_crossborder_shipment( $order_id ) ) {
 			
 			// Duties drop down
@@ -79,6 +80,7 @@ class PR_DHL_WC_Order_ECS extends PR_DHL_WC_Order {
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
 		}
+		*/
 	}
 	
 
@@ -165,7 +167,7 @@ class PR_DHL_WC_Order_ECS extends PR_DHL_WC_Order {
 
 		// Get package prefix
 		$args['order_details']['prefix'] = $this->shipping_dhl_settings['dhl_prefix'];
-
+		$dhl_label_items['pr_dhl_description'] = 'test';
 		if ( ! empty( $dhl_label_items['pr_dhl_description'] ) ) {
 			$args['order_details']['description'] = $dhl_label_items['pr_dhl_description'];
 		} else {
