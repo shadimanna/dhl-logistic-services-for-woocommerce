@@ -12,9 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author   Shadi Manna
  */
 
-if ( ! class_exists( 'PR_DHL_WC_Order_ECS' ) ) :
+if ( ! class_exists( 'PR_DHL_WC_Order_eCS_Asia' ) ) :
 
-class PR_DHL_WC_Order_ECS extends PR_DHL_WC_Order {
+class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 	
 	protected $carrier = 'DHL eCommerces';
 

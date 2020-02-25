@@ -1,6 +1,6 @@
 <?php
 
-namespace PR\DHL\REST_API\DHL_eCS;
+namespace PR\DHL\REST_API\DHL_eCS_Asia;
 
 use PR\DHL\REST_API\Interfaces\API_Auth_Interface;
 use PR\DHL\REST_API\Interfaces\API_Driver_Interface;

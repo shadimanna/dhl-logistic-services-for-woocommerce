@@ -1,18 +1,18 @@
 <?php
 
 // Exit if accessed directly or class already exists
-if ( ! defined( 'ABSPATH' ) || class_exists( 'PR_DHL_WC_Method_ECS', false ) ) {
+if ( ! defined( 'ABSPATH' ) || class_exists( 'PR_DHL_WC_Method_eCS_Asia', false ) ) {
 	return;
 }
 
-class PR_DHL_WC_Method_ECS extends WC_Shipping_Method {
+class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
     /**
      * Init and hook in the integration.
      */
     public function __construct( $instance_id = 0 ) {
-        $this->id = 'pr_dhl_ecs';
+        $this->id = 'pr_dhl_ecs_asia';
         $this->instance_id = absint( $instance_id );
-        $this->method_title = __( 'DHL eCS', 'pr-shipping-dhl' );
+        $this->method_title = __( 'DHL eCS Asia', 'pr-shipping-dhl' );
         $this->method_description = sprintf(
             __( 'To start creating DHL eCommerce shipping labels and return back a DHL Tracking number to your customers, please fill in your user credentials as shown in your contracts provided by DHL. Not yet a customer? Please get a quote %shere%s or find out more on how to set up this plugin and get some more support %shere%s.', 'pr-shipping-dhl' ), '<a href="https://www.logistics.dhl/global-en/home/our-divisions/ecommerce/integration/contact-ecommerce-integration-get-a-quote.html?cid=referrer_3pv-signup_woocommerce_ecommerce-integration&SFL=v_signup-woocommerce" target="_blank">', '</a>', '<a href="https://www.logistics.dhl/global-en/home/our-divisions/ecommerce/integration/integration-channels/third-party-solutions/woocommerce.html?cid=referrer_docu_woocommerce_ecommerce-integration&SFL=v_woocommerce" target="_blank">', '</a>'
         );
@@ -94,7 +94,7 @@ class PR_DHL_WC_Method_ECS extends WC_Shipping_Method {
 			$select_dhl_product_int = $dhl_obj->get_dhl_products_international();
 			$select_dhl_product_dom = $dhl_obj->get_dhl_products_domestic();
         } catch ( Exception $e ) {
-            PR_DHL()->log_msg( __( 'DHL eCS Products not displaying - ', 'pr-shipping-dhl' ) . $e->getMessage() );
+            PR_DHL()->log_msg( __( 'DHL eCS Asia Products not displaying - ', 'pr-shipping-dhl' ) . $e->getMessage() );
         }
 
         $weight_units = get_option( 'woocommerce_weight_unit' );
@@ -257,7 +257,7 @@ class PR_DHL_WC_Method_ECS extends WC_Shipping_Method {
 					'title'             => PR_DHL_BUTTON_TEST_CONNECTION,
 					'type'              => 'button',
 					'custom_attributes' => array(
-						'onclick' => "dhlTestConnection('#woocommerce_pr_dhl_ecs_dhl_test_connection_button');",
+						'onclick' => "dhlTestConnection('#woocommerce_pr_dhl_ecs_asia_dhl_test_connection_button');",
 					),
 					'description'       => __(
 						'Press the button for testing the connection against our DHL eCommerce (depending on the selected environment this test is being done against the Sandbox or the Production Environment).',

@@ -1,6 +1,6 @@
 <?php
 
-namespace PR\DHL\REST_API\DHL_eCS;
+namespace PR\DHL\REST_API\DHL_eCS_Asia;
 
 use Exception;
 use PR\DHL\Utils\Args_Parser;

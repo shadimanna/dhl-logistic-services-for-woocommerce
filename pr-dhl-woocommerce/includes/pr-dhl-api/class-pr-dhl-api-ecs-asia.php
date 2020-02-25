@@ -1,8 +1,8 @@
 <?php
 
-use PR\DHL\REST_API\DHL_eCS\Auth;
-use PR\DHL\REST_API\DHL_eCS\Client;
-use PR\DHL\REST_API\DHL_eCS\Item_Info;
+use PR\DHL\REST_API\DHL_eCS_Asia\Auth;
+use PR\DHL\REST_API\DHL_eCS_Asia\Client;
+use PR\DHL\REST_API\DHL_eCS_Asia\Item_Info;
 use PR\DHL\REST_API\Drivers\JSON_API_Driver;
 use PR\DHL\REST_API\Drivers\Logging_Driver;
 use PR\DHL\REST_API\Drivers\WP_API_Driver;
@@ -10,11 +10,11 @@ use PR\DHL\REST_API\Interfaces\API_Auth_Interface;
 use PR\DHL\REST_API\Interfaces\API_Driver_Interface;
 
 // Exit if accessed directly or class already exists
-if ( ! defined( 'ABSPATH' ) || class_exists( 'PR_DHL_API_ECS', false ) ) {
+if ( ! defined( 'ABSPATH' ) || class_exists( 'PR_DHL_API_eCS_Asia', false ) ) {
 	return;
 }
 
-class PR_DHL_API_ECS extends PR_DHL_API {
+class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	/**
 	 * The URL to the API.
 	 *
@@ -34,7 +34,7 @@ class PR_DHL_API_ECS extends PR_DHL_API {
 	 *
 	 * @since [*next-version*]
 	 */
-	const ACCESS_TOKEN_TRANSIENT = 'pr_dhl_ecs_access_token';
+	const ACCESS_TOKEN_TRANSIENT = 'pr_dhl_ecs_asia_access_token';
 
 	/**
 	 * The API driver instance.
@@ -152,7 +152,7 @@ class PR_DHL_API_ECS extends PR_DHL_API {
 	 *
 	 * @since [*next-version*]
 	 */
-	public function is_dhl_ecs() {
+	public function is_dhl_ecs_asia() {
 		return true;
 	}
 
@@ -321,7 +321,8 @@ class PR_DHL_API_ECS extends PR_DHL_API {
 		$this->api_client->update_shipper_address( $args );
 		$this->api_client->update_shipper_address( $args );
 		$this->api_client->update_access_token();
-		error_log( print_r( get_option( 'pr_dhl_ecs_label'), true ) );
+		error_log( "test ecs asia" );
+		error_log( print_r( get_option( 'pr_dhl_ecs_asia_label'), true ) );
 		$label_response 	= $this->api_client->create_shipping_label( $order_id );
 		
 		//$this->save_dhl_label_file( 'item', $item_barcode, $label_pdf_data );
@@ -620,7 +621,7 @@ class PR_DHL_API_ECS extends PR_DHL_API {
 				$awbs[] = $shipment->awb;
 
 				// Save the DHL order ID in the WC order meta
-				update_post_meta( $item_wc_order_id, 'pr_dhl_ecs_order', $response->orderId );
+				update_post_meta( $item_wc_order_id, 'pr_dhl_ecs_asia_order', $response->orderId );
 			}
 		}
 

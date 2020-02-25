@@ -1,6 +1,6 @@
 <?php
 
-namespace PR\DHL\REST_API\DHL_eCS;
+namespace PR\DHL\REST_API\DHL_eCS_Asia;
 
 use Exception;
 use PR\DHL\REST_API\API_Client;
@@ -101,13 +101,13 @@ class Client extends API_Client {
 	 */
 	public function get_shipping_label($orderId = null)
 	{
-		$current = get_option( 'pr_dhl_ecs_label', $this->get_default_label_info() );
+		$current = get_option( 'pr_dhl_ecs_asia_label', $this->get_default_label_info() );
 
 		if (empty($orderId)) {
 			return $current;
 		}
 
-		return get_option( 'pr_dhl_ecs_label_' . $orderId, $current );
+		return get_option( 'pr_dhl_ecs_asia_label_' . $orderId, $current );
 	}
 
 	/**
@@ -156,7 +156,7 @@ class Client extends API_Client {
 		$label['labelRequest']['bd']['pickupAccountId'] = $settings['dhl_pickup_id'];
 		$label['labelRequest']['bd']['soldToAccountId'] = $settings['dhl_soldto_id'];
 
-		update_option( 'pr_dhl_ecs_label', $label );
+		update_option( 'pr_dhl_ecs_asia_label', $label );
 	}
 
 	/**
@@ -188,7 +188,7 @@ class Client extends API_Client {
 
 		$label['labelRequest']['bd']['pickupAddress'] = $pickup_address;
 		$label['labelRequest']['bd']['pickupAddress'] = null; //testing
-		update_option( 'pr_dhl_ecs_label', $label );
+		update_option( 'pr_dhl_ecs_asia_label', $label );
 
 
 	}
@@ -222,7 +222,7 @@ class Client extends API_Client {
 
 		$label['labelRequest']['bd']['shipperAddress'] = $shipper_address;
 		$label['labelRequest']['bd']['shipperAddress'] = null; //testing
-		update_option( 'pr_dhl_ecs_label', $label );
+		update_option( 'pr_dhl_ecs_asia_label', $label );
 
 	}
 
@@ -242,7 +242,7 @@ class Client extends API_Client {
 
 		$label['labelRequest']['bd']['shipmentItems' ][] = $item_info->item;
 
-		update_option( 'pr_dhl_ecs_label', $label );
+		update_option( 'pr_dhl_ecs_asia_label', $label );
 
 	}
 
@@ -260,7 +260,7 @@ class Client extends API_Client {
 
 		$label['labelRequest']['hdr']['accessToken'] = $token->token;
 
-		update_option( 'pr_dhl_ecs_label', $label );
+		update_option( 'pr_dhl_ecs_asia_label', $label );
 
 	}
 
@@ -271,7 +271,7 @@ class Client extends API_Client {
 	 */
 	public function reset_current_shipping_label(){
 
-		update_option( 'pr_dhl_ecs_label', $this->get_default_label_info() );
+		update_option( 'pr_dhl_ecs_asia_label', $this->get_default_label_info() );
 
 	}
 
