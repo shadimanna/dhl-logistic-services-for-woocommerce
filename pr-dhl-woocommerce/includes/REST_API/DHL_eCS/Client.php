@@ -74,11 +74,17 @@ class Client extends API_Client {
 				'bd' 	=> array(
 					'pickupAccountId' 	=> '',
 					'soldToAccountId'	=> '',
+					'customerAccountId' => null,
+					'pickupDateTime' 	=> null,
+					'inlineLabelReturn' => null,
+					'handoverMethod' 	=> null,
+					
 					'label' 			=> array(
 						'format' 	=> 'PDF',
 						'layout' 	=> '1x1',
 						'pageSize' 	=> '400x600'
 					)
+					
 				)
 			)
 		);
@@ -118,7 +124,7 @@ class Client extends API_Client {
 		$data 	= $this->get_shipping_label( $order_id );
 		
 		$response = $this->post($route, $data);
-		
+		error_log( print_r( $response, true ) );
 		if ( $response->status === 200 ) {
 			
 			return $response->body;
@@ -181,7 +187,7 @@ class Client extends API_Client {
 		$label = $this->get_shipping_label();
 
 		$label['labelRequest']['bd']['pickupAddress'] = $pickup_address;
-
+		$label['labelRequest']['bd']['pickupAddress'] = null; //testing
 		update_option( 'pr_dhl_ecs_label', $label );
 
 
@@ -215,7 +221,7 @@ class Client extends API_Client {
 		$label = $this->get_shipping_label();
 
 		$label['labelRequest']['bd']['shipperAddress'] = $shipper_address;
-
+		$label['labelRequest']['bd']['shipperAddress'] = null; //testing
 		update_option( 'pr_dhl_ecs_label', $label );
 
 	}

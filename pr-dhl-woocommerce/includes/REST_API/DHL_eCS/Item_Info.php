@@ -160,25 +160,29 @@ class Item_Info {
 		$order_id 	= $args[ 'order_details' ][ 'order_id' ];
 		$order 		= wc_get_order( $order_id );
 
-		$item["shipmentID"] 			= "2TH15107346524632";
-		$item["deliveryConfirmationNo"] = "238643";
+		$item["shipmentID"] 			= "2MY15107346524632";
+		$item["returnMode"] 			= null;
+		$item["deliveryConfirmationNo"] = null;
 		$item["packageDesc"] 			= "PKG_desc";
-		$item["totalWeightUOM"] 	= $this->get_weight_uom();
-		$item["dimensionUOM"] 		= $this->get_dimension_uom();
-		$item["totalWeight"]		= 0.0;
-		$item["height"] 			= 0.0;
-		$item["length"] 			= 0.0;
-		$item["width"] 				= 0.0;
-		$item["customerReference1"] = $settings['dhl_label_ref'];
-		$item["customerReference2"] = $settings['dhl_label_ref_2'];
-		$item["productCode"] 		= $settings['dhl_default_product_int'];
-		$item["contentIndicator"] 	= null;
-		$item["codValue"] 			= null;
-		$item["insuranceValue"] 	= null;
-		$item["freightCharge"] 		= null;
-		$item["totalValue"] 		= null;
-		$item["currency"] 			= get_woocommerce_currency();
-		$item["remarks"] 			= $settings['dhl_remarks'];
+		$item["totalWeight"]			= 0.0;
+		$item["totalWeightUOM"] 		= $this->get_weight_uom();
+		$item["dimensionUOM"] 			= $this->get_dimension_uom();
+		$item["height"] 				= 0.0;
+		$item["length"] 				= 0.0;
+		$item["width"] 					= 0.0;
+		$item["customerReference1"] 	= $settings['dhl_label_ref'];
+		$item["customerReference2"] 	= $settings['dhl_label_ref_2'];
+		$item["productCode"] 			= $settings['dhl_default_product_int'];
+		$item["contentIndicator"] 		= null;
+		$item["codValue"] 				= null;
+		$item["insuranceValue"] 		= null;
+		$item["freightCharge"] 			= null;
+		$item["totalValue"] 			= null;
+		$item["currency"] 				= get_woocommerce_currency();
+		$item["remarks"] 				= $settings['dhl_remarks'];
+		$item["workshareIndicator"] 	= null;
+		$item["billingReference1"] 		= null;
+		$item["billingReference2"] 		= null;
 		$item["valueAddedServices"] = array(
 			'valueAddedService' => array(
 				array( "vasCode" => "PPOD" )
@@ -383,6 +387,8 @@ class Item_Info {
 		$order_id 	= $args[ 'order_details' ][ 'order_id' ];
 		$order 		= wc_get_order( $order_id );
 		
+		$total_val 	= 0;
+
 		foreach( $order->get_items() as $item_id => $item_line ){
 
 			$product_id 	= $item_line->get_product_id();
@@ -391,6 +397,8 @@ class Item_Info {
 			$weight 		= $product->get_weight();
 			$weight_uom 	= $this->weightUom;
 			$weight_gr		= $this->maybe_convert_to_grams( $weight, $weight_uom );
+
+			$total_val 		+= $product->get_price();
 
 			$item["shipmentContents"][] = array(
 				"skuNumber" 			=> $product_sku,
@@ -407,6 +415,8 @@ class Item_Info {
 			);
 
 		}
+
+		$item["totalValue"] 	= round( $total_val, 2);
 
 		$this->item = array_merge( $this->item, $item );
 

@@ -295,7 +295,7 @@ class PR_DHL_API_ECS extends PR_DHL_API {
 
 		$args[ 'dhl_settings' ]['dhl_label_ref']		= 'test';
 		$args[ 'dhl_settings' ]['dhl_label_ref_2']		= 'test2';
-		$args[ 'dhl_settings' ]['dhl_default_product_int'] = 'PKG';
+		$args[ 'dhl_settings' ]['dhl_default_product_int'] = 'PDO';
 		$args[ 'dhl_settings' ]['dhl_remarks'] = 'test remarks';
 
 		$args[ 'dhl_settings' ]['dhl_pickup_id'] 		= '5999999108';
@@ -323,7 +323,7 @@ class PR_DHL_API_ECS extends PR_DHL_API {
 		$this->api_client->update_access_token();
 		error_log( print_r( get_option( 'pr_dhl_ecs_label'), true ) );
 		$label_response 	= $this->api_client->create_shipping_label( $order_id );
-		error_log( print_r( $label_response, true ) );
+		
 		//$this->save_dhl_label_file( 'item', $item_barcode, $label_pdf_data );
 
 		return array(
