@@ -36,7 +36,12 @@ class DHLPWC_Model_Logic_Access_Control_Capabilities extends DHLPWC_Model_Core_S
                 if (isset($capability->options) && is_array($capability->options)) {
                     foreach ($capability->options as $option) {
                         if (isset($option->key)) {
-                            $allowed_shipping_options[$option->key] = $option;
+                            // Need to shift second reference to the top so keep a decent order (special treatment)
+                            if ($option->key === DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE2) {
+                                $allowed_shipping_options = array($option->key => $option) + $allowed_shipping_options;
+                            } else {
+                                $allowed_shipping_options[$option->key] = $option;
+                            }
                         }
                     }
                 }
@@ -58,6 +63,17 @@ class DHLPWC_Model_Logic_Access_Control_Capabilities extends DHLPWC_Model_Core_S
         $receiver_address = $this->get_address_from_order($order_id);
         $data = $this->get_capability_check($receiver_address, $to_business);
 
+        if (!$data->from_country || !$data->to_country) {
+            $messages = DHLPWC_Model_Core_Flash_Message::instance();
+            if (!$data->from_country) {
+                $messages->add_error(__('Missing shipping country code when checking for capabilities.', 'dhlpwc'), 'dhlpwc_label_meta');
+            }
+            if (!$data->to_country) {
+                $messages->add_error(__('Missing receiver country code when checking for capabilities.', 'dhlpwc'), 'dhlpwc_label_meta');
+            }
+            return [];
+        }
+
         // Add selected options
         $data->option = implode(',', $options);
 
@@ -71,6 +87,17 @@ class DHLPWC_Model_Logic_Access_Control_Capabilities extends DHLPWC_Model_Core_S
 
         $cart_address = $this->get_address_from_cart();
         $data = $this->get_capability_check($cart_address, $to_business);
+
+        if (!$data->from_country || !$data->to_country) {
+            $messages = DHLPWC_Model_Core_Flash_Message::instance();
+            if (!$data->from_country) {
+                $messages->add_error(__('Missing shipping country code when checking for capabilities.', 'dhlpwc'), 'dhlpwc_label_meta');
+            }
+            if (!$data->to_country) {
+                $messages->add_error(__('Missing receiver country code when checking for capabilities.', 'dhlpwc'), 'dhlpwc_label_meta');
+            }
+            return [];
+        }
 
         return $this->get_capabilities($data);
     }

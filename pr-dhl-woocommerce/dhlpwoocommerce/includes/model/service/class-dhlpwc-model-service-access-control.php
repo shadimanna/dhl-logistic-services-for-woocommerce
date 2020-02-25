@@ -19,6 +19,7 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
     const ACCESS_BULK_DOWNLOAD = 'bulk_download';
 
     const ACCESS_TRACK_TRACE_MAIL = 'track_trace_mail';
+    const ACCESS_TRACK_TRACE_MAIL_TEXT = 'track_trace_mail_text';
     const ACCESS_TRACK_TRACE_COMPONENT = 'track_trace_component';
 
     const ACCESS_DEFAULT_TO_BUSINESS = 'default_to_business';
@@ -50,6 +51,8 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
     const ACCESS_VALIDATION_RULE = 'validation_rule';
 
     const ACCESS_PRINTER = 'printer';
+
+    const ACCESS_LABEL_REQUEST = 'debug_label_request';
 
     // Simple options can be set and retrieved without custom logic
     protected $simple_options = array(
@@ -115,6 +118,11 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
             case self::ACCESS_TRACK_TRACE_MAIL:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
                 return $logic->check_track_trace_mail();
+                break;
+
+            case self::ACCESS_TRACK_TRACE_MAIL_TEXT:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_track_trace_mail_text();
                 break;
 
             case self::ACCESS_TRACK_TRACE_COMPONENT:
@@ -205,10 +213,15 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
                 return $logic->check_default_hide_sender_address();
                 break;
 
-            case self::ACCESS_PRINTER:
-                $logic = DHLPWC_Model_Logic_Access_Control::instance();
-                return $logic->check_printer();
-                break;
+	        case self::ACCESS_PRINTER:
+		        $logic = DHLPWC_Model_Logic_Access_Control::instance();
+		        return $logic->check_printer();
+		        break;
+
+	        case self::ACCESS_LABEL_REQUEST:
+		        $logic = DHLPWC_Model_Logic_Access_Control::instance();
+		        return $logic->check_label_request();
+		        break;
 
             case self::ACCESS_DEBUG:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();

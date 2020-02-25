@@ -6,9 +6,12 @@ if (!class_exists('DHLPWC_Model_Service_Translation')) :
 
 class DHLPWC_Model_Service_Translation extends DHLPWC_Model_Core_Singleton_Abstract
 {
+    const CUSTOM_TRACK_TRACE_MAIL = 'track_trace_mail';
+
     protected $options;
     protected $parcel_types;
     protected $bulk_operations;
+    protected $custom = [];
 
     public function option($key)
     {
@@ -22,16 +25,15 @@ class DHLPWC_Model_Service_Translation extends DHLPWC_Model_Core_Singleton_Abstr
                 DHLPWC_Model_Meta_Order_Option_Preference::OPTION_H                => __('Hold for collection', 'dhlpwc'),
 
                 // Service option
-                DHLPWC_Model_Meta_Order_Option_Preference::OPTION_COD_CASH         => __('Cash on delivery. Payment method cash.', 'dhlpwc'),
                 DHLPWC_Model_Meta_Order_Option_Preference::OPTION_EXP              => __('Expresser', 'dhlpwc'),
                 DHLPWC_Model_Meta_Order_Option_Preference::OPTION_BOUW             => __('Delivery to construction site', 'dhlpwc'),
                 DHLPWC_Model_Meta_Order_Option_Preference::OPTION_EXW              => __('Ex Works', 'dhlpwc'),
                 DHLPWC_Model_Meta_Order_Option_Preference::OPTION_EA               => __('Extra assurance', 'dhlpwc'),
                 DHLPWC_Model_Meta_Order_Option_Preference::OPTION_EVE              => __('Evening delivery', 'dhlpwc'),
                 DHLPWC_Model_Meta_Order_Option_Preference::OPTION_RECAP            => __('Recap', 'dhlpwc'),
-                DHLPWC_Model_Meta_Order_Option_Preference::OPTION_COD_CHECK        => __('Cash on delivery. Payment method check.', 'dhlpwc'),
                 DHLPWC_Model_Meta_Order_Option_Preference::OPTION_INS              => __('All risks insurance', 'dhlpwc'),
                 DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE        => __('Reference', 'dhlpwc'),
+                DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE2       => __('Second reference', 'dhlpwc'),
                 DHLPWC_Model_Meta_Order_Option_Preference::OPTION_HANDT            => __('Signature on delivery', 'dhlpwc'),
                 DHLPWC_Model_Meta_Order_Option_Preference::OPTION_NBB              => __('No neighbour delivery', 'dhlpwc'),
                 DHLPWC_Model_Meta_Order_Option_Preference::OPTION_ADD_RETURN_LABEL => __('Print extra label for return shipment', 'dhlpwc'),
@@ -86,6 +88,27 @@ class DHLPWC_Model_Service_Translation extends DHLPWC_Model_Core_Singleton_Abstr
             return $key;
         }
         return $this->bulk_operations[$key];
+    }
+
+    public function custom($key)
+    {
+        if (!array_key_exists($key, $this->custom)) {
+            switch($key) {
+                case self::CUSTOM_TRACK_TRACE_MAIL:
+                    $service = DHLPWC_Model_Service_Access_Control::instance();
+                    $mail_text = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_TRACK_TRACE_MAIL_TEXT);
+                    if ($mail_text) {
+                        $string = __($mail_text, 'dhlpwc');
+                    } else {
+                        $string = __('Once the shipment has been scanned, simply follow it with track & trace. Once the delivery is planned you will see the expected delivery time.', 'dhlpwc');
+                    }
+                    break;
+                default:
+                    return $key;
+            }
+            $this->custom[$key] = $string;
+        }
+        return $this->custom[$key];
     }
 }
 

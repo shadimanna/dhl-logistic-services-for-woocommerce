@@ -17,15 +17,13 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
         DHLPWC_Model_Meta_Order_Option_Preference::OPTION_H, // (requires custom address selection)
 
         // Service option
-        DHLPWC_Model_Meta_Order_Option_Preference::OPTION_COD_CASH,
         DHLPWC_Model_Meta_Order_Option_Preference::OPTION_EXP,
         DHLPWC_Model_Meta_Order_Option_Preference::OPTION_BOUW,
-        //DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE2, // (requires a custom layout, it's an additional option for reference option)
+        DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE2,
         DHLPWC_Model_Meta_Order_Option_Preference::OPTION_EXW,
         DHLPWC_Model_Meta_Order_Option_Preference::OPTION_EA,
         DHLPWC_Model_Meta_Order_Option_Preference::OPTION_EVE,
         DHLPWC_Model_Meta_Order_Option_Preference::OPTION_RECAP,
-        DHLPWC_Model_Meta_Order_Option_Preference::OPTION_COD_CHECK,
         DHLPWC_Model_Meta_Order_Option_Preference::OPTION_INS,
         DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE,
         DHLPWC_Model_Meta_Order_Option_Preference::OPTION_HANDT,
@@ -134,7 +132,20 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
                         $option->input_template = DHLPWC_Model_API_Data_Option::INPUT_TEMPLATE_TEXT;
                         $option->input_template_data = array(
                             'placeholder' => __('Reference', 'dhlpwc'),
-                            'placeholder2' => __('Second reference', 'dhlpwc'),
+                            'value' => $value,
+                        );
+                        break;
+                    case (DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE2):
+                        if (!empty($option_data) && is_array($option_data) && array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE2, $option_data)) {
+                            $logic = DHLPWC_Model_Logic_Shipment::instance();
+                            $value = $logic->get_reference2_data($option_data);
+                        } else {
+                            $value = null;
+                        }
+
+                        $option->input_template = DHLPWC_Model_API_Data_Option::INPUT_TEMPLATE_TEXT;
+                        $option->input_template_data = array(
+                            'placeholder' => __('Second reference', 'dhlpwc'),
                             'value' => $value,
                         );
                         break;
@@ -185,12 +196,6 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
                             'address' => $hide_sender_address,
                         );
                         break;
-                    case (DHLPWC_Model_Meta_Order_Option_Preference::OPTION_COD_CASH):
-                        $option->input_template = DHLPWC_Model_API_Data_Option::INPUT_TEMPLATE_PRICE;
-                        $option->input_template_data = array(
-                            'placeholder' => __('In euros (€)', 'dhlpwc'),
-                        );
-                        break;
                     case (DHLPWC_Model_Meta_Order_Option_Preference::OPTION_H):
                         $option->input_template = DHLPWC_Model_API_Data_Option::INPUT_TEMPLATE_TERMINAL;
                         $option->input_template_data = array();
@@ -213,10 +218,19 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
                         $delivery_options[] = $option;
                     }
                 } else {
-                    $service_options[] = $option;
+                    // Make a special case: references go first (to group them)
+                    if ($option->key === DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE ||
+                        $option->key === DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE2) {
+                        array_unshift($service_options, $option);
+                    } else {
+                        $service_options[] = $option;
+                    }
                 }
 
             }
+        } else {
+            $messages = DHLPWC_Model_Core_Flash_Message::instance();
+            $messages->add_error(__('No matching capabilities found.', 'dhlpwc'), 'dhlpwc_label_meta');
         }
 
         $view = new DHLPWC_Template('order.meta.form.options');
@@ -273,7 +287,8 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
         $tracking_url = $service->get_url($label['tracker_code'], $postcode, $locale);
 
         $service = DHLPWC_Model_Service_Access_Control::instance();
-        $printer = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_PRINTER);
+	    $printer = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_PRINTER);
+	    $debug_label_requests = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_LABEL_REQUEST);
 
         $actions = array();
         $actions[] = array(
@@ -302,6 +317,15 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
             'action' => "dhlpwc_action_delete",
         );
 
+        if ($debug_label_requests && !empty($label['request'])) {
+	        $actions[] = array(
+		        'url'    => admin_url('admin-ajax.php?action=dhlpwc_print_label_request&post_id=' . $post_id . '&label_id=' . $label['label_id']),
+		        'name'   => __('Show Label Request', 'dhlpwc'),
+		        'action' => "dhlpwc_action_request",
+		        'external_link' => false
+	        );
+        }
+
         // Create template
         $action_view = '';
 
@@ -314,7 +338,7 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
                 'action'        => $action,
                 'post_id'       => $post_id,
                 'label_id'      => $label['label_id'],
-                'external_link' => $external_link,
+                'external_link' => isset($action['external_link']) ? $action['external_link'] : $external_link,
             ), false);
         }
 

@@ -15,6 +15,20 @@
             <?php endforeach ?>
         </ul>
 
+        <?php if (isset($custom_links) && is_array($custom_links) && !empty($custom_links)) : ?>
+            <?php foreach ($custom_links as $custom_link) : ?>
+            <p>
+                <span>
+                    <?php echo sprintf(
+                        $custom_link->message,
+                        '<a class="button-primary" target="' . $custom_link->target . '" href="' . $custom_link->url . '">',
+                        '</a>'
+                    ) ?>
+                </span>
+            </p>
+            <?php endforeach ?>
+        <?php endif ?>
+
         <?php if (isset($admin_link)) : ?>
         <span>
             <?php echo sprintf(
