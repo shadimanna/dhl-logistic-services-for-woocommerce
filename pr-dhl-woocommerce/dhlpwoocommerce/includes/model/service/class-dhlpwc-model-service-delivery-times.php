@@ -215,7 +215,9 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
 
             if ($timestamp < $today_midnight_timestamp) {
                 // Today's logic
-                if ($timestamp_same_day !== null && $timestamp_same_day < $timestamp) {
+                if ($timestamp_same_day !== null && $timestamp_same_day < $timestamp &&
+                    intval($delivery_time->source->start_time) > 1400 &&
+                    (intval($delivery_time->source->end_time) > 1800 || $delivery_time->source->end_time === '0000')) {
                     // Check if today is a shipping day
                     if ($shipping_days[date_i18n('N')] === true) {
                         // Check if same day shipping is allowed
@@ -232,8 +234,9 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
                     $system_timestamp = strtotime($delivery_time->source->delivery_date . ' ' . $delivery_time->source->start_time);
 
                     if ($this->validate_with_shipping_days($timestamp_home, $timestamp, $system_timestamp, $shipping_days)) {
-                        if (intval($delivery_time->source->start_time) >= 1700) { // This is an intentional ambiguous check, due to no strict regulations on the type of input from the Time Window API
-
+                        if (intval($delivery_time->source->start_time) > 1400
+                            && (intval($delivery_time->source->end_time) > 1800 || $delivery_time->source->end_time === '0000')
+                        ) {
                             if ($evening_enabled && $evening_allowed) {
                                 $delivery_time->preset_frontend_id = $evening_id;
                                 $filtered_times[] = $delivery_time;
@@ -345,7 +348,7 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
                 return null;
             } else {
                 // Hardcode evening time for now, because the API shows evening hours when it shouldn't
-                $datetime = new DateTime('today 17:59:59', new DateTimeZone(wc_timezone_string()));
+                $datetime = new DateTime('today 00:00:01', new DateTimeZone(wc_timezone_string()));
                 return $datetime->getTimestamp();
             }
         }

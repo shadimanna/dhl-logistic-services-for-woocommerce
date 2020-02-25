@@ -1,6 +1,6 @@
 <?php if (!defined('ABSPATH')) { exit; } ?>
 <?php if (isset($tracking_codesets) && is_array($tracking_codesets) && !empty($tracking_codesets)) : ?>
-    <span><?php _e('Once the shipment has been scanned, simply follow it with track & trace. Once the delivery is planned you will see the expected delivery time.', 'dhlpwc') ?></span><br/>
+    <span><?php echo esc_html($text) ?></span><br/>
 
     <table class="td" cellspacing="0" cellpadding="6" style="width: 100%; font-family: 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif; margin-bottom: 40px;" border="1">
 

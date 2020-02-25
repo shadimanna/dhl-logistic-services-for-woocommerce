@@ -201,11 +201,15 @@ class DHLPWC_Controller_Admin_Order
         $service = DHLPWC_Model_Service_Shipment::instance();
         $success_data = $service->bulk($order_ids, $option);
 
+        $download_id = crc32(json_encode($order_ids));
+        set_transient('dhlpwc_bulk_download_' . $download_id, $order_ids, 1 * DAY_IN_SECONDS);
+
         $location = add_query_arg(array(
             'post_type'             => 'shop_order',
             'dhlpwc_labels_created' => 1,
             'dhlpwc_create_count'   => $success_data['success'],
             'dhlpwc_fail_count'     => $success_data['fail'],
+            'dhlpwc_download_id'    => $download_id,
         ), 'edit.php');
 
         wp_redirect(admin_url($location));
@@ -218,6 +222,7 @@ class DHLPWC_Controller_Admin_Order
             if (isset($_GET['dhlpwc_labels_created'])) {
                 $created = isset($_GET['dhlpwc_create_count']) && is_numeric($_GET['dhlpwc_create_count']) ? wc_clean($_GET['dhlpwc_create_count']) : 0;
                 $failed = isset($_GET['dhlpwc_fail_count']) && is_numeric($_GET['dhlpwc_fail_count']) ? wc_clean($_GET['dhlpwc_fail_count']) : 0;
+                $download_id = isset($_GET['dhlpwc_download_id']) && is_numeric($_GET['dhlpwc_download_id']) ? wc_clean($_GET['dhlpwc_download_id']) : null;
 
                 $messages = array();
                 if ($created) {
@@ -227,10 +232,42 @@ class DHLPWC_Controller_Admin_Order
                     $messages[] = sprintf(_n('Label could not be created.', '%s labels failed to create.', number_format_i18n($failed), 'dhlpwc'), number_format_i18n($failed));
                 }
 
+                // Create action links
+                $links = array();
+                $service = DHLPWC_Model_Service_Access_Control::instance();
+                if ($created && $download_id) {
+                    $order_ids = get_transient('dhlpwc_bulk_download_' . $download_id);
+                    if (!empty($order_ids) && is_array($order_ids)) {
+                        $order_texts = preg_filter('/^/', '#', $order_ids);
+                        $order_list = implode(', ', $order_texts);
+
+                        if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_BULK_DOWNLOAD)) {
+                            $link = new DHLPWC_Model_Data_Notice_Custom_Links();
+                            $link->url = add_query_arg(array(
+                                'post' => $order_ids,
+                            ), admin_url('edit.php?post_type=shop_order&action=dhlpwc_download_labels'));
+                            $link->message = sprintf(_n('%sDownload label%s For order: %s.', '%sDownload labels%s For orders: %s.', count($order_ids), 'dhlpwc'), '%s', '%s', $order_list);
+                            $link->target = '_blank';
+                            $links[] = $link;
+                        }
+
+                        if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_PRINTER)) {
+                            $link = new DHLPWC_Model_Data_Notice_Custom_Links();
+                            $link->url = add_query_arg(array(
+                                'post' => $order_ids,
+                            ), admin_url('edit.php?post_type=shop_order&action=dhlpwc_print_labels'));
+                            $link->message = sprintf(_n('%sPrint label%s For order: %s.', '%sPrint labels%s For orders: %s.', count($order_ids), 'dhlpwc'), '%s', '%s', $order_list);
+                            $link->target = '_self';
+                            $links[] = $link;
+                        }
+                    }
+                }
+
                 if (!empty($messages)) {
                     $view = new DHLPWC_Template('admin.notice');
                     $view->render(array(
-                        'messages'   => $messages,
+                        'messages'     => $messages,
+                        'custom_links' => $links,
                     ));
                 }
             }
@@ -275,12 +312,16 @@ class DHLPWC_Controller_Admin_Order
 
         $success = $service->send($label_ids);
 
+        $download_id = crc32(json_encode($order_ids));
+        set_transient('dhlpwc_bulk_download_' . $download_id, $order_ids, 1 * DAY_IN_SECONDS);
+
         $location = add_query_arg(array(
             'post_type'             => 'shop_order',
             'dhlpwc_labels_printed' => 1,
             'dhlpwc_order_count'    => $order_count,
             'dhlpwc_label_count'    => $label_count,
             'dhlpwc_success'        => $success ? 'true' : 'false',
+            'dhlpwc_download_id'    => $download_id,
         ), 'edit.php');
 
         wp_redirect(admin_url($location));
@@ -294,6 +335,7 @@ class DHLPWC_Controller_Admin_Order
                 $orders = isset($_GET['dhlpwc_order_count']) && is_numeric($_GET['dhlpwc_order_count']) ? wc_clean($_GET['dhlpwc_order_count']) : 0;
                 $labels = isset($_GET['dhlpwc_label_count']) && is_numeric($_GET['dhlpwc_label_count']) ? wc_clean($_GET['dhlpwc_label_count']) : 0;
                 $success = isset($_GET['dhlpwc_success']) ? boolval(wc_clean($_GET['dhlpwc_success']) == 'true') : false;
+                $download_id = isset($_GET['dhlpwc_download_id']) && is_numeric($_GET['dhlpwc_download_id']) ? wc_clean($_GET['dhlpwc_download_id']) : null;
 
                 $messages = array();
                 if ($orders) {
@@ -303,6 +345,27 @@ class DHLPWC_Controller_Admin_Order
                     $messages[] = sprintf(_n('Label sent to printer.', '%s labels sent to printer.', number_format_i18n($labels), 'dhlpwc'), number_format_i18n($labels));
                 } else {
                     $messages[] = sprintf(_n('Failed to print label.', 'Failed to print labels.', number_format_i18n($labels), 'dhlpwc'), number_format_i18n($labels));
+                }
+
+                // Create action links
+                $links = array();
+                $service = DHLPWC_Model_Service_Access_Control::instance();
+                if ($download_id) {
+                    $order_ids = get_transient('dhlpwc_bulk_download_' . $download_id);
+                    if (!empty($order_ids) && is_array($order_ids)) {
+                        $order_texts = preg_filter('/^/', '#', $order_ids);
+                        $order_list = implode(', ', $order_texts);
+
+                        if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_BULK_DOWNLOAD)) {
+                            $link = new DHLPWC_Model_Data_Notice_Custom_Links();
+                            $link->url = add_query_arg(array(
+                                'post' => $order_ids,
+                            ), admin_url('edit.php?post_type=shop_order&action=dhlpwc_download_labels'));
+                            $link->message = sprintf(_n('%sDownload label%s For order: %s.', '%sDownload labels%s For orders: %s.', count($order_ids), 'dhlpwc'), '%s', '%s', $order_list);
+                            $link->target = '_blank';
+                            $links[] = $link;
+                        }
+                    }
                 }
 
                 if (!empty($messages)) {

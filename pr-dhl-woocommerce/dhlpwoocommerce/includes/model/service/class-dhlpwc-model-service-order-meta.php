@@ -25,12 +25,25 @@ class DHLPWC_Model_Service_Order_Meta extends DHLPWC_Model_Core_Singleton_Abstra
         );
     }
 
-    public function get_labels($order_id)
-    {
-        return DHLPWC_Model_Logic_Order_Meta::instance()->get_stack(
-            self::ORDER_LABELS, $order_id
-        );
-    }
+	public function get_labels($order_id)
+	{
+		return DHLPWC_Model_Logic_Order_Meta::instance()->get_stack(
+			self::ORDER_LABELS, $order_id
+		);
+	}
+
+	public function get_label($order_id, $label_id)
+	{
+		$labels = $this->get_labels($order_id, $label_id);
+
+		foreach ($labels as $label) {
+			if ($label['label_id'] == $label_id) {
+				return $label;
+			}
+		}
+
+		return false;
+	}
 
 }
 

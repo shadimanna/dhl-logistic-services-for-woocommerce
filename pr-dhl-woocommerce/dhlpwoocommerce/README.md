@@ -1,5 +1,20 @@
 # DHL Parcel plugin for WooCommerce
 
+v1.2.17
+
+## Changes
+- Added an error message when trying to create a label without country information
+- Added download and print button after creating labels in bulk
+- Added customizable track & trace text
+- Added a fallback ServicePoint selector when no Google Maps key is provided
+- Added secondary reference service
+- Updated number parsing from address data
+- Updated error responses to include detail information
+- Updated evening detection for more dynamic delivery times
+- Fixed German packStations being selected by default
+- Fixed an issue with same day delivery when combined with delivery times
+- Removed cash on delivery service
+
 v1.2.16
 
 ## Changes

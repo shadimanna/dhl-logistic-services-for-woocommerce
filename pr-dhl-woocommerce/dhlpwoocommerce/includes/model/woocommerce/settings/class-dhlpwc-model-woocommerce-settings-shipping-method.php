@@ -108,8 +108,6 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'title'       => __('Plugin Settings', 'dhlpwc'),
                     'type'        => 'title',
                     'description' => __('Enable features of this plugin.', 'dhlpwc'),
-                    'id'          => 'plugin_settings',
-                    'name'        => 'plugin_settings'
                 ),
                 'enable_all'                   => array(
                     'title'       => __('Enable plugin', 'dhlpwc'),
@@ -140,11 +138,18 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'default'     => 'yes',
                 ),
                 'enable_track_trace_mail' => array(
-                    'title'       => __('Track & trace in mail', 'dhlpwc'),
+                    'title'       => __('Track & trace in email', 'dhlpwc'),
                     'type'        => 'checkbox',
                     'label'       => __('Enable', 'dhlpwc'),
                     'description' => __("Add track & trace information to the default WooCommerce 'completed order' e-mail if available.", 'dhlpwc'),
                     'default'     => 'no',
+                ),
+                'custom_track_trace_mail_text' => array(
+                    'title'       => __('Custom track & trace email text', 'dhlpwc'),
+                    'type'        => 'textarea',
+                    'placeholder' => sprintf('Once the shipment has been scanned, simply follow it with track & trace. Once the delivery is planned you will see the expected delivery time.'),
+                    'description' => __("Leave empty to use default. Note: it's recommended to write this in English and pass through translation under the code 'dhlpwc'.", 'dhlpwc'),
+                    'default'     => '',
                 ),
                 'enable_track_trace_component' => array(
                     'title'       => __('Track & trace component', 'dhlpwc'),
@@ -158,7 +163,8 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'type'        => 'text',
                     'placeholder' => sprintf(__('Example: %s', 'dhlpwc'), '1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f90a'),
                     'description' => sprintf(
-                        __('Please configure your credentials for Google Maps. No Google Maps Javascript API credentials yet? Follow the instructions %shere%s on how to get the API key.', 'dhlpwc'),
+                        __('To show a visual map provided by Google Maps, please fill in your Google Maps Javascript API key. If unavailable, a regular selection box is shown without a map.%sNo Google Maps Javascript API credentials yet? Follow the instructions %shere%s on how to get the API key.', 'dhlpwc'),
+                        '<br><br>',
                         '<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank">',
                         '</a>'
                     ),
@@ -183,7 +189,7 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                 'change_order_status_to' => array(
                     'type'    => 'select',
                     'options' => array_merge(
-                        array('null' => __('Do not change order status')),
+                        array('null' => __('Do not change order status', 'dhlpwc')),
                         array_map(array($this, 'change_order_status_to_option_update'), wc_get_order_statuses())
                     ),
                     'default' => 'null',
@@ -281,7 +287,7 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'type'    => 'select',
                     'options' => array(
                         ''               => __('Default (1 label per page)', 'dhlpwc'),
-                        self::COMBINE_A4 => __("Print 3 labels per page for an A4 paper sheet", 'dhlpwc'),
+                        self::COMBINE_A4 => __('Print 3 labels per page for an A4 paper sheet', 'dhlpwc'),
                     ),
                     'description' => __("When downloading labels with the bulk feature, labels can be combined to make it easier to print on a single sheet", 'dhlpwc'),
                     'default' => '',
@@ -416,12 +422,12 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'type'        => 'title',
                     'description' => __('Settings for developers.', 'dhlpwc'),
                 ),
-                'enable_debug'                      => array(
-                    'title'       => __('Report errors', 'dhlpwc'),
-                    'type'        => 'checkbox',
-                    'label'       => __('Enable', 'dhlpwc'),
-                    'description' => __('Enable this and select one of the reporting methods below to automatically send errors of this plugin to the development team.', 'dhlpwc'),
-                ),
+	            'enable_debug'                      => array(
+		            'title'       => __('Report errors', 'dhlpwc'),
+		            'type'        => 'checkbox',
+		            'label'       => __('Enable', 'dhlpwc'),
+		            'description' => __('Enable this and select one of the reporting methods below to automatically send errors of this plugin to the development team.', 'dhlpwc'),
+	            ),
                 'enable_debug_mail'                 => array(
                     'title'       => __('By mail', 'dhlpwc'),
                     'type'        => 'checkbox',
@@ -438,6 +444,12 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'type'        => 'text',
                     'description' => __("Alternative external URL. Used by developers. Will not be used if left empty.", 'dhlpwc'),
                 ),
+	            'enable_debug_requests' => array(
+		            'title'       => __('Log Requests for debugging', 'dhlpwc'),
+		            'type'        => 'checkbox',
+		            'label'       => __('Enable', 'dhlpwc'),
+		            'description' => __('Enable this and you can check your request.', 'dhlpwc'),
+	            ),
 
                 // Feedback
                 'feedback_settings'                => array(
@@ -1034,7 +1046,7 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
 
     protected function change_order_status_to_option_update($option)
     {
-        return __('Change status to: ') . $option;
+        return sprintf(__('Change status to: %s', 'dhlpwc'), $option);
     }
 }
 

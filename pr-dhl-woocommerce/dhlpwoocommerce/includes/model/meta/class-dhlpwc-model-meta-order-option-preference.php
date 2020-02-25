@@ -14,7 +14,6 @@ class DHLPWC_Model_Meta_Order_Option_Preference extends DHLPWC_Model_Meta_Abstra
     const OPTION_H = 'H'; // Hold for collection (Terminal)
 
     // Additional delivery option
-    const OPTION_COD_CASH = 'COD_CASH'; // Cash on delivery. Payment method cash.
     const OPTION_EXP = 'EXP'; // Expresser
     const OPTION_BOUW = 'BOUW'; // Delivery to construction site
     const OPTION_REFERENCE2 = 'REFERENCE2'; // Reference
@@ -22,7 +21,6 @@ class DHLPWC_Model_Meta_Order_Option_Preference extends DHLPWC_Model_Meta_Abstra
     const OPTION_EA = 'EA'; // Increased liability
     const OPTION_EVE = 'EVE'; // Evening delivery
     const OPTION_RECAP = 'RECAP'; // Recap
-    const OPTION_COD_CHECK = 'COD_CHECK'; // Cash on delivery. Payment method check.
     const OPTION_INS = 'INS'; // All risks insurance
     const OPTION_REFERENCE = 'REFERENCE'; // Reference
     const OPTION_HANDT = 'HANDT'; // Signature on delivery
