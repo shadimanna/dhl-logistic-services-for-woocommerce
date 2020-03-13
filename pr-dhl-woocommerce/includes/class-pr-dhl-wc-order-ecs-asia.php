@@ -167,7 +167,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 		// Get package prefix
 		$args['order_details']['prefix'] = $this->shipping_dhl_settings['dhl_prefix'];
-		$dhl_label_items['pr_dhl_description'] = 'test';
+		$dhl_label_items['pr_dhl_description'] = 'test'; /***** ** * Hardcoded */
 		if ( ! empty( $dhl_label_items['pr_dhl_description'] ) ) {
 			$args['order_details']['description'] = $dhl_label_items['pr_dhl_description'];
 		} else {
@@ -317,6 +317,28 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 				echo $this->get_hangover_status( $order_id );
 			}
 		}
+	}
+
+	protected function get_download_label_url( $order_id ) {
+		
+		if( empty( $order_id ) ) {
+			return '';
+		}
+
+		$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
+		// Check whether the label has already been created or not
+		if( empty( $label_tracking_info ) ) {
+			return '';
+		}
+		
+		// If no 'label_path' isset but a 'label_url' is set them return it...
+		// ... this indicates an old download style label!
+		if ( isset( $label_tracking_info['label_url'] ) ){
+			return $label_tracking_info['label_url'];
+		}
+
+		// Override URL with our solution's download label endpoint:
+		return $this->generate_download_url( '/' . self::DHL_DOWNLOAD_ENDPOINT . '/' . $order_id );
 	}
 
 	private function get_print_status( $order_id ) {

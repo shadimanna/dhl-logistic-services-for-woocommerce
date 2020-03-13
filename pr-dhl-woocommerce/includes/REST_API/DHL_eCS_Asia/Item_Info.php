@@ -136,7 +136,7 @@ class Item_Info {
 			"height" 					=> 0.0,
 			"length" 					=> 0.0,
 			"width" 					=> 0.0,
-			"productCode" 				=> "PDO",
+			"productCode" 				=> "PDO", /***** ** * hardcoded */
 			"totalValue" 				=> "",
 			"currency" 					=> "",
 			"isMult"					=> "true",
@@ -161,9 +161,9 @@ class Item_Info {
 		$order 		= wc_get_order( $order_id );
 
 		$item["shipmentID"] 			= "2MY15107346524632";
-		$item["returnMode"] 			= null;
+		$item["returnMode"] 			= "01"; /***** ** * hardcoded */
 		$item["deliveryConfirmationNo"] = null;
-		$item["packageDesc"] 			= "PKG_desc";
+		$item["packageDesc"] 			= "PKG_desc"; /***** ** * hardcoded */
 		$item["totalWeight"]			= 0.0;
 		$item["totalWeightUOM"] 		= $this->get_weight_uom();
 		$item["dimensionUOM"] 			= $this->get_dimension_uom();
@@ -189,7 +189,7 @@ class Item_Info {
 			)
 
 		);
-		$item["isMult"] 			= "TRUE";
+		$item["isMult"] 			= "TRUE"; /***** ** * hardcoded */
 		$item["deliveryOption"] 	= "C"; // only supported C
 
 		$this->item = array_merge( $this->item, $item );
@@ -304,8 +304,8 @@ class Item_Info {
 					"weight" 	=> $weight_gr,
 					"unit" 		=> $this->get_weight_uom()
 				),
-				"codAmount" 		=> 0,
-				"insuranceAmount" 	=> 0,
+				"codAmount" 		=> 1, /***** ** * hardcoded */
+				"insuranceAmount" 	=> 1, /***** ** * hardcoded */
 				"billingReference1"	=> $order_id . "-" . $product_id,
 				"billingReference2" => $order_id . "-" . $product_id,
 				"pieceDescription"	=> $item_line->get_name()

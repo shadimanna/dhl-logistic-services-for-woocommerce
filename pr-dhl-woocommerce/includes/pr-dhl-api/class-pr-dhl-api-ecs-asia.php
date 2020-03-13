@@ -282,6 +282,7 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	 * @since [*next-version*]
 	 */
 	public function get_dhl_label( $args ) {
+		/***** ** * hardcoded */
 		$args[ 'dhl_settings' ]['dhl_contact_name'] 	= 'test';
 		$args[ 'dhl_settings' ]['dhl_address_1'] 		= 'Petronas Twin Towers';
 		$args[ 'dhl_settings' ]['dhl_address_2'] 		= 'Kuala Lumpur City Centre';
@@ -298,8 +299,8 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		$args[ 'dhl_settings' ]['dhl_default_product_int'] = 'PDO';
 		$args[ 'dhl_settings' ]['dhl_remarks'] = 'test remarks';
 
-		$args[ 'dhl_settings' ]['dhl_pickup_id'] 		= '5999999108';
-		$args[ 'dhl_settings' ]['dhl_soldto_id']		= '5999999108';
+		$args[ 'dhl_settings' ]['dhl_pickup_id'] 		= '5264574522';
+		$args[ 'dhl_settings' ]['dhl_soldto_id']		= '5264574522';
 		$settings = $args[ 'dhl_settings' ];
 
 		$order_id = isset( $args[ 'order_details' ][ 'order_id' ] )
@@ -321,15 +322,27 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		$this->api_client->update_shipper_address( $args );
 		$this->api_client->update_shipper_address( $args );
 		$this->api_client->update_access_token();
-		error_log( "test ecs asia" );
-		error_log( print_r( get_option( 'pr_dhl_ecs_asia_label'), true ) );
+		//error_log( "test ecs asia" );
+		//error_log( print_r( get_option( 'pr_dhl_ecs_asia_label'), true ) );
 		$label_response 	= $this->api_client->create_shipping_label( $order_id );
 		
+		$label_response 	= json_decode( $label_response );
+		$label_pieces 		= $label_response->labelResponse->bd->labels[0]->pieces;
+
+		foreach( $label_pieces as $piece_id => $piece ){
+
+			$label_pdf_data 	= base64_decode( $piece->content );
+			$item_barcode 		= $piece->deliveryConfirmationNo . '.' . $piece->shipmentPieceID;
+			
+			$item_file_info 	= $this->save_dhl_label_file( 'item', $item_barcode, $label_pdf_data );
+			
+		}
 		//$this->save_dhl_label_file( 'item', $item_barcode, $label_pdf_data );
 
 		return array(
-			'label_path' => '',
-			'item_barcode' => '',
+			'label_path' => $item_file_info->path,
+			'label_url' 	=> $item_file_info->url,
+			'item_barcode' => $item_barcode,
 			'tracking_number' => '',
 			'tracking_status' => '',
 		);

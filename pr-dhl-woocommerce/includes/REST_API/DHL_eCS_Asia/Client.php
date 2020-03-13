@@ -124,7 +124,7 @@ class Client extends API_Client {
 		$data 	= $this->get_shipping_label( $order_id );
 		
 		$response = $this->post($route, $data);
-		error_log( print_r( $response, true ) );
+		
 		if ( $response->status === 200 ) {
 			
 			return $response->body;
