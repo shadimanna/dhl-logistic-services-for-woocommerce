@@ -214,11 +214,12 @@ class DHLPWC_Model_Service_Order_Meta_Option extends DHLPWC_Model_Core_Singleton
     protected function get_exclusions($allowed_shipping_options, $options)
     {
         $exclusions = [];
-        foreach ($options as $option){
-            foreach ($allowed_shipping_options[$option]->exclusions as $exclusion)
-            {
-                if(!in_array($exclusion,$exclusions)){
-                    $exclusions[]=$exclusion->key;
+        foreach ($options as $option) {
+            if (array_key_exists($option, $allowed_shipping_options)) {
+                foreach ($allowed_shipping_options[$option]->exclusions as $exclusion) {
+                    if (!in_array($exclusion, $exclusions)) {
+                        $exclusions[] = $exclusion->key;
+                    }
                 }
             }
         }

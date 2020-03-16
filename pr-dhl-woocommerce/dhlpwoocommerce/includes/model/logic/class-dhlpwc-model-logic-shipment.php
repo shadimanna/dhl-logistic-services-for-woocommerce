@@ -109,6 +109,16 @@ class DHLPWC_Model_Logic_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
         return $cleaned_data;
     }
 
+    public function get_reference2_data($label_data)
+    {
+        if (!array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE2, $label_data)) {
+            return null;
+        }
+
+        $cleaned_data = wp_unslash(wc_clean($label_data[DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE2]));
+        return $cleaned_data;
+    }
+
     public function get_hide_sender_data($label_data)
     {
         if (!array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SSN, $label_data)) {
@@ -209,23 +219,26 @@ class DHLPWC_Model_Logic_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
         $skip_addition_check = false;
 
         if (!isset($address['street'])) {
-            $address['street'] = join(' ', array($address['address_1'], $address['address_2']));
+            $address['street'] = trim(join(' ', array(
+                isset($address['address_1']) ? trim($address['address_1']) : '',
+                isset($address['address_2']) ? trim($address['address_2']) : ''
+            )));
         }
 
         if (!isset($address['number'])) {
             // Always create a default key
             $address['number'] = '';
 
-            preg_match('/([^\d]+)\s?(.+)/i', $address['street'], $street_parts);
-            $street = trim($street_parts[1]);
-            $number = trim($street_parts[2]);
+            preg_match('/([^\d]*)\s*(.*)/i', $address['street'], $street_parts);
+            $street = isset($street_parts[1]) ? trim($street_parts[1]) : '';
+            $number = isset($street_parts[2]) ? trim($street_parts[2]) : '';
 
-            // Check if $number has no numbers
-            if (preg_match("/\d/", $number) === 0) {
+            // Check if $street is empty
+            if (strlen($street) === 0) {
                 // Try a reverse parse
-                preg_match('/([\d]+[\w.-]*)\s?(.+)/i', $address['street'], $street_parts);
-                $number = trim($street_parts[1]);
-                $street = trim($street_parts[2]);
+                preg_match('/([\d]+[\w.-]*)\s*(.*)/i', $address['street'], $street_parts);
+                $number = isset($street_parts[1]) ? trim($street_parts[1]) : '';
+                $street = isset($street_parts[2]) ? trim($street_parts[2]) : '';
                 $skip_addition_check = true;
             }
 
@@ -241,8 +254,8 @@ class DHLPWC_Model_Logic_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
             $address['addition'] = '';
             if (!$skip_addition_check) {
                 preg_match('/([\d]+)[ .-]*(.*)/i', $address['number'], $number_parts);
-                $address['number'] = trim($number_parts[1]);
-                $address['addition'] = trim($number_parts[2]);
+                $address['number'] = isset($number_parts[1]) ? trim($number_parts[1]) : '';
+                $address['addition'] = isset($number_parts[2]) ? trim($number_parts[2]) : '';
             }
         }
 

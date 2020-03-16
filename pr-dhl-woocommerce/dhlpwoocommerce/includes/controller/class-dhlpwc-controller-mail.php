@@ -52,8 +52,13 @@ class DHLPWC_Controller_Mail
             $view = new DHLPWC_Template('mail.track-and-trace');
         }
 
+        $text = DHLPWC_Model_Service_Translation::instance()->custom(DHLPWC_Model_Service_Translation::CUSTOM_TRACK_TRACE_MAIL);
+
         // Create track and trace output
-        $view->render(array('tracking_codesets' => $tracking_codesets));
+        $view->render(array(
+            'text' => $text,
+            'tracking_codesets' => $tracking_codesets)
+        );
     }
 
 }
