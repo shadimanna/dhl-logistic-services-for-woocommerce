@@ -132,15 +132,6 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 				'default'           => '',
 				'placeholder'		=> '0000500000'
 			),
-			'dhl_distribution' => array(
-				'title'             => __( 'Distribution Center', 'pr-shipping-dhl' ),
-				'type'              => 'text',
-				'description'       => __( 'Your distribution center is a 6 digit alphanumerical field (like USLAX1) indicating where we are processing your items and will be provided by your local DHL sales organization too.', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
-				'default'           => '',
-				'placeholder'		=> 'USLAX1',
-				'custom_attributes'	=> array( 'maxlength' => '6' )
-			)
 		);
 
 		// if ( ! empty( $select_dhl_product_int ) ) {
@@ -188,15 +179,6 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 		// }
 
 		$this->form_fields += array(
-			'dhl_prefix' => array(
-				'title'             => __( 'Package Prefix', 'pr-shipping-dhl' ),
-				'type'              => 'text',
-				'description'       => __( 'The package prefix is added to identify the package is coming from your shop. This value is limited to 5 charaters.', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
-				'default'           => '',
-				'placeholder'		=> '',
-				'custom_attributes'	=> array( 'maxlength' => '5' )
-			),
 			'dhl_desc_default' => array(
 				'title'             => __( 'Package Description', 'pr-shipping-dhl' ),
 				'type'              => 'select',
@@ -213,28 +195,21 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 				'options'           => array( 'PDF' => 'PDF', 'PNG' => 'PNG', 'ZPL' => 'ZPL' ),
 				'class'				=> 'wc-enhanced-select'
 			),
-			'dhl_label_size' => array(
-				'title'             => __( 'Label Size', 'pr-shipping-dhl' ),
+			'dhl_label_layout' => array(
+				'title'             => __( 'Label Layout', 'pr-shipping-dhl' ),
 				'type'              => 'select',
 				'description'       => __( 'Select the shipping label size.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
-				'options'           => array( '4x6' => '4x6', '4x4' => '4x4' ),
+				'options'           => array( '1x1' => '1x1', '4x1' => '4x1' ),
 				'class'				=> 'wc-enhanced-select'
 			),
 			'dhl_label_page' => array(
-				'title'             => __( 'Page Size', 'pr-shipping-dhl' ),
+				'title'             => __( 'Label Page', 'pr-shipping-dhl' ),
 				'type'              => 'select',
-				'description'       => __( 'Select the shipping label page size.', 'pr-shipping-dhl' ),
+				'description'       => __( 'Select the shipping label size.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
-				'options'           => array( 'A4' => 'A4', '400x600' => '400x600', '400x400' => '400x400' ),
-				'class'				=> 'wc-enhanced-select'
-			),
-			'dhl_handover_type' => array(
-				'title'             => __( 'Handover', 'pr-shipping-dhl' ),
-				'type'              => 'select',
-				'description'       => __( 'Select whether to drop-off the packages to DHL or have them pick them up.', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
-				'options'           => array( 'dropoff' => 'Drop-Off', 'pickup' => 'Pick-Up'),
+				'options'           => array( '400x600' => '400x600' ),
+				'default' 			=> '400x600',
 				'class'				=> 'wc-enhanced-select'
 			),
 			'dhl_add_weight_type' => array(

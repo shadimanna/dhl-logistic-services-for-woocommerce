@@ -213,7 +213,7 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	 * @return array An associative array of the settings keys mapping to their values.
 	 */
 	public function get_settings() {
-		return get_option( 'woocommerce_pr_dhl_ecs_settings', array() );
+		return get_option( 'woocommerce_pr_dhl_ecs_asia_settings', array() );
 	}
 
 	/**
@@ -282,25 +282,9 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	 * @since [*next-version*]
 	 */
 	public function get_dhl_label( $args ) {
-		/***** ** * hardcoded */
-		$args[ 'dhl_settings' ]['dhl_contact_name'] 	= 'test';
-		$args[ 'dhl_settings' ]['dhl_address_1'] 		= 'Petronas Twin Towers';
-		$args[ 'dhl_settings' ]['dhl_address_2'] 		= 'Kuala Lumpur City Centre';
-		$args[ 'dhl_settings' ]['dhl_city'] 			= 'Kuala Lumpur';
-		$args[ 'dhl_settings' ]['dhl_state'] 			= 'KLumpur';
-		$args[ 'dhl_settings' ]['dhl_district'] 		= 'KLumpur';
-		$args[ 'dhl_settings' ]['dhl_country'] 			= 'MY';
-		$args[ 'dhl_settings' ]['dhl_postcode'] 		= '50088';
-		$args[ 'dhl_settings' ]['dhl_phone'] 			= '1212121212';
-		$args[ 'dhl_settings' ]['dhl_email'] 			= 'test@email.com';
+		error_log( 'ARGS:' );
+		error_log( print_r( $args, true ) );
 
-		$args[ 'dhl_settings' ]['dhl_label_ref']		= 'test';
-		$args[ 'dhl_settings' ]['dhl_label_ref_2']		= 'test2';
-		$args[ 'dhl_settings' ]['dhl_default_product_int'] = 'PDO';
-		$args[ 'dhl_settings' ]['dhl_remarks'] = 'test remarks';
-
-		$args[ 'dhl_settings' ]['dhl_pickup_id'] 		= '5264574522';
-		$args[ 'dhl_settings' ]['dhl_soldto_id']		= '5264574522';
 		$settings = $args[ 'dhl_settings' ];
 
 		$order_id = isset( $args[ 'order_details' ][ 'order_id' ] )
@@ -325,7 +309,8 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		//error_log( "test ecs asia" );
 		//error_log( print_r( get_option( 'pr_dhl_ecs_asia_label'), true ) );
 		$label_response 	= $this->api_client->create_shipping_label( $order_id );
-		
+		error_log( 'RESPONSE:' );
+		error_log( print_r( $label_response, true ) );
 		$label_response 	= json_decode( $label_response );
 		$label_pieces 		= $label_response->labelResponse->bd->labels[0]->pieces;
 

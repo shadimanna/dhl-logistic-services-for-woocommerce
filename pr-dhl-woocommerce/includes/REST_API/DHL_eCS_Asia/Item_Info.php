@@ -136,7 +136,7 @@ class Item_Info {
 			"height" 					=> 0.0,
 			"length" 					=> 0.0,
 			"width" 					=> 0.0,
-			"productCode" 				=> "PDO", /***** ** * hardcoded */
+			"productCode" 				=> "PDO",
 			"totalValue" 				=> "",
 			"currency" 					=> "",
 			"isMult"					=> "true",
@@ -159,38 +159,15 @@ class Item_Info {
 		$settings 	= $args[ 'dhl_settings' ];
 		$order_id 	= $args[ 'order_details' ][ 'order_id' ];
 		$order 		= wc_get_order( $order_id );
-
-		$item["shipmentID"] 			= "2MY15107346524632";
+		$shipmentid = "DHL". date("YmdHis") . sprintf('%07d', $order_id );
+		$item["shipmentID"] 			= $shipmentid;
 		$item["returnMode"] 			= "01"; /***** ** * hardcoded */
 		$item["deliveryConfirmationNo"] = null;
-		$item["packageDesc"] 			= "PKG_desc"; /***** ** * hardcoded */
-		$item["totalWeight"]			= 0.0;
+		$item["packageDesc"] 			= $args['order_details']['description'];
 		$item["totalWeightUOM"] 		= $this->get_weight_uom();
 		$item["dimensionUOM"] 			= $this->get_dimension_uom();
-		$item["height"] 				= 0.0;
-		$item["length"] 				= 0.0;
-		$item["width"] 					= 0.0;
-		$item["customerReference1"] 	= $settings['dhl_label_ref'];
-		$item["customerReference2"] 	= $settings['dhl_label_ref_2'];
-		$item["productCode"] 			= $settings['dhl_default_product_int'];
-		$item["contentIndicator"] 		= null;
-		$item["codValue"] 				= null;
-		$item["insuranceValue"] 		= null;
-		$item["freightCharge"] 			= null;
-		$item["totalValue"] 			= null;
+		$item["productCode"] 			= $args['order_details']['dhl_product'];
 		$item["currency"] 				= get_woocommerce_currency();
-		$item["remarks"] 				= $settings['dhl_remarks'];
-		$item["workshareIndicator"] 	= null;
-		$item["billingReference1"] 		= null;
-		$item["billingReference2"] 		= null;
-		$item["valueAddedServices"] = array(
-			'valueAddedService' => array(
-				array( "vasCode" => "PPOD" )
-			)
-
-		);
-		$item["isMult"] 			= "TRUE"; /***** ** * hardcoded */
-		$item["deliveryOption"] 	= "C"; // only supported C
 
 		$this->item = array_merge( $this->item, $item );
 	}
@@ -208,19 +185,18 @@ class Item_Info {
 		$item 		= $this->item;
 		$order_id 	= $args[ 'order_details' ][ 'order_id' ];
 		$order 		= wc_get_order( $order_id );
-		$address 	= $this->order_address( $order_id );
 		$user 		= get_user_by( 'ID', $order->get_customer_id() );
 		$id_number 	= $user->user_login . '-' . $order->get_customer_id();
 
 		$item["consigneeAddress"] = array(
-			"name" 		=> $address['name'],
-			"address1" 	=> $address['address1'],
-			"address2" 	=> $address['address2'],
-			"city" 		=> $address['city'],
-			"state" 	=> $address['state'],
-			"district" 	=> $address['state'],
-			"country" 	=> $address['country'],
-			"postCode" 	=> $address['postcode'],
+			"name" 		=> $args['shipping_address']['first_name'] . " " . $args['shipping_address']['last_name'],
+			"address1" 	=> $args['shipping_address']['address_1'],
+			"address2" 	=> $args['shipping_address']['address_2'],
+			"city" 		=> $args['shipping_address']['city'],
+			"state" 	=> $args['shipping_address']['state'],
+			"district" 	=> $args['shipping_address']['state'],
+			"country" 	=> $args['shipping_address']['country'],
+			"postCode" 	=> $args['shipping_address']['postcode'],
 			"phone"		=> $order->get_billing_phone(),
 			"email" 	=> $order->get_billing_email(),
 			"idNumber" 	=> $id_number,
@@ -297,15 +273,13 @@ class Item_Info {
 			$total_height 	+= $height;
 			$total_width 	+= $width;
 			$total_length 	+= $length;
-
+			
 			$item["shipmentPieces"][] = array(
 				"pieceID" 			=> $product_id,
 				"announcedWeight" 	=> array(
 					"weight" 	=> $weight_gr,
 					"unit" 		=> $this->get_weight_uom()
 				),
-				"codAmount" 		=> 1, /***** ** * hardcoded */
-				"insuranceAmount" 	=> 1, /***** ** * hardcoded */
 				"billingReference1"	=> $order_id . "-" . $product_id,
 				"billingReference2" => $order_id . "-" . $product_id,
 				"pieceDescription"	=> $item_line->get_name()
@@ -410,7 +384,6 @@ class Item_Info {
 				"grossWeight" 			=> $weight_gr,
 				"netWeight" 			=> $weight_gr,
 				"weightUOM" 			=> $this->get_weight_uom(),
-				"contentIndicator"		=> null,
 				"countryOfOrigin" 		=> $settings['dhl_country'],
 			);
 
@@ -474,33 +447,6 @@ class Item_Info {
 		}
 
 		return substr( $string, 0, ( $max-1 ));
-	}
-
-	public function order_address( $order_id ){
-
-		$order 		= wc_get_order( $order_id );
-		
-		$name 		= empty( $order->get_shipping_first_name() )? $order->get_billing_first_name() . ' ' . $order->get_billing_last_name() : $order->get_shipping_first_name() . ' ' . $order->get_shipping_last_name();
-		$address1 	= empty( $order->get_shipping_address_1() )? $order->get_billing_address_1() : $order->get_shipping_address_1();
-		$address2 	= empty( $order->get_shipping_address_2() )? $order->get_billing_address_2() : $order->get_shipping_address_2();
-		$city 		= empty( $order->get_shipping_city() )? $order->get_billing_city() : $order->get_shipping_city();
-		$state 		= empty( $order->get_shipping_state() )? $order->get_billing_state() : $order->get_shipping_state();
-		$district 	= empty( $order->get_shipping_state() )? $order->get_billing_state() : $order->get_shipping_state();
-		$country 	= empty( $order->get_shipping_country() )? $order->get_billing_country() : $order->get_shipping_country();
-		$postcode 	= empty( $order->get_shipping_postcode() )? $order->get_billing_postcode() : $order->get_shipping_postcode();
-
-		$address_info = array(
-			"name" 		=> $name,
-			"address1" 	=> $address1,
-			"address2" 	=> $address2,
-			"city" 		=> $city,
-			"state" 	=> $state,
-			"district" 	=> $district,
-			"country" 	=> $country,
-			"postcode" 	=> $postcode,
-		);
-		
-		return $address_info;
 	}
 
 }

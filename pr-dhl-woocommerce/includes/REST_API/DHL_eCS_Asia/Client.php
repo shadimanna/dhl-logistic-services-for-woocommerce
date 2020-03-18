@@ -153,8 +153,8 @@ class Client extends API_Client {
 
 		$label = $this->get_shipping_label();
 
-		$label['labelRequest']['bd']['pickupAccountId'] = $settings['dhl_pickup_id'];
-		$label['labelRequest']['bd']['soldToAccountId'] = $settings['dhl_soldto_id'];
+		$label['labelRequest']['bd']['pickupAccountId'] = $settings['pickup_id'];
+		$label['labelRequest']['bd']['soldToAccountId'] = $settings['soldto_id'];
 
 		update_option( 'pr_dhl_ecs_asia_label', $label );
 	}
