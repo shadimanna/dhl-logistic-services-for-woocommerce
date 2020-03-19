@@ -5,9 +5,9 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 5.2
-Stable tag: 1.6.4
+Stable tag: 1.6.5
 WC requires at least: 2.6.14
-WC tested up to: 3.8
+WC tested up to: 4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -76,6 +76,11 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+
+= 1.6.5 =
+* Deutsche Post: Add merchant phone number for "Express" customers
+* Deutsche Post: Modify settings descriptions
+* Update "WC tested up to" "4.0"
 
 = 1.6.4 =
 * DHL Parcel: Added an error message when trying to create a label without country information
