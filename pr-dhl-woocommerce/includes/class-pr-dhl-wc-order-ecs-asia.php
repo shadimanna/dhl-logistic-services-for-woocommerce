@@ -37,7 +37,6 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 	public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
 
-		/*
 		if( $this->is_crossborder_shipment( $order_id ) ) {
 			
 			// Duties drop down
@@ -80,7 +79,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
 		}
-		*/
+
 	}
 	
 

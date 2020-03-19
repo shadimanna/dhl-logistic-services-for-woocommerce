@@ -169,6 +169,10 @@ class Item_Info {
 		$item["productCode"] 			= $args['order_details']['dhl_product'];
 		$item["currency"] 				= get_woocommerce_currency();
 
+		if( isset( $args['order_details']['duties'] ) ){
+			$item["incoterm"] = $args['order_details']['duties'];
+		}
+		
 		$this->item = array_merge( $this->item, $item );
 	}
 
@@ -384,6 +388,7 @@ class Item_Info {
 			$weight 		= $product->get_weight();
 			$weight_uom 	= $this->weightUom;
 			$weight_gr		= $this->maybe_convert_to_grams( $weight, $weight_uom );
+			$weight_gr 		= ( $weight_gr > 1 )? $weight_gr : 1;
 
 			$country_origin    = get_post_meta( $product_id, '_dhl_manufacture_country', true );
 			$hs_code           = get_post_meta( $product_id, '_dhl_hs_code', true );
