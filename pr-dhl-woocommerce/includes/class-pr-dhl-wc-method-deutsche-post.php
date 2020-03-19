@@ -36,35 +36,6 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
         $this->init_settings();
 
         add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'process_admin_options' ) );
-        add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
-    }
-
-    /**
-     * Enqueues scripts for the admin-side.
-     *
-     * @since [*next-version*]
-     *
-     * @param string $hook The current admin page.
-     */
-    public function enqueue_admin_scripts( $hook ) {
-        // Only applies to WC Settings panel
-        if ( $hook !== 'woocommerce_page_wc-settings' ) {
-            return;
-        }
-
-        $test_con_data = array(
-            'ajax_url'       => admin_url( 'admin-ajax.php' ),
-            'loader_image'   => admin_url( 'images/loading.gif' ),
-            'test_con_nonce' => wp_create_nonce( 'pr-dhl-test-con' ),
-        );
-
-        wp_enqueue_script(
-            'wc-shipment-dhl-testcon-js',
-            PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-test-connection.js',
-            array( 'jquery' ),
-            PR_DHL_VERSION
-        );
-        wp_localize_script( 'wc-shipment-dhl-testcon-js', 'dhl_test_con_obj', $test_con_data );
     }
 
     /**
