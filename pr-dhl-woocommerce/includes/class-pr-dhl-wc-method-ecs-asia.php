@@ -131,6 +131,20 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 				'desc_tip'          => true,
 				'default'           => '',
 				'placeholder'		=> '0000500000'
+			),'dhl_pickup_email' => array(
+				'title'             => __( 'Pickup Email', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'The pickup email.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => '',
+				'placeholder'		=> 'name@email.com'
+			),'dhl_pickup_phone' => array(
+				'title'             => __( 'Pickup Phone', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'The pickup phone.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => '',
+				'placeholder'		=> '0214543433'
 			),
 		);
 

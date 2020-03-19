@@ -171,8 +171,8 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 		$args[ 'dhl_settings' ]['dhl_district'] 		= WC()->countries->get_base_state();
 		$args[ 'dhl_settings' ]['dhl_country'] 			= WC()->countries->get_base_country();
 		$args[ 'dhl_settings' ]['dhl_postcode'] 		= WC()->countries->get_base_postcode();
-		$args[ 'dhl_settings' ]['dhl_phone'] 			= '1212121212';
-		$args[ 'dhl_settings' ]['dhl_email'] 			= 'test@email.com';
+		$args[ 'dhl_settings' ]['dhl_phone'] 			= $this->shipping_dhl_settings['dhl_pickup_phone'];
+		$args[ 'dhl_settings' ]['dhl_email'] 			= $this->shipping_dhl_settings['dhl_pickup_email'];
 		
 		// Get package prefix
 		$dhl_label_items['pr_dhl_description'] = $this->shipping_dhl_settings['dhl_desc_default'];
