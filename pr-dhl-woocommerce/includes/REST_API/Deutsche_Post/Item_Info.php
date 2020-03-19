@@ -315,9 +315,9 @@ class Item_Info {
 
 	protected function float_round_sanitization( $float, $numcomma ) {
 
-		$float = floatval( $float );
+		$float = round( floatval( $float ), $numcomma);
 
-		return round( $float, $numcomma);
+        return number_format($float, 2, '.', '');
 	}
 
 	protected function string_length_sanitization( $string, $max ) {
