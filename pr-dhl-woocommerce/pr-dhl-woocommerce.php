@@ -203,7 +203,7 @@ class PR_DHL_WC {
         add_action( 'init', array( $this, 'load_textdomain' ) );
         add_action( 'init', array( $this, 'set_payment_gateways' ) );
 
-        add_action( 'admin_enqueue_scripts', array( $this, 'dhl_theme_enqueue_styles') );
+        add_action( 'admin_enqueue_scripts', array( $this, 'dhl_enqueue_scripts') );
 
         add_action( 'woocommerce_shipping_init', array( $this, 'includes' ) );
         add_filter( 'woocommerce_shipping_methods', array( $this, 'add_shipping_method' ) );
@@ -264,12 +264,15 @@ class PR_DHL_WC {
 		load_plugin_textdomain( 'pr-shipping-dhl', false, dirname( plugin_basename(__FILE__) ) . '/lang/' );
 	}
 
-	public function dhl_theme_enqueue_styles() {
+	public function dhl_enqueue_scripts() {
+		// Enqueue Styles
+		wp_enqueue_style( 'wc-shipment-dhl-label-css', PR_DHL_PLUGIN_DIR_URL . '/assets/css/pr-dhl-admin.css' );
+
+		// Enqueue Scripts		
         $screen    = get_current_screen();
         $screen_id = $screen ? $screen->id : '';
 
         if ( 'woocommerce_page_wc-settings' === $screen_id ) {
-            wp_enqueue_style( 'wc-shipment-dhl-label-css', PR_DHL_PLUGIN_DIR_URL . '/assets/css/pr-dhl-admin.css' );
 
             $test_con_data = array(
                 'ajax_url'       => admin_url( 'admin-ajax.php' ),
