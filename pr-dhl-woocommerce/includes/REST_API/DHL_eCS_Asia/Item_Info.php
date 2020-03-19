@@ -139,7 +139,7 @@ class Item_Info {
 			"productCode" 				=> "PDO",
 			"totalValue" 				=> "",
 			"currency" 					=> "",
-			"isMult"					=> "true",
+			"isMult"					=> "FALSE",
 			"deliveryOption"			=> "P",
 			"shipmentPieces" 			=> array(),
 		);
@@ -274,6 +274,7 @@ class Item_Info {
 			$total_width 	+= $width;
 			$total_length 	+= $length;
 			
+			/*
 			$item["shipmentPieces"][] = array(
 				"pieceID" 			=> $product_id,
 				"announcedWeight" 	=> array(
@@ -284,8 +285,20 @@ class Item_Info {
 				"billingReference2" => $order_id . "-" . $product_id,
 				"pieceDescription"	=> $item_line->get_name()
 			);
+			*/
 
 		}
+
+		$item["shipmentPieces"][] = array(
+			"pieceID" 			=> $order_id,
+			"announcedWeight" 	=> array(
+				"weight" 	=> $total_weight,
+				"unit" 		=> $this->get_weight_uom()
+			),
+			"billingReference1"	=> $order_id,
+			"billingReference2" => $order_id,
+			"pieceDescription"	=> "Order no. " . $order_id
+		);
 
 		$item["totalWeight"] 	= $total_weight;
 		$item["height"] 		= $total_height;
@@ -372,9 +385,17 @@ class Item_Info {
 			$weight_uom 	= $this->weightUom;
 			$weight_gr		= $this->maybe_convert_to_grams( $weight, $weight_uom );
 
+			$country_origin    = get_post_meta( $product_id, '_dhl_manufacture_country', true );
+			$hs_code           = get_post_meta( $product_id, '_dhl_hs_code', true );
+			$content_indicator = get_post_meta( $product_id, '_dhl_dangerous_goods', true );
+
+			if( empty( $country_origin ) ){
+				$country_origin = $settings['dhl_country'];
+			}
+
 			$total_val 		+= $product->get_price();
 
-			$item["shipmentContents"][] = array(
+			$shipment_contents = array(
 				"skuNumber" 			=> $product_sku,
 				"description"			=> $item_line->get_name(),
 				"descriptionImport" 	=> $item_line->get_name(),
@@ -384,8 +405,18 @@ class Item_Info {
 				"grossWeight" 			=> $weight_gr,
 				"netWeight" 			=> $weight_gr,
 				"weightUOM" 			=> $this->get_weight_uom(),
-				"countryOfOrigin" 		=> $settings['dhl_country'],
+				"countryOfOrigin" 		=> $country_origin
 			);
+
+			if( !empty( $hs_code ) ){
+				$shipment_contents['hsCode'] = $hs_code;
+			}
+
+			if( !empty( $content_indicator ) ){
+				$shipment_contents['contentIndicator'] = $content_indicator;
+			}
+
+			$item["shipmentContents"][] = $shipment_contents;
 
 		}
 

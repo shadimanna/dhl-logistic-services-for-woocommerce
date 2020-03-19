@@ -249,7 +249,7 @@ class PR_DHL_WC {
 				if( $dhl_obj->is_dhl_paket() ) {
 					$this->shipping_dhl_product = new PR_DHL_WC_Product_Paket();
 				} elseif( $dhl_obj->is_dhl_ecs_asia() ) {
-					$this->shipping_dhl_product = new PR_DHL_WC_Product_Ecomm();
+					$this->shipping_dhl_product = new PR_DHL_WC_Product_eCS_Asia();
 				} elseif( $dhl_obj->is_dhl_ecomm() ) {
 					$this->shipping_dhl_product = new PR_DHL_WC_Product_Ecomm();
 				}

@@ -244,6 +244,18 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		return $this->api_auth->revoke();
 	}
 
+	public function get_dhl_content_indicator() {
+		return array(
+			'00' => __('Does not contain Lithium Batteries', 'pr-shipping-dhl' ),
+			'01' => __('Lithium Batteries in item', 'pr-shipping-dhl' ),
+			'02' => __('Lithium Batteries packed with item', 'pr-shipping-dhl' ),
+			'03' => __('Lithium Batteries only', 'pr-shipping-dhl' ),
+			'04' => __('Rechargeable Batteries in item', 'pr-shipping-dhl' ),
+			'05' => __('Rechargeable Batteries packed with item', 'pr-shipping-dhl' ),
+			'06' => __('Rechargeable Batteries only', 'pr-shipping-dhl' ),
+		);
+	}
+
 	/**
 	 * {@inheritdoc}
 	 *
@@ -304,7 +316,6 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		$this->api_client->update_account_id( $args );
 		$this->api_client->update_pickup_address( $args );
 		$this->api_client->update_shipper_address( $args );
-		$this->api_client->update_shipper_address( $args );
 		$this->api_client->update_access_token();
 		//error_log( "test ecs asia" );
 		//error_log( print_r( get_option( 'pr_dhl_ecs_asia_label'), true ) );
@@ -312,23 +323,40 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		error_log( 'RESPONSE:' );
 		error_log( print_r( $label_response, true ) );
 		$label_response 	= json_decode( $label_response );
-		$label_pieces 		= $label_response->labelResponse->bd->labels[0]->pieces;
 
-		foreach( $label_pieces as $piece_id => $piece ){
-
-			$label_pdf_data 	= base64_decode( $piece->content );
-			$item_barcode 		= $piece->deliveryConfirmationNo . '.' . $piece->shipmentPieceID;
-			
-			$item_file_info 	= $this->save_dhl_label_file( 'item', $item_barcode, $label_pdf_data );
-			
+		$response_status 	= $label_response->labelResponse->bd->responseStatus;
+		if( $response_status->code != 200 ){
+			throw new Exception( 
+				"Error: " . $response_status->message . "<br /> " .
+				"Detail: " . $response_status->messageDetails[0]->messageDetail 
+			);
 		}
+
+		if( isset( $label_response->labelResponse->bd->labels[0]->pieces ) ){
+			$label_pieces 		= $label_response->labelResponse->bd->labels[0]->pieces;
+			foreach( $label_pieces as $piece_id => $piece ){
+
+				$label_pdf_data 	= base64_decode( $piece->content );
+				$item_barcode 		= $piece->deliveryConfirmationNo . '.' . $piece->shipmentPieceID;
+				$tracking_num 		= $piece->deliveryConfirmationNo;
+				$item_file_info 	= $this->save_dhl_label_file( 'item', $item_barcode, $label_pdf_data );
+				
+			}
+		}else{
+			$labels_info 		= $label_response->labelResponse->bd->labels[0];
+			$label_pdf_data 	= base64_decode( $labels_info->content );
+			$item_barcode 		= $labels_info->deliveryConfirmationNo;
+			$tracking_num 		= $item_barcode;
+			$item_file_info 	= $this->save_dhl_label_file( 'item', $item_barcode, $label_pdf_data );
+		}
+		
 		//$this->save_dhl_label_file( 'item', $item_barcode, $label_pdf_data );
 
 		return array(
 			'label_path' => $item_file_info->path,
 			'label_url' 	=> $item_file_info->url,
 			'item_barcode' => $item_barcode,
-			'tracking_number' => '',
+			'tracking_number' => $tracking_num,
 			'tracking_status' => '',
 		);
 	}
