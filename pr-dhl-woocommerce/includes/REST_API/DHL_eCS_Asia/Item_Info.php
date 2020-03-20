@@ -126,7 +126,6 @@ class Item_Info {
 
 		return array(
 			"consigneeAddress" 			=> array(),
-			"returnAddress" 			=> array(),
 			"shipmentID" 				=> "",
 			"deliveryConfirmationNo" 	=> "",
 			"packageDesc" 				=> "",
@@ -203,8 +202,8 @@ class Item_Info {
 			"postCode" 	=> $args['shipping_address']['postcode'],
 			"phone"		=> $order->get_billing_phone(),
 			"email" 	=> $order->get_billing_email(),
-			"idNumber" 	=> $id_number,
-			"idType" 	=> "4"
+			//"idNumber" 	=> $id_number, /** hardcoded */
+			//"idType" 	=> "4" /** hardcoded */
 		);
 
 		$this->item = array_merge( $this->item, $item );
@@ -223,6 +222,17 @@ class Item_Info {
 
 		$item 		= $this->item;
 		$settings 	= $args[ 'dhl_settings' ];
+
+		if( empty( $settings['dhl_address_1'] ) || 
+			empty( $settings['dhl_address_2'] ) || 
+			empty( $settings['dhl_city'] ) || 
+			empty( $settings['dhl_state'] ) || 
+			empty( $settings['dhl_district'] ) || 
+			empty( $settings['dhl_country'] ) || 
+			empty( $settings['dhl_postcode'] ) )
+		{
+			return;
+		}
 		
 		$item["returnAddress"] = array(
 			"name" 		=> $settings['dhl_contact_name'],
@@ -233,9 +243,15 @@ class Item_Info {
 			"district" 	=> $settings['dhl_district'],
 			"country" 	=> $settings['dhl_country'],
 			"postCode" 	=> $settings['dhl_postcode'],
-			"phone"		=> $settings['dhl_phone'],
-			"email" 	=> $settings['dhl_email'],	
 		);
+
+		if( !empty( $settings['dhl_phone'] ) ){
+			$item["returnAddress"]['phone'] = $settings['dhl_phone'];
+		}
+
+		if( !empty( $settings['dhl_email'] ) ){
+			$item["returnAddress"]['email'] = $settings['dhl_email'];
+		}
 
 		$this->item = array_merge( $this->item, $item );
 

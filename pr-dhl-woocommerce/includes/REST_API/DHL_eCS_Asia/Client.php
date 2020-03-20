@@ -160,6 +160,26 @@ class Client extends API_Client {
 	}
 
 	/**
+	 * Update accountID
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param array $args The arguments to parse.
+	 *
+	 */
+	public function update_label_info( $args ){
+
+		$settings = $args[ 'dhl_settings' ];
+
+		$label = $this->get_shipping_label();
+
+		$label['labelRequest']['bd']['label']['format'] = $settings['label_format'];
+		$label['labelRequest']['bd']['label']['layout'] = $settings['label_layout'];
+
+		update_option( 'pr_dhl_ecs_asia_label', $label );
+	}
+
+	/**
 	 * Update pickup address data from the settings
 	 *
 	 * @since [*next-version*]
@@ -184,10 +204,40 @@ class Client extends API_Client {
 			"email" 	=> $settings['dhl_email']	
 		);
 
+		if( empty( $settings['dhl_address_1'] ) || 
+			empty( $settings['dhl_address_2'] ) || 
+			empty( $settings['dhl_city'] ) || 
+			empty( $settings['dhl_state'] ) || 
+			empty( $settings['dhl_district'] ) || 
+			empty( $settings['dhl_country'] ) || 
+			empty( $settings['dhl_postcode'] ) )
+		{
+			return;
+		}
+
+		$pickup_address = array(
+			"name" 		=> $settings['dhl_contact_name'],
+			"address1" 	=> $settings['dhl_address_1'],
+			"address2" 	=> $settings['dhl_address_2'],
+			"city" 		=> $settings['dhl_city'],
+			"state" 	=> $settings['dhl_state'],
+			"district" 	=> $settings['dhl_district'],
+			"country" 	=> $settings['dhl_country'],
+			"postCode" 	=> $settings['dhl_postcode'],
+		);
+
+		if( !empty( $settings['dhl_phone'] ) ){
+			$pickup_address['phone'] = $settings['dhl_phone'];
+		}
+
+		if( !empty( $settings['dhl_email'] ) ){
+			$pickup_address['email'] = $settings['dhl_email'];
+		}
+
 		$label = $this->get_shipping_label();
 
 		$label['labelRequest']['bd']['pickupAddress'] = $pickup_address;
-		$label['labelRequest']['bd']['pickupAddress'] = null; //testing
+		//$label['labelRequest']['bd']['pickupAddress'] = null; //testing
 		update_option( 'pr_dhl_ecs_asia_label', $label );
 
 
@@ -205,7 +255,18 @@ class Client extends API_Client {
 
 		$settings = $args[ 'dhl_settings' ];
 
-		$shipper_address =  array(
+		if( empty( $settings['dhl_address_1'] ) || 
+			empty( $settings['dhl_address_2'] ) || 
+			empty( $settings['dhl_city'] ) || 
+			empty( $settings['dhl_state'] ) || 
+			empty( $settings['dhl_district'] ) || 
+			empty( $settings['dhl_country'] ) || 
+			empty( $settings['dhl_postcode'] ) )
+		{
+			return;
+		}
+
+		$shipper_address = array(
 			"name" 		=> $settings['dhl_contact_name'],
 			"address1" 	=> $settings['dhl_address_1'],
 			"address2" 	=> $settings['dhl_address_2'],
@@ -214,14 +275,20 @@ class Client extends API_Client {
 			"district" 	=> $settings['dhl_district'],
 			"country" 	=> $settings['dhl_country'],
 			"postCode" 	=> $settings['dhl_postcode'],
-			"phone"		=> $settings['dhl_phone'],
-			"email" 	=> $settings['dhl_email']	
 		);
+
+		if( !empty( $settings['dhl_phone'] ) ){
+			$shipper_address['phone'] = $settings['dhl_phone'];
+		}
+
+		if( !empty( $settings['dhl_email'] ) ){
+			$shipper_address['email'] = $settings['dhl_email'];
+		}
 
 		$label = $this->get_shipping_label();
 
 		$label['labelRequest']['bd']['shipperAddress'] = $shipper_address;
-		$label['labelRequest']['bd']['shipperAddress'] = null; //testing
+		//$label['labelRequest']['bd']['shipperAddress'] = null; //testing
 		update_option( 'pr_dhl_ecs_asia_label', $label );
 
 	}
