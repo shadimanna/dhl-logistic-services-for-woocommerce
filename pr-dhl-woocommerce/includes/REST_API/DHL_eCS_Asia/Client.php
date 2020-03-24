@@ -25,6 +25,15 @@ class Client extends API_Client {
 	protected $auth;
 
 	/**
+	 * The label info.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @var array
+	 */
+	protected $label_info;
+
+	/**
 	 * The pickup address data.
 	 *
 	 * @since [*next-version*]
@@ -53,6 +62,8 @@ class Client extends API_Client {
 		parent::__construct( $base_url, $driver, $auth );
 
 		$this->auth 		= $auth;
+
+		$this->label_info   = $this->get_default_label_info();
 	}
 
 	/**
@@ -99,15 +110,10 @@ class Client extends API_Client {
 	 *
 	 * @return array
 	 */
-	public function get_shipping_label($orderId = null)
-	{
-		$current = get_option( 'pr_dhl_ecs_asia_label', $this->get_default_label_info() );
+	public function get_shipping_label($orderId = null){
+		$current = $this->label_info;
 
-		if (empty($orderId)) {
-			return $current;
-		}
-
-		return get_option( 'pr_dhl_ecs_asia_label_' . $orderId, $current );
+		return $current;
 	}
 
 	/**
@@ -118,10 +124,10 @@ class Client extends API_Client {
 	 * @param int $order_id The order id.
 	 *
 	 */
-	public function create_shipping_label( $order_id ){
+	public function create_shipping_label(){
 
 		$route 	= $this->shipping_label_route();
-		$data 	= $this->get_shipping_label( $order_id );
+		$data 	= $this->get_shipping_label();
 		
 		$response = $this->post($route, $data);
 		
@@ -151,12 +157,12 @@ class Client extends API_Client {
 
 		$settings = $args[ 'dhl_settings' ];
 
-		$label = $this->get_shipping_label();
+		$label = $this->label_info;
 
 		$label['labelRequest']['bd']['pickupAccountId'] = $settings['pickup_id'];
 		$label['labelRequest']['bd']['soldToAccountId'] = $settings['soldto_id'];
 
-		update_option( 'pr_dhl_ecs_asia_label', $label );
+		$this->label_info = $label;
 	}
 
 	/**
@@ -171,12 +177,12 @@ class Client extends API_Client {
 
 		$settings = $args[ 'dhl_settings' ];
 
-		$label = $this->get_shipping_label();
+		$label = $this->label_info;
 
 		$label['labelRequest']['bd']['label']['format'] = $settings['label_format'];
 		$label['labelRequest']['bd']['label']['layout'] = $settings['label_layout'];
 
-		update_option( 'pr_dhl_ecs_asia_label', $label );
+		$this->label_info = $label;
 	}
 
 	/**
@@ -234,12 +240,12 @@ class Client extends API_Client {
 			$pickup_address['email'] = $settings['dhl_email'];
 		}
 
-		$label = $this->get_shipping_label();
+		$label = $this->label_info;
 
 		$label['labelRequest']['bd']['pickupAddress'] = $pickup_address;
 		//$label['labelRequest']['bd']['pickupAddress'] = null; //testing
-		update_option( 'pr_dhl_ecs_asia_label', $label );
 
+		$this->label_info = $label;
 
 	}
 
@@ -285,11 +291,11 @@ class Client extends API_Client {
 			$shipper_address['email'] = $settings['dhl_email'];
 		}
 
-		$label = $this->get_shipping_label();
+		$label = $this->label_info;
 
 		$label['labelRequest']['bd']['shipperAddress'] = $shipper_address;
 		//$label['labelRequest']['bd']['shipperAddress'] = null; //testing
-		update_option( 'pr_dhl_ecs_asia_label', $label );
+		$this->label_info = $label;
 
 	}
 
@@ -305,11 +311,11 @@ class Client extends API_Client {
 	 */
 	public function add_item( Item_Info $item_info ) {
 
-		$label = $this->get_shipping_label();
+		$label = $this->label_info;
 
 		$label['labelRequest']['bd']['shipmentItems' ][] = $item_info->item;
 
-		update_option( 'pr_dhl_ecs_asia_label', $label );
+		$this->label_info = $label;
 
 	}
 
@@ -323,11 +329,11 @@ class Client extends API_Client {
 
 		$token 	= $this->auth->load_token();
 
-		$label = $this->get_shipping_label();
+		$label = $this->label_info;
 
 		$label['labelRequest']['hdr']['accessToken'] = $token->token;
 
-		update_option( 'pr_dhl_ecs_asia_label', $label );
+		$this->label_info = $label;
 
 	}
 
@@ -338,7 +344,7 @@ class Client extends API_Client {
 	 */
 	public function reset_current_shipping_label(){
 
-		update_option( 'pr_dhl_ecs_asia_label', $this->get_default_label_info() );
+		$this->label_info = $this->get_default_label_info();
 
 	}
 

@@ -269,9 +269,9 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		$accepted_products = array();
 
 		foreach( $products as $product_code => $product ){
-			//if( strpos( $product['dest_countries'],  $country_code ) !== false ){
+			if( strpos( $product['origin_countries'],  $country_code ) !== false ){
 				$accepted_products[ $product_code ] = $product['name'];
-			//}
+			}
 		}
 
 		return $accepted_products;
@@ -291,9 +291,9 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		$accepted_products = array();
 
 		foreach( $products as $product_code => $product ){
-			//if( strpos( $product['dest_countries'],  $country_code ) !== false ){
+			if( strpos( $product['origin_countries'],  $country_code ) !== false ){
 				$accepted_products[ $product_code ] = $product['name'];
-			//}
+			}
 		}
 
 		return $accepted_products;
@@ -304,35 +304,35 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		$products = array(
 			'PPM' => array(
 				'name' 	    => __( 'Packet Plus International Priority Manifest', 'pr-shipping-dhl' ),
-				'dest_countries' => 'AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,DE,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE,GB'
+				'origin_countries' => 'CN,HK,TH'
 			),
 			'PPS' => array(
 				'name' 	    => __( 'Packet Plus International Standard', 'pr-shipping-dhl' ),
-				'dest_countries' => ''
+				'origin_countries' => 'AU,CN,HK,IL,IN,MY,SG,TH'
 			),
 			'PKM' => array(
 				'name' 	    => __( 'Packet International Priority Manifest', 'pr-shipping-dhl' ),
-				'dest_countries' => 'AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,DE,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE,GB'
+				'origin_countries' => 'CN,HK,TH'
 			),
 			'PKD' => array(
 				'name' 	    => __( 'Packet International Standard', 'pr-shipping-dhl' ),
-				'dest_countries' => ''
+				'origin_countries' => 'CN,TH,HK,SG,AU,IN,MY'
 			),
 			'PLT' => array(
 				'name' 	    => __( 'Parcel International Direct Standard', 'pr-shipping-dhl' ),
-				'dest_countries' => 'AT,BE,HR,CZ,DK,FI,GR,HU,IE,IT,NL,PL,PT,SK,SI,SE,CY,LU,LV,MT,EE,LT,BG,RO,GB,FR,DE,ES,MX,US,MY,CA,TH,PH,VN,IL,AU,IN,JP,KR,ID,SG,CN,NZ'
+				'origin_countries' => 'AU,CN,HK,IL,IN,MY,SG,TH'
 			),
 			'PLE' => array(
 				'name' 	    => __( 'Parcel International Direct Expedited', 'pr-shipping-dhl' ),
-				'dest_countries' => 'US,TH,IT,IN,FR,ES,DE'
+				'origin_countries' => 'IN,CN,HK,SG,TH,AU,MY'
 			),
 			'PLD' => array(
 				'name' 	    => __( 'Parcel International Standard', 'pr-shipping-dhl' ),
-				'dest_countries' => 'AT,AU,BE,BG,BR,CA,CH,CL,CM,CY,CZ,DE,DK,EE,EG,ES,FI,FR,GB,GH,GR,HR,HU,CI,ID,IE,IL,IT,JP,KE,LT,LU,LV,MA,MD,MT,MX,MY,NG,NL,NO,NZ,PH,PL,PT,RO,RU,SE,SG,SI,SK,SN,TH,TR,TW,UA,UG,US,VN'
+				'origin_countries' => 'CN,HK,SG,AU,IN'
 			),
 			'PKG' => array(
 				'name' 	    => __( 'Packet International Economy', 'pr-shipping-dhl' ),
-				'dest_countries' => 'AT,BE,HR,CZ,DK,FI,GR,HU,IE,IT,NL,PL,PT,SK,SI,SE,CY,LU,LV,MT,EE,LT,BG,RO,GB,FR,DE,ES,AD,AE,AF,AG,AI,AL,AM,AO,AQ,AR,AS,AU,AW,AX,AZ,BA,BB,BD,BF,BH,BI,BJ,BL,BM,BN,BO,BQ,BR,BS,BT,BV,BW,BY,BZ,CA,CC,CD,CF,CG,CH,CI,CK,CL,CM,CN,CO,CR,CV,CW,CX,DJ,DM,DO,DZ,EC,EG,EH,ER,ET,FJ,FK,FM,FO,GA,GD,GE,GF,GG,GH,GI,GL,GM,GN,GP,GQ,GS,GT,GU,GW,GY,HK,HM,HN,HT,ID,IL,IM,IN,IO,IQ,IS,JE,JM,JO,JP,KE,KG,KH,KI,KM,KN,KR,KW,KY,KZ,LA,LB,LC,LI,LK,LR,LS,LY,MA,MC,MD,ME,MF,MG,MH,MK,ML,MM,MN,MO,MP,MQ,MR,MS,MU,MV,MW,MX,MY,MZ,NA,NC,NE,NF,NG,NI,NO,NP,NR,NU,NZ,OM,PA,PE,PF,PG,PH,PK,PM,PN,PR,PS,PW,PY,QA,RE,RS,RW,SA,SB,SC,SG,SH,SJ,SL,SM,SN,SO,SR,SS,ST,SV,SX,SZ,TC,TD,TF,TG,TH,TJ,TK,TL,TM,TN,TO,TR,TT,TV,TW,TZ,UA,UG,UM,UY,UZ,VA,VC,VE,VG,VI,VN,VU,WF,WS,XK,YE,YT,ZA,ZM,ZW'
+				'origin_countries' => 'CN,HK,IN,TH'
 			),
 		);
 
@@ -344,19 +344,19 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		$products = array(
 			'PDO' => array(
 				'name' 	    => __( 'Parcel Domestic', 'pr-shipping-dhl' ),
-				'dest_countries' => 'TH,VN,AU,MY'
+				'origin_countries' => 'TH,VN,AU,MY'
 			),
 			'PDE' => array(
 				'name' 	    => __( 'Parcel Domestic Expedited', 'pr-shipping-dhl' ),
-				'dest_countries' => 'AU,VN'
+				'origin_countries' => 'AU,VN'
 			),
 			'PDR' => array(
 				'name' 	    => __( 'Parcel Return', 'pr-shipping-dhl' ),
-				'dest_countries' => 'TH,VN,MY'
+				'origin_countries' => 'TH,VN,MY'
 			),
 			'SDP' => array(
 				'name' 	    => __( 'DHL Parcel Metro', 'pr-shipping-dhl' ),
-				'dest_countries' => 'VN,TH,MY'
+				'origin_countries' => 'VN,TH,MY'
 			),
 		);
 
@@ -384,7 +384,7 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		} catch (Exception $e) {
 			throw $e;
 		}
-
+		
 		// Create the shipping label
 		$this->api_client->reset_current_shipping_label();
 		$this->api_client->add_item( $item_info );
@@ -393,11 +393,10 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		$this->api_client->update_pickup_address( $args );
 		$this->api_client->update_shipper_address( $args );
 		$this->api_client->update_access_token();
-		//error_log( "test ecs asia" );
-		//error_log( print_r( get_option( 'pr_dhl_ecs_asia_label'), true ) );
-		$label_response 	= $this->api_client->create_shipping_label( $order_id );
-		error_log( 'RESPONSE:' );
-		error_log( print_r( $label_response, true ) );
+		
+		$label_response 	= $this->api_client->create_shipping_label();
+		//error_log( 'RESPONSE:' );
+		//error_log( print_r( $label_response, true ) );
 		$label_response 	= json_decode( $label_response );
 
 		$response_status 	= $label_response->labelResponse->bd->responseStatus;
