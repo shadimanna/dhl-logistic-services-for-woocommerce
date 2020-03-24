@@ -269,19 +269,18 @@ class Item_Info {
 
 		$item 			= $this->item;
 		$order_id 		= $args[ 'order_details' ][ 'order_id' ];
-		$order 			= wc_get_order( $order_id );
 		
 		$total_weight 	= 0;
 		$total_height 	= 0;
 		$total_width 	= 0;
 		$total_length 	= 0;
 
-		foreach( $order->get_items() as $item_id => $item_line ){
+		foreach( $args['items'] as $item_line ){
 
-			$product_id 	= $item_line->get_product_id();
+			$product_id 	= $item_line['product_id'];
 			$product 		= wc_get_product( $product_id );
 
-			$weight 		= absint( $product->get_weight() ) < 1? 1 : absint( $product->get_weight() );
+			$weight 		= absint( $item_line['item_weight'] ) < 1 ? 1 : absint( $item_line['item_weight'] );
 			$weight_uom 	= $this->weightUom;
 			$weight_gr		= $this->maybe_convert_to_grams( $weight, $weight_uom );
 
@@ -341,21 +340,20 @@ class Item_Info {
 
 		$item 			= $this->item;
 		$order_id 		= $args[ 'order_details' ][ 'order_id' ];
-		$order 			= wc_get_order( $order_id );
 		
 		$total_weight 	= 0;
 		$total_height 	= 0;
 		$total_width 	= 0;
 		$total_length 	= 0;
 
-		foreach( $order->get_items() as $item_id => $item_line ){
+		foreach( $args['items'] as $item_line ){
 
-			$product_id 	= $item_line->get_product_id();
+			$product_id 	= $item_line['product_id'];
 			$product 		= wc_get_product( $product_id );
 
-			$quantity 		= $item_line->get_quantity();
+			$quantity 		= $item_line['qty'];
 
-			$weight 		= absint( $product->get_weight() ) < 1? 1 : absint( $product->get_weight() );
+			$weight 		= absint( $item_line['item_weight'] ) < 1 ? 1 : absint( $item_line['item_weight'] );
 			$weight_uom 	= $this->weightUom;
 			$weight_gr		= $this->maybe_convert_to_grams( $weight, $weight_uom );
 
@@ -392,16 +390,15 @@ class Item_Info {
 		
 		$item 		= $this->item;
 		$order_id 	= $args[ 'order_details' ][ 'order_id' ];
-		$order 		= wc_get_order( $order_id );
 		
 		$total_val 	= 0;
 
-		foreach( $order->get_items() as $item_id => $item_line ){
+		foreach( $args['items'] as $item_line ){
 
-			$product_id 	= $item_line->get_product_id();
+			$product_id 	= $item_line['product_id'];
 			$product 		= wc_get_product( $product_id );
-			$product_sku 	= empty( $product->get_sku() )? "product_id-".$product_id : $product->get_sku();
-			$weight 		= $product->get_weight();
+			$product_sku 	= empty( $item_line['sku'] )? "product_id-".$product_id : $item_line['sku'];
+			$weight 		= absint( $item_line['item_weight'] ) < 1 ? 1 : absint( $item_line['item_weight'] );
 			$weight_uom 	= $this->weightUom;
 			$weight_gr		= $this->maybe_convert_to_grams( $weight, $weight_uom );
 			$weight_gr 		= ( $weight_gr > 1 )? $weight_gr : 1;
@@ -414,15 +411,15 @@ class Item_Info {
 				$country_origin = $settings['dhl_country'];
 			}
 
-			$total_val 		+= $product->get_price();
+			$total_val 		+= $item_line['item_value'];
 
 			$shipment_contents = array(
 				"skuNumber" 			=> $product_sku,
-				"description"			=> $item_line->get_name(),
-				"descriptionImport" 	=> $item_line->get_name(),
-				"descriptionExport" 	=> $item_line->get_name(),
-				"itemValue" 			=> round( $product->get_price(), 2),
-				"itemQuantity" 			=> $item_line->get_quantity(),
+				"description"			=> $item_line['item_description'],
+				"descriptionImport" 	=> $item_line['item_description'],
+				"descriptionExport" 	=> $item_line['item_description'],
+				"itemValue" 			=> round( $item_line['item_value'], 2 ),
+				"itemQuantity" 			=> $item_line['qty'],
 				"grossWeight" 			=> $weight_gr,
 				"netWeight" 			=> $weight_gr,
 				"weightUOM" 			=> $this->get_weight_uom(),
