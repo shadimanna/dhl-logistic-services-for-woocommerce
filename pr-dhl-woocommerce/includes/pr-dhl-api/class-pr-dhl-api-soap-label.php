@@ -84,7 +84,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
             } elseif (isset( $response_body->Status->statusText )) {
             	$status_message = $response_body->Status->statusText;
             } else {
-            	$status_message = 'Contact Support';
+            	$status_message = __('Contact Support', 'pr-shipping-dhl');
             }
 
 		    throw new Exception( sprintf( __('Could not create label - %s', 'pr-shipping-dhl'), $status_message ) );
