@@ -197,19 +197,6 @@ class Client extends API_Client {
 
 		$settings = $args[ 'dhl_settings' ];
 
-		$pickup_address =  array(
-			"name" 		=> $settings['dhl_contact_name'],
-			"address1" 	=> $settings['dhl_address_1'],
-			"address2" 	=> $settings['dhl_address_2'],
-			"city" 		=> $settings['dhl_city'],
-			"state" 	=> $settings['dhl_state'],
-			"district" 	=> $settings['dhl_district'],
-			"country" 	=> $settings['dhl_country'],
-			"postCode" 	=> $settings['dhl_postcode'],
-			"phone"		=> $settings['dhl_phone'],
-			"email" 	=> $settings['dhl_email']	
-		);
-
 		if( empty( $settings['dhl_address_1'] ) || 
 			empty( $settings['dhl_address_2'] ) || 
 			empty( $settings['dhl_city'] ) || 
