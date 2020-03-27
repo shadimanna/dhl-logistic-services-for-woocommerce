@@ -369,10 +369,8 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	 * @since [*next-version*]
 	 */
 	public function get_dhl_label( $args ) {
-		error_log( 'ARGS:' );
-		error_log( print_r( $args, true ) );
-
-		$settings = $args[ 'dhl_settings' ];
+		//error_log( 'ARGS:' );
+		//error_log( print_r( $args, true ) );
 
 		$order_id = isset( $args[ 'order_details' ][ 'order_id' ] )
 			? $args[ 'order_details' ][ 'order_id' ]
@@ -386,15 +384,9 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		}
 		
 		// Create the shipping label
-		$this->api_client->reset_current_shipping_label();
-		$this->api_client->add_item( $item_info );
-		$this->api_client->update_account_id( $args );
-		$this->api_client->update_label_info( $args );
-		$this->api_client->update_pickup_address( $args );
-		$this->api_client->update_shipper_address( $args );
-		$this->api_client->update_access_token();
-		
-		$label_response 	= $this->api_client->create_shipping_label();
+
+		//$label_response 	= $this->api_client->create_shipping_label();
+		$label_response 	= $this->api_client->create_label( $item_info );
 		//error_log( 'RESPONSE:' );
 		//error_log( print_r( $label_response, true ) );
 		$label_response 	= json_decode( $label_response );

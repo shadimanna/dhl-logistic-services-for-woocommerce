@@ -161,9 +161,6 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 		$args['dhl_settings']['handover'] = $this->get_label_handover_num();
 		$args['dhl_settings']['label_format'] = $this->shipping_dhl_settings['dhl_label_format'];
 		$args['dhl_settings']['label_layout'] = $this->shipping_dhl_settings['dhl_label_layout'];
-		$args['dhl_settings']['return_mode'] = "01";
-		$args['dhl_settings']['is_mult'] = "FALSE";
-		$args['dhl_settings']['delivery_option'] = "P";
 
 		// Get DHL Pickup Address.
 		$args[ 'dhl_settings' ]['dhl_contact_name'] 	= $this->shipping_dhl_settings['dhl_pickup_name'];
@@ -181,7 +178,6 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 		$args[ 'order_details' ]['height'] 		= 1;
 		$args[ 'order_details' ]['width'] 		= 1;
 		$args[ 'order_details' ]['length'] 		= 1;
-		$args[ 'order_details' ]['dimensionUom'] = "CM";
 		
 		// Get package prefix
 		$dhl_label_items['pr_dhl_description'] = $this->shipping_dhl_settings['dhl_desc_default'];

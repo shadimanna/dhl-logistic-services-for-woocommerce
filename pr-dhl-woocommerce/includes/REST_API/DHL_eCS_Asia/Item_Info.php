@@ -22,13 +22,22 @@ class Item_Info {
 	public $order_id;
 
 	/**
-	 * The array of order recipient information.
+	 * The array of header information.
 	 *
 	 * @since [*next-version*]
 	 *
 	 * @var array
 	 */
-	public $item;
+	public $header;
+
+	/**
+	 * The array of body information.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @var array
+	 */
+	public $body;
 
 	/**
 	 * The array of shipment information.
@@ -73,7 +82,7 @@ class Item_Info {
 	 *
 	 * @var array[]
 	 */
-	public $return;
+	public $pickup;
 
 	/**
 	 * The array of content item information sub-arrays.
@@ -107,12 +116,7 @@ class Item_Info {
 		//$this->parse_args( $args );
 		$this->weightUom 	= $uom;
 		$this->parse_args( $args, $uom );
-		$this->item 		= $this->get_default_item_info();
 
-		$this->update_item();
-		$this->update_item_consignee_address();
-		$this->update_item_return_address();
-		$this->update_item_shipment_contents();
 	}
 
 	/**
@@ -129,86 +133,82 @@ class Item_Info {
 		$recipient_info = $args[ 'shipping_address' ] + $settings;
 		$shipping_info = $args[ 'order_details' ] + $settings;
 		$items_info = $args['items'];
-
+		
 		$this->order 			= $args[ 'order_details' ][ 'order_id' ];
-		$this->shipment 		= Args_Parser::parse_args( $shipping_info, $this->get_base_info_schema() );
+		$this->header 			= Args_Parser::parse_args( $shipping_info, $this->get_header_info_schema() );
+		$this->body 			= Args_Parser::parse_args( $shipping_info, $this->get_body_info_schema() );
+		$this->shipment 		= Args_Parser::parse_args( $shipping_info, $this->get_shipment_info_schema() );
 		$this->consignee 		= Args_Parser::parse_args( $recipient_info, $this->get_recipient_info_schema() );
-		$this->return 			= Args_Parser::parse_args( $settings, $this->get_return_info_schema() );
+		$this->pickup 			= Args_Parser::parse_args( $settings, $this->get_pickup_info_schema() );
 		$this->contents 		= array();
 
-		$this->contents = array();
 		foreach ( $items_info as $item_info ) {
 			$this->contents[] = Args_Parser::parse_args( $item_info, $this->get_content_item_info_schema() );
 		}
 	}
 
 	/**
-	 * Get Default value for the label info 
-	 * 
+	 * Retrieves the args scheme to use with {@link Args_Parser} for header info.
+	 *
+	 * @since [*next-version*]
+	 *
 	 * @return array
 	 */
-	protected function get_default_item_info() {
+	protected function get_header_info_schema() {
 
+		// Closures in PHP 5.3 do not inherit class context
+		// So we need to copy $this into a lexical variable and pass it to closures manually
+		$self = $this;
+		
 		return array(
-			"consigneeAddress" 			=> array(),
-			"shipmentID" 				=> "",
-			"deliveryConfirmationNo" 	=> null,
-			"packageDesc" 				=> "",
-			"totalWeight" 				=> 0.0,
-			"totalWeightUOM" 			=> "G",
-			"dimensionUOM" 				=> "cm",
-			"height" 					=> 0.0,
-			"length" 					=> 0.0,
-			"width" 					=> 0.0,
-			"productCode" 				=> "PDO",
-			"totalValue" 				=> "",
-			"currency" 					=> "",
-			"isMult"					=> "FALSE",
-			"deliveryOption"			=> "P",
-			"shipmentPieces" 			=> array(),
+			'message_type' => array(
+				'default' => 'LABEL'
+			),
+			'message_date_time' => array(
+				'default' => date( "c", time() )
+			),
+			'message_version' => array(
+				'default' => '1.4'
+			),
+			'access_token' => array(
+				'default' => ''
+			),
+			'message_language' => array(
+				'default' => 'en'
+			)
 		);
 	}
 
 	/**
-	 * Update item data
-	 * 
+	 * Retrieves the args scheme to use with {@link Args_Parser} for header info.
+	 *
 	 * @since [*next-version*]
-	 * 
-	 * @param Array $args
-	 * 
+	 *
+	 * @return array
 	 */
-	public function update_item(){
+	protected function get_body_info_schema() {
 
-		$item 				= $this->item;
-		$shipment   		= $this->shipment;
+		// Closures in PHP 5.3 do not inherit class context
+		// So we need to copy $this into a lexical variable and pass it to closures manually
+		$self = $this;
 		
-		$shipmentid = "DHL". date("YmdHis") . sprintf('%07d', $this->order );
-		$item["shipmentID"] 			= $shipmentid;
-		$item["returnMode"] 			= $shipment['return_mode'];
-		$item["packageDesc"] 			= $shipment['description'];
-		$item["totalWeight"] 			= $shipment['weight'];
-		$item["totalWeightUOM"] 		= $shipment['weightUom'];
-		$item["dimensionUOM"] 			= $shipment['dimensionUom'];
-		$item["productCode"] 			= $shipment['product_code'];
-		$item['totalValue']				= $shipment['total_value'];
-		$item["currency"] 				= $shipment['currency'];
-
-		if( !empty( $shipment['incoterm'] ) ){
-			$item["incoterm"] = $shipment['incoterm'];
-		}
-
-		$item["shipmentPieces"][] = array(
-			"pieceID" 			=> $this->order,
-			"announcedWeight" 	=> array(
-				"weight" 	=> $shipment['weight'],
-				"unit" 		=> $shipment['weightUom']
+		return array(
+			'pickup_id' => array(
+				'error' => __( 'Pickup Account ID is empty!', 'pr-shipping-dhl' ),
 			),
-			"billingReference1"	=> $this->order,
-			"billingReference2" => $this->order,
-			"pieceDescription"	=> "Order no. " . $this->order
+			'soldto_id' => array(
+				'error' => __( 'Soldto Account ID is empty!', 'pr-shipping-dhl' ),
+			),
+			'label_format' => array(
+				'default' => 'PDF'
+			),
+			'label_layout' => array(
+				'default' => '1x1'
+			),
+			'label_pagesize' => array(
+				'default' => '400x600'
+			)
 		);
-		
-		$this->item = array_merge( $this->item, $item );
 	}
 
 	/**
@@ -218,7 +218,7 @@ class Item_Info {
 	 *
 	 * @return array
 	 */
-	protected function get_base_info_schema() {
+	protected function get_shipment_info_schema() {
 
 		// Closures in PHP 5.3 do not inherit class context
 		// So we need to copy $this into a lexical variable and pass it to closures manually
@@ -264,19 +264,19 @@ class Item_Info {
 			'height'     => array(
 				'default' => 1,
 				'sanitize' => function( $value ) use ( $self ) {
-					return (string) $self->absolute_float_sanitization( $value, 2 );
+					return $self->absolute_float_sanitization( $value, 2 );
 				}
 			),
 			'length'     => array(
 				'default' => 1,
 				'sanitize' => function( $value ) use ( $self ) {
-					return (string) $self->absolute_float_sanitization( $value, 2 );
+					return $self->absolute_float_sanitization( $value, 2 );
 				}
 			),
 			'width'     => array(
 				'default' => 1,
 				'sanitize' => function( $value ) use ( $self ) {
-					return (string) $self->absolute_float_sanitization( $value, 2 );
+					return $self->absolute_float_sanitization( $value, 2 );
 				}
 			),
 			'total_value' => array(
@@ -302,38 +302,6 @@ class Item_Info {
 				'default' => 'P'
 			)
 		);
-	}
-
-	/**
-	 * Update consignee address data in the item
-	 * 
-	 * @since [*next-version*]
-	 * 
-	 * @param Array $args
-	 * 
-	 */
-	public function update_item_consignee_address(){
-
-		$item 		= $this->item;
-		$consignee  = $this->consignee;
-
-		$item["consigneeAddress"] = array(
-			"name" 		=> $consignee['name'],
-			"address1" 	=> $consignee['address_1'],
-			"address2" 	=> $consignee['address_2'],
-			"city" 		=> $consignee['city'],
-			"state" 	=> $consignee['state'],
-			"district" 	=> $consignee['state'],
-			"country" 	=> $consignee['country'],
-			"postCode" 	=> $consignee['postcode'],
-			"phone"		=> $consignee['phone'],
-			"email" 	=> $consignee['email'],
-			//"idNumber" 	=> $id_number, /** hardcoded */
-			//"idType" 	=> "4" /** hardcoded */
-		);
-
-		$this->item = array_merge( $this->item, $item );
-
 	}
 
 	/**
@@ -370,17 +338,23 @@ class Item_Info {
 				'error' => __( 'Shipping "Email" is empty!', 'pr-shipping-dhl' ),
 			),
 			'address_1' => array(
+				'rename' => 'address1',
 				'error' => __( 'Shipping "Address 1" is empty!', 'pr-shipping-dhl' ),
 			),
 			'address_2' => array(
+				'rename' => 'address2',
 				'default' => '',
 			),
 			'city'      => array(
 				'error' => __( 'Shipping "City" is empty!', 'pr-shipping-dhl' ),
 			),
 			'postcode'  => array(
+				'rename' => 'postCode',
 				'default' => '',
 				'error' => __( 'Shipping "Postcode" is empty!', 'pr-shipping-dhl' ),
+			),
+			'district' => array(
+				'default' => ''
 			),
 			'state'     => array(
 				'default' => '',
@@ -392,49 +366,13 @@ class Item_Info {
 	}
 
 	/**
-	 * Update consignee address data in the item
-	 * 
-	 * @since [*next-version*]
-	 * 
-	 * @param Array $args
-	 * 
-	 */
-	public function update_item_return_address(){
-
-		$item 			= $this->item;
-		$return_info 	= $this->return;
-		
-		$item["returnAddress"] = array(
-			"name" 		=> $return_info['dhl_contact_name'],
-			"address1" 	=> $return_info['dhl_address_1'],
-			"address2" 	=> $return_info['dhl_address_2'],
-			"city" 		=> $return_info['dhl_city'],
-			"state" 	=> $return_info['dhl_state'],
-			"district" 	=> $return_info['dhl_district'],
-			"country" 	=> $return_info['dhl_country'],
-			"postCode" 	=> $return_info['dhl_postcode'],
-		);
-
-		if( !empty( $return_info['dhl_phone'] ) ){
-			$item["returnAddress"]['phone'] = $return_info['dhl_phone'];
-		}
-
-		if( !empty( $return_info['dhl_email'] ) ){
-			$item["returnAddress"]['email'] = $return_info['dhl_email'];
-		}
-
-		$this->item = array_merge( $this->item, $item );
-
-	}
-
-	/**
-	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing order return shipment info.
+	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing order pickup shipment info.
 	 *
 	 * @since [*next-version*]
 	 *
 	 * @return array
 	 */
-	protected function get_return_info_schema() {
+	protected function get_pickup_info_schema() {
 
 		// Closures in PHP 5.3 do not inherit class context
 		// So we need to copy $this into a lexical variable and pass it to closures manually
@@ -442,6 +380,7 @@ class Item_Info {
 
 		return array(
 			'dhl_contact_name'      => array(
+				'rename' => 'name',
 				'default' => '',
 				'error'  => __( 'Base "Contact Name" is empty!', 'pr-shipping-dhl' ),
 				'sanitize' => function( $name ) use ($self) {
@@ -450,6 +389,7 @@ class Item_Info {
 				}
 			),
 			'dhl_phone'     => array(
+				'rename' => 'phone',
 				'default' => '',
 				'sanitize' => function( $phone ) use ($self) {
 
@@ -457,78 +397,42 @@ class Item_Info {
 				}
 			),
 			'dhl_email'     => array(
+				'rename' => 'email',
 				'default' => '',
 				'error'  => __( 'Base "Email" is empty!', 'pr-shipping-dhl' ),
 			),
 			'dhl_address_1' => array(
+				'rename' => 'address1',
 				'error' => __( 'Base "Address 1" is empty!', 'pr-shipping-dhl' ),
 			),
 			'dhl_address_2' => array(
+				'rename' => 'address2',
 				'default' => '',
 			),
 			'dhl_city'      => array(
+				'rename' => 'city',
 				'error' => __( 'Base "City" is empty!', 'pr-shipping-dhl' ),
 			),
 			'dhl_district'     => array(
+				'rename' => 'district',
 				'default' => '',
 				'error' => __( 'Base "District" is empty!', 'pr-shipping-dhl' ),
 			),
 			'dhl_postcode'  => array(
+				'rename' => 'postCode',
 				'default' => '',
 				'error' => __( 'Base "Postcode" is empty!', 'pr-shipping-dhl' ),
 			),
 			'dhl_state'     => array(
+				'rename' => 'state',
 				'default' => '',
 				'error'   => __( 'Base "State" is empty!', 'pr-shipping-dhl' ),
 			),
 			'dhl_country'   => array(
+				'rename' => 'country',
 				'error' => __( 'Base "Country" is empty!', 'pr-shipping-dhl' ),
 			),
 		);
-	}
-
-	/**
-	 * Update shipment contents data in the item
-	 * 
-	 * @since [*next-version*]
-	 * 
-	 * @param Array $args
-	 * 
-	 */
-	public function update_item_shipment_contents(){
-		
-		$contents 	= $this->contents;
-		$item 		= $this->item;
-
-		foreach( $contents as $content ){
-
-			$shipment_contents = array(
-				"skuNumber" 			=> $content['sku'],
-				"description"			=> $content['description'],
-				"descriptionImport" 	=> $content['description'],
-				"descriptionExport" 	=> $content['description'],
-				"itemValue" 			=> round( $content['value'], 2 ),
-				"itemQuantity" 			=> $content['qty'],
-				"grossWeight" 			=> $content['weight'],
-				"netWeight" 			=> $content['weight'],
-				"weightUOM" 			=> $this->shipment['weightUom'],
-				"countryOfOrigin" 		=> $content['origin']
-			);
-
-			if( !empty( $content['hs_code'] ) ){
-				$shipment_contents['hsCode'] = $content['hs_code'];
-			}
-
-			if( !empty( $content['dangerous_goods'] ) ){
-				$shipment_contents['contentIndicator'] = $content['dangerous_goods'];
-			}
-
-			$item["shipmentContents"][] = $shipment_contents;
-
-		}
-
-		$this->item = array_merge( $this->item, $item );
-
 	}
 
 	/**

@@ -61,7 +61,7 @@ class API_Client {
 	 *
 	 * @var API_Auth_Interface|null
 	 */
-	private $auth;
+	protected $auth;
 
 	/**
 	 * Constructor.

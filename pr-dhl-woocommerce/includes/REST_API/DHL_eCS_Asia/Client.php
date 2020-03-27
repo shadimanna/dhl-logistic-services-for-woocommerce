@@ -16,24 +16,6 @@ use stdClass;
 class Client extends API_Client {
 
 	/**
-	 * The api auth.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @var API_Auth_Interface
-	 */
-	protected $auth;
-
-	/**
-	 * The label info.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @var array
-	 */
-	protected $label_info;
-
-	/**
 	 * The pickup address data.
 	 *
 	 * @since [*next-version*]
@@ -61,59 +43,6 @@ class Client extends API_Client {
 	public function __construct( $base_url, API_Driver_Interface $driver, API_Auth_Interface $auth = null ) {
 		parent::__construct( $base_url, $driver, $auth );
 
-		$this->auth 		= $auth;
-
-		$this->label_info   = $this->get_default_label_info();
-	}
-
-	/**
-	 * Get Default value for the label info 
-	 * 
-	 * @return array
-	 */
-	protected function get_default_label_info() {
-
-		return array(
-			'labelRequest' 	=> array(
-				'hdr' 	=> array(
-					'messageType' 		=> 'LABEL',
-					'messageDateTime' 	=> date( "c", time() ),
-					'messageVersion' 	=> '1.4',
-					'accessToken'		=> '',
-					'messageLanguage' 	=> 'en'
-				),
-				'bd' 	=> array(
-					'pickupAccountId' 	=> '',
-					'soldToAccountId'	=> '',
-					'customerAccountId' => null,
-					'pickupDateTime' 	=> null,
-					'inlineLabelReturn' => null,
-					'handoverMethod' 	=> null,
-					
-					'label' 			=> array(
-						'format' 	=> 'PDF',
-						'layout' 	=> '1x1',
-						'pageSize' 	=> '400x600'
-					)
-					
-				)
-			)
-		);
-	}
-
-	/**
-	 * Retrieves the current DHL order, or an existing one if an ID is given.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param int|null $orderId Optional DHL order ID.
-	 *
-	 * @return array
-	 */
-	public function get_shipping_label($orderId = null){
-		$current = $this->label_info;
-
-		return $current;
 	}
 
 	/**
@@ -124,10 +53,11 @@ class Client extends API_Client {
 	 * @param int $order_id The order id.
 	 *
 	 */
-	public function create_shipping_label(){
+	public function create_label( Item_Info $item_info ){
 
 		$route 	= $this->shipping_label_route();
-		$data 	= $this->get_shipping_label();
+
+		$data = $this->item_info_to_request_data( $item_info );
 		
 		$response = $this->post($route, $data);
 		
@@ -146,193 +76,129 @@ class Client extends API_Client {
 	}
 
 	/**
-	 * Update accountID
+	 * Transforms an item info object into a request data array.
 	 *
-	 * @since [*next-version*]
+	 * @param Item_Info $item_info The item info object to transform.
 	 *
-	 * @param array $args The arguments to parse.
-	 *
+	 * @return array The request data for the given item info object.
 	 */
-	public function update_account_id( $args ){
-
-		$settings = $args[ 'dhl_settings' ];
-
-		$label = $this->label_info;
-
-		$label['labelRequest']['bd']['pickupAccountId'] = $settings['pickup_id'];
-		$label['labelRequest']['bd']['soldToAccountId'] = $settings['soldto_id'];
-
-		$this->label_info = $label;
-	}
-
-	/**
-	 * Update accountID
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param array $args The arguments to parse.
-	 *
-	 */
-	public function update_label_info( $args ){
-
-		$settings = $args[ 'dhl_settings' ];
-
-		$label = $this->label_info;
-
-		$label['labelRequest']['bd']['label']['format'] = $settings['label_format'];
-		$label['labelRequest']['bd']['label']['layout'] = $settings['label_layout'];
-
-		$this->label_info = $label;
-	}
-
-	/**
-	 * Update pickup address data from the settings
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param array $args The arguments to parse.
-	 *
-	 */
-	public function update_pickup_address( $args ){
-
-		$settings = $args[ 'dhl_settings' ];
-
-		if( empty( $settings['dhl_address_1'] ) || 
-			empty( $settings['dhl_address_2'] ) || 
-			empty( $settings['dhl_city'] ) || 
-			empty( $settings['dhl_state'] ) || 
-			empty( $settings['dhl_district'] ) || 
-			empty( $settings['dhl_country'] ) || 
-			empty( $settings['dhl_postcode'] ) )
-		{
-			return;
-		}
-
-		$pickup_address = array(
-			"name" 		=> $settings['dhl_contact_name'],
-			"address1" 	=> $settings['dhl_address_1'],
-			"address2" 	=> $settings['dhl_address_2'],
-			"city" 		=> $settings['dhl_city'],
-			"state" 	=> $settings['dhl_state'],
-			"district" 	=> $settings['dhl_district'],
-			"country" 	=> $settings['dhl_country'],
-			"postCode" 	=> $settings['dhl_postcode'],
-		);
-
-		if( !empty( $settings['dhl_phone'] ) ){
-			$pickup_address['phone'] = $settings['dhl_phone'];
-		}
-
-		if( !empty( $settings['dhl_email'] ) ){
-			$pickup_address['email'] = $settings['dhl_email'];
-		}
-
-		$label = $this->label_info;
-
-		$label['labelRequest']['bd']['pickupAddress'] = $pickup_address;
-		//$label['labelRequest']['bd']['pickupAddress'] = null; //testing
-
-		$this->label_info = $label;
-
-	}
-
-	/**
-	 * Update shipper address data from the settings
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param array $args The arguments to parse.
-	 *
-	 */
-	public function update_shipper_address( $args ){
-
-		$settings = $args[ 'dhl_settings' ];
-
-		if( empty( $settings['dhl_address_1'] ) || 
-			empty( $settings['dhl_address_2'] ) || 
-			empty( $settings['dhl_city'] ) || 
-			empty( $settings['dhl_state'] ) || 
-			empty( $settings['dhl_district'] ) || 
-			empty( $settings['dhl_country'] ) || 
-			empty( $settings['dhl_postcode'] ) )
-		{
-			return;
-		}
-
-		$shipper_address = array(
-			"name" 		=> $settings['dhl_contact_name'],
-			"address1" 	=> $settings['dhl_address_1'],
-			"address2" 	=> $settings['dhl_address_2'],
-			"city" 		=> $settings['dhl_city'],
-			"state" 	=> $settings['dhl_state'],
-			"district" 	=> $settings['dhl_district'],
-			"country" 	=> $settings['dhl_country'],
-			"postCode" 	=> $settings['dhl_postcode'],
-		);
-
-		if( !empty( $settings['dhl_phone'] ) ){
-			$shipper_address['phone'] = $settings['dhl_phone'];
-		}
-
-		if( !empty( $settings['dhl_email'] ) ){
-			$shipper_address['email'] = $settings['dhl_email'];
-		}
-
-		$label = $this->label_info;
-
-		$label['labelRequest']['bd']['shipperAddress'] = $shipper_address;
-		//$label['labelRequest']['bd']['shipperAddress'] = null; //testing
-		$this->label_info = $label;
-
-	}
-
-	/**
-	 * Add an item to the current.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param Item_Info $item_info The information of the item to be created.
-	 *
-	 * @return stdClass The item information as returned by the remote API.
-	 *
-	 */
-	public function add_item( Item_Info $item_info ) {
-
-		$label = $this->label_info;
-
-		$label['labelRequest']['bd']['shipmentItems' ][] = $item_info->item;
-
-		$this->label_info = $label;
-
-	}
-
-	/**
-	 * Update the token to the current DHL shipping label.
-	 *
-	 * @since [*next-version*]
-	 *
-	 */
-	public function update_access_token(){
+	protected function item_info_to_request_data( Item_Info $item_info ) {
 
 		$token 	= $this->auth->load_token();
 
-		$label = $this->label_info;
+		$pickup_address = $item_info->pickup;
 
-		$label['labelRequest']['hdr']['accessToken'] = $token->token;
+		if( empty( $pickup_address['phone'] ) ){
+			unset( $pickup_address['phone'] );
+		}
 
-		$this->label_info = $label;
+		if( empty( $pickup_address['email'] ) ){
+			unset( $pickup_address['email'] );
+		}
 
-	}
+		$shipper_address 	= $pickup_address;
 
-	/**
-	 * Resets the current shipping label.
-	 *
-	 * @since [*next-version*]
-	 */
-	public function reset_current_shipping_label(){
+		$contents 			= $item_info->contents;
+		$shipment_contents 	= array();
 
-		$this->label_info = $this->get_default_label_info();
+		foreach( $contents as $content ){
 
+			$shipment_content = array(
+				"skuNumber" 			=> $content['sku'],
+				"description"			=> $content['description'],
+				"descriptionImport" 	=> $content['description'],
+				"descriptionExport" 	=> $content['description'],
+				"itemValue" 			=> round( $content['value'], 2 ),
+				"itemQuantity" 			=> $content['qty'],
+				"grossWeight" 			=> $content['weight'],
+				"netWeight" 			=> $content['weight'],
+				"weightUOM" 			=> $item_info->shipment['weightUom'],
+				"countryOfOrigin" 		=> $content['origin']
+			);
+
+			if( !empty( $content['hs_code'] ) ){
+				$shipment_content['hsCode'] = $content['hs_code'];
+			}
+
+			if( !empty( $content['dangerous_goods'] ) ){
+				$shipment_content['contentIndicator'] = $content['dangerous_goods'];
+			}
+
+			$shipment_contents[] = $shipment_content;
+
+		}
+
+		$return_address 	= $pickup_address;
+		$consignee 			= $item_info->consignee;
+
+		if( $consignee['district'] == '' ){
+			$consignee['district'] = $consignee['state'];
+		}
+
+		$shipmentid 		= "DHL". date("YmdHis") . sprintf('%07d', $item_info->order );
+
+		$shipment_item 		= array(
+			'returnAddress' 	=> $return_address,
+			'consigneeAddress' 	=> $consignee,
+			'shipmentID' 		=> $shipmentid,
+			'returnMode' 		=> $item_info->shipment['return_mode'],
+			'packageDesc' 		=> $item_info->shipment['description'],
+			'totalWeight' 		=> $item_info->shipment['weight'],
+			'totalWeightUOM' 	=> $item_info->shipment['weightUom'],
+			'dimensionUOM' 		=> $item_info->shipment['dimensionUom'],
+			"height" 			=> $item_info->shipment['height'],
+			"length" 			=> $item_info->shipment['length'],
+			"width" 			=> $item_info->shipment['width'],
+			'productCode' 		=> $item_info->shipment['product_code'],
+			'totalValue'		=> $item_info->shipment['total_value'],
+			'currency' 			=> $item_info->shipment['currency'],
+			"isMult"			=> $item_info->shipment['is_mult'],
+			"deliveryOption"	=> $item_info->shipment['delivery_option'],
+			'shipmentPieces' 	=> array(
+				array(
+					"pieceID" 			=> $item_info->order,
+					"announcedWeight" 	=> array(
+						"weight" 	=> $item_info->shipment['weight'],
+						"unit" 		=> $item_info->shipment['weightUom']
+					),
+					"billingReference1"	=> $item_info->order,
+					"billingReference2" => $item_info->order,
+					"pieceDescription"	=> "Order no. " . $item_info->order
+				)
+			),
+			'shipmentContents' 			=> $shipment_contents
+		);
+
+		if( !empty( $item_info->shipment['incoterm'] ) ){
+
+			$shipment_item["incoterm"] = $item_info->shipment['incoterm'];
+
+		}
+
+		return array(
+			'labelRequest' 	=> array(
+				'hdr' 	=> array(
+					'messageType' 		=> $item_info->header[ 'message_type' ],
+					'messageDateTime' 	=> $item_info->header[ 'message_date_time' ],
+					'messageVersion' 	=> $item_info->header[ 'message_version' ],
+					'accessToken'		=> $token->token,
+					'messageLanguage' 	=> $item_info->header[ 'message_language' ]
+				),
+				'bd' 	=> array(
+					'pickupAccountId' 	=> $item_info->body[ 'pickup_id' ],
+					'soldToAccountId'	=> $item_info->body[ 'soldto_id' ],
+					'pickupAddress' 	=> $pickup_address,
+					'shipperAddress' 	=> $shipper_address,
+					'shipmentItems' 	=> array( $shipment_item ),
+					'label' 			=> array(
+						'format' 	=> $item_info->body[ 'label_format' ],
+						'layout' 	=> $item_info->body[ 'label_layout' ],
+						'pageSize' 	=> $item_info->body[ 'label_pagesize' ]
+					)
+					
+				)
+			)
+		);
 	}
 
 	/**
