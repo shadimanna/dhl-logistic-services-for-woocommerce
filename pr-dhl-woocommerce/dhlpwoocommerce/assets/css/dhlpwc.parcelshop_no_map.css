@@ -1,0 +1,41 @@
+.dhlpwc-parcelshop-option-list-target {
+    clear: both;
+    position: relative;
+}
+
+.dhlpwc-parcelshop-option-list-target .dhlpwc-parcelshop-option-list {
+    background-color: white;
+    z-index: 1337;
+    position: absolute;
+    box-shadow: 2px 2px 4px 2px rgba(0, 0, 0, 0.2), 2px 2px 2px 0 rgba(0, 0, 0, 0.2);
+    display: none;
+}
+
+.dhlpwc-parcelshop-option-list-target .dhlpwc-parcelshop-option-list .dhlpwc-parcelshop-option-list-item {
+    overflow-x: hidden;
+    font-size: smaller;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 6px 5px;
+}
+
+.dhlpwc-parcelshop-option-list-target .dhlpwc-parcelshop-option-list .dhlpwc-parcelshop-option-list-search input {
+    width: 100%;
+    min-width: 200px;
+}
+
+.dhlpwc-parcelshop-option-list-target .dhlpwc-parcelshop-option-list .dhlpwc-parcelshop-option-list-item.parcelshop-option {
+    cursor: pointer;
+}
+
+.dhlpwc-parcelshop-option-list-target .dhlpwc-parcelshop-option-list .dhlpwc-parcelshop-option-list-item.parcelshop-option:hover {
+    background-color: #fccc01;
+}
+
+.dhlpwc-parcelshop-option-list-target .dhlpwc-parcelshop-option-list .dhlpwc-parcelshop-option-list-item.parcelshop-option:hover strong {
+    color: #d30511;
+}
+
+.woocommerce-checkout-review-order-table .dhlpwc-parcelshop-option-list-target .dhlpwc-parcelshop-option-list {
+    top: -7px;
+}

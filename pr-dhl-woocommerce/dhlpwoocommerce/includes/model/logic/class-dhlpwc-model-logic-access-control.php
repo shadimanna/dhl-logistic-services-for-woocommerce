@@ -277,6 +277,30 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         return true;
     }
 
+    public function check_track_trace_mail_text()
+    {
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
+
+        if (empty($shipping_method)) {
+            return false;
+        }
+
+        if (!isset($shipping_method['enable_track_trace_mail'])) {
+            return false;
+        }
+
+        if ($shipping_method['enable_track_trace_mail'] != 'yes') {
+            return false;
+        }
+
+        if (empty($shipping_method['custom_track_trace_mail_text'])) {
+            return false;
+        }
+
+        return sanitize_text_field($shipping_method['custom_track_trace_mail_text']);
+
+    }
+
     public function check_track_trace_component()
     {
         $shipping_method = get_option('woocommerce_dhlpwc_settings');
@@ -759,6 +783,33 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
 
         return true;
     }
+
+	  public function check_label_request()
+	  {
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
+
+        if (empty($shipping_method)) {
+          return false;
+        }
+
+        if (!isset($shipping_method['enable_debug'])) {
+          return false;
+        }
+
+        if ($shipping_method['enable_debug'] != 'yes') {
+          return false;
+        }
+
+        if (!isset($shipping_method['enable_debug_requests'])) {
+          return false;
+        }
+
+        if ($shipping_method['enable_debug_requests'] != 'yes') {
+          return false;
+        }
+
+        return true;
+	  }
 
     public function check_validation_rule($identifier)
     {

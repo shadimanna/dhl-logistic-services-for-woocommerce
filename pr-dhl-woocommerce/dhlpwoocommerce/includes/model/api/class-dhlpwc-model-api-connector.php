@@ -132,6 +132,11 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
                 if (isset($formatted_error['key']) && isset($formatted_error['message'])) {
                     $this->error_id = $formatted_error['key'];
                     $this->error_message = $formatted_error['message'];
+
+                    // Add error details if exists
+                    if (isset($formatted_error['details']) && is_array($formatted_error['details'])) {
+                        $this->error_message .= ' Details: ' . json_encode($formatted_error['details']);
+                    }
                 }
             }
         }
