@@ -46,6 +46,8 @@ input.dhlpwc-parcelshop-option-change {
     display: block;
     float:left;
     width:auto;
+    border-color: transparent;
+    outline: none;
 }
 
 input.dhlpwc-parcelshop-option-change.dhlpwc-still-loading {

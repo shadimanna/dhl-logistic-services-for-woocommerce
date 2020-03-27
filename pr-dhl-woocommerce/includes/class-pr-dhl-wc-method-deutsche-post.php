@@ -36,35 +36,6 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
         $this->init_settings();
 
         add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'process_admin_options' ) );
-        add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
-    }
-
-    /**
-     * Enqueues scripts for the admin-side.
-     *
-     * @since [*next-version*]
-     *
-     * @param string $hook The current admin page.
-     */
-    public function enqueue_admin_scripts( $hook ) {
-        // Only applies to WC Settings panel
-        if ( $hook !== 'woocommerce_page_wc-settings' ) {
-            return;
-        }
-
-        $test_con_data = array(
-            'ajax_url'       => admin_url( 'admin-ajax.php' ),
-            'loader_image'   => admin_url( 'images/loading.gif' ),
-            'test_con_nonce' => wp_create_nonce( 'pr-dhl-test-con' ),
-        );
-
-        wp_enqueue_script(
-            'wc-shipment-dhl-testcon-js',
-            PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-test-connection.js',
-            array( 'jquery' ),
-            PR_DHL_VERSION
-        );
-        wp_localize_script( 'wc-shipment-dhl-testcon-js', 'dhl_test_con_obj', $test_con_data );
     }
 
     /**
@@ -116,7 +87,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
             'dhl_account_num' => array(
 	            'title'             => __( 'Account Number (EKP)', 'pr-shipping-dhl' ),
 	            'type'              => 'text',
-	            'description'       => __( 'Your Deutsche Post account number (10 digits - numerical), also called "EKP“. This will be provided by your local Deutsche Post sales organization.', 'pr-shipping-dhl' ),
+	            'description'       => __( 'Your account number (9; 10 or 15 digits, numerical), also called "EKP“. This will be provided by your local Deutsche Post sales organization.', 'pr-shipping-dhl' ),
 	            'desc_tip'          => true,
 	            'default'           => '',
 	            'placeholder'		=> '1234567890',
@@ -125,10 +96,18 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
 	        'dhl_contact_name' => array(
 		        'title'             => __( 'Contact Name', 'pr-shipping-dhl' ),
 		        'type'              => 'text',
-		        'description'       => __( 'The name of the merchant, used as contact information when creating Deutsche Post orders.', 'pr-shipping-dhl' ),
+		        'description'       => __( 'Required for all customers. The name of the merchant, used as contact information on the Waybill.', 'pr-shipping-dhl' ),
 		        'desc_tip'          => true,
 		        'default'           => '',
 		        'placeholder'		=> 'Contact Name',
+			),
+			'dhl_contact_phone_number' => array(
+		        'title'             => __( 'Contact Phone Number', 'pr-shipping-dhl' ),
+		        'type'              => 'text',
+		        'description'       => __( 'Required for DHL Express customers. The phone number of the merchant, used as contact information on the Waybill.', 'pr-shipping-dhl' ),
+		        'desc_tip'          => true,
+		        'default'           => '',
+		        'placeholder'		=> '+4935120681234',
 	        ),
             'dhl_api_key'                => array(
                 'title'       => __( 'Client Id', 'pr-shipping-dhl' ),
@@ -331,7 +310,34 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
         <?php
 
         return ob_get_clean();
-    }
+	}
+	
+	/**
+	 * Validate the contact phone number field
+	 * @see validate_settings_fields()
+	 */
+	public function validate_dhl_contact_phone_number_field( $key, $value ) {
+		
+		$post_data 		= $this->get_post_data();
+		$account_num 	= $post_data[ $this->plugin_id . $this->id . '_' . 'dhl_account_num' ];
+
+		$first_nums = array( "1", "3", "4" );
+		
+		foreach( $first_nums as $num ){
+			if( substr( $account_num, 0, 1 ) == $num ){
+
+				if( empty( $value ) ){
+
+					$msg = __( 'Contact Phone Number required, please add in settings.', 'pr-shipping-dhl' );
+					echo $this->get_message( $msg );
+					throw new Exception( $msg );
+					break;
+				}
+			}
+		}
+
+		return $value;
+	}
 
     /**
      * Processes and saves options.
@@ -342,13 +348,13 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
         try {
 
             $dhl_obj = PR_DHL()->get_dhl_factory();
-            $dhl_obj->dhl_reset_connection();
+			$dhl_obj->dhl_reset_connection();
         } catch ( Exception $e ) {
 
             echo $this->get_message( __( 'Could not reset connection: ', 'pr-shipping-dhl' ) . $e->getMessage() );
             // throw $e;
         }
-
+		
         return parent::process_admin_options();
     }
 }

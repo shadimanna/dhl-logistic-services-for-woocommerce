@@ -20,7 +20,8 @@
     <div class="clear"></div>
 </div>
 <div id="dhlpwc-metabox-parcelshop-select-box" style="display:none;">
-    <input id="dhlpwc-metabox-parcelshop-search-field" placeholder="Zoek op postcode, plaats of naam" type="text" />
+    <input id="dhlpwc-metabox-parcelshop-search-field"
+           placeholder="<?php _e('Search by postcode, city or name', 'dhlpwc') ?>" type="text"/>
     <div id="dhlpwc-metabox-parcelshop-select-list">
     </div>
     <div class="clear"></div>

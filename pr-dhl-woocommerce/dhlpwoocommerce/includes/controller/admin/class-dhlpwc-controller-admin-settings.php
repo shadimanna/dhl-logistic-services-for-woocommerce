@@ -11,7 +11,6 @@ class DHLPWC_Controller_Admin_Settings
 
     const NOTICE_TAG_COUNTRY = 'country';
     const NOTICE_TAG_API_SETTINGS = 'api_settings';
-    const NOTICE_TAG_PARCELSHOP = 'parcelshop';
 
     public function __construct()
     {
@@ -282,15 +281,6 @@ class DHLPWC_Controller_Admin_Settings
                 $this->show_notice(self::NOTICE_TAG_API_SETTINGS, $messages, admin_url('admin.php?page=wc-settings&tab=shipping&section=dhlpwc'));
             }
 
-        } else if ($service->plugin_is_enabled()) {
-            // Maps key
-            if (empty($service->get_maps_key())) {
-                $messages[] = sprintf(__('Missing %1$s from %2$s', 'dhlpwc'), __('Google Maps key', 'dhlpwc'), __('Plugin settings', 'dhlpwc'));
-                $messages[] = __('To continue using DHL ServicePoint and show a visual map to customers, please add a Google Maps Javascript API key.', 'dhlpwc');
-            }
-            if (!empty($messages) && !get_site_transient(self::NOTICE_TAG_PARCELSHOP)) {
-                $this->show_notice(self::NOTICE_TAG_PARCELSHOP, $messages, admin_url('admin.php?page=wc-settings&tab=shipping&section=dhlpwc'));
-            }
         }
     }
 
