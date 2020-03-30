@@ -76,13 +76,13 @@ class Item_Info {
 	public $consignee;
 
 	/**
-	 * The array of return information sub-arrays.
+	 * The array of shipper information sub-arrays.
 	 *
 	 * @since [*next-version*]
 	 *
 	 * @var array[]
 	 */
-	public $pickup;
+	public $shipper;
 
 	/**
 	 * The array of content item information sub-arrays.
@@ -134,12 +134,11 @@ class Item_Info {
 		$shipping_info = $args[ 'order_details' ] + $settings;
 		$items_info = $args['items'];
 		
-		$this->order 			= $args[ 'order_details' ][ 'order_id' ];
 		$this->header 			= Args_Parser::parse_args( $shipping_info, $this->get_header_info_schema() );
 		$this->body 			= Args_Parser::parse_args( $shipping_info, $this->get_body_info_schema() );
 		$this->shipment 		= Args_Parser::parse_args( $shipping_info, $this->get_shipment_info_schema() );
 		$this->consignee 		= Args_Parser::parse_args( $recipient_info, $this->get_recipient_info_schema() );
-		$this->pickup 			= Args_Parser::parse_args( $settings, $this->get_pickup_info_schema() );
+		$this->shipper 			= Args_Parser::parse_args( $settings, $this->get_shipper_info_schema() );
 		$this->contents 		= array();
 
 		foreach ( $items_info as $item_info ) {
@@ -165,7 +164,7 @@ class Item_Info {
 				'default' => 'LABEL'
 			),
 			'message_date_time' => array(
-				'default' => date( "c", time() )
+				'default' => date( 'c', time() )
 			),
 			'message_version' => array(
 				'default' => '1.4'
@@ -228,6 +227,9 @@ class Item_Info {
 			'order_id'      => array(
 				'default' => '',
 			),
+			'prefix' 		=> array(
+				'default' => 'DHL'
+			),
 			'return_mode'   => array(
 				'default' => '01'
 			),
@@ -251,7 +253,7 @@ class Item_Info {
 				}
 			),
 			'dimensionUom'     => array(
-				'default' => "CM"
+				'default' => 'CM'
 			),
 			'dhl_product' => array(
 				'rename' 	=> 'product_code',
@@ -260,24 +262,6 @@ class Item_Info {
 			'duties' => array(
 				'rename' 	=> 'incoterm',
 				'default' 	=> ''
-			),
-			'height'     => array(
-				'default' => 1,
-				'sanitize' => function( $value ) use ( $self ) {
-					return $self->absolute_float_sanitization( $value, 2 );
-				}
-			),
-			'length'     => array(
-				'default' => 1,
-				'sanitize' => function( $value ) use ( $self ) {
-					return $self->absolute_float_sanitization( $value, 2 );
-				}
-			),
-			'width'     => array(
-				'default' => 1,
-				'sanitize' => function( $value ) use ( $self ) {
-					return $self->absolute_float_sanitization( $value, 2 );
-				}
 			),
 			'total_value' => array(
 				'default' => 1,
@@ -295,12 +279,6 @@ class Item_Info {
 			'currency' => array(
 				'error' => __( 'Shop "Currency" is empty!', 'pr-shipping-dhl' ),
 			),
-			'is_mult' => array(
-				'default' => 'FALSE'
-			),
-			'delivery_option' => array(
-				'default' => 'P'
-			)
 		);
 	}
 
@@ -372,7 +350,7 @@ class Item_Info {
 	 *
 	 * @return array
 	 */
-	protected function get_pickup_info_schema() {
+	protected function get_shipper_info_schema() {
 
 		// Closures in PHP 5.3 do not inherit class context
 		// So we need to copy $this into a lexical variable and pass it to closures manually
@@ -503,24 +481,6 @@ class Item_Info {
 					return $weight;
 				}
 			),
-			'item_height' 	=> array(
-				'default'  => 1,
-				'sanitize' => function( $value ) use ( $self ) {
-					return (string) $self->absolute_float_sanitization( $value, 2 );
-				}
-			),
-			'item_width' 	=> array(
-				'default'  => 1,
-				'sanitize' => function( $value ) use ( $self ) {
-					return (string) $self->absolute_float_sanitization( $value, 2 );
-				}
-			),
-			'item_length' 	=> array(
-				'default'  => 1,
-				'sanitize' => function( $value ) use ( $self ) {
-					return (string) $self->absolute_float_sanitization( $value, 2 );
-				}
-			),
 			'dangerous_goods' => array(
 				'default' => ''
 			)
@@ -528,11 +488,11 @@ class Item_Info {
 	}
 
 	public function get_weight_uom(){
-		return "G";
+		return 'G';
 	}
 
 	public function get_dimension_uom(){
-		return "CM";
+		return 'CM';
 	}
 
 	/**

@@ -93,13 +93,7 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 				'description'     => __( 'Please configure your shipping parameters underneath.', 'pr-shipping-dhl' ),
 				'class'			  => '',
 			),
-			'dhl_pickup_name' => array(
-				'title'             => __( 'Pickup Account Name', 'pr-shipping-dhl' ),
-				'type'              => 'text',
-				'description'       => __( 'The pickup account name will be provided by your local DHL sales organization and tells us where to pick up your shipments.', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
-				'default'           => ''
-			),'dhl_pickup_id' => array(
+			'dhl_pickup_id' => array(
 				'title'             => __( 'Pickup Account ID', 'pr-shipping-dhl' ),
 				'type'              => 'text',
 				'description'       => __( 'The pickup account id (10 digits - numerical) will be provided by your local DHL sales organization and tells us where to pick up your shipments.', 'pr-shipping-dhl' ),
@@ -113,17 +107,23 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 				'desc_tip'          => true,
 				'default'           => '',
 				'placeholder'		=> '0000500000'
-			),'dhl_pickup_email' => array(
-				'title'             => __( 'Pickup Email', 'pr-shipping-dhl' ),
+			),'dhl_contact_name' => array(
+				'title'             => __( 'Account Name', 'pr-shipping-dhl' ),
 				'type'              => 'text',
-				'description'       => __( 'The pickup email.', 'pr-shipping-dhl' ),
+				'description'       => __( 'The account name will be provided by your local DHL sales organization and tells us where to pick up your shipments.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
+			),'dhl_email' => array(
+				'title'             => __( 'Email', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'The email.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 				'default'           => '',
 				'placeholder'		=> 'name@email.com'
-			),'dhl_pickup_phone' => array(
-				'title'             => __( 'Pickup Phone', 'pr-shipping-dhl' ),
+			),'dhl_phone' => array(
+				'title'             => __( 'Phone', 'pr-shipping-dhl' ),
 				'type'              => 'text',
-				'description'       => __( 'The pickup phone.', 'pr-shipping-dhl' ),
+				'description'       => __( 'The phone.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 				'default'           => '',
 				'placeholder'		=> '0214543433'
@@ -138,6 +138,15 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 				'type'            => 'title',
 				'description'     => __( 'Please configure your label parameters underneath.', 'pr-shipping-dhl' ),
 				'class'			  => '',
+			),
+			'dhl_prefix' => array(
+				'title'             => __( 'Package Prefix', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'The package prefix is added to identify the package is coming from your shop. This value is limited to 5 charaters.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => '',
+				'placeholder'		=> '',
+				'custom_attributes'	=> array( 'maxlength' => '5' )
 			),
 			'dhl_default_product_int' => array(
 				'title'             => __( 'International Default Service', 'pr-shipping-dhl' ),

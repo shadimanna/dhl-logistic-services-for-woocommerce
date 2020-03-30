@@ -163,7 +163,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 		$args['dhl_settings']['label_layout'] = $this->shipping_dhl_settings['dhl_label_layout'];
 
 		// Get DHL Pickup Address.
-		$args[ 'dhl_settings' ]['dhl_contact_name'] 	= $this->shipping_dhl_settings['dhl_pickup_name'];
+		$args[ 'dhl_settings' ]['dhl_contact_name'] 	= $this->shipping_dhl_settings['dhl_contact_name'];
 		$args[ 'dhl_settings' ]['dhl_address_1'] 		= WC()->countries->get_base_address();
 		$args[ 'dhl_settings' ]['dhl_address_2'] 		= WC()->countries->get_base_address_2();
 		$args[ 'dhl_settings' ]['dhl_city'] 			= WC()->countries->get_base_city();
@@ -171,13 +171,11 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 		$args[ 'dhl_settings' ]['dhl_district'] 		= WC()->countries->get_base_state();
 		$args[ 'dhl_settings' ]['dhl_country'] 			= WC()->countries->get_base_country();
 		$args[ 'dhl_settings' ]['dhl_postcode'] 		= WC()->countries->get_base_postcode();
-		$args[ 'dhl_settings' ]['dhl_phone'] 			= $this->shipping_dhl_settings['dhl_pickup_phone'];
-		$args[ 'dhl_settings' ]['dhl_email'] 			= $this->shipping_dhl_settings['dhl_pickup_email'];
+		$args[ 'dhl_settings' ]['dhl_phone'] 			= $this->shipping_dhl_settings['dhl_phone'];
+		$args[ 'dhl_settings' ]['dhl_email'] 			= $this->shipping_dhl_settings['dhl_email'];
 
-		//Get Weight and Dimension
-		$args[ 'order_details' ]['height'] 		= 1;
-		$args[ 'order_details' ]['width'] 		= 1;
-		$args[ 'order_details' ]['length'] 		= 1;
+		// Get package prefix
+		$args['order_details']['prefix'] = $this->shipping_dhl_settings['dhl_prefix'];
 		
 		// Get package prefix
 		$dhl_label_items['pr_dhl_description'] = $this->shipping_dhl_settings['dhl_desc_default'];
@@ -229,22 +227,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 	    	
 		}
 
-		if( floatval( $product->get_height() ) > 0 ){
-			$args['order_details']['height'] += float_val( $product->get_height(), 2 );
-		}
-
-		if( floatval( $product->get_width() ) > 0 ){
-			$args['order_details']['width'] += float_val( $product->get_width(), 2 );
-		}
-
-		if( floatval( $product->get_length() ) > 0 ){
-			$args['order_details']['length'] += float_val( $product->get_length(), 2 );
-		}
-
 		$new_item['item_export'] 		= get_post_meta( $product_id, '_dhl_export_description', true );
-		$new_item['item_height'] 		= $product->get_height();
-		$new_item['item_width']  		= $product->get_width();
-		$new_item['item_length'] 		= $product->get_length();
 		$new_item['dangerous_goods'] 	= $dangerous_goods;
 
 		return $new_item;
@@ -466,7 +449,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 			// Initially we were using a transient, but this seemed to cause issues
 			// on some hosts (mainly GoDaddy) that had difficulty in implementing a
 			// proper object cache override.
-			update_option( "pr_dhl_handover_order_ids_{$order_ids_hash}", $order_ids );
+			update_option( 'pr_dhl_handover_order_ids_' . $order_ids_hash, $order_ids );
 
 			$action_url = wp_nonce_url(
 				add_query_arg(
@@ -515,7 +498,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 			// Get order IDs temporary option.
 			$order_ids_hash = isset( $_GET['order_ids'] ) ? $_GET['order_ids'] : '';
-			$order_ids      = empty( $order_ids_hash )    ? array()            : get_option( "pr_dhl_handover_order_ids_{$order_ids_hash}" );
+			$order_ids      = empty( $order_ids_hash )    ? array()            : get_option( 'pr_dhl_handover_order_ids_' . $order_ids_hash );
 			$order_ids      = false === $order_ids        ? array()            : $order_ids;
 
 			if ( empty( $order_ids ) ) {
@@ -523,7 +506,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 			}
 
 			// Since this is not a transient, we delete it manually.
-			delete_option( "pr_dhl_handover_order_ids_{$order_ids_hash}" );
+			delete_option( 'pr_dhl_handover_order_ids_' . $order_ids_hash );
 
 			// Generate the handover id random number (10 digits) with prefix '8'
 			$handover_id = $this->get_handover_num();

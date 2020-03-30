@@ -16,24 +16,6 @@ use stdClass;
 class Client extends API_Client {
 
 	/**
-	 * The pickup address data.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @var array
-	 */
-	protected $pickup_address;
-
-	/**
-	 * The shipper address data.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @var array
-	 */
-	protected $shipper_address;
-
-	/**
 	 * {@inheritdoc}
 	 *
 	 * @since [*next-version*]
@@ -86,17 +68,17 @@ class Client extends API_Client {
 
 		$token 	= $this->auth->load_token();
 
-		$pickup_address = $item_info->pickup;
+		$shipper_address = $item_info->shipper;
 
-		if( empty( $pickup_address['phone'] ) ){
-			unset( $pickup_address['phone'] );
+		if( empty( $shipper_address['phone'] ) ){
+			unset( $shipper_address['phone'] );
 		}
 
-		if( empty( $pickup_address['email'] ) ){
-			unset( $pickup_address['email'] );
+		if( empty( $shipper_address['email'] ) ){
+			unset( $shipper_address['email'] );
 		}
 
-		$shipper_address 	= $pickup_address;
+		//$pickup_address 	= $shipper_address;
 
 		$contents 			= $item_info->contents;
 		$shipment_contents 	= array();
@@ -104,16 +86,13 @@ class Client extends API_Client {
 		foreach( $contents as $content ){
 
 			$shipment_content = array(
-				"skuNumber" 			=> $content['sku'],
-				"description"			=> $content['description'],
-				"descriptionImport" 	=> $content['description'],
-				"descriptionExport" 	=> $content['description'],
-				"itemValue" 			=> round( $content['value'], 2 ),
-				"itemQuantity" 			=> $content['qty'],
-				"grossWeight" 			=> $content['weight'],
-				"netWeight" 			=> $content['weight'],
-				"weightUOM" 			=> $item_info->shipment['weightUom'],
-				"countryOfOrigin" 		=> $content['origin']
+				'skuNumber' 			=> $content['sku'],
+				'description'			=> $content['description'],
+				'itemValue' 			=> round( $content['value'], 2 ),
+				'itemQuantity' 			=> $content['qty'],
+				'netWeight' 			=> $content['weight'],
+				'weightUOM' 			=> $item_info->shipment['weightUom'],
+				'countryOfOrigin' 		=> $content['origin']
 			);
 
 			if( !empty( $content['hs_code'] ) ){
@@ -128,17 +107,17 @@ class Client extends API_Client {
 
 		}
 
-		$return_address 	= $pickup_address;
+		//$return_address 	= $shipper_address;
 		$consignee 			= $item_info->consignee;
 
 		if( $consignee['district'] == '' ){
 			$consignee['district'] = $consignee['state'];
 		}
 
-		$shipmentid 		= "DHL". date("YmdHis") . sprintf('%07d', $item_info->order );
+		$shipmentid 		= $item_info->shipment['prefix'] . sprintf('%07d', $item_info->shipment['order_id'] );
 
 		$shipment_item 		= array(
-			'returnAddress' 	=> $return_address,
+			//'returnAddress' 	=> $return_address,
 			'consigneeAddress' 	=> $consignee,
 			'shipmentID' 		=> $shipmentid,
 			'returnMode' 		=> $item_info->shipment['return_mode'],
@@ -146,24 +125,18 @@ class Client extends API_Client {
 			'totalWeight' 		=> $item_info->shipment['weight'],
 			'totalWeightUOM' 	=> $item_info->shipment['weightUom'],
 			'dimensionUOM' 		=> $item_info->shipment['dimensionUom'],
-			"height" 			=> $item_info->shipment['height'],
-			"length" 			=> $item_info->shipment['length'],
-			"width" 			=> $item_info->shipment['width'],
 			'productCode' 		=> $item_info->shipment['product_code'],
 			'totalValue'		=> $item_info->shipment['total_value'],
 			'currency' 			=> $item_info->shipment['currency'],
-			"isMult"			=> $item_info->shipment['is_mult'],
-			"deliveryOption"	=> $item_info->shipment['delivery_option'],
 			'shipmentPieces' 	=> array(
 				array(
-					"pieceID" 			=> $item_info->order,
-					"announcedWeight" 	=> array(
-						"weight" 	=> $item_info->shipment['weight'],
-						"unit" 		=> $item_info->shipment['weightUom']
+					'pieceID' 			=> $item_info->shipment['order_id'],
+					'announcedWeight' 	=> array(
+						'weight' 	=> $item_info->shipment['weight'],
+						'unit' 		=> $item_info->shipment['weightUom']
 					),
-					"billingReference1"	=> $item_info->order,
-					"billingReference2" => $item_info->order,
-					"pieceDescription"	=> "Order no. " . $item_info->order
+					'billingReference1'	=> $item_info->shipment['order_id'],
+					'pieceDescription'	=> $item_info->shipment['description']
 				)
 			),
 			'shipmentContents' 			=> $shipment_contents
@@ -171,7 +144,7 @@ class Client extends API_Client {
 
 		if( !empty( $item_info->shipment['incoterm'] ) ){
 
-			$shipment_item["incoterm"] = $item_info->shipment['incoterm'];
+			$shipment_item['incoterm'] = $item_info->shipment['incoterm'];
 
 		}
 
@@ -187,7 +160,7 @@ class Client extends API_Client {
 				'bd' 	=> array(
 					'pickupAccountId' 	=> $item_info->body[ 'pickup_id' ],
 					'soldToAccountId'	=> $item_info->body[ 'soldto_id' ],
-					'pickupAddress' 	=> $pickup_address,
+					//'pickupAddress' 	=> $pickup_address,
 					'shipperAddress' 	=> $shipper_address,
 					'shipmentItems' 	=> array( $shipment_item ),
 					'label' 			=> array(
