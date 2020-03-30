@@ -89,9 +89,9 @@ class DHLPWC_Controller_Cart
         }
 
         $service = DHLPWC_Model_Service_Checkout::instance();
-        $search_value = $service->get_cart_shipping_postal_code(true) ?: null;
+        $postal_code = $service->get_cart_shipping_postal_code() ?: null;
 
-        WC()->session->set('dhlpwc_parcelshop_selection_sync', array($parcelshop_id, $country_code, $search_value));
+        WC()->session->set('dhlpwc_parcelshop_selection_sync', array($parcelshop_id, $country_code, $postal_code));
         wp_send_json($json_response->to_array(), 200);
     }
 
@@ -171,9 +171,9 @@ class DHLPWC_Controller_Cart
                 case 'dhlpwc-parcelshop':
                     $sync = WC()->session->get('dhlpwc_parcelshop_selection_sync');
                     if ($sync) {
-                        list($parcelshop_id, $country_code, $search_value_memory) = $sync;
+                        list($parcelshop_id, $country_code, $postal_code_memory) = $sync;
                     } else {
-                        list($parcelshop_id, $country_code, $search_value_memory) = array(null, null, null);
+                        list($parcelshop_id, $country_code, $postal_code_memory) = array(null, null, null);
                     }
 
                     $service = DHLPWC_Model_Service_Checkout::instance();
@@ -182,20 +182,19 @@ class DHLPWC_Controller_Cart
                     $cart_country = $service->get_cart_shipping_country_code();
                     if (!empty($country_code) && $country_code != $cart_country) {
                         // Reset selection, due to countries being out of sync
-                        list($parcelshop_id, $country_code, $search_value_memory) = array(null, null, null);
+                        list($parcelshop_id, $country_code, $postal_code_memory) = array(null, null, null);
                         WC()->session->set('dhlpwc_parcelshop_selection_sync', array(null, null, null));
                     }
 
-                    $search_value = $service->get_cart_shipping_postal_code(true) ?: null;
                     $postal_code = $service->get_cart_shipping_postal_code() ?: null;
                     $country_code = $country_code ?: $cart_country;
 
                     // Attempt to select a default parcelshop when none is selected or postal code is changed
                     $service = DHLPWC_Model_Service_Parcelshop::instance();
-                    if (!$parcelshop_id || $search_value != $search_value_memory) {
+                    if (!$parcelshop_id || $postal_code != $postal_code_memory) {
                         $parcelshop = $service->search_parcelshop($postal_code, $country_code);
                         if ($parcelshop) {
-                            WC()->session->set('dhlpwc_parcelshop_selection_sync', array($parcelshop->id, $country_code, $search_value));
+                            WC()->session->set('dhlpwc_parcelshop_selection_sync', array($parcelshop->id, $country_code, $postal_code));
                         }
                     } else {
                         $parcelshop = $service->get_parcelshop($parcelshop_id, $country_code);
@@ -204,7 +203,7 @@ class DHLPWC_Controller_Cart
                     $view = new DHLPWC_Template('cart.parcelshop-option');
                     $view->render(array(
                         'country_code' => $country_code,
-                        'search_value' => $search_value,
+                        'postal_code' => $postal_code,
                         'parcelshop' => $parcelshop,
                     ));
 
