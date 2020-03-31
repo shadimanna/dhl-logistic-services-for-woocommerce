@@ -114,14 +114,14 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 				'desc_tip'          => true,
 				'default'           => ''
 			),'dhl_email' => array(
-				'title'             => __( 'Email', 'pr-shipping-dhl' ),
+				'title'             => __( 'Account Email', 'pr-shipping-dhl' ),
 				'type'              => 'text',
 				'description'       => __( 'The email.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 				'default'           => '',
 				'placeholder'		=> 'name@email.com'
 			),'dhl_phone' => array(
-				'title'             => __( 'Phone', 'pr-shipping-dhl' ),
+				'title'             => __( 'Account Phone', 'pr-shipping-dhl' ),
 				'type'              => 'text',
 				'description'       => __( 'The phone.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
@@ -139,15 +139,6 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 				'description'     => __( 'Please configure your label parameters underneath.', 'pr-shipping-dhl' ),
 				'class'			  => '',
 			),
-			'dhl_prefix' => array(
-				'title'             => __( 'Package Prefix', 'pr-shipping-dhl' ),
-				'type'              => 'text',
-				'description'       => __( 'The package prefix is added to identify the package is coming from your shop. This value is limited to 5 charaters.', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
-				'default'           => '',
-				'placeholder'		=> '',
-				'custom_attributes'	=> array( 'maxlength' => '5' )
-			),
 			'dhl_default_product_int' => array(
 				'title'             => __( 'International Default Service', 'pr-shipping-dhl' ),
 				'type'              => 'select',
@@ -164,6 +155,15 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 				'options'           => $select_dhl_product_dom,
 				'class'				=> 'wc-enhanced-select'
 			),
+            'dhl_prefix' => array(
+                'title'             => __( 'Package Prefix', 'pr-shipping-dhl' ),
+                'type'              => 'text',
+                'description'       => __( 'The package prefix is added to identify the package is coming from your shop. This value is limited to 5 charaters.', 'pr-shipping-dhl' ),
+                'desc_tip'          => true,
+                'default'           => '',
+                'placeholder'		=> '',
+                'custom_attributes'	=> array( 'maxlength' => '5' )
+            ),
 			'dhl_desc_default' => array(
 				'title'             => __( 'Package Description', 'pr-shipping-dhl' ),
 				'type'              => 'select',
