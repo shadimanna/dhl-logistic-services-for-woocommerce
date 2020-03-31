@@ -2,7 +2,7 @@
     exit;
 } ?>
 <div class="dhlpwc-shipping-method-parcelshop-option"
-    <?php echo !empty($search_value) ? 'data-search-value="' . $search_value . '"' : '' ?>
+    <?php echo !empty($postal_code) ? 'data-search-value="' . $postal_code . '"' : '' ?>
     <?php echo !empty($country_code) ? 'data-country-code="' . $country_code . '"' : '' ?>
 >
     <?php if (!empty($parcelshop)) : ?>
@@ -17,7 +17,7 @@
             <div class="dhlpwc-parcelshop-option-list-search">
                 <input type="text"
                        placeholder="<?php _e('Search by postcode, city or name', 'dhlpwc') ?>"
-                       value="<?php echo $search_value ?>"></div>
+                       value="<?php echo $postal_code ?>"></div>
         </div>
     </div>
 </div>
