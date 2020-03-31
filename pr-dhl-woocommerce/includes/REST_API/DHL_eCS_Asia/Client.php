@@ -65,9 +65,7 @@ class Client extends API_Client {
 	 * @return array The request data for the given item info object.
 	 */
 	protected function item_info_to_request_data( Item_Info $item_info ) {
-
-		$token 	= $this->auth->authorize();
-
+		
 		$shipper_address = $item_info->shipper;
 
 		if( empty( $shipper_address['phone'] ) ){
@@ -154,7 +152,7 @@ class Client extends API_Client {
 					'messageType' 		=> $item_info->header[ 'message_type' ],
 					'messageDateTime' 	=> $item_info->header[ 'message_date_time' ],
 					'messageVersion' 	=> $item_info->header[ 'message_version' ],
-					'accessToken'		=> $token->token,
+					//'accessToken'		=> $token->token,
 					'messageLanguage' 	=> $item_info->header[ 'message_language' ]
 				),
 				'bd' 	=> array(
