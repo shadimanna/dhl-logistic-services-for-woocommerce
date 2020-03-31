@@ -225,7 +225,7 @@ class Item_Info {
 
 		return array(
 			'order_id'      => array(
-				'default' => '',
+				'error'  => __( 'Shipment "Order ID" is empty!', 'pr-shipping-dhl' ),
 			),
 			'prefix' 		=> array(
 				'default' => 'DHL'
@@ -234,7 +234,7 @@ class Item_Info {
 				'default' => '01'
 			),
 			'description' 	=> array(
-				'default' => ''
+				'error'  => __( 'Shipment "Description" is empty!', 'pr-shipping-dhl' ),
 			),
 			'weight'     => array(
 				'default' => '1',
@@ -264,7 +264,6 @@ class Item_Info {
 				'default' 	=> ''
 			),
 			'total_value' => array(
-				'default' => 1,
 				'error'  => __( 'Shipment "Value" is empty!', 'pr-shipping-dhl' ),
 				'validate' => function( $value ) {
 					if ( ! is_numeric( $value ) ) {
@@ -297,7 +296,6 @@ class Item_Info {
 		
 		return array(
 			'name'      => array(
-				'default' => '',
 				'error'  => __( 'Recipient is empty!', 'pr-shipping-dhl' ),
 				'sanitize' => function( $name ) use ($self) {
 
@@ -312,7 +310,6 @@ class Item_Info {
 				}
 			),
 			'email'     => array(
-				'default' => '',
 				'error' => __( 'Shipping "Email" is empty!', 'pr-shipping-dhl' ),
 			),
 			'address_1' => array(
@@ -328,14 +325,13 @@ class Item_Info {
 			),
 			'postcode'  => array(
 				'rename' => 'postCode',
-				'default' => '',
 				'error' => __( 'Shipping "Postcode" is empty!', 'pr-shipping-dhl' ),
 			),
 			'district' => array(
 				'default' => ''
 			),
 			'state'     => array(
-				'default' => '',
+				'error' => __( 'Shipping "State" is empty!', 'pr-shipping-dhl' ),
 			),
 			'country'   => array(
 				'error' => __( 'Shipping "Country" is empty!', 'pr-shipping-dhl' ),
@@ -388,16 +384,13 @@ class Item_Info {
 			'dhl_district'     => array(
 				'rename' => 'district',
 				'default' => '',
-				'error' => __( 'Base "District" is empty!', 'pr-shipping-dhl' ),
 			),
 			'dhl_postcode'  => array(
 				'rename' => 'postCode',
-				'default' => '',
 				'error' => __( 'Base "Postcode" is empty!', 'pr-shipping-dhl' ),
 			),
 			'dhl_state'     => array(
 				'rename' => 'state',
-				'default' => '',
 				'error'   => __( 'Base "State" is empty!', 'pr-shipping-dhl' ),
 			),
 			'dhl_country'   => array(
