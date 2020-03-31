@@ -66,7 +66,7 @@ class Client extends API_Client {
 	 */
 	protected function item_info_to_request_data( Item_Info $item_info ) {
 
-		$token 	= $this->auth->load_token();
+		$token 	= $this->auth->authorize();
 
 		$shipper_address = $item_info->shipper;
 
@@ -161,7 +161,7 @@ class Client extends API_Client {
 					'pickupAccountId' 	=> $item_info->body[ 'pickup_id' ],
 					'soldToAccountId'	=> $item_info->body[ 'soldto_id' ],
 					//'pickupAddress' 	=> $pickup_address,
-					'shipperAddress' 	=> $shipper_address,
+//					'shipperAddress' 	=> $shipper_address,
 					'shipmentItems' 	=> array( $shipment_item ),
 					'label' 			=> array(
 						'format' 	=> $item_info->body[ 'label_format' ],

@@ -138,7 +138,7 @@ class Item_Info {
 		$this->body 			= Args_Parser::parse_args( $shipping_info, $this->get_body_info_schema() );
 		$this->shipment 		= Args_Parser::parse_args( $shipping_info, $this->get_shipment_info_schema() );
 		$this->consignee 		= Args_Parser::parse_args( $recipient_info, $this->get_recipient_info_schema() );
-		$this->shipper 			= Args_Parser::parse_args( $settings, $this->get_shipper_info_schema() );
+//		$this->shipper 			= Args_Parser::parse_args( $settings, $this->get_shipper_info_schema() );
 		$this->contents 		= array();
 
 		foreach ( $items_info as $item_info ) {
@@ -359,7 +359,7 @@ class Item_Info {
 		return array(
 			'dhl_contact_name'      => array(
 				'rename' => 'name',
-				'error'  => __( 'Base "Contact Name" is empty!', 'pr-shipping-dhl' ),
+				'error'  => __( '"Account Name" in settings is empty.', 'pr-shipping-dhl' ),
 				'sanitize' => function( $name ) use ($self) {
 
 					return $self->string_length_sanitization( $name, 30 );
@@ -368,15 +368,10 @@ class Item_Info {
 			'dhl_phone'     => array(
 				'rename' => 'phone',
 				'default' => '',
-				'sanitize' => function( $phone ) use ($self) {
-
-					return $self->string_length_sanitization( $phone, 15 );
-				}
 			),
 			'dhl_email'     => array(
 				'rename' => 'email',
 				'default' => '',
-				'error'  => __( 'Base "Email" is empty!', 'pr-shipping-dhl' ),
 			),
 			'dhl_address_1' => array(
 				'rename' => 'address1',
