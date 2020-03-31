@@ -359,7 +359,6 @@ class Item_Info {
 		return array(
 			'dhl_contact_name'      => array(
 				'rename' => 'name',
-				'default' => '',
 				'error'  => __( 'Base "Contact Name" is empty!', 'pr-shipping-dhl' ),
 				'sanitize' => function( $name ) use ($self) {
 
