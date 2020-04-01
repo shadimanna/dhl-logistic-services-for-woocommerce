@@ -134,7 +134,9 @@ class Auth implements API_Auth_Interface {
 		$code = $this->token->token;
 
 		//$request->headers[ static::H_AUTH_TOKEN ] = $type . ' ' . $code;
-		$request->body['labelRequest']['hdr']['accessToken'] = $code;
+		foreach( $request->body as $key => $value ){
+			$request->body[$key]['hdr']['accessToken'] = $code;
+		}
 		return $request;
 	}
 

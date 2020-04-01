@@ -387,8 +387,8 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 
 		//$label_response 	= $this->api_client->create_shipping_label();
 		$label_response 	= $this->api_client->create_label( $item_info );
-		//error_log( 'RESPONSE:' );
-		//error_log( print_r( $label_response, true ) );
+		error_log( 'RESPONSE:' );
+		error_log( print_r( $label_response, true ) );
 		$label_response 	= json_decode( $label_response );
 
 		$response_status 	= $label_response->labelResponse->bd->responseStatus;
@@ -399,35 +399,25 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 			);
 		}
 
-		if( isset( $label_response->labelResponse->bd->labels[0]->pieces ) ){
-			$label_pieces 		= $label_response->labelResponse->bd->labels[0]->pieces;
-			foreach( $label_pieces as $piece_id => $piece ){
-
-				$label_pdf_data 	= base64_decode( $piece->content );
-				$item_barcode 		= $piece->deliveryConfirmationNo . '.' . $piece->shipmentPieceID;
-				$tracking_num 		= $piece->deliveryConfirmationNo;
-				$item_file_info 	= $this->save_dhl_label_file( 'item', $item_barcode, $label_pdf_data );
-				
-			}
-		}else{
-			$labels_info 		= $label_response->labelResponse->bd->labels[0];
-			$label_pdf_data 	= base64_decode( $labels_info->content );
-			$item_barcode 		= $labels_info->deliveryConfirmationNo;
-			if( empty( $item_barcode ) ){
-				$item_barcode = $labels_info->shipmentID;	
-			}
-			$tracking_num 		= $item_barcode;
-			$item_file_info 	= $this->save_dhl_label_file( 'item', $item_barcode, $label_pdf_data );
+		$labels_info 		= $label_response->labelResponse->bd->labels[0];
+		$label_pdf_data 	= base64_decode( $labels_info->content );
+		$delivery_conf_no 	= $labels_info->deliveryConfirmationNo;
+		if( empty( $delivery_conf_no ) ){
+			$delivery_conf_no = $labels_info->shipmentID;	
 		}
+		$shipment_id 		= $labels_info->shipmentID;
+		$tracking_num 		= $shipment_id;
+		$item_file_info 	= $this->save_dhl_label_file( 'item', $shipment_id, $label_pdf_data );
 		
 		//$this->save_dhl_label_file( 'item', $item_barcode, $label_pdf_data );
 
 		return array(
-			'label_path' => $item_file_info->path,
-			'label_url' 	=> $item_file_info->url,
-			'item_barcode' => $item_barcode,
-			'tracking_number' => $tracking_num,
-			'tracking_status' => '',
+			'label_path' 			=> $item_file_info->path,
+			'label_url' 			=> $item_file_info->url,
+			'shipment_id' 			=> $shipment_id,
+			'delivery_confirm_no' 	=> $delivery_conf_no,
+			'tracking_number' 		=> $tracking_num,
+			'tracking_status' 		=> '',
 		);
 	}
 
@@ -436,9 +426,32 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	 *
 	 * @since [*next-version*]
 	 */
-	public function delete_dhl_label( $label_info ) {
+	public function delete_dhl_label( $args ) {
+		
+		$label_info = $args['label_tracking'];
+		
 		if ( ! isset( $label_info['label_path'] ) ) {
 			throw new Exception( __( 'DHL Label has no path!', 'pr-shipping-dhl' ) );
+		}
+
+		$uom = get_option( 'woocommerce_weight_unit' );
+		try {
+			$item_info = new Item_Info( $args, $uom );
+		} catch (Exception $e) {
+			throw $e;
+		}
+
+		$label_response 	= $this->api_client->delete_label( $item_info );
+		//error_log( 'RESPONSE DELETE:' );
+		//error_log( print_r( $label_response, true ) );
+		$label_response 	= json_decode( $label_response );
+		
+		$response_status 	= $label_response->deleteShipmentResp->bd->responseStatus;
+		if( $response_status->code != 200 ){
+			throw new Exception( 
+				"Error: " . $response_status->message . "<br /> " .
+				"Detail: " . $response_status->messageDetails[0]->messageDetail 
+			);
 		}
 
 		$label_path = $label_info['label_path'];

@@ -255,6 +255,15 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 	}
 
+	protected function delete_label_args( $order_id ) {
+		// Gather args for DHL API call
+		$args = $this->get_label_args( $order_id );
+		$args['label_tracking'] 				= $this->get_dhl_label_tracking( $order_id );
+		$args['tracking_number'] 				= $args['label_tracking']['tracking_number'];
+		
+		return $args;
+	}
+
 	// Used by label API to pass handover number
 	protected function get_label_handover_num() {
 		// If handover exists, use it...

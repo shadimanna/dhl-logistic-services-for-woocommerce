@@ -51,7 +51,7 @@ class Client extends API_Client {
 
 		throw new Exception(
 			sprintf(
-				__( 'Failed to create order: %s', 'pr-shipping-dhl' ),
+				__( 'Failed to create label: %s', 'pr-shipping-dhl' ),
 				implode( ', ', $response->body->messages )
 			)
 		);
@@ -173,16 +173,91 @@ class Client extends API_Client {
 	}
 
 	/**
-	 * Prepares an API route with the customer namespace and EKP.
+	 * Deletes an item from the remote API.
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @param string $route The route to prepare.
+	 * @param int $item_id The ID of the item to delete.
+	 *
+	 * @return stdClass The response.
+	 *
+	 * @throws Exception
+	 */
+	public function delete_label( $item_info ) {
+
+		$route 	= $this->delete_label_route();
+
+		$data = $this->item_info_to_delete_label( $item_info );
+		//error_log( 'DELETE DATA' );
+		//error_log( print_r( $data, true ) );
+		$response = $this->post($route, $data);
+		
+		if ( $response->status === 200 ) {
+			
+			return $response->body;
+
+		}
+
+		throw new Exception(
+			sprintf(
+				__( 'Failed to delete label: %s', 'pr-shipping-dhl' ),
+				implode( ', ', $response->body->messages )
+			)
+		);
+	}
+
+	/**
+	 * Transforms an item info object into a delete label array.
+	 *
+	 * @param Item_Info $item_info The item info object to transform.
+	 *
+	 * @return array The request data for the given item info object.
+	 */
+	protected function item_info_to_delete_label( Item_Info $item_info ) {
+
+		$shipmentid 		= $item_info->delete_info['shipment_id'];
+
+		return array(
+			'deleteShipmentReq' 	=> array(
+				'hdr' 	=> array(
+					'messageType' 		=> $item_info->delete_info[ 'message_type' ],
+					'messageDateTime' 	=> $item_info->header[ 'message_date_time' ],
+					'messageVersion' 	=> $item_info->header[ 'message_version' ],
+					'messageLanguage' 	=> $item_info->header[ 'message_language' ]
+				),
+				'bd' 	=> array(
+					'pickupAccountId' 	=> $item_info->body[ 'pickup_id' ],
+					'soldToAccountId'	=> $item_info->body[ 'soldto_id' ],
+					'shipmentItems' 	=> array(
+						array(
+							'shipmentID' 		=> $shipmentid,
+						)
+					 ),
+				)
+			)
+		);
+	}
+
+	/**
+	 * Prepares an API route with the customer namespace and EKP.
+	 *
+	 * @since [*next-version*]
 	 *
 	 * @return string
 	 */
 	protected function shipping_label_route() {
 		return 'rest/v2/Label';
+	}
+
+	/**
+	 * Prepares an API route for deleting label.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return string
+	 */
+	protected function delete_label_route() {
+		return $this->shipping_label_route(). '/Delete';
 	}
 
 }

@@ -94,6 +94,15 @@ class Item_Info {
 	public $contents;
 
 	/**
+	 * The array of delete information sub-arrays.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @var array[]
+	 */
+	public $delete_info;
+
+	/**
 	 * The units of measurement used for weights in the input args.
 	 *
 	 * @since [*next-version*]
@@ -143,6 +152,11 @@ class Item_Info {
 
 		foreach ( $items_info as $item_info ) {
 			$this->contents[] = Args_Parser::parse_args( $item_info, $this->get_content_item_info_schema() );
+		}
+
+		if( isset( $args[ 'label_tracking' ] ) ){
+			$tracking_info 			= $args[ 'label_tracking' ] + $settings;
+			$this->delete_info 		= Args_Parser::parse_args( $tracking_info, $this->get_delete_info_schema() );	
 		}
 	}
 
@@ -470,6 +484,29 @@ class Item_Info {
 			),
 			'dangerous_goods' => array(
 				'default' => ''
+			)
+		);
+	}
+
+	/**
+	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing order content item info.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return array
+	 */
+	protected function get_delete_info_schema()
+	{
+		// Closures in PHP 5.3 do not inherit class context
+		// So we need to copy $this into a lexical variable and pass it to closures manually
+		$self = $this;
+
+		return array(
+			'message_type' 		=> array(
+				'default' => 'DELETESHIPMENT',
+			),
+			'shipment_id'     	=> array(
+				'default'  => '',
 			)
 		);
 	}
