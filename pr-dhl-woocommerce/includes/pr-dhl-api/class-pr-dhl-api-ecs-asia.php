@@ -397,8 +397,6 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	 * @since [*next-version*]
 	 */
 	public function get_dhl_label( $args ) {
-		//error_log( 'ARGS:' );
-		//error_log( print_r( $args, true ) );
 
 		$order_id = isset( $args[ 'order_details' ][ 'order_id' ] )
 			? $args[ 'order_details' ][ 'order_id' ]
@@ -415,8 +413,6 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 
 		//$label_response 	= $this->api_client->create_shipping_label();
 		$label_response 	= $this->api_client->create_label( $item_info );
-		error_log( 'RESPONSE:' );
-		error_log( print_r( $label_response, true ) );
 		$label_response 	= json_decode( $label_response );
 
 		$response_status 	= $label_response->labelResponse->bd->responseStatus;
@@ -461,8 +457,6 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		}
 
 		$label_response 	= $this->api_client->delete_label( $label_info );
-		error_log( 'RESPONSE DELETE:' );
-		error_log( print_r( $label_response, true ) );
 		$label_response 	= json_decode( $label_response );
 		
 		$response_status 	= $label_response->deleteShipmentResp->bd->responseStatus;

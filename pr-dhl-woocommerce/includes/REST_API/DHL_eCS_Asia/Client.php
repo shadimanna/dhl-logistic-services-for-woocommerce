@@ -255,10 +255,8 @@ class Client extends API_Client {
 
 		$route 	= $this->delete_label_route();
 
-		$data = $this->label_info_to_delete_label( $label_info );
-		//error_log( 'DELETE DATA' );
-		//error_log( print_r( $data, true ) );
-		$response = $this->post($route, $data);
+		$data 		= $this->label_info_to_delete_label( $label_info );
+		$response 	= $this->post($route, $data);
 		
 		if ( $response->status === 200 ) {
 			
