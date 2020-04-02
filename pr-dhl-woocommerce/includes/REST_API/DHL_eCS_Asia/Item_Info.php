@@ -22,15 +22,6 @@ class Item_Info {
 	public $order_id;
 
 	/**
-	 * The array of header information.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @var array
-	 */
-	public $header;
-
-	/**
 	 * The array of body information.
 	 *
 	 * @since [*next-version*]
@@ -94,15 +85,6 @@ class Item_Info {
 	public $contents;
 
 	/**
-	 * The array of delete information sub-arrays.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @var array[]
-	 */
-	public $delete_info;
-
-	/**
 	 * The units of measurement used for weights in the input args.
 	 *
 	 * @since [*next-version*]
@@ -143,7 +125,6 @@ class Item_Info {
 		$shipping_info = $args[ 'order_details' ] + $settings;
 		$items_info = $args['items'];
 		
-		$this->header 			= Args_Parser::parse_args( $shipping_info, $this->get_header_info_schema() );
 		$this->body 			= Args_Parser::parse_args( $shipping_info, $this->get_body_info_schema() );
 		$this->shipment 		= Args_Parser::parse_args( $shipping_info, $this->get_shipment_info_schema() );
 		$this->consignee 		= Args_Parser::parse_args( $recipient_info, $this->get_recipient_info_schema() );
@@ -153,43 +134,6 @@ class Item_Info {
 		foreach ( $items_info as $item_info ) {
 			$this->contents[] = Args_Parser::parse_args( $item_info, $this->get_content_item_info_schema() );
 		}
-
-		if( isset( $args[ 'label_tracking' ] ) ){
-			$tracking_info 			= $args[ 'label_tracking' ] + $settings;
-			$this->delete_info 		= Args_Parser::parse_args( $tracking_info, $this->get_delete_info_schema() );	
-		}
-	}
-
-	/**
-	 * Retrieves the args scheme to use with {@link Args_Parser} for header info.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @return array
-	 */
-	protected function get_header_info_schema() {
-
-		// Closures in PHP 5.3 do not inherit class context
-		// So we need to copy $this into a lexical variable and pass it to closures manually
-		$self = $this;
-		
-		return array(
-			'message_type' => array(
-				'default' => 'LABEL'
-			),
-			'message_date_time' => array(
-				'default' => date( 'c', time() )
-			),
-			'message_version' => array(
-				'default' => '1.4'
-			),
-			'access_token' => array(
-				'default' => ''
-			),
-			'message_language' => array(
-				'default' => 'en'
-			)
-		);
 	}
 
 	/**
@@ -206,17 +150,11 @@ class Item_Info {
 		$self = $this;
 		
 		return array(
-			'pickup_id' => array(
-				'error' => __( 'Pickup Account ID is empty!', 'pr-shipping-dhl' ),
-			),
-			'soldto_id' => array(
-				'error' => __( 'Soldto Account ID is empty!', 'pr-shipping-dhl' ),
-			),
 			'label_format' => array(
-				'default' => 'PDF'
+				'default' => ''
 			),
 			'label_layout' => array(
-				'default' => '1x1'
+				'default' => ''
 			),
 			'label_pagesize' => array(
 				'default' => '400x600'
@@ -248,7 +186,6 @@ class Item_Info {
 				'error'  => __( 'Shipment "Description" is empty!', 'pr-shipping-dhl' ),
 			),
 			'weight'     => array(
-				'default' => '1',
 				'sanitize' => function ( $weight ) use ($self) {
 
 					$weight = $self->maybe_convert_to_grams( $weight, $self->weightUom );
@@ -257,7 +194,6 @@ class Item_Info {
 				}
 			),
 			'weightUom'  => array(
-				'default' => 'G',
 				'sanitize' => function ( $uom ) use ($self) {
 
 					return ( $uom != 'G' )? 'G' : $uom;
@@ -272,7 +208,7 @@ class Item_Info {
 			),
 			'duties' => array(
 				'rename' 	=> 'incoterm',
-				'default' 	=> ''
+				'error'  => __( 'Shipment "Duties" is empty!', 'pr-shipping-dhl' ),
 			),
 			'total_value' => array(
 				'error'  => __( 'Shipment "Value" is empty!', 'pr-shipping-dhl' ),
@@ -321,7 +257,7 @@ class Item_Info {
 				}
 			),
 			'email'     => array(
-				'error' => __( 'Shipping "Email" is empty!', 'pr-shipping-dhl' ),
+				'default' => '',
 			),
 			'address_1' => array(
 				'rename' => 'address1',
@@ -342,7 +278,7 @@ class Item_Info {
 				'default' => ''
 			),
 			'state'     => array(
-				'error' => __( 'Shipping "State" is empty!', 'pr-shipping-dhl' ),
+				'default' => '',
 			),
 			'country'   => array(
 				'error' => __( 'Shipping "Country" is empty!', 'pr-shipping-dhl' ),
@@ -402,7 +338,7 @@ class Item_Info {
 			),
 			'dhl_state'     => array(
 				'rename' => 'state',
-				'error'   => __( 'Base "State" is empty!', 'pr-shipping-dhl' ),
+				'default' => '',
 			),
 			'dhl_country'   => array(
 				'rename' => 'country',
@@ -434,9 +370,9 @@ class Item_Info {
 						return;
 					}
 
-					if ( $length < 4 || $length > 20 ) {
+					if ( $length < 6 || $length > 20 ) {
 						throw new Exception(
-							__( 'Item HS Code must be between 0 and 20 characters long', 'pr-shipping-dhl' )
+							__( 'Item HS Code must be between 6 and 20 characters long', 'pr-shipping-dhl' )
 						);
 					}
 				},
@@ -450,28 +386,36 @@ class Item_Info {
 				}
 			),
 			'product_id'  => array(
-				'default' => '',
+				'error' => __( 'Item "Product ID" is empty!', 'pr-shipping-dhl' ),
 			),
 			'sku'         => array(
-				'default' => '',
+				'error' => __( 'Item "Product SKU" is empty!', 'pr-shipping-dhl' ),
 			),
 			'item_value'       => array(
 				'rename' => 'value',
 				'default' => 0,
 				'sanitize' => function( $value ) use ($self) {
 
-					return (string) $self->float_round_sanitization( $value, 2 );
+					return $self->float_round_sanitization( $value, 2 );
 				}
 			),
 			'origin'      => array(
 				'default' => PR_DHL()->get_base_country(),
 			),
 			'qty'         => array(
-				'default' => 1,
+				'validate' => function( $qty ) {
+
+					if( !is_numeric( $qty ) || $qty < 1 ){
+
+						throw new Exception(
+							__( 'Item quantity must be more than 1', 'pr-shipping-dhl' )
+						);
+
+					}
+				},
 			),
 			'item_weight'      => array(
 				'rename' => 'weight',
-				'default' => 1,
 				'sanitize' => function ( $weight ) use ($self) {
 
 					$weight = $self->maybe_convert_to_grams( $weight, $self->weightUom );
@@ -481,29 +425,6 @@ class Item_Info {
 			),
 			'dangerous_goods' => array(
 				'default' => ''
-			)
-		);
-	}
-
-	/**
-	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing order content item info.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @return array
-	 */
-	protected function get_delete_info_schema()
-	{
-		// Closures in PHP 5.3 do not inherit class context
-		// So we need to copy $this into a lexical variable and pass it to closures manually
-		$self = $this;
-
-		return array(
-			'message_type' 		=> array(
-				'default' => 'DELETESHIPMENT',
-			),
-			'shipment_id'     	=> array(
-				'default'  => '',
 			)
 		);
 	}

@@ -16,15 +16,41 @@ use stdClass;
 class Client extends API_Client {
 
 	/**
+	 * The DHL Pickup Account ID.
+	 *
+	 */
+	protected $pickup_id;
+
+	/**
+	 * The DHL SoldTo Account ID
+	 *
+	 */
+	protected $soldto_id;
+
+	/**
+	 * The language of the message
+	 *
+	 */
+	protected $language = 'en';
+
+	/**
+	 * The version of the message
+	 *
+	 */
+	protected $version = '1.4';
+
+	/**
 	 * {@inheritdoc}
 	 *
 	 * @since [*next-version*]
 	 *
 	 * @param string $contact_name The contact name to use for creating orders.
 	 */
-	public function __construct( $base_url, API_Driver_Interface $driver, API_Auth_Interface $auth = null ) {
+	public function __construct( $pickup_id, $soldto_id, $base_url, API_Driver_Interface $driver, API_Auth_Interface $auth = null ) {
 		parent::__construct( $base_url, $driver, $auth );
 
+		$this->pickup_id = $pickup_id;
+		$this->soldto_id = $soldto_id;
 	}
 
 	/**
@@ -58,6 +84,49 @@ class Client extends API_Client {
 	}
 
 	/**
+	 * Get message type.
+	 *
+	 * @param string $type The type of the message.
+	 * 
+	 * @return string The type of the message.
+	 */
+	protected function get_type( $type = 'create' ){
+
+		if( $type == 'delete' ) {
+			return 'DELETESHIPMENT';
+		}elseif( $type == 'create' ) {
+			return 'LABEL';
+		}
+	}
+
+	/**
+	 * Get date time.
+	 *
+	 * @return string The date and time of the message.
+	 */
+	protected function get_datetime(){
+		return date( 'c', time() );
+	}
+
+	/**
+	 * Get message language.
+	 *
+	 * @return string The language of the message.
+	 */
+	protected function get_language(){
+		return $this->language;
+	}
+
+	/**
+	 * Get message version.
+	 *
+	 * @return string The version of the message.
+	 */
+	protected function get_version(){
+		return $this->version;
+	}
+
+	/**
 	 * Transforms an item info object into a request data array.
 	 *
 	 * @param Item_Info $item_info The item info object to transform.
@@ -86,7 +155,7 @@ class Client extends API_Client {
 			$shipment_content = array(
 				'skuNumber' 			=> $content['sku'],
 				'description'			=> $content['description'],
-				'itemValue' 			=> round( $content['value'], 2 ),
+				'itemValue' 			=> $content['value'],
 				'itemQuantity' 			=> $content['qty'],
 				'netWeight' 			=> $content['weight'],
 				'weightUOM' 			=> $item_info->shipment['weightUom'],
@@ -148,15 +217,15 @@ class Client extends API_Client {
 		return array(
 			'labelRequest' 	=> array(
 				'hdr' 	=> array(
-					'messageType' 		=> $item_info->header[ 'message_type' ],
-					'messageDateTime' 	=> $item_info->header[ 'message_date_time' ],
-					'messageVersion' 	=> $item_info->header[ 'message_version' ],
+					'messageType' 		=> $this->get_type(),
+					'messageDateTime' 	=> $this->get_datetime(),
+					'messageVersion' 	=> $this->get_version(),
 					//'accessToken'		=> $token->token,
-					'messageLanguage' 	=> $item_info->header[ 'message_language' ]
+					'messageLanguage' 	=> $this->get_language()
 				),
 				'bd' 	=> array(
-					'pickupAccountId' 	=> $item_info->body[ 'pickup_id' ],
-					'soldToAccountId'	=> $item_info->body[ 'soldto_id' ],
+					'pickupAccountId' 	=> $this->pickup_id,
+					'soldToAccountId'	=> $this->soldto_id,
 					//'pickupAddress' 	=> $pickup_address,
 //					'shipperAddress' 	=> $shipper_address,
 					'shipmentItems' 	=> array( $shipment_item ),
@@ -182,11 +251,11 @@ class Client extends API_Client {
 	 *
 	 * @throws Exception
 	 */
-	public function delete_label( $item_info ) {
+	public function delete_label( $label_info ) {
 
 		$route 	= $this->delete_label_route();
 
-		$data = $this->item_info_to_delete_label( $item_info );
+		$data = $this->label_info_to_delete_label( $label_info );
 		//error_log( 'DELETE DATA' );
 		//error_log( print_r( $data, true ) );
 		$response = $this->post($route, $data);
@@ -212,24 +281,22 @@ class Client extends API_Client {
 	 *
 	 * @return array The request data for the given item info object.
 	 */
-	protected function item_info_to_delete_label( Item_Info $item_info ) {
-
-		$shipmentid 		= $item_info->delete_info['shipment_id'];
+	protected function label_info_to_delete_label( $label_info ) {
 
 		return array(
 			'deleteShipmentReq' 	=> array(
 				'hdr' 	=> array(
-					'messageType' 		=> $item_info->delete_info[ 'message_type' ],
-					'messageDateTime' 	=> $item_info->header[ 'message_date_time' ],
-					'messageVersion' 	=> $item_info->header[ 'message_version' ],
-					'messageLanguage' 	=> $item_info->header[ 'message_language' ]
+					'messageType' 		=> $this->get_type( 'delete' ),
+					'messageDateTime' 	=> $this->get_datetime(),
+					'messageVersion' 	=> $this->get_version(),
+					'messageLanguage' 	=> $this->get_language()
 				),
 				'bd' 	=> array(
-					'pickupAccountId' 	=> $item_info->body[ 'pickup_id' ],
-					'soldToAccountId'	=> $item_info->body[ 'soldto_id' ],
+					'pickupAccountId' 	=> $this->pickup_id,
+					'soldToAccountId'	=> $this->soldto_id,
 					'shipmentItems' 	=> array(
 						array(
-							'shipmentID' 		=> $shipmentid,
+							'shipmentID' 		=> $label_info['shipment_id'],
 						)
 					 ),
 				)

@@ -94,6 +94,8 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	protected function create_api_client() {
 		// Create the API client, using this instance's driver and auth objects
 		return new Client(
+			$this->get_pickup_id(),
+			$this->get_soldto_id(),
 			$this->get_api_url(),
 			$this->api_driver,
 			$this->api_auth
@@ -187,6 +189,32 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 			$this->get_setting( 'dhl_api_key' ),
 			$this->get_setting( 'dhl_api_secret' ),
 		);
+	}
+
+	/**
+	 * Retrieves the DHL Pickup Account ID
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return string
+	 *
+	 * @throws Exception If failed to retrieve the EKP from the settings.
+	 */
+	public function get_pickup_id() {
+		return $this->get_setting( 'dhl_pickup_id' );
+	}
+
+	/**
+	 * Retrieves the DHL Pickup Account ID
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return string
+	 *
+	 * @throws Exception If failed to retrieve the EKP from the settings.
+	 */
+	public function get_soldto_id() {
+		return $this->get_setting( 'dhl_soldto_id' );
 	}
 
 	/**
@@ -426,24 +454,15 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	 *
 	 * @since [*next-version*]
 	 */
-	public function delete_dhl_label( $args ) {
-		
-		$label_info = $args['label_tracking'];
+	public function delete_dhl_label( $label_info ) {
 		
 		if ( ! isset( $label_info['label_path'] ) ) {
 			throw new Exception( __( 'DHL Label has no path!', 'pr-shipping-dhl' ) );
 		}
 
-		$uom = get_option( 'woocommerce_weight_unit' );
-		try {
-			$item_info = new Item_Info( $args, $uom );
-		} catch (Exception $e) {
-			throw $e;
-		}
-
-		$label_response 	= $this->api_client->delete_label( $item_info );
-		//error_log( 'RESPONSE DELETE:' );
-		//error_log( print_r( $label_response, true ) );
+		$label_response 	= $this->api_client->delete_label( $label_info );
+		error_log( 'RESPONSE DELETE:' );
+		error_log( print_r( $label_response, true ) );
 		$label_response 	= json_decode( $label_response );
 		
 		$response_status 	= $label_response->deleteShipmentResp->bd->responseStatus;
