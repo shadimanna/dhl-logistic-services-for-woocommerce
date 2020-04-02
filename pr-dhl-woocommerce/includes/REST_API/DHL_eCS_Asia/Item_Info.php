@@ -244,9 +244,6 @@ class Item_Info {
 			'prefix' 		=> array(
 				'default' => 'DHL'
 			),
-			'return_mode'   => array(
-				'default' => '01'
-			),
 			'description' 	=> array(
 				'error'  => __( 'Shipment "Description" is empty!', 'pr-shipping-dhl' ),
 			),

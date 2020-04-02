@@ -118,7 +118,6 @@ class Client extends API_Client {
 			//'returnAddress' 	=> $return_address,
 			'consigneeAddress' 	=> $consignee,
 			'shipmentID' 		=> $shipmentid,
-			'returnMode' 		=> $item_info->shipment['return_mode'],
 			'packageDesc' 		=> $item_info->shipment['description'],
 			'totalWeight' 		=> $item_info->shipment['weight'],
 			'totalWeightUOM' 	=> $item_info->shipment['weightUom'],
