@@ -429,14 +429,6 @@ class Item_Info {
 		);
 	}
 
-	public function get_weight_uom(){
-		return 'G';
-	}
-
-	public function get_dimension_uom(){
-		return 'CM';
-	}
-
 	/**
 	 * Converts a given weight into grams, if necessary.
 	 *
