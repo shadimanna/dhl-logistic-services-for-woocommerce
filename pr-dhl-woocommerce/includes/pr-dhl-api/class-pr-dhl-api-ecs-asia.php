@@ -455,8 +455,8 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		if ( ! isset( $label_info['label_path'] ) ) {
 			throw new Exception( __( 'DHL Label has no path!', 'pr-shipping-dhl' ) );
 		}
-
-		$label_response 	= $this->api_client->delete_label( $label_info );
+		$shipment_id 		= $label_info['shipment_id'];
+		$label_response 	= $this->api_client->delete_label( $shipment_id );
 		$label_response 	= json_decode( $label_response );
 		
 		$response_status 	= $label_response->deleteShipmentResp->bd->responseStatus;

@@ -245,43 +245,17 @@ class Client extends API_Client {
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @param int $item_id The ID of the item to delete.
+	 * @param int $shipment_id The ID of the shipment to delete.
 	 *
 	 * @return stdClass The response.
 	 *
 	 * @throws Exception
 	 */
-	public function delete_label( $label_info ) {
+	public function delete_label( $shipment_id ) {
 
 		$route 	= $this->delete_label_route();
 
-		$data 		= $this->label_info_to_delete_label( $label_info );
-		$response 	= $this->post($route, $data);
-		
-		if ( $response->status === 200 ) {
-			
-			return $response->body;
-
-		}
-
-		throw new Exception(
-			sprintf(
-				__( 'Failed to delete label: %s', 'pr-shipping-dhl' ),
-				implode( ', ', $response->body->messages )
-			)
-		);
-	}
-
-	/**
-	 * Transforms an item info object into a delete label array.
-	 *
-	 * @param Item_Info $item_info The item info object to transform.
-	 *
-	 * @return array The request data for the given item info object.
-	 */
-	protected function label_info_to_delete_label( $label_info ) {
-
-		return array(
+		$data 		= array(
 			'deleteShipmentReq' 	=> array(
 				'hdr' 	=> array(
 					'messageType' 		=> $this->get_type( 'delete' ),
@@ -294,10 +268,25 @@ class Client extends API_Client {
 					'soldToAccountId'	=> $this->soldto_id,
 					'shipmentItems' 	=> array(
 						array(
-							'shipmentID' 		=> $label_info['shipment_id'],
+							'shipmentID' 		=> $shipment_id,
 						)
 					 ),
 				)
+			)
+		);
+
+		$response 	= $this->post($route, $data);
+		
+		if ( $response->status === 200 ) {
+			
+			return $response->body;
+
+		}
+
+		throw new Exception(
+			sprintf(
+				__( 'Failed to delete label: %s', 'pr-shipping-dhl' ),
+				implode( ', ', $response->body->messages )
 			)
 		);
 	}
