@@ -106,8 +106,9 @@ class Item_Info {
 	public function __construct( $args, $uom ) {
 		//$this->parse_args( $args );
 		$this->weightUom 	= $uom;
+		$this->crossBorder 	= PR_DHL()->is_crossborder_shipment( $args['shipping_address']['country'] );
 		$this->parse_args( $args, $uom );
-
+		
 	}
 
 	/**
@@ -183,7 +184,12 @@ class Item_Info {
 				'default' => 'DHL'
 			),
 			'description' 	=> array(
-				'error'  => __( 'Shipment "Description" is empty!', 'pr-shipping-dhl' ),
+				'validate' => function( $value ) {
+
+					if( empty( $value ) && $this->crossBorder == true ) {
+						throw new Exception( __( 'Shipment "Description" is empty!', 'pr-shipping-dhl' ) );
+					}
+				},
 			),
 			'weight'     => array(
 				'sanitize' => function ( $weight ) use ($self) {
@@ -208,7 +214,13 @@ class Item_Info {
 			),
 			'duties' => array(
 				'rename' 	=> 'incoterm',
-				'error'  => __( 'Shipment "Duties" is empty!', 'pr-shipping-dhl' ),
+				'default' 	=> '',
+				'validate' => function( $value ) {
+
+					if( empty( $value ) && $this->crossBorder == true ) {
+						throw new Exception( __( 'Shipment "Duties" is empty!', 'pr-shipping-dhl' ) );
+					}
+				},
 			),
 			'total_value' => array(
 				'error'  => __( 'Shipment "Value" is empty!', 'pr-shipping-dhl' ),
