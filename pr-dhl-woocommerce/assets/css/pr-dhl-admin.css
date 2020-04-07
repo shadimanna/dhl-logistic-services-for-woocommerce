@@ -9,6 +9,11 @@ span.wc_dhl_error {
 	float:right;
 }
 
+ul.wc_dhl_error{
+	list-style-type: disc;
+	padding-left:20px;
+}
+
 .dhl_connection_succeeded {
 	color: #008000;
 	margin-left: 10px;

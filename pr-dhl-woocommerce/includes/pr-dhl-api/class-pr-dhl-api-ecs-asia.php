@@ -417,9 +417,29 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 
 		$response_status 	= $label_response->labelResponse->bd->responseStatus;
 		if( $response_status->code != 200 ){
+			$error_details 	= '';
+			$labels 		= $label_response->labelResponse->bd->labels;
+
+			foreach( $labels as $label ){
+
+				if( !isset( $label->responseStatus->messageDetails ) ){
+					continue;
+				}
+
+				foreach( $label->responseStatus->messageDetails as $message_detail ){
+
+					$error_details .= '<li>' . $message_detail->messageDetail . '</li>';
+
+				}
+
+				$error_details = '<ul class = "wc_dhl_error">' . $error_details . '</ul>';
+				
+			}
+
 			throw new Exception( 
-				"Error: " . $response_status->message . "<br /> " .
-				"Detail: " . $response_status->messageDetails[0]->messageDetail 
+				"Error: " . $response_status->message  . "<br /> " .
+				"Details: " . $response_status->messageDetails[0]->messageDetail
+				. $error_details
 			);
 		}
 
