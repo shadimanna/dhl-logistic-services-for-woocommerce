@@ -222,7 +222,7 @@ class Item_Info {
 					}
 				},
 			),
-			'total_value' => array(
+			'items_value' => array(
 				'error'  => __( 'Shipment "Value" is empty!', 'pr-shipping-dhl' ),
 				'validate' => function( $value ) {
 					if ( ! is_numeric( $value ) ) {

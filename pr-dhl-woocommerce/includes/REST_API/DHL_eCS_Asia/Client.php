@@ -192,7 +192,7 @@ class Client extends API_Client {
 			'totalWeightUOM' 	=> $item_info->shipment['weightUom'],
 			'dimensionUOM' 		=> $item_info->shipment['dimensionUom'],
 			'productCode' 		=> $item_info->shipment['product_code'],
-			'totalValue'		=> $item_info->shipment['total_value'],
+			'totalValue'		=> $item_info->shipment['items_value'],
 			'currency' 			=> $item_info->shipment['currency'],
 			'shipmentPieces' 	=> array(
 				array(
