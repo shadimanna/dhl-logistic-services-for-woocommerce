@@ -157,8 +157,8 @@ class Client extends API_Client {
 				'description'			=> $content['description'],
 				'itemValue' 			=> $content['value'],
 				'itemQuantity' 			=> $content['qty'],
-				'netWeight' 			=> $content['weight'],
-				'weightUOM' 			=> $item_info->shipment['weightUom'],
+//				'netWeight' 			=> $content['weight'],
+//				'weightUOM' 			=> $item_info->shipment['weightUom'],
 				'countryOfOrigin' 		=> $content['origin']
 			);
 
