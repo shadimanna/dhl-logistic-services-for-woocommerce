@@ -192,12 +192,18 @@ class Item_Info {
 				},
 			),
 			'weight'     => array(
-				'sanitize' => function ( $weight ) use ($self) {
+                'error'    => __( 'Order "Weight" is empty!', 'pr-shipping-dhl' ),
+                'validate' => function( $weight ) {
+                    if ( ! is_numeric( $weight ) ) {
+                        throw new Exception( __( 'The order "Weight" must be a number', 'pr-shipping-dhl' ) );
+                    }
+                },
+                'sanitize' => function ( $weight ) use ($self) {
 
-					$weight = $self->maybe_convert_to_grams( $weight, $self->weightUom );
-					$weight = ( $weight > 1 )? $weight : 1;
-					return $weight;
-				}
+                    $weight = $self->maybe_convert_to_grams( $weight, $self->weightUom );
+
+                    return $weight;
+                }
 			),
 			'weightUom'  => array(
 				'sanitize' => function ( $uom ) use ($self) {
