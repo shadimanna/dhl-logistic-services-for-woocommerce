@@ -186,7 +186,7 @@ class Item_Info {
 			'description' 	=> array(
 				'validate' => function( $value ) {
 
-					if( empty( $value ) && $this->crossBorder == true ) {
+					if( empty( $value ) && $this->crossBorder ) {
 						throw new Exception( __( 'Shipment "Description" is empty!', 'pr-shipping-dhl' ) );
 					}
 				},
@@ -223,7 +223,7 @@ class Item_Info {
 				'default' 	=> '',
 				'validate' => function( $value ) {
 
-					if( empty( $value ) && $this->crossBorder == true ) {
+					if( empty( $value ) && $this->crossBorder ) {
 						throw new Exception( __( 'Shipment "Duties" is empty!', 'pr-shipping-dhl' ) );
 					}
 				},
@@ -286,7 +286,12 @@ class Item_Info {
 				'default' => '',
 			),
 			'city'      => array(
-				'error' => __( 'Shipping "City" is empty!', 'pr-shipping-dhl' ),
+                'validate' => function( $value ) {
+
+                    if( empty( $value ) && $this->crossBorder ) {
+                        throw new Exception( __( 'Shipping "City" is empty!', 'pr-shipping-dhl' ) );
+                    }
+                },
 			),
 			'postcode'  => array(
 				'rename' => 'postCode',

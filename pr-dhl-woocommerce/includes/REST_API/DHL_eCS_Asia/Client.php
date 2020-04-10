@@ -134,7 +134,7 @@ class Client extends API_Client {
 	 * @return array The request data for the given item info object.
 	 */
 	protected function item_info_to_request_data( Item_Info $item_info ) {
-		
+
 		$shipper_address = $item_info->shipper;
 
 		if( empty( $shipper_address['phone'] ) ){
@@ -174,18 +174,11 @@ class Client extends API_Client {
 
 		}
 
-		//$return_address 	= $shipper_address;
-		$consignee 			= $item_info->consignee;
-
-		if( $consignee['district'] == '' ){
-			$consignee['district'] = $consignee['state'];
-		}
-
 		$shipmentid 		= $item_info->shipment['prefix'] . sprintf('%07d', $item_info->shipment['order_id'] );
 
 		$shipment_item 		= array(
 			//'returnAddress' 	=> $return_address,
-			'consigneeAddress' 	=> $consignee,
+			'consigneeAddress' 	=> $this->get_consignee( $item_info ),
 			'shipmentID' 		=> $shipmentid,
 			'packageDesc' 		=> $item_info->shipment['description'],
 			'totalWeight' 		=> $item_info->shipment['weight'],
@@ -240,6 +233,22 @@ class Client extends API_Client {
 		);
 	}
 
+	protected function get_consignee( Item_Info $item_info ) {
+        $consignee 			= $item_info->consignee;
+
+        if( empty( $consignee['district'] ) && ! empty( $consignee['state'] )) {
+            $consignee['district'] = $consignee['state'];
+        }
+
+        foreach ( $consignee as $consignee_key => $consignee_val ) {
+            // If the field is empty do not pass it
+            if( empty( $consignee_val ) ){
+                unset( $consignee[ $consignee_key ] );
+            }
+        }
+        
+        return $consignee;
+    }
 	/**
 	 * Deletes an item from the remote API.
 	 *
