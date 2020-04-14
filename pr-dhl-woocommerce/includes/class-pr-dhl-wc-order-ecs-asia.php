@@ -213,9 +213,8 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 		$new_item = array();
 		$dangerous_goods = get_post_meta( $product_id, '_dhl_dangerous_goods', true );
-		$product 		 = wc_get_product( $product_id );
 
-	    if( ! empty( $dangerous_goods ) ) {
+        if( ! empty( $dangerous_goods ) ) {
 
 	    	if ( isset( $args['order_details']['dangerous_goods'] ) ) {
 	    		// if more than one item id DG, make sure to take the minimum value
@@ -227,7 +226,6 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 		}
 
 		$new_item['item_export'] 		= get_post_meta( $product_id, '_dhl_export_description', true );
-		$new_item['dangerous_goods'] 	= $dangerous_goods;
 
 		return $new_item;
 	}
