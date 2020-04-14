@@ -158,7 +158,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 		$args['dhl_settings']['dhl_api_secret'] = $this->shipping_dhl_settings['dhl_api_secret'];
 		$args['dhl_settings']['pickup_id'] = $this->shipping_dhl_settings['dhl_pickup_id'];
 		$args['dhl_settings']['soldto_id'] = $this->shipping_dhl_settings['dhl_soldto_id'];
-		$args['dhl_settings']['handover'] = $this->get_label_handover_num();
+//		$args['dhl_settings']['handover'] = $this->get_label_handover_num();
 		$args['dhl_settings']['label_format'] = $this->shipping_dhl_settings['dhl_label_format'];
 		$args['dhl_settings']['label_layout'] = $this->shipping_dhl_settings['dhl_label_layout'];
 
@@ -178,7 +178,6 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 		$args['order_details']['prefix'] = $this->shipping_dhl_settings['dhl_prefix'];
 		
 		// Get package prefix
-		$dhl_label_items['pr_dhl_description'] = $this->shipping_dhl_settings['dhl_desc_default'];
 		if ( ! empty( $dhl_label_items['pr_dhl_description'] ) ) {
 			$args['order_details']['description'] = $dhl_label_items['pr_dhl_description'];
 		} else {
