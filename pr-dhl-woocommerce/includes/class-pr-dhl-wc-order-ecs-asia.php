@@ -95,7 +95,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 	}
 	
 	protected function get_tracking_url() {
-		return PR_DHL_ECOMM_TRACKING_URL;
+		return PR_DHL_ECS_ASIA_TRACKING_URL;
 	}
 
 	protected function get_package_description( $order_id ) {
