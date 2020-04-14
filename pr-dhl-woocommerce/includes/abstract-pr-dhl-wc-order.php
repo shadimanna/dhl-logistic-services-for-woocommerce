@@ -349,7 +349,7 @@ abstract class PR_DHL_WC_Order {
 			return '';
 		}
 
-		return sprintf( __( '<a href="%s%s" target="_blank">%s</a>', 'my-text-domain' ), $this->get_tracking_url(), $label_tracking_info['tracking_number'], $label_tracking_info['tracking_number']);
+		return sprintf( __( '<a href="%s%s" target="_blank">%s</a>', 'pr-shipping-dhl' ), $this->get_tracking_url(), $label_tracking_info['tracking_number'], $label_tracking_info['tracking_number']);
 	}
 
 	abstract protected function get_tracking_url();

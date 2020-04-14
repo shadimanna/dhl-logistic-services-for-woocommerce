@@ -121,6 +121,7 @@ class Item_Info {
 	 * @throws Exception If some data in $args did not pass validation.
 	 */
 	protected function parse_args( $args ) {
+	    error_log(print_r($args,true));
 		$settings = $args[ 'dhl_settings' ];
 		$recipient_info = $args[ 'shipping_address' ] + $settings;
 		$shipping_info = $args[ 'order_details' ] + $settings;
@@ -477,13 +478,6 @@ class Item_Info {
 		}
 
 		return $weight;
-	}
-
-	protected function absolute_float_sanitization( $float ){
-
-		$abs = absint( $float ) < 1 ? 1 : floatval( $float);
-		return $this->float_round_sanitization( $abs, 2 );
-
 	}
 
 	protected function float_round_sanitization( $float, $numcomma ) {

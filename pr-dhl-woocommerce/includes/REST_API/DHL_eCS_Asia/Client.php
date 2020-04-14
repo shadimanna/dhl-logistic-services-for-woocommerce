@@ -246,7 +246,7 @@ class Client extends API_Client {
                 unset( $consignee[ $consignee_key ] );
             }
         }
-        
+
         return $consignee;
     }
 	/**
