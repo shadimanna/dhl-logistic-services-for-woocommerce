@@ -401,7 +401,7 @@ class Item_Info {
 					}
 				},
 			),
-			'item_description' => array(
+			'item_export' => array(
 				'rename' => 'description',
 				'default' => '',
 				'sanitize' => function( $description ) use ($self) {

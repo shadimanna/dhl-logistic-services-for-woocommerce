@@ -155,6 +155,7 @@ class Client extends API_Client {
 			$shipment_content = array(
 				'skuNumber' 			=> $content['sku'],
 				'description'			=> $content['description'],
+				'descriptionExport'		=> $content['description'],
 				'itemValue' 			=> $content['value'],
 				'itemQuantity' 			=> $content['qty'],
 //				'netWeight' 			=> $content['weight'],
