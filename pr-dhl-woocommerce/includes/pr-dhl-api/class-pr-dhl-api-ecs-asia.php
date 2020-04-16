@@ -421,44 +421,10 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		
 		// Create the shipping label
 
-		//$label_response 	= $this->api_client->create_shipping_label();
-		$label_response 	= $this->api_client->create_label( $item_info );
-		$label_response 	= json_decode( $label_response );
-        error_log(print_r($label_response, true));
-		$response_status 	= $label_response->labelResponse->bd->responseStatus;
-		if( $response_status->code != 200 ){
-			$error_details 	= '';
+		$label_info			= $this->api_client->create_label( $item_info );
 
-            if( isset( $label_response->labelResponse->bd->labels ) ) {
-
-                $labels 		= $label_response->labelResponse->bd->labels;
-                foreach( $labels as $label ){
-
-                    if( !isset( $label->responseStatus->messageDetails ) ){
-                        continue;
-                    }
-
-                    foreach( $label->responseStatus->messageDetails as $message_detail ){
-
-                        $error_details .= '<li>' . $message_detail->messageDetail . '</li>';
-
-                    }
-
-                    $error_details = '<ul class = "wc_dhl_error">' . $error_details . '</ul>';
-                }
-            }
-
-			throw new Exception( 
-				"Error: " . $response_status->message  . "<br /> " .
-				"Details: " . $response_status->messageDetails[0]->messageDetail
-				. $error_details
-			);
-		}
-
-		$labels_info 		= $label_response->labelResponse->bd->labels[0];
-		$label_pdf_data 	= ( $label_format == 'ZPL' )? $labels_info->content : base64_decode( $labels_info->content );
-
-		$shipment_id 		= $labels_info->shipmentID;
+		$label_pdf_data 	= ( $label_format == 'ZPL' )? $label_info->content : base64_decode( $label_info->content );
+		$shipment_id 		= $label_info->shipmentID;
 		$this->save_dhl_label_file( 'item', $shipment_id, $label_pdf_data );
 		
 		return array(

@@ -69,19 +69,122 @@ class Client extends API_Client {
 		$data = $this->item_info_to_request_data( $item_info );
 
 		$response = $this->post($route, $data);
-		
-		if ( $response->status === 200 ) {
-			
-			return $response->body;
+		$response_body = json_decode( $response->body );
 
+		if ( $response->status === 200 ) {
+
+			if( $this->check_status_code( $response_body ) == 200 ){
+
+				return $this->get_label_content( $response_body );
+
+			}
 		}
 
 		throw new Exception(
 			sprintf(
-				__( 'Failed to create label: %s', 'pr-shipping-dhl' ),
-				implode( ', ', $response->body->messages )
+				__( 'Failed to create label: %s', 'pr-shipping-dhl' ), 
+				$this->generate_error_details( $response_body )
 			)
 		);
+	}
+
+	public function check_status_code( $label_response ){
+		
+		if( !isset( $label_response->labelResponse->bd->responseStatus->code ) ){
+			throw new Exception( __( 'Response status is not exist!', 'pr-shipping-dhl' ) );
+		}
+
+		return $label_response->labelResponse->bd->responseStatus->code;
+	}
+
+	public function get_label_content( $label_response ){
+
+		if( !isset( $label_response->labelResponse->bd->labels ) ){
+			throw new Exception( __( 'Label info is not exist!', 'pr-shipping-dhl' ) );
+		}
+
+		$labels_info 		= $label_response->labelResponse->bd->labels;
+		
+		foreach( $labels_info as $info ){
+
+			if( !isset( $info->content ) ){
+				throw new Exception( __( 'Label content is not exist!', 'pr-shipping-dhl' ) );
+			}elseif( !isset( $info->shipmentID ) ){
+				throw new Exception( __( 'Shipment ID is not exist!', 'pr-shipping-dhl' ) );
+			}else{
+
+				return $info;
+
+			}
+		}
+
+		return false;
+	}
+
+	public function generate_error_details( $label_response ){
+
+		$error_details 	= '';
+
+		if( isset( $label_response->labelResponse->bd->labels ) ) {
+
+			$labels = $label_response->labelResponse->bd->labels;
+			
+			foreach( $labels as $label ){
+
+				if( !isset( $label->responseStatus->messageDetails ) ){
+					continue;
+				}
+
+				foreach( $label->responseStatus->messageDetails as $message_detail ){
+
+					if( isset( $message_detail->messageDetail ) ){
+
+						$error_details .= '<li>' . $message_detail->messageDetail . '</li>';
+
+					}
+					
+				}
+				
+			}
+		}
+		
+		$error_exception = '';
+		$response_status = $label_response->labelResponse->bd->responseStatus;
+
+		if( isset( $response_status->message) ){
+			$error_exception .= $response_status->message  . '<br /> ';
+		}
+
+		if( isset( $response_status->messageDetails[0]->messageDetail ) ){
+
+			$message_details = '';
+			foreach( $response_status->messageDetails as $message_detail ){
+				
+				if( isset( $message_detail->messageDetail ) ){
+					$message_details .= $message_detail->messageDetail . '<br />';
+				}
+				
+			}
+			
+			if( !empty( $message_detail ) ){
+
+				$error_exception .= 'Error Details: ' . $message_details;
+
+			}
+			
+		}
+
+		if( !empty( $error_details ) ){
+
+			$error_exception .= '<ul class = "wc_dhl_error">' . $error_details . '</ul>';
+
+		}else{
+
+			$error_exception .= __( 'Error message detail is not exist!', 'pr-shipping-dhl' );
+
+		}
+
+		return $error_exception;
 	}
 
 	/**
