@@ -259,14 +259,11 @@ class Item_Info {
                 'default' => 0,
                 'rename' => 'codValue',
                 'sanitize' => function( $value, $args ) use ($self) {
-                    error_log('sanitive cod');
-                    error_log(print_r($args, true));
                     if( isset( $args['is_cod'] ) && $args['is_cod'] == 'yes' ) {
                         $value = $self->float_round_sanitization( $value, 2 );
                     } else {
                         $value = 0;
                     }
-                    error_log($value);
                     return $value;
                 }
             )

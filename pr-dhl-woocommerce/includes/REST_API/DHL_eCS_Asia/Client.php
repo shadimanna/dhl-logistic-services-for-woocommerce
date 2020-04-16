@@ -128,10 +128,10 @@ class Client extends API_Client {
     }
 
     /**
- * Get message version.
- *
- * @return string The version of the message.
- */
+     * Get message version.
+     *
+     * @return string The version of the message.
+     */
     protected function get_shipment_id( $prefix, $id ){
         if ( empty( $prefix ) ) {
             $shipment_parts = array( sprintf('%07d', $id ), time() );

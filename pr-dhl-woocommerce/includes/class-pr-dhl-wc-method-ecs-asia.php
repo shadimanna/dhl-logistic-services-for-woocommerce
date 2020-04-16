@@ -96,14 +96,14 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 			'dhl_pickup_id' => array(
 				'title'             => __( 'Pickup Account ID', 'pr-shipping-dhl' ),
 				'type'              => 'text',
-				'description'       => __( 'The pickup account id (10 digits - numerical) will be provided by your local DHL sales organization and tells us where to pick up your shipments.', 'pr-shipping-dhl' ),
+				'description'       => __( 'The "Pickup Account" id will be provided by your local DHL sales organization and tells us where to pick up your shipments.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 				'default'           => '',
 				'placeholder'		=> '0000500000'
 			),'dhl_soldto_id' => array(
 				'title'             => __( 'Soldto Account ID', 'pr-shipping-dhl' ),
 				'type'              => 'text',
-				'description'       => __( 'The pickup account id (10 digits - numerical) will be provided by your local DHL sales organization and tells us where to pick up your shipments.', 'pr-shipping-dhl' ),
+				'description'       => __( 'The "Soldto Account" id will be provided by your local DHL sales organization and tells us where to pick up your shipments.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 				'default'           => '',
 				'placeholder'		=> '0000500000'
