@@ -6,6 +6,7 @@ use Exception;
 use PR\DHL\REST_API\API_Client;
 use PR\DHL\REST_API\Interfaces\API_Auth_Interface;
 use PR\DHL\REST_API\Interfaces\API_Driver_Interface;
+use PR\DHL\Utils\Args_Parser;
 use stdClass;
 
 /**
@@ -118,13 +119,23 @@ class Client extends API_Client {
 	}
 
 	/**
-	 * Get message version.
-	 *
-	 * @return string The version of the message.
-	 */
-	protected function get_version(){
-		return $this->version;
-	}
+ * Get message version.
+ *
+ * @return string The version of the message.
+ */
+    protected function get_version(){
+        return $this->version;
+    }
+
+    /**
+ * Get message version.
+ *
+ * @return string The version of the message.
+ */
+    protected function get_shipment_id( $prefix, $id ){
+        $shipment_parts = array( $prefix, sprintf('%07d', $id ), time() );
+        return implode('-', $shipment_parts);
+    }
 
 	/**
 	 * Transforms an item info object into a request data array.
@@ -134,52 +145,12 @@ class Client extends API_Client {
 	 * @return array The request data for the given item info object.
 	 */
 	protected function item_info_to_request_data( Item_Info $item_info ) {
-
-		$shipper_address = $item_info->shipper;
-
-		if( empty( $shipper_address['phone'] ) ){
-			unset( $shipper_address['phone'] );
-		}
-
-		if( empty( $shipper_address['email'] ) ){
-			unset( $shipper_address['email'] );
-		}
-
-		//$pickup_address 	= $shipper_address;
-
-		$contents 			= $item_info->contents;
-		$shipment_contents 	= array();
-
-		foreach( $contents as $content ){
-
-			$shipment_content = array(
-				'skuNumber' 			=> $content['sku'],
-				'description'			=> $content['description'],
-				'descriptionExport'		=> $content['description'],
-				'itemValue' 			=> $content['value'],
-				'itemQuantity' 			=> $content['qty'],
-//				'netWeight' 			=> $content['weight'],
-//				'weightUOM' 			=> $item_info->shipment['weightUom'],
-				'countryOfOrigin' 		=> $content['origin']
-			);
-
-			if( !empty( $content['hs_code'] ) ){
-				$shipment_content['hsCode'] = $content['hs_code'];
-			}
-
-			if( !empty( $content['dangerous_goods'] ) ){
-				$shipment_content['contentIndicator'] = $content['dangerous_goods'];
-			}
-
-			$shipment_contents[] = $shipment_content;
-
-		}
-
-		$shipmentid 		= $item_info->shipment['prefix'] . sprintf('%07d', $item_info->shipment['order_id'] );
+		$shipmentid 		= $this->get_shipment_id( $item_info->shipment['prefix'], $item_info->shipment['order_id'] );
 
 		$shipment_item 		= array(
 			//'returnAddress' 	=> $return_address,
-			'consigneeAddress' 	=> $this->get_consignee( $item_info ),
+//			'consigneeAddress' 	=> $this->get_consignee( $item_info ),
+			'consigneeAddress' 	=> $item_info->consignee,
 			'shipmentID' 		=> $shipmentid,
 			'packageDesc' 		=> $item_info->shipment['description'],
 			'totalWeight' 		=> $item_info->shipment['weight'],
@@ -199,16 +170,39 @@ class Client extends API_Client {
 					'pieceDescription'	=> $item_info->shipment['description']
 				)
 			),
-			'shipmentContents' 			=> $shipment_contents
 		);
 
-		if( !empty( $item_info->shipment['incoterm'] ) ){
+        // Set cross-border fields
+		if( $item_info->isCrossBorder ) {
+            $contents 			= $item_info->contents;
+            $shipment_contents 	= array();
 
-			$shipment_item['incoterm'] = $item_info->shipment['incoterm'];
+            foreach( $contents as $content ){
 
-		}
+                $shipment_content = array(
+                    'skuNumber' 			=> $content['sku'],
+                    'description'			=> $content['description'],
+                    'descriptionExport'		=> $content['description'],
+                    'itemValue' 			=> $content['value'],
+                    'itemQuantity' 			=> $content['qty'],
+    //				'netWeight' 			=> $content['weight'],
+    //				'weightUOM' 			=> $item_info->shipment['weightUom'],
+                    'countryOfOrigin' 		=> $content['origin'],
+                    'hsCode'                => $content['hs_code'],
+                    'contentIndicator'      => $content['dangerous_goods']
+                );
 
-		return array(
+                $shipment_contents[] = $shipment_content;
+            }
+
+            $shipment_item['shipmentContents'] = $shipment_contents;
+
+            if( !empty( $item_info->shipment['incoterm'] ) ){
+                $shipment_item['incoterm'] = $item_info->shipment['incoterm'];
+            }
+        }
+
+		$request_data = array(
 			'labelRequest' 	=> array(
 				'hdr' 	=> array(
 					'messageType' 		=> $this->get_type(),
@@ -232,6 +226,9 @@ class Client extends API_Client {
 				)
 			)
 		);
+
+		error_log(print_r($request_data,true));
+        return Args_Parser::unset_empty_values( $request_data );
 	}
 
 	protected function get_consignee( Item_Info $item_info ) {

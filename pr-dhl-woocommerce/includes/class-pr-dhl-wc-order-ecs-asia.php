@@ -50,24 +50,26 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 					'custom_attributes'	=> array( $is_disabled => $is_disabled )
 				) );
 
-			// Get saved package description, otherwise generate the text based on settings
-			if( ! empty( $dhl_label_items['pr_dhl_description'] ) ) {
-				$selected_dhl_desc = $dhl_label_items['pr_dhl_description'];
-			} else {
-				$selected_dhl_desc = $this->get_package_description( $order_id );
-			}	
 
-			woocommerce_wp_textarea_input( array(
-				'id'          		=> 'pr_dhl_description',
-				'label'       		=> __( 'Package description for customs (50 characters max): ', 'pr-shipping-dhl' ),
-				'placeholder' 		=> '',
-				'description'		=> '',
-				'value'       		=> $selected_dhl_desc,
-				'custom_attributes'	=> array( $is_disabled => $is_disabled, 'maxlength' => '50' )
-			) );
 
 		}
-		
+
+        // Get saved package description, otherwise generate the text based on settings
+        if( ! empty( $dhl_label_items['pr_dhl_description'] ) ) {
+            $selected_dhl_desc = $dhl_label_items['pr_dhl_description'];
+        } else {
+            $selected_dhl_desc = $this->get_package_description( $order_id );
+        }
+
+        woocommerce_wp_textarea_input( array(
+            'id'          		=> 'pr_dhl_description',
+            'label'       		=> __( 'Package description for customs (50 characters max): ', 'pr-shipping-dhl' ),
+            'placeholder' 		=> '',
+            'description'		=> '',
+            'value'       		=> $selected_dhl_desc,
+            'custom_attributes'	=> array( $is_disabled => $is_disabled, 'maxlength' => '50' )
+        ) );
+
 		if( $this->is_cod_payment_method( $order_id ) ) {
 
 			woocommerce_wp_checkbox( array(
@@ -374,30 +376,8 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 	public function get_bulk_actions() {
 
-		$shop_manager_actions = array();
-
 		$shop_manager_actions = array(
 			'pr_dhl_create_labels'      => __( 'DHL Create Labels', 'pr-shipping-dhl' )
-		);
-
-		if ( isset( $this->shipping_dhl_settings['dhl_bulk_product_int']) && ($bulk_product_int = $this->shipping_dhl_settings['dhl_bulk_product_int'] ) ) {
-			foreach ($bulk_product_int as $key => $value) {
-				$shop_manager_actions += array(
-					"pr_dhl_create_labels:int:$value"      => __( "DHL Create Labels - $value", 'pr-shipping-dhl' )
-					);
-			}
-		}
-
-		if ( isset($this->shipping_dhl_settings['dhl_bulk_product_dom']) && ($bulk_product_dom = $this->shipping_dhl_settings['dhl_bulk_product_dom'] ) ) {
-			foreach ($bulk_product_dom as $key => $value) {
-				$shop_manager_actions += array(
-					"pr_dhl_create_labels:dom:$value"      => __( "DHL Create Labels - $value", 'pr-shipping-dhl' )
-					);
-			}
-		}
-
-		$shop_manager_actions += array(
-			'pr_dhl_handover'      => __( 'DHL Print Handover', 'pr-shipping-dhl' )
 		);
 
 		return $shop_manager_actions;

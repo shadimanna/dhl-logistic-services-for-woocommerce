@@ -94,6 +94,15 @@ class Item_Info {
 	protected $weightUom;
 
 	/**
+	 * Is the shipment cross-border or domestic
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @var boolean
+	 */
+	public $isCrossBorder;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since [*next-version*]
@@ -103,10 +112,11 @@ class Item_Info {
 	 *
 	 * @throws Exception If some data in $args did not pass validation.
 	 */
-	public function __construct( $args, $uom ) {
+	public function __construct( $args, $uom, $isCrossBorder ) {
 		//$this->parse_args( $args );
 		$this->weightUom 	= $uom;
-		$this->crossBorder 	= PR_DHL()->is_crossborder_shipment( $args['shipping_address']['country'] );
+		$this->isCrossBorder = $isCrossBorder;
+
 		$this->parse_args( $args, $uom );
 		
 	}
@@ -121,7 +131,7 @@ class Item_Info {
 	 * @throws Exception If some data in $args did not pass validation.
 	 */
 	protected function parse_args( $args ) {
-	    error_log(print_r($args,true));
+//	    error_log(print_r($args,true));
 		$settings = $args[ 'dhl_settings' ];
 		$recipient_info = $args[ 'shipping_address' ] + $settings;
 		$shipping_info = $args[ 'order_details' ] + $settings;
@@ -185,18 +195,19 @@ class Item_Info {
 				'default' => 'DHL'
 			),
 			'description' 	=> array(
+			    'default'   => '',
 				'validate' => function( $value ) {
 
-					if( empty( $value ) && $this->crossBorder ) {
+					if( empty( $value ) && $this->isCrossBorder ) {
 						throw new Exception( __( 'Shipment "Description" is empty!', 'pr-shipping-dhl' ) );
 					}
 				},
 			),
 			'weight'     => array(
                 'error'    => __( 'Order "Weight" is empty!', 'pr-shipping-dhl' ),
-                'validate' => function( $weight ) {
-                    if ( ! is_numeric( $weight ) ) {
-                        throw new Exception( __( 'The order "Weight" must be a number', 'pr-shipping-dhl' ) );
+                'validate' => function( $weight ) use ($self) {
+                    if ( ! is_numeric( $weight ) || $weight <= 0 ) {
+                        throw new Exception( __( 'The order "Weight" must be a positive number', 'pr-shipping-dhl' ) );
                     }
                 },
                 'sanitize' => function ( $weight ) use ($self) {
@@ -224,7 +235,7 @@ class Item_Info {
 				'default' 	=> '',
 				'validate' => function( $value ) {
 
-					if( empty( $value ) && $this->crossBorder ) {
+					if( empty( $value ) && $this->isCrossBorder ) {
 						throw new Exception( __( 'Shipment "Duties" is empty!', 'pr-shipping-dhl' ) );
 					}
 				},
@@ -289,7 +300,7 @@ class Item_Info {
 			'city'      => array(
                 'validate' => function( $value ) {
 
-                    if( empty( $value ) && $this->crossBorder ) {
+                    if( empty( $value ) && $this->isCrossBorder ) {
                         throw new Exception( __( 'Shipping "City" is empty!', 'pr-shipping-dhl' ) );
                     }
                 },

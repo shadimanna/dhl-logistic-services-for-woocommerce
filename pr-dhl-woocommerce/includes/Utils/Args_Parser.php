@@ -81,4 +81,26 @@ class Args_Parser {
 
 		return $final_args;
 	}
+
+    /**
+     * Unset/remove any items that are empty strings or 0
+     *
+     * @param array $array
+     * @return array
+     */
+    public static function unset_empty_values( array $array ) {
+
+        foreach ($array as $k => $v) {
+            if ( is_array( $v ) ) {
+                $array[$k] = self::unset_empty_values( $v );
+            }
+
+            if ( empty( $v ) ) {
+                unset($array[$k]);
+            }
+
+        }
+
+        return $array;
+    }
 }

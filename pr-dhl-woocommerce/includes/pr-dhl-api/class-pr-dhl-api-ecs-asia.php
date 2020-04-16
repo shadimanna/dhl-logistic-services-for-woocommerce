@@ -403,8 +403,9 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 			: null;
 
 		$uom = get_option( 'woocommerce_weight_unit' );
+        $is_cross_border = PR_DHL()->is_crossborder_shipment( $args['shipping_address']['country'] );
 		try {
-			$item_info = new Item_Info( $args, $uom );
+			$item_info = new Item_Info( $args, $uom, $is_cross_border );
 		} catch (Exception $e) {
 			throw $e;
 		}
@@ -414,27 +415,29 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		//$label_response 	= $this->api_client->create_shipping_label();
 		$label_response 	= $this->api_client->create_label( $item_info );
 		$label_response 	= json_decode( $label_response );
-
+        error_log(print_r($label_response, true));
 		$response_status 	= $label_response->labelResponse->bd->responseStatus;
 		if( $response_status->code != 200 ){
 			$error_details 	= '';
-			$labels 		= $label_response->labelResponse->bd->labels;
 
-			foreach( $labels as $label ){
+            if( isset( $label_response->labelResponse->bd->labels ) ) {
 
-				if( !isset( $label->responseStatus->messageDetails ) ){
-					continue;
-				}
+                $labels 		= $label_response->labelResponse->bd->labels;
+                foreach( $labels as $label ){
 
-				foreach( $label->responseStatus->messageDetails as $message_detail ){
+                    if( !isset( $label->responseStatus->messageDetails ) ){
+                        continue;
+                    }
 
-					$error_details .= '<li>' . $message_detail->messageDetail . '</li>';
+                    foreach( $label->responseStatus->messageDetails as $message_detail ){
 
-				}
+                        $error_details .= '<li>' . $message_detail->messageDetail . '</li>';
 
-				$error_details = '<ul class = "wc_dhl_error">' . $error_details . '</ul>';
-				
-			}
+                    }
+
+                    $error_details = '<ul class = "wc_dhl_error">' . $error_details . '</ul>';
+                }
+            }
 
 			throw new Exception( 
 				"Error: " . $response_status->message  . "<br /> " .
@@ -445,22 +448,14 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 
 		$labels_info 		= $label_response->labelResponse->bd->labels[0];
 		$label_pdf_data 	= base64_decode( $labels_info->content );
-		$delivery_conf_no 	= $labels_info->deliveryConfirmationNo;
-		if( empty( $delivery_conf_no ) ){
-			$delivery_conf_no = $labels_info->shipmentID;	
-		}
-		$shipment_id 		= $labels_info->shipmentID;
-		$tracking_num 		= $shipment_id;
-		$item_file_info 	= $this->save_dhl_label_file( 'item', $shipment_id, $label_pdf_data );
-		
-		//$this->save_dhl_label_file( 'item', $item_barcode, $label_pdf_data );
 
+		$shipment_id 		= $labels_info->shipmentID;
+		$this->save_dhl_label_file( 'item', $shipment_id, $label_pdf_data );
+		
 		return array(
-			'label_path' 			=> $item_file_info->path,
-			'label_url' 			=> $item_file_info->url,
+			'label_path' 			=> $this->get_dhl_item_label_file_info( $shipment_id )->path,
 			'shipment_id' 			=> $shipment_id,
-			'delivery_confirm_no' 	=> $delivery_conf_no,
-			'tracking_number' 		=> $tracking_num,
+			'tracking_number' 		=> $shipment_id,
 			'tracking_status' 		=> '',
 		);
 	}
