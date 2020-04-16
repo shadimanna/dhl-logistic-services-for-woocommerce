@@ -385,11 +385,11 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 			'PDE' => array(
 				'name' 	    => __( 'Parcel Domestic Expedited', 'pr-shipping-dhl' ),
 				'origin_countries' => 'AU,VN'
-			),
+			),/*
 			'PDR' => array(
 				'name' 	    => __( 'Parcel Return', 'pr-shipping-dhl' ),
 				'origin_countries' => 'TH,VN,MY'
-			),
+			),*/
 			'SDP' => array(
 				'name' 	    => __( 'DHL Parcel Metro', 'pr-shipping-dhl' ),
 				'origin_countries' => 'VN,TH,MY'
