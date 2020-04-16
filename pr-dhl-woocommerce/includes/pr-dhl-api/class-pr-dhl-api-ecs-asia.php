@@ -516,20 +516,6 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	}
 
 	/**
-	 * Retrieves the filename for DHL order label files (a.k.a. merged AWB label files).
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param string $order_id The DHL order ID.
-	 * @param string $format The file format.
-	 *
-	 * @return string
-	 */
-	public function get_dhl_order_label_file_name( $order_id, $format = 'pdf' ) {
-		return sprintf('dhl-waybill-order-%s.%s', $order_id, $format);
-	}
-
-	/**
 	 * Retrieves the file info for a DHL item label file.
 	 *
 	 * @since [*next-version*]
@@ -549,25 +535,6 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	}
 
 	/**
-	 * Retrieves the file info for DHL order label files (a.k.a. merged AWB label files).
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param string $order_id The DHL order ID.
-	 * @param string $format The file format.
-	 *
-	 * @return object An object containing the file "path" and "url" strings.
-	 */
-	public function get_dhl_order_label_file_info( $order_id, $format = 'pdf') {
-		$file_name = $this->get_dhl_order_label_file_name( $order_id, $format);
-
-		return (object) array(
-			'path' => PR_DHL()->get_dhl_label_folder_dir() . $file_name,
-			'url' => PR_DHL()->get_dhl_label_folder_url() . $file_name,
-		);
-	}
-
-	/**
 	 * Retrieves the file info for any DHL label file, based on type.
 	 *
 	 * @since [*next-version*]
@@ -578,11 +545,6 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	 * @return object An object containing the file "path" and "url" strings.
 	 */
 	public function get_dhl_label_file_info( $type, $key ) {
-
-		// Return file info for "order" type
-		if ( $type === 'order' ) {
-			return $this->get_dhl_order_label_file_info( $key );
-		}
 
 		// Return info for "item" type
 		return $this->get_dhl_item_label_file_info( $key );
@@ -648,66 +610,6 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	}
 
 	/**
-	 * Checks if an order label file already exist, and if not fetches it from the API and saves it.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param string $order_id The DHL order ID.
-	 *
-	 * @return object An object containing the "path" and "url" to the label file.
-	 *
-	 * @throws Exception
-	 */
-	public function create_dhl_order_label_file( $order_id )
-	{
-		$file_info = $this->get_dhl_order_label_file_info( $order_id );
-
-		// Skip creating the file if it already exists
-		if ( file_exists( $file_info->path ) ) {
-			return $file_info;
-		}
-
-		// Get the order with the given ID
-		$order = $this->api_client->get_order( $order_id );
-		if ($order === null) {
-			throw new Exception("DHL order {$order_id} does not exist.");
-		}
-
-		// For multiple shipments, maybe create each label file and then merge them
-		$loader = PR_DHL_Libraryloader::instance();
-		$pdfMerger = $loader->get_pdf_merger();
-
-		if( $pdfMerger === null ){
-
-			throw new Exception( __('Library conflict, could not merge PDF files. Please download PDF files individually.', 'pr-shipping-dhl') );
-		}
-
-		foreach ( $order['shipments'] as $shipment ) {
-			// Create the single AWB label file
-			$awb_label_info = $this->create_dhl_awb_label_file( $shipment->awb );
-
-			// Ensure file exists
-			if ( ! file_exists( $awb_label_info->path ) ) {
-				continue;
-			}
-
-			// Ensure it is a PDF file
-			$ext = pathinfo($awb_label_info->path, PATHINFO_EXTENSION);
-			if ( stripos($ext, 'pdf') === false) {
-				throw new Exception( __('Not all the file formats are the same.', 'pr-shipping-dhl') );
-			}
-
-			// Add to merge queue
-			$pdfMerger->addPDF( $awb_label_info->path, 'all' );
-		}
-
-		// Merge all files in the queue
-		$pdfMerger->merge( 'file',  $file_info->path );
-
-		return $file_info;
-	}
-
-	/**
 	 * {@inheritdoc}
 	 *
 	 * @since [*next-version*]
@@ -715,64 +617,4 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	public function dhl_validate_field( $key, $value ) {
 	}
 
-	/**
-	 * Finalizes and creates the current Deutsche Post order.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @return string The ID of the created DHL order.
-	 *
-	 * @throws Exception If an error occurred while and the API failed to create the order.
-	 */
-	public function create_order()
-	{
-		// Create the DHL order
-		$response = $this->api_client->create_order();
-
-		$this->get_settings();
-
-		// Get the current DHL order - the one that was just submitted
-		$order = $this->api_client->get_order($response->orderId);
-		$order_items = $order['items'];
-
-		// Get the tracking note type setting
-		$tracking_note_type = $this->get_setting('dhl_tracking_note', 'customer');
-		$tracking_note_type = ($tracking_note_type == 'yes') ? '' : 'customer';
-
-		// Go through the shipments retrieved from the API and save the AWB of the shipment to
-		// each DHL item's associated WooCommerce order in post meta. This will make sure that each
-		// WooCommerce order has a reference to the its DHL shipment AWB.
-		// At the same time, we will be collecting the AWBs to merge the label PDFs later on, as well
-		// as adding order notes for the AWB to each WC order.
-		$awbs = array();
-		foreach ($response->shipments as $shipment) {
-			foreach ($shipment->items as $item) {
-				if ( ! isset( $order_items[ $item->barcode ] ) ) {
-					continue;
-				}
-
-				// Get the WC order for this DHL item
-				$item_wc_order_id = $order_items[ $item->barcode ];
-				$item_wc_order = wc_get_order( $item_wc_order_id );
-
-				// Save the AWB to the WC order
-				update_post_meta( $item_wc_order_id, 'pr_dhl_dp_awb', $shipment->awb );
-
-				// An an order note for the AWB
-				$item_awb_note = __('Shipment AWB: ', 'pr-shipping-dhl') . $shipment->awb;
-				$item_wc_order->add_order_note( $item_awb_note, $tracking_note_type, true );
-
-				// Save the AWB in the list.
-				$awbs[] = $shipment->awb;
-
-				// Save the DHL order ID in the WC order meta
-				update_post_meta( $item_wc_order_id, 'pr_dhl_ecs_asia_order', $response->orderId );
-			}
-		}
-
-		// Generate the merged AWB label file
-		$this->create_dhl_order_label_file( $response->orderId );
-
-		return $response->orderId;
-	}
 }
