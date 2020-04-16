@@ -131,7 +131,7 @@ class Item_Info {
 	 * @throws Exception If some data in $args did not pass validation.
 	 */
 	protected function parse_args( $args ) {
-//	    error_log(print_r($args,true));
+	    error_log(print_r($args,true));
 		$settings = $args[ 'dhl_settings' ];
 		$recipient_info = $args[ 'shipping_address' ] + $settings;
 		$shipping_info = $args[ 'order_details' ] + $settings;
@@ -255,6 +255,21 @@ class Item_Info {
 			'currency' => array(
 				'error' => __( 'Shop "Currency" is empty!', 'pr-shipping-dhl' ),
 			),
+            'cod_value' => array(
+                'default' => 0,
+                'rename' => 'codValue',
+                'sanitize' => function( $value, $args ) use ($self) {
+                    error_log('sanitive cod');
+                    error_log(print_r($args, true));
+                    if( isset( $args['is_cod'] ) && $args['is_cod'] == 'yes' ) {
+                        $value = $self->float_round_sanitization( $value, 2 );
+                    } else {
+                        $value = 0;
+                    }
+                    error_log($value);
+                    return $value;
+                }
+            )
 		);
 	}
 

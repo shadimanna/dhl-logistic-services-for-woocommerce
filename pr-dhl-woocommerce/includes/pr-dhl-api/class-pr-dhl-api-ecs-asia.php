@@ -82,6 +82,14 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		}
 	}
 
+    public function get_dhl_duties() {
+        $duties = array(
+            'DDU' => __('Duties Consignee Paid', 'pr-shipping-dhl'),
+            'DDP' => __('Duties Shipper Paid', 'pr-shipping-dhl')
+        );
+        return $duties;
+    }
+
 	/**
 	 * Initializes the API client instance.
 	 *

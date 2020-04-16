@@ -156,7 +156,7 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 				'class'				=> 'wc-enhanced-select'
 			),
             'dhl_prefix' => array(
-                'title'             => __( 'Package Prefix', 'pr-shipping-dhl' ),
+                'title'             => __( 'Customer Prefix', 'pr-shipping-dhl' ),
                 'type'              => 'text',
                 'description'       => __( 'The package prefix is added to identify the package is coming from your shop. This value is limited to 5 charaters.', 'pr-shipping-dhl' ),
                 'desc_tip'          => true,

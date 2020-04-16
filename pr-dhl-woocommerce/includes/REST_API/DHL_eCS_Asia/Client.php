@@ -67,7 +67,7 @@ class Client extends API_Client {
 		$route 	= $this->shipping_label_route();
 
 		$data = $this->item_info_to_request_data( $item_info );
-		
+
 		$response = $this->post($route, $data);
 		
 		if ( $response->status === 200 ) {
@@ -133,7 +133,12 @@ class Client extends API_Client {
  * @return string The version of the message.
  */
     protected function get_shipment_id( $prefix, $id ){
-        $shipment_parts = array( $prefix, sprintf('%07d', $id ), time() );
+        if ( empty( $prefix ) ) {
+            $shipment_parts = array( sprintf('%07d', $id ), time() );
+        } else {
+            $shipment_parts = array( $prefix, sprintf('%07d', $id ), time() );
+        }
+
         return implode('-', $shipment_parts);
     }
 
@@ -157,6 +162,7 @@ class Client extends API_Client {
 			'totalWeightUOM' 	=> $item_info->shipment['weightUom'],
 			'dimensionUOM' 		=> $item_info->shipment['dimensionUom'],
 			'productCode' 		=> $item_info->shipment['product_code'],
+			'codValue'          => $item_info->shipment['codValue'],
 			'totalValue'		=> $item_info->shipment['items_value'],
 			'currency' 			=> $item_info->shipment['currency'],
 			'shipmentPieces' 	=> array(
@@ -167,7 +173,8 @@ class Client extends API_Client {
 						'unit' 		=> $item_info->shipment['weightUom']
 					),
 					'billingReference1'	=> $item_info->shipment['order_id'],
-					'pieceDescription'	=> $item_info->shipment['description']
+					'pieceDescription'	=> $item_info->shipment['description'],
+                    'codAmount'         => $item_info->shipment['codValue'],
 				)
 			),
 		);
@@ -227,7 +234,6 @@ class Client extends API_Client {
 			)
 		);
 
-		error_log(print_r($request_data,true));
         return Args_Parser::unset_empty_values( $request_data );
 	}
 
