@@ -410,8 +410,9 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 			? $args[ 'order_details' ][ 'order_id' ]
 			: null;
 
-		$uom = get_option( 'woocommerce_weight_unit' );
-        $is_cross_border = PR_DHL()->is_crossborder_shipment( $args['shipping_address']['country'] );
+		$uom 				= get_option( 'woocommerce_weight_unit' );
+		$label_format 		= $args['dhl_settings']['label_format'];
+        $is_cross_border 	= PR_DHL()->is_crossborder_shipment( $args['shipping_address']['country'] );
 		try {
 			$item_info = new Item_Info( $args, $uom, $is_cross_border );
 		} catch (Exception $e) {
@@ -455,13 +456,13 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		}
 
 		$labels_info 		= $label_response->labelResponse->bd->labels[0];
-		$label_pdf_data 	= base64_decode( $labels_info->content );
+		$label_pdf_data 	= ( $label_format == 'ZPL' )? $labels_info->content : base64_decode( $labels_info->content );
 
 		$shipment_id 		= $labels_info->shipmentID;
 		$this->save_dhl_label_file( 'item', $shipment_id, $label_pdf_data );
 		
 		return array(
-			'label_path' 			=> $this->get_dhl_item_label_file_info( $shipment_id )->path,
+			'label_path' 			=> $this->get_dhl_label_file_info( 'item', $shipment_id )->path,
 			'shipment_id' 			=> $shipment_id,
 			'tracking_number' 		=> $shipment_id,
 			'tracking_status' 		=> '',
@@ -546,8 +547,10 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	 */
 	public function get_dhl_label_file_info( $type, $key ) {
 
+		$label_format = strtolower( $this->get_setting( 'dhl_label_format' ) );
+		
 		// Return info for "item" type
-		return $this->get_dhl_item_label_file_info( $key );
+		return $this->get_dhl_item_label_file_info( $key, $label_format );
 	}
 
 	/**
