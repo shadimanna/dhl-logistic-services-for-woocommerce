@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 5.2
-Stable tag: 1.6.8
+Stable tag: 1.6.9
 WC requires at least: 2.6.14
 WC tested up to: 4.0
 License: GPLv2 or later
@@ -76,6 +76,12 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+
+= 1.6.9 =
+* DHL Parcel: Updated ServicePoint selector width to scale to full width
+* DHL Parcel: Updated ServicePoint selector to block the enter key on input to prevent accidental form submission
+* DHL Parcel: Fixed an issue that caused PHP warning errors on pages with cart data
+* DHL Parcel: Updated translation texts
 
 = 1.6.8 =
 * DHL Paket: Fix label creation error message to display correctly
