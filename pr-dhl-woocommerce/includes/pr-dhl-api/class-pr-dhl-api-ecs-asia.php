@@ -370,6 +370,10 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 				'name' 	    => __( 'Packet International Economy', 'pr-shipping-dhl' ),
 				'origin_countries' => 'CN,HK,IN,TH'
 			),
+			'PKW' => array(
+                'name' 	    => __( 'Parcel International Direct Semi', 'pr-shipping-dhl' ),
+                'origin_countries' => 'CN,HK'
+            ),
 		);
 
 		return $products;
