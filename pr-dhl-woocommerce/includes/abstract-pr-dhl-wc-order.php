@@ -653,6 +653,9 @@ abstract class PR_DHL_WC_Order {
 		// Sum value of ordered items
 		$args['order_details']['items_value'] = 0;
 		foreach ($ordered_items as $key => $item) {
+            // Reset array
+            $new_item = array();
+
 			$new_item['qty'] = $item['qty'];
 			// Get 1 item value not total items, based on ordered items in case currency is different that set product price
 			$new_item['item_value'] = ( $item['line_total'] / $item['qty'] );
