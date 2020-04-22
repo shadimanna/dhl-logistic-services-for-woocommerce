@@ -54,7 +54,6 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		$germany_dom = array(  
 								'V01PAK' => __('DHL Paket', 'pr-shipping-dhl'),
 								'V01PRIO' => __('DHL Paket PRIO', 'pr-shipping-dhl'),
-								'V06PAK' => __('DHL Paket Taggleich', 'pr-shipping-dhl'),
 								);
 
 		$dhl_prod_dom = array();
