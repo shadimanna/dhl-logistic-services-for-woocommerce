@@ -159,7 +159,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			}
 
 			try {
-				$preferred_times = array();
 				$shipping_address = $order->get_address( 'shipping' );
 
 				$preferred_day_time = PR_DHL()->get_dhl_preferred_day_time( $shipping_address['postcode'] );
@@ -168,8 +167,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 					$preferred_days = $preferred_day_time['preferred_day'];
 					$preferred_days = array_keys($preferred_days);
 					$preferred_days = array_combine($preferred_days, $preferred_days);
-
-					$preferred_times = $preferred_day_time['preferred_time'];
 				}
 			} catch (Exception $e) {
 				// catch exception
@@ -183,16 +180,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				'description'		=> '',
 				'value'       		=> isset( $dhl_label_items['pr_dhl_preferred_day'] ) ? $dhl_label_items['pr_dhl_preferred_day'] : '',
 				'options'			=> $preferred_days,
-				'custom_attributes'	=> array( $is_disabled => $is_disabled )
-			) );
-
-			// $preferred_times = $dhl_obj->get_dhl_preferred_time();
-			woocommerce_wp_select( array(
-				'id'          		=> 'pr_dhl_preferred_time',
-				'label'       		=> __( 'Preferred Time:', 'pr-shipping-dhl' ),
-				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_preferred_time'] ) ? $dhl_label_items['pr_dhl_preferred_time'] : '',
-				'options'			=> $preferred_times,
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
 
@@ -386,7 +373,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	 * Function for saving tracking items
 	 */
 	public function get_additional_meta_ids( ) {
-		return array( 'pr_dhl_cod_value', 'pr_dhl_preferred_day', 'pr_dhl_preferred_time', 'pr_dhl_preferred_location', 'pr_dhl_preferred_neighbor', 'pr_dhl_duties', 'pr_dhl_age_visual', 'pr_dhl_email_notification', 'pr_dhl_additional_insurance', 'pr_dhl_personally', 'pr_dhl_no_neighbor', 'pr_dhl_named_person', 'pr_dhl_premium', 'pr_dhl_bulky_goods', 'pr_dhl_is_codeable', 'pr_dhl_identcheck', 'pr_dhl_identcheck_dob', 'pr_dhl_identcheck_age', 'pr_dhl_return_address_enabled', 'pr_dhl_return_name', 'pr_dhl_return_company', 'pr_dhl_return_address','pr_dhl_return_address_no', 'pr_dhl_return_address_city', 'pr_dhl_return_address_state', 'pr_dhl_return_address_zip', 'pr_dhl_return_phone', 'pr_dhl_return_email', 'pr_dhl_routing', 'pr_dhl_routing_email' );
+		return array( 'pr_dhl_cod_value', 'pr_dhl_preferred_day', 'pr_dhl_preferred_location', 'pr_dhl_preferred_neighbor', 'pr_dhl_duties', 'pr_dhl_age_visual', 'pr_dhl_email_notification', 'pr_dhl_additional_insurance', 'pr_dhl_personally', 'pr_dhl_no_neighbor', 'pr_dhl_named_person', 'pr_dhl_premium', 'pr_dhl_bulky_goods', 'pr_dhl_is_codeable', 'pr_dhl_identcheck', 'pr_dhl_identcheck_dob', 'pr_dhl_identcheck_age', 'pr_dhl_return_address_enabled', 'pr_dhl_return_name', 'pr_dhl_return_company', 'pr_dhl_return_address','pr_dhl_return_address_no', 'pr_dhl_return_address_city', 'pr_dhl_return_address_state', 'pr_dhl_return_address_zip', 'pr_dhl_return_phone', 'pr_dhl_return_email', 'pr_dhl_routing', 'pr_dhl_routing_email' );
 	}
 
 	protected function get_tracking_url() {

@@ -127,7 +127,6 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		
 		$preferred_day_time = array();
 		$preferred_day_time['preferred_day'] = $this->get_dhl_preferred_day( $preferred_services );
-		$preferred_day_time['preferred_time'] = $this->get_dhl_preferred_time( $preferred_services );
 
 		// Reset time locael
 		// setlocale(LC_TIME, $current_locale);
@@ -166,28 +165,6 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 
 
 		return $preferred_days;
-	}
-
-	protected function get_dhl_preferred_time( $preferred_services ) {
-		
-		$preferred_times = array();
-		if( isset( $preferred_services->preferredTime->available ) && $preferred_services->preferredTime->available && isset( $preferred_services->preferredTime->timeframes ) ) {
-
-			// Add none option
-			$preferred_times[0] = _x('none', 'time context', 'pr-shipping-dhl');
-			foreach ($preferred_services->preferredTime->timeframes as $time_key => $time_value) {
-				$temp_day_time = str_replace( ':00', '', $time_value->start );
-				$temp_day_time .= '-';
-				$temp_day_time .= str_replace( ':00', '', $time_value->end );
-
-				$temp_day_time_key = str_replace( ':', '', $time_value->start );
-				$temp_day_time_key .= str_replace( ':', '', $time_value->end );
-
-				$preferred_times[ $temp_day_time_key ] = $temp_day_time;
-			}
-		}
-
-		return $preferred_times;
 	}
 
 	public function get_dhl_duties() {

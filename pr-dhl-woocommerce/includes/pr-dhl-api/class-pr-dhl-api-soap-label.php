@@ -424,9 +424,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			// SERVICES DATA
 			$services_map = array(
-								'preferred_time' => array(
-													'name' => 'PreferredTime',
-													'type' => 'type'),
 								'age_visual' => array(
 													'name' => 'VisualCheckOfAge',
 													'type' => 'type'),
