@@ -266,7 +266,24 @@ class Item_Info {
                     }
                     return $value;
                 }
-            )
+			),
+			'insurance_value' => array(
+				'default' => 0,
+                'rename' => 'insuranceValue',
+                'sanitize' => function( $value, $args ) use ($self) {
+                    if( isset( $args['additional_insurance'] ) && $args['additional_insurance'] == 'yes' ) {
+
+                        $value = $self->float_round_sanitization( $args['items_value'], 2 );
+					
+					} else {
+                        $value = 0;
+                    }
+                    return $value;
+                }
+			),
+			'obox_service' => array(
+                'default' => '',
+			),
 		);
 	}
 

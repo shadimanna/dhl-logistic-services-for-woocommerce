@@ -4,6 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+
 /**
  * DHL Shipping Method.
  *
@@ -234,6 +235,22 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 				'description'       => __( 'Set the custom text when adding the tracking number to the order notes. {tracking-link} is where the tracking number will be set.', 'pr-shipping-dhl' ),
 				'desc_tip'          => false,
 				'default'           => __( 'DHL Tracking Number: {tracking-link}', 'pr-shipping-dhl')
+			),
+			'dhl_default_additional_insurance' => array(
+				'title'             => __( 'Additional Insurance', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Enabled', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here to enable insurance.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
+			'dhl_default_obox_service' => array(
+				'title'             => __( 'Open Box Service', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Enabled', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here to enable open box service.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
 			),
 			'dhl_api'           => array(
 				'title'           => __( 'API Settings', 'pr-shipping-dhl' ),
