@@ -313,15 +313,11 @@ class Client extends API_Client {
             }
 		}
 		
-		if( !$item_info->isCrossBorder ) {
-			
-			if( $item_info->shipment['obox_service'] == 'yes' ){
+		if( isset( $item_info->shipment['obox_service'] ) && $item_info->shipment['obox_service'] == 'yes' ){
 
-				$shipment_item['valueAddedServices']['valueAddedService'][] = array(
-					'vasCode' => 'OBOX'
-				);
-
-			}
+			$shipment_item['valueAddedServices']['valueAddedService'][] = array(
+				'vasCode' => 'OBOX'
+			);
 
 		}
 
