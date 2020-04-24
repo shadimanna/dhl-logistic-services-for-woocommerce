@@ -70,17 +70,20 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
             'custom_attributes'	=> array( $is_disabled => $is_disabled, 'maxlength' => '50' )
         ) );
 
-		if( $this->is_cod_payment_method( $order_id ) ) {
+        if ( $this->is_shipping_domestic( $order_id ) ) {
 
-			woocommerce_wp_checkbox( array(
-				'id'          		=> 'pr_dhl_is_cod',
-				'label'       		=> __( 'COD Enabled:', 'pr-shipping-dhl' ),
-				'placeholder' 		=> '',
-				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_is_cod'] ) ? $dhl_label_items['pr_dhl_is_cod'] : 'yes',
-				'custom_attributes'	=> array( $is_disabled => $is_disabled )
-			) );
-		}
+            if( $this->is_cod_payment_method( $order_id ) ) {
+
+                woocommerce_wp_checkbox( array(
+                    'id'          		=> 'pr_dhl_is_cod',
+                    'label'       		=> __( 'COD Enabled:', 'pr-shipping-dhl' ),
+                    'placeholder' 		=> '',
+                    'description'		=> '',
+                    'value'       		=> isset( $dhl_label_items['pr_dhl_is_cod'] ) ? $dhl_label_items['pr_dhl_is_cod'] : 'yes',
+                    'custom_attributes'	=> array( $is_disabled => $is_disabled )
+                ) );
+            }
+        }
 
 	}
 	
@@ -377,7 +380,8 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 	public function get_bulk_actions() {
 
 		$shop_manager_actions = array(
-			'pr_dhl_create_labels'      => __( 'DHL Create Labels', 'pr-shipping-dhl' )
+			'pr_dhl_create_labels'      => __( 'DHL Create Labels', 'pr-shipping-dhl' ),
+            'pr_dhl_handover'      => __( 'DHL Print Handover', 'pr-shipping-dhl' )
 		);
 
 		return $shop_manager_actions;

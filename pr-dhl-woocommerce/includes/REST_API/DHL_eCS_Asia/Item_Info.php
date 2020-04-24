@@ -266,6 +266,10 @@ class Item_Info {
                     }
                     return $value;
                 }
+            ),
+            'order_note' => array(
+                'default' => '',
+                'rename' => 'remarks'
             )
 		);
 	}

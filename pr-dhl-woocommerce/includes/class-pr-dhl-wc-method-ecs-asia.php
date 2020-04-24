@@ -212,7 +212,7 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 				'desc_tip'          => true,
 				'options'           => $select_dhl_duties,
 				'class'				=> 'wc-enhanced-select'
-			),/*
+			),
 			'dhl_order_note' => array(
 				'title'             => __( 'Order Notes', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
@@ -220,7 +220,7 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 				'default'           => 'no',
 				'description'       => __( 'Please, tick here if you want to send the customer "Order Notes" to be added to the label.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
-			),*/
+			),
 			'dhl_tracking_note' => array(
 				'title'             => __( 'Tracking Note', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
