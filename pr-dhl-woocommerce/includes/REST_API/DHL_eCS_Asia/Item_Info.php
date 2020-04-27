@@ -428,12 +428,20 @@ class Item_Info {
 					}
 				},
 			),
-			'item_export' => array(
+			'item_description' => array(
 				'rename' => 'description',
 				'default' => '',
 				'sanitize' => function( $description ) use ($self) {
 
-					return $self->string_length_sanitization( $description, 33 );
+					return $self->string_length_sanitization( $description, 50 );
+				}
+			),
+            'item_export' => array(
+				'rename' => 'descriptionExport',
+				'default' => '',
+				'sanitize' => function( $description ) use ($self) {
+
+					return $self->string_length_sanitization( $description, 50 );
 				}
 			),
 			'product_id'  => array(
