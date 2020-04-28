@@ -320,8 +320,7 @@ class Client extends API_Client {
 				'bd' 	=> array(
 					'pickupAccountId' 	=> $this->pickup_id,
 					'soldToAccountId'	=> $this->soldto_id,
-					//'pickupAddress' 	=> $pickup_address,
-//					'shipperAddress' 	=> $shipper_address,
+					'pickupAddress' 	=> $item_info->shipper,
 					'shipmentItems' 	=> array( $shipment_item ),
 					'label' 			=> array(
 						'format' 	=> $item_info->body[ 'label_format' ],

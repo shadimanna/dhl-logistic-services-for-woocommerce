@@ -28,7 +28,7 @@ class Item_Info {
 	 *
 	 * @var array
 	 */
-	public $body;
+	public $body = array();
 
 	/**
 	 * The array of shipment information.
@@ -37,7 +37,7 @@ class Item_Info {
 	 *
 	 * @var array
 	 */
-	public $shipment;
+	public $shipment = array();
 
 	/**
 	 * The array of shipment pieces information.
@@ -55,7 +55,7 @@ class Item_Info {
 	 *
 	 * @var array
 	 */
-	public $recipient;
+	public $recipient = array();
 
 	/**
 	 * The array of consignee information sub-arrays.
@@ -64,7 +64,7 @@ class Item_Info {
 	 *
 	 * @var array[]
 	 */
-	public $consignee;
+	public $consignee = array();
 
 	/**
 	 * The array of shipper information sub-arrays.
@@ -73,7 +73,7 @@ class Item_Info {
 	 *
 	 * @var array[]
 	 */
-	public $shipper;
+	public $shipper = array();
 
 	/**
 	 * The array of content item information sub-arrays.
@@ -82,7 +82,7 @@ class Item_Info {
 	 *
 	 * @var array[]
 	 */
-	public $contents;
+	public $contents = array();
 
 	/**
 	 * The units of measurement used for weights in the input args.
@@ -131,7 +131,7 @@ class Item_Info {
 	 * @throws Exception If some data in $args did not pass validation.
 	 */
 	protected function parse_args( $args ) {
-	    
+        error_log(print_r($args,true));
 		$settings = $args[ 'dhl_settings' ];
 		$recipient_info = $args[ 'shipping_address' ] + $settings;
 		$shipping_info = $args[ 'order_details' ] + $settings;
@@ -140,9 +140,12 @@ class Item_Info {
 		$this->body 			= Args_Parser::parse_args( $shipping_info, $this->get_body_info_schema() );
 		$this->shipment 		= Args_Parser::parse_args( $shipping_info, $this->get_shipment_info_schema() );
 		$this->consignee 		= Args_Parser::parse_args( $recipient_info, $this->get_recipient_info_schema() );
-//		$this->shipper 			= Args_Parser::parse_args( $settings, $this->get_shipper_info_schema() );
-		$this->contents 		= array();
 
+		if( $args['order_details']['dhl_product'] == 'SDP') {
+		    $this->shipper 			= Args_Parser::parse_args( $settings, $this->get_shipper_info_schema() );
+        }
+
+		$this->contents 		= array();
 		foreach ( $items_info as $item_info ) {
 			$this->contents[] = Args_Parser::parse_args( $item_info, $this->get_content_item_info_schema() );
 		}
@@ -356,6 +359,12 @@ class Item_Info {
 				'error'  => __( '"Account Name" in settings is empty.', 'pr-shipping-dhl' ),
 				'sanitize' => function( $name ) use ($self) {
 
+                    if (empty($name)) {
+                        throw new Exception(
+                            __( '"Account Name" in settings is empty.', 'pr-shipping-dhl' )
+                        );
+                    }
+
 					return $self->string_length_sanitization( $name, 30 );
 				}
 			),
@@ -370,6 +379,16 @@ class Item_Info {
 			'dhl_address_1' => array(
 				'rename' => 'address1',
 				'error' => __( 'Base "Address 1" is empty!', 'pr-shipping-dhl' ),
+                'sanitize' => function( $name ) use ($self) {
+
+                    if (empty($name)) {
+                        throw new Exception(
+                            __( 'Base "Address 1" is empty!', 'pr-shipping-dhl' )
+                        );
+                    }
+
+                    return $self->string_length_sanitization( $name, 50 );
+                }
 			),
 			'dhl_address_2' => array(
 				'rename' => 'address2',
