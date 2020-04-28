@@ -130,6 +130,72 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 			),
 		);
 
+		$this->form_fields += array(
+			'dhl_shipper'           => array(
+				'title'           => __( 'Shipper Address', 'pr-shipping-dhl' ),
+				'type'            => 'title',
+				'description'     => __( 'Enter Shipper Address below.', 'pr-shipping-dhl' ),
+			),
+			'dhl_shipper_company' => array(
+				'title'             => __( 'Company', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'Enter Shipper Company.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
+			),
+			'dhl_shipper_address_1' => array(
+				'title'             => __( 'Address 1', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'Enter Shipper Address.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
+			),
+			'dhl_shipper_address_2' => array(
+				'title'             => __( 'Address 2', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'Enter Shipper Address 2.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
+			),
+			'dhl_shipper_address_city' => array(
+				'title'             => __( 'City', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'Enter Shipper City.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
+			),
+			'dhl_shipper_address_state' => array(
+				'title'             => __( 'State', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'Enter Shipper County.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
+			),
+			'dhl_shipper_address_district' => array(
+				'title'             => __( 'District', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'Enter Shipper District.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
+			),
+			'dhl_shipper_address_country' => array(
+				'title'             => __( 'Country', 'pr-shipping-dhl' ),
+				'type'              => 'select',
+				'description'       => __( 'Enter Shipper Country.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'options'           => WC()->countries->get_countries(),
+				'class'				=> 'wc-enhanced-select',
+				'default'           => ''
+			),
+			'dhl_shipper_address_postcode' => array(
+				'title'             => __( 'Postcode', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => __( 'Enter Shipper Postcode.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'default'           => ''
+			),
+		);
+
 		// if ( ! empty( $select_dhl_product_int ) ) {
 
 		$this->form_fields += array(
