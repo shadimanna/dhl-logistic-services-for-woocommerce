@@ -37,6 +37,8 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 	public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
 
+		$order 	= wc_get_order( $order_id );
+		
 		if( $this->is_crossborder_shipment( $order_id ) ) {
 			
 			// Duties drop down
@@ -91,6 +93,16 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 			'value'       		=> isset( $dhl_label_items['pr_dhl_additional_insurance'] ) ? $dhl_label_items['pr_dhl_additional_insurance'] : $this->shipping_dhl_settings['dhl_default_additional_insurance'],
 			'custom_attributes'	=> array( $is_disabled => $is_disabled )
 		) );
+
+		woocommerce_wp_text_input( array(
+			'id'          		=> 'pr_dhl_insurance_value',
+			'class'          	=> 'wc_input_decimal',
+			'label'       		=> __( 'Insurance Value:', 'pr-shipping-dhl' ),
+			'placeholder' 		=> '',
+			'description'		=> '',
+			'value'       		=> isset( $dhl_label_items['pr_dhl_insurance_value'] ) ? $dhl_label_items['pr_dhl_insurance_value'] : $order->get_subtotal(),
+			'custom_attributes'	=> array( $is_disabled => $is_disabled )
+	) );
 		
 		if( $this->is_shipping_domestic( $order_id ) ) {
 
@@ -115,7 +127,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 	 */
 	public function get_additional_meta_ids( ) {
 
-		return array( 'pr_dhl_duties', 'pr_dhl_description', 'pr_dhl_is_cod', 'pr_dhl_additional_insurance', 'pr_dhl_obox_service' );
+		return array( 'pr_dhl_duties', 'pr_dhl_description', 'pr_dhl_is_cod', 'pr_dhl_additional_insurance', 'pr_dhl_insurance_value', 'pr_dhl_obox_service' );
 
 	}
 	
@@ -232,6 +244,10 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 		if ( ! empty( $dhl_label_items['pr_dhl_additional_insurance'] ) ) {
 			$args['order_details']['additional_insurance'] = $dhl_label_items['pr_dhl_additional_insurance'];
+		}
+
+		if ( ! empty( $dhl_label_items['pr_dhl_insurance_value'] ) ) { 
+			$args['order_details']['insurance_value'] = $dhl_label_items['pr_dhl_insurance_value'];
 		}
 
 		if ( ! empty( $dhl_label_items['pr_dhl_obox_service'] ) ) {

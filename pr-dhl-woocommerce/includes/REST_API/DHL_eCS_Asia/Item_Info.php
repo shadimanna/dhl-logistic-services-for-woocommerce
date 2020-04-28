@@ -273,7 +273,7 @@ class Item_Info {
                 'sanitize' => function( $value, $args ) use ($self) {
                     if( isset( $args['additional_insurance'] ) && $args['additional_insurance'] == 'yes' ) {
 
-                        $value = $self->float_round_sanitization( $args['items_value'], 2 );
+                        $value = $self->float_round_sanitization( $value, 2 );
 					
 					} else {
                         $value = 0;
