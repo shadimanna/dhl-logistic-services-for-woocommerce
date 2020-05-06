@@ -41,6 +41,15 @@ jQuery(document).ready(function ($) {
                 $('.dhlpwc-parcelshop-option-list').hide();
             }
         }
+        
+    }).on('keyup keypress', '.dhlpwc-parcelshop-option-list-search input', function (e) {
+        // Prevent ENTER key from doing anything
+        var keyCode = e.keyCode || e.which;
+        if (keyCode === 13) { 
+            e.preventDefault();
+            return false;
+        }
+        
     }).on('keyup', '.dhlpwc-parcelshop-option-list-search input', function (e) {
         if ($('[id^=shipping_method_][id$=_dhlpwc-parcelshop]').is(':checked')) {
             clearTimeout(dhlpwc_parcelshop_selector_timeout);

@@ -21,7 +21,7 @@
 </div>
 <div id="dhlpwc-metabox-parcelshop-select-box" style="display:none;">
     <input id="dhlpwc-metabox-parcelshop-search-field"
-           placeholder="<?php _e('Search by postcode, city or name', 'dhlpwc') ?>" type="text"/>
+           placeholder="<?php _e('Search with postal code or city', 'dhlpwc') ?>" type="text"/>
     <div id="dhlpwc-metabox-parcelshop-select-list">
     </div>
     <div class="clear"></div>
