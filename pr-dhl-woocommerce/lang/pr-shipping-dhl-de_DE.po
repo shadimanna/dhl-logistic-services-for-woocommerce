@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DHL Logistic Services for WooCommerce\n"
 "POT-Creation-Date: 2019-11-04 21:40+0700\n"
-"PO-Revision-Date: 2020-05-01 11:11+0200\n"
+"PO-Revision-Date: 2019-11-04 21:43+0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -2773,7 +2773,7 @@ msgstr ""
 
 #: includes/class-pr-dhl-wc-method-paket.php:380
 msgid "Preferred Service"
-msgstr "DHL Wunschzustellung"
+msgstr "DHL Wunschpaket"
 
 #: includes/class-pr-dhl-wc-method-paket.php:382
 msgid "Preferred service options."
@@ -2934,7 +2934,7 @@ msgid ""
 "and Location Finder below. You can press \"ctrl\" to select multiple options "
 "or click on a selected option to deselect it."
 msgstr ""
-"Wählen Sie die Bezahlmethoden, bei denen im Frontend die Wunschzustellung-"
+"Wählen Sie die Bezahlmethoden, bei denen im Frontend die Wunschpaket-"
 "Services und Standortsuche nicht buchbar werden sollen. Sie können durch "
 "halten der “Strg”-Taste mehrere Optionen gleichzeitig auswählen, ein Klick "
 "auf eine bereits ausgewählte Option deaktiviert diese wieder."
@@ -4733,7 +4733,7 @@ msgstr "Adresse"
 
 #: templates/checkout/dhl-preferred-services.php:19
 msgid "DHL Preferred Delivery. Delivered just as you wish."
-msgstr "lhr DHL Wunschzustellung. Gebracht wie gewünscht."
+msgstr "lhr DHL Wunschpaket. Gebracht wie gewünscht."
 
 #: templates/checkout/dhl-preferred-services.php:23
 msgid ""
@@ -4742,8 +4742,8 @@ msgid ""
 "when and where you want to receive your parcels.<br>\n"
 "Please choose your preferred delivery option."
 msgstr ""
-"Mit den Services von DHL Wunschzustellung entscheiden Sie, wann und wo Sie "
-"Ihre Pakete empfangen.\n"
+"Mit den Services von DHL Wunschpaket entscheiden Sie, wann und wo Sie Ihre "
+"Pakete empfangen.\n"
 "Wählen Sie Ihre bevorzugte Lieferoption."
 
 #: templates/checkout/dhl-preferred-services.php:33
