@@ -77,6 +77,10 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 == Changelog ==
 
+= 1.7.0 =
+* DHL Paket: Remove "Preferred Time" service
+* DHL Paket: Remove "DHL Paket Taggleich" product
+
 = 1.6.9 =
 * DHL Parcel: Updated ServicePoint selector width to scale to full width
 * DHL Parcel: Updated ServicePoint selector to block the enter key on input to prevent accidental form submission
