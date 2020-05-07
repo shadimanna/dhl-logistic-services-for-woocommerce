@@ -228,7 +228,7 @@ class Item_Info {
 			),
 			'dhl_product' => array(
 				'rename' 	=> 'product_code',
-				'default' 	=> 'PDO'
+                'error'     => __( '"DHL Product" is empty!', 'pr-shipping-dhl' ),
 			),
 			'duties' => array(
 				'rename' 	=> 'incoterm',
@@ -267,6 +267,10 @@ class Item_Info {
                     return $value;
                 }
 			),
+            'order_note' => array(
+                'default' => '',
+                'rename' => 'remarks'
+            ),
 			'insurance_value' => array(
 				'default' => 0,
                 'rename' => 'insuranceValue',
