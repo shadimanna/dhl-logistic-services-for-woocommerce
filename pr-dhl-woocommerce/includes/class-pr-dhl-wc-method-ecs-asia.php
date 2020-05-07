@@ -90,7 +90,7 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 			'dhl_pickup_dist'     => array(
 				'title'           => __( 'Account', 'pr-shipping-dhl' ),
 				'type'            => 'title',
-				'description'     => __( 'Please configure your shipping parameters underneath.', 'pr-shipping-dhl' ),
+				'description'     => __( 'Please enter your account information underneath.', 'pr-shipping-dhl' ),
 				'class'			  => '',
 			),
 			'dhl_pickup_id' => array(
@@ -100,39 +100,15 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 				'desc_tip'          => true,
 				'default'           => '',
 				'placeholder'		=> '0000500000'
-			),'dhl_soldto_id' => array(
+			),
+            'dhl_soldto_id' => array(
 				'title'             => __( 'Soldto Account ID', 'pr-shipping-dhl' ),
 				'type'              => 'text',
 				'description'       => __( 'The "Soldto Account" id will be provided by your local DHL sales organization and tells us where to pick up your shipments.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 				'default'           => '',
 				'placeholder'		=> '0000500000'
-			),'dhl_contact_name' => array(
-				'title'             => __( 'Account Name', 'pr-shipping-dhl' ),
-				'type'              => 'text',
-				'description'       => __( 'The account name will be provided by your local DHL sales organization and tells us where to pick up your shipments.', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
-				'default'           => ''
-			),'dhl_email' => array(
-				'title'             => __( 'Account Email', 'pr-shipping-dhl' ),
-				'type'              => 'text',
-				'description'       => __( 'The email.', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
-				'default'           => '',
-				'placeholder'		=> 'name@email.com'
-			),'dhl_phone' => array(
-				'title'             => __( 'Account Phone', 'pr-shipping-dhl' ),
-				'type'              => 'text',
-				'description'       => __( 'The phone.', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
-				'default'           => '',
-				'placeholder'		=> '0214543433'
 			),
-		);
-
-		// if ( ! empty( $select_dhl_product_int ) ) {
-
-		$this->form_fields += array(
 			'dhl_label_title'     => array(
 				'title'           => __( 'Label', 'pr-shipping-dhl' ),
 				'type'            => 'title',
@@ -212,7 +188,7 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 				'desc_tip'          => true,
 				'options'           => $select_dhl_duties,
 				'class'				=> 'wc-enhanced-select'
-			),/*
+			),
 			'dhl_order_note' => array(
 				'title'             => __( 'Order Notes', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
@@ -220,7 +196,7 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 				'default'           => 'no',
 				'description'       => __( 'Please, tick here if you want to send the customer "Order Notes" to be added to the label.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
-			),*/
+			),
 			'dhl_tracking_note' => array(
 				'title'             => __( 'Tracking Note', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
@@ -296,6 +272,92 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 				'default'           => 'yes',
 				'description'       => sprintf( __( 'A log file containing the communication to the DHL server will be maintained if this option is checked. This can be used in case of technical issues and can be found %shere%s.', 'pr-shipping-dhl' ), '<a href="' . $log_path . '" target = "_blank">', '</a>' )
 			),
+            'dhl_shipper'           => array(
+                'title'           => __( 'Pickup Address', 'pr-shipping-dhl' ),
+                'type'            => 'title',
+                'description'     => __( 'Enter Pickup Address below.  This is used for the "DHL Parcel Metro" product only.', 'pr-shipping-dhl' ),
+            ),
+            'dhl_contact_name' => array(
+                'title'             => __( 'Name', 'pr-shipping-dhl' ),
+                'type'              => 'text',
+                'description'       => __( 'The account name will be provided by your local DHL sales organization and tells us where to pick up your shipments.', 'pr-shipping-dhl' ),
+                'desc_tip'          => true,
+                'default'           => ''
+            ),
+            'dhl_email' => array(
+                'title'             => __( 'Email', 'pr-shipping-dhl' ),
+                'type'              => 'text',
+                'description'       => __( 'The email.', 'pr-shipping-dhl' ),
+                'desc_tip'          => true,
+                'default'           => '',
+                'placeholder'		=> 'name@email.com'
+            ),
+            'dhl_phone' => array(
+                'title'             => __( 'Phone', 'pr-shipping-dhl' ),
+                'type'              => 'text',
+                'description'       => __( 'The phone.', 'pr-shipping-dhl' ),
+                'desc_tip'          => true,
+                'default'           => '',
+                'placeholder'		=> '0214543433'
+            ),
+            'dhl_shipper_company' => array(
+                'title'             => __( 'Company', 'pr-shipping-dhl' ),
+                'type'              => 'text',
+                'description'       => __( 'Enter Pickup Company.', 'pr-shipping-dhl' ),
+                'desc_tip'          => true,
+                'default'           => ''
+            ),
+            'dhl_shipper_address_1' => array(
+                'title'             => __( 'Address 1', 'pr-shipping-dhl' ),
+                'type'              => 'text',
+                'description'       => __( 'Enter Pickup Address.', 'pr-shipping-dhl' ),
+                'desc_tip'          => true,
+                'default'           => ''
+            ),
+            'dhl_shipper_address_2' => array(
+                'title'             => __( 'Address 2', 'pr-shipping-dhl' ),
+                'type'              => 'text',
+                'description'       => __( 'Enter Pickup Address 2.', 'pr-shipping-dhl' ),
+                'desc_tip'          => true,
+                'default'           => ''
+            ),
+            'dhl_shipper_address_city' => array(
+                'title'             => __( 'City', 'pr-shipping-dhl' ),
+                'type'              => 'text',
+                'description'       => __( 'Enter Pickup City.', 'pr-shipping-dhl' ),
+                'desc_tip'          => true,
+                'default'           => ''
+            ),
+            'dhl_shipper_address_state' => array(
+                'title'             => __( 'State', 'pr-shipping-dhl' ),
+                'type'              => 'text',
+                'description'       => __( 'Enter Pickup County.', 'pr-shipping-dhl' ),
+                'desc_tip'          => true,
+                'default'           => ''
+            ),
+            'dhl_shipper_address_district' => array(
+                'title'             => __( 'District', 'pr-shipping-dhl' ),
+                'type'              => 'text',
+                'description'       => __( 'Enter Pickup District.', 'pr-shipping-dhl' ),
+                'desc_tip'          => true,
+                'default'           => ''
+            ),
+            'dhl_shipper_address_country' => array(
+                'title'             => __( 'Country', 'pr-shipping-dhl' ),
+                'type'              => 'select',
+                'description'       => __( 'Enter Pickup Country.', 'pr-shipping-dhl' ),
+                'desc_tip'          => true,
+                'options'           => WC()->countries->get_countries(),
+                'class'				=> 'wc-enhanced-select',
+                'default'           => ''
+            ),
+            'dhl_shipper_address_postcode' => array(
+                'title'             => __( 'Postcode', 'pr-shipping-dhl' ),
+                'type'              => 'text',
+                'description'       => __( 'Enter Pickup Postcode.', 'pr-shipping-dhl' ),
+                'desc_tip'          => true,
+                'default'           => ''
+            ),
 		);
 	}
 

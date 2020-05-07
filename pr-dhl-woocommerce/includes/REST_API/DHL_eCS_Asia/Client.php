@@ -82,14 +82,14 @@ class Client extends API_Client {
 
 		throw new Exception(
 			sprintf(
-				__( 'Failed to create label: %s', 'pr-shipping-dhl' ), 
+				__( 'Failed to create label: %s', 'pr-shipping-dhl' ),
 				$this->generate_error_details( $response_body )
 			)
 		);
 	}
 
 	public function check_status_code( $label_response ){
-		
+
 		if( !isset( $label_response->labelResponse->bd->responseStatus->code ) ){
 			throw new Exception( __( 'Response status is not exist!', 'pr-shipping-dhl' ) );
 		}
@@ -104,7 +104,7 @@ class Client extends API_Client {
 		}
 
 		$labels_info 		= $label_response->labelResponse->bd->labels;
-		
+
 		foreach( $labels_info as $info ){
 
 			if( !isset( $info->content ) ){
@@ -128,7 +128,7 @@ class Client extends API_Client {
 		if( isset( $label_response->labelResponse->bd->labels ) ) {
 
 			$labels = $label_response->labelResponse->bd->labels;
-			
+
 			foreach( $labels as $label ){
 
 				if( !isset( $label->responseStatus->messageDetails ) ){
@@ -142,12 +142,12 @@ class Client extends API_Client {
 						$error_details .= '<li>' . $message_detail->messageDetail . '</li>';
 
 					}
-					
+
 				}
-				
+
 			}
 		}
-		
+
 		$error_exception = '';
 		$response_status = $label_response->labelResponse->bd->responseStatus;
 
@@ -159,19 +159,19 @@ class Client extends API_Client {
 
 			$message_details = '';
 			foreach( $response_status->messageDetails as $message_detail ){
-				
+
 				if( isset( $message_detail->messageDetail ) ){
 					$message_details .= $message_detail->messageDetail . '<br />';
 				}
-				
+
 			}
-			
+
 			if( !empty( $message_detail ) ){
 
 				$error_exception .= 'Error Details: ' . $message_details;
 
 			}
-			
+
 		}
 
 		if( !empty( $error_details ) ){
@@ -191,7 +191,7 @@ class Client extends API_Client {
 	 * Get message type.
 	 *
 	 * @param string $type The type of the message.
-	 * 
+	 *
 	 * @return string The type of the message.
 	 */
 	protected function get_type( $type = 'create' ){
@@ -236,13 +236,8 @@ class Client extends API_Client {
      * @return string The version of the message.
      */
     protected function get_shipment_id( $prefix, $id ){
-        if ( empty( $prefix ) ) {
-            $shipment_parts = array( sprintf('%07d', $id ), time() );
-        } else {
-            $shipment_parts = array( $prefix, sprintf('%07d', $id ), time() );
-        }
-
-        return implode('-', $shipment_parts);
+        $prefix = trim( $prefix );
+        return $prefix . $id . time();
     }
 
 	/**
@@ -269,6 +264,7 @@ class Client extends API_Client {
 			'insuranceValue' 	=> $item_info->shipment['insuranceValue'],
 			'totalValue'		=> $item_info->shipment['items_value'],
 			'currency' 			=> $item_info->shipment['currency'],
+			'remarks'           => $item_info->shipment['remarks'],
 			'shipmentPieces' 	=> array(
 				array(
 					'pieceID' 			=> $item_info->shipment['order_id'],
@@ -293,7 +289,7 @@ class Client extends API_Client {
                 $shipment_content = array(
                     'skuNumber' 			=> $content['sku'],
                     'description'			=> $content['description'],
-                    'descriptionExport'		=> $content['description'],
+                    'descriptionExport'		=> $content['descriptionExport'],
                     'itemValue' 			=> $content['value'],
                     'itemQuantity' 			=> $content['qty'],
     //				'netWeight' 			=> $content['weight'],
@@ -332,15 +328,14 @@ class Client extends API_Client {
 				'bd' 	=> array(
 					'pickupAccountId' 	=> $this->pickup_id,
 					'soldToAccountId'	=> $this->soldto_id,
-					//'pickupAddress' 	=> $pickup_address,
-//					'shipperAddress' 	=> $shipper_address,
+					'pickupAddress' 	=> $item_info->shipper,
 					'shipmentItems' 	=> array( $shipment_item ),
 					'label' 			=> array(
 						'format' 	=> $item_info->body[ 'label_format' ],
 						'layout' 	=> $item_info->body[ 'label_layout' ],
 						'pageSize' 	=> $item_info->body[ 'label_pagesize' ]
 					)
-					
+
 				)
 			)
 		);
@@ -400,9 +395,9 @@ class Client extends API_Client {
 		);
 
 		$response 	= $this->post($route, $data);
-		
+
 		if ( $response->status === 200 ) {
-			
+
 			return $response->body;
 
 		}

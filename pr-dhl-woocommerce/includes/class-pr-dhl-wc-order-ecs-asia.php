@@ -72,17 +72,20 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
             'custom_attributes'	=> array( $is_disabled => $is_disabled, 'maxlength' => '50' )
         ) );
 
-		if( $this->is_cod_payment_method( $order_id ) ) {
+        if ( $this->is_shipping_domestic( $order_id ) ) {
 
-			woocommerce_wp_checkbox( array(
-				'id'          		=> 'pr_dhl_is_cod',
-				'label'       		=> __( 'COD Enabled:', 'pr-shipping-dhl' ),
-				'placeholder' 		=> '',
-				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_is_cod'] ) ? $dhl_label_items['pr_dhl_is_cod'] : 'yes',
-				'custom_attributes'	=> array( $is_disabled => $is_disabled )
-			) );
-		}
+            if( $this->is_cod_payment_method( $order_id ) ) {
+
+                woocommerce_wp_checkbox( array(
+                    'id'          		=> 'pr_dhl_is_cod',
+                    'label'       		=> __( 'COD Enabled:', 'pr-shipping-dhl' ),
+                    'placeholder' 		=> '',
+                    'description'		=> '',
+                    'value'       		=> isset( $dhl_label_items['pr_dhl_is_cod'] ) ? $dhl_label_items['pr_dhl_is_cod'] : 'yes',
+                    'custom_attributes'	=> array( $is_disabled => $is_disabled )
+                ) );
+            }
+        }
 
 		woocommerce_wp_checkbox( array(
 			'id'          		=> 'pr_dhl_additional_insurance',
@@ -200,13 +203,13 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 		// Get DHL Pickup Address.
 		$args[ 'dhl_settings' ]['dhl_contact_name'] 	= $this->shipping_dhl_settings['dhl_contact_name'];
-		$args[ 'dhl_settings' ]['dhl_address_1'] 		= WC()->countries->get_base_address();
-		$args[ 'dhl_settings' ]['dhl_address_2'] 		= WC()->countries->get_base_address_2();
-		$args[ 'dhl_settings' ]['dhl_city'] 			= WC()->countries->get_base_city();
-		$args[ 'dhl_settings' ]['dhl_state'] 			= WC()->countries->get_base_state();
-		$args[ 'dhl_settings' ]['dhl_district'] 		= WC()->countries->get_base_state();
-		$args[ 'dhl_settings' ]['dhl_country'] 			= WC()->countries->get_base_country();
-		$args[ 'dhl_settings' ]['dhl_postcode'] 		= WC()->countries->get_base_postcode();
+		$args[ 'dhl_settings' ]['dhl_address_1'] 		= $this->shipping_dhl_settings['dhl_shipper_address_1'];
+		$args[ 'dhl_settings' ]['dhl_address_2'] 		= $this->shipping_dhl_settings['dhl_shipper_address_2'];
+		$args[ 'dhl_settings' ]['dhl_city'] 			= $this->shipping_dhl_settings['dhl_shipper_address_city'];
+		$args[ 'dhl_settings' ]['dhl_state'] 			= $this->shipping_dhl_settings['dhl_shipper_address_state'];
+		$args[ 'dhl_settings' ]['dhl_district'] 		= $this->shipping_dhl_settings['dhl_shipper_address_district'];
+		$args[ 'dhl_settings' ]['dhl_country'] 			= $this->shipping_dhl_settings['dhl_shipper_address_country'];
+		$args[ 'dhl_settings' ]['dhl_postcode'] 		= $this->shipping_dhl_settings['dhl_shipper_address_postcode'];
 		$args[ 'dhl_settings' ]['dhl_phone'] 			= $this->shipping_dhl_settings['dhl_phone'];
 		$args[ 'dhl_settings' ]['dhl_email'] 			= $this->shipping_dhl_settings['dhl_email'];
 
@@ -441,7 +444,8 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 	public function get_bulk_actions() {
 
 		$shop_manager_actions = array(
-			'pr_dhl_create_labels'      => __( 'DHL Create Labels', 'pr-shipping-dhl' )
+			'pr_dhl_create_labels'      => __( 'DHL Create Labels', 'pr-shipping-dhl' ),
+            'pr_dhl_handover'      => __( 'DHL Print Handover', 'pr-shipping-dhl' )
 		);
 
 		return $shop_manager_actions;
