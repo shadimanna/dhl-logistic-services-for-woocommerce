@@ -237,19 +237,19 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 				'default'           => __( 'DHL Tracking Number: {tracking-link}', 'pr-shipping-dhl')
 			),
 			'dhl_default_additional_insurance' => array(
-				'title'             => __( 'Additional Insurance', 'pr-shipping-dhl' ),
+				'title'             => __( 'Additional Insurance default', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
 				'label'             => __( 'Enabled', 'pr-shipping-dhl' ),
 				'default'           => 'no',
-				'description'       => __( 'Please, tick here to enable insurance.', 'pr-shipping-dhl' ),
+				'description'       => __( 'Please, tick here if you want "Additional Insurance" service to be checked by default.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 			),
 			'dhl_default_obox_service' => array(
-				'title'             => __( 'Open Box Service', 'pr-shipping-dhl' ),
+				'title'             => __( 'Open Box Service default', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
 				'label'             => __( 'Enabled', 'pr-shipping-dhl' ),
 				'default'           => 'no',
-				'description'       => __( 'Please, tick here to enable open box service.', 'pr-shipping-dhl' ),
+				'description'       => __( 'Please, tick here if you want "Open Box" service to be checked by default.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 			),
 			'dhl_api'           => array(

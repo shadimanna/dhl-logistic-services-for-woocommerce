@@ -308,17 +308,16 @@ class Client extends API_Client {
 
             $shipment_item['shipmentContents'] = $shipment_contents;
 
-            if( !empty( $item_info->shipment['incoterm'] ) ){
+            if( !empty( $item_info->shipment['incoterm'] ) ) {
                 $shipment_item['incoterm'] = $item_info->shipment['incoterm'];
             }
 		}
 		
-		if( isset( $item_info->shipment['obox_service'] ) && $item_info->shipment['obox_service'] == 'yes' ){
-
-			$shipment_item['valueAddedServices']['valueAddedService'][] = array(
-				'vasCode' => 'OBOX'
-			);
-
+		if( !empty( $item_info->shipment['obox_service'] ) ) {
+			$shipment_item['valueAddedServices']['valueAddedService'][] =
+                array(
+                    'vasCode' => $item_info->shipment['obox_service']
+                );
 		}
 
 		$request_data = array(

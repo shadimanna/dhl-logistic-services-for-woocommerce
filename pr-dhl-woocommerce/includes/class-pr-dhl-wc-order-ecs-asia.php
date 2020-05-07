@@ -84,7 +84,6 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 			) );
 		}
 
-
 		woocommerce_wp_checkbox( array(
 			'id'          		=> 'pr_dhl_additional_insurance',
 			'label'       		=> __( 'Additional Insurance:', 'pr-shipping-dhl' ),
@@ -281,6 +280,8 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 	protected function save_default_dhl_label_items( $order_id ) {
 
+        $order = wc_get_order( $order_id );
+
 		parent::save_default_dhl_label_items( $order_id );
 
 		$dhl_label_items = $this->get_dhl_label_items( $order_id );
@@ -310,8 +311,11 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 			}
 		}
 
-		$this->save_dhl_label_items( $order_id, $dhl_label_items );
+        if( empty( $dhl_label_items['pr_dhl_insurance_value'] ) ) {
+            $dhl_label_items['pr_dhl_insurance_value'] = $order->get_subtotal();
+        }
 
+		$this->save_dhl_label_items( $order_id, $dhl_label_items );
 	}
 
 	// Used by label API to pass handover number

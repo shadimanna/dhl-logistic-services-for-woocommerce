@@ -270,6 +270,11 @@ class Item_Info {
 			'insurance_value' => array(
 				'default' => 0,
                 'rename' => 'insuranceValue',
+                'validate' => function( $value, $args ) {
+                    if( isset( $args['additional_insurance'] ) && $args['additional_insurance'] == 'yes' && empty( $value ) ) {
+                        throw new Exception( __( 'The "Insurance Value" cannot be empty', 'pr-shipping-dhl' ) );
+                    }
+                },
                 'sanitize' => function( $value, $args ) use ($self) {
                     if( isset( $args['additional_insurance'] ) && $args['additional_insurance'] == 'yes' ) {
 
@@ -283,6 +288,16 @@ class Item_Info {
 			),
 			'obox_service' => array(
                 'default' => '',
+                'sanitize' => function( $value ) use ($self) {
+
+                    if ( isset( $value ) && $value == 'yes') {
+                        $value = 'OBOX';
+                    } else {
+                        $value = '';
+                    }
+
+                    return $value;
+                }
 			),
 		);
 	}
