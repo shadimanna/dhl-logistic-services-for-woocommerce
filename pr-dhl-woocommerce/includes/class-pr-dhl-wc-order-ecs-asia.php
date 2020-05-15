@@ -37,6 +37,8 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 	public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
 
+		$order 	= wc_get_order( $order_id );
+		
 		if( $this->is_crossborder_shipment( $order_id ) ) {
 			
 			// Duties drop down
@@ -85,6 +87,38 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
             }
         }
 
+		woocommerce_wp_checkbox( array(
+			'id'          		=> 'pr_dhl_additional_insurance',
+			'label'       		=> __( 'Additional Insurance:', 'pr-shipping-dhl' ),
+			'placeholder' 		=> '',
+			'description'		=> '',
+			'value'       		=> isset( $dhl_label_items['pr_dhl_additional_insurance'] ) ? $dhl_label_items['pr_dhl_additional_insurance'] : $this->shipping_dhl_settings['dhl_default_additional_insurance'],
+			'custom_attributes'	=> array( $is_disabled => $is_disabled )
+		) );
+
+		woocommerce_wp_text_input( array(
+			'id'          		=> 'pr_dhl_insurance_value',
+			'class'          	=> 'wc_input_decimal',
+			'label'       		=> __( 'Insurance Value:', 'pr-shipping-dhl' ),
+			'placeholder' 		=> '',
+			'description'		=> '',
+			'value'       		=> isset( $dhl_label_items['pr_dhl_insurance_value'] ) ? $dhl_label_items['pr_dhl_insurance_value'] : $order->get_subtotal(),
+			'custom_attributes'	=> array( $is_disabled => $is_disabled )
+	) );
+		
+		if( $this->is_shipping_domestic( $order_id ) ) {
+
+			woocommerce_wp_checkbox( array(
+				'id'          		=> 'pr_dhl_obox_service',
+				'label'       		=> __( 'Open Box Service:', 'pr-shipping-dhl' ),
+				'placeholder' 		=> '',
+				'description'		=> '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_obox_service'] ) ? $dhl_label_items['pr_dhl_obox_service'] : $this->shipping_dhl_settings['dhl_default_obox_service'],
+				'custom_attributes'	=> array( $is_disabled => $is_disabled )
+			) );
+
+		}
+
 	}
 	
 
@@ -95,7 +129,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 	 */
 	public function get_additional_meta_ids( ) {
 
-		return array( 'pr_dhl_duties', 'pr_dhl_description', 'pr_dhl_is_cod' );
+		return array( 'pr_dhl_duties', 'pr_dhl_description', 'pr_dhl_is_cod', 'pr_dhl_additional_insurance', 'pr_dhl_insurance_value', 'pr_dhl_obox_service' );
 
 	}
 	
@@ -210,6 +244,18 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 			$args['order_details']['is_cod'] = $dhl_label_items['pr_dhl_is_cod'];
 		}
 
+		if ( ! empty( $dhl_label_items['pr_dhl_additional_insurance'] ) ) {
+			$args['order_details']['additional_insurance'] = $dhl_label_items['pr_dhl_additional_insurance'];
+		}
+
+		if ( ! empty( $dhl_label_items['pr_dhl_insurance_value'] ) ) { 
+			$args['order_details']['insurance_value'] = $dhl_label_items['pr_dhl_insurance_value'];
+		}
+
+		if ( ! empty( $dhl_label_items['pr_dhl_obox_service'] ) ) {
+			$args['order_details']['obox_service'] = $dhl_label_items['pr_dhl_obox_service'];
+		}
+
 		return $args;
 	}
 	
@@ -237,6 +283,8 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 	protected function save_default_dhl_label_items( $order_id ) {
 
+        $order = wc_get_order( $order_id );
+
 		parent::save_default_dhl_label_items( $order_id );
 
 		$dhl_label_items = $this->get_dhl_label_items( $order_id );
@@ -253,8 +301,24 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 			$dhl_label_items['pr_dhl_is_cod'] = $this->is_cod_payment_method( $order_id ) ? 'yes' : 'no';
 		}
 
-		$this->save_dhl_label_items( $order_id, $dhl_label_items );
+		$settings_default_ids = array(
+			'pr_dhl_additional_insurance',
+			'pr_dhl_obox_service'
+		);
 
+		foreach ($settings_default_ids as $default_id) {
+			$id_name = str_replace('pr_dhl_', '', $default_id);
+
+			if ( !isset($dhl_label_items[$default_id]) ) {
+				$dhl_label_items[$default_id] = isset( $this->shipping_dhl_settings['dhl_default_' . $id_name] ) ? $this->shipping_dhl_settings['dhl_default_' . $id_name] : '';
+			}
+		}
+
+        if( empty( $dhl_label_items['pr_dhl_insurance_value'] ) ) {
+            $dhl_label_items['pr_dhl_insurance_value'] = $order->get_subtotal();
+        }
+
+		$this->save_dhl_label_items( $order_id, $dhl_label_items );
 	}
 
 	// Used by label API to pass handover number

@@ -70,7 +70,7 @@ class Client extends API_Client {
 
 		$response = $this->post($route, $data);
 		$response_body = json_decode( $response->body );
-
+		
 		if ( $response->status === 200 ) {
 
 			if( $this->check_status_code( $response_body ) == 200 ){
@@ -261,6 +261,7 @@ class Client extends API_Client {
 			'dimensionUOM' 		=> $item_info->shipment['dimensionUom'],
 			'productCode' 		=> $item_info->shipment['product_code'],
 			'codValue'          => $item_info->shipment['codValue'],
+			'insuranceValue' 	=> $item_info->shipment['insuranceValue'],
 			'totalValue'		=> $item_info->shipment['items_value'],
 			'currency' 			=> $item_info->shipment['currency'],
 			'remarks'           => $item_info->shipment['remarks'],
@@ -303,10 +304,17 @@ class Client extends API_Client {
 
             $shipment_item['shipmentContents'] = $shipment_contents;
 
-            if( !empty( $item_info->shipment['incoterm'] ) ){
+            if( !empty( $item_info->shipment['incoterm'] ) ) {
                 $shipment_item['incoterm'] = $item_info->shipment['incoterm'];
             }
-        }
+		}
+		
+		if( !empty( $item_info->shipment['obox_service'] ) ) {
+			$shipment_item['valueAddedServices']['valueAddedService'][] =
+                array(
+                    'vasCode' => $item_info->shipment['obox_service']
+                );
+		}
 
 		$request_data = array(
 			'labelRequest' 	=> array(

@@ -197,6 +197,22 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 				'description'       => __( 'Please, tick here if you want to send the customer "Order Notes" to be added to the label.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 			),
+            'dhl_default_additional_insurance' => array(
+                'title'             => __( 'Additional Insurance default', 'pr-shipping-dhl' ),
+                'type'              => 'checkbox',
+                'label'             => __( 'Enabled', 'pr-shipping-dhl' ),
+                'default'           => 'no',
+                'description'       => __( 'Please, tick here if you want "Additional Insurance" service to be checked by default.', 'pr-shipping-dhl' ),
+                'desc_tip'          => true,
+            ),
+            'dhl_default_obox_service' => array(
+                'title'             => __( 'Open Box Service default', 'pr-shipping-dhl' ),
+                'type'              => 'checkbox',
+                'label'             => __( 'Enabled', 'pr-shipping-dhl' ),
+                'default'           => 'no',
+                'description'       => __( 'Please, tick here if you want "Open Box" service to be checked by default.', 'pr-shipping-dhl' ),
+                'desc_tip'          => true,
+            ),
 			'dhl_tracking_note' => array(
 				'title'             => __( 'Tracking Note', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
