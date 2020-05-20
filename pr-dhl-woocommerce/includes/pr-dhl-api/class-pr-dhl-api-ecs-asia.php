@@ -473,6 +473,24 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	}
 
 	/**
+	 * {@inheritdoc}
+	 *
+	 * @since [*next-version*]
+	 */
+	public function close_out_labels( $shipment_ids ){
+
+		$response 	= $this->api_client->close_out_labels( $shipment_ids );
+
+		$data 		= base64_decode( $response->handoverNote );
+		$file_info 	= $this->save_dhl_label_file( 'closeout', $response->handoverID, $data );
+
+		return array(
+			'handover_id' 	=> $response->handoverID,
+			'file_info' 	=> $file_info
+		);
+	}
+
+	/**
 	 * Retrieves the filename for DHL item label files.
 	 *
 	 * @since [*next-version*]
@@ -517,8 +535,11 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	 */
 	public function get_dhl_label_file_info( $type, $key ) {
 
-		$label_format = strtolower( $this->get_setting( 'dhl_label_format' ) );
-		
+		if( $type == 'closeout' ){
+			$label_format = 'pdf';
+		}else{
+			$label_format = strtolower( $this->get_setting( 'dhl_label_format' ) );
+		}
 		// Return info for "item" type
 		return $this->get_dhl_item_label_file_info( $key, $label_format );
 	}

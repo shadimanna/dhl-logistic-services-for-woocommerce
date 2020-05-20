@@ -88,13 +88,65 @@ class Client extends API_Client {
 		);
 	}
 
-	public function check_status_code( $label_response ){
+	public function close_out_labels( $shipment_ids ){
 
-		if( !isset( $label_response->labelResponse->bd->responseStatus->code ) ){
+		$route 			= $this->close_out_label_route();
+		$shipment_items = array();
+		
+		foreach( $shipment_ids as $shipment_id ){
+			$shipment_items[] = array(
+				'shipmentID' => $shipment_id,
+			);
+		}
+
+		$data 		= array(
+			'closeOutRequest' 	=> array(
+				'hdr' 	=> array(
+					'messageType' 		=> $this->get_type( 'closeout' ),
+					'messageDateTime' 	=> $this->get_datetime(),
+					'messageVersion' 	=> '1.3',
+					'messageLanguage' 	=> $this->get_language()
+				),
+				'bd' 	=> array(
+					'pickupAccountId' 	=> $this->pickup_id,
+					'soldToAccountId'	=> $this->soldto_id,
+					'generateHandover' 	=> 'Y',
+					'handoverMethod' 	=> 1,
+					'shipmentItems' 	=> $shipment_items,
+				)
+			)
+		);
+
+		$response 	= $this->post($route, $data);
+		error_log( 'test closeout response');
+		error_log( print_r( $response, true ) );
+		$response_body = json_decode( $response->body );
+		
+		if ( $response->status === 200 ) {
+
+			if( $this->check_status_code( $response_body, 'closeOutResponse' ) == 200 ){
+
+				return $this->get_closeout_content( $response_body );
+
+			}
+		}
+
+		throw new Exception(
+			sprintf(
+				__( 'Failed to close out label: %s', 'pr-shipping-dhl' ),
+				$this->generate_error_details( $response_body, 'closeOutResponse' )
+			)
+		);
+
+	}
+
+	public function check_status_code( $label_response, $response_type = 'labelResponse' ){
+		
+		if( !isset( $label_response->$response_type->bd->responseStatus->code ) ){
 			throw new Exception( __( 'Response status is not exist!', 'pr-shipping-dhl' ) );
 		}
 
-		return $label_response->labelResponse->bd->responseStatus->code;
+		return $label_response->$response_type->bd->responseStatus->code;
 	}
 
 	public function get_label_content( $label_response ){
@@ -121,35 +173,47 @@ class Client extends API_Client {
 		return false;
 	}
 
-	public function generate_error_details( $label_response ){
+	public function get_closeout_content( $response ){
+
+		if( !isset( $response->closeOutResponse->bd->handoverID ) ){
+			throw new Exception( __( 'Handover ID does not exist!', 'pr-shipping-dhl' ) );
+		}
+
+		if( !isset( $response->closeOutResponse->bd->handoverNote ) ){
+			throw new Exception( __( 'Handover Note does not exist!', 'pr-shipping-dhl' ) );
+		}
+
+		return $response->closeOutResponse->bd;
+	}
+
+	public function generate_error_details( $label_response, $response_type = 'labelResponse' ){
 
 		$error_details 	= '';
 
-		if( isset( $label_response->labelResponse->bd->labels ) ) {
+		if( $response_type == 'labelResponse' ){
 
-			$labels = $label_response->labelResponse->bd->labels;
+			if( isset( $label_response->labelResponse->bd->labels ) ) {
 
-			foreach( $labels as $label ){
+				$labels = $label_response->labelResponse->bd->labels;
 
-				if( !isset( $label->responseStatus->messageDetails ) ){
-					continue;
-				}
-
-				foreach( $label->responseStatus->messageDetails as $message_detail ){
-
-					if( isset( $message_detail->messageDetail ) ){
-
-						$error_details .= '<li>' . $message_detail->messageDetail . '</li>';
-
-					}
-
-				}
-
+				$error_details .= $this->get_error_lists( $labels );
+	
 			}
+
+		}elseif( $response_type == 'closeOutResponse' ){
+
+			if( isset( $label_response->closeOutResponse->bd->shipmentItems ) ) {
+
+				$items = $label_response->closeOutResponse->bd->shipmentItems;
+	
+				$error_details .= $this->get_error_lists( $items );
+			}
+
 		}
+		
 
 		$error_exception = '';
-		$response_status = $label_response->labelResponse->bd->responseStatus;
+		$response_status = $label_response->$response_type->bd->responseStatus;
 
 		if( isset( $response_status->message) ){
 			$error_exception .= $response_status->message  . '<br /> ';
@@ -187,6 +251,31 @@ class Client extends API_Client {
 		return $error_exception;
 	}
 
+	public function get_error_lists( $items ){
+
+		$error_details = '';
+
+		foreach( $items as $item ){
+	
+			if( !isset( $item->responseStatus->messageDetails ) ){
+				continue;
+			}
+
+			foreach( $item->responseStatus->messageDetails as $message_detail ){
+
+				if( isset( $message_detail->messageDetail ) ){
+
+					$error_details .= '<li>' . $message_detail->messageDetail . '</li>';
+
+				}
+
+			}
+
+		}
+
+		return $error_details;
+	}
+
 	/**
 	 * Get message type.
 	 *
@@ -198,6 +287,8 @@ class Client extends API_Client {
 
 		if( $type == 'delete' ) {
 			return 'DELETESHIPMENT';
+		}elseif( $type == 'closeout' ){
+			return 'CLOSEOUT';
 		}elseif( $type == 'create' ) {
 			return 'LABEL';
 		}
@@ -430,6 +521,17 @@ class Client extends API_Client {
 	 */
 	protected function delete_label_route() {
 		return $this->shipping_label_route(). '/Delete';
+	}
+
+	/**
+	 * Prepares a CloseOut API route.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return string
+	 */
+	protected function close_out_label_route() {
+		return 'rest/v2/Order/Shipment/CloseOut';
 	}
 
 }

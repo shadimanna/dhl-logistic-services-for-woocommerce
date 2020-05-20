@@ -445,7 +445,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 		$shop_manager_actions = array(
 			'pr_dhl_create_labels'      => __( 'DHL Create Labels', 'pr-shipping-dhl' ),
-            'pr_dhl_handover'      => __( 'DHL Print Handover', 'pr-shipping-dhl' )
+            'pr_dhl_closeout'      => __( 'DHL Close Out', 'pr-shipping-dhl' )
 		);
 
 		return $shop_manager_actions;
@@ -454,6 +454,14 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 	public function validate_bulk_actions( $action, $order_ids ) {
 		$message = '';
 		if ( 'pr_dhl_handover' === $action ) {
+			// Ensure the selected orders have a label created, otherwise don't create handover
+			foreach ( $order_ids as $order_id ) {
+				$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
+				if( empty( $label_tracking_info ) ) {
+					$message = __( 'One or more orders do not have a DHL label created, please ensure all DHL labels are created for each order before creating a handoff document.', 'pr-shipping-dhl' );
+				}
+			}
+		}elseif( 'pr_dhl_closeout' === $action ){
 			// Ensure the selected orders have a label created, otherwise don't create handover
 			foreach ( $order_ids as $order_id ) {
 				$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
@@ -487,7 +495,54 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 		$array_messages += parent::process_bulk_actions( $action, $order_ids, $orders_count, $dhl_force_product, $is_force_product_dom );
 
-		if ( 'pr_dhl_handover' === $action ) {
+		if( 'pr_dhl_closeout' === $action ){
+
+			$instance = PR_DHL()->get_dhl_factory();
+			$client = $instance->api_client;
+
+			$shipment_ids = array();
+
+			foreach ( $order_ids as $order_id ) {
+
+				$label_tracking_info 	= $this->get_dhl_label_tracking( $order_id );
+				$shipment_ids[] 		= $label_tracking_info['shipment_id'];
+
+			}
+
+			try {
+				$closeout 	= $instance->close_out_labels( $shipment_ids );
+
+				$manifest_link 	= sprintf(
+					'<a href="%1$s" target="_blank">%2$s</a>',
+					$closeout['file_info']->url,
+					__('download closeout file', 'pr-shipping-dhl') . ' ' . $closeout['handover_id']
+				);
+
+				$message = sprintf(
+					__( 'Finalized DHL Close Out - %2$s', 'pr-shipping-dhl' ),
+					$closeout['handover_id'],
+					$manifest_link
+				);
+
+				array_push(
+					$array_messages,
+					array(
+						'message' => $message,
+						'type'    => 'success',
+					)
+				);
+				
+			} catch (Exception $exception) {
+				array_push(
+					$array_messages,
+					array(
+						'message' => $exception->getMessage(),
+						'type'    => 'error',
+					)
+				);
+			}
+
+		}elseif ( 'pr_dhl_handover' === $action ) {
 			$redirect_url  = admin_url( 'edit.php?post_type=shop_order' );
 			$order_ids_hash = md5( json_encode( $order_ids ) );
 			// Save the order IDs in a option.
