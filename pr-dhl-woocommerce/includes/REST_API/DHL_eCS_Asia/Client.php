@@ -119,10 +119,13 @@ class Client extends API_Client {
 
 		$response 		= $this->post($route, $data);
 		$response_body 	= json_decode( $response->body );
-		
+		error_log( 'closeout response body');
+		error_log( print_r( $response_body, true ) );
 		if ( $response->status === 200 ) {
 
-			if( $this->check_status_code( $response_body, 'closeOutResponse' ) == 200 ){
+			$status_code = $this->check_status_code( $response_body, 'closeOutResponse' );
+			
+			if( $status_code == 200 || $status_code == 204 ){
 
 				return $this->get_closeout_content( $response_body );
 
@@ -259,11 +262,16 @@ class Client extends API_Client {
 				continue;
 			}
 
+			$shipment_id_text = '';
+			if( isset( $item->shipmentID ) ){
+				$shipment_id_text = $item->shipmentID . ' - ';
+			}
+
 			foreach( $item->responseStatus->messageDetails as $message_detail ){
 
 				if( isset( $message_detail->messageDetail ) ){
 
-					$error_details .= '<li>' . $message_detail->messageDetail . '</li>';
+					$error_details .= '<li>' . $shipment_id_text . $message_detail->messageDetail . '</li>';
 
 				}
 
