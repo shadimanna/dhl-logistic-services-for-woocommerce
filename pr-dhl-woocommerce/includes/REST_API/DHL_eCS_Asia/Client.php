@@ -117,10 +117,8 @@ class Client extends API_Client {
 			)
 		);
 
-		$response 	= $this->post($route, $data);
-		error_log( 'test closeout response');
-		error_log( print_r( $response, true ) );
-		$response_body = json_decode( $response->body );
+		$response 		= $this->post($route, $data);
+		$response_body 	= json_decode( $response->body );
 		
 		if ( $response->status === 200 ) {
 
@@ -192,19 +190,19 @@ class Client extends API_Client {
 
 		if( $response_type == 'labelResponse' ){
 
-			if( isset( $label_response->labelResponse->bd->labels ) ) {
+			if( isset( $label_response->$response_type->bd->labels ) ) {
 
-				$labels = $label_response->labelResponse->bd->labels;
+				$labels = $label_response->$response_type->bd->labels;
 
 				$error_details .= $this->get_error_lists( $labels );
 	
 			}
 
-		}elseif( $response_type == 'closeOutResponse' ){
+		}elseif( $response_type == 'closeOutResponse' || $response_type == 'deleteShipmentResp' ){
 
-			if( isset( $label_response->closeOutResponse->bd->shipmentItems ) ) {
+			if( isset( $label_response->$response_type->bd->shipmentItems ) ) {
 
-				$items = $label_response->closeOutResponse->bd->shipmentItems;
+				$items = $label_response->$response_type->bd->shipmentItems;
 	
 				$error_details .= $this->get_error_lists( $items );
 			}
@@ -487,16 +485,21 @@ class Client extends API_Client {
 
 		$response 	= $this->post($route, $data);
 
+		$response_body = json_decode( $response->body );
+		
 		if ( $response->status === 200 ) {
 
-			return $response->body;
+			if( $this->check_status_code( $response_body, 'deleteShipmentResp' ) == 200 ){
 
+				return $response_body->deleteShipmentResp->bd;
+
+			}
 		}
 
 		throw new Exception(
 			sprintf(
 				__( 'Failed to delete label: %s', 'pr-shipping-dhl' ),
-				implode( ', ', $response->body->messages )
+				$this->generate_error_details( $response_body, 'deleteShipmentResp' )
 			)
 		);
 	}

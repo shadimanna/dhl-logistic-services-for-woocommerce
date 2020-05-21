@@ -498,7 +498,6 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 		if( 'pr_dhl_closeout' === $action ){
 
 			$instance = PR_DHL()->get_dhl_factory();
-			$client = $instance->api_client;
 
 			$shipment_ids = array();
 
