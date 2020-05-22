@@ -445,7 +445,8 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 		$shop_manager_actions = array(
 			'pr_dhl_create_labels'      => __( 'DHL Create Labels', 'pr-shipping-dhl' ),
-            'pr_dhl_closeout'      => __( 'DHL Close Out', 'pr-shipping-dhl' )
+			'pr_dhl_closeout_all'      => __( 'DHL Close Out All', 'pr-shipping-dhl' ),
+			'pr_dhl_closeout_selected'      => __( 'DHL Close Out Selected', 'pr-shipping-dhl' )
 		);
 
 		return $shop_manager_actions;
@@ -461,7 +462,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 					$message = __( 'One or more orders do not have a DHL label created, please ensure all DHL labels are created for each order before creating a handoff document.', 'pr-shipping-dhl' );
 				}
 			}
-		}elseif( 'pr_dhl_closeout' === $action ){
+		}elseif( 'pr_dhl_closeout_selected' === $action ){
 			// Ensure the selected orders have a label created, otherwise don't create handover
 			foreach ( $order_ids as $order_id ) {
 				$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
@@ -495,21 +496,62 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 		$array_messages += parent::process_bulk_actions( $action, $order_ids, $orders_count, $dhl_force_product, $is_force_product_dom );
 
-		if( 'pr_dhl_closeout' === $action ){
+		if( 'pr_dhl_closeout_all' === $action ){
+
+			$instance = PR_DHL()->get_dhl_factory();
+
+			try {
+				$closeout 	= $instance->close_out_all();
+
+				$manifest_link 	= sprintf(
+					'<a href="%1$s" target="_blank">%2$s</a>',
+					$closeout['file_info']->url,
+					__('download closeout file', 'pr-shipping-dhl') . ' ' . $closeout['handover_id']
+				);
+
+				$message = sprintf(
+					__( 'Finalized DHL Close Out - %2$s', 'pr-shipping-dhl' ),
+					$closeout['handover_id'],
+					$manifest_link
+				);
+
+				array_push(
+					$array_messages,
+					array(
+						'message' => $message,
+						'type'    => 'success',
+					)
+				);
+				
+			} catch (Exception $exception) {
+				array_push(
+					$array_messages,
+					array(
+						'message' => $exception->getMessage(),
+						'type'    => 'error',
+					)
+				);
+			}
+
+		}elseif( 'pr_dhl_closeout_selected' === $action ){
 
 			$instance = PR_DHL()->get_dhl_factory();
 
 			$shipment_ids = array();
 
-			foreach ( $order_ids as $order_id ) {
-
-				$label_tracking_info 	= $this->get_dhl_label_tracking( $order_id );
-				$shipment_ids[] 		= $label_tracking_info['shipment_id'];
-
-			}
-
 			try {
-				$closeout 	= $instance->close_out_labels( $shipment_ids );
+
+				foreach ( $order_ids as $order_id ) {
+
+					if( !$this->is_crossborder_shipment( $order_id ) ){
+						
+						throw new Exception( __( 'Local shipment found! Please pick international shipment only.', 'pr-shipping-dhl' ) );
+					}
+					$label_tracking_info 	= $this->get_dhl_label_tracking( $order_id );
+					$shipment_ids[] 		= $label_tracking_info['shipment_id'];
+				}
+
+				$closeout 	= $instance->close_out_selected( $shipment_ids );
 
 				$manifest_link 	= sprintf(
 					'<a href="%1$s" target="_blank">%2$s</a>',

@@ -88,15 +88,19 @@ class Client extends API_Client {
 		);
 	}
 
-	public function close_out_labels( $shipment_ids ){
+	public function close_out_labels( $shipment_ids = array() ){
 
 		$route 			= $this->close_out_label_route();
 		$shipment_items = array();
 		
-		foreach( $shipment_ids as $shipment_id ){
-			$shipment_items[] = array(
-				'shipmentID' => $shipment_id,
-			);
+		if( is_array( $shipment_ids ) && count( $shipment_ids ) > 0 ){
+
+			foreach( $shipment_ids as $shipment_id ){
+				$shipment_items[] = array(
+					'shipmentID' => $shipment_id,
+				);
+			}
+
 		}
 
 		$data 		= array(
@@ -112,15 +116,17 @@ class Client extends API_Client {
 					'soldToAccountId'	=> $this->soldto_id,
 					'generateHandover' 	=> 'Y',
 					'handoverMethod' 	=> 1,
-					'shipmentItems' 	=> $shipment_items,
 				)
 			)
 		);
 
-		$response 		= $this->post($route, $data);
+		if( count( $shipment_items ) > 0 ){
+			$data['closeOutRequest']['bd']['shipmentItems'] = $shipment_items;
+		}
+
+		$response 		= $this->post($route, $data );
 		$response_body 	= json_decode( $response->body );
-		error_log( 'closeout response body');
-		error_log( print_r( $response_body, true ) );
+
 		if ( $response->status === 200 ) {
 
 			$status_code = $this->check_status_code( $response_body, 'closeOutResponse' );
