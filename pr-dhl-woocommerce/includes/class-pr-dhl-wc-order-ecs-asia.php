@@ -514,17 +514,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 			try {
 				$closeout 	= $instance->close_out_all();
 
-				$manifest_link 	= sprintf(
-					'<a href="%1$s" target="_blank">%2$s</a>',
-					$closeout['file_info']->url,
-					__('download closeout file', 'pr-shipping-dhl') . ' ' . $closeout['handover_id']
-				);
-
-				$message = sprintf(
-					__( 'Finalized DHL Close Out - %2$s', 'pr-shipping-dhl' ),
-					$closeout['handover_id'],
-					$manifest_link
-				);
+				$message = $closeout['message'] . ' - Handover ID: ' . $closeout['handover_id'];
 
 				array_push(
 					$array_messages,

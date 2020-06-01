@@ -473,11 +473,15 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		$response 	= $this->api_client->close_out_labels();
 
 		$data 		= base64_decode( $response->handoverNote );
-		$file_info 	= $this->save_dhl_label_file( 'closeout', $response->handoverID, $data );
+		//$file_info 	= $this->save_dhl_label_file( 'closeout', $response->handoverID, $data );
+		$messages 	= $response->responseStatus->messageDetails;
 
+		foreach( $messages as $msg ){
+			$message = $msg->messageDetail;
+		}
 		return array(
 			'handover_id' 	=> $response->handoverID,
-			'file_info' 	=> $file_info
+			'message' 		=> $message
 		);
 	}
 

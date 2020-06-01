@@ -133,7 +133,7 @@ class Client extends API_Client {
 			
 			if( $status_code == 200 || $status_code == 204 ){
 
-				return $this->get_closeout_content( $response_body );
+				return $this->get_closeout_content( $response_body, $shipment_ids );
 
 			}
 		}
@@ -180,14 +180,19 @@ class Client extends API_Client {
 		return false;
 	}
 
-	public function get_closeout_content( $response ){
+	public function get_closeout_content( $response, $shipment_ids ){
 
 		if( !isset( $response->closeOutResponse->bd->handoverID ) ){
 			throw new Exception( __( 'Handover ID does not exist!', 'pr-shipping-dhl' ) );
 		}
 
-		if( !isset( $response->closeOutResponse->bd->handoverNote ) ){
+		if( !isset( $response->closeOutResponse->bd->handoverNote ) && count( $shipment_ids ) > 0 ){
 			throw new Exception( __( 'Handover Note does not exist!', 'pr-shipping-dhl' ) );
+		}else{
+			
+			if( !isset( $response->closeOutResponse->bd->responseStatus->messageDetails ) ){
+				throw new Exception( __( 'Message Detail does not exist!', 'pr-shipping-dhl' ) );
+			}
 		}
 
 		return $response->closeOutResponse->bd;
