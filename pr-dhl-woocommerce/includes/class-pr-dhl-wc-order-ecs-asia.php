@@ -453,26 +453,37 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 	}
 
 	public function validate_bulk_actions( $action, $order_ids ) {
-		$message = '';
-		if ( 'pr_dhl_handover' === $action ) {
-			// Ensure the selected orders have a label created, otherwise don't create handover
-			foreach ( $order_ids as $order_id ) {
-				$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
-				if( empty( $label_tracking_info ) ) {
-					$message = __( 'One or more orders do not have a DHL label created, please ensure all DHL labels are created for each order before creating a handoff document.', 'pr-shipping-dhl' );
-				}
+		
+		$orders_count 	= count( $order_ids );
+
+		if( 'pr_dhl_create_labels' === $action ){
+
+			if ( $orders_count < 1 ) {
+
+				return __( 'No orders selected for the DHL bulk action, please select orders before performing the DHL action.', 'pr-shipping-dhl' );
+
 			}
+
 		}elseif( 'pr_dhl_closeout_selected' === $action ){
-			// Ensure the selected orders have a label created, otherwise don't create handover
-			foreach ( $order_ids as $order_id ) {
-				$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
-				if( empty( $label_tracking_info ) ) {
-					$message = __( 'One or more orders do not have a DHL label created, please ensure all DHL labels are created for each order before creating a handoff document.', 'pr-shipping-dhl' );
+
+			if ( $orders_count < 1 ) {
+
+				return __( 'No orders selected for the DHL bulk action, please select orders before performing the DHL action.', 'pr-shipping-dhl' );
+
+			}else{
+
+				// Ensure the selected orders have a label created, otherwise don't create handover
+				foreach ( $order_ids as $order_id ) {
+					$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
+					if( empty( $label_tracking_info ) ) {
+						return __( 'One or more orders do not have a DHL label created, please ensure all DHL labels are created for each order before creating a handoff document.', 'pr-shipping-dhl' );
+					}
 				}
+
 			}
 		}
 
-		return $message;
+		return '';
 	}
 
 	public function process_bulk_actions( $action, $order_ids, $orders_count, $dhl_force_product = false, $is_force_product_dom = false ) {
