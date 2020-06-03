@@ -666,7 +666,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 									),
 
 						),
-						'labelResponseType' => 'B64'
+						'labelResponseType' => 'B64',
+						'labelFormat' => $this->args['dhl_settings']['label_format'],
 				);
 
 

@@ -265,6 +265,21 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'placeholder'		=> '',
 				'class'				=> 'wc_input_decimal'
 			),
+			'dhl_label_format' => array(
+				'title'             => __( 'Label Format', 'pr-shipping-dhl' ),
+				'type'              => 'select',
+				'description'       => __( 'Select one of the formats to generate the shipping label in.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'options'           => array( 
+					'A4' => 'A4', 
+					'910-300-700' => '910-300-700', 
+					'910-300-700-oZ' => '910-300-700-oZ', 
+					'910-300-600' => '910-300-600', 
+					'910-300-610' => '910-300-610', 
+					'910-300-710' => '910-300-710' 
+				),
+				'class'				=> 'wc-enhanced-select'
+			),
 			'dhl_tracking_note' => array(
 				'title'             => __( 'Tracking Note', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',

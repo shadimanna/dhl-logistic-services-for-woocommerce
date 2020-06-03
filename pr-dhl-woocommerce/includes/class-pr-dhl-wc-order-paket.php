@@ -426,6 +426,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$args['dhl_settings'][ 'shipper_country' ] = PR_DHL()->get_base_country();
 		$args['dhl_settings'][ 'return_country' ] = PR_DHL()->get_base_country();
 		$args['dhl_settings'][ 'participation' ] = $this->shipping_dhl_settings[ 'dhl_participation_' . $dhl_label_items['pr_dhl_product'] ];
+		$args['dhl_settings'][ 'label_format' ] = $this->shipping_dhl_settings['dhl_label_format'];
 
 		return $args;
 	}
