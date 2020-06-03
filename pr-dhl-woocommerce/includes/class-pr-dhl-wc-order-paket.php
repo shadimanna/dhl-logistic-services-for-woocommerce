@@ -24,6 +24,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 		add_action( 'pr_shipping_dhl_label_created', array( $this, 'change_order_status' ), 10, 1 );
 		add_action( 'woocommerce_email_order_details', array( $this, 'add_tracking_info'), 10, 4 );
+		add_action( 'woocommerce_order_status_changed', array( $this, 'create_label_on_status_changed' ), 10, 4 );
 	}
 	
 	public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
@@ -539,6 +540,13 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		}
 
 	} 
+
+	public function create_label_on_status_changed($order_id, $status_from, $status_to, $order ){
+
+		if( $this->shipping_dhl_settings['dhl_create_label_on_status'] == $status_to ){
+			$this->process_bulk_actions( 'pr_dhl_create_labels', array( $order_id ), 1 );
+		}
+	}
 }
 
 endif;

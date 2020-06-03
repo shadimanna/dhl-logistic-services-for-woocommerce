@@ -312,6 +312,22 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'default'           => 'no',
 				'class'				=> ''
 			),
+			'dhl_create_label_on_status' => array(
+				'title'             => __( 'Create Label on Status', 'pr-shipping-dhl' ),
+				'type'              => 'select',
+				'label' 			=> __( 'Create label on specific status.', 'pr-shipping-dhl'),
+				'description'       => __( 'Select the order status.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'options'           => array( 
+					'none' => __( 'None', 'pr-shipping-dhl'), 
+					'pending' => __( 'Pending', 'pr-shipping-dhl'), 
+					'on-hold' => __( 'On-Hold', 'pr-shipping-dhl'), 
+					'processing' => __( 'Processing', 'pr-shipping-dhl'), 
+					'completed' => __( 'Completed', 'pr-shipping-dhl'), 
+				),
+				'class'				=> 'wc-enhanced-select',
+				'default'           => 'no',
+			),
 			'dhl_change_order_status_completed' => array(
 				'title'             => __( 'Order Status', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
