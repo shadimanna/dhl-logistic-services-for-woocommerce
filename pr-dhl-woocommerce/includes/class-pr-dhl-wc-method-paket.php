@@ -280,6 +280,14 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				),
 				'class'				=> 'wc-enhanced-select'
 			),
+			'dhl_add_logo' => array(
+				'title'             => __( 'Logo', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Add Logo', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'The logo will be added from your DHL dashboard settings.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
 			'dhl_tracking_note' => array(
 				'title'             => __( 'Tracking Note', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
