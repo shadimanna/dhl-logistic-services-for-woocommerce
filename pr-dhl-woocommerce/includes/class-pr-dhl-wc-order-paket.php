@@ -543,7 +543,8 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 	public function create_label_on_status_changed($order_id, $status_from, $status_to, $order ){
 
-		if( $this->shipping_dhl_settings['dhl_create_label_on_status'] == $status_to ){
+		$status_setting = str_replace('wc-', '', $this->shipping_dhl_settings['dhl_create_label_on_status'] );
+		if( $status_setting == $status_to ){
 			$this->process_bulk_actions( 'pr_dhl_create_labels', array( $order_id ), 1 );
 		}
 	}

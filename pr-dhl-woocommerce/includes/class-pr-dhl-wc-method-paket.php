@@ -56,6 +56,26 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		return ob_get_clean();
 	}
 
+	public function excluded_order_statuses(){
+
+		return array(
+			'wc-failed',
+			'wc-refunded',
+			'wc-cancelled'
+		);
+	}
+
+	public function get_order_statuses(){
+		
+		$wc_order_statuses = wc_get_order_statuses();
+
+		foreach( $this->excluded_order_statuses() as $status ){
+			unset( $wc_order_statuses[ $status ] );
+		}
+		
+		return $wc_order_statuses;
+	}
+
 	/**
 	 * Initialize integration settings form fields.
 	 *
@@ -64,6 +84,11 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 	public function init_form_fields() {
 		$wc_shipping_methods = WC()->shipping->get_shipping_methods();
 		$wc_shipping_titles = wp_list_pluck($wc_shipping_methods, 'method_title', 'id');
+		$order_status_options = array(
+			'none' => __( 'None', 'pr-shipping-dhl'), 
+		);
+		
+		$order_status_options = array_merge( $order_status_options, $this->get_order_statuses() );
 		
 		$payment_gateway_titles = PR_DHL()->get_payment_gateways();
 
@@ -318,13 +343,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'label' 			=> __( 'Create label on specific status.', 'pr-shipping-dhl'),
 				'description'       => __( 'Select the order status.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
-				'options'           => array( 
-					'none' => __( 'None', 'pr-shipping-dhl'), 
-					'pending' => __( 'Pending', 'pr-shipping-dhl'), 
-					'on-hold' => __( 'On-Hold', 'pr-shipping-dhl'), 
-					'processing' => __( 'Processing', 'pr-shipping-dhl'), 
-					'completed' => __( 'Completed', 'pr-shipping-dhl'), 
-				),
+				'options'           => $order_status_options,
 				'class'				=> 'wc-enhanced-select',
 				'default'           => 'no',
 			),
