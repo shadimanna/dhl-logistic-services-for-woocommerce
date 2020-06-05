@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2020-02-25 12:19+0100\n"
+"POT-Creation-Date: 2020-04-10 11:29+0200\n"
 "PO-Revision-Date: 2017-10-06 12:50+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1348,7 +1348,7 @@ msgstr ""
 
 #: includes/view/cart/parcelshop-option.php:19
 #: includes/view/order/meta/form/input/parcelshop.php:24
-msgid "Search by postcode, city or name"
+msgid "Search with postal code or city"
 msgstr ""
 
 #: includes/view/cart/parcelshop/confirm-button.php:4

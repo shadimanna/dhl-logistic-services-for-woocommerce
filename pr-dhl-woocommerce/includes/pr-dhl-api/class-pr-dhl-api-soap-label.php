@@ -351,29 +351,39 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		if ( ! $this->pos_ps && ! $this->pos_rs && ! $this->pos_po ) {
 			// If address 2 missing, set last piece of an address to be address 2
 			if ( empty( $args['shipping_address']['address_2'] )) {
-				// Break address into pieces			
+			    $set_key = false;
+				// Break address into pieces by spaces
 				$address_exploded = explode(' ', $args['shipping_address']['address_1']);
-				
+
+				// If no spaces found
+                if( count($address_exploded) == 1 ) {
+                    // Break address into pieces by '.'
+                    $address_exploded = explode('.', $args['shipping_address']['address_1']);
+
+                    if( count($address_exploded) == 1 ) {
+                        throw new Exception(__('Shipping "Address 2" is empty!', 'pr-shipping-dhl'));
+                    }
+                }
+
 				// Loop through address and set number value only...
 				// ...last found number will be 'address_2'
 				foreach ($address_exploded as $address_key => $address_value) {
 					if (is_numeric($address_value)) {
 						// Set last index as street number
-						$args['shipping_address']['address_2'] = $address_value;
 						$set_key = $address_key;
 					}
 				}
 
 				// If no number was found, then take last part of address no matter what it is
-				if ( empty( $args['shipping_address']['address_2'] )) {
-					$args['shipping_address']['address_2'] = $address_exploded[ $address_key ];
+				if( $set_key === false ) {
 					$set_key = $address_key;
 				}
 
-				// Unset it in address 1
-				unset( $address_exploded[ $set_key ] );
-				// Set address 1 without street number or last part of address
-				$args['shipping_address']['address_1'] = implode(' ', $address_exploded );
+				// Set "address_2" first
+				$args['shipping_address']['address_2'] = implode( ' ', array_slice( $address_exploded, $set_key ) );
+				// Remove "address_2" from "address_1"
+				$args['shipping_address']['address_1'] = implode( ' ', array_slice( $address_exploded, 0 , $set_key ) );
+
 			}
 		}
 
@@ -424,9 +434,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			// SERVICES DATA
 			$services_map = array(
-								'preferred_time' => array(
-													'name' => 'PreferredTime',
-													'type' => 'type'),
 								'age_visual' => array(
 													'name' => 'VisualCheckOfAge',
 													'type' => 'type'),

@@ -16,7 +16,7 @@
         <div class="dhlpwc-parcelshop-option-list">
             <div class="dhlpwc-parcelshop-option-list-search">
                 <input type="text"
-                       placeholder="<?php _e('Search by postcode, city or name', 'dhlpwc') ?>"
+                       placeholder="<?php _e('Search with postal code or city', 'dhlpwc') ?>"
                        value="<?php echo $postal_code ?>"></div>
         </div>
     </div>

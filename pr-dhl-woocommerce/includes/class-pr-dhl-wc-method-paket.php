@@ -402,30 +402,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'type'              => 'checkbox',
 					'label'             => __( 'Saturday', 'pr-shipping-dhl' ),
 				),
-				'dhl_preferred_time' => array(
-					'title'             => __( 'Preferred Time', 'pr-shipping-dhl' ),
-					'type'              => 'checkbox',
-					'label'             => __( 'Enable Preferred Time', 'pr-shipping-dhl' ),
-					'default'           => 'yes',
-					'description'       => __( 'Enabling this will display a front-end option for the user to select their preferred time of delivery.', 'pr-shipping-dhl' ),
-					'desc_tip'          => true,
-				),
-				'dhl_preferred_time_cost' => array(
-					'title'             => __( 'Preferred Time Price', 'pr-shipping-dhl' ),
-					'type'              => 'text',
-					'description'       => __( 'Insert gross value as surcharge for the preferred time. Insert 0 to offer service for free.', 'pr-shipping-dhl' ),
-					'desc_tip'          => true,
-					'default'           => '4.8',
-					'class'				=> 'wc_input_decimal'
-				),
-				'dhl_preferred_day_time_cost' => array(
-					'title'             => __( 'Preferred Day and Time Price', 'pr-shipping-dhl' ),
-					'type'              => 'text',
-					'description'       => __( 'Insert gross value as surcharge for the combination of preferred day and time. Insert 0 to offer service for free.', 'pr-shipping-dhl' ),
-					'desc_tip'          => true,
-					'default'           => '4.8',
-					'class'				=> 'wc_input_decimal'
-				),
 				'dhl_preferred_location' => array(
 					'title'             => __( 'Preferred Location', 'pr-shipping-dhl' ),
 					'type'              => 'checkbox',

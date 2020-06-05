@@ -156,9 +156,6 @@ class DHLPWC_Model_Logic_Access_Control_Capabilities extends DHLPWC_Model_Core_S
         $customer = WC()->customer;
         if ($customer) {
             return new DHLPWC_Model_Meta_Address(array(
-                'first_name' => $customer->shipping_first_name,
-                'last_name'  => $customer->shipping_last_name,
-                'company'    => $customer->shipping_company,
                 'address_1'  => $customer->get_shipping_address(),
                 'address_2'  => $customer->get_shipping_address_2(),
                 'city'       => $customer->get_shipping_city(),
