@@ -31,7 +31,6 @@ class PR_DHL_Front_End_Paket {
 
 		$this->preferred_services = array(
 								'pr_dhl_preferred_day' => __('Preferred Day', 'pr-shipping-dhl'),
-								'pr_dhl_preferred_time' => __('Preferred Time', 'pr-shipping-dhl'),
 								'pr_dhl_preferred_location_neighbor' => __('Preferred Location or Neighbor', 'pr-shipping-dhl'),
 								'pr_dhl_preferred_location' => __('Preferred Location Address', 'pr-shipping-dhl'),
 								'pr_dhl_preferred_neighbour_name' => __('Preferred Neighbor Name', 'pr-shipping-dhl'),
@@ -98,7 +97,7 @@ class PR_DHL_Front_End_Paket {
 
 	protected function is_preferredservice_enabled() {
 		
-		if( ( isset( $this->shipping_dhl_settings['dhl_preferred_day'] ) && ( $this->shipping_dhl_settings['dhl_preferred_day'] == 'yes' ) ) ||	( isset( $this->shipping_dhl_settings['dhl_preferred_time'] ) && ( $this->shipping_dhl_settings['dhl_preferred_time'] == 'yes' ) ) || ( isset( $this->shipping_dhl_settings['dhl_preferred_location'] ) && ( $this->shipping_dhl_settings['dhl_preferred_location'] == 'yes' ) ) ||	( isset( $this->shipping_dhl_settings['dhl_preferred_neighbour'] ) && ( $this->shipping_dhl_settings['dhl_preferred_neighbour'] == 'yes' ) ) ) {
+		if( ( isset( $this->shipping_dhl_settings['dhl_preferred_day'] ) && ( $this->shipping_dhl_settings['dhl_preferred_day'] == 'yes' ) ) || ( isset( $this->shipping_dhl_settings['dhl_preferred_location'] ) && ( $this->shipping_dhl_settings['dhl_preferred_location'] == 'yes' ) ) ||	( isset( $this->shipping_dhl_settings['dhl_preferred_neighbour'] ) && ( $this->shipping_dhl_settings['dhl_preferred_neighbour'] == 'yes' ) ) ) {
 			return true;
 		} else {
 			return false;
@@ -302,8 +301,7 @@ class PR_DHL_Front_End_Paket {
 
 				}
 
-				if( ( isset( $this->shipping_dhl_settings['dhl_preferred_day'] ) && ( $this->shipping_dhl_settings['dhl_preferred_day'] == 'yes' ) ) || 
-				    ( isset( $this->shipping_dhl_settings['dhl_preferred_time'] ) && ( $this->shipping_dhl_settings['dhl_preferred_time'] == 'yes' ) ) ) {
+				if( isset( $this->shipping_dhl_settings['dhl_preferred_day'] ) && ( $this->shipping_dhl_settings['dhl_preferred_day'] == 'yes' )  ) {
 
 					if ( isset( $_POST['s_postcode'] ) ) {
 						$shipping_postcode = wc_clean( $_POST['s_postcode'] );
@@ -341,18 +339,7 @@ class PR_DHL_Front_End_Paket {
 				return;
 			}
 
-			if( ! empty( $post_data['pr_dhl_preferred_time'] ) && ! empty( $post_data['pr_dhl_preferred_day'] ) ) {
-				if( ! empty( $this->shipping_dhl_settings['dhl_preferred_day_time_cost'] ) ) {
-					$cart->add_fee( __('DHL Preferred Day & Time', 'pr-shipping-dhl'), $this->shipping_dhl_settings['dhl_preferred_day_time_cost'] );
-				}
-
-			} elseif ( ! empty( $post_data['pr_dhl_preferred_time'] ) ) {
-				
-				if( ! empty( $this->shipping_dhl_settings['dhl_preferred_time_cost'] ) ) {
-					$cart->add_fee( __('DHL Preferred Time', 'pr-shipping-dhl'), $this->shipping_dhl_settings['dhl_preferred_time_cost'] );
-				}
-
-			} elseif ( ! empty( $post_data['pr_dhl_preferred_day'] ) ) {
+			if ( ! empty( $post_data['pr_dhl_preferred_day'] ) ) {
 				
 				if( ! empty( $this->shipping_dhl_settings['dhl_preferred_day_cost'] ) ) {
 					$cart->add_fee( __('DHL Preferred Day', 'pr-shipping-dhl'), $this->shipping_dhl_settings['dhl_preferred_day_cost'] );
@@ -438,7 +425,6 @@ class PR_DHL_Front_End_Paket {
 		if( isset( WC()->session ) ) {
 
 			$preferred_day_time = WC()->session->get( 'dhl_preferred_day_time' );
-			$preferred_time = $preferred_day_time['preferred_time'];
 
 			$new_rows = array();
 			foreach ( $this->preferred_services as $key => $value) {
@@ -447,9 +433,7 @@ class PR_DHL_Front_End_Paket {
 					// NEED TO PLACE THESE ROWS BEFORE THE PAYMENT METHOD
 					$new_rows[ $key ]['label'] = $value . ':';
 
-					if ( isset( $preferred_time[ $dhl_label_options[ $key ] ] ) ) {
-						$new_rows[ $key ]['value'] = $preferred_time[ $dhl_label_options[ $key ] ];
-					} elseif( isset( $this->preferred_location_neighbor[ $dhl_label_options[ $key ] ] ) ) {
+					if( isset( $this->preferred_location_neighbor[ $dhl_label_options[ $key ] ] ) ) {
 						$new_rows[ $key ]['value'] = $this->preferred_location_neighbor[ $dhl_label_options[ $key ] ];
 					} else {
 						$new_rows[ $key ]['value'] = $dhl_label_options[ $key ];

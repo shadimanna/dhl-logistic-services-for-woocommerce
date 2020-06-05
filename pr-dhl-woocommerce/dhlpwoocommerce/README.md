@@ -1,5 +1,11 @@
 # DHL Parcel plugin for WooCommerce
 
+v1.2.18
+
+## Changes
+- Added a postnumber input pop-up for Packstations that require it with the mapless locator 
+- Fixed an issue with logged in users not seeing shipping methods in the checkout
+
 v1.2.17
 
 ## Changes

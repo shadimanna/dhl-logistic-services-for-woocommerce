@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: DHL\n"
-"POT-Creation-Date: 2020-02-25 12:19+0100\n"
+"POT-Creation-Date: 2020-04-10 11:29+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -460,11 +460,11 @@ msgstr "Thuis bezorgen"
 
 #: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:74
 msgid "Door delivery in the evening"
-msgstr "Avondbezorging (18.00 - 21.00 uur)"
+msgstr "Avondbezorging (18.00 - 21.30 uur)"
 
 #: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:83
 msgid "Door delivery today"
-msgstr "Vandaag bezorgen (18.00 - 21.00 uur)"
+msgstr "Vandaag bezorgen (18.00 - 21.30 uur)"
 
 #: includes/model/service/class-dhlpwc-model-service-shipping-preset.php:93
 msgid "Door delivery, avoid dropping at neighbours"
@@ -1425,8 +1425,8 @@ msgstr "Selecteer"
 
 #: includes/view/cart/parcelshop-option.php:19
 #: includes/view/order/meta/form/input/parcelshop.php:24
-msgid "Search by postcode, city or name"
-msgstr "Zoek op postcode, land of naam"
+msgid "Search with postal code or city"
+msgstr "Zoek op postcode of plaats"
 
 #: includes/view/cart/parcelshop/confirm-button.php:4
 msgid "Select this ServicePoint"
@@ -1511,6 +1511,9 @@ msgstr "DHL ServicePoint"
 #: includes/view/unavailable.php:2
 msgid "DHL data unavailable."
 msgstr "DHL service niet beschikbaar."
+
+#~ msgid "Search by postcode, city or name"
+#~ msgstr "Zoek op postcode, land of naam"
 
 #~ msgid "Google Maps key"
 #~ msgstr "Google Maps key"
