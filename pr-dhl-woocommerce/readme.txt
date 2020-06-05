@@ -81,6 +81,7 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 * DHL eCommerce: New API integration for Asia, specifically; SG, HK, TH, CN, MY, VN, AU, IN
 * DHL eCommerce: Include support for value added services; COD, Insurance and OBOX.
 * DHL eCommerce: Remove old API integration for Asia and North America
+* Deutsche Post: Suppress Waybill email to end client
 
 = 1.7.0 =
 * DHL Paket: Remove "Preferred Time" service
