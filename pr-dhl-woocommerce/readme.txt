@@ -77,6 +77,11 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 == Changelog ==
 
+= 2.0.0 =
+* DHL eCommerce: New API integration for Asia, specifically; SG, HK, TH, CN, MY, VN, AU, IN
+* DHL eCommerce: Include support for value added services; COD, Insurance and OBOX.
+* DHL eCommerce: Remove old API integration for Asia and North America
+
 = 1.7.0 =
 * DHL Paket: Remove "Preferred Time" service
 * DHL Paket: Remove "DHL Paket Taggleich" product
