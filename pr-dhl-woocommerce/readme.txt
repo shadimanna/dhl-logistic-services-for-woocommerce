@@ -19,7 +19,8 @@ The official DHL for WooCommerce plugin allows you to automate your e-commerce o
 DHL’s official extension for WooCommerce on Wordpress. Manage your national and international shipments easily.  The “DHL for WooCommerce” – plugin is compatible with (whether the plugin is available in your country see [here](https://www.logistics.dhl/content/dam/dhl/local/global/dhl-ecommerce/images/text-generic-1592x896/g0-integration-3pv-wooocommerce-00.web.796.448.jpg "Global DHL service coverage within WooCommerce").):
 * DHL Paket (Germany)
 * DHL Parcel (Benelux)
-* Deutsche Post International 
+* Deutsche Post International
+* DHL eCommerce Asia
 
 
 == Features ==
