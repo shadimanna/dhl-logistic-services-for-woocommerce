@@ -253,6 +253,10 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			throw new Exception( __('Please, provide a shipper postcode in the DHL shipping settings', 'pr-shipping-dhl') );
 		}
 
+		if( $args['dhl_settings']['add_logo'] == 'yes' && empty( $args['dhl_settings']['shipper_reference'] ) ){
+			throw new Exception( __('Please, provide a shipper reference in the DHL shipping settings', 'pr-shipping-dhl') );
+		}
+
 		// Order details
 		if ( empty( $args['order_details']['dhl_product'] )) {
 			throw new Exception( __('DHL "Product" is empty!', 'pr-shipping-dhl') );
