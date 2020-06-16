@@ -428,11 +428,12 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			PR_DHL()->get_dhl_factory()->create_order();
 
 			// Send the new metabox HTML and the AWB (from the meta we just saved) as a tracking note
+			// 'type' should alwasys be private for AWB
 			wp_send_json( array(
 				'html' => $this->dhl_order_meta_box_table( $wc_order_id ),
 				'tracking' => array(
 					'note' => $this->get_tracking_note( $wc_order_id ),
-					'type' => $this->get_tracking_note_type(),
+					'type' => '',
 				),
 			) );
 		} catch (Exception $e) {
@@ -485,6 +486,8 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			$this->save_dhl_label_tracking( $order_id, $label_info );
 			$label_url = $this->get_download_label_url( $order_id );
 
+			do_action( 'pr_shipping_dhl_label_created', $order_id );
+
 			wp_send_json( array(
 				'download_msg' => __('Your DHL label is ready to download, click the "Download Label" button above"', 'pr-shipping-dhl'),
 				'button_txt' => __( 'Download Label', 'pr-shipping-dhl' ),
@@ -492,8 +495,6 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 				'tracking_note'	  => $this->get_tracking_note( $order_id ),
 				'tracking_note_type' => $this->get_tracking_note_type()
 			) );
-
-			do_action( 'pr_shipping_dhl_label_created', $order_id );
 
 		} catch ( Exception $e ) {
 			wp_send_json( array( 'error' => $e->getMessage() ) );

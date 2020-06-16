@@ -4,10 +4,10 @@ Donate link:
 Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL Parcel Benelux, DHL Parcel Luxembourg, DHL Paket Germany, WooCommerce, Woocom, Woo Commerce, Shipping, shiping, label creation, label printing, shipping rates, DHL Paket
 Requires at least: 4.1
 Requires PHP: 5.6
-Tested up to: 5.2
-Stable tag: 1.7.0
+Tested up to: 5.4
+Stable tag: 2.0.0
 WC requires at least: 2.6.14
-WC tested up to: 4.0
+WC tested up to: 4.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,7 +19,8 @@ The official DHL for WooCommerce plugin allows you to automate your e-commerce o
 DHL’s official extension for WooCommerce on Wordpress. Manage your national and international shipments easily.  The “DHL for WooCommerce” – plugin is compatible with (whether the plugin is available in your country see [here](https://www.logistics.dhl/content/dam/dhl/local/global/dhl-ecommerce/images/text-generic-1592x896/g0-integration-3pv-wooocommerce-00.web.796.448.jpg "Global DHL service coverage within WooCommerce").):
 * DHL Paket (Germany)
 * DHL Parcel (Benelux)
-* Deutsche Post International 
+* Deutsche Post International
+* DHL eCommerce Asia
 
 
 == Features ==
@@ -76,6 +77,12 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+
+= 2.0.0 =
+* DHL eCommerce: New API integration for Asia, specifically; SG, HK, TH, CN, MY, VN, AU, IN
+* DHL eCommerce: Include support for value added services; COD, Insurance and OBOX.
+* DHL eCommerce: Remove old API integration for Asia and North America
+* Deutsche Post: Suppress Waybill email to end client
 
 = 1.7.0 =
 * DHL Paket: Remove "Preferred Time" service

@@ -672,8 +672,8 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 		$order_items = $order['items'];
 
 		// Get the tracking note type setting
-		$tracking_note_type = $this->get_setting('dhl_tracking_note', 'customer');
-		$tracking_note_type = ($tracking_note_type == 'yes') ? '' : 'customer';
+		// $tracking_note_type = $this->get_setting('dhl_tracking_note', 'customer');
+		// $tracking_note_type = ($tracking_note_type == 'yes') ? '' : 'customer';
 
 		// Go through the shipments retrieved from the API and save the AWB of the shipment to
 		// each DHL item's associated WooCommerce order in post meta. This will make sure that each
@@ -696,7 +696,8 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 
 				// An an order note for the AWB
 				$item_awb_note = __('Shipment AWB: ', 'pr-shipping-dhl') . $shipment->awb;
-				$item_wc_order->add_order_note( $item_awb_note, $tracking_note_type, true );
+				// 'type' should alwasys be private for AWB
+				$item_wc_order->add_order_note( $item_awb_note, '', true );
 
 				// Save the AWB in the list.
 				$awbs[] = $shipment->awb;
