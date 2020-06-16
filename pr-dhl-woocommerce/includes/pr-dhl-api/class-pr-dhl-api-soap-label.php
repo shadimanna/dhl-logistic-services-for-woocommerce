@@ -672,7 +672,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			
 			if( $this->args['dhl_settings']['add_logo'] == 'yes' ){
 				unset( $dhl_label_body['ShipmentOrder']['Shipment']['Shipper'] );
-				$dhl_label_body['ShipmentOrder']['Shipment']['ShipperReference'] = 'ShipperReference';
+				$dhl_label_body['ShipmentOrder']['Shipment']['ShipperReference'] = $this->args['dhl_settings']['shipper_reference'];
 			}
 
 			if ( $this->pos_ps || $this->pos_rs || $this->pos_po ) {
