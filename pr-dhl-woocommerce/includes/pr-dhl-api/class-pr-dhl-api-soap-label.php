@@ -589,6 +589,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				$receiver_name1 = $this->args['shipping_address']['name'];
 				$receiver_name2 = '';
 			}
+			
+			$berlin_date = new DateTime('now', new DateTimeZone('Europe/Berlin') );
 
 			$dhl_label_body = 
 				array(
@@ -607,7 +609,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 												'product' => $this->args['order_details']['dhl_product'],
 												'accountNumber' => $account_number,
 												'accountNumber' => $account_number,
-												'shipmentDate' => date('Y-m-d'),
+												'shipmentDate' => $berlin_date->format('Y-m-d'),
 												'ShipmentItem' => 
 													array( 
 														'weightInKG' => $this->args['order_details']['weight']
