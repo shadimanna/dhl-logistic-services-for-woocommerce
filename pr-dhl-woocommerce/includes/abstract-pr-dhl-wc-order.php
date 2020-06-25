@@ -332,7 +332,11 @@ abstract class PR_DHL_WC_Order {
 		}
 		
 		$tracking_link = $this->get_tracking_link( $order_id );
-		
+
+		if( empty( $tracking_link ) ) {
+		    return '';
+        }
+
 		$tracking_note_new = str_replace('{tracking-link}', $tracking_link, $tracking_note, $count);
 		
 		if( $count == 0 ) {
