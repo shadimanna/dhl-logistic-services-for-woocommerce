@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 5.4
-Stable tag: 2.0.0
+Stable tag: 2.1.0
 WC requires at least: 2.6.14
 WC tested up to: 4.2
 License: GPLv2 or later
@@ -77,6 +77,14 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+
+= 2.1.0 =
+* DHL Paket: Add "Warenpost" DHL product
+* DHL Paket: Enable logo addition via customer portal "Shipper Reference" setting
+* DHL Paket: Add label format setting
+* DHL Paket: Add setting to automatically generate the label on a specific order status
+* DHL Paket: Add WordPress filter to relocate email notifcation on checkout, called "pr_shipping_dhl_email_notification_position"
+* DHL Paket: Bug fix when address number is at the beginning in "address 1" for addresses outside of Germany
 
 = 2.0.0 =
 * DHL eCommerce: New API integration for Asia, specifically; SG, HK, TH, CN, MY, VN, AU, IN
