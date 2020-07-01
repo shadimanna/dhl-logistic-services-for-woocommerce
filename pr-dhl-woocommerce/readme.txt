@@ -85,6 +85,7 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 * DHL Paket: Add setting to automatically generate the label on a specific order status
 * DHL Paket: Add WordPress filter to relocate email notifcation on checkout, called "pr_shipping_dhl_email_notification_position"
 * DHL Paket: Bug fix when address number is at the beginning in "address 1" for addresses outside of Germany
+* DHL Paket: Bug fix when tracking link is empty do not add any text to email
 
 = 2.0.0 =
 * DHL eCommerce: New API integration for Asia, specifically; SG, HK, TH, CN, MY, VN, AU, IN
