@@ -538,7 +538,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
             $tracking_note = $this->get_tracking_note( $order_id );
 
             if( ! empty( $tracking_note ) ) {
-			    echo $tracking_note;
+			    echo '<p>' . $tracking_note . '</p>';
             }
 		}
 
