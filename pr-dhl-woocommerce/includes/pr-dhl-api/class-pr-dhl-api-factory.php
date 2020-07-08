@@ -38,24 +38,15 @@ class PR_DHL_API_Factory {
 				case 'UM':
 				case 'VI':
 				case 'CA':
-//                    $dhl_obj = new PR_DHL_API_eCS_US( $country_code );
-//                    break;
                     throw new Exception( __('The DHL plugin is not supported in your store\'s "Base Location"', 'pr-shipping-dhl') );
 				case 'SG':
 				case 'HK':
 				case 'TH':
-//				case 'JP':
 				case 'CN':
 				case 'MY':
 				case 'VN':
 				case 'AU':
-				case 'IL':
-//				case 'NZ':
-//				case 'TW':
-//				case 'KR':
-//				case 'PH':
 				case 'IN':
-					//$dhl_obj = new PR_DHL_API_Ecomm( $country_code);
 					$dhl_obj = new PR_DHL_API_eCS_Asia( $country_code );
 					break;
 				case 'DE':

@@ -24,6 +24,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 		add_action( 'pr_shipping_dhl_label_created', array( $this, 'change_order_status' ), 10, 1 );
 		add_action( 'woocommerce_email_order_details', array( $this, 'add_tracking_info'), 10, 4 );
+		add_action( 'woocommerce_order_status_changed', array( $this, 'create_label_on_status_changed' ), 10, 4 );
 	}
 	
 	public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
@@ -159,7 +160,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			}
 
 			try {
-				$preferred_times = array();
 				$shipping_address = $order->get_address( 'shipping' );
 
 				$preferred_day_time = PR_DHL()->get_dhl_preferred_day_time( $shipping_address['postcode'] );
@@ -168,8 +168,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 					$preferred_days = $preferred_day_time['preferred_day'];
 					$preferred_days = array_keys($preferred_days);
 					$preferred_days = array_combine($preferred_days, $preferred_days);
-
-					$preferred_times = $preferred_day_time['preferred_time'];
 				}
 			} catch (Exception $e) {
 				// catch exception
@@ -183,16 +181,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				'description'		=> '',
 				'value'       		=> isset( $dhl_label_items['pr_dhl_preferred_day'] ) ? $dhl_label_items['pr_dhl_preferred_day'] : '',
 				'options'			=> $preferred_days,
-				'custom_attributes'	=> array( $is_disabled => $is_disabled )
-			) );
-
-			// $preferred_times = $dhl_obj->get_dhl_preferred_time();
-			woocommerce_wp_select( array(
-				'id'          		=> 'pr_dhl_preferred_time',
-				'label'       		=> __( 'Preferred Time:', 'pr-shipping-dhl' ),
-				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_preferred_time'] ) ? $dhl_label_items['pr_dhl_preferred_time'] : '',
-				'options'			=> $preferred_times,
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
 
@@ -386,7 +374,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	 * Function for saving tracking items
 	 */
 	public function get_additional_meta_ids( ) {
-		return array( 'pr_dhl_cod_value', 'pr_dhl_preferred_day', 'pr_dhl_preferred_time', 'pr_dhl_preferred_location', 'pr_dhl_preferred_neighbor', 'pr_dhl_duties', 'pr_dhl_age_visual', 'pr_dhl_email_notification', 'pr_dhl_additional_insurance', 'pr_dhl_personally', 'pr_dhl_no_neighbor', 'pr_dhl_named_person', 'pr_dhl_premium', 'pr_dhl_bulky_goods', 'pr_dhl_is_codeable', 'pr_dhl_identcheck', 'pr_dhl_identcheck_dob', 'pr_dhl_identcheck_age', 'pr_dhl_return_address_enabled', 'pr_dhl_return_name', 'pr_dhl_return_company', 'pr_dhl_return_address','pr_dhl_return_address_no', 'pr_dhl_return_address_city', 'pr_dhl_return_address_state', 'pr_dhl_return_address_zip', 'pr_dhl_return_phone', 'pr_dhl_return_email', 'pr_dhl_routing', 'pr_dhl_routing_email' );
+		return array( 'pr_dhl_cod_value', 'pr_dhl_preferred_day', 'pr_dhl_preferred_location', 'pr_dhl_preferred_neighbor', 'pr_dhl_duties', 'pr_dhl_age_visual', 'pr_dhl_email_notification', 'pr_dhl_additional_insurance', 'pr_dhl_personally', 'pr_dhl_no_neighbor', 'pr_dhl_named_person', 'pr_dhl_premium', 'pr_dhl_bulky_goods', 'pr_dhl_is_codeable', 'pr_dhl_identcheck', 'pr_dhl_identcheck_dob', 'pr_dhl_identcheck_age', 'pr_dhl_return_address_enabled', 'pr_dhl_return_name', 'pr_dhl_return_company', 'pr_dhl_return_address','pr_dhl_return_address_no', 'pr_dhl_return_address_city', 'pr_dhl_return_address_state', 'pr_dhl_return_address_zip', 'pr_dhl_return_phone', 'pr_dhl_return_email', 'pr_dhl_routing', 'pr_dhl_routing_email' );
 	}
 
 	protected function get_tracking_url() {
@@ -420,7 +408,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		// Get settings
 		// $this->shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
 
-		$setting_ids = array( 'dhl_api_user','dhl_api_pwd', 'dhl_account_num', 'dhl_shipper_name', 'dhl_shipper_company', 'dhl_shipper_address','dhl_shipper_address_no', 'dhl_shipper_address_city', 'dhl_shipper_address_state', 'dhl_shipper_address_zip', 'dhl_shipper_phone', 'dhl_shipper_email', 'dhl_bank_holder', 'dhl_bank_name', 'dhl_bank_iban', 'dhl_bank_bic', 'dhl_bank_ref', 'dhl_bank_ref_2', 'dhl_participation_return' );
+		$setting_ids = array( 'dhl_api_user','dhl_api_pwd', 'dhl_add_logo', 'dhl_shipper_reference', 'dhl_account_num', 'dhl_shipper_name', 'dhl_shipper_company', 'dhl_shipper_address','dhl_shipper_address_no', 'dhl_shipper_address_city', 'dhl_shipper_address_state', 'dhl_shipper_address_zip', 'dhl_shipper_phone', 'dhl_shipper_email', 'dhl_shipper_reference', 'dhl_bank_holder', 'dhl_bank_name', 'dhl_bank_iban', 'dhl_bank_bic', 'dhl_bank_ref', 'dhl_bank_ref_2', 'dhl_participation_return' );
 
 		foreach ($setting_ids as $value) {
 			$api_key = str_replace('dhl_', '', $value);
@@ -439,6 +427,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$args['dhl_settings'][ 'shipper_country' ] = PR_DHL()->get_base_country();
 		$args['dhl_settings'][ 'return_country' ] = PR_DHL()->get_base_country();
 		$args['dhl_settings'][ 'participation' ] = $this->shipping_dhl_settings[ 'dhl_participation_' . $dhl_label_items['pr_dhl_product'] ];
+		$args['dhl_settings'][ 'label_format' ] = $this->shipping_dhl_settings['dhl_label_format'];
 
 		return $args;
 	}
@@ -563,11 +552,22 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
                 $order_id = $order->id;
             }
 
-			echo $this->get_tracking_note( $order_id );
-			
+            $tracking_note = $this->get_tracking_note( $order_id );
+
+            if( ! empty( $tracking_note ) ) {
+			    echo $tracking_note;
+            }
 		}
 
 	} 
+
+	public function create_label_on_status_changed($order_id, $status_from, $status_to, $order ){
+
+		$status_setting = str_replace('wc-', '', $this->shipping_dhl_settings['dhl_create_label_on_status'] );
+		if( $status_setting == $status_to ){
+			$this->process_bulk_actions( 'pr_dhl_create_labels', array( $order_id ), 1 );
+		}
+	}
 }
 
 endif;

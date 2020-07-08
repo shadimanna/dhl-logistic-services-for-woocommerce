@@ -81,6 +81,10 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
                 $status_message = $response_body->Status->statusMessage;
             } elseif( isset( $response_body->CreationState->LabelData->Status->statusMessage[0] ) ) {
                 $status_message = $response_body->CreationState->LabelData->Status->statusMessage[0];
+            } elseif (isset( $response_body->Status->statusText )) {
+            	$status_message = $response_body->Status->statusText;
+            } else {
+            	$status_message = __('Contact Support', 'pr-shipping-dhl');
             }
 
 		    throw new Exception( sprintf( __('Could not create label - %s', 'pr-shipping-dhl'), $status_message ) );
@@ -249,6 +253,10 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			throw new Exception( __('Please, provide a shipper postcode in the DHL shipping settings', 'pr-shipping-dhl') );
 		}
 
+		if( $args['dhl_settings']['add_logo'] == 'yes' && empty( $args['dhl_settings']['shipper_reference'] ) ){
+			throw new Exception( __('Please, provide a shipper reference in the DHL shipping settings', 'pr-shipping-dhl') );
+		}
+
 		// Order details
 		if ( empty( $args['order_details']['dhl_product'] )) {
 			throw new Exception( __('DHL "Product" is empty!', 'pr-shipping-dhl') );
@@ -347,29 +355,46 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		if ( ! $this->pos_ps && ! $this->pos_rs && ! $this->pos_po ) {
 			// If address 2 missing, set last piece of an address to be address 2
 			if ( empty( $args['shipping_address']['address_2'] )) {
-				// Break address into pieces			
+			    $set_key = false;
+				// Break address into pieces by spaces
 				$address_exploded = explode(' ', $args['shipping_address']['address_1']);
-				
+
+				// If no spaces found
+                if( count($address_exploded) == 1 ) {
+                    // Break address into pieces by '.'
+                    $address_exploded = explode('.', $args['shipping_address']['address_1']);
+
+                    if( count($address_exploded) == 1 ) {
+                        throw new Exception(__('Shipping "Address 2" is empty!', 'pr-shipping-dhl'));
+                    }
+                }
+
 				// Loop through address and set number value only...
 				// ...last found number will be 'address_2'
 				foreach ($address_exploded as $address_key => $address_value) {
 					if (is_numeric($address_value)) {
 						// Set last index as street number
-						$args['shipping_address']['address_2'] = $address_value;
 						$set_key = $address_key;
 					}
 				}
 
 				// If no number was found, then take last part of address no matter what it is
-				if ( empty( $args['shipping_address']['address_2'] )) {
-					$args['shipping_address']['address_2'] = $address_exploded[ $address_key ];
+				if( $set_key === false ) {
 					$set_key = $address_key;
 				}
 
-				// Unset it in address 1
-				unset( $address_exploded[ $set_key ] );
-				// Set address 1 without street number or last part of address
-				$args['shipping_address']['address_1'] = implode(' ', $address_exploded );
+				// The number is the first part of address 1
+                if( $set_key == 0 ) {
+                    // Set "address_2" first, as first part
+                    $args['shipping_address']['address_2'] = implode( ' ', array_slice( $address_exploded, 0, 1 ) );
+                    // Remove "address_2" from "address_1"
+                    $args['shipping_address']['address_1'] = implode( ' ', array_slice( $address_exploded, 1 ) );
+                } else {
+                    // Set "address_2" first
+                    $args['shipping_address']['address_2'] = implode( ' ', array_slice( $address_exploded, $set_key ) );
+                    // Remove "address_2" from "address_1"
+				    $args['shipping_address']['address_1'] = implode( ' ', array_slice( $address_exploded, 0 , $set_key ) );
+                }
 			}
 		}
 
@@ -420,9 +445,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			// SERVICES DATA
 			$services_map = array(
-								'preferred_time' => array(
-													'name' => 'PreferredTime',
-													'type' => 'type'),
 								'age_visual' => array(
 													'name' => 'VisualCheckOfAge',
 													'type' => 'type'),
@@ -574,6 +596,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				$receiver_name1 = $this->args['shipping_address']['name'];
 				$receiver_name2 = '';
 			}
+			
+			$berlin_date = new DateTime('now', new DateTimeZone('Europe/Berlin') );
 
 			$dhl_label_body = 
 				array(
@@ -592,7 +616,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 												'product' => $this->args['order_details']['dhl_product'],
 												'accountNumber' => $account_number,
 												'accountNumber' => $account_number,
-												'shipmentDate' => date('Y-m-d'),
+												'shipmentDate' => $berlin_date->format('Y-m-d'),
 												'ShipmentItem' => 
 													array( 
 														'weightInKG' => $this->args['order_details']['weight']
@@ -655,9 +679,14 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 									),
 
 						),
-						'labelResponseType' => 'B64'
+						'labelResponseType' => 'B64',
+						'labelFormat' => $this->args['dhl_settings']['label_format'],
 				);
-
+			
+			if( $this->args['dhl_settings']['add_logo'] == 'yes' ){
+				unset( $dhl_label_body['ShipmentOrder']['Shipment']['Shipper'] );
+				$dhl_label_body['ShipmentOrder']['Shipment']['ShipperReference'] = $this->args['dhl_settings']['shipper_reference'];
+			}
 
 			if ( $this->pos_ps || $this->pos_rs || $this->pos_po ) {
 

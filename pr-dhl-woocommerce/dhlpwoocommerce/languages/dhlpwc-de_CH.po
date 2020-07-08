@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: DHL to German\n"
-"POT-Creation-Date: 2020-02-25 12:19+0100\n"
+"POT-Creation-Date: 2020-04-10 11:29+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1435,8 +1435,8 @@ msgstr "Wählen"
 
 #: includes/view/cart/parcelshop-option.php:19
 #: includes/view/order/meta/form/input/parcelshop.php:24
-msgid "Search by postcode, city or name"
-msgstr "Suche nach Postleitzahl, Stadt oder Name"
+msgid "Search with postal code or city"
+msgstr "Suche mit Postleitzahl oder Stadt"
 
 #: includes/view/cart/parcelshop/confirm-button.php:4
 msgid "Select this ServicePoint"
@@ -1521,6 +1521,9 @@ msgstr "DHL ServicePoint"
 #: includes/view/unavailable.php:2
 msgid "DHL data unavailable."
 msgstr "DHL Daten nicht verfügbar."
+
+#~ msgid "Search by postcode, city or name"
+#~ msgstr "Suche nach Postleitzahl, Stadt oder Name"
 
 #~ msgid "Google Maps key"
 #~ msgstr "Google Maps-Schlüssel"

@@ -56,6 +56,26 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		return ob_get_clean();
 	}
 
+	public function excluded_order_statuses(){
+
+		return array(
+			'wc-failed',
+			'wc-refunded',
+			'wc-cancelled'
+		);
+	}
+
+	public function get_order_statuses(){
+		
+		$wc_order_statuses = wc_get_order_statuses();
+
+		foreach( $this->excluded_order_statuses() as $status ){
+			unset( $wc_order_statuses[ $status ] );
+		}
+		
+		return $wc_order_statuses;
+	}
+
 	/**
 	 * Initialize integration settings form fields.
 	 *
@@ -64,6 +84,11 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 	public function init_form_fields() {
 		$wc_shipping_methods = WC()->shipping->get_shipping_methods();
 		$wc_shipping_titles = wp_list_pluck($wc_shipping_methods, 'method_title', 'id');
+		$order_status_options = array(
+			'none' => __( 'None', 'pr-shipping-dhl'), 
+		);
+		
+		$order_status_options = array_merge( $order_status_options, $this->get_order_statuses() );
 		
 		$payment_gateway_titles = PR_DHL()->get_payment_gateways();
 
@@ -265,6 +290,37 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'placeholder'		=> '',
 				'class'				=> 'wc_input_decimal'
 			),
+			'dhl_label_format' => array(
+				'title'             => __( 'Label Format', 'pr-shipping-dhl' ),
+				'type'              => 'select',
+				'description'       => __( 'Select one of the formats to generate the shipping label in.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'options'           => array( 
+					'A4' => 'A4', 
+					'910-300-700' => '910-300-700', 
+					'910-300-700-oZ' => '910-300-700-oZ', 
+					'910-300-600' => '910-300-600', 
+					'910-300-610' => '910-300-610', 
+					'910-300-710' => '910-300-710' 
+				),
+				'class'				=> 'wc-enhanced-select'
+			),
+			'dhl_add_logo' => array(
+				'title'             => __( 'Logo', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Add Logo', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'The logo will be added from your DHL dashboard settings.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
+			'dhl_shipper_reference' => array(
+				'title'             => sprintf( __( 'Shipper Reference', 'pr-shipping-dhl' ), $weight_units),
+				'type'              => 'text',
+				'description'       => __( 'Add shipper reference.', 'pr-shipping-dhl' ),
+				'desc_tip'          => false,
+				'default'           => '',
+				'placeholder'		=> '',
+			),
 			'dhl_tracking_note' => array(
 				'title'             => __( 'Tracking Note', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
@@ -288,6 +344,16 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'desc_tip'          => true,
 				'default'           => 'no',
 				'class'				=> ''
+			),
+			'dhl_create_label_on_status' => array(
+				'title'             => __( 'Create Label on Status', 'pr-shipping-dhl' ),
+				'type'              => 'select',
+				'label' 			=> __( 'Create label on specific status.', 'pr-shipping-dhl'),
+				'description'       => __( 'Select the order status.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+				'options'           => $order_status_options,
+				'class'				=> 'wc-enhanced-select',
+				'default'           => 'no',
 			),
 			'dhl_change_order_status_completed' => array(
 				'title'             => __( 'Order Status', 'pr-shipping-dhl' ),
@@ -401,30 +467,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'dhl_preferred_exclusion_sat' => array(
 					'type'              => 'checkbox',
 					'label'             => __( 'Saturday', 'pr-shipping-dhl' ),
-				),
-				'dhl_preferred_time' => array(
-					'title'             => __( 'Preferred Time', 'pr-shipping-dhl' ),
-					'type'              => 'checkbox',
-					'label'             => __( 'Enable Preferred Time', 'pr-shipping-dhl' ),
-					'default'           => 'yes',
-					'description'       => __( 'Enabling this will display a front-end option for the user to select their preferred time of delivery.', 'pr-shipping-dhl' ),
-					'desc_tip'          => true,
-				),
-				'dhl_preferred_time_cost' => array(
-					'title'             => __( 'Preferred Time Price', 'pr-shipping-dhl' ),
-					'type'              => 'text',
-					'description'       => __( 'Insert gross value as surcharge for the preferred time. Insert 0 to offer service for free.', 'pr-shipping-dhl' ),
-					'desc_tip'          => true,
-					'default'           => '4.8',
-					'class'				=> 'wc_input_decimal'
-				),
-				'dhl_preferred_day_time_cost' => array(
-					'title'             => __( 'Preferred Day and Time Price', 'pr-shipping-dhl' ),
-					'type'              => 'text',
-					'description'       => __( 'Insert gross value as surcharge for the combination of preferred day and time. Insert 0 to offer service for free.', 'pr-shipping-dhl' ),
-					'desc_tip'          => true,
-					'default'           => '4.8',
-					'class'				=> 'wc_input_decimal'
 				),
 				'dhl_preferred_location' => array(
 					'title'             => __( 'Preferred Location', 'pr-shipping-dhl' ),

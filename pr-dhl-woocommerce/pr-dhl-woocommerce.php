@@ -5,7 +5,7 @@
  * Description: WooCommerce integration for DHL eCommerce, DHL Paket, DHL Parcel Europe (Benelux and Iberia) and Deutsche Post International
  * Author: DHL
  * Author URI: http://dhl.com/woocommerce
- * Version: 2.0.0a
+ * Version: 2.1.0
  * WC requires at least: 2.6.14
  * WC tested up to: 4.0
  *
@@ -32,7 +32,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "1.6.6";
+	private $version = "2.1.0";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -135,8 +135,8 @@ class PR_DHL_WC {
 		$this->define( 'PR_DHL_REST_AUTH_URL_QA', 'https://api-qa.dhlecommerce.com' );
 		$this->define( 'PR_DHL_ECOMM_TRACKING_URL', 'https://webtrack.dhlglobalmail.com/?trackingnumber=' );
 
-		// DHL eCS Asia
-		$this->define( 'PR_DHL_ECS_ASIA_TRACKING_URL', 'https://preprod2.dhlecommerce.dhl.com/track/?ref=' );
+		// DHL eCS Asia tracking link. Sandbox => https://preprod2.dhlecommerce.dhl.com/track/?ref=
+		$this->define( 'PR_DHL_ECS_ASIA_TRACKING_URL', 'https://ecommerceportal.dhl.com/track/?ref=' );
 
 		// DHL Paket
 		$this->define( 'PR_DHL_CIG_USR', 'dhl_woocommerce_plugin_2_1' );
