@@ -25,8 +25,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		add_action( 'pr_shipping_dhl_label_created', array( $this, 'change_order_status' ), 10, 1 );
 		add_action( 'woocommerce_email_order_details', array( $this, 'add_tracking_info'), 10, 4 );
 		add_action( 'woocommerce_order_status_changed', array( $this, 'create_label_on_status_changed' ), 10, 4 );
-
-		add_filter( 'woocommerce_email_format_string' , array( $this, 'add_tracking_note_email_placeholder' ), 10, 2 );
 	}
 	
 	public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
@@ -544,19 +542,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
             }
 		}
 
-	} 
-
-	
-	public function add_tracking_note_email_placeholder( $string, $email ) {
-
-		$placeholder = '{tracking_note}'; // The corresponding placeholder to be used
-		
-    	$order = $email->object; // Get the instance of the WC_Order Object
-		
-		$tracking_note = $this->get_tracking_note( $order->get_id() );
-
-    	// Return the clean replacement tracking_note string for "{tracking_note}" placeholder
-    	return str_replace( $placeholder, $tracking_note, $string );
 	}
 
 	public function create_label_on_status_changed($order_id, $status_from, $status_to, $order ){

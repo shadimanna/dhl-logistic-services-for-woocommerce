@@ -65,6 +65,9 @@ abstract class PR_DHL_WC_Order {
 
 		add_action( 'init', array( $this, 'add_download_label_endpoint' ) );
 		add_action( 'parse_query', array( $this, 'process_download_label' ) );
+
+		// add {tracking_note} placeholder
+		add_filter( 'woocommerce_email_format_string' , array( $this, 'add_tracking_note_email_placeholder' ), 10, 2 );
 	}
 
 	/**
@@ -364,6 +367,18 @@ abstract class PR_DHL_WC_Order {
 		} else {
 			return 'customer';
 		}
+	}
+
+	public function add_tracking_note_email_placeholder( $string, $email ) {
+
+		$placeholder = '{tracking_note}'; // The corresponding placeholder to be used
+		
+    	$order = $email->object; // Get the instance of the WC_Order Object
+		
+		$tracking_note = $this->get_tracking_note( $order->get_id() );
+
+    	// Return the clean replacement tracking_note string for "{tracking_note}" placeholder
+    	return str_replace( $placeholder, $tracking_note, $string );
 	}
 
 	/**
