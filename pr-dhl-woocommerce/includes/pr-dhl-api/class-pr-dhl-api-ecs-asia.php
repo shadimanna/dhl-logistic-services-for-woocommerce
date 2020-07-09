@@ -468,39 +468,33 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	 *
 	 * @since [*next-version*]
 	 */
-	public function close_out_all(){
-
-		$response 	= $this->api_client->close_out_labels();
-
-		$data 		= base64_decode( $response->handoverNote );
-		//$file_info 	= $this->save_dhl_label_file( 'closeout', $response->handoverID, $data );
-		$messages 	= $response->responseStatus->messageDetails;
-
-		foreach( $messages as $msg ){
-			$message = $msg->messageDetail;
-		}
-		return array(
-			'handover_id' 	=> $response->handoverID,
-			'message' 		=> $message
-		);
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @since [*next-version*]
-	 */
-	public function close_out_selected( $shipment_ids ){
+	public function close_out_shipment( $shipment_ids = array() ){
 
 		$response 	= $this->api_client->close_out_labels( $shipment_ids );
+		
+		$return = array();
 
-		$data 		= base64_decode( $response->handoverNote );
-		$file_info 	= $this->save_dhl_label_file( 'closeout', $response->handoverID, $data );
+		if( isset( $response->handoverID ) ){
+			$return['handover_id'] = $response->handoverID;
+		}
 
-		return array(
-			'handover_id' 	=> $response->handoverID,
-			'file_info' 	=> $file_info
-		);
+		if( isset( $response->handoverNote ) && !empty( $response->handoverNote ) ){
+			$data 					= base64_decode( $response->handoverNote );
+			$return['file_info'] 	= $this->save_dhl_label_file( 'closeout', $response->handoverID, $data );
+		}
+
+		if( isset( $response->responseStatus->messageDetails ) ){
+
+			foreach( $response->responseStatus->messageDetails as $msg ){
+				
+				if( isset( $msg->messageDetail ) ){
+					$return['message'] = $msg->messageDetail;
+				}
+
+			}
+		}
+
+		return $return;
 	}
 
 	/**

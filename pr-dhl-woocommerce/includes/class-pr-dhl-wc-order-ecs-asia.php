@@ -512,9 +512,22 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 			$instance = PR_DHL()->get_dhl_factory();
 
 			try {
-				$closeout 	= $instance->close_out_all();
+				$closeout 	= $instance->close_out_shipment();
 
-				$message = $closeout['message'] . ' - Handover ID: ' . $closeout['handover_id'];
+				if( !isset( $closeout['handover_id'] ) ){
+					throw new Exception( __( 'Cannot get Handover ID!', 'pr-shipping-dhl' ) );
+				}
+				
+				$message 	= '';
+
+				if( isset( $closeout['message'] ) ){
+					$message .= $closeout['message'];
+				}
+
+				if( isset( $closeout['handover_id']) ){
+					$message .= ( !empty( $message ) )? ' - ' : '';
+					$message .= 'Handover ID: ' . $closeout['handover_id'];
+				}
 
 				array_push(
 					$array_messages,
@@ -552,7 +565,15 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 					$shipment_ids[] 		= $label_tracking_info['shipment_id'];
 				}
 
-				$closeout 	= $instance->close_out_selected( $shipment_ids );
+				$closeout 	= $instance->close_out_shipment( $shipment_ids );
+
+				if( !isset( $closeout['handover_id'] ) ){
+					throw new Exception( __( 'Cannot get Handover ID!', 'pr-shipping-dhl' ) );
+				}
+
+				if( !isset( $closeout['file_info']->url ) ){
+					throw new Exception( __( 'Cannot find generated file url!', 'pr-shipping-dhl' ) );
+				}
 
 				$manifest_link 	= sprintf(
 					'<a href="%1$s" target="_blank">%2$s</a>',
