@@ -88,7 +88,7 @@ class Client extends API_Client {
 		);
 	}
 
-	public function close_out_labels( $shipment_ids = array() ){
+	public function close_out_labels( $country_code, $shipment_ids = array() ){
 
 		$route 			= $this->close_out_label_route();
 		$shipment_items = array();
@@ -119,6 +119,11 @@ class Client extends API_Client {
 				)
 			)
 		);
+
+		if( !in_array( $country_code, array('IN', 'CN', 'HK', 'AU', 'SG') ) ){
+			$data['closeOutRequest']['bd']['handoverID'] = 'C' . date("YmdHis");
+			$data['closeOutRequest']['bd']['generateHandover'] = 'N';
+		}
 
 		if( count( $shipment_items ) > 0 ){
 			$data['closeOutRequest']['bd']['shipmentItems'] = $shipment_items;
@@ -186,13 +191,8 @@ class Client extends API_Client {
 			throw new Exception( __( 'Handover ID does not exist!', 'pr-shipping-dhl' ) );
 		}
 
-		if( !isset( $response->closeOutResponse->bd->handoverNote ) && count( $shipment_ids ) > 0 ){
-			throw new Exception( __( 'Handover Note does not exist!', 'pr-shipping-dhl' ) );
-		}else{
-			
-			if( !isset( $response->closeOutResponse->bd->responseStatus->messageDetails ) ){
-				throw new Exception( __( 'Message Detail does not exist!', 'pr-shipping-dhl' ) );
-			}
+		if( !isset( $response->closeOutResponse->bd->responseStatus->messageDetails ) && count( $shipment_ids ) < 1 ){
+			throw new Exception( __( 'Message Detail does not exist!', 'pr-shipping-dhl' ) );
 		}
 
 		return $response->closeOutResponse->bd;

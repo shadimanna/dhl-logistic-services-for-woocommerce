@@ -571,20 +571,22 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 					throw new Exception( __( 'Cannot get Handover ID!', 'pr-shipping-dhl' ) );
 				}
 
-				if( !isset( $closeout['file_info']->url ) ){
-					throw new Exception( __( 'Cannot find generated file url!', 'pr-shipping-dhl' ) );
-				}
+				if( isset( $closeout['file_info']->url ) ){
+				
+					$manifest_text 	= sprintf(
+						'<a href="%1$s" target="_blank">%2$s</a>',
+						$closeout['file_info']->url,
+						__('Download Closeout File', 'pr-shipping-dhl') . ' ' . $closeout['handover_id']
+					);
 
-				$manifest_link 	= sprintf(
-					'<a href="%1$s" target="_blank">%2$s</a>',
-					$closeout['file_info']->url,
-					__('download closeout file', 'pr-shipping-dhl') . ' ' . $closeout['handover_id']
-				);
+				}else{
+					$manifest_text = __('Handover ID : ', 'pr-shipping-dhl' ) . $closeout['handover_id'];
+				}
 
 				$message = sprintf(
 					__( 'Finalized DHL Close Out - %2$s', 'pr-shipping-dhl' ),
 					$closeout['handover_id'],
-					$manifest_link
+					$manifest_text
 				);
 
 				array_push(

@@ -470,7 +470,7 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	 */
 	public function close_out_shipment( $shipment_ids = array() ){
 
-		$response 	= $this->api_client->close_out_labels( $shipment_ids );
+		$response 	= $this->api_client->close_out_labels( $this->country_code, $shipment_ids );
 		
 		$return = array();
 
