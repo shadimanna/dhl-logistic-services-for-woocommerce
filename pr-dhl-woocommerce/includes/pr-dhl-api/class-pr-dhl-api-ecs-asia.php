@@ -521,7 +521,7 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	 *
 	 * @return string
 	 */
-	public function get_dhl_closeout_label_file_name( $barcode, $format = 'pdf' ) {
+	public function get_dhl_close_out_label_file_name( $barcode, $format = 'pdf' ) {
 		return sprintf('dhl-closeout-%s.%s', $barcode, $format);
 	}
 
@@ -554,8 +554,8 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	 *
 	 * @return object An object containing the file "path" and "url" strings.
 	 */
-	public function get_dhl_closeout_label_file_info( $closeout_id, $format = 'pdf' ) {
-		$file_name = $this->get_dhl_item_label_file_name($closeout_id, $format);
+	public function get_dhl_close_out_label_file_info( $closeout_id, $format = 'pdf' ) {
+		$file_name = $this->get_dhl_close_out_label_file_name($closeout_id, $format);
 
 		return (object) array(
 			'path' => PR_DHL()->get_dhl_label_folder_dir() . $file_name,
@@ -576,9 +576,9 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	public function get_dhl_label_file_info( $type, $key ) {
 
 		if( $type == 'closeout' ){
-			$this->get_dhl_closeout_label_file_info( $key, 'pdf' );
+			$this->get_dhl_close_out_label_file_info( $key, 'pdf' );
 		}
-		
+
 		$label_format = strtolower( $this->get_setting( 'dhl_label_format' ) );
 		// Return info for "item" type
 		return $this->get_dhl_item_label_file_info( $key, $label_format );
