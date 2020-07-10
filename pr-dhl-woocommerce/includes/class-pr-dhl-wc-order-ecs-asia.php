@@ -18,6 +18,13 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 	
 	protected $carrier = 'DHL eCS Asia';
 
+	/**
+	 * The endpoint for download close out labels.
+	 *
+	 * @since [*next-version*]
+	 */
+	const DHL_DOWNLOAD_CLOSE_OUT_ENDPOINT = 'dhl_download_close_out';
+
 	public function init_hooks() {
 		parent::init_hooks();
 
@@ -33,6 +40,14 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 		// add bulk order filter for printed / non-printed orders
 		add_action( 'restrict_manage_posts', array( $this, 'filter_orders_by_label_created') , 20 );
 		add_filter( 'request',               array( $this, 'filter_orders_by_label_created_query' ) );
+
+		// The Close out label download endpoint
+		add_action( 'init', array( $this, 'add_download_close_out_endpoint' ) );
+		add_action( 'parse_query', array( $this, 'process_download_close_out' ) );
+	}
+
+	public function add_download_close_out_endpoint() {
+		add_rewrite_endpoint( self::DHL_DOWNLOAD_CLOSE_OUT_ENDPOINT, EP_ROOT );
 	}
 
 	public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
@@ -572,10 +587,12 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 				}
 
 				if( isset( $closeout['file_info']->url ) ){
-				
+					
+					$label_url 			= $this->generate_download_url( '/' . self::DHL_DOWNLOAD_CLOSE_OUT_ENDPOINT . '/' . $closeout['handover_id'] );
+
 					$manifest_text 	= sprintf(
 						'<a href="%1$s" target="_blank">%2$s</a>',
-						$closeout['file_info']->url,
+						$label_url,
 						__('Download Closeout File', 'pr-shipping-dhl') . ' ' . $closeout['handover_id']
 					);
 
@@ -639,6 +656,46 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 		}
 
 		return $array_messages;
+	}
+
+	public function process_download_close_out() {
+		global $wp_query;
+		
+		$dhl_close_out_id = isset($wp_query->query_vars[ self::DHL_DOWNLOAD_CLOSE_OUT_ENDPOINT ] )
+			? $wp_query->query_vars[ self::DHL_DOWNLOAD_CLOSE_OUT_ENDPOINT ]
+			: null;
+			
+		// If the endpoint param (aka the DHL order ID) is not in the query, we bail
+		if ( $dhl_close_out_id === null ) {
+			return;
+		}
+
+		$instance 	= PR_DHL()->get_dhl_factory();
+		$label_path = $instance->get_dhl_close_out_label_file_info( $dhl_close_out_id )->path;
+		
+		$array_messages = get_option( '_pr_dhl_bulk_action_confirmation' );
+		if ( empty( $array_messages ) || !is_array( $array_messages ) ) {
+			$array_messages = array( 'msg_user_id' => get_current_user_id() );
+		}
+
+		if ( false == $this->download_label( $label_path ) ) {
+			array_push($array_messages, array(
+				'message' => __( 'Unable to download file. Label appears to be invalid or is missing. Please try again.', 'pr-shipping-dhl' ),
+				'type' => 'error'
+			));
+		}
+
+		update_option( '_pr_dhl_bulk_action_confirmation', $array_messages );
+
+		$redirect_url = isset($wp_query->query_vars[ 'referer' ])
+			? $wp_query->query_vars[ 'referer' ]
+			: admin_url('edit.php?post_type=shop_order');
+
+		// If there are errors redirect to the shop_orders and display error
+		if ( $this->has_error_message( $array_messages ) ) {
+            wp_redirect( remove_query_arg( array( '_wp_http_referer', '_wpnonce' ), $redirect_url ) );
+			exit;
+		}
 	}
 
 	protected function get_bulk_settings_override( $args ) {
