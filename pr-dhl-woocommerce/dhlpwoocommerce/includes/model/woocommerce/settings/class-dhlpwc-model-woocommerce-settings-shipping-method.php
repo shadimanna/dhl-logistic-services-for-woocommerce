@@ -158,6 +158,13 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'description' => __("Include a track & trace component in the order summary for customers, when they log into the website and check their account information.", 'dhlpwc'),
                     'default'     => 'yes',
                 ),
+                'enable_servicepoint_in_order_mail' => array(
+                    'title'       => __('Servicepoint information in email', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Enable', 'dhlpwc'),
+                    'description' => __('Add servicepoint information below customer details in order emails', 'dhlpwc'),
+                    'default'     => 'no',
+                ),
                 'google_maps_key' => array(
                     'title'       => __('Google Maps Javascript API key', 'dhlpwc'),
                     'type'        => 'text',
@@ -273,6 +280,8 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
             $this->get_bulk_group_fields('large_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), DHLPWC_Model_Service_Translation::instance()->parcelType('PARCELTYPE_LARGE'))),
             $this->get_bulk_group_fields('xsmall_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), DHLPWC_Model_Service_Translation::instance()->parcelType('PARCELTYPE_XSMALL'))),
             $this->get_bulk_group_fields('xlarge_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), DHLPWC_Model_Service_Translation::instance()->parcelType('PARCELTYPE_XLARGE'))),
+            $this->get_bulk_group_fields('roll_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), DHLPWC_Model_Service_Translation::instance()->parcelType('PARCELTYPE_ROLL'))),
+            $this->get_bulk_group_fields('bulky_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), DHLPWC_Model_Service_Translation::instance()->parcelType('PARCELTYPE_BULKY'))),
             $this->get_bulk_group_fields('largest', __('Choose the largest available size', 'dhlpwc')),
 
             array(
@@ -479,7 +488,7 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                 'class'             => "dhlpwc-grouped-option dhlpwc-price-input dhlpwc-option-grid['" . $code . "'] " . $class,
                 'default'           => '0.00',
                 'custom_attributes' => array(
-                    'data-option-group'           => $code,
+                    'data-option-group' => $code,
                 ),
             ),
 
@@ -497,7 +506,7 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                 'class'             => "dhlpwc-grouped-option dhlpwc-price-input dhlpwc-option-grid['" . $code . "'] " . $class,
                 'default'           => '0.00',
                 'custom_attributes' => array(
-                    'data-option-group'           => $code,
+                    'data-option-group' => $code,
                 ),
             ),
 
@@ -522,9 +531,9 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
             ),
 
             'option_condition_' . $code => array(
-                'type'              => 'textarea',
-                'class'             => 'dhlpwc-option-condition ' . $class,
-                'default'           => ''
+                'type'    => 'textarea',
+                'class'   => 'dhlpwc-option-condition ' . $class,
+                'default' => '',
             ),
         );
 
@@ -838,7 +847,7 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'NL' => __('Netherlands', 'dhlpwc'),
                     'BE' => __('Belgium', 'dhlpwc'),
                     'LU' => __('Luxembourg', 'dhlpwc'),
-                    'CH' => __('Switzerland', 'dhlpwc'),
+                    'AT' => __('Austria', 'dhlpwc'),
                 ),
                 'default' => 'NL',
                 'class' => $class,
@@ -888,12 +897,27 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     unset($allowed_shipping_options[DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SDD]);
                 }
             }
+        } else {
+            $delivery_times_service = DHLPWC_Model_Service_Delivery_Times::instance();
+
+            if (!$delivery_times_service->same_day_without_delivery_times_allowed()) {
+                if (array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SDD, $allowed_shipping_options)) {
+                    $allowed_shipping_options[DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SDD] = null;
+                    unset($allowed_shipping_options[DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SDD]);
+                }
+            }
         }
 
         // remove methods that have not been allowed for products which have restriction turned on
         foreach ($package['contents'] as $item_id => $item) {
             if (get_post_meta($item['product_id'], 'dhlpwc_enable_method_limit', true) === 'yes') {
                 $allowed_methods = get_post_meta($item['product_id'], 'dhlpwc_selected_method_limit', true);
+
+                // When no method should be used, create an empty array instead of empty string or null
+                if (empty($allowed_methods)) {
+                    $allowed_methods = array();
+                }
+
                 foreach ($presets as $method_key => $method) {
                     if (in_array($method['frontend_id'], $allowed_methods) === false) {
                         unset($presets[$method_key]);
@@ -902,14 +926,21 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
             }
         }
 
-        foreach($presets as $data) {
+        foreach ($presets as $data) {
 
             $preset = new DHLPWC_Model_Meta_Shipping_Preset($data);
 
             $check_allowed_options = true;
-            foreach($preset->options as $preset_option) {
+
+            foreach ($preset->options as $preset_option) {
                 if (!array_key_exists($preset_option, $allowed_shipping_options)) {
                     $check_allowed_options = false;
+                } else if ($preset_option === DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SDD) {
+                    $no_neighbour = array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_NBB, $preset->options);
+                    $delivery_times_service = DHLPWC_Model_Service_Delivery_Times::instance();
+                    if (!$delivery_times_service->same_day_allowed_today($no_neighbour)) {
+                        $check_allowed_options = false;
+                    }
                 }
             }
 

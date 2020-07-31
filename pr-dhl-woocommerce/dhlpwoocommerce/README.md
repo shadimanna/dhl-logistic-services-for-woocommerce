@@ -1,5 +1,26 @@
 # DHL Parcel plugin for WooCommerce
 
+v1.3.0
+## Changes
+- Enabled Austria as shipping country
+- Added a setting to show the selected ServicePoint information in e-mails
+- Added requirements and visual indicators to enable Same Day delivery so it works without enabling delivery times
+- Added additional meta data for third party exports
+- Added a dynamic notification to switch between Deutsche Post International and DHL Parcel
+- Updated address parsing to support addresses starting with numbers
+- Fixed an issue where limiting DHL methods didn't work if none were selected
+- Fixed correct printer responses being sent as error reports
+- Fixed an issue with non-default price decimals not being handled correctly
+- Removed sending error reports when credentials not configured and still empty
+
+v1.2.19
+
+## Changes
+- Updated ServicePoint selector width to scale to full width
+- Updated ServicePoint selector to block the enter key on input to prevent accidental form submission
+- Fixed an issue that caused PHP warning errors on pages with cart data
+- Updated translation texts
+
 v1.2.18
 
 ## Changes

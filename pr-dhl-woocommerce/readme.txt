@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 5.4
-Stable tag: 2.1.0
+Stable tag: 2.2.0
 WC requires at least: 2.6.14
 WC tested up to: 4.2
 License: GPLv2 or later
@@ -80,6 +80,18 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+
+= 2.2.0 =
+* DHL Parcel: Enabled Austria as shipping country
+* DHL Parcel: Added a setting to show the selected ServicePoint information in e-mails
+* DHL Parcel: Added requirements and visual indicators to enable Same Day delivery so it works without enabling delivery times
+* DHL Parcel: Added additional meta data for third party exports
+* DHL Parcel: Added a dynamic notification to switch between Deutsche Post International and DHL Parcel
+* DHL Parcel: Updated address parsing to support addresses starting with numbers
+* DHL Parcel: Fixed an issue where limiting DHL methods didn't work if none were selected
+* DHL Parcel: Fixed correct printer responses being sent as error reports
+* DHL Parcel: Fixed an issue with non-default price decimals not being handled correctly
+* DHL Parcel: Removed sending error reports when credentials not configured and still empty
 
 = 2.1.0 =
 * DHL Paket: Add "Warenpost" DHL product

@@ -53,7 +53,7 @@ jQuery(document).ready(function($) {
                         $('input#woocommerce_dhlpwc_account_id').val(value);
                     }
                 }
-                
+
             } else {
                 dhlpwc_test_connection_button.val(message);
                 dhlpwc_test_connection_button.addClass('dhlpwc_button_fail');
@@ -287,6 +287,8 @@ jQuery(document).ready(function($) {
                     .wrap("<td></td>");
             });
         });
+
+        $(document.body).trigger('dhlpwc:init_error_messages');
 
     }).on('dhlpwc:init_conditions', function(e, code) {
         // Hide original input
@@ -601,6 +603,8 @@ jQuery(document).ready(function($) {
             });
         });
 
+        $(document.body).trigger('dhlpwc:init_error_messages');
+
     }).on('dhlpwc:init_bulk_grid', function() {
         // Don't load if the bulk grid cannot be found
         if ($('.dhlpwc-bulk-grid table').length < 1) {
@@ -662,6 +666,66 @@ jQuery(document).ready(function($) {
         $('.dhlpwc-weight-input').not('.dhlpwc-weight-unit-wrap .dhlpwc-weight-input').each(function(e) {
             $(this).wrapAll('<div class="dhlpwc-weight-unit-wrap"></div>').parent().prepend('<i>' + weight_unit + '</i>');
         });
+
+    }).on('dhlpwc:init_error_messages', function (e) {
+
+        if ($('#dhlpwc-option-group-error-same_day').length === 0) {
+            $('#dhlpwc-option-group-mirror-same_day').after('<tr id="dhlpwc-option-group-error-same_day" class="dhlpwc_warning"><td colspan="7">' + dhlpwc_settings_object.option_same_day_error + '</td></tr>');
+        }
+        if ($('#dhlpwc-option-group-error-no_neighbour_same_day').length === 0) {
+            $('#dhlpwc-option-group-mirror-no_neighbour_same_day').after('<tr id="dhlpwc-option-group-error-no_neighbour_same_day" class="dhlpwc_warning"><td colspan="7">' + dhlpwc_settings_object.option_same_day_no_neighbour_error + '</td></tr>');
+        }
+        if ($('#dhlpwc-delivery-times-group-error-same_day').length === 0) {
+            $('#dhlpwc-delivery-times-group-mirror-same_day').after('<tr id="dhlpwc-delivery-times-group-error-same_day" class="dhlpwc_warning"><td colspan="4">' + dhlpwc_settings_object.delivery_time_same_day_error + '</td></tr>');
+        }
+        if ($('#dhlpwc-delivery-times-group-error-no_neighbour_same_day').length === 0) {
+            $('#dhlpwc-delivery-times-group-mirror-no_neighbour_same_day').after('<tr id="dhlpwc-delivery-times-group-error-no_neighbour_same_day" class="dhlpwc_warning"><td colspan="4">' + dhlpwc_settings_object.delivery_time_same_day_no_neighbour_error + '</td></tr>');
+        }
+
+        $('#woocommerce_dhlpwc_enable_option_same_day-mirror, #woocommerce_dhlpwc_enable_delivery_time_same_day-mirror').trigger('change');
+        $('#woocommerce_dhlpwc_enable_option_no_neighbour_same_day-mirror, #woocommerce_dhlpwc_enable_delivery_time_no_neighbour_same_day-mirror').trigger('change');
+
+    }).on('change', '#woocommerce_dhlpwc_enable_option_same_day-mirror, #woocommerce_dhlpwc_enable_delivery_time_same_day-mirror', function (e) {
+        var shipping_option_checked = $('#woocommerce_dhlpwc_enable_option_same_day-mirror').is(':checked');
+        var delivery_times_checked  = $('#woocommerce_dhlpwc_enable_delivery_time_same_day-mirror').is(':checked');
+
+        var shipping_option_error = $('#dhlpwc-option-group-error-same_day');
+        var delivery_times_error  = $('#dhlpwc-delivery-times-group-error-same_day');
+
+        if (
+            (shipping_option_checked && delivery_times_checked) ||
+            (!shipping_option_checked && delivery_times_checked) ||
+            (!shipping_option_checked && !delivery_times_checked)
+        ) {
+            shipping_option_error.addClass('hidden');
+            delivery_times_error.addClass('hidden');
+
+            return;
+        }
+
+        shipping_option_error.removeClass('hidden');
+        delivery_times_error.removeClass('hidden');
+
+    }).on('change', '#woocommerce_dhlpwc_enable_option_no_neighbour_same_day-mirror, #woocommerce_dhlpwc_enable_delivery_time_no_neighbour_same_day-mirror', function (e) {
+        var shipping_option_checked = $('#woocommerce_dhlpwc_enable_option_no_neighbour_same_day-mirror').is(':checked');
+        var delivery_times_checked  = $('#woocommerce_dhlpwc_enable_delivery_time_no_neighbour_same_day-mirror').is(':checked');
+
+        var shipping_option_error = $('#dhlpwc-option-group-error-no_neighbour_same_day');
+        var delivery_times_error  = $('#dhlpwc-delivery-times-group-error-no_neighbour_same_day');
+
+        if (
+            (shipping_option_checked && delivery_times_checked) ||
+            (!shipping_option_checked && delivery_times_checked) ||
+            (!shipping_option_checked && !delivery_times_checked)
+        ) {
+            shipping_option_error.addClass('hidden');
+            delivery_times_error.addClass('hidden');
+
+            return;
+        }
+
+        shipping_option_error.removeClass('hidden');
+        delivery_times_error.removeClass('hidden');
 
     });
 

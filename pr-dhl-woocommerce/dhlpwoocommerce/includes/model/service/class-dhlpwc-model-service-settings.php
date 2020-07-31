@@ -99,6 +99,107 @@ class DHLPWC_Model_Service_Settings extends DHLPWC_Model_Core_Singleton_Abstract
         return $shipping_method['printer_id'];
     }
 
+    public function format_settings($data)
+    {
+        if (!is_array($data)) {
+            return $data;
+        }
+
+        foreach ($data as $key => $value) {
+            if (strpos($key, 'price_option_') !== false) {
+                $data[$key] = wc_format_localized_price($value);
+            }
+
+            if (strpos($key, 'option_condition_') !== false) {
+                $data[$key] = $this->format_option_conditions($value);
+            }
+        }
+
+        return $data;
+    }
+
+    protected function format_option_conditions($value)
+    {
+        $conditions = json_decode($value, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return $value;
+        }
+
+        foreach ($conditions as $key => $condition) {
+            $conditions[$key] = $this->format_option_condition($condition);
+        }
+
+        return json_encode($conditions);
+    }
+
+    protected function format_option_condition($condition)
+    {
+        if (!is_array($condition)) {
+            return $condition;
+        }
+
+        if (array_key_exists('input_data', $condition)) {
+            $condition['input_data'] = wc_format_localized_price($condition['input_data']);
+        }
+
+        if (array_key_exists('input_action_data', $condition)) {
+            $condition['input_action_data'] = wc_format_localized_price($condition['input_action_data']);
+        }
+
+        return $condition;
+    }
+
+    public function update_settings($data)
+    {
+        if (!is_array($data)) {
+            return $data;
+        }
+
+        foreach ($data as $key => $value) {
+            if (strpos($key, 'price_option_') !== false) {
+                $data[$key] = wc_format_decimal($value);
+            }
+
+            if (strpos($key, 'option_condition_') !== false) {
+                $data[$key] = $this->update_option_conditions($value);
+            }
+        }
+
+        return $data;
+    }
+
+    protected function update_option_conditions($value)
+    {
+        $conditions = json_decode($value, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return $value;
+        }
+
+        foreach ($conditions as $key => $condition) {
+            $conditions[$key] = $this->update_option_condition($condition);
+        }
+
+        return json_encode($conditions);
+    }
+
+    protected function update_option_condition($condition)
+    {
+        if (!is_array($condition)) {
+            return $condition;
+        }
+
+        if (array_key_exists('input_data', $condition)) {
+            $condition['input_data'] = wc_format_decimal($condition['input_data']);
+        }
+
+        if (array_key_exists('input_action_data', $condition)) {
+            $condition['input_action_data'] = wc_format_decimal($condition['input_action_data']);
+        }
+
+        return $condition;
+    }
 }
 
 endif;

@@ -22,6 +22,8 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
     const ACCESS_TRACK_TRACE_MAIL_TEXT = 'track_trace_mail_text';
     const ACCESS_TRACK_TRACE_COMPONENT = 'track_trace_component';
 
+    const ACCESS_SERVICEPOINT_IN_ORDER_MAIL = 'servicepoint_mail';
+
     const ACCESS_DEFAULT_TO_BUSINESS = 'default_to_business';
     const ACCESS_DEFAULT_SEND_SIGNATURE = 'default_send_signature';
     const ACCESS_DEFAULT_AGE_CHECK = 'default_age_check';
@@ -128,6 +130,11 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
             case self::ACCESS_TRACK_TRACE_COMPONENT:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
                 return $logic->check_track_trace_component();
+                break;
+
+            case self::ACCESS_SERVICEPOINT_IN_ORDER_MAIL:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_service_point_in_order_mail();
                 break;
 
             case self::ACCESS_DEFAULT_TO_BUSINESS:

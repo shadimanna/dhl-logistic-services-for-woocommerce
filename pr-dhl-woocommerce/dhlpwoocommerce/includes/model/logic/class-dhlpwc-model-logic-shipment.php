@@ -223,41 +223,53 @@ class DHLPWC_Model_Logic_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
                 isset($address['address_1']) ? trim($address['address_1']) : '',
                 isset($address['address_2']) ? trim($address['address_2']) : ''
             )));
-        }
 
-        if (!isset($address['number'])) {
-            // Always create a default key
-            $address['number'] = '';
+            // Determine if we need to cutoff the first word from parsing (when contains digit AND number)
+            $raw_parts = explode(' ', trim($address['street']));
+            $street_prefix = '';
+            $street_first_word = reset($raw_parts);
+            preg_match('/[0-9]+[a-zA-Z]+/i', trim($street_first_word), $first_word_parts);
+            if (!empty($first_word_parts)) {
+                $street_prefix = $street_first_word . ' ';
+                unset($raw_parts[key($raw_parts)]);
+            }
+            $raw = implode(' ', $raw_parts);
 
-            preg_match('/([^\d]*)\s*(.*)/i', $address['street'], $street_parts);
-            $street = isset($street_parts[1]) ? trim($street_parts[1]) : '';
-            $number = isset($street_parts[2]) ? trim($street_parts[2]) : '';
+            preg_match('/([^0-9]*)\s*(.*)/i', trim($raw), $street_parts);
+            $address = array_merge($address, [
+                'street' => isset($street_parts[1]) ? trim($street_parts[1]) : '',
+                'number' => isset($street_parts[2]) ? trim($street_parts[2]) : '',
+                'addition' => '',
+            ]);
 
             // Check if $street is empty
-            if (strlen($street) === 0) {
+            if (strlen($address['street']) === 0) {
                 // Try a reverse parse
-                preg_match('/([\d]+[\w.-]*)\s*(.*)/i', $address['street'], $street_parts);
-                $number = isset($street_parts[1]) ? trim($street_parts[1]) : '';
-                $street = isset($street_parts[2]) ? trim($street_parts[2]) : '';
+                preg_match('/([\d]+[\w.-]*)\s*(.*)/i', trim($raw), $street_parts);
+                $address['street'] = isset($street_parts[2]) ? trim($street_parts[2]) : '';
+                $address['number'] = isset($street_parts[1]) ? trim($street_parts[1]) : '';
                 $skip_addition_check = true;
             }
 
             // Check if $number has numbers
-            if (preg_match("/\d/", $number) === 1) {
-                $address['street'] = $street;
-                $address['number'] = $number;
-            }
-        }
-
-        if (!isset($address['addition'])) {
-            // Always create a default key
-            $address['addition'] = '';
-            if (!$skip_addition_check) {
+            if (preg_match("/\d/", $address['number']) !== 1) {
+                $address['street'] = trim($raw);
+                $address['number'] = '';
+            } elseif (!$skip_addition_check) {
                 preg_match('/([\d]+)[ .-]*(.*)/i', $address['number'], $number_parts);
                 $address['number'] = isset($number_parts[1]) ? trim($number_parts[1]) : '';
                 $address['addition'] = isset($number_parts[2]) ? trim($number_parts[2]) : '';
             }
+
+            // Reassemble street
+            if (isset($address['street'])) {
+                $address['street'] = $street_prefix . $address['street'];
+            }
         }
+
+        // Be sure these fields are filled
+        $address['number'] = isset($address['number']) ? $address['number'] : '';
+        $address['addition'] = isset($address['addition']) ? $address['addition'] : '';
 
         return $address;
     }
