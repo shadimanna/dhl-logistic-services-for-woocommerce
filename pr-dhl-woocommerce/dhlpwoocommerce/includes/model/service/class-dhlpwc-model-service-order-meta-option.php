@@ -8,6 +8,7 @@ class DHLPWC_Model_Service_Order_Meta_Option extends DHLPWC_Model_Core_Singleton
 {
 
     const ORDER_OPTION_PREFERENCES = '_dhlpwc_order_option_preferences';
+    const ORDER_CONNECTORS_DATA = '_dhlpwc_order_connectors_data';
 
     public function save_option_preference($order_id, $option, $input = null)
     {
@@ -209,6 +210,24 @@ class DHLPWC_Model_Service_Order_Meta_Option extends DHLPWC_Model_Core_Singleton
             $array[] = $key;
         }
         return $array;
+    }
+
+    public function update_connectors_data($order_id, $value, $is_option = true)
+    {
+        $connectors_data = DHLPWC_Model_Logic_Order_Meta::instance()->get_stack(self::ORDER_CONNECTORS_DATA, $order_id);
+        if ($is_option) {
+            $options = array();
+            if (isset($connectors_data['options'])) {
+                $options = explode(',', $connectors_data['options']);
+            }
+            if (!in_array($value, $options)) {
+                $options[] = $value;
+            }
+            $connectors_data['options'] = implode(',', $options);
+        } else {
+            $connectors_data['id'] = $value;
+        }
+        update_post_meta($order_id, self::ORDER_CONNECTORS_DATA, $connectors_data);
     }
 
     protected function get_exclusions($allowed_shipping_options, $options)

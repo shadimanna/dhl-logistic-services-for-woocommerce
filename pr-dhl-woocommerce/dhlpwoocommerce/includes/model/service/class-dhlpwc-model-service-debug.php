@@ -12,7 +12,8 @@ class DHLPWC_Model_Service_Debug extends DHLPWC_Model_Core_Singleton_Abstract
     // For example, if the endpoint 'search-people/%query%' that returns 404 doesn't need to be reported (because it's common), add:
     // 'search-people/' => array(404)
     protected $exclude_endpoint_codes = array(
-        'parcel-shop-locations/' => array(404)
+        'parcel-shop-locations/' => array(404),
+        'printers/' => array(201),
     );
 
     protected function is_excluded($endpoint, $error_code)
@@ -37,6 +38,11 @@ class DHLPWC_Model_Service_Debug extends DHLPWC_Model_Core_Singleton_Abstract
 
     public function mail($error_id, $error_code, $error_message, $endpoint, $request)
     {
+        $settings = DHLPWC_Model_Service_Settings::instance();
+        if (empty($settings->get_api_user()) || empty($settings->get_api_key())) {
+            return;
+        }
+
         if ($this->is_excluded($endpoint, $error_code)) {
             return;
         }

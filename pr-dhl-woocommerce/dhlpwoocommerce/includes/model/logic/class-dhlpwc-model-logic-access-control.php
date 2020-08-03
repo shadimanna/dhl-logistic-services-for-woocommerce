@@ -53,7 +53,7 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
             'NL',
             'BE',
             'LU',
-            'CH',
+            'AT',
         ))) {
             return false;
         }
@@ -190,7 +190,9 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
             'large_only',
             'xsmall_only',
             'xlarge_only',
-            'largest'
+            'roll_only',
+            'bulky_only',
+            'largest',
         );
 
         $enabled = array();
@@ -314,6 +316,25 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         }
 
         if ($shipping_method['enable_track_trace_component'] != 'yes') {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function check_service_point_in_order_mail()
+    {
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
+
+        if (empty($shipping_method)) {
+            return false;
+        }
+
+        if (!isset($shipping_method['enable_servicepoint_in_order_mail'])) {
+            return false;
+        }
+
+        if ($shipping_method['enable_servicepoint_in_order_mail'] != 'yes') {
             return false;
         }
 
