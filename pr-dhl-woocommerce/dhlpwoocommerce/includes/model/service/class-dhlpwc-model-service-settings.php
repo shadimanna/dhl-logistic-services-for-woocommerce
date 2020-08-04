@@ -126,11 +126,25 @@ class DHLPWC_Model_Service_Settings extends DHLPWC_Model_Core_Singleton_Abstract
             return $value;
         }
 
+        if (!$this->is_iterable($conditions)) {
+            return $value;
+        }
+
         foreach ($conditions as $key => $condition) {
             $conditions[$key] = $this->format_option_condition($condition);
         }
 
         return json_encode($conditions);
+    }
+
+    protected function is_iterable($var)
+    {
+        return $var !== null
+            && (is_array($var)
+                || $var instanceof Traversable
+                || $var instanceof Iterator
+                || $var instanceof IteratorAggregate
+            );
     }
 
     protected function format_option_condition($condition)
