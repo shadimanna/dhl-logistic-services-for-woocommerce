@@ -189,9 +189,10 @@ class DHLPWC_Controller_Admin_Settings
             $locale_parts = explode('_', $locale);
             $language = strtolower(reset($locale_parts));
 
-            wp_enqueue_script( 'dhlpwc-settings-usabilla', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.usabilla-loader.js');
-            wp_localize_script( 'dhlpwc-settings-usabilla', 'dhlpwc_usabilla_object', array(
-                'usabilla_js' => DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.usabilla.js',
+            wp_enqueue_script( 'dhlpwc-settings-mopinion', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.mopinion-loader.js');
+            wp_localize_script( 'dhlpwc-settings-mopinion', 'dhlpwc_mopinion_object', array(
+                'mopinion_js' => DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.mopinion.js',
+                'form_key' => 'd55f706e65bfae8311d009d8a1a63a3d86a411ee',
                 'language' => $language,
             ));
         }

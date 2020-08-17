@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 5.4
-Stable tag: 2.2.1
+Stable tag: 2.2.2
 WC requires at least: 2.6.14
 WC tested up to: 4.2
 License: GPLv2 or later
@@ -80,6 +80,13 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+
+= 2.2.2 =
+* DHL Parcel: Added a shortcode for tracking information
+* DHL Parcel: Added additional meta data of preferred delivery date for third party exports
+* DHL Parcel: Improved PDFMerger loading
+* DHL Parcel: Fixed an issue with multiple warnings showing in admin
+* DHL Parcel: Updated feedback system from Usabilla to Mopinion
 
 = 2.2.1 =
 * DHL Parcel: Fixed an issue with warnings when loading settings
