@@ -57,6 +57,8 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	public function init_hooks() {
 		parent::init_hooks();
 
+		// add AWB Copy Count
+		add_action('manage_posts_extra_tablenav', array( $this, 'add_shop_order_awb_copy' ), 1 );
 		// add 'Status' orders page column header
 		add_filter( 'manage_edit-shop_order_columns', array( $this, 'add_order_status_column_header' ), 30 );
 		// add 'Status Created' orders page column content
@@ -76,6 +78,30 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		// The AWB label download endpoint
 		add_action( 'init', array( $this, 'add_download_awb_label_endpoint' ) );
 		add_action( 'parse_query', array( $this, 'process_download_awb_label' ) );
+	}
+
+	public function add_shop_order_awb_copy( $which ){
+		global $pagenow, $typenow;
+	
+		if( 'shop_order' === $typenow && 'edit.php' === $pagenow ) {
+			// Get available countries codes with their states code/name pairs
+			$country_states = WC()->countries->get_allowed_country_states();
+	
+			// Initializing
+			$filter_id   = 'dhl_awb_copy_count';
+			$selected     = isset($_GET[$filter_id])? $_GET[$filter_id] : '';
+			
+			echo '<div class="alignleft dhl-awb-filter-container">';
+				echo '<select name="'. esc_attr( $filter_id ) .'" class="dhl-awb-copy-count">';
+					echo '<option value="">'. esc_html__( 'AWB Copy Count', 'pr-dhl-woocommerce' ) . '</option>';
+					// Loop through shipping zones locations array
+					for( $i=1; $i<51; $i++ ){
+						echo '<option value="'. esc_attr( $i ) .'" '. selected( $selected, $i, false ) .'>'. $i .'</option>';
+					}
+
+				echo '</select>';
+			echo '</div>';
+		}
 	}
 
 	public function add_download_awb_label_endpoint() {
@@ -746,6 +772,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	public function validate_bulk_actions( $action, $order_ids ) {
 		if ( 'pr_dhl_create_orders' === $action ) {
 			// Ensure the selected orders have a label created, otherwise don't add them to the order
+			
 			foreach ( $order_ids as $order_id ) {
 				$item_barcode = get_post_meta( $order_id, 'pr_dhl_dp_item_barcode', true );
 				// If item has no barcode, return the error message
@@ -755,6 +782,20 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 						'pr-shipping-dhl'
 					);
 				}
+			}
+
+			$get_copy_count = $_GET['dhl_awb_copy_count'];
+
+			if( empty( $get_copy_count ) ){
+
+				return __( 'Copy count must not be empty.', 'pr-shipping-dhl' );
+
+			}elseif( !is_numeric( $get_copy_count ) ){
+
+				return __( 'Copy count must be numeric.', 'pr-shipping-dhl' );
+			}elseif( 50 <= intval( $get_copy_count ) ){
+
+				return __( 'Copy count must not be more than 50.', 'pr-shipping-dhl' );
 			}
 		}
 
@@ -814,10 +855,17 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
 			try {
 				$order = $instance->api_client->get_order();
-				$items_count = count( $order['items'] );
-
+				$items_count 	= count( $order['items'] );
+				$get_copy_count = $_GET['dhl_awb_copy_count'];
+				
+				if( !empty( $get_copy_count ) && is_numeric( $get_copy_count ) ){
+					$copy_count = $get_copy_count;	
+				}else{
+					$copy_count = 1;
+				}
+				
 				// Create the order
-				$dhl_order_id = $instance->create_order();
+				$dhl_order_id = $instance->create_order( $copy_count );
 				// Get the URL to download the order label file
 				$label_url = $this->generate_download_url( '/' . self::DHL_DOWNLOAD_AWB_LABEL_ENDPOINT . '/' . $dhl_order_id );
 

@@ -660,10 +660,10 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 *
 	 * @throws Exception If an error occurred while and the API failed to create the order.
 	 */
-	public function create_order()
+	public function create_order( $copy_count = 1 )
 	{
 		// Create the DHL order
-		$response = $this->api_client->create_order();
+		$response = $this->api_client->create_order( $copy_count );
 
 		$this->get_settings();
 

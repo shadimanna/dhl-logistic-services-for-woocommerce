@@ -255,17 +255,18 @@ class Client extends API_Client {
 	 *
 	 * @throws Exception
 	 */
-	public function create_order()
+	public function create_order( $copy_count = 1 )
 	{
 		$order = $this->get_order();
 		$items = $order['items'];
 		$barcodes = array_keys( $items );
+		$copy_count = intval( $copy_count );
 
 		$route = $this->customer_route( 'orders' );
 		$data = array(
 			'itemBarcodes' => $barcodes,
 			'paperwork' => array(
-				'awbCopyCount' => 1,
+				'awbCopyCount' => $copy_count,
 				'contactName' => $this->contact_name,
 				'telephoneNumber' => $this->contact_phone,
 			),
