@@ -60,3 +60,9 @@ span.wc_dhl_error {
 	background-size: auto 36px;
 	background-repeat:repeat-x;
 }
+
+.dhl-awb-filter-container{
+	clear:both;
+	margin-top:9px;
+	margin-bottom:9px;
+}

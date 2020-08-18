@@ -59,6 +59,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
 		// add AWB Copy Count
 		add_action('manage_posts_extra_tablenav', array( $this, 'add_shop_order_awb_copy' ), 1 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'order_list_awb_script' ), 10 );
 		// add 'Status' orders page column header
 		add_filter( 'manage_edit-shop_order_columns', array( $this, 'add_order_status_column_header' ), 30 );
 		// add 'Status Created' orders page column content
@@ -101,6 +102,21 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
 				echo '</select>';
 			echo '</div>';
+		}
+	}
+
+	public function order_list_awb_script( $hook ) {
+		global $typenow;
+
+		if ( 'edit.php' === $hook && 'shop_order' === $typenow ) {
+			
+			wp_enqueue_script(
+				'wc-shipment-dhl-dp-orderlist-js',
+				PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-dp-orderlist.js',
+				array(),
+				PR_DHL_VERSION,
+				true
+			);
 		}
 	}
 
