@@ -1,5 +1,13 @@
 # DHL Parcel plugin for WooCommerce
 
+v1.3.1
+## Changes
+- Added a shortcode for tracking information
+- Added additional meta data of preferred delivery date for third party exports
+- Improved PDFMerger loading
+- Fixed an issue with multiple warnings showing in admin 
+- Updated feedback system from Usabilla to Mopinion
+
 v1.3.0
 ## Changes
 - Enabled Austria as shipping country

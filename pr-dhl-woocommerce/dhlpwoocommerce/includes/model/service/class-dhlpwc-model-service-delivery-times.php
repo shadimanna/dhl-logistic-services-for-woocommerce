@@ -8,6 +8,7 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
 {
 
     const ORDER_TIME_SELECTION = '_dhlpwc_order_time_selection';
+    const ORDER_CONNECTORS_DATE_PREFERENCE = '_dhlpwc_connectors_date_preference';
 
     const SHIPPING_PRIORITY_BACKLOG = 'shipping_priority_backlog';
     const SHIPPING_PRIORITY_SOON = 'shipping_priority_soon';
@@ -17,6 +18,7 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
     /**
      * @param $order_id
      * @param $data
+     *
      * @return bool|int
      */
     public function save_order_time_selection($order_id)
@@ -41,6 +43,7 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
             'timestamp' => strtotime($date . ' ' . $start_time . ' ' . wc_timezone_string()),
         ));
 
+        update_post_meta($order_id, self::ORDER_CONNECTORS_DATE_PREFERENCE, date_create_from_format('d-m-Y', $date)->format('Y-m-d'));
         return update_post_meta($order_id, self::ORDER_TIME_SELECTION, $meta_object->to_array());
     }
 
