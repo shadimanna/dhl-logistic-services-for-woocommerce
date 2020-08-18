@@ -59,6 +59,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
 		// add AWB Copy Count
 		add_action('manage_posts_extra_tablenav', array( $this, 'add_shop_order_awb_copy' ), 1 );
+		//add_action('restrict_manage_posts', array( $this, 'add_shop_order_awb_copy' ), 1 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'order_list_awb_script' ), 10 );
 		// add 'Status' orders page column header
 		add_filter( 'manage_edit-shop_order_columns', array( $this, 'add_order_status_column_header' ), 30 );
@@ -92,7 +93,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			$filter_id   = 'dhl_awb_copy_count';
 			$selected     = isset($_GET[$filter_id])? $_GET[$filter_id] : '';
 			
-			echo '<div class="alignleft dhl-awb-filter-container">';
+			echo '<div class="alignleft actions dhl-awb-filter-container">';
 				echo '<select name="'. esc_attr( $filter_id ) .'" class="dhl-awb-copy-count">';
 					echo '<option value="">'. esc_html__( 'AWB Copy Count', 'pr-dhl-woocommerce' ) . '</option>';
 					// Loop through shipping zones locations array
@@ -101,6 +102,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 					}
 
 				echo '</select>';
+				//echo '<input type="submit" name="awb_copy_submit" class="button" value="Submit" />';
 			echo '</div>';
 		}
 	}
@@ -800,8 +802,8 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 				}
 			}
 
-			$get_copy_count = $_GET['dhl_awb_copy_count'];
-
+			$get_copy_count = $_REQUEST['dhl_awb_copy_count'];
+			
 			if( empty( $get_copy_count ) ){
 
 				return __( 'Copy count must not be empty.', 'pr-shipping-dhl' );

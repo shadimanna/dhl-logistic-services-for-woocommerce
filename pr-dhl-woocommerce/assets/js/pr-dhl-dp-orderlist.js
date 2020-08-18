@@ -19,6 +19,8 @@
 			var value 		= jQuery( this ).val();
 			var post_form 	= jQuery( this ).parents('#posts-filter');
 
+			post_form.find('.tablenav.bottom .dhl-awb-filter-container').remove();
+			
 			if( 'pr_dhl_create_orders' == value ){
 				post_form.find( '.dhl-awb-filter-container' ).show();
 			}else{
