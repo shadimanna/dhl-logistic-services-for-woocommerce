@@ -115,10 +115,17 @@ class Item_Info {
             'dhl_product'       => array(
 				'rename' => 'product',
 				'error'  => __( 'DHL "Product" is empty!', 'pr-shipping-dhl' ),
+				'sanitize' => function ( $product ) use ($self) {
+
+					$product_info 	= explode( '-', $product );
+					$product 		= $product_info[0];
+
+					return $product;
+				},
 			),
 			'dhl_service_level' => array(
 				'rename'   => 'service_level',
-				'default'  => 'STANDARD',
+				'default'  => 'PRIORITY',
 				'validate' => function( $level ) {
 					if ( $level !== 'STANDARD' && $level !== 'PRIORITY' && $level !== 'REGISTERED' ) {
 						throw new Exception( __( 'Order "Service Level" is invalid', 'pr-shipping-dhl' ) );

@@ -395,7 +395,7 @@ class Client extends API_Client {
 		}
 
 		return array(
-			'serviceLevel'        => 'PRIORITY',
+			'serviceLevel'        => $item_info->shipment[ 'service_level' ],
 			'product'             => $item_info->shipment[ 'product' ],
 			'custRef'             => $item_info->shipment[ 'label_ref' ],
 			'custRef2'            => $item_info->shipment[ 'label_ref_2' ],

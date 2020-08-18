@@ -293,7 +293,8 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 */
 	public function get_dhl_products_international() {
 		return array(
-			'GMP' => __( 'Packet', 'pr-shipping-dhl' ),
+			'GMP-STANDARD' => __( 'Packet Standard', 'pr-shipping-dhl' ),
+			'GMP' => __( 'Packet Priority', 'pr-shipping-dhl' ),
 			'GPP' => __( 'Packet Plus', 'pr-shipping-dhl' ),
 			'GPT' => __( 'Packet Tracked', 'pr-shipping-dhl' ),
 		);
