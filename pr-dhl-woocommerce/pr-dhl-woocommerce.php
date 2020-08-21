@@ -247,6 +247,8 @@ class PR_DHL_WC {
 					$this->shipping_dhl_product = new PR_DHL_WC_Product_Paket();
 				} elseif( $dhl_obj->is_dhl_ecomm() ) {
 					$this->shipping_dhl_product = new PR_DHL_WC_Product_Ecomm();
+				}elseif( $dhl_obj->is_dhl_deutsche_post() ){
+					$this->shipping_dhl_product = new PR_DHL_WC_Product_Deutsche_Post();
 				}
 				
 			} catch (Exception $e) {
