@@ -12,7 +12,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
     public function __construct( $instance_id = 0 ) {
         $this->id = 'pr_dhl_dp';
         $this->instance_id = absint( $instance_id );
-        $this->method_title = __( 'Deutsche Post', 'pr-shipping-dhl' );
+        $this->method_title = __( 'Deutsche Post International', 'pr-shipping-dhl' );
         $this->method_description = sprintf(
             __(
                 'To start creating Deutsche Post shipping labels and return back a tracking number to your customers, please fill in your user credentials as provided by Deutsche Post. Not yet a customer? Please get a quote %shere%s.',
