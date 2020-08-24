@@ -210,9 +210,9 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			
 			woocommerce_wp_checkbox( array(
 				'id'          		=> 'pr_dhl_packet_return',
-				'label'       		=> __( 'Return:', 'pr-shipping-dhl' ),
+				'label'       		=> __( 'Packet Return:', 'pr-shipping-dhl' ),
 				'placeholder' 		=> '',
-				'description'		=> '',
+				'description'		=> __('Please note that Packet Return needs to be activated by Deutsche Post. Please get in touch with your local DP Customer Service for more details.', 'pr-shipping-dhl'),
 				'value'       		=> isset( $dhl_label_items['pr_dhl_packet_return'] ) ? $dhl_label_items['pr_dhl_packet_return'] : 'no',
 				'custom_attributes'	=> array( $is_disabled => $is_disabled )
 			) );
