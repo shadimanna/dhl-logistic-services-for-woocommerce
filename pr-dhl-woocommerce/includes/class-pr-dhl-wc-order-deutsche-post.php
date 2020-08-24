@@ -108,7 +108,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	}
 
 	public function order_list_awb_script( $hook ) {
-		global $typenow;
+		global $typenow, $pagenow;
 
 		if ( 'edit.php' === $hook && 'shop_order' === $typenow ) {
 			
@@ -119,6 +119,22 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 				PR_DHL_VERSION,
 				true
 			);
+		}
+
+		if (( $pagenow == 'post.php' ) || (get_post_type() == 'shop_order')) {
+
+			wp_enqueue_script(
+				'wc-shipment-dhl-dp-orderedit-js',
+				PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-dp-orderedit.js',
+				array(),
+				PR_DHL_VERSION,
+				true
+			);
+			wp_localize_script( 'wc-shipment-dhl-dp-orderedit-js', 'pr_dhl_dp_obj', array(
+				'packet_return_product' => $this->product_can_return(),
+				'packet_return_country' => $this->country_available_packet_return(),
+			) );
+		
 		}
 	}
 
@@ -188,8 +204,68 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
                 'options' => $nature_type,
                 'custom_attributes' => array($is_disabled => $is_disabled)
             ));
-        }
-    }
+		}
+
+		if( $this->is_packet_return_available( $order_id ) ){
+			
+			woocommerce_wp_checkbox( array(
+				'id'          		=> 'pr_dhl_packet_return',
+				'label'       		=> __( 'Return:', 'pr-shipping-dhl' ),
+				'placeholder' 		=> '',
+				'description'		=> '',
+				'value'       		=> isset( $dhl_label_items['pr_dhl_packet_return'] ) ? $dhl_label_items['pr_dhl_packet_return'] : 'no',
+				'custom_attributes'	=> array( $is_disabled => $is_disabled )
+			) );
+		}
+		
+	}
+	
+	public function is_packet_return_available( $order_id ){
+
+		$can_return = false;
+		$order 		= wc_get_order( $order_id );
+
+		if( in_array( $order->get_shipping_country(), $this->country_available_packet_return() ) ){
+			$can_return = true;
+		}
+
+		return $can_return;
+	}
+
+	public function product_can_return(){
+		return array(
+			'GMP',
+			'GPP',
+			'GPT'
+		);
+	}
+
+	public function country_available_packet_return(){
+		return array(
+			'AT',
+			'BE',
+			'CZ',
+			'DE',
+			'DK',
+			'ES',
+			'FI',
+			'FR',
+			'GB',
+			'GR',
+			'HR',
+			'HU',
+			'IT',
+			'LT',
+			'LU',
+			'LV',
+			'NL',
+			'PL',
+			'PT',
+			'RO',
+			'SE',
+			'SI'
+		);
+	}
 
 	/**
 	 * The meta box for managing the current Deutsche Post order.
@@ -604,7 +680,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 * Function for saving tracking items
 	 */
 	public function get_additional_meta_ids() {
-		return array( 'pr_dhl_nature_type' );
+		return array( 'pr_dhl_nature_type', 'pr_dhl_packet_return' );
 	}
 
 	/**
@@ -661,6 +737,11 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		
 		if ($dhl_label_items['pr_dhl_nature_type']) {
             $args['order_details']['nature_type'] = $dhl_label_items['pr_dhl_nature_type'];
+		}
+
+		if ($dhl_label_items['pr_dhl_packet_return'] 
+		&& in_array( $dhl_label_items['pr_dhl_product'], $this->product_can_return() ) ) {
+            $args['order_details']['packet_return'] = $dhl_label_items['pr_dhl_packet_return'];
 		}
 		
 		$dhl_product 	= $dhl_label_items['pr_dhl_product'];

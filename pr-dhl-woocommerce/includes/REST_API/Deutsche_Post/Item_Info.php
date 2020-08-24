@@ -165,7 +165,14 @@ class Item_Info {
             'nature_type'          => array(
                 'rename' => 'nature_type',
                 'default' => 'SALE_GOODS',
-            ),
+			),
+			'packet_return' 	=> array(
+				'default' => '',
+				'sanitize' => function ( $return ) use ($self) {
+
+					return ( $return == 'yes' )? true : false;
+				}
+			)
 		);
 	}
 
