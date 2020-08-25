@@ -80,6 +80,8 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		// The AWB label download endpoint
 		add_action( 'init', array( $this, 'add_download_awb_label_endpoint' ) );
 		add_action( 'parse_query', array( $this, 'process_download_awb_label' ) );
+
+		add_filter( 'gettext', array( $this, 'change_meta_box_title' ) );
 	}
 
 	public function add_shop_order_awb_copy( $which ){
@@ -174,6 +176,19 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			'side',
 			'high'
 		);
+	}
+
+	public function change_meta_box_title( $text ){
+
+		global $pagenow;
+	
+		if (( $pagenow == 'post.php' ) && (get_post_type() == 'shop_order')) {
+			if( $text == '%s Label & Tracking' ){
+				$text = '%s Label';
+			}
+		}
+
+		return $text;
 	}
 
 	/**
@@ -752,6 +767,16 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		}
 
 		return $args;
+	}
+
+	// Pass args by reference to add item export if needed
+	protected function get_label_item_args( $product_id, &$args ) {
+
+		$new_item = array();
+
+		$new_item['item_export'] = get_post_meta( $product_id, '_dhl_export_description', true );
+
+		return $new_item;
 	}
 
 	protected function replace_references( $reference, $order_id ) {
