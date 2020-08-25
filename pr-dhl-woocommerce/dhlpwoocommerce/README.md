@@ -1,5 +1,10 @@
 # DHL Parcel plugin for WooCommerce
 
+v1.3.2
+## Changes
+- Updated Mopinion code to include language setting
+- Removed shortcode for tracking information to prevent errors
+
 v1.3.1
 ## Changes
 - Added a shortcode for tracking information

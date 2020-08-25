@@ -459,9 +459,6 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
 		            'label'       => __('Enable', 'dhlpwc'),
 		            'description' => __('Enable this and you can check your request.', 'dhlpwc'),
 	            ),
-	            'debug_shortcodes' => array(
-		            'type'  => 'dhlpwc_shortcodes_container',
-	            ),
 
                 // Feedback
                 'feedback_settings'                => array(
@@ -1003,12 +1000,6 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
     protected function generate_dhlpwc_grouped_option_container_html($key, $data)
     {
         $view = new DHLPWC_Template('admin.settings.options-grid-header');
-        return $view->render(array(), false);
-    }
-
-    protected function generate_dhlpwc_shortcodes_container_html($key, $data)
-    {
-        $view = new DHLPWC_Template('admin.settings.shortcodes');
         return $view->render(array(), false);
     }
 
