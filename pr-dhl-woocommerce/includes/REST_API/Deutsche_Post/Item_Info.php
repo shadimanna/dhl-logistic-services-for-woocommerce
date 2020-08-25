@@ -254,7 +254,7 @@ class Item_Info {
 
 					if ( $length < 4 || $length > 20 ) {
 						throw new Exception(
-							__( 'Item HS Code must be between 0 and 20 characters long', 'pr-shipping-dhl' )
+							__( 'Item HS Code must be between 4 and 20 characters long', 'pr-shipping-dhl' )
 						);
 					}
 				},
@@ -281,7 +281,8 @@ class Item_Info {
 					return (string) $self->float_round_sanitization( $value, 2 );
 				}
 			),
-			'origin'      => array(
+			'country_origin' => array(
+				'rename' => 'origin',
 				'default' => PR_DHL()->get_base_country(),
 			),
 			'qty'         => array(

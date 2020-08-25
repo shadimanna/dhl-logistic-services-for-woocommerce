@@ -388,7 +388,7 @@ class Client extends API_Client {
 				'contentPieceHsCode' => trim( $content_info[ 'hs_code' ] )
 			);
 			// Only include HS code if it's not empty
-			if ( empty( $content_info[ 'contentPieceHsCode' ] ) ) {
+			if ( empty( $data[ 'contentPieceHsCode' ] ) ) {
 				unset( $data[ 'contentPieceHsCode' ] );
 			}
 			$contents[] = $data;
