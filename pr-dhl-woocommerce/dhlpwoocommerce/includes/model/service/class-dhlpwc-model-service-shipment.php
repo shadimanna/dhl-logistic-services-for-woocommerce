@@ -284,10 +284,17 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
                     case 'smallest':
                         // Select smallest size available
                         $lowest_weight = null;
+                        $smallest_dimensions = null;
                         foreach($sizes as $size) {
                             /** @var DHLPWC_Model_API_Data_Parceltype $size */
-                            if ($lowest_weight === null || $size->max_weight_kg < $lowest_weight) {
+                            $size_dimensions = $size->dimensions->max_width_cm * $size->dimensions->max_length_cm * $size->dimensions->max_height_cm;
+                            if (
+                                $lowest_weight === null ||
+                                $size->max_weight_kg < $lowest_weight ||
+                                ($size->max_weight_kg === $lowest_weight && $size_dimensions < $smallest_dimensions)
+                            ) {
                                 $lowest_weight = $size->max_weight_kg;
+                                $smallest_dimensions = $size_dimensions;
                                 $label_size = $size->key;
                             }
                         }
@@ -337,13 +344,38 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
                             }
                         }
                         break;
+                    case 'roll_only':
+                        foreach($sizes as $size) {
+                            /** @var DHLPWC_Model_API_Data_Parceltype $size */
+                            if (strtolower($size->key) === 'roll') {
+                                $label_size = $size->key;
+                                break;
+                            }
+                        }
+                        break;
+                    case 'bulky_only':
+                        foreach($sizes as $size) {
+                            /** @var DHLPWC_Model_API_Data_Parceltype $size */
+                            if (strtolower($size->key) === 'bulky') {
+                                $label_size = $size->key;
+                                break;
+                            }
+                        }
+                        break;
                     case 'largest':
                         // Select smallest size available
                         $highest_weight = null;
+                        $biggest_dimensions = null;
                         foreach($sizes as $size) {
                             /** @var DHLPWC_Model_API_Data_Parceltype $size */
-                            if ($highest_weight === null || $size->max_weight_kg > $highest_weight) {
+                            $size_dimensions = $size->dimensions->max_width_cm * $size->dimensions->max_length_cm * $size->dimensions->max_height_cm;
+                            if (
+                                $highest_weight === null ||
+                                $size->max_weight_kg > $highest_weight ||
+                                ($size->max_weight_kg === $highest_weight && $size_dimensions > $biggest_dimensions)
+                            ) {
                                 $highest_weight = $size->max_weight_kg;
+                                $biggest_dimensions = $size_dimensions;
                                 $label_size = $size->key;
                             }
                         }

@@ -9,47 +9,48 @@ class DHLPWC_Controller_Admin_Order
 
     public function __construct()
     {
-        if (is_admin()) {
+        if (!is_admin()) {
+            return;
+        }
 
-            add_action('admin_enqueue_scripts', array($this, 'load_styles'));
-            add_action('admin_enqueue_scripts', array($this, 'load_scripts'));
+        add_action('admin_enqueue_scripts', array($this, 'load_styles'));
+        add_action('admin_enqueue_scripts', array($this, 'load_scripts'));
 
-            add_action('woocommerce_admin_order_data_after_shipping_address', array($this, 'parcelshop_info'), 10, 1);
+        add_action('woocommerce_admin_order_data_after_shipping_address', array($this, 'parcelshop_info'), 10, 1);
 
-            $service = DHLPWC_Model_Service_Access_Control::instance();
-            if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_COLUMN_INFO)) {
-                add_filter('manage_edit-shop_order_columns', array($this, 'add_label_column'), 10, 1);
-                add_action('manage_shop_order_posts_custom_column', array($this, 'add_label_column_content'), 10, 2);
+        $service = DHLPWC_Model_Service_Access_Control::instance();
+        if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_COLUMN_INFO)) {
+            add_filter('manage_edit-shop_order_columns', array($this, 'add_label_column'), 10, 1);
+            add_action('manage_shop_order_posts_custom_column', array($this, 'add_label_column_content'), 10, 2);
+        }
+
+        if ($bulk_options = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_BULK_CREATE)) {
+            add_filter('bulk_actions-edit-shop_order', array($this, 'add_bulk_create_actions'));
+            foreach ($bulk_options as $bulk_option) {
+                add_action('admin_action_dhlpwc_create_labels_' . $bulk_option, array($this, 'create_multiple_labels_' . $bulk_option));
             }
+            add_action('admin_notices', array($this, 'bulk_create_notice'));
+        }
 
-            if ($bulk_options = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_BULK_CREATE)) {
-                add_filter('bulk_actions-edit-shop_order', array($this, 'add_bulk_create_actions'));
-                foreach ($bulk_options as $bulk_option) {
-                    add_action('admin_action_dhlpwc_create_labels_' . $bulk_option, array($this, 'create_multiple_labels_' . $bulk_option));
-                }
-                add_action('admin_notices', array($this, 'bulk_create_notice'));
-            }
+        if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_BULK_DOWNLOAD)) {
+            add_filter('bulk_actions-edit-shop_order', array($this, 'add_bulk_download_action'));
+            add_action('admin_action_dhlpwc_download_labels', array($this, 'download_multiple_labels'));
+        }
 
-            if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_BULK_DOWNLOAD)) {
-                add_filter('bulk_actions-edit-shop_order', array($this, 'add_bulk_download_action'));
-                add_action('admin_action_dhlpwc_download_labels', array($this, 'download_multiple_labels'));
-            }
+        if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_PRINTER)) {
+            add_filter('bulk_actions-edit-shop_order', array($this, 'add_bulk_print_action'));
+            add_action('admin_action_dhlpwc_print_labels', array($this, 'print_multiple_labels'));
+            add_action('admin_notices', array($this, 'bulk_print_notice'));
+        }
 
-            if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_PRINTER)) {
-                add_filter('bulk_actions-edit-shop_order', array($this, 'add_bulk_print_action'));
-                add_action('admin_action_dhlpwc_print_labels', array($this, 'print_multiple_labels'));
-                add_action('admin_notices', array($this, 'bulk_print_notice'));
-            }
+        add_filter('manage_edit-shop_order_columns', array($this, 'add_delivery_time_column'));
+        add_action( 'manage_shop_order_posts_custom_column', array($this, 'add_delivery_time_column_content'), 10, 2 );
 
-            if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DELIVERY_TIMES)) {
-                add_filter('views_edit-shop_order',array($this, 'add_delivery_times_filter'), 10, 1);
+        if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DELIVERY_TIMES)) {
+            add_filter('views_edit-shop_order',array($this, 'add_delivery_times_filter'), 10, 1);
 
-                add_filter('manage_edit-shop_order_columns', array($this, 'add_delivery_time_column'));
-                add_action( 'manage_shop_order_posts_custom_column', array($this, 'add_delivery_time_column_content'), 10, 2 );
-
-                add_filter( 'manage_edit-shop_order_sortable_columns', array($this, 'sort_delivery_time_column'));
-                add_action( 'pre_get_posts', array($this, 'delivery_date_orderby'));
-            }
+            add_filter( 'manage_edit-shop_order_sortable_columns', array($this, 'sort_delivery_time_column'));
+            add_action( 'pre_get_posts', array($this, 'delivery_date_orderby'));
         }
     }
 
@@ -79,10 +80,6 @@ class DHLPWC_Controller_Admin_Order
 
     public function delivery_date_orderby($query)
     {
-        if (!is_admin()) {
-            return;
-        }
-
         if (!$this->is_ordergrid_screen()) {
             return;
         }
@@ -104,8 +101,20 @@ class DHLPWC_Controller_Admin_Order
         }
     }
 
-    public function add_delivery_time_column($columns) {
-        $columns['dhlpwc_delivery_time'] = __('Delivery date', 'dhlpwc');
+    public function add_delivery_time_column($columns)
+    {
+        /** @var \WP_Query $wp_query */
+        global $wp_query;
+
+        $time_selections = array_map(function ($post) {
+            /** @var \WP_Post $post */
+            return DHLPWC_Model_Service_Delivery_Times::instance()->get_order_time_selection($post->ID);
+        }, $wp_query->posts);
+
+        if (count(array_filter($time_selections)) > 0) {
+            $columns['dhlpwc_delivery_time'] = __('Delivery date', 'dhlpwc');
+        }
+
         return $columns;
     }
 
@@ -117,25 +126,30 @@ class DHLPWC_Controller_Admin_Order
 
         $service = DHLPWC_Model_Service_Delivery_Times::instance();
         $time_selection = $service->get_order_time_selection($order_id);
-        if ($time_selection) {
-            $current_timestamp = time();
-            $time_left = human_time_diff($current_timestamp, $time_selection->timestamp);
-            if ($current_timestamp > $time_selection->timestamp) {
-                $time_left = null;
-            }
-            $delivery_time = $service->parse_time_frame($time_selection->date, $time_selection->start_time, $time_selection->end_time);
-            $shipping_advice = $service->get_shipping_advice($time_selection->timestamp);
-            $shipping_advice_class = $service->get_shipping_advice_class($time_selection->timestamp);
 
-            if (!empty($delivery_time)) {
-                $view = new DHLPWC_Template('admin.order.delivery-times');
-                $view->render(array(
-                    'time_left'             => $time_left,
-                    'delivery_time'         => $delivery_time,
-                    'shipping_advice'       => $shipping_advice,
-                    'shipping_advice_class' => $shipping_advice_class,
-                ));
-            }
+        if (!$time_selection) {
+            return;
+        }
+
+        $current_timestamp = time();
+        $time_left = human_time_diff($current_timestamp, $time_selection->timestamp);
+
+        if ($current_timestamp > $time_selection->timestamp) {
+            $time_left = null;
+        }
+
+        $delivery_time = $service->parse_time_frame($time_selection->date, $time_selection->start_time, $time_selection->end_time);
+        $shipping_advice = $service->get_shipping_advice($time_selection->timestamp);
+        $shipping_advice_class = $service->get_shipping_advice_class($time_selection->timestamp);
+
+        if (!empty($delivery_time)) {
+            $view = new DHLPWC_Template('admin.order.delivery-times');
+            $view->render(array(
+                'time_left'             => $time_left,
+                'delivery_time'         => $delivery_time,
+                'shipping_advice'       => $shipping_advice,
+                'shipping_advice_class' => $shipping_advice_class,
+            ));
         }
     }
 
@@ -183,6 +197,16 @@ class DHLPWC_Controller_Admin_Order
     public function create_multiple_labels_xlarge_only()
     {
         $this->create_multiple_labels('xlarge_only');
+    }
+
+    public function create_multiple_labels_roll_only()
+    {
+        $this->create_multiple_labels('roll_only');
+    }
+
+    public function create_multiple_labels_bulky_only()
+    {
+        $this->create_multiple_labels('bulky_only');
     }
 
     public function create_multiple_labels_largest()

@@ -253,6 +253,10 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			throw new Exception( __('Please, provide a shipper postcode in the DHL shipping settings', 'pr-shipping-dhl') );
 		}
 
+		if( $args['dhl_settings']['add_logo'] == 'yes' && empty( $args['dhl_settings']['shipper_reference'] ) ){
+			throw new Exception( __('Please, provide a shipper reference in the DHL shipping settings', 'pr-shipping-dhl') );
+		}
+
 		// Order details
 		if ( empty( $args['order_details']['dhl_product'] )) {
 			throw new Exception( __('DHL "Product" is empty!', 'pr-shipping-dhl') );
@@ -379,11 +383,18 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 					$set_key = $address_key;
 				}
 
-				// Set "address_2" first
-				$args['shipping_address']['address_2'] = implode( ' ', array_slice( $address_exploded, $set_key ) );
-				// Remove "address_2" from "address_1"
-				$args['shipping_address']['address_1'] = implode( ' ', array_slice( $address_exploded, 0 , $set_key ) );
-
+				// The number is the first part of address 1
+                if( $set_key == 0 ) {
+                    // Set "address_2" first, as first part
+                    $args['shipping_address']['address_2'] = implode( ' ', array_slice( $address_exploded, 0, 1 ) );
+                    // Remove "address_2" from "address_1"
+                    $args['shipping_address']['address_1'] = implode( ' ', array_slice( $address_exploded, 1 ) );
+                } else {
+                    // Set "address_2" first
+                    $args['shipping_address']['address_2'] = implode( ' ', array_slice( $address_exploded, $set_key ) );
+                    // Remove "address_2" from "address_1"
+				    $args['shipping_address']['address_1'] = implode( ' ', array_slice( $address_exploded, 0 , $set_key ) );
+                }
 			}
 		}
 
@@ -585,6 +596,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				$receiver_name1 = $this->args['shipping_address']['name'];
 				$receiver_name2 = '';
 			}
+			
+			$berlin_date = new DateTime('now', new DateTimeZone('Europe/Berlin') );
 
 			$dhl_label_body = 
 				array(
@@ -603,7 +616,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 												'product' => $this->args['order_details']['dhl_product'],
 												'accountNumber' => $account_number,
 												'accountNumber' => $account_number,
-												'shipmentDate' => date('Y-m-d'),
+												'shipmentDate' => $berlin_date->format('Y-m-d'),
 												'ShipmentItem' => 
 													array( 
 														'weightInKG' => $this->args['order_details']['weight']
@@ -666,9 +679,14 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 									),
 
 						),
-						'labelResponseType' => 'B64'
+						'labelResponseType' => 'B64',
+						'labelFormat' => $this->args['dhl_settings']['label_format'],
 				);
-
+			
+			if( $this->args['dhl_settings']['add_logo'] == 'yes' ){
+				unset( $dhl_label_body['ShipmentOrder']['Shipment']['Shipper'] );
+				$dhl_label_body['ShipmentOrder']['Shipment']['ShipperReference'] = $this->args['dhl_settings']['shipper_reference'];
+			}
 
 			if ( $this->pos_ps || $this->pos_rs || $this->pos_po ) {
 

@@ -332,7 +332,11 @@ abstract class PR_DHL_WC_Order {
 		}
 		
 		$tracking_link = $this->get_tracking_link( $order_id );
-		
+
+		if( empty( $tracking_link ) ) {
+		    return '';
+        }
+
 		$tracking_note_new = str_replace('{tracking-link}', $tracking_link, $tracking_note, $count);
 		
 		if( $count == 0 ) {
@@ -349,7 +353,7 @@ abstract class PR_DHL_WC_Order {
 			return '';
 		}
 
-		return sprintf( __( '<a href="%s%s" target="_blank">%s</a>', 'my-text-domain' ), $this->get_tracking_url(), $label_tracking_info['tracking_number'], $label_tracking_info['tracking_number']);
+		return sprintf( __( '<a href="%s%s" target="_blank">%s</a>', 'pr-shipping-dhl' ), $this->get_tracking_url(), $label_tracking_info['tracking_number'], $label_tracking_info['tracking_number']);
 	}
 
 	abstract protected function get_tracking_url();
@@ -653,6 +657,9 @@ abstract class PR_DHL_WC_Order {
 		// Sum value of ordered items
 		$args['order_details']['items_value'] = 0;
 		foreach ($ordered_items as $key => $item) {
+            // Reset array
+            $new_item = array();
+
 			$new_item['qty'] = $item['qty'];
 			// Get 1 item value not total items, based on ordered items in case currency is different that set product price
 			$new_item['item_value'] = ( $item['line_total'] / $item['qty'] );
