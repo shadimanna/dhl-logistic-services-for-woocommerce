@@ -267,6 +267,14 @@ class Item_Info {
 					return $self->string_length_sanitization( $description, 33 );
 				}
 			),
+			'item_export' => array(
+				'rename' => 'description_export',
+				'default' => '',
+				'sanitize' => function( $description_export ) use ($self) {
+
+					return $self->string_length_sanitization( $description_export, 33 );
+				}
+			),
 			'product_id'  => array(
 				'default' => '',
 			),

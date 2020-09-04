@@ -378,9 +378,15 @@ class Client extends API_Client {
 	protected function item_info_to_request_data( Item_Info $item_info ) {
 		$contents = array();
 		foreach ( $item_info->contents as $content_info ) {
+
+			$item_desc = $content_info['description'];
+			if( !empty( $content_info['description_export'] ) ){
+				$item_desc = $content_info['description_export'];
+			}
+
 			$data = array(
 				'contentPieceAmount' => $content_info[ 'qty' ],
-				'contentPieceDescription' => $content_info[ 'description' ],
+				'contentPieceDescription' => $item_desc,
 				'contentPieceIndexNumber' => $content_info[ 'product_id' ],
 				'contentPieceNetweight' => $content_info[ 'weight' ],
 				'contentPieceOrigin' => $content_info[ 'origin' ],
