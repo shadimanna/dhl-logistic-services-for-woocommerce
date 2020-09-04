@@ -45,8 +45,10 @@ class PDFMerger
 	 */
 	public function __construct()
 	{
-		require_once('tcpdf/tcpdf.php');
-		require_once('tcpdf/tcpdi.php');
+        $dir = DHLPWC_PLUGIN_DIR . 'lib' . DIRECTORY_SEPARATOR . 'PDFMerger' . DIRECTORY_SEPARATOR . 'tcpdf' . DIRECTORY_SEPARATOR;
+
+        require_once $dir . 'tcpdf.php';
+        require_once $dir . 'tcpdi.php';
 	}
 
 	/**

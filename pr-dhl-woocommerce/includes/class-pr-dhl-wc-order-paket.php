@@ -24,6 +24,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 		add_action( 'pr_shipping_dhl_label_created', array( $this, 'change_order_status' ), 10, 1 );
 		add_action( 'woocommerce_email_order_details', array( $this, 'add_tracking_info'), 10, 4 );
+		add_action( 'woocommerce_order_status_changed', array( $this, 'create_label_on_status_changed' ), 10, 4 );
 	}
 	
 	public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
@@ -407,7 +408,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		// Get settings
 		// $this->shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
 
-		$setting_ids = array( 'dhl_api_user','dhl_api_pwd', 'dhl_account_num', 'dhl_shipper_name', 'dhl_shipper_company', 'dhl_shipper_address','dhl_shipper_address_no', 'dhl_shipper_address_city', 'dhl_shipper_address_state', 'dhl_shipper_address_zip', 'dhl_shipper_phone', 'dhl_shipper_email', 'dhl_bank_holder', 'dhl_bank_name', 'dhl_bank_iban', 'dhl_bank_bic', 'dhl_bank_ref', 'dhl_bank_ref_2', 'dhl_participation_return' );
+		$setting_ids = array( 'dhl_api_user','dhl_api_pwd', 'dhl_add_logo', 'dhl_shipper_reference', 'dhl_account_num', 'dhl_shipper_name', 'dhl_shipper_company', 'dhl_shipper_address','dhl_shipper_address_no', 'dhl_shipper_address_city', 'dhl_shipper_address_state', 'dhl_shipper_address_zip', 'dhl_shipper_phone', 'dhl_shipper_email', 'dhl_shipper_reference', 'dhl_bank_holder', 'dhl_bank_name', 'dhl_bank_iban', 'dhl_bank_bic', 'dhl_bank_ref', 'dhl_bank_ref_2', 'dhl_participation_return' );
 
 		foreach ($setting_ids as $value) {
 			$api_key = str_replace('dhl_', '', $value);
@@ -426,6 +427,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$args['dhl_settings'][ 'shipper_country' ] = PR_DHL()->get_base_country();
 		$args['dhl_settings'][ 'return_country' ] = PR_DHL()->get_base_country();
 		$args['dhl_settings'][ 'participation' ] = $this->shipping_dhl_settings[ 'dhl_participation_' . $dhl_label_items['pr_dhl_product'] ];
+		$args['dhl_settings'][ 'label_format' ] = $this->shipping_dhl_settings['dhl_label_format'];
 
 		return $args;
 	}
@@ -533,11 +535,22 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
                 $order_id = $order->id;
             }
 
-			echo $this->get_tracking_note( $order_id );
-			
+            $tracking_note = $this->get_tracking_note( $order_id );
+
+            if( ! empty( $tracking_note ) ) {
+			    echo $tracking_note;
+            }
 		}
 
 	} 
+
+	public function create_label_on_status_changed($order_id, $status_from, $status_to, $order ){
+
+		$status_setting = str_replace('wc-', '', $this->shipping_dhl_settings['dhl_create_label_on_status'] );
+		if( $status_setting == $status_to ){
+			$this->process_bulk_actions( 'pr_dhl_create_labels', array( $order_id ), 1 );
+		}
+	}
 }
 
 endif;

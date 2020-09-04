@@ -37,7 +37,7 @@ class DHLPWC_Controller_Checkout
             case 'NL' :
             case 'BE' :
             case 'LU' :
-            case 'CH' :
+            case 'AT' :
                 $service = DHLPWC_Model_Service_Postcode::instance();
                 $valid = $service->validate($postcode, $country);
                 break;
@@ -73,8 +73,10 @@ class DHLPWC_Controller_Checkout
                         unset($country_code, $postal_code_memory);
 
                         $meta_service->save_option_preference($order_id, $option, $parcelshop_id);
+                        $meta_service->update_connectors_data($order_id, $parcelshop_id, false);
                     } else {
                         $meta_service->save_option_preference($order_id, $option);
+                        $meta_service->update_connectors_data($order_id, $option, true);
                     }
                 }
             }

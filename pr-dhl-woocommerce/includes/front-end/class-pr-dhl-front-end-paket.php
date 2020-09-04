@@ -80,7 +80,8 @@ class PR_DHL_Front_End_Paket {
 		}
 		
 		if( $this->is_email_notification_enabled() ){
-			add_action( 'woocommerce_review_order_before_submit', array( $this, 'add_email_notification_checkbox' ), 10 );
+			$pos = apply_filters('pr_shipping_dhl_email_notification_position', 'woocommerce_review_order_before_submit' );
+			add_action( $pos, array( $this, 'add_email_notification_checkbox' ), 10 );
 			add_action('woocommerce_checkout_order_processed', array( $this, 'process_email_notification_fields'), 30, 2 );
 		}
 		
