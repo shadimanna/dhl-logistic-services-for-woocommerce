@@ -415,6 +415,17 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			<?php echo implode( '', $table_rows ) ?>
 			</tbody>
 		</table>
+		<p class="form-field pr_dhl_awb_copy_count_field">
+			<label for="dhl_awb_copy_count"><?php _e( 'AWB Copy Count:', 'pr-dhl-woocommerce' ); ?></label>
+			<select name="dhl_awb_copy_count" id="pr_dhl_awb_copy_count" class="select long dhl-awb-copy-count">
+				<?php
+				// Loop through shipping zones locations array
+				for( $i=1; $i<51; $i++ ){
+					echo '<option value="'. esc_attr( $i ) .'">'. $i .'</option>';
+				}
+				?>
+			</select>
+		</p>
 		<p>
 			<button id="pr_dhl_add_to_order" class="button button-secondary disabled" type="button">
 				<?php _e( 'Add to Waybill', 'pr-shipping-dhl' ); ?>
@@ -556,11 +567,18 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		check_ajax_referer( 'pr_dhl_order_ajax', 'pr_dhl_order_nonce' );
 
 		// Get the WC order
-		$wc_order_id = wc_clean( $_POST[ 'order_id' ] );
+		$wc_order_id 		= wc_clean( $_POST[ 'order_id' ] );
+
+		// Get AWB copy count 
+		if( !empty( $_POST['awb_copy_count'] ) && is_numeric( $_POST['awb_copy_count'] ) ){
+			$dhl_awb_copy_count = wc_clean( $_POST['awb_copy_count'] );
+		}else{
+			$dhl_awb_copy_count = 1;
+		}
 
 		try {
 			// Create the order
-			PR_DHL()->get_dhl_factory()->create_order();
+			PR_DHL()->get_dhl_factory()->create_order( $dhl_awb_copy_count );
 
 			// Send the new metabox HTML and the AWB (from the meta we just saved) as a tracking note
 			// 'type' should alwasys be private for AWB
