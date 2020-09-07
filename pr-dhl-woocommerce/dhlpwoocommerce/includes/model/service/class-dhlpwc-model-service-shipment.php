@@ -211,8 +211,34 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
 
             // Generate options
             $option_service = DHLPWC_Model_Service_Order_Meta_Option::instance();
-            $preselected_options = $option_service->get_keys($order_id);
+            $preset_options = $option_service->get_keys($order_id);
 
+            // Only apply special delivery method logic if it's not an PS.
+            if (!in_array(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS, $preset_options)) {
+                // BP preference
+                if ($bulk_size === 'bp_only') {
+                    if ( in_array(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_DOOR, $preset_options)) {
+                        // Remove DOOR
+                        $preset_options = array_diff($preset_options, [DHLPWC_Model_Meta_Order_Option_Preference::OPTION_DOOR]);
+                    }
+                    $preset_options[] = DHLPWC_Model_Meta_Order_Option_Preference::OPTION_BP;
+                }
+            }
+
+            $priority_options = $option_service->filter_priority_options($preset_options);
+            $non_priority_options = $option_service->filter_priority_options($preset_options, true);
+
+            // Use only priority (delivery methods) options as base
+            $preselected_options = $priority_options;
+
+            // Add other preset options, if available
+            foreach($non_priority_options as $option) {
+                if ($option_service->check_exclusion($option, $order_id, $preselected_options, $to_business)) {
+                    $option_service->add_key_to_stack($option, $preselected_options);
+                }
+            }
+
+            // Add remaining defaults from settings, if available:
             // Default option settings
             $default_order_id_reference = $option_service->default_order_id_reference($order_id, $preselected_options, $to_business);
             if ($default_order_id_reference) {
@@ -252,20 +278,6 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
                 }
             }
 
-            // BP preference
-            if ($bulk_size == 'bp_only') {
-                // Manual check for PS, due to the API not correctly invalidating this label combination
-                if (in_array(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS, $preselected_options)) {
-                    continue;
-                }
-
-                $key = array_search(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_DOOR, $preselected_options);
-                if ($key !== false) {
-                    unset($preselected_options[$key]);
-                }
-                $preselected_options[] = DHLPWC_Model_Meta_Order_Option_Preference::OPTION_BP;
-            }
-
             // Generate sizes (with requested options)
             $service = DHLPWC_Model_Service_Access_Control::instance();
             $sizes = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CAPABILITY_PARCELTYPE, array(
@@ -276,6 +288,7 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
 
             // Skip if no sizes are found
             if (empty($sizes)) {
+                $bulk_fail++;
                 continue;
             } else {
                 $label_size = null;
@@ -385,6 +398,7 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
 
             if (!$label_size) {
                 // Couldn't find an appropriate label size
+                $bulk_fail++;
                 continue;
             }
 
