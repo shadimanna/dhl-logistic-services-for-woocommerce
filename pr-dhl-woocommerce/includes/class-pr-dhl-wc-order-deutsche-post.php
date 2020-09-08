@@ -204,6 +204,11 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
                 'custom_attributes' => array($is_disabled => $is_disabled)
             ));
 		}
+
+		if( !$this->is_packet_return_available( $order_id ) ){
+
+			echo '<p>'. __('Please note that the destination country does <b>not</b> support Packet Return', 'pr-shipping-dhl' ) . '</p>';
+		}
 		
 	}
 	
@@ -740,6 +745,10 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		$args['dhl_settings']['dhl_label_ref'] = $this->replace_references( $this->shipping_dhl_settings['dhl_label_ref'], $order_id );
 		$args['dhl_settings']['dhl_label_ref_2'] = $this->replace_references( $this->shipping_dhl_settings['dhl_label_ref_2'], $order_id );
 		
+		if ( $this->is_packet_return_available( $order_id ) && in_array( $dhl_label_items['pr_dhl_product'], $this->product_can_return() ) ) {
+            $args['dhl_settings']['packet_return'] = $this->shipping_dhl_settings['dhl_packet_return'];
+		}
+
 		if ($dhl_label_items['pr_dhl_nature_type']) {
             $args['order_details']['nature_type'] = $dhl_label_items['pr_dhl_nature_type'];
 		}

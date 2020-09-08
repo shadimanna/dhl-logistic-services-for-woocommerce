@@ -208,7 +208,18 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
                 'default'     => '',
                 'placeholder' => '',
                 'class'       => 'wc_input_decimal',
-            ),
+			),
+			'dhl_packet_return' 	=> array(
+				'title'       => __( 'Packet Return', 'pr-shipping-dhl' ),
+                'type'        => 'checkbox',
+                'label'       => __( 'Please note that Packet Return needs to be activated by Deutsche Post. Please get in touch with your local DP Customer Service for more details.', 'pr-shipping-dhl' ),
+                'default'     => 'no',
+                'description' => __(
+                    'Please note that Packet Return needs to be activated by Deutsche Post. Please get in touch with your local DP Customer Service for more details.',
+                    'pr-shipping-dhl'
+                ),
+                'desc_tip'    => true,
+			),
             'dhl_tracking_note'     => array(
                 'title'       => __( 'Tracking Note', 'pr-shipping-dhl' ),
                 'type'        => 'checkbox',
