@@ -303,6 +303,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'910-300-610' => 'Thermo printer 103 x 202 mm', 
 					'910-300-710' => 'Laser printer 105 x 208 mm' 
 				),
+				'default' 			=> '910-300-700',
 				'class'				=> 'wc-enhanced-select'
 			),
 			'dhl_add_logo' => array(
