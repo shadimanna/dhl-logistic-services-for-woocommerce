@@ -122,22 +122,6 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 				true
 			);
 		}
-
-		if (( $pagenow == 'post.php' ) || (get_post_type() == 'shop_order')) {
-
-			wp_enqueue_script(
-				'wc-shipment-dhl-dp-orderedit-js',
-				PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-dp-orderedit.js',
-				array(),
-				PR_DHL_VERSION,
-				true
-			);
-			wp_localize_script( 'wc-shipment-dhl-dp-orderedit-js', 'pr_dhl_dp_obj', array(
-				'packet_return_product' => $this->product_can_return(),
-				'packet_return_country' => $this->country_available_packet_return(),
-			) );
-		
-		}
 	}
 
 	public function add_download_awb_label_endpoint() {
@@ -219,18 +203,6 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
                 'options' => $nature_type,
                 'custom_attributes' => array($is_disabled => $is_disabled)
             ));
-		}
-
-		if( $this->is_packet_return_available( $order_id ) ){
-			
-			woocommerce_wp_checkbox( array(
-				'id'          		=> 'pr_dhl_packet_return',
-				'label'       		=> __( 'Packet Return:', 'pr-shipping-dhl' ),
-				'placeholder' 		=> '',
-				'description'		=> __('Please note that Packet Return needs to be activated by Deutsche Post. Please get in touch with your local DP Customer Service for more details.', 'pr-shipping-dhl'),
-				'value'       		=> isset( $dhl_label_items['pr_dhl_packet_return'] ) ? $dhl_label_items['pr_dhl_packet_return'] : 'no',
-				'custom_attributes'	=> array( $is_disabled => $is_disabled )
-			) );
 		}
 		
 	}
@@ -770,11 +742,6 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		
 		if ($dhl_label_items['pr_dhl_nature_type']) {
             $args['order_details']['nature_type'] = $dhl_label_items['pr_dhl_nature_type'];
-		}
-
-		if ($dhl_label_items['pr_dhl_packet_return'] 
-		&& in_array( $dhl_label_items['pr_dhl_product'], $this->product_can_return() ) ) {
-            $args['order_details']['packet_return'] = $dhl_label_items['pr_dhl_packet_return'];
 		}
 		
 		$dhl_product 	= $dhl_label_items['pr_dhl_product'];
