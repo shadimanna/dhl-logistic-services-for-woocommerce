@@ -16,4 +16,21 @@ jQuery(document).ready(function($) {
         }, 'json');
     });
 
+    // Inject manually if admin notices are disabled
+    if ($('a#dhlpwc-admin-load-switcher').length === 0) {
+        var data = {
+            'action': 'dhlpwc_inject_switcher',
+            'message': dhlpwc_load_switcher_object.message
+        };
+        $.post(ajaxurl, data, function (response) {
+            console.log(response);
+            try {
+                var view = response.data.view;
+            } catch (error) {
+                return;
+            }
+            $('form#mainform').prepend(view);
+        }, 'json');
+    }
+
 });
