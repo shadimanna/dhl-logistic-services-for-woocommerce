@@ -1204,6 +1204,10 @@ abstract class PR_DHL_WC_Order {
 	public function process_download_label() {
 	    global $wp_query;
 
+	    if ( ! current_user_can( 'edit_shop_orders' ) ) {
+  			return;
+  		}
+  		
 		if ( ! isset($wp_query->query_vars[ self::DHL_DOWNLOAD_ENDPOINT ] ) ) {
 			return;
 		}
