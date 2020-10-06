@@ -59,6 +59,7 @@ class DHLPWC_Model_Service_Translation extends DHLPWC_Model_Core_Singleton_Abstr
                 'PARCELTYPE_LARGE'  => __('Large', 'dhlpwc'),
                 'PARCELTYPE_PALLET' => __('Pallet', 'dhlpwc'),
                 'PARCELTYPE_BULKY'  => __('Bulky', 'dhlpwc'),
+                'PARCELTYPE_ROLL'   => __('Roll', 'dhlpwc'),
                 'PARCELTYPE_XSMALL' => __('Extra Small', 'dhlpwc'),
                 'PARCELTYPE_XLARGE' => __('Extra Large', 'dhlpwc'),
             ];
@@ -81,6 +82,8 @@ class DHLPWC_Model_Service_Translation extends DHLPWC_Model_Core_Singleton_Abstr
                 'LARGE_ONLY'  => __('Large only', 'dhlpwc'),
                 'XSMALL_ONLY' => __('Extra Small only', 'dhlpwc'),
                 'XLARGE_ONLY' => __('Extra Large only', 'dhlpwc'),
+                'ROLL_ONLY'   => __('Roll only', 'dhlpwc'),
+                'BULKY_ONLY'  => __('Bulky only', 'dhlpwc'),
                 'LARGEST'     => __('Largest only', 'dhlpwc'),
             ];
         }

@@ -14,6 +14,7 @@ class DHLPWC_Model_API_Data_Parceltype extends DHLPWC_Model_API_Data_Abstract
     public $key;
     public $min_weight_kg;
     public $max_weight_kg;
+    /** @var DHLPWC_Model_API_Data_Parceltype_Dimensions */
     public $dimensions;
 
 }

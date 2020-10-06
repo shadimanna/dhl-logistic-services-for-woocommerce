@@ -14,31 +14,35 @@ class DHLPWC_Controller_Admin_Settings
 
     public function __construct()
     {
-        if (is_admin()) {
-            add_action('admin_enqueue_scripts', array($this, 'load_styles'));
-            add_action('admin_enqueue_scripts', array($this, 'load_scripts'));
-
-            if (defined('DHLPWC_PLUGIN_BASENAME')) {
-                add_filter('plugin_action_links_' . DHLPWC_PLUGIN_BASENAME, array($this, 'add_settings_link'), 10, 1);
-            }
-
-            // Also try to hook to collaboration plugin, whenever this class is loaded through that
-            $collaboration_name = 'dhl-for-woocommerce/pr-dhl-woocommerce.php';
-            add_filter('plugin_action_links_' . $collaboration_name, array($this, 'add_settings_link'), 10, 1);
-
-            $service = DHLPWC_Model_Service_Access_Control::instance();
-            if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_SUBMENU_LINK)) {
-                add_action('admin_menu', array($this, 'add_submenu_link'));
-            }
-
-            add_action('admin_notices', array($this, 'check_for_notices'));
-
-            add_action('wp_ajax_dhlpwc_dismiss_admin_notice', array($this, 'dismiss_admin_notice'));
-            add_action('wp_ajax_dhlpwc_test_connection', array($this, 'test_connection'));
-            add_action('wp_ajax_dhlpwc_search_printers', array($this, 'search_printers'));
-            add_action('wp_ajax_dhlpwc_dynamic_option_settings', array($this, 'dynamic_option_settings'));
-            add_action('wp_ajax_dhlpwc_test_bulk_download', array($this, 'test_bulk_download'));
+        if (!is_admin()) {
+            return;
         }
+
+        add_action('admin_enqueue_scripts', array($this, 'load_styles'));
+        add_action('admin_enqueue_scripts', array($this, 'load_scripts'));
+
+        if (defined('DHLPWC_PLUGIN_BASENAME')) {
+            add_filter('plugin_action_links_' . DHLPWC_PLUGIN_BASENAME, array($this, 'add_settings_link'), 10, 1);
+        }
+
+        // Also try to hook to collaboration plugin, whenever this class is loaded through that
+        $collaboration_name = 'dhl-for-woocommerce/pr-dhl-woocommerce.php';
+        add_filter('plugin_action_links_' . $collaboration_name, array($this, 'add_settings_link'), 10, 1);
+        add_filter('option_woocommerce_dhlpwc_settings', array($this, 'filter_settings_before_get'));
+        add_filter('pre_update_option_woocommerce_dhlpwc_settings', array($this, 'filter_settings_before_save'));
+
+        $service = DHLPWC_Model_Service_Access_Control::instance();
+        if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_SUBMENU_LINK)) {
+            add_action('admin_menu', array($this, 'add_submenu_link'));
+        }
+
+        add_action('admin_notices', array($this, 'check_for_notices'));
+
+        add_action('wp_ajax_dhlpwc_dismiss_admin_notice', array($this, 'dismiss_admin_notice'));
+        add_action('wp_ajax_dhlpwc_test_connection', array($this, 'test_connection'));
+        add_action('wp_ajax_dhlpwc_search_printers', array($this, 'search_printers'));
+        add_action('wp_ajax_dhlpwc_dynamic_option_settings', array($this, 'dynamic_option_settings'));
+        add_action('wp_ajax_dhlpwc_test_bulk_download', array($this, 'test_bulk_download'));
     }
 
     public function add_submenu_link()
@@ -163,16 +167,20 @@ class DHLPWC_Controller_Admin_Settings
 
             wp_enqueue_script( 'dhlpwc-settings-action', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.settings.js', array('jquery', 'jquery-ui-sortable'));
             wp_localize_script( 'dhlpwc-settings-action', 'dhlpwc_settings_object', array(
-                'test_connection_message'         => __('Test connection and retrieve account data', 'dhlpwc'),
-                'test_connection_loading_message' => __('Please wait...', 'dhlpwc'),
-                'accounts_found_message'          => __('Accounts found. Click to use.', 'dhlpwc'),
-                'search_printers_message'         => __('Search for printers linked to account', 'dhlpwc'),
-                'search_printers_loading_message' => __('Please wait...', 'dhlpwc'),
-                'printers_found_message'          => __('Printers found. Click to use.', 'dhlpwc'),
-                'condition_templates'             => $condition_templates,
-                'currency_symbol'                 => get_woocommerce_currency_symbol(),
-                'currency_pos'                    => get_option('woocommerce_currency_pos'),
-                'weight_unit'                     => get_option('woocommerce_weight_unit'),
+                'test_connection_message'                   => __('Test connection and retrieve account data', 'dhlpwc'),
+                'test_connection_loading_message'           => __('Please wait...', 'dhlpwc'),
+                'accounts_found_message'                    => __('Accounts found. Click to use.', 'dhlpwc'),
+                'search_printers_message'                   => __('Search for printers linked to account', 'dhlpwc'),
+                'search_printers_loading_message'           => __('Please wait...', 'dhlpwc'),
+                'printers_found_message'                    => __('Printers found. Click to use.', 'dhlpwc'),
+                'option_same_day_error'                     => __('You need to check the same day delivery option to use this shipping method', 'dhlpwc'),
+                'option_same_day_no_neighbour_error'        => __('You need to check the no neighbours same day delivery option to use this shipping method', 'dhlpwc'),
+                'delivery_time_same_day_error'              => __('You need to check this option to use the same day delivery', 'dhlpwc'),
+                'delivery_time_same_day_no_neighbour_error' => __('You need to check this option to use the no neighbour same day delivery', 'dhlpwc'),
+                'condition_templates'                       => $condition_templates,
+                'currency_symbol'                           => get_woocommerce_currency_symbol(),
+                'currency_pos'                              => get_option('woocommerce_currency_pos'),
+                'weight_unit'                               => get_option('woocommerce_weight_unit'),
             ));
         }
 
@@ -181,10 +189,12 @@ class DHLPWC_Controller_Admin_Settings
             $locale_parts = explode('_', $locale);
             $language = strtolower(reset($locale_parts));
 
-            wp_enqueue_script( 'dhlpwc-settings-usabilla', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.usabilla-loader.js');
-            wp_localize_script( 'dhlpwc-settings-usabilla', 'dhlpwc_usabilla_object', array(
-                'usabilla_js' => DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.usabilla.js',
-                'language' => $language,
+            wp_enqueue_script( 'dhlpwc-settings-mopinion', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.mopinion-loader.js');
+            wp_localize_script('dhlpwc-settings-mopinion', 'dhlpwc_mopinion_object', array(
+                'mopinion_js' => DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.mopinion.js',
+                'form_key'    => 'd55f706e65bfae8311d009d8a1a63a3d86a411ee',
+                'language'    => $language,
+                'framework'   => 'woocommerce',
             ));
         }
     }
@@ -303,6 +313,15 @@ class DHLPWC_Controller_Admin_Settings
         return array_merge($action_links, $links);
     }
 
+    public function filter_settings_before_get($data)
+    {
+        return DHLPWC_Model_Service_Settings::instance()->format_settings($data);
+    }
+
+    public function filter_settings_before_save($data)
+    {
+        return DHLPWC_Model_Service_Settings::instance()->update_settings($data);
+    }
 }
 
 endif;
