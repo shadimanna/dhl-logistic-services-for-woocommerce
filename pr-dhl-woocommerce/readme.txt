@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 5.4
-Stable tag: 2.2.5
+Stable tag: 2.2.6
 WC requires at least: 2.6.14
 WC tested up to: 4.2
 License: GPLv2 or later
@@ -80,7 +80,16 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
- 
+
+= 2.2.6 =
+* DHL Paket: Added {pr_dhl_tracking_note} replace placeholder for WC emails. This adds the tracking note within an email. 
+* DHL Paket: Added [pr_dhl_tracking_note order_id="12345"] shortcode to display tracking note info for a given order id.
+* DHL Paket: Added [pr_dhl_tracking_link order_id="12345"] shortcode to display tracking link for a given order id.
+* DHL Paket: Add spacing for tracking note display.
+* DHL Paket: Ensure only shop managers can download label.
+* DHL Paket: Modify label format names
+* DHL Paket: Default label format to 910-300-700 (Laser printer 105 x 205 mm)
+
 = 2.2.5 =
 * DHL Parcel: Added a fallback notice for switching between DHL Parcel and Deutsche Post International
  
