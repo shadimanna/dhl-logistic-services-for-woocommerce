@@ -576,12 +576,12 @@ class PR_DHL_WC {
 
 		$exclusion_work_day = array( );
 		$work_days = array(
-		            'Mon' => __('mon', 'pr-shipping-dhl'), 
-		            'Tue' => __('tue', 'pr-shipping-dhl'), 
-		            'Wed' => __('wed', 'pr-shipping-dhl'),
-		            'Thu' => __('thu', 'pr-shipping-dhl'),
-		            'Fri' => __('fri', 'pr-shipping-dhl'),
-		            'Sat' => __('sat', 'pr-shipping-dhl') );
+		            'Mon' => 'mon', 
+		            'Tue' => 'tue',
+		            'Wed' => 'wed',
+		            'Thu' => 'thu',
+		            'Fri' => 'fri',
+		            'Sat' => 'sat');
 
 		foreach ($work_days as $key => $value) {
 			$exclusion_day = 'dhl_preferred_exclusion_' . $value;
