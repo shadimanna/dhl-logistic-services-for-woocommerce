@@ -81,6 +81,9 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 == Changelog ==
 
+= 2.2.7 =
+* DHL Paket: Fix exclusion of tranfer days issue in German language
+
 = 2.2.6 =
 * DHL Paket: Added {pr_dhl_tracking_note} replace placeholder for WC emails. This adds the tracking note within an email. 
 * DHL Paket: Added [pr_dhl_tracking_note order_id="12345"] shortcode to display tracking note info for a given order id.
