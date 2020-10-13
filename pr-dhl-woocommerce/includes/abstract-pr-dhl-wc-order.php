@@ -378,6 +378,11 @@ abstract class PR_DHL_WC_Order {
 		
     	$order = $email->object; // Get the instance of the WC_Order Object
 		
+		// Ensure the object is an order and not another type
+		if ( ! ( $order instanceof WC_Order ) ) {
+    		return $string;
+    	}
+
 		$tracking_note = $this->get_tracking_note( $order->get_id() );
 
     	// Return the clean replacement tracking_note string for "{tracking_note}" placeholder
