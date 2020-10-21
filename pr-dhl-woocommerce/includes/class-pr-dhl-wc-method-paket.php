@@ -297,12 +297,13 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'desc_tip'          => true,
 				'options'           => array( 
 					'A4' => 'A4', 
-					'910-300-700' => '910-300-700', 
-					'910-300-700-oZ' => '910-300-700-oZ', 
-					'910-300-600' => '910-300-600', 
-					'910-300-610' => '910-300-610', 
-					'910-300-710' => '910-300-710' 
+					'910-300-700' => 'Laser printer 105 x 205 mm', 
+					'910-300-700-oZ' => 'Laser printer 105 x 205 mm (no info)', 
+					'910-300-600' => 'Thermo printer 103 x 199 mm', 
+					'910-300-610' => 'Thermo printer 103 x 202 mm', 
+					'910-300-710' => 'Laser printer 105 x 208 mm' 
 				),
+				'default' 			=> '910-300-700',
 				'class'				=> 'wc-enhanced-select'
 			),
 			'dhl_add_logo' => array(

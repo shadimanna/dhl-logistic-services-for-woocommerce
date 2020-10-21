@@ -21,6 +21,7 @@ class DHLPWC_Controller_Isolated_Load_Switcher
         add_action('admin_notices', array($this, 'show_load_switcher'));
 
         add_action('wp_ajax_dhlpwc_load_switcher', array($this, 'load_switcher'));
+        add_action('wp_ajax_dhlpwc_inject_switcher', array($this, 'inject_switcher'));
 
     }
 
@@ -48,19 +49,25 @@ class DHLPWC_Controller_Isolated_Load_Switcher
         wp_send_json($json_response->to_array(), 200);
     }
 
-    public function show_load_switcher()
+    public function inject_switcher()
     {
-        if (!$this->is_plugin_screen()) {
+        $message = wc_clean($_POST['message']);
+        if (!$message) {
             return;
         }
 
-        if ($this->is_plugin_screen(false) && !boolval(apply_filters('dhlpwc_dpi_is_configured', $this->check_dpi_configured()))) {
-            // Show load switcher on DPI settings
-            $message = __('Were you looking to use DHL Parcel instead? %sClick here to switch%s (this will turn off Deutsche Post International).', 'dhlpwc');
-        } else if ($this->is_plugin_screen(true) && !$this->check_parcel_configured()) {
-            // Show load switcher on Parcel settings
-            $message = __('Were you looking to use Deutsche Post International instead? %sClick here to switch%s (this will turn off DHL Parcel).', 'dhlpwc');
-        } else {
+        $view = new DHLPWC_Template('admin.load-switcher');
+        $switcher_view = $view->render(array('message' => $message), false);
+
+        $json_response = new DHLPWC_Model_Response_JSON();
+        $json_response->set_data(array('view' => $switcher_view));
+        wp_send_json($json_response->to_array(), 200);
+    }
+
+    public function show_load_switcher()
+    {
+        $message = $this->get_message();
+        if (!$message) {
             return;
         }
 
@@ -70,10 +77,15 @@ class DHLPWC_Controller_Isolated_Load_Switcher
 
     public function load_scripts()
     {
-        if (!$this->is_plugin_screen()) {
+        $message = $this->get_message();
+        if (!$message) {
             return;
         }
+
         wp_enqueue_script( 'dhlpwc-load-switcher', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.admin.load-switcher.js');
+        wp_localize_script( 'dhlpwc-load-switcher', 'dhlpwc_load_switcher_object', array(
+            'message' => $message
+        ));
     }
 
     protected function is_plugin_screen($parcel = null)
@@ -112,6 +124,25 @@ class DHLPWC_Controller_Isolated_Load_Switcher
         }
 
         return true;
+    }
+
+    protected function get_message()
+    {
+        if (!$this->is_plugin_screen()) {
+            return null;
+        }
+
+        if ($this->is_plugin_screen(false) && !boolval(apply_filters('dhlpwc_dpi_is_configured', $this->check_dpi_configured()))) {
+            // Show load switcher on DPI settings
+            $message = __('Were you looking to use DHL Parcel instead? %sClick here to switch%s (this will turn off Deutsche Post International).', 'dhlpwc');
+        } else if ($this->is_plugin_screen(true) && !$this->check_parcel_configured()) {
+            // Show load switcher on Parcel settings
+            $message = __('Were you looking to use Deutsche Post International instead? %sClick here to switch%s (this will turn off DHL Parcel).', 'dhlpwc');
+        } else {
+            return null;
+        }
+
+        return $message;
     }
 
     protected function check_dpi_configured()

@@ -318,7 +318,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				'label'       		=> __( 'Ident-Check - Date of Birth: ', 'pr-shipping-dhl' ),
 				'placeholder' 		=> '',
 				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_dob'] ) ? $dhl_label_items['pr_dhl_identcheck_dob'] : $this->shipping_dhl_settings['dhl_default_identcheck_dob'],
+				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_dob'] ) ? $dhl_label_items['pr_dhl_identcheck_dob'] : $this->shipping_dhl_settings['dhl_default_identcheck_age'],
 				'custom_attributes'	=> array( $is_disabled => $is_disabled ),
 				'class'				=> 'short date-picker'
 			) );
@@ -538,11 +538,11 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
             $tracking_note = $this->get_tracking_note( $order_id );
 
             if( ! empty( $tracking_note ) ) {
-			    echo $tracking_note;
+			    echo '<p>' . $tracking_note . '</p>';
             }
 		}
 
-	} 
+	}
 
 	public function create_label_on_status_changed($order_id, $status_from, $status_to, $order ){
 

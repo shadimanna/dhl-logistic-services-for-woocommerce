@@ -65,6 +65,12 @@ abstract class PR_DHL_WC_Order {
 
 		add_action( 'init', array( $this, 'add_download_label_endpoint' ) );
 		add_action( 'parse_query', array( $this, 'process_download_label' ) );
+
+		// add {tracking_note} placeholder
+		add_filter( 'woocommerce_email_format_string' , array( $this, 'add_tracking_note_email_placeholder' ), 10, 2 );
+		
+		add_shortcode( 'pr_dhl_tracking_note', array( $this, 'tracking_note_shortcode') );
+		add_shortcode( 'pr_dhl_tracking_link', array( $this, 'tracking_link_shortcode') );
 	}
 
 	/**
@@ -364,6 +370,53 @@ abstract class PR_DHL_WC_Order {
 		} else {
 			return 'customer';
 		}
+	}
+
+	public function add_tracking_note_email_placeholder( $string, $email ) {
+
+		$placeholder = '{pr_dhl_tracking_note}'; // The corresponding placeholder to be used
+		
+    	$order = $email->object; // Get the instance of the WC_Order Object
+		
+		// Ensure the object is an order and not another type
+		if ( ! ( $order instanceof WC_Order ) ) {
+    		return $string;
+    	}
+
+		$tracking_note = $this->get_tracking_note( $order->get_id() );
+
+    	// Return the clean replacement tracking_note string for "{tracking_note}" placeholder
+    	return str_replace( $placeholder, $tracking_note, $string );
+	}
+
+	public function tracking_note_shortcode( $atts, $content ) {
+
+		extract(shortcode_atts(array(
+			'order_id' => ''
+		), $atts));
+
+		if( $order = wc_get_order( $order_id ) ){
+
+			return $this->get_tracking_note( $order->get_id() );
+
+		}
+
+    	return '';
+	}
+
+	public function tracking_link_shortcode( $atts, $content ) {
+
+		extract(shortcode_atts(array(
+			'order_id' => ''
+		), $atts));
+
+		if( $order = wc_get_order( $order_id ) ){
+
+			return $this->get_tracking_link( $order->get_id() );
+
+		}
+
+    	return '';
 	}
 
 	/**
@@ -1156,6 +1209,10 @@ abstract class PR_DHL_WC_Order {
 	public function process_download_label() {
 	    global $wp_query;
 
+	    if ( ! current_user_can( 'edit_shop_orders' ) ) {
+  			return;
+  		}
+  		
 		if ( ! isset($wp_query->query_vars[ self::DHL_DOWNLOAD_ENDPOINT ] ) ) {
 			return;
 		}
