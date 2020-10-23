@@ -599,6 +599,24 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			
 			$berlin_date = new DateTime('now', new DateTimeZone('Europe/Berlin') );
 
+
+			$shipment_items = array();
+			
+			foreach ($this->args['items'] as $key => $item) {
+				// weightInKG is in KG needs to be changed if 'g' or 'lbs' etc.
+				//$product 				= wc_get_product( $item['product_id'] );
+				$item['item_weight'] 	= $this->maybe_convert_weight( $item['item_weight'], $this->args['order_details']['weightUom'] );
+
+				// $customsDetails = $json_item;
+				$shipment_items[] = array(
+					'weightInKG' 	=> round( floatval( $item['item_weight'] ), 2 ),
+					'lengthInCM' 	=> 10,
+					'widthInCM' 	=> 10,
+					'heightInCM' 	=> 10
+
+				);
+			}
+
 			$dhl_label_body = 
 				array(
 					'Version' =>
@@ -683,11 +701,15 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 						'labelFormat' => $this->args['dhl_settings']['label_format'],
 				);
 			
+			if( count( $shipment_items ) > 1 ){
+				$dhl_label_body['ShipmentOrder']['Shipment']['ShipmentDetails']['ShipmentItem'] = $shipment_items;
+			}
+			
 			if( $this->args['dhl_settings']['add_logo'] == 'yes' ){
 				unset( $dhl_label_body['ShipmentOrder']['Shipment']['Shipper'] );
 				$dhl_label_body['ShipmentOrder']['Shipment']['ShipperReference'] = $this->args['dhl_settings']['shipper_reference'];
 			}
-
+			
 			if( isset( $this->args['dhl_settings']['pass_email'] ) && $this->args['dhl_settings']['pass_email'] != 'yes' ) {
 				unset( $dhl_label_body['ShipmentOrder']['Shipment']['Shipper']['Communication']['email'] );
 			}
