@@ -688,6 +688,14 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				$dhl_label_body['ShipmentOrder']['Shipment']['ShipperReference'] = $this->args['dhl_settings']['shipper_reference'];
 			}
 
+			if( isset( $this->args['dhl_settings']['pass_email'] ) && $this->args['dhl_settings']['pass_email'] != 'yes' ) {
+				unset( $dhl_label_body['ShipmentOrder']['Shipment']['Shipper']['Communication']['email'] );
+			}
+
+			if( isset( $this->args['dhl_settings']['pass_phone'] ) && $this->args['dhl_settings']['pass_phone'] != 'yes' ) {
+				unset( $dhl_label_body['ShipmentOrder']['Shipment']['Shipper']['Communication']['phone'] );
+			}
+
 			if ( $this->pos_ps || $this->pos_rs || $this->pos_po ) {
 
 				// Address is NOT needed if using a parcel shop

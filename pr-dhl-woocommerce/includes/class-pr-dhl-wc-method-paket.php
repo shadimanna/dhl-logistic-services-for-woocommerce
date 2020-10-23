@@ -322,6 +322,22 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'default'           => '',
 				'placeholder'		=> '',
 			),
+			'dhl_pass_email' => array(
+				'title'             => __( 'Use Email', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Use Email in the API', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here to not send an email to the DHL API.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
+			'dhl_pass_phone' => array(
+				'title'             => __( 'Use Phone', 'pr-shipping-dhl' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Use Phone in the API', 'pr-shipping-dhl' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here to not send a phone to the DHL API.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
 			'dhl_tracking_note' => array(
 				'title'             => __( 'Tracking Note', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
