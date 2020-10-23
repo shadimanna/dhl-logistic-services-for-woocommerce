@@ -288,6 +288,18 @@ class PR_DHL_WC {
                 'test_con_nonce' => wp_create_nonce( 'pr-dhl-test-con' ),
             );
 
+
+			if( $_GET['section'] == 'pr_dhl_paket' ){
+
+				wp_enqueue_script(
+					'wc-shipment-dhl-paket-settings-js',
+					PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-paket-settings.js',
+					array( 'jquery' ),
+					PR_DHL_VERSION
+				);
+
+			}
+			
             wp_enqueue_script(
                 'wc-shipment-dhl-testcon-js',
                 PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-test-connection.js',
