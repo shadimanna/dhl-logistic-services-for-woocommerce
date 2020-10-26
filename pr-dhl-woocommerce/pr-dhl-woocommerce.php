@@ -289,7 +289,7 @@ class PR_DHL_WC {
             );
 
 
-			if( $_GET['section'] == 'pr_dhl_paket' ){
+			if( isset( $_GET['section'] ) && $_GET['section'] == 'pr_dhl_paket' ){
 
 				wp_enqueue_script(
 					'wc-shipment-dhl-paket-settings-js',
