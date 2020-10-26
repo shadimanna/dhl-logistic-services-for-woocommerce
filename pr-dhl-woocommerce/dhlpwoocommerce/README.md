@@ -1,5 +1,13 @@
 # DHL Parcel plugin for WooCommerce
 
+v1.3.5
+## Changes
+- Added a fallback notice for switching between DHL Parcel and Deutsche Post International
+
+v1.3.4
+## Changes
+- Improved mailpost bulk processing
+
 v1.3.2
 ## Changes
 - Updated Mopinion code to include language setting

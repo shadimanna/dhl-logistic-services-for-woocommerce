@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 5.4
-Stable tag: 2.2.8
+Stable tag: 2.2.9
 WC requires at least: 3.0
 WC tested up to: 4.5
 License: GPLv2 or later
@@ -80,6 +80,9 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+ 
+= 2.2.9 =
+* DHL Parcel: Fixed an issue with certain settings not being able to save with certain themes
 
 = 2.2.8 =
 * DHL: Fix registration email issue, by confirming is WC_Order
