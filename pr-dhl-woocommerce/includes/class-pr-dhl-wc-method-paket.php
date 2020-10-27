@@ -920,6 +920,31 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 	}
 
 	/**
+	 * Validate the logo enabled field
+	 * @see validate_settings_fields()
+	 */
+	public function validate_dhl_add_logo_field( $key ) {
+		
+		if ( ! isset( $_POST[ $this->plugin_id . $this->id . '_' . $key ] ) ) {
+			return 'no';
+		}
+
+		// Verify shipper reference set
+		$shipper_reference = $_POST[ $this->plugin_id . $this->id . '_dhl_shipper_reference' ];
+		
+		if ( empty( $shipper_reference ) ) {
+
+			$error_message = __('In order to use logo, you need to set a shipper reference first.', 'pr-shipping-dhl');	
+			
+			echo $this->get_message( $error_message );
+			
+			return 'no';
+		}
+
+		return 'yes';
+	}
+
+	/**
 	 * Validate the any location enabled field
 	 * @see validate_settings_fields()
 	 * @return return 'no' or 'yes' (not exception) to 'disable' locations as opposed to NOT save them
