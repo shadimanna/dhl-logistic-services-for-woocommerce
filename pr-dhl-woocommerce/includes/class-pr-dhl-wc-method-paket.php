@@ -186,10 +186,27 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			),
 			'dhl_email_notification' => array(
 				'title'             => __( 'Email Notification', 'pr-shipping-dhl' ),
-				'type'              => 'checkbox',
-				'label'             => __( 'Enabled', 'pr-shipping-dhl' ),
+				'type'              => 'select',
+				'label'             => __( 'Send Email in the API', 'pr-shipping-dhl' ),
+				'options'           => array( 
+					'no' 		=> __( 'Not send', 'pr-shipping-dhl'), 
+					'yes' 		=> __( 'Send via customer confirmation', 'pr-shipping-dhl'), 
+					'sendviatc' => __( 'Send via terms & condition', 'pr-shipping-dhl'), 
+				),
 				'default'           => 'no',
-				'description'       => __( 'Please, tick here if you want the "Email Notification" service to be displayed as an option on the checkout page', 'pr-shipping-dhl' ),
+				'description'       => __( 'Select one of the method to send an email notification.', 'pr-shipping-dhl' ),
+				'desc_tip'          => true,
+			),
+			'dhl_phone_notification' => array(
+				'title'             => __( 'Phone Notification', 'pr-shipping-dhl' ),
+				'type'              => 'select',
+				'label'             => __( 'Send Phone in the API', 'pr-shipping-dhl' ),
+				'options'           => array( 
+					'no' 		=> __( 'Not send', 'pr-shipping-dhl'), 
+					'sendviatc' => __( 'Send via terms & condition', 'pr-shipping-dhl'), 
+				),
+				'default'           => 'no',
+				'description'       => __( 'Select one of the method to send a phone notification.', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
 			),
 			'dhl_default_age_visual' => array(
@@ -321,22 +338,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'desc_tip'          => false,
 				'default'           => '',
 				'placeholder'		=> '',
-			),
-			'dhl_pass_email' => array(
-				'title'             => __( 'Use Email', 'pr-shipping-dhl' ),
-				'type'              => 'checkbox',
-				'label'             => __( 'Use Email in the API', 'pr-shipping-dhl' ),
-				'default'           => 'no',
-				'description'       => __( 'Please, tick here to not send an email to the DHL API.', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
-			),
-			'dhl_pass_phone' => array(
-				'title'             => __( 'Use Phone', 'pr-shipping-dhl' ),
-				'type'              => 'checkbox',
-				'label'             => __( 'Use Phone in the API', 'pr-shipping-dhl' ),
-				'default'           => 'no',
-				'description'       => __( 'Please, tick here to not send a phone to the DHL API.', 'pr-shipping-dhl' ),
-				'desc_tip'          => true,
 			),
 			'dhl_tracking_note' => array(
 				'title'             => __( 'Tracking Note', 'pr-shipping-dhl' ),

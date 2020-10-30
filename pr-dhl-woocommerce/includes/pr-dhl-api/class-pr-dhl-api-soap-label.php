@@ -526,7 +526,12 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			// EMAIL NOTIFCATION
 			$notification_email = array();
-			if ( isset( $this->args['order_details'][ 'email_notification' ] ) && ( $this->args['order_details'][ 'email_notification' ] == 'yes' || $this->args['order_details'][ 'email_notification' ] == '1' ) ) {
+
+			if( isset( $this->args['dhl_settings']['email_notification'] ) && $this->args['dhl_settings']['email_notification'] == 'yes' ) {
+				if ( isset( $this->args['order_details'][ 'email_notification' ] ) && ( $this->args['order_details'][ 'email_notification' ] == 'yes' || $this->args['order_details'][ 'email_notification' ] == '1' ) ) {
+					$notification_email['recipientEmailAddress'] = $this->args['shipping_address']['email'];
+				}
+			}elseif( isset( $this->args['dhl_settings']['email_notification'] ) && $this->args['dhl_settings']['email_notification'] == 'sendviatc' ){
 				$notification_email['recipientEmailAddress'] = $this->args['shipping_address']['email'];
 			}
 
@@ -710,11 +715,21 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				$dhl_label_body['ShipmentOrder']['Shipment']['ShipperReference'] = $this->args['dhl_settings']['shipper_reference'];
 			}
 			
-			if( isset( $this->args['dhl_settings']['pass_email'] ) && $this->args['dhl_settings']['pass_email'] != 'yes' ) {
-				unset( $dhl_label_body['ShipmentOrder']['Shipment']['Shipper']['Communication']['email'] );
-			}
+			if( isset( $this->args['dhl_settings']['email_notification'] ) && $this->args['dhl_settings']['email_notification'] == 'no' ) {
 
-			if( isset( $this->args['dhl_settings']['pass_phone'] ) && $this->args['dhl_settings']['pass_phone'] != 'yes' ) {
+				unset( $dhl_label_body['ShipmentOrder']['Shipment']['Shipper']['Communication']['email'] );
+
+			}elseif( isset( $this->args['dhl_settings']['email_notification'] ) && $this->args['dhl_settings']['email_notification'] == 'yes' ) {
+
+				if ( isset( $this->args['order_details'][ 'email_notification' ] ) && ( $this->args['order_details'][ 'email_notification' ] != 'yes' && $this->args['order_details'][ 'email_notification' ] != '1' ) ) {
+
+					unset( $dhl_label_body['ShipmentOrder']['Shipment']['Shipper']['Communication']['email'] );
+
+				}
+
+			}
+			
+			if( isset( $this->args['dhl_settings']['phone_notification'] ) && $this->args['dhl_settings']['phone_notification'] == 'no' ) {
 				unset( $dhl_label_body['ShipmentOrder']['Shipment']['Shipper']['Communication']['phone'] );
 			}
 
@@ -738,7 +753,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 					$parcel_shop['postNumber'] = $this->args['shipping_address']['dhl_postnum'];
 					$parcel_shop['packstationNumber'] = $address_num;
 
-					
 					$dhl_label_body['ShipmentOrder']['Shipment']['Receiver']['Packstation'] = $parcel_shop;
 				}
 				/*

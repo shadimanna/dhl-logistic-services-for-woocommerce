@@ -78,7 +78,7 @@ class PR_DHL_Front_End_Paket {
 			add_filter( 'woocommerce_localisation_address_formats', array( $this, 'set_format_post_number' ) );
 			add_filter( 'woocommerce_formatted_address_replacements', array( $this, 'add_format_post_number' ), 10, 2 );
 		}
-		
+
 		if( $this->is_email_notification_enabled() ){
 			$pos = apply_filters('pr_shipping_dhl_email_notification_position', 'woocommerce_review_order_before_submit' );
 			add_action( $pos, array( $this, 'add_email_notification_checkbox' ), 10 );

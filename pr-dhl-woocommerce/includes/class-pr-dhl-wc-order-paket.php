@@ -408,7 +408,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		// Get settings
 		// $this->shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
 
-		$setting_ids = array( 'dhl_api_user','dhl_api_pwd', 'dhl_add_logo', 'dhl_shipper_reference', 'dhl_account_num', 'dhl_shipper_name', 'dhl_shipper_company', 'dhl_shipper_address','dhl_shipper_address_no', 'dhl_shipper_address_city', 'dhl_shipper_address_state', 'dhl_shipper_address_zip', 'dhl_shipper_phone', 'dhl_shipper_email', 'dhl_shipper_reference', 'dhl_bank_holder', 'dhl_bank_name', 'dhl_bank_iban', 'dhl_bank_bic', 'dhl_bank_ref', 'dhl_bank_ref_2', 'dhl_participation_return', 'dhl_pass_email', 'dhl_pass_phone' );
+		$setting_ids = array( 'dhl_api_user','dhl_api_pwd', 'dhl_add_logo', 'dhl_shipper_reference', 'dhl_account_num', 'dhl_shipper_name', 'dhl_shipper_company', 'dhl_shipper_address','dhl_shipper_address_no', 'dhl_shipper_address_city', 'dhl_shipper_address_state', 'dhl_shipper_address_zip', 'dhl_shipper_phone', 'dhl_shipper_email', 'dhl_shipper_reference', 'dhl_bank_holder', 'dhl_bank_name', 'dhl_bank_iban', 'dhl_bank_bic', 'dhl_bank_ref', 'dhl_bank_ref_2', 'dhl_participation_return', 'dhl_email_notification', 'dhl_phone_notification' );
 
 		foreach ($setting_ids as $value) {
 			$api_key = str_replace('dhl_', '', $value);
