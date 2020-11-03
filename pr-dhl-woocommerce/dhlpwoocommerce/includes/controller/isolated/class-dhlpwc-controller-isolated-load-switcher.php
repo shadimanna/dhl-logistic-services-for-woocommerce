@@ -11,18 +11,17 @@ class DHLPWC_Controller_Isolated_Load_Switcher
 
     public function __construct()
     {
+        add_filter('pr_shipping_dhl_bypass_load_plugin', array($this, 'load_alternative_plugin'), 10, 1);
+
         if (!is_admin()) {
             return;
         }
 
         add_action('admin_enqueue_scripts', array($this, 'load_scripts'));
-
-        add_filter('pr_shipping_dhl_bypass_load_plugin', array($this, 'load_alternative_plugin'), 10, 1);
         add_action('admin_notices', array($this, 'show_load_switcher'));
 
         add_action('wp_ajax_dhlpwc_load_switcher', array($this, 'load_switcher'));
         add_action('wp_ajax_dhlpwc_inject_switcher', array($this, 'inject_switcher'));
-
     }
 
     public function load_alternative_plugin()
