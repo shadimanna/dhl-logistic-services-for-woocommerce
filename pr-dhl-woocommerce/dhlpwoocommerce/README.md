@@ -1,4 +1,8 @@
 # DHL Parcel plugin for WooCommerce
+ 
+v1.3.7
+## Changes
+- Fixed an issue with certain settings not being able to save with certain themes
 
 v1.3.5
 ## Changes
