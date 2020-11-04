@@ -92,15 +92,33 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			// Give the server 1 second to create the PDF before downloading it
 			sleep(1);
 
-			$export_data = '';
-			if ( isset( $response_body->CreationState->LabelData->exportLabelData) ) {
-				$export_data = $response_body->CreationState->LabelData->exportLabelData;
+			if( isset( $response_body->CreationState ) && is_array( $response_body->CreationState ) ){
+				foreach( $response_body->CreationState as $creation_state ){
+					$export_data = '';
+					if ( isset( $creation_state->LabelData->exportLabelData) ) {
+						$export_data = $creation_state->LabelData->exportLabelData;
+					}
+
+					if( isset( $creation_state->sequenceNumber ) && isset( $creation_state->LabelData->labelData ) ){
+						$label_tracking_info = $this->save_data_files( $creation_state->sequenceNumber, $creation_state->LabelData->labelData, $export_data );
+
+						$tracking_number = isset( $creation_state->shipmentNumber ) ? $creation_state->shipmentNumber : '';
+						$label_tracking_info['tracking_number'] = $tracking_number;
+						break;
+					}
+					
+				}
+			}else{
+				$export_data = '';
+				if ( isset( $response_body->CreationState->LabelData->exportLabelData) ) {
+					$export_data = $response_body->CreationState->LabelData->exportLabelData;
+				}
+
+				$label_tracking_info = $this->save_data_files( $response_body->CreationState->sequenceNumber, $response_body->CreationState->LabelData->labelData, $export_data );
+
+				$tracking_number = isset( $response_body->CreationState->shipmentNumber ) ? $response_body->CreationState->shipmentNumber : '';
+				$label_tracking_info['tracking_number'] = $tracking_number;
 			}
-
-			$label_tracking_info = $this->save_data_files( $response_body->CreationState->sequenceNumber, $response_body->CreationState->LabelData->labelData, $export_data );
-
-			$tracking_number = isset( $response_body->CreationState->shipmentNumber ) ? $response_body->CreationState->shipmentNumber : '';
-			$label_tracking_info['tracking_number'] = $tracking_number;
 
 			return $label_tracking_info;
 		}
@@ -202,7 +220,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		if( validate_file($data_path) > 0 ) {
 			throw new Exception( __('Invalid file path!', 'pr-shipping-dhl' ) );
 		}
-
+		
         $label_data_decoded = base64_decode($label_data);
 		$file_ret = file_put_contents( $data_path, $label_data_decoded );
 		
@@ -706,10 +724,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 						'labelFormat' => $this->args['dhl_settings']['label_format'],
 				);
 			
-			if( count( $shipment_items ) > 1 ){
-				$dhl_label_body['ShipmentOrder']['Shipment']['ShipmentDetails']['ShipmentItem'] = $shipment_items;
-			}
-			
 			if( $this->args['dhl_settings']['add_logo'] == 'yes' ){
 				unset( $dhl_label_body['ShipmentOrder']['Shipment']['Shipper'] );
 				$dhl_label_body['ShipmentOrder']['Shipment']['ShipperReference'] = $this->args['dhl_settings']['shipper_reference'];
@@ -899,6 +913,20 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			if( ! isset( $this->body_request['ShipmentOrder']['Shipment']['Receiver']['Postfiliale']['postNumber'] ) ) {
 				// Additional fees, required and 0 so place after check
 				$this->body_request['ShipmentOrder']['Shipment']['Receiver']['Postfiliale']['postNumber'] = '';
+			}
+
+			if( count( $shipment_items ) > 1 ){
+				$shipment_order 	= $this->body_request['ShipmentOrder'];
+				$shipment_orders 	= array();
+				$sequence 			= 0;
+				foreach( $shipment_items as $shipment_item ){
+					$sequence++;
+					$copy_ship_order 	= $shipment_order;
+					$copy_ship_order['Shipment']['ShipmentDetails']['ShipmentItem'] = $shipment_item;
+					$copy_ship_order['sequenceNumber'] = $this->args['order_details']['order_id'] . '-' . $sequence;
+					$shipment_orders[] = $copy_ship_order;
+				}
+				$this->body_request['ShipmentOrder'] = $shipment_orders;
 			}
 			
 			return $this->body_request;
