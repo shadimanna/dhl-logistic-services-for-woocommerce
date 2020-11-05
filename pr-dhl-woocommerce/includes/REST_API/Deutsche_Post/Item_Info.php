@@ -284,9 +284,12 @@ class Item_Info {
 			'item_value'       => array(
 				'rename' => 'value',
 				'default' => 0,
-				'sanitize' => function( $value ) use ($self) {
-
-					return (string) $self->float_round_sanitization( $value, 2 );
+				'sanitize' => function( $value, $args ) use ($self) {
+					
+					$qty 			= isset( $args['qty'] ) && is_numeric( $args['qty'] )? floatval( $args['qty'] ) : 1;
+					$total_value 	= floatval( $value ) * $qty;
+					
+					return (string) $self->float_round_sanitization( $total_value, 2 );
 				}
 			),
 			'country_origin' => array(
