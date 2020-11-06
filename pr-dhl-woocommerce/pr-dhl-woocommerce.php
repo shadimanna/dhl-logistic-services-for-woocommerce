@@ -785,6 +785,15 @@ class PR_DHL_WC {
 
 endif;
 
+/**
+ * Activation hook.
+ */
+function pr_dhl_activate() {
+	// Flag for permalink flushed
+	update_option('dhl_permalinks_flushed', 0);
+}
+register_activation_hook( __FILE__, 'pr_dhl_activate' );
+
 function PR_DHL() {
 	return PR_DHL_WC::instance();
 }

@@ -1194,6 +1194,12 @@ abstract class PR_DHL_WC_Order {
 	 */
 	public function add_download_label_endpoint() {
 		add_rewrite_endpoint(  self::DHL_DOWNLOAD_ENDPOINT, EP_ROOT );
+
+		//Flush permalink if it is not flushed yet.
+		if( !get_option( 'dhl_permalinks_flushed') ){
+			flush_rewrite_rules();
+			update_option('dhl_permalinks_flushed', 1);
+		}
 	}
 
 	/**
