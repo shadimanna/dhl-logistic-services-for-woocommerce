@@ -215,7 +215,8 @@ abstract class PR_DHL_WC_Order {
 		$meta_box_ids = array( 'pr_dhl_product', 'pr_dhl_weight');
 
 		$additional_meta_box_ids = $this->get_additional_meta_ids( );
-
+		// error_log(print_r($additional_meta_box_ids,true));
+		// error_log(print_r($_POST,true));
 		// $meta_box_ids += $additional_meta_box_ids;
 		$meta_box_ids = array_merge( $meta_box_ids, $additional_meta_box_ids );
 		foreach ($meta_box_ids as $key => $value) {
@@ -606,6 +607,8 @@ abstract class PR_DHL_WC_Order {
 				$args['order_details']['weightUom'] = $weight_units;
 				break;
 		}
+
+		$args['order_details']['dimUom'] = get_option( 'woocommerce_dimension_unit' );
 
 		if( $this->is_cod_payment_method( $order_id ) ) {
 			$args['order_details']['cod_value']	= $order->get_total();			

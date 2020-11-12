@@ -67,14 +67,20 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			$soap_client = $this->get_access_token( $args['dhl_settings']['api_user'], $args['dhl_settings']['api_pwd'] );
 			PR_DHL()->log_msg( '"createShipmentOrder" called with: ' . print_r( $soap_request, true ) );
 
-			$response_body = $soap_client->createShipmentOrder($soap_request);
-
+			$response_body = $soap_client->createShipmentOrder($soap_request);	
+			error_log(print_r($response_body,true));
+			// error_log(print_r( $soap_client->__getLastRequest(), true ));
 			PR_DHL()->log_msg( 'Response: Successful');
+			return $this->process_label_response( $response_body );
+
 
 		} catch (Exception $e) {
 			PR_DHL()->log_msg( 'Response Error: ' . $e->getMessage() );
 			throw $e;
 		}
+	}
+
+	protected function process_label_response($response_body, $order_id = '') {
 
 		if( $response_body->Status->statusCode != 0 ) {
 		    if( isset( $response_body->Status->statusMessage ) ) {
@@ -93,21 +99,29 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			sleep(1);
 
 			if( isset( $response_body->CreationState ) && is_array( $response_body->CreationState ) ){
-				foreach( $response_body->CreationState as $creation_state ){
+
+				$multi_label_info = array();
+				$multi_tracking_info = array();
+
+				foreach( $response_body->CreationState as $creation_key => $creation_state ){
 					$export_data = '';
 					if ( isset( $creation_state->LabelData->exportLabelData) ) {
 						$export_data = $creation_state->LabelData->exportLabelData;
 					}
 
 					if( isset( $creation_state->sequenceNumber ) && isset( $creation_state->LabelData->labelData ) ){
-						$label_tracking_info = $this->save_data_files( $creation_state->sequenceNumber, $creation_state->LabelData->labelData, $export_data );
+						$multi_label_info[ $creation_key ] = $this->save_data_files( $creation_state->sequenceNumber, $creation_state->LabelData->labelData, $export_data );
 
 						$tracking_number = isset( $creation_state->shipmentNumber ) ? $creation_state->shipmentNumber : '';
-						$label_tracking_info['tracking_number'] = $tracking_number;
-						break;
+						$multi_tracking_info['tracking_number'][ $creation_key ] = $tracking_number;
 					}
-					
 				}
+
+				$label_tracking_info = $this->save_multiple_files( $multi_label_info, $order_id );
+				$label_tracking_info += $multi_tracking_info;
+				error_log(print_r($label_tracking_info, true));
+
+
 			}else{
 				$export_data = '';
 				if ( isset( $response_body->CreationState->LabelData->exportLabelData) ) {
@@ -123,6 +137,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			return $label_tracking_info;
 		}
 	}
+
 
 	public function delete_dhl_label_call( $args ) {
 		$soap_request =	array(
@@ -177,6 +192,30 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				throw new Exception( __('DHL Label could not be deleted!', 'pr-shipping-dhl' ) );
 			}
 		}
+	}
+
+	protected function save_multiple_files( $multiple_files, $order_id ) {
+		error_log(print_r($multiple_files,true));
+		if ( is_array( $multiple_files ) ) {
+
+			// Merge PDF files
+			$loader = PR_DHL_Libraryloader::instance();
+			$pdfMerger = $loader->get_pdf_merger();
+
+			if( $pdfMerger ){
+
+				foreach ($multiple_files as $key => $value) {
+					$pdfMerger->addPDF( $value['label_path'], 'all' );
+				}
+
+				$filename = 'dhl-multi-label-export-' . $order_id . '.pdf';
+				$label_url = PR_DHL()->get_dhl_label_folder_url() . $filename;
+				$label_path = PR_DHL()->get_dhl_label_folder_dir() . $filename;
+				$pdfMerger->merge( 'file',  $label_path );
+			}
+		}
+		
+		return array( 'label_url' => $label_url, 'label_path' => $label_path);
 	}
 
 	protected function save_data_files( $order_id, $label_data, $export_data ) {
@@ -336,6 +375,36 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			$this->validate_field( 'weight', $args['order_details']['weight'] );
 		} catch (Exception $e) {
 			throw new Exception( 'Weight - ' . $e->getMessage() );
+		}
+
+		// error_log(print_r($args,true));
+		if ( isset( $args['order_details']['multi_packages_enabled'] ) && ( $args['order_details']['multi_packages_enabled'] == 'yes' ) ) {
+			
+			if ( isset( $args['order_details']['total_packages'] ) ) {
+
+				for ($i=0; $i<intval($args['order_details']['total_packages']); $i++) {
+
+					if( empty($args['order_details']['packages_number'][$i]) ) {
+						throw new Exception( __('A package number is empty. Ensure all package details are filled in.', 'pr-shipping-dhl') );
+					}
+
+					if( empty($args['order_details']['packages_weight'][$i]) ) {
+						throw new Exception( __('A package weight is empty. Ensure all package details are filled in.', 'pr-shipping-dhl') );
+					}
+
+					if( empty($args['order_details']['packages_length'][$i]) ) {
+						throw new Exception( __('A package length is empty. Ensure all package details are filled in.', 'pr-shipping-dhl') );
+					}
+
+					if( empty($args['order_details']['packages_width'][$i]) ) {
+						throw new Exception( __('A package width is empty. Ensure all package details are filled in.', 'pr-shipping-dhl') );
+					}
+
+					if( empty($args['order_details']['packages_height'][$i]) ) {
+						throw new Exception( __('A package height is empty. Ensure all package details are filled in.', 'pr-shipping-dhl') );
+					}
+				}
+			}
 		}
 
 		// if ( empty( $args['order_details']['duties'] )) {
@@ -625,20 +694,19 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			$shipment_items = array();
 			
-			foreach ($this->args['items'] as $key => $item) {
-				// weightInKG is in KG needs to be changed if 'g' or 'lbs' etc.
-				//$product 				= wc_get_product( $item['product_id'] );
-				$item['item_weight'] 	= $this->maybe_convert_weight( $item['item_weight'], $this->args['order_details']['weightUom'] );
+			if ( isset( $this->args['order_details']['multi_packages_enabled'] ) && ( $this->args['order_details']['multi_packages_enabled'] == 'yes' ) ) {
 
-				// $customsDetails = $json_item;
-				$shipment_items[] = array(
-					'weightInKG' 	=> round( floatval( $item['item_weight'] ), 2 ),
-					'lengthInCM' 	=> 10,
-					'widthInCM' 	=> 10,
-					'heightInCM' 	=> 10
-
-				);
+				foreach ($this->args['order_details']['packages_weight'] as $key => $item) {
+					
+					$shipment_items[] = array(
+						'weightInKG' 	=> $this->maybe_convert_weight( $item, $this->args['order_details']['weightUom'] ),
+						'lengthInCM' 	=> $this->maybe_convert_centimeters( $this->args['order_details']['packages_length'][ $key ], $this->args['order_details']['dimUom'] ),
+						'widthInCM' 	=> $this->maybe_convert_centimeters( $this->args['order_details']['packages_width'][ $key ], $this->args['order_details']['dimUom'] ),
+						'heightInCM' 	=> $this->maybe_convert_centimeters( $this->args['order_details']['packages_height'][ $key ], $this->args['order_details']['dimUom'] )
+					);
+				}
 			}
+			
 
 			$dhl_label_body = 
 				array(
@@ -924,11 +992,26 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 					$copy_ship_order 	= $shipment_order;
 					$copy_ship_order['Shipment']['ShipmentDetails']['ShipmentItem'] = $shipment_item;
 					$copy_ship_order['sequenceNumber'] = $this->args['order_details']['order_id'] . '-' . $sequence;
+
+					// Add an "Index" to ensure "ref" is NOT used in XML and actual values are passed instead
+					$copy_ship_order['Shipment']['Shipper']['Index'] = $sequence;
+					$copy_ship_order['Shipment']['Shipper']['Address']['Origin']['Index'] = $sequence;
+					$copy_ship_order['Shipment']['Receiver']['Index'] = $sequence;
+					$copy_ship_order['Shipment']['Receiver']['Address']['Origin']['Index'] = $sequence;
+
+					if( isset( $copy_ship_order['Shipment']['ExportDocument']['ExportDocPosition'] ) ) {
+						foreach ($copy_ship_order['Shipment']['ExportDocument']['ExportDocPosition'] as $key => $value) {
+							
+							$copy_ship_order['Shipment']['ExportDocument']['ExportDocPosition'][$key]['Index'] = $sequence;
+						}
+					}
+					
 					$shipment_orders[] = $copy_ship_order;
 				}
 				$this->body_request['ShipmentOrder'] = $shipment_orders;
 			}
 			
+			error_log(print_r($this->body_request, true));
 			return $this->body_request;
 			// $this->body_request = json_encode($dhl_label_body, JSON_PRETTY_PRINT);
 		}
