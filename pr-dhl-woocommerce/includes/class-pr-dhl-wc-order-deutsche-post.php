@@ -204,23 +204,24 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
                 'custom_attributes' => array($is_disabled => $is_disabled)
             ));
 		}
-
+		/*
 		if( !$this->is_packet_return_available( $order_id ) ){
 
 			echo '<p>'. __('Please note that the destination country does <b>not</b> support Packet Return', 'pr-shipping-dhl' ) . '</p>';
-		}
+		}*/
 		
 	}
 	
 	public function is_packet_return_available( $order_id ){
 
 		$can_return = false;
+		/*
 		$order 		= wc_get_order( $order_id );
 
 		if( in_array( $order->get_shipping_country(), $this->country_available_packet_return() ) ){
 			$can_return = true;
 		}
-
+		*/
 		return $can_return;
 	}
 

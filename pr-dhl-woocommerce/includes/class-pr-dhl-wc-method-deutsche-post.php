@@ -209,6 +209,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
                 'placeholder' => '',
                 'class'       => 'wc_input_decimal',
 			),
+            /*
 			'dhl_packet_return' 	=> array(
 				'title'       => __( 'Packet Return', 'pr-shipping-dhl' ),
                 'type'        => 'checkbox',
@@ -220,6 +221,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
                 ),
                 'desc_tip'    => true,
 			),
+            */
             'dhl_tracking_note'     => array(
                 'title'       => __( 'Tracking Note', 'pr-shipping-dhl' ),
                 'type'        => 'checkbox',
