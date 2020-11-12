@@ -1,4 +1,16 @@
 # DHL Parcel plugin for WooCommerce
+ 
+v1.3.7
+## Changes
+- Fixed an issue with certain settings not being able to save with certain themes
+
+v1.3.5
+## Changes
+- Added a fallback notice for switching between DHL Parcel and Deutsche Post International
+
+v1.3.4
+## Changes
+- Improved mailpost bulk processing
 
 v1.3.2
 ## Changes

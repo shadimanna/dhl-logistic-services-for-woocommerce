@@ -278,7 +278,7 @@ jQuery(document).ready(function($) {
                     .bind('change blur', function () {
                         if ($(this).attr('type') === 'checkbox') {
                             $(document.body).trigger('dhlpwc:check_option_setting', [option_identifier]);
-                            $('#' + $(this).attr('id').slice(0, -7)).attr('checked', $(this).attr('checked') === 'checked');
+                            $('#' + $(this).attr('id').slice(0, -7)).attr('checked', $(this).is(':checked'));
                         } else {
                             $('#' + $(this).attr('id').slice(0, -7)).val($(this).val());
                         }
@@ -423,13 +423,13 @@ jQuery(document).ready(function($) {
         $(document.body).trigger('dhlpwc:save_conditions', [code]);
 
     }).on('dhlpwc:check_option_setting', function(e, code) {
-        var checked = $("input[id$='_dhlpwc_enable_option_" + code + "-mirror']").attr('checked') === 'checked';
+        var checked = $("input[id$='_dhlpwc_enable_option_" + code + "-mirror']").is(':checked');
 
         if (checked === true) {
             $('.dhlpwc-option-grid\\[\\\'' + code + '\\\'\\]').each(function (e) {
                 if ($(this).attr('id').indexOf('_dhlpwc_enable_option_') === -1) { // Skip if it's the enable checkbox
                     if ($(this).attr('id').indexOf('_dhlpwc_free_price_option_') > -1) {
-                        if ($("input[id$='_dhlpwc_enable_free_option_" + code + "-mirror']").attr('checked') === 'checked') {
+                        if ($("input[id$='_dhlpwc_enable_free_option_" + code + "-mirror']").is(':checked')) {
                             $(this).prop('disabled', false);
                         } else {
                             $(this).prop('disabled', true);
@@ -593,7 +593,7 @@ jQuery(document).ready(function($) {
                     .prop('id', $(this).attr('id') + '-mirror')
                     .bind('change blur', function () {
                         if ($(this).attr('type') === 'checkbox') {
-                            $('#' + $(this).attr('id').slice(0, -7)).attr('checked', $(this).attr('checked') === 'checked');
+                            $('#' + $(this).attr('id').slice(0, -7)).attr('checked', $(this).is(':checked'));
                         } else {
                             $('#' + $(this).attr('id').slice(0, -7)).val($(this).val());
                         }
@@ -643,7 +643,7 @@ jQuery(document).ready(function($) {
                     .prop('id', $(this).attr('id') + '-mirror')
                     .bind('change blur', function () {
                         if ($(this).attr('type') === 'checkbox') {
-                            $('#' + $(this).attr('id').slice(0, -7)).attr('checked', $(this).attr('checked') === 'checked');
+                            $('#' + $(this).attr('id').slice(0, -7)).attr('checked', $(this).is(':checked'));
                         } else {
                             $('#' + $(this).attr('id').slice(0, -7)).val($(this).val());
                         }
