@@ -167,7 +167,7 @@ class Item_Info {
                 'default' => 'SALE_GOODS',
 			),
 			'packet_return' 	=> array(
-				'default' => '',
+				'default' => false,
 				'sanitize' => function ( $return ) use ($self) {
 
 					return ( $return == 'yes' )? true : false;
