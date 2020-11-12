@@ -517,6 +517,11 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 		$args['api_user'] = $this->shipping_dhl_settings['dhl_api_user'];
 		$args['api_pwd'] = $this->shipping_dhl_settings['dhl_api_pwd'];
+
+		// If there are multiple tracking numbers, get the first one to search for the string in order notes
+		if (is_array( $args['tracking_number'] ) ) {
+			$args['tracking_number'] = $args['tracking_number'][0];
+		}
 		
 		return $args;
 	}
@@ -631,7 +636,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	}
 
 	protected function get_tracking_link( $order_id ) {
-		
+		error_log('get_tracking_link');
 		$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
 		if( empty( $tracking_number = $label_tracking_info['tracking_number'] ) ) {
 			return '';
@@ -645,7 +650,8 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 			$tracking_link_str = implode('<br/>', $tracking_link);
 		} else {
-			parent::get_tracking_link( $order_id );
+			error_log('call parent tracking link');
+			$tracking_link_str = parent::get_tracking_link( $order_id );
 		}
 
 		return $tracking_link_str;
