@@ -80,6 +80,13 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+
+= 2.3 =
+* Deutsche Post: Add "Paket Priority"
+* Deutsche Post: Add AWB copy count option
+* Deutsche Post: Add product options; country of origin, HS code and customs description
+* Deutsche Post: Fixed non-EU labels merging with EU labels
+* Deutsche Post: Fixed “contentpiecevalue” to include quantity
  
 = 2.2.10 =
 * DHL Parcel: Fixed an issue where the DPI module was not loading on certain pages
