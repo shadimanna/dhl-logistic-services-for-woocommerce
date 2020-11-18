@@ -974,6 +974,11 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				$this->body_request['ShipmentOrder']['Shipment']['Receiver']['Postfiliale']['postNumber'] = '';
 			}
 
+			// Ensure 'zip' is passed, it is required
+			if( ! isset( $this->body_request['ShipmentOrder']['Shipment']['Receiver']['Address']['zip'] ) ) {
+				$this->body_request['ShipmentOrder']['Shipment']['Receiver']['Address']['zip'] = '';
+			}
+
 			if( count( $shipment_items ) > 1 ){
 				$shipment_order 	= $this->body_request['ShipmentOrder'];
 				$shipment_orders 	= array();
