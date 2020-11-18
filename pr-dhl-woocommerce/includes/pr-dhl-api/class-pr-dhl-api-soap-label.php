@@ -613,12 +613,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			// EMAIL NOTIFCATION
 			$notification_email = array();
-
-			if( isset( $this->args['dhl_settings']['email_notification'] ) && $this->args['dhl_settings']['email_notification'] == 'yes' ) {
-				if ( isset( $this->args['order_details'][ 'email_notification' ] ) && ( $this->args['order_details'][ 'email_notification' ] == 'yes' || $this->args['order_details'][ 'email_notification' ] == '1' ) ) {
-					$notification_email['recipientEmailAddress'] = $this->args['shipping_address']['email'];
-				}
-			}elseif( isset( $this->args['dhl_settings']['email_notification'] ) && $this->args['dhl_settings']['email_notification'] == 'sendviatc' ){
+			if ( isset( $this->args['order_details'][ 'email_notification' ] ) && ( $this->args['order_details'][ 'email_notification' ] == 'yes' || $this->args['order_details'][ 'email_notification' ] == '1' ) ) {
 				$notification_email['recipientEmailAddress'] = $this->args['shipping_address']['email'];
 			}
 
@@ -793,26 +788,22 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				);
 			
 			if( $this->args['dhl_settings']['add_logo'] == 'yes' ){
+				
 				unset( $dhl_label_body['ShipmentOrder']['Shipment']['Shipper'] );
 				$dhl_label_body['ShipmentOrder']['Shipment']['ShipperReference'] = $this->args['dhl_settings']['shipper_reference'];
 			}
 			
+			// Unset receiver email if set to don't send in settings
 			if( isset( $this->args['dhl_settings']['email_notification'] ) && $this->args['dhl_settings']['email_notification'] == 'no' ) {
 
-				unset( $dhl_label_body['ShipmentOrder']['Shipment']['Shipper']['Communication']['email'] );
-
-			}elseif( isset( $this->args['dhl_settings']['email_notification'] ) && $this->args['dhl_settings']['email_notification'] == 'yes' ) {
-
-				if ( isset( $this->args['order_details'][ 'email_notification' ] ) && ( $this->args['order_details'][ 'email_notification' ] != 'yes' && $this->args['order_details'][ 'email_notification' ] != '1' ) ) {
-
-					unset( $dhl_label_body['ShipmentOrder']['Shipment']['Shipper']['Communication']['email'] );
-
-				}
+				unset( $dhl_label_body['ShipmentOrder']['Shipment']['Receiver']['Communication']['email'] );
 
 			}
 			
+			// Unset receiver phone if set to don't send in settings
 			if( isset( $this->args['dhl_settings']['phone_notification'] ) && $this->args['dhl_settings']['phone_notification'] == 'no' ) {
-				unset( $dhl_label_body['ShipmentOrder']['Shipment']['Shipper']['Communication']['phone'] );
+
+				unset( $dhl_label_body['ShipmentOrder']['Shipment']['Receiver']['Communication']['phone'] );
 			}
 
 			if ( $this->pos_ps || $this->pos_rs || $this->pos_po ) {
