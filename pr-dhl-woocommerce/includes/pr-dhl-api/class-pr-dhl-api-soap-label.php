@@ -60,6 +60,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 	}
 
 	public function get_dhl_label( $args ) {
+		error_log(print_r($args,true));
 		$this->set_arguments( $args );
 		$soap_request = $this->set_message();
 
@@ -929,7 +930,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 				$dhl_label_body['ShipmentOrder']['Shipment']['ExportDocument'] = 
 					array(
-						'invoiceNumber' => $this->args['order_details']['order_id'],
+						'invoiceNumber' => $this->args['order_details']['invoice_num'],
 						'exportType' => 'OTHER',
 						'exportTypeDescription' => $item_description,
 						'termsOfTrade' => $this->args['order_details']['duties'],
