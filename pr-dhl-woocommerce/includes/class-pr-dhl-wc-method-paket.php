@@ -398,7 +398,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'description'       => sprintf( __( 'Your password for the DHL business customer portal. Please note the new assignment of the password to 3 (Standard User) or 12 (System User) months and test your access data in advance at %shere%s', 'pr-shipping-dhl' ), '<a href="' . PR_DHL_PAKET_BUSSINESS_PORTAL . '" target = "_blank">', '</a>' ),
 				'desc_tip'          => false,
 				'default'           => ''
-			),
+			),/*
 			'dhl_sandbox' => array(
 				'title'             => __( 'Sandbox Mode', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
@@ -406,7 +406,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'default'           => 'no',
 				'description'       => __( 'Please, tick here if you want to test the plug-in installation against the DHL Sandbox Environment. Labels generated via Sandbox cannot be used for shipping and you need to enter your client ID and client secret for the Sandbox environment instead of the ones for production!', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
-			),
+			),*/
 			'dhl_debug' => array(
 				'title'             => __( 'Debug Log', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
