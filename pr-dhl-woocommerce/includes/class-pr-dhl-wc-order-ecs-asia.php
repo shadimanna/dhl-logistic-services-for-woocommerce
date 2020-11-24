@@ -460,7 +460,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 		$shop_manager_actions = array(
 			'pr_dhl_create_labels'      => __( 'DHL Create Labels', 'pr-shipping-dhl' ),
-			'pr_dhl_closeout_all'      => __( 'DHL Close Out All', 'pr-shipping-dhl' ),
+			// 'pr_dhl_closeout_all'      => __( 'DHL Close Out All', 'pr-shipping-dhl' ),
 			'pr_dhl_closeout_selected'      => __( 'DHL Close Out Selected', 'pr-shipping-dhl' )
 		);
 
