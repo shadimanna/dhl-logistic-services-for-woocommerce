@@ -555,12 +555,13 @@ class Item_Info {
 		switch ( $uom ) {
 			case 'kg':
 				$weight = $weight * 1000;
-
+				break;
 			case 'lb':
 				$weight = $weight / 2.2;
-
+				break;
 			case 'oz':
 				$weight = $weight / 35.274;
+				break;
 		}
 		
 		return round( $weight );
