@@ -61,7 +61,6 @@ jQuery( function( $ ) {
 			var widths = this.get_package_array($form, 'width');
 			var heights = this.get_package_array($form, 'height');
 
-			console.log(numbers);
 			for (var i=0; i<parseInt(total); i++) {
 				if (required) {
 					if (!numbers[i].length || !weights[i].length || !lengths[i].length || !widths[i].length || !heights[i].length) {
@@ -228,69 +227,59 @@ jQuery( function( $ ) {
 			
 			// In case an error has occured.
 			var abort = false;
+			var $form = $('#shipment-dhl-label-form'); 
+			$form.each(function(i, div) {
 
-			// var data = new Array();
-			$(function(){
-				var $form = $('#shipment-dhl-label-form'); 
-				$form.each(function(i, div) {
+			    $(div).find('input').each(function(j, element){
+			        if( $(element).attr('type') == 'checkbox' ) {
+			        	if ( $(element).prop('checked') ) {
+				        	data[ $(element).attr('name') ] = 'yes';
+			        	} else {
+				        	data[ $(element).attr('name') ] = 'no';
+			        	}
+			        } else {
+			        	var eName = $(element).attr('name');
+			        	// Do NOT add array inputs here!
+			        	if (eName.indexOf("[]") == -1) {
+			        		data[ $(element).attr('name') ] = $(element).val();
+			        	}
+			        }
+			    });
 
-				    $(div).find('input').each(function(j, element){
-				        if( $(element).attr('type') == 'checkbox' ) {
-				        	if ( $(element).prop('checked') ) {
-					        	data[ $(element).attr('name') ] = 'yes';
-				        	} else {
-					        	data[ $(element).attr('name') ] = 'no';
-				        	}
-				        } else {
-				        	var eName = $(element).attr('name');
-				        	// Do NOT add array inputs here!
-				        	if (eName.indexOf("[]") == -1) {
-				        		data[ $(element).attr('name') ] = $(element).val();
-				        	}
-				        }
-				    });
+			    $(div).find('select').each(function(j, element){
+		        	data[ $(element).attr('name') ] = $(element).val();
+			    });
 
-				    $(div).find('select').each(function(j, element){
-			        	data[ $(element).attr('name') ] = $(element).val();
-				    });
+			    $(div).find('textarea').each(function(j, element){
+		        	data[ $(element).attr('name') ] = $(element).val();
+			    });
+	    	});
 
-				    $(div).find('textarea').each(function(j, element){
-			        	data[ $(element).attr('name') ] = $(element).val();
-				    });
-		    	});
+	    	// Since, we're not posting the form directly, rather we're using jquery to pull
+			// the data individually, therefore, we're implementing a personalize API to extract
+			// our packages and add it to the "pr_dhl_packages" field for saving.
+			if( $( '#pr_dhl_multi_packages_enabled' ).prop('checked') ) {
 
-		    	// Since, we're not posting the form directly, rather we're using jquery to pull
-				// the data individually, therefore, we're implementing a personalize API to extract
-				// our packages and add it to the "pr_dhl_packages" field for saving.
-				
-				if( $( '#pr_dhl_multi_packages_enabled' ).prop('checked') ) {
-
-					var packages = wc_shipment_dhl_label_items.get_packages_for_saving($form, true);
-					// console.log(packages);
-					if (!packages) {
-						alert('It appears that one or more of your packages contains empty information. Please make sure you fill the package number, weight, length, width and height of the package before submitting.');
+				var packages = wc_shipment_dhl_label_items.get_packages_for_saving($form, true);
+				if (!packages) {
+					alert('It appears that one or more of your packages contains empty information. Please make sure you fill the package number, weight, length, width and height of the package before submitting.');
+					abort = true;
+				} else {
+					if (packages == 'invalid_number') {
+						alert('One or more of your entries contains invalid values. Only numeric values are allowed in the package line items. Please kindly check your entries and try again.');
 						abort = true;
 					} else {
-						if (packages == 'invalid_number') {
-							alert('One or more of your entries contains invalid values. Only numeric values are allowed in the package line items. Please kindly check your entries and try again.');
-							abort = true;
-						} else {
-							// console.log(packages);
-							// if (packages.length) data [ 'pr_dhl_packages' ] = packages;
-							
-							if (packages.length) {
-								data [ 'pr_dhl_packages_number' ] = wc_shipment_dhl_label_items.get_package_array($form, 'number');
-								data [ 'pr_dhl_packages_weight' ] = wc_shipment_dhl_label_items.get_package_array($form, 'weight');
-								data [ 'pr_dhl_packages_length' ]  = wc_shipment_dhl_label_items.get_package_array($form, 'length');
-								data [ 'pr_dhl_packages_width' ]  = wc_shipment_dhl_label_items.get_package_array($form, 'width');
-								data [ 'pr_dhl_packages_height' ]  = wc_shipment_dhl_label_items.get_package_array($form, 'height');
-							}
-							// console.log(data);
-						}		
-					}
+					
+						if (packages.length) {
+							data [ 'pr_dhl_packages_number' ] = wc_shipment_dhl_label_items.get_package_array($form, 'number');
+							data [ 'pr_dhl_packages_weight' ] = wc_shipment_dhl_label_items.get_package_array($form, 'weight');
+							data [ 'pr_dhl_packages_length' ]  = wc_shipment_dhl_label_items.get_package_array($form, 'length');
+							data [ 'pr_dhl_packages_width' ]  = wc_shipment_dhl_label_items.get_package_array($form, 'width');
+							data [ 'pr_dhl_packages_height' ]  = wc_shipment_dhl_label_items.get_package_array($form, 'height');
+						}
+					}		
 				}
-				
-		    });
+			}
 			
 			if (!abort) {
 				// Remove any errors from last attempt to create label
@@ -414,7 +403,6 @@ jQuery( function( $ ) {
 					$( '#shipment-dhl-label-form' ).append(dhl_label_data.main_button);
 
 					if( response.dhl_tracking_num ) {
-						console.log(response.dhl_tracking_num);
 						var tracking_note;
 						$('ul.order_notes li').each(function(i) {
 						   tracking_note = $(this);

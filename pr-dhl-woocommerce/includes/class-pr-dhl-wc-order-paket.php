@@ -388,13 +388,8 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$dim_uom = get_option( 'woocommerce_dimension_unit' );
 
 		$total_packages = isset( $dhl_label_items['pr_dhl_total_packages'] ) ? $dhl_label_items['pr_dhl_total_packages'] : '1';
-		// error_log($total_packages);
+		
 		$packages_enabled = isset( $dhl_label_items['pr_dhl_multi_packages_enabled'] ) ? $dhl_label_items['pr_dhl_multi_packages_enabled'] : '';
-		// $packages = isset( $dhl_label_items['pr_dhl_packages'] ) ? $dhl_label_items['pr_dhl_packages'] : array();
-
-		// Fallback: for whatever reason the packages were not saved successfully then we make
-		// sure that they are consistent with the total packages entry.
-		// $total_packages = empty( $packages ) ? 1 : $total_packages;
 
 		$numbers = array();
 		for ( $i = 1; $i <= 50; $i++ ) $numbers[$i] = $i;
@@ -646,7 +641,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	}
 
 	protected function get_tracking_link( $order_id ) {
-		error_log('get_tracking_link');
 		$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
 		if( empty( $tracking_number = $label_tracking_info['tracking_number'] ) ) {
 			return '';
@@ -660,7 +654,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 			$tracking_link_str = implode('<br/>', $tracking_link);
 		} else {
-			error_log('call parent tracking link');
 			$tracking_link_str = parent::get_tracking_link( $order_id );
 		}
 

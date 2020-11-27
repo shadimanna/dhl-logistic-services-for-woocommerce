@@ -10,8 +10,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 	/**
 	 * WSDL definitions
 	 */
-	const PR_DHL_WSDL_LINK = 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/3.0/geschaeftskundenversand-api-3.0.wsdl';
-//	const PR_DHL_WSDL_LINK = 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/2.2/geschaeftskundenversand-api-2.2.wsdl';
+	const PR_DHL_WSDL_LINK = 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/3.1/geschaeftskundenversand-api-3.1.wsdl';
 
 	const DHL_MAX_ITEMS = '6';
 	const DHL_RETURN_PRODUCT = '07';
@@ -60,7 +59,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 	}
 
 	public function get_dhl_label( $args ) {
-		error_log(print_r($args,true));
+		// error_log(print_r($args,true));
 		$this->set_arguments( $args );
 		$soap_request = $this->set_message();
 
@@ -69,8 +68,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			PR_DHL()->log_msg( '"createShipmentOrder" called with: ' . print_r( $soap_request, true ) );
 
 			$response_body = $soap_client->createShipmentOrder($soap_request);	
-			error_log(print_r($response_body,true));
-			error_log(print_r( $soap_client->__getLastRequest(), true ));
+			// error_log(print_r($response_body,true));
+			// error_log(print_r( $soap_client->__getLastRequest(), true ));
 			PR_DHL()->log_msg( 'Response: Successful');
 			return $this->process_label_response( $response_body, $args['order_details']['order_id'] );
 
@@ -120,8 +119,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 				$label_tracking_info = $this->save_multiple_files( $multi_label_info, $order_id );
 				$label_tracking_info += $multi_tracking_info;
-				error_log(print_r($label_tracking_info, true));
-
 
 			}else{
 				$export_data = '';
@@ -145,7 +142,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 					'Version' =>
 						array(
 								'majorRelease' => '3',
-								'minorRelease' => '0'
+								'minorRelease' => '1'
 						),
 					'shipmentNumber' => $args['tracking_number']
 				);
@@ -196,7 +193,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 	}
 
 	protected function save_multiple_files( $multiple_files, $order_id ) {
-		error_log(print_r($multiple_files,true));
 		if ( is_array( $multiple_files ) ) {
 
 			// Merge PDF files
@@ -378,7 +374,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			throw new Exception( 'Weight - ' . $e->getMessage() );
 		}
 
-		// error_log(print_r($args,true));
 		if ( isset( $args['order_details']['multi_packages_enabled'] ) && ( $args['order_details']['multi_packages_enabled'] == 'yes' ) ) {
 			
 			if ( isset( $args['order_details']['total_packages'] ) ) {
@@ -709,7 +704,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 					'Version' =>
 						array(
 								'majorRelease' => '3',
-								'minorRelease' => '0'
+								'minorRelease' => '1'
 						),
 					'ShipmentOrder' => 
 						array (
@@ -1008,9 +1003,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				$this->body_request['ShipmentOrder'] = $shipment_orders;
 			}
 			
-			error_log(print_r($this->body_request, true));
+			// error_log(print_r($this->body_request, true));
 			return $this->body_request;
-			// $this->body_request = json_encode($dhl_label_body, JSON_PRETTY_PRINT);
 		}
 		
 	}
