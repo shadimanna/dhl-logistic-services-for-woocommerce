@@ -410,6 +410,8 @@ class Client extends API_Client {
 			'shipmentGrossWeight' => $item_info->shipment[ 'weight' ],
 			'shipmentNaturetype'  => $item_info->shipment[ 'nature_type' ],
 			'returnItemWanted' 	  => $item_info->shipment[ 'packet_return' ], 
+			'importerTaxId'		  => $item_info->shipment[ 'importer_taxid' ], 
+			'senderTaxId'		  => $item_info->shipment[ 'sender_taxid' ], 
 			'recipient'           => $item_info->recipient[ 'name' ],
 			'recipientPhone'      => $item_info->recipient[ 'phone' ],
 			'recipientEmail'      => $item_info->recipient[ 'email' ],
