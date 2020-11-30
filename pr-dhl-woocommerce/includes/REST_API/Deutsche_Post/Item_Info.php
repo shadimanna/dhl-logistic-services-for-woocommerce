@@ -115,10 +115,17 @@ class Item_Info {
             'dhl_product'       => array(
 				'rename' => 'product',
 				'error'  => __( 'DHL "Product" is empty!', 'pr-shipping-dhl' ),
+				'sanitize' => function ( $product ) use ($self) {
+
+					$product_info 	= explode( '-', $product );
+					$product 		= $product_info[0];
+
+					return $product;
+				},
 			),
 			'dhl_service_level' => array(
 				'rename'   => 'service_level',
-				'default'  => 'STANDARD',
+				'default'  => 'PRIORITY',
 				'validate' => function( $level ) {
 					if ( $level !== 'STANDARD' && $level !== 'PRIORITY' && $level !== 'REGISTERED' ) {
 						throw new Exception( __( 'Order "Service Level" is invalid', 'pr-shipping-dhl' ) );
@@ -158,7 +165,14 @@ class Item_Info {
             'nature_type'          => array(
                 'rename' => 'nature_type',
                 'default' => 'SALE_GOODS',
-            ),
+			),
+			'packet_return' 	=> array(
+				'default' => false,
+				'sanitize' => function ( $return ) use ($self) {
+
+					return ( $return == 'yes' )? true : false;
+				}
+			)
 		);
 	}
 
@@ -240,7 +254,7 @@ class Item_Info {
 
 					if ( $length < 4 || $length > 20 ) {
 						throw new Exception(
-							__( 'Item HS Code must be between 0 and 20 characters long', 'pr-shipping-dhl' )
+							__( 'Item HS Code must be between 4 and 20 characters long', 'pr-shipping-dhl' )
 						);
 					}
 				},
@@ -253,6 +267,14 @@ class Item_Info {
 					return $self->string_length_sanitization( $description, 33 );
 				}
 			),
+			'item_export' => array(
+				'rename' => 'description_export',
+				'default' => '',
+				'sanitize' => function( $description_export ) use ($self) {
+
+					return $self->string_length_sanitization( $description_export, 33 );
+				}
+			),
 			'product_id'  => array(
 				'default' => '',
 			),
@@ -262,12 +284,16 @@ class Item_Info {
 			'item_value'       => array(
 				'rename' => 'value',
 				'default' => 0,
-				'sanitize' => function( $value ) use ($self) {
-
-					return (string) $self->float_round_sanitization( $value, 2 );
+				'sanitize' => function( $value, $args ) use ($self) {
+					
+					$qty 			= isset( $args['qty'] ) && is_numeric( $args['qty'] )? floatval( $args['qty'] ) : 1;
+					$total_value 	= floatval( $value ) * $qty;
+					
+					return (string) $self->float_round_sanitization( $total_value, 2 );
 				}
 			),
-			'origin'      => array(
+			'country_origin' => array(
+				'rename' => 'origin',
 				'default' => PR_DHL()->get_base_country(),
 			),
 			'qty'         => array(
@@ -301,16 +327,17 @@ class Item_Info {
 
 		switch ( $uom ) {
 			case 'kg':
-				return $weight * 1000;
-
+				$weight = $weight * 1000;
+				break;
 			case 'lb':
-				return $weight / 2.2;
-
+				$weight = $weight / 2.2;
+				break;
 			case 'oz':
-				return $weight / 35.274;
+				$weight = $weight / 35.274;
+				break;
 		}
-
-		return $weight;
+		
+		return round( $weight );
 	}
 
 	protected function float_round_sanitization( $float, $numcomma ) {

@@ -57,6 +57,10 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	public function init_hooks() {
 		parent::init_hooks();
 
+		// add AWB Copy Count
+		add_action('manage_posts_extra_tablenav', array( $this, 'add_shop_order_awb_copy' ), 1 );
+		//add_action('restrict_manage_posts', array( $this, 'add_shop_order_awb_copy' ), 1 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'order_list_awb_script' ), 10 );
 		// add 'Status' orders page column header
 		add_filter( 'manage_edit-shop_order_columns', array( $this, 'add_order_status_column_header' ), 30 );
 		// add 'Status Created' orders page column content
@@ -76,6 +80,48 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		// The AWB label download endpoint
 		add_action( 'init', array( $this, 'add_download_awb_label_endpoint' ) );
 		add_action( 'parse_query', array( $this, 'process_download_awb_label' ) );
+
+		add_filter( 'gettext', array( $this, 'change_meta_box_title' ) );
+	}
+
+	public function add_shop_order_awb_copy( $which ){
+		global $pagenow, $typenow;
+	
+		if( 'shop_order' === $typenow && 'edit.php' === $pagenow ) {
+			// Get available countries codes with their states code/name pairs
+			$country_states = WC()->countries->get_allowed_country_states();
+	
+			// Initializing
+			$filter_id   = 'dhl_awb_copy_count';
+			$selected     = isset($_GET[$filter_id])? $_GET[$filter_id] : '';
+			
+			echo '<div class="alignleft actions dhl-awb-filter-container">';
+				echo '<select name="'. esc_attr( $filter_id ) .'" class="dhl-awb-copy-count">';
+					echo '<option value="">'. esc_html__( 'AWB Copy Count', 'pr-dhl-woocommerce' ) . '</option>';
+					// Loop through shipping zones locations array
+					for( $i=1; $i<51; $i++ ){
+						echo '<option value="'. esc_attr( $i ) .'" '. selected( $selected, $i, false ) .'>'. $i .'</option>';
+					}
+
+				echo '</select>';
+				//echo '<input type="submit" name="awb_copy_submit" class="button" value="Submit" />';
+			echo '</div>';
+		}
+	}
+
+	public function order_list_awb_script( $hook ) {
+		global $typenow, $pagenow;
+
+		if ( 'edit.php' === $hook && 'shop_order' === $typenow ) {
+			
+			wp_enqueue_script(
+				'wc-shipment-dhl-dp-orderlist-js',
+				PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-dp-orderlist.js',
+				array(),
+				PR_DHL_VERSION,
+				true
+			);
+		}
 	}
 
 	public function add_download_awb_label_endpoint() {
@@ -116,6 +162,19 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		);
 	}
 
+	public function change_meta_box_title( $text ){
+
+		global $pagenow;
+	
+		if (( $pagenow == 'post.php' ) && (get_post_type() == 'shop_order')) {
+			if( $text == '%s Label & Tracking' ){
+				$text = '%s Label';
+			}
+		}
+
+		return $text;
+	}
+
 	/**
 	 * {@inheritdoc}
 	 *
@@ -144,8 +203,62 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
                 'options' => $nature_type,
                 'custom_attributes' => array($is_disabled => $is_disabled)
             ));
-        }
-    }
+		}
+		/*
+		if( !$this->is_packet_return_available( $order_id ) ){
+
+			echo '<p>'. __('Please note that the destination country does <b>not</b> support Packet Return', 'pr-shipping-dhl' ) . '</p>';
+		}*/
+		
+	}
+	
+	public function is_packet_return_available( $order_id ){
+
+		$can_return = false;
+		/*
+		$order 		= wc_get_order( $order_id );
+
+		if( in_array( $order->get_shipping_country(), $this->country_available_packet_return() ) ){
+			$can_return = true;
+		}
+		*/
+		return $can_return;
+	}
+
+	public function product_can_return(){
+		return array(
+			'GMP',
+			'GPP',
+			'GPT'
+		);
+	}
+
+	public function country_available_packet_return(){
+		return array(
+			'AT',
+			'BE',
+			'CZ',
+			'DE',
+			'DK',
+			'ES',
+			'FI',
+			'FR',
+			'GB',
+			'GR',
+			'HR',
+			'HU',
+			'IT',
+			'LT',
+			'LU',
+			'LV',
+			'NL',
+			'PL',
+			'PT',
+			'RO',
+			'SE',
+			'SI'
+		);
+	}
 
 	/**
 	 * The meta box for managing the current Deutsche Post order.
@@ -280,6 +393,17 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			<?php echo implode( '', $table_rows ) ?>
 			</tbody>
 		</table>
+		<p class="form-field pr_dhl_awb_copy_count_field">
+			<label for="dhl_awb_copy_count"><?php _e( 'AWB Copy Count:', 'pr-dhl-woocommerce' ); ?></label>
+			<select name="dhl_awb_copy_count" id="pr_dhl_awb_copy_count" class="select long dhl-awb-copy-count">
+				<?php
+				// Loop through shipping zones locations array
+				for( $i=1; $i<51; $i++ ){
+					echo '<option value="'. esc_attr( $i ) .'">'. $i .'</option>';
+				}
+				?>
+			</select>
+		</p>
 		<p>
 			<button id="pr_dhl_add_to_order" class="button button-secondary disabled" type="button">
 				<?php _e( 'Add to Waybill', 'pr-shipping-dhl' ); ?>
@@ -421,11 +545,18 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		check_ajax_referer( 'pr_dhl_order_ajax', 'pr_dhl_order_nonce' );
 
 		// Get the WC order
-		$wc_order_id = wc_clean( $_POST[ 'order_id' ] );
+		$wc_order_id 		= wc_clean( $_POST[ 'order_id' ] );
+
+		// Get AWB copy count 
+		if( !empty( $_POST['awb_copy_count'] ) && is_numeric( $_POST['awb_copy_count'] ) ){
+			$dhl_awb_copy_count = wc_clean( $_POST['awb_copy_count'] );
+		}else{
+			$dhl_awb_copy_count = 1;
+		}
 
 		try {
 			// Create the order
-			PR_DHL()->get_dhl_factory()->create_order();
+			PR_DHL()->get_dhl_factory()->create_order( $dhl_awb_copy_count );
 
 			// Send the new metabox HTML and the AWB (from the meta we just saved) as a tracking note
 			// 'type' should alwasys be private for AWB
@@ -560,7 +691,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 * Function for saving tracking items
 	 */
 	public function get_additional_meta_ids() {
-		return array( 'pr_dhl_nature_type' );
+		return array( 'pr_dhl_nature_type', 'pr_dhl_packet_return' );
 	}
 
 	/**
@@ -614,12 +745,33 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
 		$args['dhl_settings']['dhl_label_ref'] = $this->replace_references( $this->shipping_dhl_settings['dhl_label_ref'], $order_id );
 		$args['dhl_settings']['dhl_label_ref_2'] = $this->replace_references( $this->shipping_dhl_settings['dhl_label_ref_2'], $order_id );
+		
+		if ( $this->is_packet_return_available( $order_id ) && in_array( $dhl_label_items['pr_dhl_product'], $this->product_can_return() ) ) {
+            $args['dhl_settings']['packet_return'] = $this->shipping_dhl_settings['dhl_packet_return'];
+		}
 
 		if ($dhl_label_items['pr_dhl_nature_type']) {
             $args['order_details']['nature_type'] = $dhl_label_items['pr_dhl_nature_type'];
-        }
+		}
+		
+		$dhl_product 	= $dhl_label_items['pr_dhl_product'];
+		$product_info 	= explode( '-', $dhl_product );
+		$product 		= $product_info[0];
+		if( isset( $product_info[1] ) ){
+			$args['order_details']['dhl_service_level'] = $product_info[1]; // get service level
+		}
 
 		return $args;
+	}
+
+	// Pass args by reference to add item export if needed
+	protected function get_label_item_args( $product_id, &$args ) {
+
+		$new_item = array();
+
+		$new_item['item_export'] = get_post_meta( $product_id, '_dhl_export_description', true );
+
+		return $new_item;
 	}
 
 	protected function replace_references( $reference, $order_id ) {
@@ -746,6 +898,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	public function validate_bulk_actions( $action, $order_ids ) {
 		if ( 'pr_dhl_create_orders' === $action ) {
 			// Ensure the selected orders have a label created, otherwise don't add them to the order
+			
 			foreach ( $order_ids as $order_id ) {
 				$item_barcode = get_post_meta( $order_id, 'pr_dhl_dp_item_barcode', true );
 				// If item has no barcode, return the error message
@@ -755,6 +908,20 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 						'pr-shipping-dhl'
 					);
 				}
+			}
+
+			$get_copy_count = $_REQUEST['dhl_awb_copy_count'];
+			
+			if( empty( $get_copy_count ) ){
+
+				return __( 'Copy count must not be empty.', 'pr-shipping-dhl' );
+
+			}elseif( !is_numeric( $get_copy_count ) ){
+
+				return __( 'Copy count must be numeric.', 'pr-shipping-dhl' );
+			}elseif( 50 <= intval( $get_copy_count ) ){
+
+				return __( 'Copy count must not be more than 50.', 'pr-shipping-dhl' );
 			}
 		}
 
@@ -814,10 +981,17 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
 			try {
 				$order = $instance->api_client->get_order();
-				$items_count = count( $order['items'] );
-
+				$items_count 	= count( $order['items'] );
+				$get_copy_count = $_GET['dhl_awb_copy_count'];
+				
+				if( !empty( $get_copy_count ) && is_numeric( $get_copy_count ) ){
+					$copy_count = $get_copy_count;	
+				}else{
+					$copy_count = 1;
+				}
+				
 				// Create the order
-				$dhl_order_id = $instance->create_order();
+				$dhl_order_id = $instance->create_order( $copy_count );
 				// Get the URL to download the order label file
 				$label_url = $this->generate_download_url( '/' . self::DHL_DOWNLOAD_AWB_LABEL_ENDPOINT . '/' . $dhl_order_id );
 

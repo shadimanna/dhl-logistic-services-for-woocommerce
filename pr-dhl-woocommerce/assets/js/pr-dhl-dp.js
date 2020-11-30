@@ -118,9 +118,15 @@
 				return;
 			}
 
+			var copy_count = 1;
+			if( $('#pr_dhl_awb_copy_count').length > 0 ){
+				copy_count = $('#pr_dhl_awb_copy_count').val();
+			}
+
 			var data = {
 				action:				'wc_shipment_dhl_create_order',
 				order_id:			woocommerce_admin_meta_boxes.post_id,
+				awb_copy_count: copy_count,
 				pr_dhl_order_nonce:	$( '#pr_dhl_order_nonce' ).val()
 			};
 

@@ -12,7 +12,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
     public function __construct( $instance_id = 0 ) {
         $this->id = 'pr_dhl_dp';
         $this->instance_id = absint( $instance_id );
-        $this->method_title = __( 'Deutsche Post', 'pr-shipping-dhl' );
+        $this->method_title = __( 'Deutsche Post International', 'pr-shipping-dhl' );
         $this->method_description = sprintf(
             __(
                 'To start creating Deutsche Post shipping labels and return back a tracking number to your customers, please fill in your user credentials as provided by Deutsche Post. Not yet a customer? Please get a quote %shere%s.',
@@ -208,7 +208,20 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
                 'default'     => '',
                 'placeholder' => '',
                 'class'       => 'wc_input_decimal',
-            ),
+			),
+            /*
+			'dhl_packet_return' 	=> array(
+				'title'       => __( 'Packet Return', 'pr-shipping-dhl' ),
+                'type'        => 'checkbox',
+                'label'       => __( 'Enable', 'pr-shipping-dhl' ),
+                'default'     => 'no',
+                'description' => __(
+                    'Please note that Packet Return needs to be activated by Deutsche Post. Please get in touch with your local DP Customer Service for more details.',
+                    'pr-shipping-dhl'
+                ),
+                'desc_tip'    => true,
+			),
+            */
             'dhl_tracking_note'     => array(
                 'title'       => __( 'Tracking Note', 'pr-shipping-dhl' ),
                 'type'        => 'checkbox',
