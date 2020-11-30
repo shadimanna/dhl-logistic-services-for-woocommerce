@@ -5,9 +5,9 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 5.4
-Stable tag: 2.2.5
-WC requires at least: 2.6.14
-WC tested up to: 4.2
+Stable tag: 2.2.10
+WC requires at least: 3.0
+WC tested up to: 4.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -80,7 +80,36 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+
+= 2.3 =
+* Deutsche Post: Add "Paket Priority"
+* Deutsche Post: Add AWB copy count option
+* Deutsche Post: Add product options; country of origin, HS code and customs description
+* Deutsche Post: Fixed non-EU labels merging with EU labels
+* Deutsche Post: Fixed “contentpiecevalue” to include quantity
  
+= 2.2.10 =
+* DHL Parcel: Fixed an issue where the DPI module was not loading on certain pages
+ 
+= 2.2.9 =
+* DHL Parcel: Fixed an issue with certain settings not being able to save with certain themes
+
+= 2.2.8 =
+* DHL: Fix registration email issue, by confirming is WC_Order
+* DHL Paket: Fix wrong key "dhl_default_identcheck_dob"
+
+= 2.2.7 =
+* DHL Paket: Fix exclusion of transfer days issue in German language
+
+= 2.2.6 =
+* DHL Paket: Added {pr_dhl_tracking_note} replace placeholder for WC emails. This adds the tracking note within an email. 
+* DHL Paket: Added [pr_dhl_tracking_note order_id="12345"] shortcode to display tracking note info for a given order id.
+* DHL Paket: Added [pr_dhl_tracking_link order_id="12345"] shortcode to display tracking link for a given order id.
+* DHL Paket: Add spacing for tracking note display.
+* DHL Paket: Ensure only shop managers can download label.
+* DHL Paket: Modify label format names
+* DHL Paket: Default label format to 910-300-700 (Laser printer 105 x 205 mm)
+
 = 2.2.5 =
 * DHL Parcel: Added a fallback notice for switching between DHL Parcel and Deutsche Post International
  

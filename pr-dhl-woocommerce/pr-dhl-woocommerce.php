@@ -5,9 +5,9 @@
  * Description: WooCommerce integration for DHL eCommerce, DHL Paket, DHL Parcel Europe (Benelux and Iberia) and Deutsche Post International
  * Author: DHL
  * Author URI: http://dhl.com/woocommerce
- * Version: 2.2.5
- * WC requires at least: 2.6.14
- * WC tested up to: 4.0
+ * Version: 2.3
+ * WC requires at least: 3.0
+ * WC tested up to: 4.5
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "2.2.5";
+	private $version = "2.3";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -255,6 +255,8 @@ class PR_DHL_WC {
 					$this->shipping_dhl_product = new PR_DHL_WC_Product_eCS_Asia();
 				} elseif( $dhl_obj->is_dhl_ecomm() ) {
 					$this->shipping_dhl_product = new PR_DHL_WC_Product_Ecomm();
+				}elseif( $dhl_obj->is_dhl_deutsche_post() ){
+					$this->shipping_dhl_product = new PR_DHL_WC_Product_Deutsche_Post();
 				}
 				
 			} catch (Exception $e) {
@@ -588,12 +590,12 @@ class PR_DHL_WC {
 
 		$exclusion_work_day = array( );
 		$work_days = array(
-		            'Mon' => __('mon', 'pr-shipping-dhl'), 
-		            'Tue' => __('tue', 'pr-shipping-dhl'), 
-		            'Wed' => __('wed', 'pr-shipping-dhl'),
-		            'Thu' => __('thu', 'pr-shipping-dhl'),
-		            'Fri' => __('fri', 'pr-shipping-dhl'),
-		            'Sat' => __('sat', 'pr-shipping-dhl') );
+		            'Mon' => 'mon', 
+		            'Tue' => 'tue',
+		            'Wed' => 'wed',
+		            'Thu' => 'thu',
+		            'Fri' => 'fri',
+		            'Sat' => 'sat');
 
 		foreach ($work_days as $key => $value) {
 			$exclusion_day = 'dhl_preferred_exclusion_' . $value;

@@ -16,10 +16,19 @@ if ( ! class_exists( 'PR_DHL_WC_Product' ) ) :
 
 abstract class PR_DHL_WC_Product {
 
+	protected $manufacture_country_label = '';
+	protected $hs_code_label = '';
+	protected $hs_code_description = '';
+
 	/**
 	 * Init and hook in the integration.
 	 */
 	public function __construct( ) {
+
+		$this->manufacture_country_label = __('Country of Manufacture (DHL)', 'pr-shipping-dhl');
+		$this->hs_code_label = __('Harmonized Tariff Schedule (DHL)', 'pr-shipping-dhl');
+		$this->hs_code_description = __('Harmonized Tariff Schedule is a number assigned to every possible commodity that can be imported or exported from any country.', 'pr-shipping-dhl');
+
 		// priority is '8' because WC Subscriptions hides fields in the shipping tabs which hide the DHL fields here
 		add_action( 'woocommerce_product_options_shipping', array($this,'additional_product_shipping_options'), 8 );
 		add_action( 'woocommerce_process_product_meta', array( $this, 'save_additional_product_shipping_options' ) );
@@ -67,7 +76,7 @@ abstract class PR_DHL_WC_Product {
 	    woocommerce_wp_select(
 	    	array(
 				'id' => '_dhl_manufacture_country',
-				'label' => __('Country of Manufacture (DHL)', 'pr-shipping-dhl'),
+				'label' => $this->manufacture_country_label,
 				'description' => $manufacture_tip,
 				'desc_tip' => 'true',
 				/*'value' => $country_value,*/
@@ -78,8 +87,8 @@ abstract class PR_DHL_WC_Product {
 		woocommerce_wp_text_input( 
 			array(
 				'id' => '_dhl_hs_code',
-				'label' => __('Harmonized Tariff Schedule (DHL)', 'pr-shipping-dhl'),
-				'description' => __('Harmonized Tariff Schedule is a number assigned to every possible commodity that can be imported or exported from any country.', 'pr-shipping-dhl'),
+				'label' => $this->hs_code_label,
+				'description' => $this->hs_code_description,
 				'desc_tip' => 'true',
 				'placeholder' => 'HS Code'
 			) 

@@ -255,17 +255,18 @@ class Client extends API_Client {
 	 *
 	 * @throws Exception
 	 */
-	public function create_order()
+	public function create_order( $copy_count = 1 )
 	{
 		$order = $this->get_order();
 		$items = $order['items'];
 		$barcodes = array_keys( $items );
+		$copy_count = intval( $copy_count );
 
 		$route = $this->customer_route( 'orders' );
 		$data = array(
 			'itemBarcodes' => $barcodes,
 			'paperwork' => array(
-				'awbCopyCount' => 1,
+				'awbCopyCount' => $copy_count,
 				'contactName' => $this->contact_name,
 				'telephoneNumber' => $this->contact_phone,
 			),
@@ -377,9 +378,15 @@ class Client extends API_Client {
 	protected function item_info_to_request_data( Item_Info $item_info ) {
 		$contents = array();
 		foreach ( $item_info->contents as $content_info ) {
+
+			$item_desc = $content_info['description'];
+			if( !empty( $content_info['description_export'] ) ){
+				$item_desc = $content_info['description_export'];
+			}
+
 			$data = array(
 				'contentPieceAmount' => $content_info[ 'qty' ],
-				'contentPieceDescription' => $content_info[ 'description' ],
+				'contentPieceDescription' => $item_desc,
 				'contentPieceIndexNumber' => $content_info[ 'product_id' ],
 				'contentPieceNetweight' => $content_info[ 'weight' ],
 				'contentPieceOrigin' => $content_info[ 'origin' ],
@@ -387,14 +394,14 @@ class Client extends API_Client {
 				'contentPieceHsCode' => trim( $content_info[ 'hs_code' ] )
 			);
 			// Only include HS code if it's not empty
-			if ( empty( $content_info[ 'contentPieceHsCode' ] ) ) {
+			if ( empty( $data[ 'contentPieceHsCode' ] ) ) {
 				unset( $data[ 'contentPieceHsCode' ] );
 			}
 			$contents[] = $data;
 		}
 
 		return array(
-			'serviceLevel'        => 'PRIORITY',
+			'serviceLevel'        => $item_info->shipment[ 'service_level' ],
 			'product'             => $item_info->shipment[ 'product' ],
 			'custRef'             => $item_info->shipment[ 'label_ref' ],
 			'custRef2'            => $item_info->shipment[ 'label_ref_2' ],
@@ -402,6 +409,7 @@ class Client extends API_Client {
 			'shipmentCurrency'    => $item_info->shipment[ 'currency' ],
 			'shipmentGrossWeight' => $item_info->shipment[ 'weight' ],
 			'shipmentNaturetype'  => $item_info->shipment[ 'nature_type' ],
+			'returnItemWanted' 	  => $item_info->shipment[ 'packet_return' ], 
 			'recipient'           => $item_info->recipient[ 'name' ],
 			'recipientPhone'      => $item_info->recipient[ 'phone' ],
 			'recipientEmail'      => $item_info->recipient[ 'email' ],

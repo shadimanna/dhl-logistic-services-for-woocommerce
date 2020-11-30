@@ -66,6 +66,7 @@ ul.wc_dhl_error{
 	background-repeat:repeat-x;
 }
 
+
 .dhl-total-packages #pr_dhl_total_packages {
   width: 100px !important;
   margin-top: -7px;
@@ -89,4 +90,10 @@ p.dhl-total-packages > label {
 
 .package_item input {
   width: 40px !important;
+
+.dhl-awb-filter-container{
+	clear:both;
+	margin-top:9px;
+	margin-bottom:9px;
+
 }
