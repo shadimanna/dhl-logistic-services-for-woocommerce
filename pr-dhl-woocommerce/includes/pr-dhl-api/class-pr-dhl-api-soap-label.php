@@ -779,8 +779,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 									),
 
 						),
-						'labelResponseType' => 'B64',
-						'labelFormat' => $this->args['dhl_settings']['label_format'],
+					'labelResponseType' => 'B64',
+					'labelFormat' => $this->args['dhl_settings']['label_format'],
 				);
 			
 			if( $this->args['dhl_settings']['add_logo'] == 'yes' ){
@@ -986,10 +986,17 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 					$copy_ship_order['sequenceNumber'] = $this->args['order_details']['order_id'] . '-' . $sequence;
 
 					// Add an "Index" to ensure "ref" is NOT used in XML and actual values are passed instead
+					$copy_ship_order['Shipment']['ShipmentDetails']['Service']['Index'] = $sequence;
+
 					$copy_ship_order['Shipment']['Shipper']['Index'] = $sequence;
 					$copy_ship_order['Shipment']['Shipper']['Address']['Origin']['Index'] = $sequence;
 					$copy_ship_order['Shipment']['Receiver']['Index'] = $sequence;
 					$copy_ship_order['Shipment']['Receiver']['Address']['Origin']['Index'] = $sequence;
+
+					if ( isset( $this->args['order_details']['return_address_enabled'] ) && ( $this->args['order_details']['return_address_enabled'] == 'yes' ) ) {
+						$copy_ship_order['Shipment']['ReturnReceiver']['Index'] = $sequence;
+						$copy_ship_order['Shipment']['ReturnReceiver']['Address']['Origin']['Index'] = $sequence;
+					}
 
 					if( isset( $copy_ship_order['Shipment']['ExportDocument']['ExportDocPosition'] ) ) {
 						foreach ($copy_ship_order['Shipment']['ExportDocument']['ExportDocPosition'] as $key => $value) {
