@@ -290,7 +290,7 @@ class PR_DHL_WC {
                 'test_con_nonce' => wp_create_nonce( 'pr-dhl-test-con' ),
             );
 
-
+            /*
 			if( isset( $_GET['section'] ) && $_GET['section'] == 'pr_dhl_paket' ){
 
 				wp_enqueue_script(
@@ -300,7 +300,7 @@ class PR_DHL_WC {
 					PR_DHL_VERSION
 				);
 
-			}
+			}*/
 			
             wp_enqueue_script(
                 'wc-shipment-dhl-testcon-js',
