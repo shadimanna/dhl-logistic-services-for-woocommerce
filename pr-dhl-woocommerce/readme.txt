@@ -4,10 +4,10 @@ Donate link:
 Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL Parcel Benelux, DHL Parcel Luxembourg, DHL Paket Germany, WooCommerce, Woocom, Woo Commerce, Shipping, shiping, label creation, label printing, shipping rates, DHL Paket
 Requires at least: 4.1
 Requires PHP: 5.6
-Tested up to: 5.4
-Stable tag: 2.2.10
+Tested up to: 5.6
+Stable tag: 2.4
 WC requires at least: 3.0
-WC tested up to: 4.5
+WC tested up to: 4.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -80,6 +80,15 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+
+= 2.4 =
+* DHL Paket: Add support for multiple packages per order
+* DHL Paket: Add settings for sending email and phone to DHL
+* DHL Paket: Add invoice field to be added on customs forms for cross border packages
+* DHL Paket: Add product bulk edit for HS code & Manufacturer
+* DHL Paket: Fix zip code bug being required e.g. Hong Kong
+* DHL Paket: Add validation on shipper reference field when logo setting is checked
+* DHL Paket: Flush rewrite rules to avoid manually doing it
 
 = 2.3 =
 * Deutsche Post: Add "Paket Priority"
