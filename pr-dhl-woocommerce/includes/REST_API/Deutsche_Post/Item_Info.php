@@ -172,7 +172,41 @@ class Item_Info {
 
 					return ( $return == 'yes' )? true : false;
 				}
-			)
+			),
+			'importer_taxid'          => array(
+				'default' => '',
+				'validate' => function( $value ) use ($self) {
+
+					if( !empty( $value ) ){
+						
+						if( !ctype_alnum( $value ) ){
+							throw new Exception( __( 'The importer customs reference "value" must be an alphanumeric', 'pr-shipping-dhl' ) );
+						}
+
+						if( strlen( $value ) > 35 ){
+							throw new Exception( __( 'The importer customs reference "value" must be between 1 and 35 characters long', 'pr-shipping-dhl' ) );
+						}
+						
+					}
+				}
+			),
+			'sender_taxid'          => array(
+				'default' => '',
+				'validate' => function( $value ) use ($self) {
+
+					if( !empty( $value ) ){
+
+						if( !ctype_alnum( $value ) ){
+							throw new Exception( __( 'The sender customs reference "value" must be an alphanumeric', 'pr-shipping-dhl' ) );
+						}
+	
+						if( strlen( $value ) > 35 ){
+							throw new Exception( __( 'The sender customs reference "value" must be between 1 and 35 characters long', 'pr-shipping-dhl' ) );
+						}
+
+					}
+				}
+			),
 		);
 	}
 

@@ -189,7 +189,26 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 */
 	public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
 	    
+		woocommerce_wp_text_input( array(
+			'id'          		=> 'pr_dhl_sender_taxid',
+			'label'       		=> __( 'Sender customs reference: ', 'pr-shipping-dhl' ),
+			'placeholder' 		=> '',
+			'description'		=> '',
+			'value' 			=> isset($dhl_label_items['pr_dhl_sender_taxid']) ? $dhl_label_items['pr_dhl_sender_taxid'] : '',
+			'custom_attributes'	=> array($is_disabled => $is_disabled),
+			'class'				=> '' // adds JS to validate input is in price format
+		) );
 
+		woocommerce_wp_text_input( array(
+			'id'          		=> 'pr_dhl_importer_taxid',
+			'label'       		=> __( 'Importer customs reference: ', 'pr-shipping-dhl' ),
+			'placeholder' 		=> '',
+			'description'		=> '',
+			'value' 			=> isset($dhl_label_items['pr_dhl_importer_taxid']) ? $dhl_label_items['pr_dhl_importer_taxid'] : '',
+			'custom_attributes'	=> array($is_disabled => $is_disabled),
+			'class'				=> '' // adds JS to validate input is in price format
+		) );
+		
         if( $this->is_crossborder_shipment( $order_id ) ) {
             $dhl_obj = PR_DHL()->get_dhl_factory();
 
@@ -691,7 +710,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 * Function for saving tracking items
 	 */
 	public function get_additional_meta_ids() {
-		return array( 'pr_dhl_nature_type', 'pr_dhl_packet_return' );
+		return array( 'pr_dhl_nature_type', 'pr_dhl_packet_return', 'pr_dhl_importer_taxid', 'pr_dhl_sender_taxid' );
 	}
 
 	/**
@@ -752,6 +771,14 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
 		if ($dhl_label_items['pr_dhl_nature_type']) {
             $args['order_details']['nature_type'] = $dhl_label_items['pr_dhl_nature_type'];
+		}
+
+		if ( isset( $dhl_label_items['pr_dhl_importer_taxid'] ) ) {
+            $args['order_details']['importer_taxid'] = $dhl_label_items['pr_dhl_importer_taxid'];
+		}
+
+		if ( isset( $dhl_label_items['pr_dhl_sender_taxid'] ) ) {
+            $args['order_details']['sender_taxid'] = $dhl_label_items['pr_dhl_sender_taxid'];
 		}
 		
 		$dhl_product 	= $dhl_label_items['pr_dhl_product'];
