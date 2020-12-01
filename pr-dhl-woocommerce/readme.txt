@@ -89,6 +89,8 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 * DHL Paket: Fix zip code bug being required e.g. Hong Kong
 * DHL Paket: Add validation on shipper reference field when logo setting is checked
 * DHL Paket: Flush rewrite rules to avoid manually doing it
+* Deutsche Post: Add Sender and Importer customs reference fields
+* Deutsche Post: Round grams to nearest integer 
 
 = 2.3 =
 * Deutsche Post: Add "Paket Priority"
