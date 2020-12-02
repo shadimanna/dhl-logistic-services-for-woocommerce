@@ -642,9 +642,11 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 	protected function get_tracking_link( $order_id ) {
 		$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
-		if( empty( $tracking_number = $label_tracking_info['tracking_number'] ) ) {
+		if( empty( $label_tracking_info['tracking_number'] ) ) {
 			return '';
 		}
+		
+		$tracking_number = $label_tracking_info['tracking_number'];
 
 		$tracking_link_str = '';
 		if (is_array( $tracking_number ) ) {
