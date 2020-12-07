@@ -149,7 +149,11 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 	}
 	
 	protected function get_tracking_url() {
-		return PR_DHL_ECS_ASIA_TRACKING_URL;
+		$dhl_obj 	= PR_DHL()->get_dhl_factory();
+		$is_sandbox = $dhl_obj->get_setting( 'dhl_sandbox' );
+		$is_sandbox = filter_var($is_sandbox, FILTER_VALIDATE_BOOLEAN);
+
+		return ( $is_sandbox ) ? PR_DHL_ECS_ASIA_SANDBOX_TRACKING_URL : PR_DHL_ECS_ASIA_TRACKING_URL;
 	}
 
 	protected function get_package_description( $order_id ) {
