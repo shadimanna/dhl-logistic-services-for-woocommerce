@@ -587,6 +587,11 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 				}
 
 				if( isset( $closeout['file_info']->url ) ){
+
+					foreach( $order_ids as $order_id ){
+						// Add post meta to identify if added to handover or not
+						update_post_meta( $order_id, '_pr_shipment_dhl_handover_note', 1 );
+					}
 					
 					$label_url 			= $this->generate_download_url( '/' . self::DHL_DOWNLOAD_CLOSE_OUT_ENDPOINT . '/' . $closeout['handover_id'] );
 
