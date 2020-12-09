@@ -136,7 +136,7 @@ class PR_DHL_WC {
 		$this->define( 'PR_DHL_ECOMM_TRACKING_URL', 'https://webtrack.dhlglobalmail.com/?trackingnumber=' );
 
 		// DHL eCS Asia tracking link. Sandbox => https://preprod2.dhlecommerce.dhl.com/track/?ref=
-		$this->define( 'PR_DHL_ECS_ASIA_SANDBOX_TRACKING_URL', 'https://preprod2.dhlecommerce.dhl.com/track/?ref=' );
+		$this->define( 'PR_DHL_ECS_ASIA_SANDBOX_TRACKING_URL', 'https://sandbox.dhlecommerce.dhl.com/track/?locale=en&ref=' );
 		$this->define( 'PR_DHL_ECS_ASIA_TRACKING_URL', 'https://ecommerceportal.dhl.com/track/?ref=' );
 
 		// DHL Paket
