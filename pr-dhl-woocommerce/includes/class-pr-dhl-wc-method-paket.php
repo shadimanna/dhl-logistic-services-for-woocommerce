@@ -41,12 +41,24 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		
 	}
 
-	public static function sandbox_info(){
-		return array(
-			'username' 	=> '2222222222_01',
-			'pass' 		=> 'pass',
-			'account_no'=> '2222222222',
-		);
+	public static function get_api_credential( $shipping_dhl_settings ){
+
+		if( isset( $shipping_dhl_settings['dhl_sandbox'] ) && $shipping_dhl_settings['dhl_sandbox'] == '1' ){
+			
+			return array(
+				'api_user' 	=> $shipping_dhl_settings['dhl_api_sandbox_user'],
+				'api_pwd' 	=> $shipping_dhl_settings['dhl_api_sandbox_pwd'],
+			);
+
+		}else{
+
+			return array(
+				'api_user' 	=> $shipping_dhl_settings['dhl_api_user'],
+				'api_pwd' 	=> $shipping_dhl_settings['dhl_api_pwd'],
+			);
+
+		}
+		
 	}
 
 	/**

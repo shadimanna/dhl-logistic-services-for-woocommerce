@@ -298,7 +298,6 @@ class PR_DHL_WC {
 					array( 'jquery' ),
 					PR_DHL_VERSION
 				);
-				wp_localize_script( 'wc-shipment-dhl-paket-settings-js', 'dhl_paket_settings_obj', PR_DHL_WC_Method_Paket::sandbox_info() );
 			}
 			
             wp_enqueue_script(
@@ -486,8 +485,9 @@ class PR_DHL_WC {
 			$dhl_obj = $this->get_dhl_factory();
 
 			if( $dhl_obj->is_dhl_paket() ) {
-				$api_user = $shipping_dhl_settings['dhl_api_user']; 
-				$api_pwd = $shipping_dhl_settings['dhl_api_pwd'];
+				$creds 	= PR_DHL_WC_Method_Paket::get_api_credential( $shipping_dhl_settings );
+				$api_user = $creds['api_user']; 
+				$api_pwd = $creds['api_pwd'];
 			} elseif( $dhl_obj->is_dhl_ecs_asia() ) {
 				list($api_user, $api_pwd) = $dhl_obj->get_api_creds();
 			} elseif( $dhl_obj->is_dhl_ecomm() ) {
