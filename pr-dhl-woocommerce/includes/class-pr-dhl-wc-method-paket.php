@@ -43,7 +43,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 	public static function get_api_credential( $shipping_dhl_settings ){
 
-		if( isset( $shipping_dhl_settings['dhl_sandbox'] ) && $shipping_dhl_settings['dhl_sandbox'] == '1' ){
+		if( isset( $shipping_dhl_settings['dhl_sandbox'] ) && $shipping_dhl_settings['dhl_sandbox'] == 'yes' ){
 			
 			return array(
 				'api_user' 	=> $shipping_dhl_settings['dhl_api_sandbox_user'],
