@@ -6,8 +6,29 @@ jQuery( document ).ready(function(){
 	sandbox_checkbox.on('click', function(evt){
 		DHLSandboxEnabled( jQuery( this ) );
 	});
-	
+
+	var logo_checkbox = jQuery('#woocommerce_pr_dhl_paket_dhl_add_logo');
+	DHLLogoEnabled( logo_checkbox );
+
+	logo_checkbox.on('click', function(evt){
+		DHLLogoEnabled( jQuery(this) );
+	});
 });
+
+function DHLLogoEnabled( logo_checkbox ){
+	var shipper_reference 		= jQuery('#woocommerce_pr_dhl_paket_dhl_shipper_reference');
+	var tr_shipper_ref 			= shipper_reference.closest('tr');
+
+	if( logo_checkbox.prop('checked') == true ){
+
+		tr_shipper_ref.show();
+
+	}else{
+
+		tr_shipper_ref.hide();
+
+	}
+}
 
 function DHLSandboxEnabled( sandbox_checkbox ){
 	var api_settings_username 	= jQuery('#woocommerce_pr_dhl_paket_dhl_api_user');
