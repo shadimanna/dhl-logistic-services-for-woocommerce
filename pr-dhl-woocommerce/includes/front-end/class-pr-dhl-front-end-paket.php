@@ -533,9 +533,8 @@ class PR_DHL_Front_End_Paket {
 
 		try {
 			$dhl_obj = PR_DHL()->get_dhl_factory();
-			$creds 	= PR_DHL_WC_Method_Paket::get_api_credential( $this->shipping_dhl_settings );
-			$args['dhl_settings']['api_user'] = $creds['api_user'];
-			$args['dhl_settings']['api_pwd'] = $creds['api_pwd'];
+			$args['dhl_settings']['api_user'] = $this->shipping_dhl_settings['dhl_api_user'];
+			$args['dhl_settings']['api_pwd'] = $this->shipping_dhl_settings['dhl_api_pwd'];
 			$args['shipping_address']['address'] = $parcelfinder_address;
 			$args['shipping_address']['postcode'] = $parcelfinder_postcode;
 			$args['shipping_address']['city'] = $parcelfinder_city;

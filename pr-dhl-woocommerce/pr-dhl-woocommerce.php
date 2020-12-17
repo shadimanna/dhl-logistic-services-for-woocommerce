@@ -298,6 +298,7 @@ class PR_DHL_WC {
 					array( 'jquery' ),
 					PR_DHL_VERSION
 				);
+				wp_localize_script( 'wc-shipment-dhl-paket-settings-js', 'dhl_paket_settings_obj', PR_DHL_WC_Method_Paket::sandbox_info() );
 			}
 			
             wp_enqueue_script(
@@ -416,9 +417,18 @@ class PR_DHL_WC {
 			
 			if( $dhl_obj->is_dhl_paket() ) {
 
-				if ( defined( 'PR_DHL_SANDBOX' ) && PR_DHL_SANDBOX ) {
-					$api_cred['user'] = PR_DHL_CIG_USR_QA;
-					$api_cred['password'] = PR_DHL_CIG_PWD_QA;
+				$shipping_dhl_settings 	= $this->get_shipping_dhl_settings();
+				$dhl_sandbox 			= isset( $shipping_dhl_settings['dhl_sandbox'] ) ? $shipping_dhl_settings['dhl_sandbox'] : '';
+				if ( $dhl_sandbox == 'yes' || ( defined( 'PR_DHL_SANDBOX' ) && PR_DHL_SANDBOX ) ) {
+					
+					$user = defined( 'PR_DHL_CIG_USR_QA' )? PR_DHL_CIG_USR_QA : '';
+					$user = !empty( $shipping_dhl_settings['dhl_api_sandbox_user'] )? $shipping_dhl_settings['dhl_api_sandbox_user'] : $user;
+					
+					$pass = defined( 'PR_DHL_CIG_PWD_QA' )? PR_DHL_CIG_PWD_QA : '';
+					$pass = !empty( $shipping_dhl_settings['dhl_api_sandbox_pwd'] )? $shipping_dhl_settings['dhl_api_sandbox_pwd'] : $pass;
+
+					$api_cred['user'] = $user;
+					$api_cred['password'] = $pass;
 					$api_cred['auth_url'] = PR_DHL_CIG_AUTH_QA;
 				} else {
 					$api_cred['user'] = PR_DHL_CIG_USR;
@@ -485,9 +495,8 @@ class PR_DHL_WC {
 			$dhl_obj = $this->get_dhl_factory();
 
 			if( $dhl_obj->is_dhl_paket() ) {
-				$creds 	= PR_DHL_WC_Method_Paket::get_api_credential( $shipping_dhl_settings );
-				$api_user = $creds['api_user']; 
-				$api_pwd = $creds['api_pwd'];
+				$api_user = $shipping_dhl_settings['dhl_api_user']; 
+				$api_pwd = $shipping_dhl_settings['dhl_api_pwd'];
 			} elseif( $dhl_obj->is_dhl_ecs_asia() ) {
 				list($api_user, $api_pwd) = $dhl_obj->get_api_creds();
 			} elseif( $dhl_obj->is_dhl_ecomm() ) {

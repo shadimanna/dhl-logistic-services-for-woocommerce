@@ -512,11 +512,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				}
 			}
 		}
-
-		if( isset( $this->shipping_dhl_settings[ 'dhl_sandbox' ] ) && $this->shipping_dhl_settings[ 'dhl_sandbox' ] == 'yes' ){
-			$args['dhl_settings'][ 'api_user' ] = $args['dhl_settings'][ 'api_sandbox_user' ];
-			$args['dhl_settings'][ 'api_pwd' ] = $args['dhl_settings'][ 'api_sandbox_pwd' ];
-		}
 		
 		$args['dhl_settings'][ 'shipper_country' ] = PR_DHL()->get_base_country();
 		$args['dhl_settings'][ 'return_country' ] = PR_DHL()->get_base_country();
@@ -530,9 +525,8 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$args = $this->get_dhl_label_tracking( $order_id );
 
 		// $this->shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
-		$creds 	= PR_DHL_WC_Method_Paket::get_api_credential( $this->shipping_dhl_settings );
-		$args['api_user'] 	= $creds['api_user'];
-		$args['api_pwd'] 	= $creds['api_pwd'];
+		$args['api_user'] 	= $this->shipping_dhl_settings['dhl_api_user'];
+		$args['api_pwd'] 	= $this->shipping_dhl_settings['dhl_api_pwd'];
 
 		// If there are multiple tracking numbers, get the first one to search for the string in order notes
 		if (is_array( $args['tracking_number'] ) ) {
