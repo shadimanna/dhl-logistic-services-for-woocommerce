@@ -65,6 +65,12 @@ abstract class PR_DHL_WC_Order {
 
 		add_action( 'init', array( $this, 'add_download_label_endpoint' ) );
 		add_action( 'parse_query', array( $this, 'process_download_label' ) );
+
+		// add {tracking_note} placeholder
+		add_filter( 'woocommerce_email_format_string' , array( $this, 'add_tracking_note_email_placeholder' ), 10, 2 );
+		
+		add_shortcode( 'pr_dhl_tracking_note', array( $this, 'tracking_note_shortcode') );
+		add_shortcode( 'pr_dhl_tracking_link', array( $this, 'tracking_link_shortcode') );
 	}
 
 	/**
@@ -186,7 +192,7 @@ abstract class PR_DHL_WC_Order {
 				echo $delete_label;
 			}
 			
-			wp_enqueue_script( 'wc-shipment-dhl-label-js', PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl.js', array(), PR_DHL_VERSION );
+			wp_enqueue_script( 'wc-shipment-dhl-label-js', PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl.js', array('jquery'), PR_DHL_VERSION );
 			wp_localize_script( 'wc-shipment-dhl-label-js', 'dhl_label_data', $dhl_label_data );
 			
 		} else {
@@ -209,8 +215,6 @@ abstract class PR_DHL_WC_Order {
 		$meta_box_ids = array( 'pr_dhl_product', 'pr_dhl_weight');
 
 		$additional_meta_box_ids = $this->get_additional_meta_ids( );
-
-		// $meta_box_ids += $additional_meta_box_ids;
 		$meta_box_ids = array_merge( $meta_box_ids, $additional_meta_box_ids );
 		foreach ($meta_box_ids as $key => $value) {
 			// Save value if it exists
@@ -364,6 +368,53 @@ abstract class PR_DHL_WC_Order {
 		} else {
 			return 'customer';
 		}
+	}
+
+	public function add_tracking_note_email_placeholder( $string, $email ) {
+
+		$placeholder = '{pr_dhl_tracking_note}'; // The corresponding placeholder to be used
+		
+    	$order = $email->object; // Get the instance of the WC_Order Object
+		
+		// Ensure the object is an order and not another type
+		if ( ! ( $order instanceof WC_Order ) ) {
+    		return $string;
+    	}
+
+		$tracking_note = $this->get_tracking_note( $order->get_id() );
+
+    	// Return the clean replacement tracking_note string for "{tracking_note}" placeholder
+    	return str_replace( $placeholder, $tracking_note, $string );
+	}
+
+	public function tracking_note_shortcode( $atts, $content ) {
+
+		extract(shortcode_atts(array(
+			'order_id' => ''
+		), $atts));
+
+		if( $order = wc_get_order( $order_id ) ){
+
+			return $this->get_tracking_note( $order->get_id() );
+
+		}
+
+    	return '';
+	}
+
+	public function tracking_link_shortcode( $atts, $content ) {
+
+		extract(shortcode_atts(array(
+			'order_id' => ''
+		), $atts));
+
+		if( $order = wc_get_order( $order_id ) ){
+
+			return $this->get_tracking_link( $order->get_id() );
+
+		}
+
+    	return '';
 	}
 
 	/**
@@ -558,6 +609,8 @@ abstract class PR_DHL_WC_Order {
 				$args['order_details']['weightUom'] = $weight_units;
 				break;
 		}
+
+		$args['order_details']['dimUom'] = get_option( 'woocommerce_dimension_unit' );
 
 		if( $this->is_cod_payment_method( $order_id ) ) {
 			$args['order_details']['cod_value']	= $order->get_total();			
@@ -1136,6 +1189,12 @@ abstract class PR_DHL_WC_Order {
 	 */
 	public function add_download_label_endpoint() {
 		add_rewrite_endpoint(  self::DHL_DOWNLOAD_ENDPOINT, EP_ROOT );
+
+		//Flush permalink if it is not flushed yet.
+		if( !get_option( 'dhl_permalinks_flushed') ){
+			flush_rewrite_rules();
+			update_option('dhl_permalinks_flushed', 1);
+		}
 	}
 
 	/**
@@ -1146,6 +1205,10 @@ abstract class PR_DHL_WC_Order {
 	public function process_download_label() {
 	    global $wp_query;
 
+	    if ( ! current_user_can( 'edit_shop_orders' ) ) {
+  			return;
+  		}
+  		
 		if ( ! isset($wp_query->query_vars[ self::DHL_DOWNLOAD_ENDPOINT ] ) ) {
 			return;
 		}

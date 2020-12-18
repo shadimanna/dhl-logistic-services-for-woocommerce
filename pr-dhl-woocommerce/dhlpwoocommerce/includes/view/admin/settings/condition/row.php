@@ -15,7 +15,7 @@
         <?php _e('exceeds', 'dhlpwc') ?>
     </td>
     <td>
-        <input class="dhlpwc-global-shipping-setting dhlpwc-condition-field dhlpwc-condition-input-data"/>
+        <input class="wc_input_price dhlpwc-global-shipping-setting dhlpwc-condition-field dhlpwc-condition-input-data" type="text">
     </td>
     <td>
         <?php _e('then', 'dhlpwc') ?>
@@ -28,7 +28,7 @@
         </select>
     </td>
     <td>
-        <input class="dhlpwc-global-shipping-setting dhlpwc-condition-field dhlpwc-condition-input-action-data"/>
+        <input class="wc_input_price dhlpwc-global-shipping-setting dhlpwc-condition-field dhlpwc-condition-input-action-data" type="text">
     </td>
     <td>
         <button class="dhlpwc-global-shipping-setting dhlpwc-condition-remove-button"><span class="dashicons dashicons-no-alt"></span></button>

@@ -341,8 +341,8 @@ input#woocommerce_dhlpwc_search_printers.dhlpwc_button_fail {
 
 .woocommerce table.form-table .dhlpwc-currency-pos-right > input.dhlpwc-price-input,
 .woocommerce table.form-table .dhlpwc-currency-pos-right_space > input.dhlpwc-price-input,
-.woocommerce table.form-table .dhlpwc-weight-unit-wrap > input.dhlpwc-weight-input,
-.wc-modal-shipping-method-settings form .form-table tr td .dhlpwc-currency-pos-right > input.dhlpwc-price-input
+.woocommerce table.form-table .dhlpwc-weight-unit-wrap > input.dhlpwc-weight-input[type="text"],
+.wc-modal-shipping-method-settings form .form-table tr td .dhlpwc-currency-pos-right > input.dhlpwc-price-input,
 .wc-modal-shipping-method-settings form .form-table tr td .dhlpwc-currency-pos-right_space > input.dhlpwc-price-input,
 .wc-modal-shipping-method-settings form .form-table tr td .dhlpwc-weight-unit-wrap > input.dhlpwc-weight-input {
     padding-left: 10px;

@@ -5,9 +5,9 @@
  * Description: WooCommerce integration for DHL eCommerce, DHL Paket, DHL Parcel Europe (Benelux and Iberia) and Deutsche Post International
  * Author: DHL
  * Author URI: http://dhl.com/woocommerce
- * Version: 2.1.0
- * WC requires at least: 2.6.14
- * WC tested up to: 4.0
+ * Version: 2.4.2
+ * WC requires at least: 3.0
+ * WC tested up to: 4.5
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "2.1.0";
+	private $version = "2.4.2";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -180,7 +180,7 @@ class PR_DHL_WC {
 			// Load plugin except for DHL Parcel countries
 			$dhl_parcel_countries = array('NL', 'BE', 'LU');
 
-			if (!in_array($this->base_country_code, $dhl_parcel_countries)) {
+			if (!in_array($this->base_country_code, $dhl_parcel_countries) || apply_filters('pr_shipping_dhl_bypass_load_plugin', false)) {
 				$this->define_constants();
 				$this->includes();
 				$this->init_hooks();
@@ -256,6 +256,8 @@ class PR_DHL_WC {
 					$this->shipping_dhl_product = new PR_DHL_WC_Product_eCS_Asia();
 				} elseif( $dhl_obj->is_dhl_ecomm() ) {
 					$this->shipping_dhl_product = new PR_DHL_WC_Product_Ecomm();
+				}elseif( $dhl_obj->is_dhl_deutsche_post() ){
+					$this->shipping_dhl_product = new PR_DHL_WC_Product_Deutsche_Post();
 				}
 				
 			} catch (Exception $e) {
@@ -289,6 +291,18 @@ class PR_DHL_WC {
                 'test_con_nonce' => wp_create_nonce( 'pr-dhl-test-con' ),
             );
 
+            /*
+			if( isset( $_GET['section'] ) && $_GET['section'] == 'pr_dhl_paket' ){
+
+				wp_enqueue_script(
+					'wc-shipment-dhl-paket-settings-js',
+					PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-paket-settings.js',
+					array( 'jquery' ),
+					PR_DHL_VERSION
+				);
+
+			}*/
+			
             wp_enqueue_script(
                 'wc-shipment-dhl-testcon-js',
                 PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-test-connection.js',
@@ -577,12 +591,12 @@ class PR_DHL_WC {
 
 		$exclusion_work_day = array( );
 		$work_days = array(
-		            'Mon' => __('mon', 'pr-shipping-dhl'), 
-		            'Tue' => __('tue', 'pr-shipping-dhl'), 
-		            'Wed' => __('wed', 'pr-shipping-dhl'),
-		            'Thu' => __('thu', 'pr-shipping-dhl'),
-		            'Fri' => __('fri', 'pr-shipping-dhl'),
-		            'Sat' => __('sat', 'pr-shipping-dhl') );
+		            'Mon' => 'mon', 
+		            'Tue' => 'tue',
+		            'Wed' => 'wed',
+		            'Thu' => 'thu',
+		            'Fri' => 'fri',
+		            'Sat' => 'sat');
 
 		foreach ($work_days as $key => $value) {
 			$exclusion_day = 'dhl_preferred_exclusion_' . $value;
@@ -773,6 +787,15 @@ class PR_DHL_WC {
 }
 
 endif;
+
+/**
+ * Activation hook.
+ */
+function pr_dhl_activate() {
+	// Flag for permalink flushed
+	update_option('dhl_permalinks_flushed', 0);
+}
+register_activation_hook( __FILE__, 'pr_dhl_activate' );
 
 function PR_DHL() {
 	return PR_DHL_WC::instance();

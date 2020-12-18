@@ -4,10 +4,10 @@ Donate link:
 Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL Parcel Benelux, DHL Parcel Luxembourg, DHL Paket Germany, WooCommerce, Woocom, Woo Commerce, Shipping, shiping, label creation, label printing, shipping rates, DHL Paket
 Requires at least: 4.1
 Requires PHP: 5.6
-Tested up to: 5.4
-Stable tag: 2.1.0
-WC requires at least: 2.6.14
-WC tested up to: 4.2
+Tested up to: 5.6
+Stable tag: 2.4.2
+WC requires at least: 3.0
+WC tested up to: 4.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -80,6 +80,84 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+
+= 2.4.2 =
+* DHL Paket: Fix 'streetName' soap error for Packstation address
+
+= 2.4.1 =
+* DHL Paket: Fix array illegal offset issue i.e. 'tracking_number' 
+
+= 2.4 =
+* DHL Paket: Add support for multiple packages per order
+* DHL Paket: Add settings for sending email and phone to DHL
+* DHL Paket: Add invoice field to be added on customs forms for cross border packages
+* DHL Paket: Add product bulk edit for HS code & Manufacturer
+* DHL Paket: Fix zip code bug being required e.g. Hong Kong
+* DHL Paket: Add validation on shipper reference field when logo setting is checked
+* DHL Paket: Flush rewrite rules to avoid manually doing it
+* Deutsche Post: Add Sender and Importer customs reference fields
+* Deutsche Post: Round grams to nearest integer 
+
+= 2.3 =
+* Deutsche Post: Add "Paket Priority"
+* Deutsche Post: Add AWB copy count option
+* Deutsche Post: Add product options; country of origin, HS code and customs description
+* Deutsche Post: Fixed non-EU labels merging with EU labels
+* Deutsche Post: Fixed “contentpiecevalue” to include quantity
+ 
+= 2.2.10 =
+* DHL Parcel: Fixed an issue where the DPI module was not loading on certain pages
+ 
+= 2.2.9 =
+* DHL Parcel: Fixed an issue with certain settings not being able to save with certain themes
+
+= 2.2.8 =
+* DHL: Fix registration email issue, by confirming is WC_Order
+* DHL Paket: Fix wrong key "dhl_default_identcheck_dob"
+
+= 2.2.7 =
+* DHL Paket: Fix exclusion of transfer days issue in German language
+
+= 2.2.6 =
+* DHL Paket: Added {pr_dhl_tracking_note} replace placeholder for WC emails. This adds the tracking note within an email. 
+* DHL Paket: Added [pr_dhl_tracking_note order_id="12345"] shortcode to display tracking note info for a given order id.
+* DHL Paket: Added [pr_dhl_tracking_link order_id="12345"] shortcode to display tracking link for a given order id.
+* DHL Paket: Add spacing for tracking note display.
+* DHL Paket: Ensure only shop managers can download label.
+* DHL Paket: Modify label format names
+* DHL Paket: Default label format to 910-300-700 (Laser printer 105 x 205 mm)
+
+= 2.2.5 =
+* DHL Parcel: Added a fallback notice for switching between DHL Parcel and Deutsche Post International
+ 
+= 2.2.4 =
+* DHL Parcel: Improved mailpost bulk processing
+
+= 2.2.3 =
+* DHL Parcel: Updated Mopinion code to include language setting
+* DHL Parcel: Removed shortcode for tracking information to prevent errors
+
+= 2.2.2 =
+* DHL Parcel: Added a shortcode for tracking information
+* DHL Parcel: Added additional meta data of preferred delivery date for third party exports
+* DHL Parcel: Improved PDFMerger loading
+* DHL Parcel: Fixed an issue with multiple warnings showing in admin
+* DHL Parcel: Updated feedback system from Usabilla to Mopinion
+
+= 2.2.1 =
+* DHL Parcel: Fixed an issue with warnings when loading settings
+
+= 2.2.0 =
+* DHL Parcel: Enabled Austria as shipping country
+* DHL Parcel: Added a setting to show the selected ServicePoint information in e-mails
+* DHL Parcel: Added requirements and visual indicators to enable Same Day delivery so it works without enabling delivery times
+* DHL Parcel: Added additional meta data for third party exports
+* DHL Parcel: Added a dynamic notification to switch between Deutsche Post International and DHL Parcel
+* DHL Parcel: Updated address parsing to support addresses starting with numbers
+* DHL Parcel: Fixed an issue where limiting DHL methods didn't work if none were selected
+* DHL Parcel: Fixed correct printer responses being sent as error reports
+* DHL Parcel: Fixed an issue with non-default price decimals not being handled correctly
+* DHL Parcel: Removed sending error reports when credentials not configured and still empty
 
 = 2.1.0 =
 * DHL Paket: Add "Warenpost" DHL product

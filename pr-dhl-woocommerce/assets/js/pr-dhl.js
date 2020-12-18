@@ -24,6 +24,98 @@ jQuery( function( $ ) {
 
 			$( '#woocommerce-shipment-dhl-label' )
 				.on( 'change', '#pr_dhl_product', this.validate_product_return );
+		
+			$( '#woocommerce-shipment-dhl-label' )
+				.on( 'change', 'select#pr_dhl_total_packages', this.process_package_action );
+
+			$( '#woocommerce-shipment-dhl-label' )
+				.on( 'change', '#pr_dhl_multi_packages_enabled', this.show_hide_packages );
+			wc_shipment_dhl_label_items.show_hide_packages();
+		},
+
+		// Extract the entries for the given package attribute
+		get_package_array: function($form, attrib) {
+			var $element = $form.find('input[name="pr_dhl_packages_'+attrib+'[]"]');
+			var result = [];
+
+			if ('undefined' !== typeof $element && $element) {
+				result = $element.map(function() {
+					return $(this).val();
+				}).get();
+			}
+
+			return result;
+		},
+
+		// Extract all user inputted packages. Retrieving all available
+		// package info or attributes.
+		get_packages_for_saving: function($form, required) {
+			var total = $form.find('select#pr_dhl_total_packages').val();
+			var packages = [],
+				error = false,
+				invalid_number = false;
+
+			var numbers = this.get_package_array($form, 'number');
+			var weights = this.get_package_array($form, 'weight');
+			var lengths = this.get_package_array($form, 'length');
+			var widths = this.get_package_array($form, 'width');
+			var heights = this.get_package_array($form, 'height');
+
+			for (var i=0; i<parseInt(total); i++) {
+				if (required) {
+					if (!numbers[i].length || !weights[i].length || !lengths[i].length || !widths[i].length || !heights[i].length) {
+						error = true;
+						break;
+					} else {
+						if (!$.isNumeric(weights[i]) || !$.isNumeric(lengths[i]) || !$.isNumeric(widths[i]) || !$.isNumeric(heights[i])) {
+							invalid_number = true;
+							break;
+						}
+					}
+				}
+
+				packages.push({
+					number: numbers[i], weight: weights[i], length: lengths[i], width: widths[i], height: heights[i]
+				});
+			}
+
+			if (invalid_number) {
+				return 'invalid_number';
+			}
+
+			return (!error) ? packages : false;
+		},
+
+		// Process the cloning (adding) and removing of package entries based
+		// on the total packages selected by the user.
+		process_package_action: function() {
+			var old_value = $(this).data('current');
+			var value = $(this).val();
+			var $container = $('.total_packages_container');
+
+			if (parseInt(old_value) < parseInt(value)) {
+				var new_value = parseInt(value) - parseInt(old_value);
+				var $clone, $package_number, new_number;
+
+				for (var i=0; i<new_value; i++) {
+					$clone = $container.find('.package_item:last').clone();
+					$package_number = parseInt($clone.find('.package_number > input').data('sequence'));
+					new_number = parseInt($package_number)+1;
+
+					// We'll update both the cache and DOM to make sure that we get
+					// the expected behaviour when pulling the sequence number for processing.
+					$clone.find('.package_number > input').attr('data-sequence', new_number); // this updates the DOM
+					$clone.find('.package_number > input').data('sequence', new_number); // this updates the jquery cache
+
+					$clone.find('.package_number > input').val(new_number);
+					$clone.find('.package_item_field.clearable > input').val('');
+				$container.append($clone);
+				}
+			} else {
+				$container.find('.package_item').slice(value).remove();
+			}
+			
+			$(this).data('current', value);
 		},
 	
 		validate_product_return: function () {
@@ -98,18 +190,34 @@ jQuery( function( $ ) {
 			});
 		},
 
-		save_dhl_label: function () {
-			// Remove any errors from last attempt to create label
-			$( '#shipment-dhl-label-form .wc_dhl_error' ).remove();
+		show_hide_packages: function () {
+			var is_checked = $( '#pr_dhl_multi_packages_enabled' ).prop('checked');
 
-			$( '#shipment-dhl-label-form' ).block( {
-				message: null,
-				overlayCSS: {
-					background: '#fff',
-					opacity: 0.6
-				}
-			} );
-			
+			if ( is_checked ) {
+	    		$('#pr_dhl_weight').prop('disabled', 'disabled');
+			} else {
+				$('#pr_dhl_weight').removeAttr('disabled');
+	    	}
+
+			$( '#shipment-dhl-label-form' ).children().each( function () {
+				// If class exists, and is not 'pr_dhl_multi_packages_enabled' but is 'pr_dhl_total_packages' or 'total_packages_container' fields
+			    if( ( $(this).attr("class") ) &&
+			    	( $(this).attr("class").indexOf('pr_dhl_multi_packages_enabled') == -1 ) &&
+			    	( ( $(this).attr("class").indexOf('pr_dhl_total_packages') >= 0 ) || 
+			    	( $(this).attr("class").indexOf('total_packages_container') >= 0 ) )			    	
+			    ) {
+			    	
+			    	if ( is_checked ) {
+			    		$(this).show();
+			    	} else {
+			    		$(this).hide();
+			    	}
+			    }
+			});
+		},
+
+		save_dhl_label: function () {
+					
 			// loop through inputs within id 'shipment-dhl-label-form'
 			
 			var data = {
@@ -117,89 +225,132 @@ jQuery( function( $ ) {
 				order_id:                 woocommerce_admin_meta_boxes.post_id,
 			};
 			
-			// var data = new Array();
-			$(function(){ 
-				$('#shipment-dhl-label-form').each(function(i, div) {
+			// In case an error has occured.
+			var abort = false;
+			var $form = $('#shipment-dhl-label-form'); 
+			$form.each(function(i, div) {
 
-				    $(div).find('input').each(function(j, element){
-				        if( $(element).attr('type') == 'checkbox' ) {
-				        	if ( $(element).prop('checked') ) {
-					        	data[ $(element).attr('name') ] = 'yes';
-				        	} else {
-					        	data[ $(element).attr('name') ] = 'no';
-				        	}
-				        } else {
-				        	data[ $(element).attr('name') ] = $(element).val();
-				        }
-				    });
+			    $(div).find('input').each(function(j, element){
+			        if( $(element).attr('type') == 'checkbox' ) {
+			        	if ( $(element).prop('checked') ) {
+				        	data[ $(element).attr('name') ] = 'yes';
+			        	} else {
+				        	data[ $(element).attr('name') ] = 'no';
+			        	}
+			        } else {
+			        	var eName = $(element).attr('name');
+			        	// Do NOT add array inputs here!
+			        	if (eName.indexOf("[]") == -1) {
+			        		data[ $(element).attr('name') ] = $(element).val();
+			        	}
+			        }
+			    });
 
-				    $(div).find('select').each(function(j, element){
-			        	data[ $(element).attr('name') ] = $(element).val();
-				    });
+			    $(div).find('select').each(function(j, element){
+		        	data[ $(element).attr('name') ] = $(element).val();
+			    });
 
-				    $(div).find('textarea').each(function(j, element){
-			        	data[ $(element).attr('name') ] = $(element).val();
-				    });
-		    	});
-		    });
-			
-			$.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
-				$( '#shipment-dhl-label-form' ).unblock();
-				if ( response.error ) {
-					$( '#shipment-dhl-label-form' ).append('<p class="wc_dhl_error">' + response.error + '</p>');
+			    $(div).find('textarea').each(function(j, element){
+		        	data[ $(element).attr('name') ] = $(element).val();
+			    });
+	    	});
+
+	    	// Since, we're not posting the form directly, rather we're using jquery to pull
+			// the data individually, therefore, we're implementing a personalize API to extract
+			// our packages and add it to the "pr_dhl_packages" field for saving.
+			if( $( '#pr_dhl_multi_packages_enabled' ).prop('checked') ) {
+
+				var packages = wc_shipment_dhl_label_items.get_packages_for_saving($form, true);
+				if (!packages) {
+					alert('It appears that one or more of your packages contains empty information. Please make sure you fill the package number, weight, length, width and height of the package before submitting.');
+					abort = true;
 				} else {
-					// Disable all form items
-					$(function(){ 
-						$('#shipment-dhl-label-form').each(function(i, div) {
-
-						    $(div).find('input').each(function(j, element){
-						       $(element).prop('disabled', 'disabled');
-						    });
-
-						    $(div).find('select').each(function(j, element){
-						        $(element).prop('disabled', 'disabled');
-						    });
-
-						    $(div).find('textarea').each(function(j, element){
-						        $(element).prop('disabled','disabled');
-						    });
-				    	});
-				    });
-
-					$( '#dhl-label-button').remove();
-					$( '#shipment-dhl-label-form' ).append(dhl_label_data.print_button);
-					$( '#dhl-label-print').attr("href", response.label_url ); // update new url
-					$( '#shipment-dhl-label-form' ).append(dhl_label_data.delete_label);
-
-					if( response.tracking_note ) {
-
-						$( '#woocommerce-order-notes' ).block({
-							message: null,
-							overlayCSS: {
-								background: '#fff',
-								opacity: 0.6
-							}
-						});
-						
-						var data = {
-							action:                   'woocommerce_add_order_note',
-							post_id:                  woocommerce_admin_meta_boxes.post_id,
-							note_type: 				  response.tracking_note_type,
-							note:					  response.tracking_note,
-							security:                 woocommerce_admin_meta_boxes.add_order_note_nonce
-						};
-
-						$.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response_note ) {
-							// alert(response_note);
-							$( 'ul.order_notes' ).prepend( response_note );
-							$( '#woocommerce-order-notes' ).unblock();
-							$( '#add_order_note' ).val( '' );
-						});							
-					}
-
-					$( document ).trigger( 'pr_dhl_saved_label' );
+					if (packages == 'invalid_number') {
+						alert('One or more of your entries contains invalid values. Only numeric values are allowed in the package line items. Please kindly check your entries and try again.');
+						abort = true;
+					} else {
+					
+						if (packages.length) {
+							data [ 'pr_dhl_packages_number' ] = wc_shipment_dhl_label_items.get_package_array($form, 'number');
+							data [ 'pr_dhl_packages_weight' ] = wc_shipment_dhl_label_items.get_package_array($form, 'weight');
+							data [ 'pr_dhl_packages_length' ]  = wc_shipment_dhl_label_items.get_package_array($form, 'length');
+							data [ 'pr_dhl_packages_width' ]  = wc_shipment_dhl_label_items.get_package_array($form, 'width');
+							data [ 'pr_dhl_packages_height' ]  = wc_shipment_dhl_label_items.get_package_array($form, 'height');
+						}
+					}		
 				}
-			});		
+			}
+			
+			if (!abort) {
+				// Remove any errors from last attempt to create label
+				$( '#shipment-dhl-label-form .wc_dhl_error' ).remove();
+
+				$( '#shipment-dhl-label-form' ).block( {
+					message: null,
+					overlayCSS: {
+						background: '#fff',
+						opacity: 0.6
+					}
+				} );
+
+				$.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
+					$( '#shipment-dhl-label-form' ).unblock();
+					if ( response.error ) {
+						$( '#shipment-dhl-label-form' ).append('<p class="wc_dhl_error">' + response.error + '</p>');
+					} else {
+						// Disable all form items
+						$(function(){ 
+							$('#shipment-dhl-label-form').each(function(i, div) {
+
+							    $(div).find('input').each(function(j, element){
+							       $(element).prop('disabled', 'disabled');
+							    });
+
+							    $(div).find('select').each(function(j, element){
+							        $(element).prop('disabled', 'disabled');
+							    });
+
+							    $(div).find('textarea').each(function(j, element){
+							        $(element).prop('disabled','disabled');
+							    });
+					    	});
+					    });
+
+						$( '#dhl-label-button').remove();
+						$( '#shipment-dhl-label-form' ).append(dhl_label_data.print_button);
+						$( '#dhl-label-print').attr("href", response.label_url ); // update new url
+						$( '#shipment-dhl-label-form' ).append(dhl_label_data.delete_label);
+
+						if( response.tracking_note ) {
+
+							$( '#woocommerce-order-notes' ).block({
+								message: null,
+								overlayCSS: {
+									background: '#fff',
+									opacity: 0.6
+								}
+							});
+							
+							var data = {
+								action:                   'woocommerce_add_order_note',
+								post_id:                  woocommerce_admin_meta_boxes.post_id,
+								note_type: 				  response.tracking_note_type,
+								note:					  response.tracking_note,
+								security:                 woocommerce_admin_meta_boxes.add_order_note_nonce
+							};
+
+							$.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response_note ) {
+								// alert(response_note);
+								$( 'ul.order_notes' ).prepend( response_note );
+								$( '#woocommerce-order-notes' ).unblock();
+								$( '#add_order_note' ).val( '' );
+							});							
+						}
+
+						$( document ).trigger( 'pr_dhl_saved_label' );
+					}
+				});
+			}
 
 			return false;
 		},
@@ -252,7 +403,6 @@ jQuery( function( $ ) {
 					$( '#shipment-dhl-label-form' ).append(dhl_label_data.main_button);
 
 					if( response.dhl_tracking_num ) {
-						// alert(response.dhl_tracking_num);
 						var tracking_note;
 						$('ul.order_notes li').each(function(i) {
 						   tracking_note = $(this);

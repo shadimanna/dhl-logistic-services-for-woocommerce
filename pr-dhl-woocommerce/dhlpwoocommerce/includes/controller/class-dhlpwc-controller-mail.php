@@ -13,6 +13,47 @@ class DHLPWC_Controller_Mail
         if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_TRACK_TRACE_MAIL)) {
             add_action('woocommerce_email_after_order_table', array($this, 'add_track_trace_to_completed_order_mail'), 10, 4);
         }
+
+        if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_SERVICEPOINT_IN_ORDER_MAIL)) {
+            add_action('woocommerce_email_customer_details', array($this, 'add_service_point_to_customer_details_order_email'), 100, 4);
+        }
+    }
+
+    public function add_service_point_to_customer_details_order_email($order, $sent_to_admin, $plain_text, $email)
+    {
+        $allowed_email_ids = array(
+            'new_order',
+            'customer_on_hold_order'
+        );
+
+        // Continue only if it's a valid template
+        if (!$email || !isset($email->id) || !in_array($email->id, $allowed_email_ids)) {
+            return;
+        }
+        // Continue only if order id is set
+        if (!$order || !$order->get_id()) {
+            return;
+        }
+
+        $service = new DHLPWC_Model_Service_Order_Meta_Option();
+        $parcelshop = $service->get_parcelshop($order->get_id());
+        if (!$parcelshop) {
+            return;
+        }
+
+        // Don't generate HTML when using plain text
+        if ($plain_text) {
+            $view = new DHLPWC_Template('mail.plain.service-point');
+        } else {
+            $view = new DHLPWC_Template('mail.service-point');
+        }
+
+        $view->render(array(
+            'label'   => __('Selected delivery location', 'dhlpwc'),
+            'name'    => $parcelshop->name,
+            'address' => $parcelshop->address
+        ));
+
     }
 
     public function add_track_trace_to_completed_order_mail($order, $sent_to_admin, $plain_text, $email )
@@ -23,7 +64,7 @@ class DHLPWC_Controller_Mail
         }
 
         // Continue only if order id is set
-        if (!$order || !isset($order->id)) {
+        if (!$order || !$order->get_id()) {
             return;
         }
 

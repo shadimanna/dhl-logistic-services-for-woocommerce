@@ -72,7 +72,27 @@ abstract class PR_DHL_API_SOAP {
 			default:
 				break;
 		}
-		return $weight;
+		return round( $weight, 2 );
+	}
+
+	protected function maybe_convert_centimeters( $dimension, $UoM ) {
+		switch ( $UoM ) {
+			case 'm':
+				$dimension = $dimension * 100;
+				break;
+			case 'mm':
+				$dimension = $dimension / 10;
+				break;
+			case 'in':
+				$dimension = $dimension / 2.54;
+				break;
+			case 'yd':
+				$dimension = $dimension / 91.44;
+				break;
+			default:
+				break;
+		}
+		return round( $dimension, 2 );
 	}
 
 	// Unset/remove any items that are empty strings or 0

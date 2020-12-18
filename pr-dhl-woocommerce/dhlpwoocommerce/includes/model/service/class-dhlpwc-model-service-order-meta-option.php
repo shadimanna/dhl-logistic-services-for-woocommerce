@@ -8,6 +8,7 @@ class DHLPWC_Model_Service_Order_Meta_Option extends DHLPWC_Model_Core_Singleton
 {
 
     const ORDER_OPTION_PREFERENCES = '_dhlpwc_order_option_preferences';
+    const ORDER_CONNECTORS_DATA = '_dhlpwc_order_connectors_data';
 
     public function save_option_preference($order_id, $option, $input = null)
     {
@@ -50,6 +51,43 @@ class DHLPWC_Model_Service_Order_Meta_Option extends DHLPWC_Model_Core_Singleton
             $options[] = $option->key;
         }
         return $options;
+    }
+
+    public function filter_priority_options($options, $reverse = false)
+    {
+        $priority_options = array();
+        foreach($options as $option) {
+            $is_priority = in_array($option, array(
+                DHLPWC_Model_Meta_Order_Option_Preference::OPTION_DOOR,
+                DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS,
+                DHLPWC_Model_Meta_Order_Option_Preference::OPTION_BP,
+                DHLPWC_Model_Meta_Order_Option_Preference::OPTION_H
+            ));
+
+            if ($is_priority != $reverse) {
+                $priority_options[] = $option;
+            }
+        }
+        return $priority_options;
+    }
+
+    public function check_exclusion($option_key, $order_id, $options, $to_business)
+    {
+        $service = DHLPWC_Model_Service_Access_Control::instance();
+        $allowed_shipping_options = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CAPABILITY_ORDER_OPTIONS, array(
+            'order_id'    => $order_id,
+            'options'     => $options,
+            'to_business' => $to_business,
+        ));
+
+        $exclusions = $this->get_exclusions($allowed_shipping_options, $options);
+
+        if (!array_key_exists($option_key, $allowed_shipping_options)
+            || in_array($option_key, $exclusions)) {
+            return false;
+        }
+
+        return true;
     }
 
     public function default_signature($order_id, $options, $to_business)
@@ -209,6 +247,24 @@ class DHLPWC_Model_Service_Order_Meta_Option extends DHLPWC_Model_Core_Singleton
             $array[] = $key;
         }
         return $array;
+    }
+
+    public function update_connectors_data($order_id, $value, $is_option = true)
+    {
+        $connectors_data = DHLPWC_Model_Logic_Order_Meta::instance()->get_stack(self::ORDER_CONNECTORS_DATA, $order_id);
+        if ($is_option) {
+            $options = array();
+            if (isset($connectors_data['options'])) {
+                $options = explode(',', $connectors_data['options']);
+            }
+            if (!in_array($value, $options)) {
+                $options[] = $value;
+            }
+            $connectors_data['options'] = implode(',', $options);
+        } else {
+            $connectors_data['id'] = $value;
+        }
+        update_post_meta($order_id, self::ORDER_CONNECTORS_DATA, $connectors_data);
     }
 
     protected function get_exclusions($allowed_shipping_options, $options)

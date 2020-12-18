@@ -185,11 +185,26 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'class'          => 'wc-enhanced-select',
 			),
 			'dhl_email_notification' => array(
-				'title'             => __( 'Email Notification', 'pr-shipping-dhl' ),
-				'type'              => 'checkbox',
-				'label'             => __( 'Enabled', 'pr-shipping-dhl' ),
-				'default'           => 'no',
-				'description'       => __( 'Please, tick here if you want the "Email Notification" service to be displayed as an option on the checkout page', 'pr-shipping-dhl' ),
+				'title'             => __( 'Send Customer Email', 'pr-shipping-dhl' ),
+				'type'              => 'select',
+				'description'             => __( 'Please select whether to send the customer\'s email to DHL or not. "Customer Confirmation" displays a confirmation on the checkout page and "Confirmed via terms & condition" assumes confirmation via the website terms & conditions.', 'pr-shipping-dhl' ),
+				'options'           => array( 
+					'no' 		=> __( 'Do not send', 'pr-shipping-dhl'), 
+					'yes' 		=> __( 'Customer confirmation', 'pr-shipping-dhl'), 
+					'sendviatc' => __( 'Confirmed via terms & condition', 'pr-shipping-dhl'), 
+				),
+				'default'           => 'sendviatc',
+				'desc_tip'          => true,
+			),
+			'dhl_phone_notification' => array(
+				'title'             => __( 'Send Customer Phone', 'pr-shipping-dhl' ),
+				'type'              => 'select',
+				'description'       => __( 'Please select whether to send the customer\'s phone to DHL or not. "Confirmed via terms & condition" assumes confirmation via the website terms & conditions.', 'pr-shipping-dhl' ),
+				'options'           => array( 
+					'no' 		=> __( 'Do not send', 'pr-shipping-dhl'), 
+					'sendviatc' => __( 'Confirmed via terms & condition', 'pr-shipping-dhl'), 
+				),
+				'default'           => 'sendviatc',
 				'desc_tip'          => true,
 			),
 			'dhl_default_age_visual' => array(
@@ -297,12 +312,13 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'desc_tip'          => true,
 				'options'           => array( 
 					'A4' => 'A4', 
-					'910-300-700' => '910-300-700', 
-					'910-300-700-oZ' => '910-300-700-oZ', 
-					'910-300-600' => '910-300-600', 
-					'910-300-610' => '910-300-610', 
-					'910-300-710' => '910-300-710' 
+					'910-300-700' => 'Laser printer 105 x 205 mm', 
+					'910-300-700-oZ' => 'Laser printer 105 x 205 mm (no info)', 
+					'910-300-600' => 'Thermo printer 103 x 199 mm', 
+					'910-300-610' => 'Thermo printer 103 x 202 mm', 
+					'910-300-710' => 'Laser printer 105 x 208 mm' 
 				),
+				'default' 			=> '910-300-700',
 				'class'				=> 'wc-enhanced-select'
 			),
 			'dhl_add_logo' => array(
@@ -900,6 +916,31 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 	 */
 	public function validate_dhl_display_google_maps_field( $key ) {
 		return $this->validate_location_enabled_field( $key, __( 'Google Maps', 'pr-shipping-dhl' ) );
+	}
+
+	/**
+	 * Validate the logo enabled field
+	 * @see validate_settings_fields()
+	 */
+	public function validate_dhl_add_logo_field( $key ) {
+		
+		if ( ! isset( $_POST[ $this->plugin_id . $this->id . '_' . $key ] ) ) {
+			return 'no';
+		}
+
+		// Verify shipper reference set
+		$shipper_reference = $_POST[ $this->plugin_id . $this->id . '_dhl_shipper_reference' ];
+		
+		if ( empty( $shipper_reference ) ) {
+
+			$error_message = __('In order to use logo, you need to set a shipper reference first.', 'pr-shipping-dhl');	
+			
+			echo $this->get_message( $error_message );
+			
+			return 'no';
+		}
+
+		return 'yes';
 	}
 
 	/**
