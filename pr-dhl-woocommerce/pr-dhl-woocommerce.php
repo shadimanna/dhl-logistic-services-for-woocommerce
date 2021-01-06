@@ -298,7 +298,7 @@ class PR_DHL_WC {
 					array( 'jquery' ),
 					PR_DHL_VERSION
 				);
-				wp_localize_script( 'wc-shipment-dhl-paket-settings-js', 'dhl_paket_settings_obj', PR_DHL_WC_Method_Paket::sandbox_info() );
+				// wp_localize_script( 'wc-shipment-dhl-paket-settings-js', 'dhl_paket_settings_obj', PR_DHL_WC_Method_Paket::sandbox_info() );
 			}
 			
             wp_enqueue_script(
@@ -470,7 +470,7 @@ class PR_DHL_WC {
 			$dhl_obj = $this->get_dhl_factory();
 			
 			if( $dhl_obj->is_dhl_paket() ) {
-				$dhl_settings = get_option('woocommerce_pr_dhl_paket_settings');
+				$dhl_settings = $dhl_obj->get_settings();
 			} elseif( $dhl_obj->is_dhl_ecomm() ) {
 				$dhl_settings = get_option('woocommerce_pr_dhl_ecomm_settings');
 			} elseif ( $dhl_obj->is_dhl_ecs_asia() ) {
