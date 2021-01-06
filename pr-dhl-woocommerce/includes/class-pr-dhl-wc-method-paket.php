@@ -41,14 +41,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		
 	}
 
-	public static function sandbox_info(){
-		return array(
-			'username' 	=> '2222222222_01',
-			'pass' 		=> 'pass',
-			'account_no'=> '2222222222',
-		);
-	}
-
 	/**
 	 * Get message
 	 * @return string Error

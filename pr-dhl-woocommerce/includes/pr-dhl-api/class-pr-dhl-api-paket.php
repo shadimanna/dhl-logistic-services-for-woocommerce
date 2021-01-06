@@ -25,7 +25,44 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 	public function is_dhl_paket( ) {
 		return true;
 	}
+
+	protected function maybe_sandbox( $args ) {
+		$dhl_sandbox = get_settings('dhl_sandbox');
+		$dhl_sandbox = isset( $dhl_sandbox ) ? get_settings('dhl_sandbox') : '';
+		
+		if ( $dhl_sandbox == 'yes' ) {
+			$sandbox_info = $this->sandbox_info();
+			$args['dhl_settings']['api_user'] = $sandbox_info['username'];
+			$args['dhl_settings']['api_pwd'] = $sandbox_info['pass'];
+			$args['dhl_settings']['account_num'] = $sandbox_info['account_no'];
+		}
+
+		return $args;
+	}
+
+	public function get_dhl_label( $args ) {
+		return parent::get_dhl_label( maybe_sandbox( $args ) );
+	}
+
+	public function delete_dhl_label( $label_url ) {
+		return parent::delete_dhl_label( maybe_sandbox( $args ) );
+	}
+
+	public function get_parcel_location( $args ) {
+		return parent::get_parcel_location( maybe_sandbox( $args ) );
+	}
 	
+	/**
+	 * Retrieves all of the Deutsche Post settings.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return array An associative array of the settings keys mapping to their values.
+	 */
+	public function get_settings() {
+		return get_option( 'woocommerce_pr_dhl_paket_settings', array() );
+	}
+
 	public function get_dhl_products_international() {
 		$country_code = $this->country_code;
 		
@@ -187,5 +224,13 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 					'A18' => __('Minimum age of 18', 'pr-shipping-dhl')
 					);
 		return $visual_age;
+	}
+
+	public function sandbox_info(){
+		return array(
+			'username' 	=> '2222222222_01',
+			'pass' 		=> 'pass',
+			'account_no'=> '2222222222',
+		);
 	}
 }
