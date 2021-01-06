@@ -34,33 +34,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 		$this->add_package_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj );
 
-		if( $this->is_crossborder_shipment( $order_id ) ) {
-
-			// Duties drop down
-			$duties_opt = $dhl_obj->get_dhl_duties();
-			woocommerce_wp_select( array(
-				'id'          		=> 'pr_dhl_duties',
-				'label'       		=> __( 'Duties:', 'pr-shipping-dhl' ),
-				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_duties'] ) ? $dhl_label_items['pr_dhl_duties'] : '',
-				'options'			=> $duties_opt,
-				'custom_attributes'	=> array( $is_disabled => $is_disabled )
-			) );
-
-			woocommerce_wp_text_input( array(
-				'id'          		=> 'pr_dhl_invoice_num',
-				'class'          	=> '',
-				'label'       		=> __( 'Invoice Number:', 'pr-shipping-dhl' ),
-				'placeholder' 		=> '',
-				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_invoice_num'] ) ? $dhl_label_items['pr_dhl_invoice_num'] : $order_id,
-				'custom_attributes'	=> array( $is_disabled => $is_disabled )
-			) );
-
-			$this->crossborder_and_domestic_fields( $dhl_label_items, $is_disabled );
-
-		}
-
 		// Preferred options for Germany only
 		if( ( $base_country_code == 'DE' ) && ( $this->is_shipping_domestic( $order_id ) ) ) {
 
@@ -344,6 +317,33 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
                 'custom_attributes'	=> array( $is_disabled => $is_disabled ),
             ) );
 
+		} else { // Non-domestic shipment
+			// Outside EU
+			if( $this->is_crossborder_shipment( $order_id ) ) {
+
+				// Duties drop down
+				$duties_opt = $dhl_obj->get_dhl_duties();
+				woocommerce_wp_select( array(
+					'id'          		=> 'pr_dhl_duties',
+					'label'       		=> __( 'Duties:', 'pr-shipping-dhl' ),
+					'description'		=> '',
+					'value'       		=> isset( $dhl_label_items['pr_dhl_duties'] ) ? $dhl_label_items['pr_dhl_duties'] : '',
+					'options'			=> $duties_opt,
+					'custom_attributes'	=> array( $is_disabled => $is_disabled )
+				) );
+
+				woocommerce_wp_text_input( array(
+					'id'          		=> 'pr_dhl_invoice_num',
+					'class'          	=> '',
+					'label'       		=> __( 'Invoice Number:', 'pr-shipping-dhl' ),
+					'placeholder' 		=> '',
+					'description'		=> '',
+					'value'       		=> isset( $dhl_label_items['pr_dhl_invoice_num'] ) ? $dhl_label_items['pr_dhl_invoice_num'] : $order_id,
+					'custom_attributes'	=> array( $is_disabled => $is_disabled )
+				) );
+			}
+
+			$this->crossborder_and_domestic_fields( $dhl_label_items, $is_disabled );
 		}
 		
 	}
