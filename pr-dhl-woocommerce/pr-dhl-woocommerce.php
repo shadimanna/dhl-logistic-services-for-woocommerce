@@ -5,7 +5,7 @@
  * Description: WooCommerce integration for DHL eCommerce, DHL Paket, DHL Parcel Europe (Benelux and Iberia) and Deutsche Post International
  * Author: DHL
  * Author URI: http://dhl.com/woocommerce
- * Version: 2.4.3
+ * Version: 2.4.4
  * WC requires at least: 3.0
  * WC tested up to: 4.5
  *
@@ -32,7 +32,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "2.4.3";
+	private $version = "2.4.4";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -81,7 +81,7 @@ class PR_DHL_WC {
 	protected $base_country_code = '';
 
 	// 'LI', 'CH', 'NO'
-	protected $eu_iso2 = array( 'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SI', 'SK', 'ES', 'SE', 'GB');
+	protected $eu_iso2 = array( 'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SI', 'SK', 'ES', 'SE');
 
 	// These are all considered domestic by DHL
 	protected $us_territories = array( 'US', 'GU', 'AS', 'PR', 'UM', 'VI' );
