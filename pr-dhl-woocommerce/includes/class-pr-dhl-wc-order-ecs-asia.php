@@ -707,12 +707,6 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 		}
 	}
 
-	protected function get_bulk_settings_override( $args ) {
-		// Override duties to take default settings value for bulk only
-		$args['order_details']['duties'] = $this->shipping_dhl_settings['dhl_duties_default'];
-		return $args;
-	}
-
 	public function print_document_action() {
 
 		// listen for 'print' action query string
