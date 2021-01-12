@@ -971,7 +971,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			}
 
 			// Ensure 'zip' is passed, it is required
-			if( ! isset( $this->body_request['ShipmentOrder']['Shipment']['Receiver']['Address']['zip'] ) && ! isset( $this->body_request['ShipmentOrder']['Shipment']['Receiver']['Packstation'] ) ) {
+			if( ! isset( $this->body_request['ShipmentOrder']['Shipment']['Receiver']['Address']['zip'] ) && ! isset( $this->body_request['ShipmentOrder']['Shipment']['Receiver']['Packstation'] ) && ! isset( $this->body_request['ShipmentOrder']['Shipment']['Receiver']['Postfiliale'] ) ) {
 				$this->body_request['ShipmentOrder']['Shipment']['Receiver']['Address']['zip'] = '';
 			}
 
