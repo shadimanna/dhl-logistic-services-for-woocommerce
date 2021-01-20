@@ -120,7 +120,7 @@ class Client extends API_Client {
 			)
 		);
 
-		if( !in_array( $country_code, array('IN', 'CN', 'HK', 'AU', 'SG') ) ){
+		if( !in_array( $country_code, array('IN', 'CN', 'HK', 'AU', 'SG', 'MY', 'TH') ) ){
 			$data['closeOutRequest']['bd']['handoverID'] = 'C' . date("YmdHis");
 			$data['closeOutRequest']['bd']['generateHandover'] = 'N';
 		}
