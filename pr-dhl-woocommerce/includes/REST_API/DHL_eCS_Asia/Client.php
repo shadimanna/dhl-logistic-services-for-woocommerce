@@ -404,7 +404,6 @@ class Client extends API_Client {
     //				'weightUOM' 			=> $item_info->shipment['weightUom'],
                     'countryOfOrigin' 		=> $content['origin'],
                     'hsCode'                => $content['hs_code'],
-                    'contentIndicator'      => $content['dangerous_goods']
                 );
 
                 $shipment_contents[] = $shipment_content;
@@ -414,6 +413,10 @@ class Client extends API_Client {
 
             if( !empty( $item_info->shipment['incoterm'] ) ) {
                 $shipment_item['incoterm'] = $item_info->shipment['incoterm'];
+            }
+
+            if( !empty( $item_info->shipment['dangerous_goods'] ) ) {
+                $shipment_item['contentIndicator'] = $item_info->shipment['dangerous_goods'];
             }
 		}
 		

@@ -306,6 +306,9 @@ class Item_Info {
                     return $value;
                 }
 			),
+			'dangerous_goods' => array(
+				'default' => ''
+			)
 		);
 	}
 
@@ -532,9 +535,6 @@ class Item_Info {
 					$weight = ( $weight > 1 )? $weight : 1;
 					return $weight;
 				}
-			),
-			'dangerous_goods' => array(
-				'default' => ''
 			)
 		);
 	}
