@@ -191,6 +191,11 @@ jQuery( function( $ ) {
 		},
 
 		show_hide_packages: function () {
+			// Only relevant for Paket so check if exists
+			if ( ! $( '#pr_dhl_multi_packages_enabled' ).length ) {
+			    return;
+			}
+
 			var is_checked = $( '#pr_dhl_multi_packages_enabled' ).prop('checked');
 
 			if ( is_checked ) {
