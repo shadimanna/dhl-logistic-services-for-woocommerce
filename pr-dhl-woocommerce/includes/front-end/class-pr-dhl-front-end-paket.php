@@ -535,6 +535,7 @@ class PR_DHL_Front_End_Paket {
 			$dhl_obj = PR_DHL()->get_dhl_factory();
 			$args['dhl_settings']['api_user'] = $this->shipping_dhl_settings['dhl_api_user'];
 			$args['dhl_settings']['api_pwd'] = $this->shipping_dhl_settings['dhl_api_pwd'];
+			$args['dhl_settings']['sandbox'] = $this->shipping_dhl_settings['dhl_sandbox'];
 			$args['shipping_address']['address'] = $parcelfinder_address;
 			$args['shipping_address']['postcode'] = $parcelfinder_postcode;
 			$args['shipping_address']['city'] = $parcelfinder_city;

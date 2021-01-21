@@ -523,10 +523,10 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 	protected function delete_label_args( $order_id ) {
 		$args = $this->get_dhl_label_tracking( $order_id );
-
-		// $this->shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
+		
 		$args['api_user'] 	= $this->shipping_dhl_settings['dhl_api_user'];
 		$args['api_pwd'] 	= $this->shipping_dhl_settings['dhl_api_pwd'];
+		$args['sandbox'] 	= $this->shipping_dhl_settings['dhl_sandbox'];
 
 		// If there are multiple tracking numbers, get the first one to search for the string in order notes
 		if (is_array( $args['tracking_number'] ) ) {

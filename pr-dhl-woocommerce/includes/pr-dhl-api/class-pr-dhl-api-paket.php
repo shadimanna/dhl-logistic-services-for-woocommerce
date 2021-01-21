@@ -27,29 +27,34 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 	}
 
 	protected function maybe_sandbox( $args ) {
-		$dhl_sandbox = get_settings('dhl_sandbox');
-		$dhl_sandbox = isset( $dhl_sandbox ) ? get_settings('dhl_sandbox') : '';
+		// error_log('maybe_sandbox');
+		// error_log(print_r($args,true));
+		// $dhl_sandbox = $this->get_settings('dhl_sandbox');
+		// error_log(print_r($dhl_sandbox,true));
+		// $dhl_sandbox = isset( $dhl_sandbox ) ? $dhl_sandbox : '';
 		
-		if ( $dhl_sandbox == 'yes' ) {
+		if ( isset($args['sandbox']) && ($args['sandbox'] == 'yes' ) ) {
 			$sandbox_info = $this->sandbox_info();
-			$args['dhl_settings']['api_user'] = $sandbox_info['username'];
-			$args['dhl_settings']['api_pwd'] = $sandbox_info['pass'];
-			$args['dhl_settings']['account_num'] = $sandbox_info['account_no'];
+			$args['api_user'] = $sandbox_info['username'];
+			$args['api_pwd'] = $sandbox_info['pass'];
+			$args['account_num'] = $sandbox_info['account_no'];
 		}
-
+		// error_log(print_r($args,true));
 		return $args;
 	}
 
 	public function get_dhl_label( $args ) {
-		return parent::get_dhl_label( maybe_sandbox( $args ) );
+		$args['dhl_settings'] = $this->maybe_sandbox( $args['dhl_settings'] );
+		return parent::get_dhl_label( $args );
 	}
 
-	public function delete_dhl_label( $label_url ) {
-		return parent::delete_dhl_label( maybe_sandbox( $args ) );
+	public function delete_dhl_label( $args ) {
+		return parent::delete_dhl_label( $this->maybe_sandbox( $args ) );
 	}
 
 	public function get_parcel_location( $args ) {
-		return parent::get_parcel_location( maybe_sandbox( $args ) );
+		$args['dhl_settings'] = $this->maybe_sandbox( $args['dhl_settings'] );
+		return parent::get_parcel_location( $args );
 	}
 	
 	/**
@@ -158,9 +163,18 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		}
 
 		$args['postcode'] = $postcode;
-		$args['account_num'] = $account_num;
 		$args['start_date'] = $week_date;
+		$settings = $this->get_settings();
+		// error_log(print_r($settings,true));
+		if ( isset($settings['dhl_sandbox']) && ($settings['dhl_sandbox'] == 'yes' ) ) {
+			$sandbox_info = $this->sandbox_info();
+			$args['account_num'] = $sandbox_info['account_no'];
+		} else {
+			$args['account_num'] = $account_num;
+		}
+		
 		$dhl_parcel_services = new PR_DHL_API_REST_Parcel();
+		// error_log(print_r($args,true));
 		$preferred_services = $dhl_parcel_services->get_dhl_parcel_services($args);
 		
 		$preferred_day_time = array();
