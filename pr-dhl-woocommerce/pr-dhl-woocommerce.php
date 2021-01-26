@@ -148,6 +148,7 @@ class PR_DHL_WC {
 
 		$this->define( 'PR_DHL_PAKET_TRACKING_URL', 'https://nolp.dhl.de/nextt-online-public/report_popup.jsp?idc=' );
 		$this->define( 'PR_DHL_PAKET_BUSSINESS_PORTAL', 'https://www.dhl-geschaeftskundenportal.de' );
+		$this->define( 'PR_DHL_PAKET_DEVELOPER_PORTAL', 'https://entwickler.dhl.de/' );
 
 		$this->define( 'PR_DHL_PACKSTATION', __('Packstation ', 'pr-shipping-dhl') );
 		$this->define( 'PR_DHL_PARCELSHOP', __('Postfiliale ', 'pr-shipping-dhl') );
