@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 5.6
-Stable tag: 2.4.4
+Stable tag: 2.5
 WC requires at least: 3.0
 WC tested up to: 4.7
 License: GPLv2 or later
@@ -80,6 +80,12 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+
+= 2.5 =
+* DHL eCommerce Asia: Add Closeout manifest bulk action
+* DHL Paket: Add Sandbox mode to the plugin
+* DHL Paket: Add services outside Germany; Additional insurance, Premium, Bulk Goods, Email Notification
+* DHL Paket: Fix shipment reference and multiple packages bug
 
 = 2.4.4 =
 * DHL Paket: Remove 'GB' from EU countries, to force customs fields to display
