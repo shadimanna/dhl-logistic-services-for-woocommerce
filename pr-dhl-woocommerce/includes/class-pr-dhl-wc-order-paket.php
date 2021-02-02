@@ -595,6 +595,23 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		return $shop_manager_actions;
 	}
 
+	public function validate_bulk_actions( $action, $order_ids ) {
+		
+		$orders_count 	= count( $order_ids );
+
+		if( 'pr_dhl_create_labels' === $action ){
+
+			if ( $orders_count < 1 ) {
+
+				return __( 'No orders selected for the DHL bulk action, please select orders before performing the DHL action.', 'pr-shipping-dhl' );
+
+			}
+
+		}
+
+		return '';
+	}
+
 	protected function is_cod_payment_method( $order_id ) {
 		$base_country_code 	= PR_DHL()->get_base_country();
 

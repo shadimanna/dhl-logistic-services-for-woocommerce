@@ -873,32 +873,22 @@ abstract class PR_DHL_WC_Order {
 				$order_ids = array_map( 'absint', $_REQUEST['post'] );
 			}
 
-			// Trigger an admin notice to have the user manually open a print window
-			$is_error = 0;
-			$orders_count = count( $order_ids );
+			$orders_count 	= count( $order_ids );
 
-			if ( $orders_count < 1 ) {
+			$message = $this->validate_bulk_actions( $action, $order_ids );
+			if ( ! empty( $message ) ) {
 				array_push($array_messages, array(
-                    'message' => __( 'No orders selected for the DHL bulk action, please select orders before performing the DHL action.', 'pr-shipping-dhl' ),
-                    'type' => 'error',
-                ));
+					'message' => $message,
+					'type' => 'error',
+				));
 			} else {
-
-				$message = $this->validate_bulk_actions( $action, $order_ids );
-				if ( ! empty( $message ) ) {
+				try {
+					$array_messages += $this->process_bulk_actions( $action, $order_ids, $orders_count );
+				} catch (Exception $e) {
 					array_push($array_messages, array(
-	                    'message' => $message,
-	                    'type' => 'error',
-	                ));
-				} else {
-					try {
-						$array_messages += $this->process_bulk_actions( $action, $order_ids, $orders_count );
-					} catch (Exception $e) {
-						array_push($array_messages, array(
-		                    'message' => $e->getMessage(),
-		                    'type' => 'error',
-		                ));
-					}
+						'message' => $e->getMessage(),
+						'type' => 'error',
+					));
 				}
 			}
 
