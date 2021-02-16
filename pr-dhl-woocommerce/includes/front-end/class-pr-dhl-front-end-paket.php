@@ -88,12 +88,7 @@ class PR_DHL_Front_End_Paket {
 	}
 
 	protected function is_tracking_enabled() {
-		
-		if ( isset( $this->shipping_dhl_settings['dhl_pixel_tracking'] ) && ( $this->shipping_dhl_settings['dhl_pixel_tracking'] == 'yes' ) ) {
-			return true;
-		} else {
-			return false;
-		}
+		return false;
 	}
 
 	protected function is_preferredservice_enabled() {
