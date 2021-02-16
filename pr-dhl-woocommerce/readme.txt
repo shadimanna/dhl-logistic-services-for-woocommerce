@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 5.6
-Stable tag: 2.5
+Stable tag: 2.5.1
 WC requires at least: 3.0
 WC tested up to: 4.7
 License: GPLv2 or later
@@ -80,6 +80,9 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+
+= 2.5.1 =
+* Deutsche Post: Fix, if an ordered item value is 0, set product price to avoid error
 
 = 2.5 =
 * DHL eCommerce Asia: Add Closeout manifest bulk action
