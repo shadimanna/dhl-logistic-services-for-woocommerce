@@ -923,7 +923,24 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	}
 
 	public function validate_bulk_actions( $action, $order_ids ) {
-		if ( 'pr_dhl_create_orders' === $action ) {
+
+		$orders_count 	= count( $order_ids );
+		if ( 'pr_dhl_create_labels' === $action ) {
+			
+			if ( $orders_count < 1 ) {
+
+				return __( 'No orders selected for the DHL bulk action, please select orders before performing the DHL action.', 'pr-shipping-dhl' );
+
+			}
+
+		}elseif ( 'pr_dhl_create_orders' === $action ) {
+
+			if ( $orders_count < 1 ) {
+
+				return __( 'No orders selected for the DHL bulk action, please select orders before performing the DHL action.', 'pr-shipping-dhl' );
+
+			}
+			
 			// Ensure the selected orders have a label created, otherwise don't add them to the order
 			
 			foreach ( $order_ids as $order_id ) {

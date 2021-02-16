@@ -746,7 +746,12 @@ abstract class PR_DHL_WC_Order {
 				// Ensure id is string and not int
 				$new_item['product_id'] = intval( $item['variation_id'] );
 				$new_item['sku'] = empty( $product_sku ) ? strval( $item['variation_id'] ) : $product_sku;
-				// $new_item['item_value'] = $product_variation->get_price();
+
+				// If value is empty due to discounts, set variation price instead
+				if ( empty( $new_item['item_value'] ) ) {
+					$new_item['item_value'] = $product_variation->get_price();
+				}
+				
 				$new_item['item_weight'] = $product_variation->get_weight();
 
 				$product_attribute = wc_get_product_variation_attributes($item['variation_id']);
@@ -758,7 +763,12 @@ abstract class PR_DHL_WC_Order {
 				// Ensure id is string and not int
 				$new_item['product_id'] = intval( $item['product_id'] );
 				$new_item['sku'] = empty( $product_sku ) ? strval( $item['product_id'] ) : $product_sku;
-				// $new_item['item_value'] = $product->get_price();
+
+				// If value is empty due to discounts, set product price instead
+				if ( empty( $new_item['item_value'] ) ) {
+					$new_item['item_value'] = $product->get_price();
+				}
+
 				$new_item['item_weight'] = $product->get_weight();
 			}
 
@@ -873,32 +883,22 @@ abstract class PR_DHL_WC_Order {
 				$order_ids = array_map( 'absint', $_REQUEST['post'] );
 			}
 
-			// Trigger an admin notice to have the user manually open a print window
-			$is_error = 0;
-			$orders_count = count( $order_ids );
+			$orders_count 	= count( $order_ids );
 
-			if ( $orders_count < 1 ) {
+			$message = $this->validate_bulk_actions( $action, $order_ids );
+			if ( ! empty( $message ) ) {
 				array_push($array_messages, array(
-                    'message' => __( 'No orders selected for the DHL bulk action, please select orders before performing the DHL action.', 'pr-shipping-dhl' ),
-                    'type' => 'error',
-                ));
+					'message' => $message,
+					'type' => 'error',
+				));
 			} else {
-
-				$message = $this->validate_bulk_actions( $action, $order_ids );
-				if ( ! empty( $message ) ) {
+				try {
+					$array_messages += $this->process_bulk_actions( $action, $order_ids, $orders_count );
+				} catch (Exception $e) {
 					array_push($array_messages, array(
-	                    'message' => $message,
-	                    'type' => 'error',
-	                ));
-				} else {
-					try {
-						$array_messages += $this->process_bulk_actions( $action, $order_ids, $orders_count );
-					} catch (Exception $e) {
-						array_push($array_messages, array(
-		                    'message' => $e->getMessage(),
-		                    'type' => 'error',
-		                ));
-					}
+						'message' => $e->getMessage(),
+						'type' => 'error',
+					));
 				}
 			}
 

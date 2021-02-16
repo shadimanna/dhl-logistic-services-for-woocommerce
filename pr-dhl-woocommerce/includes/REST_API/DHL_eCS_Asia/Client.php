@@ -88,13 +88,77 @@ class Client extends API_Client {
 		);
 	}
 
-	public function check_status_code( $label_response ){
+	public function close_out_labels( $country_code, $shipment_ids = array() ){
 
-		if( !isset( $label_response->labelResponse->bd->responseStatus->code ) ){
+		$route 			= $this->close_out_label_route();
+		$shipment_items = array();
+		
+		if( is_array( $shipment_ids ) && count( $shipment_ids ) > 0 ){
+
+			foreach( $shipment_ids as $shipment_id ){
+				$shipment_items[] = array(
+					'shipmentID' => $shipment_id,
+				);
+			}
+
+		}
+
+		$data 		= array(
+			'closeOutRequest' 	=> array(
+				'hdr' 	=> array(
+					'messageType' 		=> $this->get_type( 'closeout' ),
+					'messageDateTime' 	=> $this->get_datetime(),
+					'messageVersion' 	=> '1.3',
+					'messageLanguage' 	=> $this->get_language()
+				),
+				'bd' 	=> array(
+					'pickupAccountId' 	=> $this->pickup_id,
+					'soldToAccountId'	=> $this->soldto_id,
+					'generateHandover' 	=> 'Y',
+					'handoverMethod' 	=> 1,
+				)
+			)
+		);
+
+		if( !in_array( $country_code, array('IN', 'CN', 'HK', 'AU', 'SG', 'MY', 'TH') ) ){
+			$data['closeOutRequest']['bd']['handoverID'] = 'C' . date("YmdHis");
+			$data['closeOutRequest']['bd']['generateHandover'] = 'N';
+		}
+
+		if( count( $shipment_items ) > 0 ){
+			$data['closeOutRequest']['bd']['shipmentItems'] = $shipment_items;
+		}
+
+		$response 		= $this->post($route, $data );
+		$response_body 	= json_decode( $response->body );
+
+		if ( $response->status === 200 ) {
+
+			$status_code = $this->check_status_code( $response_body, 'closeOutResponse' );
+			
+			if( $status_code == 200 || $status_code == 204 ){
+
+				return $this->get_closeout_content( $response_body, $shipment_ids );
+
+			}
+		}
+
+		throw new Exception(
+			sprintf(
+				__( 'Failed to close out label: %s', 'pr-shipping-dhl' ),
+				$this->generate_error_details( $response_body, 'closeOutResponse' )
+			)
+		);
+
+	}
+
+	public function check_status_code( $label_response, $response_type = 'labelResponse' ){
+		
+		if( !isset( $label_response->$response_type->bd->responseStatus->code ) ){
 			throw new Exception( __( 'Response status is not exist!', 'pr-shipping-dhl' ) );
 		}
 
-		return $label_response->labelResponse->bd->responseStatus->code;
+		return $label_response->$response_type->bd->responseStatus->code;
 	}
 
 	public function get_label_content( $label_response ){
@@ -121,35 +185,47 @@ class Client extends API_Client {
 		return false;
 	}
 
-	public function generate_error_details( $label_response ){
+	public function get_closeout_content( $response, $shipment_ids ){
+
+		if( !isset( $response->closeOutResponse->bd->handoverID ) ){
+			throw new Exception( __( 'Handover ID does not exist!', 'pr-shipping-dhl' ) );
+		}
+
+		if( !isset( $response->closeOutResponse->bd->responseStatus->messageDetails ) && count( $shipment_ids ) < 1 ){
+			throw new Exception( __( 'Message Detail does not exist!', 'pr-shipping-dhl' ) );
+		}
+
+		return $response->closeOutResponse->bd;
+	}
+
+	public function generate_error_details( $label_response, $response_type = 'labelResponse' ){
 
 		$error_details 	= '';
 
-		if( isset( $label_response->labelResponse->bd->labels ) ) {
+		if( $response_type == 'labelResponse' ){
 
-			$labels = $label_response->labelResponse->bd->labels;
+			if( isset( $label_response->$response_type->bd->labels ) ) {
 
-			foreach( $labels as $label ){
+				$labels = $label_response->$response_type->bd->labels;
 
-				if( !isset( $label->responseStatus->messageDetails ) ){
-					continue;
-				}
-
-				foreach( $label->responseStatus->messageDetails as $message_detail ){
-
-					if( isset( $message_detail->messageDetail ) ){
-
-						$error_details .= '<li>' . $message_detail->messageDetail . '</li>';
-
-					}
-
-				}
-
+				$error_details .= $this->get_error_lists( $labels );
+	
 			}
+
+		}elseif( $response_type == 'closeOutResponse' || $response_type == 'deleteShipmentResp' ){
+
+			if( isset( $label_response->$response_type->bd->shipmentItems ) ) {
+
+				$items = $label_response->$response_type->bd->shipmentItems;
+	
+				$error_details .= $this->get_error_lists( $items );
+			}
+
 		}
+		
 
 		$error_exception = '';
-		$response_status = $label_response->labelResponse->bd->responseStatus;
+		$response_status = $label_response->$response_type->bd->responseStatus;
 
 		if( isset( $response_status->message) ){
 			$error_exception .= $response_status->message  . '<br /> ';
@@ -187,6 +263,36 @@ class Client extends API_Client {
 		return $error_exception;
 	}
 
+	public function get_error_lists( $items ){
+
+		$error_details = '';
+
+		foreach( $items as $item ){
+	
+			if( !isset( $item->responseStatus->messageDetails ) ){
+				continue;
+			}
+
+			$shipment_id_text = '';
+			if( isset( $item->shipmentID ) ){
+				$shipment_id_text = $item->shipmentID . ' - ';
+			}
+
+			foreach( $item->responseStatus->messageDetails as $message_detail ){
+
+				if( isset( $message_detail->messageDetail ) ){
+
+					$error_details .= '<li>' . $shipment_id_text . $message_detail->messageDetail . '</li>';
+
+				}
+
+			}
+
+		}
+
+		return $error_details;
+	}
+
 	/**
 	 * Get message type.
 	 *
@@ -198,6 +304,8 @@ class Client extends API_Client {
 
 		if( $type == 'delete' ) {
 			return 'DELETESHIPMENT';
+		}elseif( $type == 'closeout' ){
+			return 'CLOSEOUT';
 		}elseif( $type == 'create' ) {
 			return 'LABEL';
 		}
@@ -296,7 +404,6 @@ class Client extends API_Client {
     //				'weightUOM' 			=> $item_info->shipment['weightUom'],
                     'countryOfOrigin' 		=> $content['origin'],
                     'hsCode'                => $content['hs_code'],
-                    'contentIndicator'      => $content['dangerous_goods']
                 );
 
                 $shipment_contents[] = $shipment_content;
@@ -306,6 +413,10 @@ class Client extends API_Client {
 
             if( !empty( $item_info->shipment['incoterm'] ) ) {
                 $shipment_item['incoterm'] = $item_info->shipment['incoterm'];
+            }
+
+            if( !empty( $item_info->shipment['dangerous_goods'] ) ) {
+                $shipment_item['contentIndicator'] = $item_info->shipment['dangerous_goods'];
             }
 		}
 		
@@ -396,16 +507,21 @@ class Client extends API_Client {
 
 		$response 	= $this->post($route, $data);
 
+		$response_body = json_decode( $response->body );
+		
 		if ( $response->status === 200 ) {
 
-			return $response->body;
+			if( $this->check_status_code( $response_body, 'deleteShipmentResp' ) == 200 ){
 
+				return $response_body->deleteShipmentResp->bd;
+
+			}
 		}
 
 		throw new Exception(
 			sprintf(
 				__( 'Failed to delete label: %s', 'pr-shipping-dhl' ),
-				implode( ', ', $response->body->messages )
+				$this->generate_error_details( $response_body, 'deleteShipmentResp' )
 			)
 		);
 	}
@@ -430,6 +546,17 @@ class Client extends API_Client {
 	 */
 	protected function delete_label_route() {
 		return $this->shipping_label_route(). '/Delete';
+	}
+
+	/**
+	 * Prepares a CloseOut API route.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return string
+	 */
+	protected function close_out_label_route() {
+		return 'rest/v2/Order/Shipment/CloseOut';
 	}
 
 }
