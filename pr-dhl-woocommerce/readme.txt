@@ -81,6 +81,10 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 == Changelog ==
 
+= 2.5.2 =
+* DHL Paket: Fix, if "Send Customer Email" setting is set to "Terms & Conditions", send DHL notification email
+* DHL Paket: Disable tracking pixel on frontend
+
 = 2.5.1 =
 * Deutsche Post: Fix, if an ordered item value is 0, set product price to avoid error
 
