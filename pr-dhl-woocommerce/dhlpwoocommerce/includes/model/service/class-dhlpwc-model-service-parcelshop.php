@@ -26,8 +26,9 @@ class DHLPWC_Model_Service_Parcelshop extends DHLPWC_Model_Core_Singleton_Abstra
         }
 
         $parcelshops_data = $connector->get('parcel-shop-locations/' . $country, array(
-            'limit' => $limit,
-            'fuzzy' => $search,
+            'limit'       => $limit,
+            'fuzzy'       => $search,
+            'serviceType' => 'parcel-last-mile',
         ), 10 * MINUTE_IN_SECONDS);
         if (!$parcelshops_data || !is_array($parcelshops_data)) {
             return array();
@@ -103,8 +104,9 @@ class DHLPWC_Model_Service_Parcelshop extends DHLPWC_Model_Core_Singleton_Abstra
 
         $connector = DHLPWC_Model_API_Connector::instance();
         $parcelshops_data = $connector->get('parcel-shop-locations/' . $country, array(
-            'limit'   => empty($type_restrictions) ? 1 : 7,
-            'zipCode' => trim(strtoupper($postal_search)),
+            'limit'       => empty($type_restrictions) ? 1 : 7,
+            'zipCode'     => trim(strtoupper($postal_search)),
+            'serviceType' => 'parcel-last-mile',
         ), 1 * HOUR_IN_SECONDS);
 
         if (empty($parcelshops_data) || !is_array($parcelshops_data)) {

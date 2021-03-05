@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 5.6
-Stable tag: 2.5.1
+Stable tag: 2.5.3
 WC requires at least: 3.0
 WC tested up to: 4.7
 License: GPLv2 or later
@@ -80,6 +80,12 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+ 
+= 2.5.3 =
+* DHL Parcel: Updated to use the newest version of the ServicePoint Locator
+* DHL Parcel: Improved automatic search of the closest ServicePoint to filter on last mile
+* DHL Parcel: Added filters to bulk redirects for developers to customize
+* DHL Parcel: Fixed an issue where conditionally disabled shipping methods were not applied to delivery times
 
 = 2.5.2 =
 * DHL Paket: Fix, if "Send Customer Email" setting is set to "Terms & Conditions", send DHL notification email
