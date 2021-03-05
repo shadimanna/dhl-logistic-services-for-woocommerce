@@ -2,6 +2,10 @@
  
 v1.3.7
 ## Changes
+- Fixed an issue where the DPI module was not loading on certain pages
+ 
+v1.3.6
+## Changes
 - Fixed an issue with certain settings not being able to save with certain themes
 
 v1.3.5
