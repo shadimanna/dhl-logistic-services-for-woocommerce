@@ -82,7 +82,7 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 == Changelog ==
  
 = 2.5.3 =
-private-repository DHL Parcel: Updated to use the newest version of the ServicePoint Locator
+* DHL Parcel: Updated to use the newest version of the ServicePoint Locator
 * DHL Parcel: Improved automatic search of the closest ServicePoint to filter on last mile
 * DHL Parcel: Added filters to bulk redirects for developers to customize
 * DHL Parcel: Fixed an issue where conditionally disabled shipping methods were not applied to delivery times
