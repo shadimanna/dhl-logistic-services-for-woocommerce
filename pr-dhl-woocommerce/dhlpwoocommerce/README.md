@@ -1,5 +1,12 @@
 # DHL Parcel plugin for WooCommerce
  
+v1.3.8
+## Changes
+- Updated to use the newest version of the ServicePoint Locator
+- Improved automatic search of the closest ServicePoint to filter on last mile
+- Added filters to bulk redirects for developers to customize
+- Fixed an issue where conditionally disabled shipping methods were not applied to delivery times
+ 
 v1.3.7
 ## Changes
 - Fixed an issue where the DPI module was not loading on certain pages

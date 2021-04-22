@@ -518,33 +518,6 @@ jQuery(document).ready(function($) {
             });
         }
 
-    }).on('change', 'input#woocommerce_dhlpwc_bulk_label_download', function(e) {
-        var dhlpwc_bulk_download_area = $('input#woocommerce_dhlpwc_bulk_label_download').closest('fieldset').parent();
-        dhlpwc_bulk_download_area.children('div.dhlpwc_settings_description_warning').remove();
-
-        if ($(this).attr('checked') !== 'checked') {
-            return;
-        }
-
-        // Do a check for compatibility
-        var data = $.extend(true, $(this).data(), {
-            action: 'dhlpwc_test_bulk_download'
-        });
-
-        $.post(ajaxurl, data, function (response) {
-            try {
-                var success = response.data.success;
-                var message = response.data.message;
-            } catch (error) {
-                dhlpwc_bulk_download_area.append('<div class="dhlpwc_settings_description_warning">An error has occured</div>');
-                return;
-            }
-
-            if (success === 'false') {
-                dhlpwc_bulk_download_area.append('<div class="dhlpwc_settings_description_warning">' + message + '</div>');
-            }
-        }, 'json');
-
     }).on('dhlpwc:init_delivery_times_grid', function() {
         // Don't load if the delivery times grid cannot be found
         if ($('.dhlpwc-delivery-times-grid table').length < 1) {

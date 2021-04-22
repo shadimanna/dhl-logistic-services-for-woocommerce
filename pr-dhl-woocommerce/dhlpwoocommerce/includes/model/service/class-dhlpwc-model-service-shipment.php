@@ -273,7 +273,8 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
                         $option_data[DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS] = $parcelshop->id;
                         break;
                     case (DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE):
-                        $option_data[DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE] = $order_id;
+                        $reference_value = apply_filters('dhlpwc_default_reference_value', $order_id);
+                        $option_data[DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE] = $reference_value;
                         break;
                 }
             }
