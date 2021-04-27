@@ -1208,6 +1208,32 @@ abstract class PR_DHL_WC_Order {
 	}
 
 	/**
+	 * Double check the label path if it's not exists.
+	 * 
+	 * @return string;
+	 */
+	public static function fix_label_path( $label_path ){
+
+		// double check the file if not exists
+		if( true !== file_exists( $label_path ) ){
+				
+			$upload_dir 	= wp_get_upload_dir();
+			$upload_path 	= $upload_dir['basedir'];
+
+			$folder_dhl 	= '/woocommerce_dhl_label/';
+			$path_explode 	= explode( $folder_dhl, $label_path );
+
+			// make sure the file name is exists.
+			if( isset( $path_explode[1] ) ){
+				$label_path = untrailingslashit( $upload_path ) . $folder_dhl . $path_explode[1];
+			}
+			
+		}
+
+		return $label_path;
+	}
+
+	/**
 	 * Processes the download label request
 	 *
 	 * @return void
@@ -1238,6 +1264,9 @@ abstract class PR_DHL_WC_Order {
 	    if ( $endpoint_param == 'bulk' ) {
 
 	    	$bulk_file_path = get_transient( '_dhl_bulk_download_labels_file_' . get_current_user_id() );
+
+			$bulk_file_path = self::fix_label_path( $bulk_file_path );
+
 	    	if ( false == $this->download_label( $bulk_file_path ) ) {
 	    		array_push($array_messages, array(
                     'message' => __( 'There are currently no bulk DHL label file to download or the download link for the bulk DHL label file has already expired. Please try again.', 'pr-shipping-dhl' ),
@@ -1256,7 +1285,8 @@ abstract class PR_DHL_WC_Order {
 				return;
 			}
 			
-			$label_path = $label_tracking_info['label_path'];
+			$label_path 	= self::fix_label_path( $label_tracking_info['label_path'] );
+
 			if ( false == $this->download_label( $label_path ) ) {
 	    		array_push($array_messages, array(
                     'message' => __( 'Unable to download file. Label appears to be invalid or is missing. Please try again.', 'pr-shipping-dhl' ),

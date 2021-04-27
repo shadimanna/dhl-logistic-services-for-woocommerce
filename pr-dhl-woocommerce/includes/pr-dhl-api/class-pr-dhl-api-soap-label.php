@@ -253,7 +253,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		$data_path = PR_DHL()->get_dhl_label_folder_dir() . $data_name;
 		$data_url = PR_DHL()->get_dhl_label_folder_url() . $data_name;
 
-		if( validate_file($data_path) > 0 ) {
+		//windows path will not get exception
+		if( validate_file($data_path) > 0 && validate_file($data_path) !== 2 ) {
 			throw new Exception( __('Invalid file path!', 'pr-shipping-dhl' ) );
 		}
 		
