@@ -514,7 +514,8 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 		// Get the file info based on type
 		$file_info = $this->get_dhl_label_file_info( $type, $key );
 
-		if ( validate_file( $file_info->path ) > 0 ) {
+		// Validate the file path
+		if ( validate_file( $file_info->path ) > 0 && validate_file( $file_info->path ) !== 2 ) {
 			throw new Exception( __( 'Invalid file path!', 'pr-shipping-dhl' ) );
 		}
 
