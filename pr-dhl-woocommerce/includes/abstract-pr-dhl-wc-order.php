@@ -528,25 +528,34 @@ abstract class PR_DHL_WC_Order {
 	}
 
 	protected function calculate_order_weight( $order_id ) {
-		$order = wc_get_order( $order_id );
+		
+		$total_weight 	= 0;
+		$order 			= wc_get_order( $order_id );
+
+		if( false === $order ){
+			return apply_filters('pr_shipping_dhl_order_weight', $total_weight, $order_id );	
+		}
 
 		$ordered_items = $order->get_items( );
 
-		$total_weight = 0;
-		foreach ($ordered_items as $key => $item) {
+		if( is_array( $ordered_items ) && count( $ordered_items ) > 0 ){
+
+			foreach ($ordered_items as $key => $item) {
 					
-			if( ! empty( $item['variation_id'] ) ) {
-				$product = wc_get_product($item['variation_id']);
-			} else {
-				$product = wc_get_product( $item['product_id'] );
-			}
-			
-			if ( $product ) {
-				$product_weight = $product->get_weight();
-				if( $product_weight ) {
-					$total_weight += ( $item['qty'] * $product_weight );
+				if( ! empty( $item['variation_id'] ) ) {
+					$product = wc_get_product($item['variation_id']);
+				} else {
+					$product = wc_get_product( $item['product_id'] );
+				}
+				
+				if ( $product ) {
+					$product_weight = $product->get_weight();
+					if( $product_weight ) {
+						$total_weight += ( $item['qty'] * $product_weight );
+					}
 				}
 			}
+
 		}
 
 		if ( ! empty( $this->shipping_dhl_settings['dhl_add_weight'] ) ) {
