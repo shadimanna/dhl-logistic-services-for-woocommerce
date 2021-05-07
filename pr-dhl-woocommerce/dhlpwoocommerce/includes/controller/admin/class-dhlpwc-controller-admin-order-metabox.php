@@ -333,7 +333,8 @@ class DHLPWC_Controller_Admin_Order_Metabox
             $default_order_id_reference = $option_service->default_order_id_reference($order_id, $preselected_options, $to_business);
             if ($default_order_id_reference) {
                 $option_service->add_key_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE, $preselected_options);
-                $option_service->add_key_value_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE, $order_id, $option_data);
+                $reference_value = apply_filters('dhlpwc_default_reference_value', $order_id);
+                $option_service->add_key_value_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE, $reference_value, $option_data);
             }
 
             // Default option settings

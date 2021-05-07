@@ -24,7 +24,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		$this->id = 'pr_dhl_paket';
 		$this->instance_id = absint( $instance_id );
 		$this->method_title = __( 'DHL Paket', 'pr-shipping-dhl' );
-		$this->method_description = sprintf( __( 'Below you will find all functions for controlling, preparing and processing your shipment with DHL Paket. Prerequisite is a valid DHL business customer contract. If you are not yet a DHL business customer, you can request a quote %shere%s.', 'pr-shipping-dhl' ), '<a href="https://www.dhl.de/de/geschaeftskunden/paket/kunde-werden/angebot-dhl-geschaeftskunden-online.html" target="_blank">', '</a>' );
+		$this->method_description = sprintf( __( 'Below you will find all functions for controlling, preparing and processing your shipment with DHL Paket. Prerequisite is a valid DHL business customer contract. If you are not yet a DHL business customer, you can request a quote %shere%s.', 'pr-shipping-dhl' ), '<a href="https://www.dhl.de/de/geschaeftskunden/paket/plugin-kunde-werden/angebot-dhl-geschaeftskunden-online.html?source=woocommerce" target="_blank">', '</a>' );
 
 		$this->init();
 	}

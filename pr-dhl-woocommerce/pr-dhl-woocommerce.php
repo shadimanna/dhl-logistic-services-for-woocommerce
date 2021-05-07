@@ -5,7 +5,7 @@
  * Description: WooCommerce integration for DHL eCommerce, DHL Paket, DHL Parcel Europe (Benelux and Iberia) and Deutsche Post International
  * Author: DHL
  * Author URI: http://dhl.com/woocommerce
- * Version: 2.5
+ * Version: 2.5.6
  * WC requires at least: 3.0
  * WC tested up to: 4.5
  *
@@ -32,7 +32,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "2.5";
+	private $version = "2.5.6";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -797,19 +797,22 @@ class PR_DHL_WC {
 
 endif;
 
-/**
- * Activation hook.
- */
-function pr_dhl_activate() {
-	// Flag for permalink flushed
-	update_option('dhl_permalinks_flushed', 0);
+if( ! function_exists('PR_DHL') ) {
+
+	/**
+	 * Activation hook.
+	 */
+	function pr_dhl_activate() {
+		// Flag for permalink flushed
+		update_option('dhl_permalinks_flushed', 0);
+	}
+	register_activation_hook( __FILE__, 'pr_dhl_activate' );
+
+	function PR_DHL() {
+		return PR_DHL_WC::instance();
+	}
+
+	$PR_DHL_WC = PR_DHL();
+
+	include( 'dhlpwoocommerce/dhlpwoocommerce.php' );
 }
-register_activation_hook( __FILE__, 'pr_dhl_activate' );
-
-function PR_DHL() {
-	return PR_DHL_WC::instance();
-}
-
-$PR_DHL_WC = PR_DHL();
-
-include( 'dhlpwoocommerce/dhlpwoocommerce.php' );

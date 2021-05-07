@@ -228,46 +228,32 @@ class DHLPWC_Controller_Cart
             $service = DHLPWC_Model_Service_Parcelshop::instance();
             $gateway = $service->get_parcelshop_gateway();
 
-            if ($google_map_key) {
+            $translations = $service->get_component_translations();
 
-                $translations = $service->get_component_translations();
+            $service = DHLPWC_Model_Service_Checkout::instance();
+            $country_code = $service->get_cart_shipping_country_code();
+            $postal_code = $service->get_cart_shipping_postal_code();
 
-                $service = DHLPWC_Model_Service_Checkout::instance();
-                $country_code = $service->get_cart_shipping_country_code();
-                $postal_code = $service->get_cart_shipping_postal_code();
+            $locale = get_locale();
+            $locale_parts = explode('_', $locale);
+            $language = strtolower(reset($locale_parts));
 
-                $view = new DHLPWC_Template('cart.parcelshop.confirm-button');
-                $confirm_button_view = $view->render(array(), false);
-
-                wp_enqueue_script('dhlpwc-checkout-parcelshop-locator-script', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.parcelshop.locator.js', $dependencies);
-                wp_localize_script(
-                    'dhlpwc-checkout-parcelshop-locator-script',
-                    'dhlpwc_parcelshop_locator',
-                    array(
-                        'gateway'          => $gateway,
-                        'postal_code'      => $postal_code,
-                        'country_code'     => $country_code,
-                        'limit'            => 7,
-                        'ajax_url'         => admin_url('admin-ajax.php'),
-                        'modal_background' => DHLPWC_PLUGIN_URL . 'assets/images/dhlpwc_top_bg.jpg',
-                        'confirm_button'   => $confirm_button_view,
-                        'google_map_key'   => $google_map_key,
-                        'translations'     => $translations,
-                    )
-                );
-            } else {
-                wp_enqueue_script('dhlpwc-checkout-parcelshop-locator-script', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.parcelshop.select.js', $dependencies);
-                wp_localize_script(
-                    'dhlpwc-checkout-parcelshop-locator-script',
-                    'dhlpwc_parcelshop_selector',
-                    array(
-                        'servicepoint_url' => $gateway . '/parcel-shop-locations/',
-                        'limit'            => 7,
-                        'ajax_url'         => admin_url('admin-ajax.php')
-                    )
-                );
-            }
-
+            wp_enqueue_script('dhlpwc-checkout-parcelshop-locator-script', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.parcelshop.locator.js', $dependencies);
+            wp_localize_script(
+                'dhlpwc-checkout-parcelshop-locator-script',
+                'dhlpwc_parcelshop_locator',
+                array(
+                    'gateway'          => $gateway,
+                    'postal_code'      => $postal_code,
+                    'country_code'     => $country_code,
+                    'limit'            => 7,
+                    'ajax_url'         => admin_url('admin-ajax.php'),
+                    'modal_background' => DHLPWC_PLUGIN_URL . 'assets/images/dhlpwc_top_bg.jpg',
+                    'google_map_key'   => $google_map_key,
+                    'translations'     => $translations,
+                    'language'         => $language
+                )
+            );
         }
     }
 
@@ -297,8 +283,7 @@ class DHLPWC_Controller_Cart
         if (is_cart() || is_checkout()) {
             wp_enqueue_style('dhlpwc-checkout-style', DHLPWC_PLUGIN_URL . 'assets/css/dhlpwc.cart.css');
             wp_enqueue_style('dhlpwc-checkout-modal-style', DHLPWC_PLUGIN_URL . 'assets/css/dhlpwc.modal.css');
-            wp_enqueue_style('dhlpwc-checkout-parcelshop-no-map-style', DHLPWC_PLUGIN_URL . 'assets/css/dhlpwc.parcelshop_no_map.css');
-            wp_enqueue_style('dhlpwc-checkout-parcelshop-dsl-style', 'https://servicepoint-locator.dhlparcel.nl/servicepoint-locator.css');
+            wp_enqueue_style('dhlpwc-checkout-parcelshop-dsl-style', 'https://static.dhlparcel.nl/fonts/Delivery.css');
         }
     }
 
