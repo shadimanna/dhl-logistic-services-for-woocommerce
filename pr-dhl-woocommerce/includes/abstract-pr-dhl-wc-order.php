@@ -754,6 +754,12 @@ abstract class PR_DHL_WC_Order {
 
 			if( ! empty( $item['variation_id'] ) ) {
 				$product_variation = wc_get_product($item['variation_id']);
+
+				// If product variation does not exist (i.e. was deleted) OR is virtual, skip it
+				if ( empty( $product_variation ) || $product_variation->is_virtual() ) {
+					continue;
+				}
+
 				// place 'sku' in a variable before validating using 'empty' to be compatible with PHP v5.4
 				$product_sku = $product_variation->get_sku();
 				// Ensure id is string and not int
