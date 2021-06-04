@@ -346,6 +346,14 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 				'name' 	    => __( 'Packet Plus International Standard', 'pr-shipping-dhl' ),
 				'origin_countries' => 'AU,CN,HK,IL,IN,MY,SG,TH'
 			),
+			'PPW' => array(
+				'name' 	    => __( 'Packet Plus Standard', 'pr-shipping-dhl' ),
+				'origin_countries' => 'AU,CN,HK,IL,IN,MY,SG,TH,VN'
+			),
+			'PPR' => array(
+				'name' 	    => __( 'Destination Redelivery Services', 'pr-shipping-dhl' ),
+				'origin_countries' => 'AU,CN,HK,IL,IN,MY,SG,TH,VN'
+			),
 			'PKM' => array(
 				'name' 	    => __( 'Packet International Priority Manifest', 'pr-shipping-dhl' ),
 				'origin_countries' => 'CN,HK,TH'
@@ -362,9 +370,17 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 				'name' 	    => __( 'Parcel International Direct Expedited', 'pr-shipping-dhl' ),
 				'origin_countries' => 'IN,CN,HK,SG,TH,AU,MY'
 			),
+			'PLG' => array(
+				'name' 	    => __( 'Parcel International Direct Goods', 'pr-shipping-dhl' ),
+				'origin_countries' => 'AU,CN,HK,IL,IN,MY,SG,TH,VN'
+			),
 			'PLD' => array(
 				'name' 	    => __( 'Parcel International Standard', 'pr-shipping-dhl' ),
 				'origin_countries' => 'CN,HK,SG,AU,IN'
+			),
+			'PLR' => array(
+				'name' 	    => __( 'Destination Intended Return Services', 'pr-shipping-dhl' ),
+				'origin_countries' => 'AU,CN,HK,IL,IN,MY,SG,TH,VN'
 			),
 			'PKG' => array(
 				'name' 	    => __( 'Packet International Economy', 'pr-shipping-dhl' ),
