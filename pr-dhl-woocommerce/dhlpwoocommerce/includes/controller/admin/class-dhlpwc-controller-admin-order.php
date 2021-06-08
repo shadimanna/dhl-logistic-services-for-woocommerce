@@ -228,13 +228,17 @@ class DHLPWC_Controller_Admin_Order
         $download_id = crc32(json_encode($order_ids));
         set_transient('dhlpwc_bulk_download_' . $download_id, $order_ids, 1 * DAY_IN_SECONDS);
 
-        $location = add_query_arg(array(
+        $query_vars = array(
             'post_type'             => 'shop_order',
             'dhlpwc_labels_created' => 1,
             'dhlpwc_create_count'   => $success_data['success'],
             'dhlpwc_fail_count'     => $success_data['fail'],
             'dhlpwc_download_id'    => $download_id,
-        ), 'edit.php');
+        );
+        $query_vars = apply_filters('dhlpwc_create_redirect_query_array', $query_vars);
+
+        $location = add_query_arg($query_vars, 'edit.php');
+        $location = apply_filters('dhlpwc_create_redirect_admin_url', $location);
 
         wp_redirect(admin_url($location));
         exit;
@@ -339,14 +343,18 @@ class DHLPWC_Controller_Admin_Order
         $download_id = crc32(json_encode($order_ids));
         set_transient('dhlpwc_bulk_download_' . $download_id, $order_ids, 1 * DAY_IN_SECONDS);
 
-        $location = add_query_arg(array(
+        $query_vars = array(
             'post_type'             => 'shop_order',
             'dhlpwc_labels_printed' => 1,
             'dhlpwc_order_count'    => $order_count,
             'dhlpwc_label_count'    => $label_count,
             'dhlpwc_success'        => $success ? 'true' : 'false',
             'dhlpwc_download_id'    => $download_id,
-        ), 'edit.php');
+        );
+        $query_vars = apply_filters('dhlpwc_print_redirect_query_array', $query_vars);
+
+        $location = add_query_arg($query_vars, 'edit.php');
+        $location = apply_filters('dhlpwc_print_redirect_admin_url', $location);
 
         wp_redirect(admin_url($location));
         exit;

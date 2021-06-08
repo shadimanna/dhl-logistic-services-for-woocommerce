@@ -78,7 +78,7 @@ class PR_DHL_Front_End_Paket {
 			add_filter( 'woocommerce_localisation_address_formats', array( $this, 'set_format_post_number' ) );
 			add_filter( 'woocommerce_formatted_address_replacements', array( $this, 'add_format_post_number' ), 10, 2 );
 		}
-		
+
 		if( $this->is_email_notification_enabled() ){
 			$pos = apply_filters('pr_shipping_dhl_email_notification_position', 'woocommerce_review_order_before_submit' );
 			add_action( $pos, array( $this, 'add_email_notification_checkbox' ), 10 );
@@ -88,12 +88,7 @@ class PR_DHL_Front_End_Paket {
 	}
 
 	protected function is_tracking_enabled() {
-		
-		if ( isset( $this->shipping_dhl_settings['dhl_pixel_tracking'] ) && ( $this->shipping_dhl_settings['dhl_pixel_tracking'] == 'yes' ) ) {
-			return true;
-		} else {
-			return false;
-		}
+		return false;
 	}
 
 	protected function is_preferredservice_enabled() {
@@ -535,6 +530,7 @@ class PR_DHL_Front_End_Paket {
 			$dhl_obj = PR_DHL()->get_dhl_factory();
 			$args['dhl_settings']['api_user'] = $this->shipping_dhl_settings['dhl_api_user'];
 			$args['dhl_settings']['api_pwd'] = $this->shipping_dhl_settings['dhl_api_pwd'];
+			$args['dhl_settings']['sandbox'] = $this->shipping_dhl_settings['dhl_sandbox'];
 			$args['shipping_address']['address'] = $parcelfinder_address;
 			$args['shipping_address']['postcode'] = $parcelfinder_postcode;
 			$args['shipping_address']['city'] = $parcelfinder_city;

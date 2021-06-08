@@ -131,7 +131,7 @@ class Item_Info {
 	 * @throws Exception If some data in $args did not pass validation.
 	 */
 	protected function parse_args( $args ) {
-        error_log(print_r($args,true));
+        
 		$settings = $args[ 'dhl_settings' ];
 		$recipient_info = $args[ 'shipping_address' ] + $settings;
 		$shipping_info = $args[ 'order_details' ] + $settings;
@@ -306,6 +306,9 @@ class Item_Info {
                     return $value;
                 }
 			),
+			'dangerous_goods' => array(
+				'default' => ''
+			)
 		);
 	}
 
@@ -532,9 +535,6 @@ class Item_Info {
 					$weight = ( $weight > 1 )? $weight : 1;
 					return $weight;
 				}
-			),
-			'dangerous_goods' => array(
-				'default' => ''
 			)
 		);
 	}
@@ -554,16 +554,17 @@ class Item_Info {
 
 		switch ( $uom ) {
 			case 'kg':
-				return $weight * 1000;
-
+				$weight = $weight * 1000;
+				break;
 			case 'lb':
-				return $weight / 2.2;
-
+				$weight = $weight / 2.2;
+				break;
 			case 'oz':
-				return $weight / 35.274;
+				$weight = $weight / 35.274;
+				break;
 		}
-
-		return $weight;
+		
+		return round( $weight );
 	}
 
 	protected function float_round_sanitization( $float, $numcomma ) {

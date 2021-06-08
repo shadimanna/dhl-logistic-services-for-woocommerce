@@ -30,37 +30,22 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
 
     public function combine_pdfs($order_ids, $orientation = null, $stack = 0)
     {
-        $loader = DHLPWC_Libraryloader::instance();
-        $pdf_merger = $loader->get_pdf_merger();
-        if ($pdf_merger === null) {
-            return null;
-        }
-
-        $files = 0;
+        $connector = DHLPWC_Model_API_Connector::instance();
+        $label_ids = array();
 
         foreach ($order_ids as $order_id) {
             $meta_service = new DHLPWC_Model_Service_Order_Meta();
             $labels = $meta_service->get_labels($order_id);
 
             if (!empty($labels)) {
-
                 foreach ($labels as $label_data) {
                     $label = new DHLPWC_Model_Meta_Order_Label($label_data);
-                    $path = $label->pdf->path;
-                    if (!file_exists($path)) {
-                        $path = $this->restore_pdf_path($path);
-                        if (!$path) {
-                            // Could not fix
-                            continue;
-                        }
-                    }
-                    $pdf_merger->addPDF($path, 'all');
-                    $files++;
+                    $label_ids[] = $label->label_id;
                 }
             }
         }
 
-        if (!$files) {
+        if (empty($label_ids)) {
             return null;
         }
 
@@ -72,10 +57,14 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
         $path = $upload_dir['path'] . DIRECTORY_SEPARATOR . $file_name;
         $url = $upload_dir['url'] . '/' . $file_name;
 
-        if (($orientation == 'L' || $orientation == 'P') && $stack > 0) {
-            $pdf_merger->groupedMerge('file', $path, $orientation, $stack);
-        } else {
-            $pdf_merger->merge('file', $path);
+        $response = $connector->stream('labels/multi', $path, array(
+            'missingLabelPolicy' => 'skip',
+            'labelIds' => $label_ids,
+            'pdfOptions' => ['pageSize' => $orientation == 'L' ? 'a4' : 'original']
+        ));
+
+        if (!$response) {
+            return null;
         }
 
         return array(

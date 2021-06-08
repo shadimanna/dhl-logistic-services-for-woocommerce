@@ -16,8 +16,16 @@ if ( ! class_exists( 'PR_DHL_WC_Product_Deutsche_Post' ) ) :
 
 class PR_DHL_WC_Product_Deutsche_Post extends PR_DHL_WC_Product {
 
+	public function __construct( ) {
+		parent::__construct( );
+
+		$this->manufacture_country_label = __('Country of origin (Deutsche Post International)', 'pr-shipping-dhl');
+		$this->hs_code_label = __('Harmonized Tariff code (Deutsche Post International)', 'pr-shipping-dhl');
+		$this->hs_code_description = __('Optional information for non-EU shipments. Appears on CN22 (Deutsche Post International).', 'pr-shipping-dhl');
+	}
+
 	public function get_manufacture_tooltip() {
-		return __('Country of Manufacture. Mandatory for shipments exporting from China.', 'pr-shipping-dhl');
+		return __('Country of origin of goods. Mandatory for all non-EU shipments. Appears on CN22 (Deutsche Post International).', 'pr-shipping-dhl');
 	}
 
 	/**
@@ -54,10 +62,9 @@ class PR_DHL_WC_Product_Deutsche_Post extends PR_DHL_WC_Product {
 		woocommerce_wp_textarea_input( 
 			array(
 				'id' => '_dhl_export_description',
-				'label' => __('Export Description (DHL)', 'pr-shipping-dhl'),
-				'description' => __('Product description to faciliate cross-border shipments. This field is limited to 50 charaters. Mandatory for shipments exporting from China, must be in Chinese characters.', 'pr-shipping-dhl'),
+				'label' => __('Content description (Deutsche Post International)', 'pr-shipping-dhl'),
+				'description' => __('Description of goods (max 33 characters). Mandatory for all non-EU shipments. Appears on CN22 (Deutsche Post International).', 'pr-shipping-dhl'),
 				'desc_tip' => 'true',
-				'placeholder' => 'Product export description...',
 				'custom_attributes'	=> array( 'maxlength' => '50' )
 			) 
 		);

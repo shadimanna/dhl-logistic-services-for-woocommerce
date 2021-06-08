@@ -18,6 +18,13 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 	
 	protected $carrier = 'DHL eCS Asia';
 
+	/**
+	 * The endpoint for download close out labels.
+	 *
+	 * @since [*next-version*]
+	 */
+	const DHL_DOWNLOAD_CLOSE_OUT_ENDPOINT = 'dhl_download_close_out';
+
 	public function init_hooks() {
 		parent::init_hooks();
 
@@ -33,6 +40,14 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 		// add bulk order filter for printed / non-printed orders
 		add_action( 'restrict_manage_posts', array( $this, 'filter_orders_by_label_created') , 20 );
 		add_filter( 'request',               array( $this, 'filter_orders_by_label_created_query' ) );
+
+		// The Close out label download endpoint
+		add_action( 'init', array( $this, 'add_download_close_out_endpoint' ) );
+		add_action( 'parse_query', array( $this, 'process_download_close_out' ) );
+	}
+
+	public function add_download_close_out_endpoint() {
+		add_rewrite_endpoint( self::DHL_DOWNLOAD_CLOSE_OUT_ENDPOINT, EP_ROOT );
 	}
 
 	public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
@@ -134,7 +149,11 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 	}
 	
 	protected function get_tracking_url() {
-		return PR_DHL_ECS_ASIA_TRACKING_URL;
+		$dhl_obj 	= PR_DHL()->get_dhl_factory();
+		$is_sandbox = $dhl_obj->get_setting( 'dhl_sandbox' );
+		$is_sandbox = filter_var($is_sandbox, FILTER_VALIDATE_BOOLEAN);
+
+		return ( $is_sandbox ) ? PR_DHL_ECS_ASIA_SANDBOX_TRACKING_URL : PR_DHL_ECS_ASIA_TRACKING_URL;
 	}
 
 	protected function get_package_description( $order_id ) {
@@ -445,25 +464,45 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 		$shop_manager_actions = array(
 			'pr_dhl_create_labels'      => __( 'DHL Create Labels', 'pr-shipping-dhl' ),
-            'pr_dhl_handover'      => __( 'DHL Print Handover', 'pr-shipping-dhl' )
+			// 'pr_dhl_closeout_all'      => __( 'DHL Close Out All', 'pr-shipping-dhl' ),
+			'pr_dhl_closeout_selected'      => __( 'DHL Close Out Selected', 'pr-shipping-dhl' )
 		);
 
 		return $shop_manager_actions;
 	}
 
 	public function validate_bulk_actions( $action, $order_ids ) {
-		$message = '';
-		if ( 'pr_dhl_handover' === $action ) {
-			// Ensure the selected orders have a label created, otherwise don't create handover
-			foreach ( $order_ids as $order_id ) {
-				$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
-				if( empty( $label_tracking_info ) ) {
-					$message = __( 'One or more orders do not have a DHL label created, please ensure all DHL labels are created for each order before creating a handoff document.', 'pr-shipping-dhl' );
+		
+		$orders_count 	= count( $order_ids );
+
+		if( 'pr_dhl_create_labels' === $action ){
+
+			if ( $orders_count < 1 ) {
+
+				return __( 'No orders selected for the DHL bulk action, please select orders before performing the DHL action.', 'pr-shipping-dhl' );
+
+			}
+
+		}elseif( 'pr_dhl_closeout_selected' === $action ){
+
+			if ( $orders_count < 1 ) {
+
+				return __( 'No orders selected for the DHL bulk action, please select orders before performing the DHL action.', 'pr-shipping-dhl' );
+
+			}else{
+
+				// Ensure the selected orders have a label created, otherwise don't create handover
+				foreach ( $order_ids as $order_id ) {
+					$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
+					if( empty( $label_tracking_info ) ) {
+						return __( 'One or more orders do not have a DHL label created, please ensure all DHL labels are created for each order before creating a handoff document.', 'pr-shipping-dhl' );
+					}
 				}
+
 			}
 		}
 
-		return $message;
+		return '';
 	}
 
 	public function process_bulk_actions( $action, $order_ids, $orders_count, $dhl_force_product = false, $is_force_product_dom = false ) {
@@ -487,7 +526,114 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 		$array_messages += parent::process_bulk_actions( $action, $order_ids, $orders_count, $dhl_force_product, $is_force_product_dom );
 
-		if ( 'pr_dhl_handover' === $action ) {
+		if( 'pr_dhl_closeout_all' === $action ){
+
+			$instance = PR_DHL()->get_dhl_factory();
+
+			try {
+				$closeout 	= $instance->close_out_shipment();
+
+				if( !isset( $closeout['handover_id'] ) ){
+					throw new Exception( __( 'Cannot get Handover ID!', 'pr-shipping-dhl' ) );
+				}
+				
+				$message 	= '';
+
+				if( isset( $closeout['message'] ) ){
+					$message .= $closeout['message'];
+				}
+
+				if( isset( $closeout['handover_id']) ){
+					$message .= ( !empty( $message ) )? ' - ' : '';
+					$message .= 'Handover ID: ' . $closeout['handover_id'];
+				}
+
+				array_push(
+					$array_messages,
+					array(
+						'message' => $message,
+						'type'    => 'success',
+					)
+				);
+				
+			} catch (Exception $exception) {
+				array_push(
+					$array_messages,
+					array(
+						'message' => $exception->getMessage(),
+						'type'    => 'error',
+					)
+				);
+			}
+
+		}elseif( 'pr_dhl_closeout_selected' === $action ){
+
+			$instance = PR_DHL()->get_dhl_factory();
+
+			$shipment_ids = array();
+
+			try {
+
+				foreach ( $order_ids as $order_id ) {
+
+					if( !$this->is_crossborder_shipment( $order_id ) ){
+						
+						throw new Exception( __( 'Local shipment found! Please pick international shipment only.', 'pr-shipping-dhl' ) );
+					}
+					$label_tracking_info 	= $this->get_dhl_label_tracking( $order_id );
+					$shipment_ids[] 		= $label_tracking_info['shipment_id'];
+				}
+
+				$closeout 	= $instance->close_out_shipment( $shipment_ids );
+
+				if( !isset( $closeout['handover_id'] ) ){
+					throw new Exception( __( 'Cannot get Handover ID!', 'pr-shipping-dhl' ) );
+				}
+
+				if( isset( $closeout['file_info']->url ) ){
+
+					foreach( $order_ids as $order_id ){
+						// Add post meta to identify if added to handover or not
+						update_post_meta( $order_id, '_pr_shipment_dhl_handover_note', 1 );
+					}
+					
+					$label_url 			= $this->generate_download_url( '/' . self::DHL_DOWNLOAD_CLOSE_OUT_ENDPOINT . '/' . $closeout['handover_id'] );
+
+					$manifest_text 	= sprintf(
+						'<a href="%1$s" target="_blank">%2$s</a>',
+						$label_url,
+						__('Download Closeout File', 'pr-shipping-dhl') . ' ' . $closeout['handover_id']
+					);
+
+				}else{
+					$manifest_text = __('Handover ID : ', 'pr-shipping-dhl' ) . $closeout['handover_id'];
+				}
+
+				$message = sprintf(
+					__( 'Finalized DHL Close Out - %2$s', 'pr-shipping-dhl' ),
+					$closeout['handover_id'],
+					$manifest_text
+				);
+
+				array_push(
+					$array_messages,
+					array(
+						'message' => $message,
+						'type'    => 'success',
+					)
+				);
+				
+			} catch (Exception $exception) {
+				array_push(
+					$array_messages,
+					array(
+						'message' => $exception->getMessage(),
+						'type'    => 'error',
+					)
+				);
+			}
+
+		}elseif ( 'pr_dhl_handover' === $action ) {
 			$redirect_url  = admin_url( 'edit.php?post_type=shop_order' );
 			$order_ids_hash = md5( json_encode( $order_ids ) );
 			// Save the order IDs in a option.
@@ -521,10 +667,44 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 		return $array_messages;
 	}
 
-	protected function get_bulk_settings_override( $args ) {
-		// Override duties to take default settings value for bulk only
-		$args['order_details']['duties'] = $this->shipping_dhl_settings['dhl_duties_default'];
-		return $args;
+	public function process_download_close_out() {
+		global $wp_query;
+		
+		$dhl_close_out_id = isset($wp_query->query_vars[ self::DHL_DOWNLOAD_CLOSE_OUT_ENDPOINT ] )
+			? $wp_query->query_vars[ self::DHL_DOWNLOAD_CLOSE_OUT_ENDPOINT ]
+			: null;
+			
+		// If the endpoint param (aka the DHL order ID) is not in the query, we bail
+		if ( $dhl_close_out_id === null ) {
+			return;
+		}
+
+		$instance 	= PR_DHL()->get_dhl_factory();
+		$label_path = $instance->get_dhl_close_out_label_file_info( $dhl_close_out_id )->path;
+		
+		$array_messages = get_option( '_pr_dhl_bulk_action_confirmation' );
+		if ( empty( $array_messages ) || !is_array( $array_messages ) ) {
+			$array_messages = array( 'msg_user_id' => get_current_user_id() );
+		}
+
+		if ( false == $this->download_label( $label_path ) ) {
+			array_push($array_messages, array(
+				'message' => __( 'Unable to download file. Label appears to be invalid or is missing. Please try again.', 'pr-shipping-dhl' ),
+				'type' => 'error'
+			));
+		}
+
+		update_option( '_pr_dhl_bulk_action_confirmation', $array_messages );
+
+		$redirect_url = isset($wp_query->query_vars[ 'referer' ])
+			? $wp_query->query_vars[ 'referer' ]
+			: admin_url('edit.php?post_type=shop_order');
+
+		// If there are errors redirect to the shop_orders and display error
+		if ( $this->has_error_message( $array_messages ) ) {
+            wp_redirect( remove_query_arg( array( '_wp_http_referer', '_wpnonce' ), $redirect_url ) );
+			exit;
+		}
 	}
 
 	public function print_document_action() {

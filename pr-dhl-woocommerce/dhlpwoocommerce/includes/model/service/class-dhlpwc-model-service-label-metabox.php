@@ -123,7 +123,7 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
                             $default_order_id_reference = $access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DEFAULT_ORDER_ID_REFERENCE);
 
                             if ($default_order_id_reference) {
-                                $value = $order_id;
+                                $value = apply_filters('dhlpwc_default_reference_value', $order_id);
                             } else {
                                 $value = null;
                             }

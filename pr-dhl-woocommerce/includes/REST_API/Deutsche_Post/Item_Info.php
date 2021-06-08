@@ -167,7 +167,7 @@ class Item_Info {
                 'default' => 'SALE_GOODS',
 			),
 			'packet_return' 	=> array(
-				'default' => '',
+				'default' => false,
 				'sanitize' => function ( $return ) use ($self) {
 
 					return ( $return == 'yes' )? true : false;
@@ -361,16 +361,17 @@ class Item_Info {
 
 		switch ( $uom ) {
 			case 'kg':
-				return $weight * 1000;
-
+				$weight = $weight * 1000;
+				break;
 			case 'lb':
-				return $weight / 2.2;
-
+				$weight = $weight / 2.2;
+				break;
 			case 'oz':
-				return $weight / 35.274;
+				$weight = $weight / 35.274;
+				break;
 		}
-
-		return $weight;
+		
+		return round( $weight );
 	}
 
 	protected function float_round_sanitization( $float, $numcomma ) {

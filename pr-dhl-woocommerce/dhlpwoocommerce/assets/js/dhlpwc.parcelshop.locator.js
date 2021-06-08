@@ -19,25 +19,17 @@ jQuery(document).ready(function($) {
             return;
         }
 
-        if (typeof  window.dhlpwc_reset_servicepoint === "function") {
-            var options = {
-                host: dhlpwc_parcelshop_locator.gateway,
-                apiKey: dhlpwc_parcelshop_locator.google_map_key,
-                query: $('.dhlpwc-shipping-method-parcelshop-option').data('search-value'),
-                countryCode: $('.dhlpwc-shipping-method-parcelshop-option').data('country-code'),
-                limit: dhlpwc_parcelshop_locator.limit,
-                tr: function (i) {
-                    return dhlpwc_parcelshop_locator.translations[i.toLowerCase()];
-                }
-            };
+        var searchQuery = $('.dhlpwc-shipping-method-parcelshop-option').data('search-value');
+        var country = $('.dhlpwc-shipping-method-parcelshop-option').data('country-code');
 
-            // Use the generated function provided by the component to load the ServicePoints
-            window.dhlpwc_reset_servicepoint(options);
-
-            $('div.dhlpwc-modal').show();
-        } else {
-            console.log('An unexpected error occured. ServicePoint functions were not loaded.');
+        if (typeof window.dhlparcel_shipping_servicepoint_locator !== 'undefined') {
+            window.dhlparcel_shipping_servicepoint_locator.setCountry(country)
+            if (searchQuery != '') {
+                window.dhlparcel_shipping_servicepoint_locator.setQuery(searchQuery)
+            }
         }
+
+        $('div.dhlpwc-modal').show();
 
     }).on('dhlpwc:add_parcelshop_component_confirm_button', function() {
         if ($('.dhl-parcelshop-locator .dhl-parcelshop-locator-desktop ul .dhlpwc-parcelshop-component-confirm-button').length === 0) {
@@ -82,27 +74,32 @@ jQuery(document).ready(function($) {
             {
                 var dhlpwc_selected_parcelshop_id = event.id;
 
-                if (typeof event.shopType !== 'undefined' && event.shopType === 'packStation' && event.address.countryCode === 'DE') {
-                    var dhlpwc_additional_parcelshop_id = prompt("Add your 'postnumber' for delivery at a DHL Packstation:");
-                    if (dhlpwc_additional_parcelshop_id != null && dhlpwc_additional_parcelshop_id != '') {
-                        dhlpwc_selected_parcelshop_id = dhlpwc_selected_parcelshop_id + '|' + dhlpwc_additional_parcelshop_id;
-                        $(document.body).trigger("dhlpwc:add_parcelshop_component_confirm_button");
-
-                        event.name = event.keyword + ' ' + dhlpwc_additional_parcelshop_id;
-                        $(document.body).trigger("dhlpwc:parcelshop_selection_sync", [dhlpwc_selected_parcelshop_id, event.address.countryCode]);
-                    } else {
-                        $(document.body).trigger("dhlpwc:parcelshop_selection_sync", [null, null]);
-                        $(document.body).trigger('dhlpwc:hide_parcelshop_selection_modal');
-                    }
-                } else {
-                    $(document.body).trigger("dhlpwc:add_parcelshop_component_confirm_button");
-                    $(document.body).trigger("dhlpwc:parcelshop_selection_sync", [dhlpwc_selected_parcelshop_id, event.address.countryCode]);
-                }
+                $(document.body).trigger("dhlpwc:parcelshop_selection_sync", [dhlpwc_selected_parcelshop_id, event.address.countryCode]);
+                $(document.body).trigger('dhlpwc:hide_parcelshop_selection_modal');
             };
 
             // Disable getScript from adding a custom timestamp
             $.ajaxSetup({cache: true});
-            $.getScript("https://servicepoint-locator.dhlparcel.nl/servicepoint-locator.js").done(function() {
+            $.getScript("https://static.dhlparcel.nl/components/servicepoint-locator-component@latest/servicepoint-locator-component.js").done(function() {
+                var dhlpwc_parcelshop_locator_language = 'en'
+                if (typeof dhlpwc_parcelshop_locator.language !== 'undefined' && dhlpwc_parcelshop_locator.language.length > 0) {
+                    dhlpwc_parcelshop_locator_language = dhlpwc_parcelshop_locator.language
+                }
+                var options = {
+                    language: dhlpwc_parcelshop_locator_language,
+                    country: '',
+                    limit: dhlpwc_parcelshop_locator.limit,
+                    header: false,
+                    resizable: true,
+                    onSelect: window.dhlpwc_select_servicepoint
+                };
+
+                if (typeof dhlpwc_parcelshop_locator.google_map_key !== 'undefined' && dhlpwc_parcelshop_locator.google_map_key !== null) {
+                    options.googleMapsApiKey = dhlpwc_parcelshop_locator.google_map_key;
+                }
+
+                window.dhlparcel_shipping_servicepoint_locator = new dhl.servicepoint.Locator(document.getElementById("dhl-servicepoint-locator-component"), options);
+
                 dhlpwc_parcelshop_selection_modal_loaded = true;
                 dhlpwc_parcelshop_selection_modal_loading_busy = false;
                 $('.dhlpwc-parcelshop-option-change').removeClass('dhlpwc-still-loading');
@@ -131,22 +128,18 @@ jQuery(document).ready(function($) {
             'country_code': country_code
         };
 
+        if (country_code === '' || parcelshop_id === '') {
+            return;
+        }
+
         $.post(dhlpwc_parcelshop_locator.ajax_url, data, function (response) {
             // $(document.body).trigger('dhlpwc:display_parcelshop', [parcelshop_id]);
             /* Cart page */
             $(document.body).trigger("wc_update_cart");
             /* Checkout page */
             $(document.body).trigger("update_checkout");
-            /* Check if auto closing is needed */
-            $(document.body).trigger("dhlpwc:check_autoclose_modal");
 
         });
-
-    }).on('dhlpwc:check_autoclose_modal', function() {
-        if ($('.dhl-parcelshop-locator .dhl-parcelshop-locator-desktop ul .dhlpwc-parcelshop-component-confirm-button').is(':hidden')) {
-            /* There is no visible confirm button, auto close any open modals after selecting a parcelshop */
-            $(document.body).trigger('dhlpwc:hide_parcelshop_selection_modal');
-        }
 
     });
 

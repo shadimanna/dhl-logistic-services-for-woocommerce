@@ -346,6 +346,14 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 				'name' 	    => __( 'Packet Plus International Standard', 'pr-shipping-dhl' ),
 				'origin_countries' => 'AU,CN,HK,IL,IN,MY,SG,TH'
 			),
+			'PPW' => array(
+				'name' 	    => __( 'Packet Plus Standard', 'pr-shipping-dhl' ),
+				'origin_countries' => 'AU,CN,HK,IL,IN,MY,SG,TH,VN'
+			),
+			'PPR' => array(
+				'name' 	    => __( 'Destination Redelivery Services', 'pr-shipping-dhl' ),
+				'origin_countries' => 'AU,CN,HK,IL,IN,MY,SG,TH,VN'
+			),
 			'PKM' => array(
 				'name' 	    => __( 'Packet International Priority Manifest', 'pr-shipping-dhl' ),
 				'origin_countries' => 'CN,HK,TH'
@@ -362,9 +370,17 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 				'name' 	    => __( 'Parcel International Direct Expedited', 'pr-shipping-dhl' ),
 				'origin_countries' => 'IN,CN,HK,SG,TH,AU,MY'
 			),
+			'PLG' => array(
+				'name' 	    => __( 'Parcel International Direct Goods', 'pr-shipping-dhl' ),
+				'origin_countries' => 'AU,CN,HK,IL,IN,MY,SG,TH,VN'
+			),
 			'PLD' => array(
 				'name' 	    => __( 'Parcel International Standard', 'pr-shipping-dhl' ),
 				'origin_countries' => 'CN,HK,SG,AU,IN'
+			),
+			'PLR' => array(
+				'name' 	    => __( 'Destination Intended Return Services', 'pr-shipping-dhl' ),
+				'origin_countries' => 'AU,CN,HK,IL,IN,MY,SG,TH,VN'
 			),
 			'PKG' => array(
 				'name' 	    => __( 'Packet International Economy', 'pr-shipping-dhl' ),
@@ -449,18 +465,9 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		if ( ! isset( $label_info['label_path'] ) ) {
 			throw new Exception( __( 'DHL Label has no path!', 'pr-shipping-dhl' ) );
 		}
-		$shipment_id 		= $label_info['shipment_id'];
-		$label_response 	= $this->api_client->delete_label( $shipment_id );
-		$label_response 	= json_decode( $label_response );
-		
-		$response_status 	= $label_response->deleteShipmentResp->bd->responseStatus;
-		if( $response_status->code != 200 ){
-			throw new Exception( 
-				"Error: " . $response_status->message . "<br /> " .
-				"Detail: " . $response_status->messageDetails[0]->messageDetail 
-			);
-		}
-
+		$shipment_id 	= $label_info['shipment_id'];
+		$response 		= $this->api_client->delete_label( $shipment_id );
+			
 		$label_path = $label_info['label_path'];
 
 		if ( file_exists( $label_path ) ) {
@@ -470,6 +477,40 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 				throw new Exception( __( 'DHL Label could not be deleted!', 'pr-shipping-dhl' ) );
 			}
 		}
+	}
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @since [*next-version*]
+	 */
+	public function close_out_shipment( $shipment_ids = array() ){
+
+		$response 	= $this->api_client->close_out_labels( $this->country_code, $shipment_ids );
+		
+		$return = array();
+
+		if( isset( $response->handoverID ) ){
+			$return['handover_id'] = $response->handoverID;
+		}
+
+		if( isset( $response->handoverNote ) && !empty( $response->handoverNote ) ){
+			$data 					= base64_decode( $response->handoverNote );
+			$return['file_info'] 	= $this->save_dhl_label_file( 'closeout', $response->handoverID, $data );
+		}
+
+		if( isset( $response->responseStatus->messageDetails ) ){
+
+			foreach( $response->responseStatus->messageDetails as $msg ){
+				
+				if( isset( $msg->messageDetail ) ){
+					$return['message'] = $msg->messageDetail;
+				}
+
+			}
+		}
+
+		return $return;
 	}
 
 	/**
@@ -484,6 +525,20 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	 */
 	public function get_dhl_item_label_file_name( $barcode, $format = 'pdf' ) {
 		return sprintf('dhl-label-%s.%s', $barcode, $format);
+	}
+
+	/**
+	 * Retrieves the filename for DHL closeout label file.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $barcode The DHL closeout id.
+	 * @param string $format The file format.
+	 *
+	 * @return string
+	 */
+	public function get_dhl_close_out_label_file_name( $handover_id, $format = 'pdf' ) {
+		return sprintf('dhl-closeout-%s.%s', $handover_id, $format);
 	}
 
 	/**
@@ -506,6 +561,25 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	}
 
 	/**
+	 * Retrieves the file info for a DHL close out label file.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $barcode The DHL item barcode.
+	 * @param string $format The file format.
+	 *
+	 * @return object An object containing the file "path" and "url" strings.
+	 */
+	public function get_dhl_close_out_label_file_info( $handover_id, $format = 'pdf' ) {
+		$file_name = $this->get_dhl_close_out_label_file_name($handover_id, $format);
+
+		return (object) array(
+			'path' => PR_DHL()->get_dhl_label_folder_dir() . $file_name,
+			'url' => PR_DHL()->get_dhl_label_folder_url() . $file_name,
+		);
+	}
+
+	/**
 	 * Retrieves the file info for any DHL label file, based on type.
 	 *
 	 * @since [*next-version*]
@@ -517,8 +591,11 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	 */
 	public function get_dhl_label_file_info( $type, $key ) {
 
+		if( $type == 'closeout' ){
+			return $this->get_dhl_close_out_label_file_info( $key, 'pdf' );
+		}
+
 		$label_format = strtolower( $this->get_setting( 'dhl_label_format' ) );
-		
 		// Return info for "item" type
 		return $this->get_dhl_item_label_file_info( $key, $label_format );
 	}
@@ -540,7 +617,8 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		// Get the file info based on type
 		$file_info = $this->get_dhl_label_file_info( $type, $key );
 
-		if ( validate_file( $file_info->path ) > 0 ) {
+		// Validate all file path including windows path
+		if ( validate_file( $file_info->path ) > 0 && validate_file( $file_info->path ) !== 2 ) {
 			throw new Exception( __( 'Invalid file path!', 'pr-shipping-dhl' ) );
 		}
 
