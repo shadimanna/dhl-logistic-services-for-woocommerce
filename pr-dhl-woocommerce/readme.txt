@@ -81,6 +81,13 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 == Changelog ==
  
+= 2.5.7 =
+* DHL Paket: Add compatibilty with Microsoft Server
+* DHL Paket: Skip virtual variation products
+* DHL Paket: Add POT file for translation
+* DHL Paket: Fix weight error issue
+* DHL eCS Asia: Add additional DHL International services
+
 = 2.5.6 =
 * DHL Parcel: Use multi-label API instead of PDFMerger
 * DHL Parcel: Add filter for reference
