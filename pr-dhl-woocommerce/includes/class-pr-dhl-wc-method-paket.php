@@ -24,7 +24,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		$this->id = 'pr_dhl_paket';
 		$this->instance_id = absint( $instance_id );
 		$this->method_title = __( 'DHL Paket', 'pr-shipping-dhl' );
-		$this->method_description = sprintf( __( 'Below you will find all functions for controlling, preparing and processing your shipment with DHL Paket. Prerequisite is a valid DHL business customer contract. If you are not yet a DHL business customer, you can request a quote %shere%s.', 'pr-shipping-dhl' ), '<a href="https://www.dhl.de/de/geschaeftskunden/paket/kunde-werden/angebot-dhl-geschaeftskunden-online.html" target="_blank">', '</a>' );
+		$this->method_description = sprintf( __( 'Below you will find all functions for controlling, preparing and processing your shipment with DHL Paket. Prerequisite is a valid DHL business customer contract. If you are not yet a DHL business customer, you can request a quote %shere%s.', 'pr-shipping-dhl' ), '<a href="https://www.dhl.de/de/geschaeftskunden/paket/plugin-kunde-werden/angebot-dhl-geschaeftskunden-online.html?source=woocommerce" target="_blank">', '</a>' );
 
 		$this->init();
 	}
@@ -398,7 +398,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'description'       => sprintf( __( 'Your password for the DHL business customer portal. Please note the new assignment of the password to 3 (Standard User) or 12 (System User) months and test your access data in advance at %shere%s', 'pr-shipping-dhl' ), '<a href="' . PR_DHL_PAKET_BUSSINESS_PORTAL . '" target = "_blank">', '</a>' ),
 				'desc_tip'          => false,
 				'default'           => ''
-			),/*
+			),
 			'dhl_sandbox' => array(
 				'title'             => __( 'Sandbox Mode', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
@@ -406,21 +406,28 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'default'           => 'no',
 				'description'       => __( 'Please, tick here if you want to test the plug-in installation against the DHL Sandbox Environment. Labels generated via Sandbox cannot be used for shipping and you need to enter your client ID and client secret for the Sandbox environment instead of the ones for production!', 'pr-shipping-dhl' ),
 				'desc_tip'          => true,
-			),*/
+			),
+			'dhl_api_sandbox_user' => array(
+				'title'             => __( 'Sandbox Username', 'pr-shipping-dhl' ),
+				'type'              => 'text',
+				'description'       => sprintf( __( 'Your sandbox username is the same as for the DHL developer portal. You can create an account %shere%s.', 'pr-shipping-dhl' ), '<a href="' . PR_DHL_PAKET_DEVELOPER_PORTAL . '" target = "_blank">', '</a>' ),
+				'desc_tip'          => false,
+				'default'           => ''
+			),
+			'dhl_api_sandbox_pwd' => array(
+				'title'             => __( 'Sandbox Password', 'pr-shipping-dhl' ),
+				'type'              => 'password',
+				'description'       => sprintf( __( 'Your sandbox password is the same as for the DHL developer portal. You can create an account %shere%s.', 'pr-shipping-dhl' ), '<a href="' . PR_DHL_PAKET_DEVELOPER_PORTAL . '" target = "_blank">', '</a>' ),
+				'desc_tip'          => false,
+				'default'           => ''
+			),
 			'dhl_debug' => array(
 				'title'             => __( 'Debug Log', 'pr-shipping-dhl' ),
 				'type'              => 'checkbox',
 				'label'             => __( 'Enable logging', 'pr-shipping-dhl' ),
 				'default'           => 'no',
 				'description'       => sprintf( __( 'A log file containing the communication to the DHL server will be maintained if this option is checked. This can be used in case of technical issues and can be found %shere%s.', 'pr-shipping-dhl' ), '<a href="' . $log_path . '" target = "_blank">', '</a>' )
-			),
-			'dhl_pixel_tracking' => array(
-				'title'             => __( 'Tracking', 'pr-shipping-dhl' ),
-				'type'              => 'checkbox',
-				'label'             => __( 'Enable tracking', 'pr-shipping-dhl' ),
-				'default'           => 'yes',
-				'description'       => __( 'This allows DHL to anomously track whether the preferred services are being used on the shop or not.' )
-			),
+			)
 		);
 
 		$base_country_code = PR_DHL()->get_base_country();

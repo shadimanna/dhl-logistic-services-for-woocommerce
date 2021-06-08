@@ -609,7 +609,12 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			// EMAIL NOTIFCATION
 			$notification_email = array();
-			if ( isset( $this->args['order_details'][ 'email_notification' ] ) && ( $this->args['order_details'][ 'email_notification' ] == 'yes' || $this->args['order_details'][ 'email_notification' ] == '1' ) ) {
+			if ( ( isset( $this->args['order_details'][ 'email_notification' ] ) && 
+					( $this->args['order_details'][ 'email_notification' ] == 'yes' || $this->args['order_details'][ 'email_notification' ] == '1' ) 
+				) || 
+				( isset( $this->args['dhl_settings'][ 'email_notification' ] ) && 
+					( $this->args['dhl_settings'][ 'email_notification' ] == 'sendviatc' ) ) ) {
+				
 				$notification_email['recipientEmailAddress'] = $this->args['shipping_address']['email'];
 			}
 

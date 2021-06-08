@@ -46,6 +46,13 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
         return $this->available_methods;
     }
 
+    public function stream($endpoint, $save_path, $params = null)
+    {
+        $params = $params ? json_encode($params) : null;
+        $response = $this->request(self::POST, $endpoint, $params, $save_path);
+        return $response;
+    }
+
     public function post($endpoint, $params = null)
     {
         $params = $params ? json_encode($params) : null;
@@ -86,7 +93,7 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
         return json_decode($response['body'], true);
     }
 
-    protected function request($method, $endpoint, $params = null)
+    protected function request($method, $endpoint, $params = null, $save_path = null)
     {
         // Assume there's always an error, until this method manages to return correctly and set the boolean to true.
         $this->is_error = true;
@@ -101,7 +108,7 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
         }
 
         $add_bearer = ($endpoint != $this->auth_api && isset($this->access_token)) ? true : false;
-        $request_params = $this->generate_params($params, $add_bearer);
+        $request_params = $this->generate_params($params, $add_bearer, $save_path);
 
         if ($method == self::POST) {
             $request = wp_remote_post($this->url.$endpoint, $request_params);
@@ -117,6 +124,9 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
         }
 
         if ($request['response']['code'] >= 200 && $request['response']['code'] < 300) {
+            if ($save_path) {
+                return $request;
+            }
             if (array_key_exists('body', $request)) {
                 json_decode($request['body'], true);
                 if (json_last_error() === JSON_ERROR_NONE) {
@@ -146,12 +156,12 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
         return false;
     }
 
-    protected function generate_params($params, $add_bearer = true)
+    protected function generate_params($params, $add_bearer = true, $save_path = null)
     {
         $request_params = [];
         $request_params = array_merge_recursive($request_params, array(
             'headers' => array(
-                'Accept' => 'application/json',
+                'Accept' => !$save_path ? 'application/json' : 'application/pdf',
                 'Content-Type' => 'application/json',
             ),
         ));
@@ -167,6 +177,13 @@ class DHLPWC_Model_API_Connector extends DHLPWC_Model_Core_Singleton_Abstract
         if ($params) {
             $request_params = array_merge_recursive($request_params, array(
                 'body' => $params,
+            ));
+        }
+
+        if ($save_path) {
+            $request_params = array_merge_recursive($request_params, array(
+                'stream' => true,
+                'filename' => $save_path,
             ));
         }
 

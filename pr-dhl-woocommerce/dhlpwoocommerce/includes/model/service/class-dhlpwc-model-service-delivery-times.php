@@ -189,16 +189,19 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
         $same_day_id = $preset->frontend_id;
         $same_day_allowed = $this->check_allowed_options($preset->options, $allowed_shipping_options);
         $same_day_enabled = $access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CHECKOUT_PRESET, $code_same_day);
+        $same_day_enabled = $same_day_enabled && !$this->is_disabled_by_conditions($code_same_day);
 
         $preset = $service->find_preset($code_home);
         $home_id = $preset->frontend_id;
         $home_allowed = $this->check_allowed_options($preset->options, $allowed_shipping_options);
         $home_enabled = $access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CHECKOUT_PRESET, $code_home);
+        $home_enabled = $home_enabled && !$this->is_disabled_by_conditions($code_home);
 
         $preset = $service->find_preset($code_evening);
         $evening_id = $preset->frontend_id;
         $evening_allowed = $this->check_allowed_options($preset->options, $allowed_shipping_options);
         $evening_enabled = $access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CHECKOUT_PRESET, $code_evening);
+        $evening_enabled = $evening_enabled && !$this->is_disabled_by_conditions($code_evening);
 
         foreach($delivery_times as $delivery_time) {
             /** @var DHLPWC_Model_Data_Delivery_Time $delivery_time */
@@ -584,6 +587,7 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
         $preset = $preset_service->find_preset($code_same_day);
         $same_day_allowed = $this->check_allowed_options($preset->options, $allowed_shipping_options);
         $same_day_enabled = $access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CHECKOUT_PRESET, $code_same_day);
+        $same_day_enabled = $same_day_enabled && !$this->is_disabled_by_conditions($code_same_day);
 
         foreach ($delivery_times as $delivery_time) {
             /** @var DHLPWC_Model_Data_Delivery_Time $delivery_time */
@@ -622,6 +626,95 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
             6 => $access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_SHIPPING_DAY, 'saturday'),
             7 => $access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_SHIPPING_DAY, 'sunday'),
         );
+    }
+
+    protected function is_disabled_by_conditions($option)
+    {
+        $cart = WC()->cart;
+        if (!$cart) {
+            return false;
+        }
+
+        $conditions = $this->get_zone_option('option_condition_' . $option);
+        if (!$conditions) {
+            return false;
+        }
+
+        // Allow developers to manipulate disable conditions
+        $conditions = apply_filters('dhlpwc_disable_conditions', $conditions, $option);
+
+        $service = DHLPWC_Model_Service_Condition_Rule::instance();
+        $disabled = $service->is_disabled($conditions, $this->get_subtotal_price($cart));
+        return $disabled;
+    }
+
+    /**
+     * @param WC_Cart $cart
+     * @return float|mixed
+     */
+    protected function get_subtotal_price($cart)
+    {
+        if ($this->get_zone_option(DHLPWC_Model_WooCommerce_Settings_Shipping_Method::FREE_AFTER_COUPON) === 'yes') {
+            $subtotal = 0;
+            foreach($cart->cart_contents as $key => $order)
+            {
+                $subtotal += $order['line_total'] + $order['line_tax'];
+            }
+            return round($subtotal, wc_get_price_decimals());
+        }
+
+        return $cart->get_subtotal();
+    }
+
+    protected function get_zone_option($option)
+    {
+        $cart = WC()->cart;
+        if (!$cart) {
+            return false;
+        }
+
+        if (is_callable(array($cart, 'get_customer'))) {
+            // WooCommerce 3.2.0+
+            $customer = $cart->get_customer();
+        } else {
+            // WooCommerce < 3.2.0
+            $customer = WC()->customer;
+        }
+
+        if (!$customer) {
+            return false;
+        }
+
+        if (!$customer->get_shipping_country()) {
+            return false;
+        }
+
+        $shipping_methods = WC_Shipping::instance()->load_shipping_methods(array(
+            'destination' => array(
+                'country'  => $customer->get_shipping_country(),
+                'state'    => $customer->get_shipping_state(),
+                'postcode' => $customer->get_shipping_postcode(),
+            ),
+        ));
+
+        if (empty($shipping_methods)) {
+            return false;
+        }
+
+        $continue = false;
+        foreach($shipping_methods as $shipping_method) {
+            if ($shipping_method->id === 'dhlpwc') {
+                $continue = true;
+                break;
+            }
+        }
+
+        if (!$continue) {
+            return false;
+        }
+
+        /** @var DHLPWC_Model_WooCommerce_Settings_Shipping_Method $shipping_method */
+        return $shipping_method->get_option($option);
     }
 }
 
