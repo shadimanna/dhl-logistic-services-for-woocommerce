@@ -82,7 +82,7 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 == Changelog ==
  
 = 2.5.7 =
-* DHL Paket: Add compatibilty with Microsoft Server
+* DHL: Add compatibility with Microsoft Server for label creation
 * DHL Paket: Skip virtual variation products
 * DHL Paket: Add POT file for translation
 * DHL Paket: Fix weight error issue
