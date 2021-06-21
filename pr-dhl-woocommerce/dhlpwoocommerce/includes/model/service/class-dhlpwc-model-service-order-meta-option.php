@@ -190,6 +190,48 @@ class DHLPWC_Model_Service_Order_Meta_Option extends DHLPWC_Model_Core_Singleton
         return true;
     }
 
+    public function send_with_bp($order_id)
+    {
+        /** @var WC_Order $order */
+        $order = new WC_Order($order_id);
+        $eligible = true;
+        $fill_percentage = 0;
+
+        $items = $order->get_items();
+        if (count($items) < 1) {
+            return false;
+        }
+
+        foreach($items as $item) {
+            if (get_post_meta($item['product_id'], 'dhlpwc_send_with_bp', true) !== 'yes') {
+                $eligible = false;
+                break;
+            } else {
+                $quantity = $item['quantity'];
+                $count = intval(get_post_meta($item['product_id'], 'dhlpwc_send_with_bp_count', true));
+                if ($count < 1) {
+                    $count = 1;
+                }
+
+                $fill_percentage += 1 / $count * $quantity * 100;
+
+                // If the total volume (calculated based on 'count' setting) exceeds 1 package, do not use BP
+                if ($fill_percentage > 100) {
+                    $eligible = false;
+                    break;
+                }
+
+                // If mixing products is not allowed, the order should not have other products
+                if (get_post_meta($item['product_id'], 'dhlpwc_send_with_bp_mix', true) !== 'yes' && count($items) > 1) {
+                    $eligible = false;
+                    break;
+                }
+            }
+        }
+
+        return $eligible;
+    }
+
     public function get_parcelshop($order_id)
     {
         /** @var WC_Order $order */

@@ -626,6 +626,54 @@ jQuery(document).ready(function($) {
             });
         });
 
+    }).on('dhlpwc:init_bulk_service_grid', function() {
+        // Don't load if the bulk grid cannot be found
+        if ($('.dhlpwc-bulk-service-grid table').length < 1) {
+            return;
+        }
+        // Don't load if the grid has already been filled (in case this event is called multiple times)
+        if ($('.dhlpwc-bulk-service-grid table').find('td').length > 0) {
+            return;
+        }
+
+        var dhlpwc_bulk_service_collection = [];
+
+        $('.dhlpwc-bulk-service-option').each(function (e) {
+            if ($.inArray($(this).data('bulk-service-group'), dhlpwc_bulk_service_collection) === -1) {
+                dhlpwc_bulk_service_collection.push($(this).data('bulk-service-group'));
+            }
+            $(this).closest('tr').addClass('dhlpwc-original-bulk-service-option');
+        });
+
+        $.each(dhlpwc_bulk_service_collection, function (i, option_identifier) {
+            $('.dhlpwc-bulk-service-grid table')
+                .find('tbody')
+                .append($('<tr id="dhlpwc-bulk-service-group-mirror-' + option_identifier + '">'));
+
+            $('.dhlpwc-bulk-service-option[data-bulk-service-group="' + option_identifier + '"]').each(function (e) {
+                // Create a label assuming the 'enable option' is first and has a label
+                if ($(this).attr('id').indexOf('_dhlpwc_enable_bulk_option_') > -1) {
+                    $(this).closest('tr').find('th').first().find('label').clone()
+                        .removeAttr('id for class')
+                        .appendTo('#dhlpwc-bulk-service-group-mirror-' + option_identifier)
+                        .wrap("<td></td>");
+                }
+
+                // Create a clone that mirrors the original input box
+                $(this).clone()
+                    .prop('id', $(this).attr('id') + '-mirror')
+                    .bind('change blur', function () {
+                        if ($(this).attr('type') === 'checkbox') {
+                            $('#' + $(this).attr('id').slice(0, -7)).attr('checked', $(this).is(':checked'));
+                        } else {
+                            $('#' + $(this).attr('id').slice(0, -7)).val($(this).val());
+                        }
+                    })
+                    .appendTo('#dhlpwc-bulk-service-group-mirror-' + option_identifier)
+                    .wrap("<td></td>");
+            });
+        });
+
     }).on('dhlpwc:update_price_fields', function() {
         var currency_symbol = dhlpwc_settings_object.currency_symbol;
         var currency_pos = 'dhlpwc-currency-pos-' + dhlpwc_settings_object.currency_pos;
@@ -681,15 +729,15 @@ jQuery(document).ready(function($) {
 
     }).on('change', '#woocommerce_dhlpwc_enable_option_no_neighbour_same_day-mirror, #woocommerce_dhlpwc_enable_delivery_time_no_neighbour_same_day-mirror', function (e) {
         var shipping_option_checked = $('#woocommerce_dhlpwc_enable_option_no_neighbour_same_day-mirror').is(':checked');
-        var delivery_times_checked  = $('#woocommerce_dhlpwc_enable_delivery_time_no_neighbour_same_day-mirror').is(':checked');
+        var delivery_times_checked = $('#woocommerce_dhlpwc_enable_delivery_time_no_neighbour_same_day-mirror').is(':checked');
 
         var shipping_option_error = $('#dhlpwc-option-group-error-no_neighbour_same_day');
-        var delivery_times_error  = $('#dhlpwc-delivery-times-group-error-no_neighbour_same_day');
+        var delivery_times_error = $('#dhlpwc-delivery-times-group-error-no_neighbour_same_day');
 
         if (
-            (shipping_option_checked && delivery_times_checked) ||
-            (!shipping_option_checked && delivery_times_checked) ||
-            (!shipping_option_checked && !delivery_times_checked)
+          (shipping_option_checked && delivery_times_checked) ||
+          (!shipping_option_checked && delivery_times_checked) ||
+          (!shipping_option_checked && !delivery_times_checked)
         ) {
             shipping_option_error.addClass('hidden');
             delivery_times_error.addClass('hidden');
@@ -699,6 +747,12 @@ jQuery(document).ready(function($) {
 
         shipping_option_error.removeClass('hidden');
         delivery_times_error.removeClass('hidden');
+
+    }).on('dhlpwc:init_snippet_information', function() {
+        $('input#woocommerce_dhlpwc_check_default_order_id_reference').closest('fieldset').append(
+          '<p>' + dhlpwc_settings_object.snippet_description_message + ' <a href="#TB_inline?&width=800&height=400&inlineId=dhlpwc_snippet_default_reference_value" class="thickbox">' + dhlpwc_settings_object.snippet_button_message + '</a></p>' +
+          '<div id="dhlpwc_snippet_default_reference_value" style="display:none;"><p><pre>' + dhlpwc_settings_object.snippet_default_reference_value + '</pre></p></div>'
+        );
 
     });
 
@@ -711,7 +765,9 @@ jQuery(document).ready(function($) {
     $(document.body).trigger('dhlpwc:check_hide_sender_address');
     $(document.body).trigger('dhlpwc:init_delivery_times_grid');
     $(document.body).trigger('dhlpwc:init_bulk_grid');
+    $(document.body).trigger('dhlpwc:init_bulk_service_grid');
     $(document.body).trigger('dhlpwc:update_price_fields');
     $(document.body).trigger('dhlpwc:update_weight_fields');
+    $(document.body).trigger('dhlpwc:init_snippet_information');
 
 });

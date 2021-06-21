@@ -198,7 +198,7 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
         return $label;
     }
 
-    public function bulk($order_ids, $bulk_size)
+    public function bulk($order_ids, $bulk_size, $bulk_service_options = array())
     {
         $bulk_success = 0;
         $bulk_fail = 0;
@@ -212,6 +212,16 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
             // Generate options
             $option_service = DHLPWC_Model_Service_Order_Meta_Option::instance();
             $preset_options = $option_service->get_keys($order_id);
+
+            // Add selected bulk service options
+            if (!empty($bulk_service_options)) {
+                $preset_options = array_merge($preset_options, $bulk_service_options);
+            }
+
+            if ($option_service->send_with_bp($order_id)) {
+                // Simulate bp_only print when eligible for BP
+                $bulk_size = 'bp_only';
+            }
 
             // Only apply special delivery method logic if it's not an PS.
             if (!in_array(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS, $preset_options)) {
@@ -273,7 +283,7 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
                         $option_data[DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS] = $parcelshop->id;
                         break;
                     case (DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE):
-                        $reference_value = apply_filters('dhlpwc_default_reference_value', $order_id);
+                        $reference_value = apply_filters('dhlpwc_default_reference_value', $order_id, $order_id);
                         $option_data[DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE] = $reference_value;
                         break;
                 }

@@ -210,6 +210,39 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         return $enabled;
     }
 
+    public function check_bulk_services($all = false)
+    {
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
+
+        if (empty($shipping_method)) {
+            return array();
+        }
+
+        $bulk_services = array(
+            DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SDD
+        );
+
+        $bulk_services = array_map('strtolower', $bulk_services);
+
+        if ($all) {
+            return $bulk_services;
+        }
+
+        $enabled = array();
+
+        foreach($bulk_services as $bulk_service) {
+            if (isset($shipping_method['enable_bulk_option_service_' . $bulk_service]) && $shipping_method['enable_bulk_option_service_' . $bulk_service] == 'yes') {
+                $enabled[] = $bulk_service;
+            }
+        }
+
+        if (!count($enabled)) {
+            return array();
+        }
+
+        return $enabled;
+    }
+
     public function check_bulk_download()
     {
         $shipping_method = get_option('woocommerce_dhlpwc_settings');
@@ -435,6 +468,35 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         }
 
         if ($shipping_method['default_send_to_business'] != 'yes') {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function check_display_zero_fee($type = 'number')
+    {
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
+
+        if (empty($shipping_method)) {
+            return false;
+        }
+
+        if (!isset($shipping_method['display_zero_fee'])) {
+            return false;
+        }
+
+        // Number check
+        if ($type === 'number') {
+            if ($shipping_method['display_zero_fee'] != DHLPWC_Model_WooCommerce_Settings_Shipping_Method::DISPLAY_ZERO_NUMBER) {
+                return false;
+            }
+
+            return true;
+        }
+
+        // Text check
+        if ($shipping_method['display_zero_fee'] != DHLPWC_Model_WooCommerce_Settings_Shipping_Method::DISPLAY_ZERO_TEXT) {
             return false;
         }
 
@@ -871,6 +933,21 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         }
 
         if ($shipping_method['validation_rule_' . $identifier] != 'yes') {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function check_use_shipping_zones()
+    {
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
+
+        if (empty($shipping_method)) {
+            return false;
+        }
+
+        if ($shipping_method['use_shipping_zones'] != 'yes') {
             return false;
         }
 

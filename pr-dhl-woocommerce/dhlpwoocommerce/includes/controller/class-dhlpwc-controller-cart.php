@@ -17,7 +17,8 @@ class DHLPWC_Controller_Cart
     public function set_parcelshop_hooks()
     {
         $service = DHLPWC_Model_Service_Access_Control::instance();
-        if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CHECKOUT_PARCELSHOP)) {
+        if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CHECKOUT_PARCELSHOP)
+            || $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_USE_SHIPPING_ZONES)) {
             add_action('wp_enqueue_scripts', array($this, 'load_parcelshop_styles'));
             add_action('wp_enqueue_scripts', array($this, 'load_parcelshop_scripts'));
 
@@ -29,6 +30,27 @@ class DHLPWC_Controller_Cart
             add_action('wp_ajax_dhlpwc_parcelshop_selection_sync', array($this, 'parcelshop_selection_sync'));
             add_action('wp_ajax_nopriv_dhlpwc_parcelshop_selection_sync', array($this, 'parcelshop_selection_sync'));
         }
+        if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DISPLAY_ZERO_FEE_NUMBER)) {
+            add_filter('woocommerce_cart_shipping_method_full_label', array($this, 'display_zero_fee_number'), 10, 2);
+        } else if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DISPLAY_ZERO_FEE_TEXT)) {
+            add_filter('woocommerce_cart_shipping_method_full_label', array($this, 'display_zero_fee_text'), 10, 2);
+        }
+    }
+
+    public function display_zero_fee_number($label, $method)
+    {
+        if (isset($method->id) && substr($method->id, 0, 6) === 'dhlpwc' && !($method->cost > 0)) {
+            $label .= ': ' . wc_price(0);
+        }
+        return $label;
+    }
+
+    public function display_zero_fee_text($label, $method)
+    {
+        if (isset($method->id) && substr($method->id, 0, 6) === 'dhlpwc' && !($method->cost > 0)) {
+            $label .= sprintf(' (%s)', __('Free', 'dhlpwc'));
+        }
+        return $label;
     }
 
     public function set_delivery_time_hooks()

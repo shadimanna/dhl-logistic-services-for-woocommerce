@@ -25,9 +25,33 @@ class DHLPWC_Controller_Admin_Order
         }
 
         if ($bulk_options = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_BULK_CREATE)) {
+            $bulk_services = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_BULK_SERVICES);
+
             add_filter('bulk_actions-edit-shop_order', array($this, 'add_bulk_create_actions'));
             foreach ($bulk_options as $bulk_option) {
-                add_action('admin_action_dhlpwc_create_labels_' . $bulk_option, array($this, 'create_multiple_labels_' . $bulk_option));
+                add_action('admin_action_dhlpwc_create_labels_' . $bulk_option, function() {
+                    if (empty($_REQUEST['action'])) {
+                        return;
+                    }
+
+                    $bulk_parameters = $this->split_bulk_parameters($_REQUEST['action']);
+
+                    $this->create_multiple_labels($bulk_parameters['size'], $bulk_parameters['service_options']);
+                });
+
+                if ($bulk_services) {
+                    foreach ($bulk_services as $bulk_service) {
+                        add_action('admin_action_dhlpwc_create_labels_' . $bulk_option. '_service_' . $bulk_service, function() {
+                            if (empty($_REQUEST['action'])) {
+                                return;
+                            }
+
+                            $bulk_parameters = $this->split_bulk_parameters($_REQUEST['action']);
+
+                            $this->create_multiple_labels($bulk_parameters['size'], $bulk_parameters['service_options']);
+                        });
+                    }
+                }
             }
             add_action('admin_notices', array($this, 'bulk_create_notice'));
         }
@@ -157,64 +181,21 @@ class DHLPWC_Controller_Admin_Order
     {
         $service = DHLPWC_Model_Service_Access_Control::instance();
         $bulk_options = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_BULK_CREATE);
+        $bulk_services = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_BULK_SERVICES);
         foreach ($bulk_options as $bulk_option) {
             $bulk_string = DHLPWC_Model_Service_Translation::instance()->bulk($bulk_option);
             $bulk_actions['dhlpwc_create_labels_' . $bulk_option] = sprintf(__('DHL - Create label (%s)', 'dhlpwc'), $bulk_string);
+
+            if ($bulk_services) {
+                foreach ($bulk_services as $bulk_service) {
+                    $bulk_actions['dhlpwc_create_labels_' . $bulk_option . '_service_' . $bulk_service] = sprintf('%s (+%s)', $bulk_actions['dhlpwc_create_labels_' . $bulk_option], DHLPWC_Model_Service_Translation::instance()->option(strtoupper($bulk_service)));
+                }
+            }
         }
         return $bulk_actions;
     }
 
-    public function create_multiple_labels_bp_only()
-    {
-        $this->create_multiple_labels('bp_only');
-    }
-
-    public function create_multiple_labels_smallest()
-    {
-        $this->create_multiple_labels('smallest');
-    }
-
-    public function create_multiple_labels_small_only()
-    {
-        $this->create_multiple_labels('small_only');
-    }
-
-    public function create_multiple_labels_medium_only()
-    {
-        $this->create_multiple_labels('medium_only');
-    }
-
-    public function create_multiple_labels_large_only()
-    {
-        $this->create_multiple_labels('large_only');
-    }
-
-    public function create_multiple_labels_xsmall_only()
-    {
-        $this->create_multiple_labels('xsmall_only');
-    }
-
-    public function create_multiple_labels_xlarge_only()
-    {
-        $this->create_multiple_labels('xlarge_only');
-    }
-
-    public function create_multiple_labels_roll_only()
-    {
-        $this->create_multiple_labels('roll_only');
-    }
-
-    public function create_multiple_labels_bulky_only()
-    {
-        $this->create_multiple_labels('bulky_only');
-    }
-
-    public function create_multiple_labels_largest()
-    {
-        $this->create_multiple_labels('largest');
-    }
-
-    public function create_multiple_labels($option)
+    public function create_multiple_labels($option, $service_options = array())
     {
         if (!isset($_REQUEST['post']) && !is_array($_REQUEST['post'])) {
             return;
@@ -223,7 +204,7 @@ class DHLPWC_Controller_Admin_Order
         $order_ids = isset($_GET['post']) && is_array($_GET['post']) ? wc_clean($_GET['post']) : array();
 
         $service = DHLPWC_Model_Service_Shipment::instance();
-        $success_data = $service->bulk($order_ids, $option);
+        $success_data = $service->bulk($order_ids, $option, $service_options);
 
         $download_id = crc32(json_encode($order_ids));
         set_transient('dhlpwc_bulk_download_' . $download_id, $order_ids, 1 * DAY_IN_SECONDS);
@@ -534,6 +515,17 @@ class DHLPWC_Controller_Admin_Order
         unset($statuses['wc-failed']);
 
         return array_keys($statuses);
+    }
+
+    protected function split_bulk_parameters($action_name)
+    {
+        $size_services = substr($action_name, strlen('dhlpwc_create_labels_'));
+        $parameters = explode('_service_', $size_services);
+
+        return array (
+            'size' => array_shift($parameters),
+            'service_options' => array_map('strtoupper', $parameters)
+        );
     }
 
 }

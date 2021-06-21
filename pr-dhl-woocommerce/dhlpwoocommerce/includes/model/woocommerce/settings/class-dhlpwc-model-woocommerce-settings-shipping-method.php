@@ -20,6 +20,9 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
     const SORT_COST_HIGH = 'cost_high';
     const SORT_CUSTOM = 'custom';
 
+    const DISPLAY_ZERO_NUMBER = 'display_zero_number';
+    const DISPLAY_ZERO_TEXT = 'display_zero_text';
+
     const COMBINE_A4 = 'a4';
 
     /**
@@ -284,6 +287,8 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
             $this->get_bulk_group_fields('bulky_only', sprintf(__("Choose size '%s' only, skip if unavailable", 'dhlpwc'), DHLPWC_Model_Service_Translation::instance()->parcelType('PARCELTYPE_BULKY'))),
             $this->get_bulk_group_fields('largest', __('Choose the largest available size', 'dhlpwc')),
 
+            $this->get_bulk_services_fields(),
+
             array(
                 'bulk_label_download' => array(
                     'title'       => __('Bulk label download', 'dhlpwc'),
@@ -328,6 +333,17 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'title'       => __('Replace text label translation domain', 'dhlpwc'),
                     'type'        => 'text',
                     'description' => __("If using replacement text labels for shipping methods, it's possible to filter it with a translation domain. To use the text as-is, leave this field empty.", 'dhlpwc'),
+                ),
+
+                'display_zero_fee' => array(
+                    'title'       => __('Display zero delivery fee price', 'dhlpwc'),
+                    'type'        => 'select',
+                    'options' => array(
+                        ''                        => __('Default (no display)', 'dhlpwc'),
+                        self::DISPLAY_ZERO_NUMBER => __('Display as numeric currency (based on your locale)', 'dhlpwc'),
+                        self::DISPLAY_ZERO_TEXT   => sprintf(__('Display the text "(%s)"', 'dhlpwc'), __('Free', 'dhlpwc')),
+                    ),
+                    'default'     => '',
                 ),
 
                 'use_shipping_zones' => array(
@@ -538,6 +554,24 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
         );
 
         return $option_settings;
+    }
+
+    protected function get_bulk_services_fields()
+    {
+        $service = DHLPWC_Model_Service_Access_Control::instance();
+        $bulk_services = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_BULK_SERVICES, true);
+
+        $bulk_service_fields = array(
+            'bulk_services_container' => array(
+                'type'  => 'dhlpwc_bulk_services_container',
+            ),
+        );
+
+        foreach ($bulk_services as $bulk_service) {
+            $bulk_service_fields = array_merge($bulk_service_fields, $this->get_bulk_service_group_fields('service_' . $bulk_service, sprintf(__("Show service: '%s'", 'dhlpwc'), DHLPWC_Model_Service_Translation::instance()->option(strtoupper($bulk_service)))));
+        }
+
+        return $bulk_service_fields;
     }
 
     protected function get_shipping_method_fields($is_global = true)
@@ -785,6 +819,21 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
         );
     }
 
+    protected function get_bulk_service_group_fields($code, $title)
+    {
+        return array(
+            'enable_bulk_option_' . $code  => array(
+                'title'             => __($title, 'dhlpwc'),
+                'type'              => 'checkbox',
+                'class'             => "dhlpwc-bulk-service-option dhlpwc-bulk-service-grid['" . $code . "']",
+                'default'           => 'no',
+                'custom_attributes' => array(
+                    'data-bulk-service-group' => $code,
+                ),
+            )
+        );
+    }
+
     public function get_address_fields($prefix = null)
     {
         switch($prefix) {
@@ -988,6 +1037,12 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
     protected function generate_dhlpwc_bulk_container_html($key, $data)
     {
         $view = new DHLPWC_Template('admin.settings.bulk-header');
+        return $view->render(array(), false);
+    }
+
+    protected function generate_dhlpwc_bulk_services_container_html($key, $data)
+    {
+        $view = new DHLPWC_Template('admin.settings.bulk-services-header');
         return $view->render(array(), false);
     }
 
