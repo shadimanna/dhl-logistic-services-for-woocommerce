@@ -18,7 +18,8 @@ class DHLPWC_Controller_Checkout
     public function set_parcelshop_hooks()
     {
         $service = DHLPWC_Model_Service_Access_Control::instance();
-        if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CHECKOUT_PARCELSHOP)) {
+        if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CHECKOUT_PARCELSHOP)
+            || $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_USE_SHIPPING_ZONES)) {
             add_action('woocommerce_after_checkout_validation', array($this, 'validate_parcelshop_selection'), 10, 2);
         }
     }

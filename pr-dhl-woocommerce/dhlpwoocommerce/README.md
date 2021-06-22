@@ -1,5 +1,10 @@
 # DHL Parcel plugin for WooCommerce
  
+v1.3.9
+## Changes
+- Use multi-label API instead of PDFMerger
+- Add filter for reference
+ 
 v1.3.8
 ## Changes
 - Updated to use the newest version of the ServicePoint Locator

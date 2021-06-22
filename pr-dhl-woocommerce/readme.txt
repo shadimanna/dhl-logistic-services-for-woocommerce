@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 5.6
-Stable tag: 2.5.7
+Stable tag: 2.5.8
 WC requires at least: 3.0
 WC tested up to: 5.3
 License: GPLv2 or later
@@ -80,6 +80,14 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+ 
+= 2.5.8 =
+* DHL Parcel: Added a new bulk setting to print all labels with Same Day Delivery
+* DHL Parcel: Added a product setting to automatically use the parcel type mailbox based on conditions
+* DHL Parcel: Added a setting to display free shipping in different ways
+* DHL Parcel: Added snippet information to the settings interface for custom order numbers
+* DHL Parcel: Updated translation
+* DHL Parcel: Fixed an issue where ServicePoint Locator isn’t loaded depending on shipping zones
  
 = 2.5.7 =
 * DHL: Add compatibility with Microsoft Server for label creation

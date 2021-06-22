@@ -214,12 +214,12 @@ class DHLPWC_Controller_Admin_Order_Metabox
 		$label = $label_service->get_label($post_id, $label_id);
 
 		if ($label === false) {
-			echo __('Label not found');
+			echo __('Label not found', 'dhlpwc');
 			exit;
 		}
 
 		if (empty($label['request'])) {
-			echo __('Label request not found');
+			echo __('Label request not found', 'dhlpwc');
 			exit;
 		}
 
@@ -317,6 +317,18 @@ class DHLPWC_Controller_Admin_Order_Metabox
         if ($preselected_options === null) {
             $preselected_options = $option_service->get_keys($order_id);
 
+            // Only apply special delivery method logic if it's not an PS.
+            if (!in_array(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS, $preselected_options)) {
+                // BP preference
+                if ($option_service->send_with_bp($order_id)) {
+                    if (in_array(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_DOOR, $preselected_options)) {
+                        // Remove DOOR
+                        $preselected_options = array_diff($preselected_options, [DHLPWC_Model_Meta_Order_Option_Preference::OPTION_DOOR]);
+                    }
+                    $preselected_options[] = DHLPWC_Model_Meta_Order_Option_Preference::OPTION_BP;
+                }
+            }
+
             // Default option settings
             $default_signature = $option_service->default_signature($order_id, $preselected_options, $to_business);
             if ($default_signature) {
@@ -333,7 +345,7 @@ class DHLPWC_Controller_Admin_Order_Metabox
             $default_order_id_reference = $option_service->default_order_id_reference($order_id, $preselected_options, $to_business);
             if ($default_order_id_reference) {
                 $option_service->add_key_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE, $preselected_options);
-                $reference_value = apply_filters('dhlpwc_default_reference_value', $order_id);
+                $reference_value = apply_filters('dhlpwc_default_reference_value', $order_id, $order_id);
                 $option_service->add_key_value_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE, $reference_value, $option_data);
             }
 

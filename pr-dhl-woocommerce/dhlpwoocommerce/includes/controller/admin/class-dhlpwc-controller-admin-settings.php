@@ -150,6 +150,7 @@ class DHLPWC_Controller_Admin_Settings
             $view = new DHLPWC_Template('admin.settings.condition.table');
             $condition_templates['table'] = $view->render(array(), false);
 
+            add_thickbox();
             wp_enqueue_script( 'dhlpwc-settings-action', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.settings.js', array('jquery', 'jquery-ui-sortable'));
             wp_localize_script( 'dhlpwc-settings-action', 'dhlpwc_settings_object', array(
                 'test_connection_message'                   => __('Test connection and retrieve account data', 'dhlpwc'),
@@ -162,6 +163,9 @@ class DHLPWC_Controller_Admin_Settings
                 'option_same_day_no_neighbour_error'        => __('You need to check the no neighbours same day delivery option to use this shipping method', 'dhlpwc'),
                 'delivery_time_same_day_error'              => __('You need to check this option to use the same day delivery', 'dhlpwc'),
                 'delivery_time_same_day_no_neighbour_error' => __('You need to check this option to use the no neighbour same day delivery', 'dhlpwc'),
+                'snippet_description_message'               => esc_html(__('To customize this functionality, please use our filters.', 'dhlpwc')),
+                'snippet_button_message'                    => esc_html(__('Click here for an example snippet', 'dhlpwc')),
+                'snippet_default_reference_value'           => DHLPWC_Model_Service_Snippets::instance()->default_order_reference(),
                 'condition_templates'                       => $condition_templates,
                 'currency_symbol'                           => get_woocommerce_currency_symbol(),
                 'currency_pos'                              => get_option('woocommerce_currency_pos'),

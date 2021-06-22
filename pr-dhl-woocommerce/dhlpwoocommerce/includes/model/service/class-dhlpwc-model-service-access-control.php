@@ -16,6 +16,7 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
     const ACCESS_OPEN_LABEL_LINKS_EXTERNAL = 'open_label_links_external';
 
     const ACCESS_BULK_CREATE = 'bulk_create';
+    const ACCESS_BULK_SERVICES = 'bulk_services';
     const ACCESS_BULK_DOWNLOAD = 'bulk_download';
 
     const ACCESS_TRACK_TRACE_MAIL = 'track_trace_mail';
@@ -25,6 +26,8 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
     const ACCESS_SERVICEPOINT_IN_ORDER_MAIL = 'servicepoint_mail';
 
     const ACCESS_DEFAULT_TO_BUSINESS = 'default_to_business';
+    const ACCESS_DISPLAY_ZERO_FEE_NUMBER = 'display_zero_fee_number';
+    const ACCESS_DISPLAY_ZERO_FEE_TEXT = 'display_zero_fee_text';
     const ACCESS_DEFAULT_SEND_SIGNATURE = 'default_send_signature';
     const ACCESS_DEFAULT_AGE_CHECK = 'default_age_check';
     const ACCESS_DEFAULT_ORDER_ID_REFERENCE = 'default_order_id_reference';
@@ -55,6 +58,8 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
     const ACCESS_PRINTER = 'printer';
 
     const ACCESS_LABEL_REQUEST = 'debug_label_request';
+
+    const ACCESS_USE_SHIPPING_ZONES = 'use_shipping_zones';
 
     // Simple options can be set and retrieved without custom logic
     protected $simple_options = array(
@@ -112,6 +117,11 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
                 return $logic->check_bulk_create();
                 break;
 
+            case self::ACCESS_BULK_SERVICES:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_bulk_services(empty($args) ? false : $args);
+                break;
+
             case self::ACCESS_BULK_DOWNLOAD:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
                 return $logic->check_bulk_download();
@@ -140,6 +150,16 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
             case self::ACCESS_DEFAULT_TO_BUSINESS:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
                 return $logic->check_default_send_to_business();
+                break;
+
+            case self::ACCESS_DISPLAY_ZERO_FEE_NUMBER:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_display_zero_fee();
+                break;
+
+            case self::ACCESS_DISPLAY_ZERO_FEE_TEXT:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_display_zero_fee('text');
                 break;
 
             case self::ACCESS_DEFAULT_SEND_SIGNATURE:
@@ -243,6 +263,11 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
             case self::ACCESS_DEBUG_MAIL:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
                 return $logic->check_debug_mail();
+                break;
+
+            case self::ACCESS_USE_SHIPPING_ZONES:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_use_shipping_zones();
                 break;
 
         }
