@@ -389,6 +389,33 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 
 	}
 
+	public function admin_options() {
+
+        parent::admin_options();
+
+		// add js inline to show or hide conditional tax id based on tax id type
+        if ( isset( $this->form_fields['dhl_shipper_tax_id_type'] ) ) {
+
+            ob_start();
+            ?>
+                $( '#woocommerce_<?php echo $this->id; ?>_dhl_shipper_tax_id_type' ).change( function() {
+
+					var tax_id_type = $(this).val();
+
+                    if ( tax_id_type == '4' || tax_id_type == 'none' || tax_id_type == '' ) {
+						$( '#woocommerce_<?php echo $this->id; ?>_dhl_shipper_tax_id' ).closest( 'tr' ).hide();
+						$( '#woocommerce_<?php echo $this->id; ?>_dhl_shipper_tax_id' ).val('');
+                    } else {
+                        $( '#woocommerce_<?php echo $this->id; ?>_dhl_shipper_tax_id' ).closest( 'tr' ).show();
+                    }
+
+                } ).change();
+            <?php
+            wc_enqueue_js( ob_get_clean() );
+        }
+
+    }
+
 	/**
 	 * Generate Button HTML.
 	 *
