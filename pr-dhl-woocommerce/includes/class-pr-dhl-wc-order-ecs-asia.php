@@ -376,6 +376,14 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
             $dhl_label_items['pr_dhl_insurance_value'] = $order->get_subtotal();
         }
 
+		if( empty( $dhl_label_items['pr_dhl_tax_id_type'] ) ) {
+			$dhl_label_items['pr_dhl_tax_id_type'] = $this->shipping_dhl_settings['dhl_shipper_tax_id_type'];
+		}
+
+		if( empty( $dhl_label_items['pr_dhl_tax_id'] ) ) {
+			$dhl_label_items['pr_dhl_tax_id'] = $this->shipping_dhl_settings['dhl_shipper_tax_id'];
+		}
+
 		$this->save_dhl_label_items( $order_id, $dhl_label_items );
 	}
 
