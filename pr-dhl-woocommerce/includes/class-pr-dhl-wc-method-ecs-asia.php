@@ -66,19 +66,25 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 
 		$select_dhl_product = array( '0' => __( '- Select DHL Product -', 'pr-shipping-dhl' ) );
 
-		$select_dhl_desc_default = array( 
-				'product_cat' => __('Product Categories', 'pr-shipping-dhl'), 
-				'product_tag' => __('Product Tags', 'pr-shipping-dhl'), 
-				'product_name' => __('Product Name', 'pr-shipping-dhl'), 
+		$select_dhl_desc_default = array(
+				'product_cat' => __('Product Categories', 'pr-shipping-dhl'),
+				'product_tag' => __('Product Tags', 'pr-shipping-dhl'),
+				'product_name' => __('Product Name', 'pr-shipping-dhl'),
 				'product_export' => __('Product Export Description', 'pr-shipping-dhl')
 		);
 
 		try {
-			
+
 			$dhl_obj = PR_DHL()->get_dhl_factory();
 			$select_dhl_product_int = $dhl_obj->get_dhl_products_international();
 			$select_dhl_product_dom = $dhl_obj->get_dhl_products_domestic();
 			$select_dhl_duties = $dhl_obj->get_dhl_duties();
+
+			$select_dhl_tax_id_types = array(
+					'' => __( ' ', 'pr-shipping-dhl' ),
+					'none' => __( '-- No Tax ID --', 'pr-shipping-dhl' )
+				);
+			$select_dhl_tax_id_types += $dhl_obj->get_dhl_tax_id_types();
 
 		} catch (Exception $e) {
 			PR_DHL()->log_msg( __('DHL Products not displaying - ', 'pr-shipping-dhl') . $e->getMessage() );
@@ -273,9 +279,9 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 				'description'       => sprintf( __( 'A log file containing the communication to the DHL server will be maintained if this option is checked. This can be used in case of technical issues and can be found %shere%s.', 'pr-shipping-dhl' ), '<a href="' . $log_path . '" target = "_blank">', '</a>' )
 			),
             'dhl_shipper'           => array(
-                'title'           => __( 'Pickup Address', 'pr-shipping-dhl' ),
+                'title'           => __( 'Pickup / Shipper Address', 'pr-shipping-dhl' ),
                 'type'            => 'title',
-                'description'     => __( 'Enter Pickup Address below.  This is used for the "DHL Parcel Metro" product only.', 'pr-shipping-dhl' ),
+                'description'     => __( 'Enter Pickup & Shipper Address below.  This is used for Shipper Address with Tax ID and for the "Pickup Address" for the "DHL Parcel Metro" product.', 'pr-shipping-dhl' ),
             ),
             'dhl_contact_name' => array(
                 'title'             => __( 'Name', 'pr-shipping-dhl' ),
@@ -358,7 +364,29 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
                 'desc_tip'          => true,
                 'default'           => ''
             ),
+			'dhl_shipper_tax_info'           => array(
+                'title'           => __( 'Tax ID Defaults', 'pr-shipping-dhl' ),
+                'type'            => 'title',
+                'description'     => __( 'Enter the default Tax ID info below. ', 'pr-shipping-dhl' ),
+            ),
+			'dhl_shipper_tax_id_type' => array(
+                'title'             => __( 'Tax ID Type', 'pr-shipping-dhl' ),
+                'type'              => 'select',
+                'description'       => __( 'The default Tax ID Type for the shipper.', 'pr-shipping-dhl' ),
+                'desc_tip'          => true,
+                'options'           => $select_dhl_tax_id_types,
+                'class'				=> 'wc-enhanced-select',
+                'default'           => ''
+            ),
+            'dhl_shipper_tax_id' => array(
+                'title'             => __( 'Tax ID', 'pr-shipping-dhl' ),
+                'type'              => 'text',
+                'description'       => __( 'The default Tax ID for the shipper.', 'pr-shipping-dhl' ),
+                'desc_tip'          => true,
+                'default'           => ''
+            ),
 		);
+
 	}
 
 	/**
@@ -410,12 +438,12 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 		// $value = wc_clean( $_POST[ $this->plugin_id . $this->id . '_' . $key ] );
 
 		try {
-			
+
 			$dhl_obj = PR_DHL()->get_dhl_factory();
 			$dhl_obj->dhl_validate_field( 'pickup', $value );
 
 		} catch (Exception $e) {
-			
+
 			echo $this->get_message( __('Pickup Account Number: ', 'pr-shipping-dhl') . $e->getMessage() );
 			throw $e;
 
@@ -430,9 +458,9 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 	 */
 	public function validate_dhl_distribution_field( $key, $value ) {
 		// $value = wc_clean( $_POST[ $this->plugin_id . $this->id . '_' . $key ] );
-		
+
 		try {
-			
+
 			$dhl_obj = PR_DHL()->get_dhl_factory();
 			$dhl_obj->dhl_validate_field( 'distribution', $value );
 
@@ -502,9 +530,9 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 	 * If there is an error thrown, will continue to save and validate fields, but will leave the erroring field out.
 	 */
 	public function process_admin_options() {
-		
+
 		try {
-			
+
 			$dhl_obj = PR_DHL()->get_dhl_factory();
 			$dhl_obj->dhl_reset_connection();
 

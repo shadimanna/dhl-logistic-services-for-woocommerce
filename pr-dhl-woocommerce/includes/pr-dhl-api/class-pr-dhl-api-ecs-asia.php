@@ -90,6 +90,16 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
         return $duties;
     }
 
+	public function get_dhl_tax_id_types() { 
+        $types = array(
+            '3' => __('IOSS', 'pr-shipping-dhl'),
+            '4' => __('IOSS (DHL)', 'pr-shipping-dhl'),
+			'1' => __('Others', 'pr-shipping-dhl')
+        );
+        return $types;
+    }
+
+
 	/**
 	 * Initializes the API client instance.
 	 *
@@ -146,7 +156,7 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	protected function create_api_auth() {
 		// Get the saved DHL customer API credentials
 		list( $client_id, $client_secret ) = $this->get_api_creds();
-		
+
 		// Create the auth object using this instance's API driver and URL
 		return new Auth(
 			$this->api_driver,
@@ -263,7 +273,7 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 			$token = $this->api_auth->test_connection( $client_id, $client_secret );
 			// Save the token if successful
 			$this->api_auth->save_token( $token );
-			
+
 			return $token;
 		} catch ( Exception $e ) {
 			$this->api_auth->save_token( null );
@@ -438,7 +448,7 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		} catch (Exception $e) {
 			throw $e;
 		}
-		
+
 		// Create the shipping label
 
 		$label_info			= $this->api_client->create_label( $item_info );
@@ -446,7 +456,7 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		$label_pdf_data 	= ( $label_format == 'ZPL' )? $label_info->content : base64_decode( $label_info->content );
 		$shipment_id 		= $label_info->shipmentID;
 		$this->save_dhl_label_file( 'item', $shipment_id, $label_pdf_data );
-		
+
 		return array(
 			'label_path' 			=> $this->get_dhl_label_file_info( 'item', $shipment_id )->path,
 			'shipment_id' 			=> $shipment_id,
@@ -461,13 +471,13 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	 * @since [*next-version*]
 	 */
 	public function delete_dhl_label( $label_info ) {
-		
+
 		if ( ! isset( $label_info['label_path'] ) ) {
 			throw new Exception( __( 'DHL Label has no path!', 'pr-shipping-dhl' ) );
 		}
 		$shipment_id 	= $label_info['shipment_id'];
 		$response 		= $this->api_client->delete_label( $shipment_id );
-			
+
 		$label_path = $label_info['label_path'];
 
 		if ( file_exists( $label_path ) ) {
@@ -487,7 +497,7 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	public function close_out_shipment( $shipment_ids = array() ){
 
 		$response 	= $this->api_client->close_out_labels( $this->country_code, $shipment_ids );
-		
+
 		$return = array();
 
 		if( isset( $response->handoverID ) ){
@@ -502,7 +512,7 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		if( isset( $response->responseStatus->messageDetails ) ){
 
 			foreach( $response->responseStatus->messageDetails as $msg ){
-				
+
 				if( isset( $msg->messageDetail ) ){
 					$return['message'] = $msg->messageDetail;
 				}
