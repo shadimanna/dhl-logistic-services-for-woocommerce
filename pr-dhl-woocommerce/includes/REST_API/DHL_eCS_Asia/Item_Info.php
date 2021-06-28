@@ -555,7 +555,7 @@ class Item_Info {
 				'default' => '',
 				'rename' => 'fiscalId',
 				'validate' => function( $value, $args ) {
-                    if( isset( $args['dh_tax_id_type'] ) && $args['dh_tax_id_type'] != 'none' && empty( $value ) ) {
+                    if( isset( $args['dh_tax_id_type'] ) && $args['dh_tax_id_type'] != 'none' && $args['dh_tax_id_type'] != 4 && empty( $value ) ) {
                         throw new Exception (
 							__( 'You must provide a "Tax ID", or to continue without a Tax ID you must select "-- No Tax ID --" for "Tax ID Type"."', 'pr-shipping-dhl' )
 						);
