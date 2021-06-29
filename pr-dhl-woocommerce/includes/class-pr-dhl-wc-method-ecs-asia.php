@@ -82,7 +82,7 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 
 			$select_dhl_tax_id_types = array(
 					'' => __( ' ', 'pr-shipping-dhl' ),
-					'none' => __( '-- No Tax ID --', 'pr-shipping-dhl' )
+					'none' => __( '-- No Shipper Tax ID --', 'pr-shipping-dhl' )
 				);
 			$select_dhl_tax_id_types += $dhl_obj->get_dhl_tax_id_types();
 
@@ -365,12 +365,12 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
                 'default'           => ''
             ),
 			'dhl_shipper_tax_info'           => array(
-                'title'           => __( 'Tax ID Defaults', 'pr-shipping-dhl' ),
+                'title'           => __( 'Shipper Tax ID Defaults', 'pr-shipping-dhl' ),
                 'type'            => 'title',
                 'description'     => __( 'Enter the default Tax ID info below. ', 'pr-shipping-dhl' ),
             ),
 			'dhl_shipper_tax_id_type' => array(
-                'title'             => __( 'Tax ID Type', 'pr-shipping-dhl' ),
+                'title'             => __( 'Shipper Tax ID Type', 'pr-shipping-dhl' ),
                 'type'              => 'select',
                 'description'       => __( 'The default Tax ID Type for the shipper.', 'pr-shipping-dhl' ),
                 'desc_tip'          => true,
@@ -379,7 +379,7 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
                 'default'           => ''
             ),
             'dhl_shipper_tax_id' => array(
-                'title'             => __( 'Tax ID', 'pr-shipping-dhl' ),
+                'title'             => __( 'Shipper Tax ID', 'pr-shipping-dhl' ),
                 'type'              => 'text',
                 'description'       => __( 'The default Tax ID for the shipper.', 'pr-shipping-dhl' ),
                 'desc_tip'          => true,

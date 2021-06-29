@@ -541,7 +541,7 @@ class Item_Info {
 			),
 			'dh_tax_id_type'   => array(
 				'rename' => 'fiscalIdType',
-				'error' => __( 'You must select a "Tax ID Type", or select "-- No Tax ID --" to continue without a Tax ID.', 'pr-shipping-dhl' ),
+				'error' => __( 'You must select a "Shipper Tax ID Type", or select "-- No Shipper Tax ID --" to continue without a Shipper Tax ID.', 'pr-shipping-dhl' ),
 				'sanitize' => function( $value, $args ) use ($self) {
 					if ( $value == 'none' ) {
 						return '';
@@ -557,7 +557,7 @@ class Item_Info {
 				'validate' => function( $value, $args ) {
                     if( isset( $args['dh_tax_id_type'] ) && $args['dh_tax_id_type'] != 'none' && $args['dh_tax_id_type'] != 4 && empty( $value ) ) {
                         throw new Exception (
-							__( 'You must provide a "Tax ID", or to continue without a Tax ID you must select "-- No Tax ID --" for "Tax ID Type"."', 'pr-shipping-dhl' )
+							__( 'You must provide a "Shipper Tax ID", or to continue without a Shipper Tax ID you must select "-- No Shipper Tax ID --" for "Shipper Tax ID Type"."', 'pr-shipping-dhl' )
 						);
                     }
                 },

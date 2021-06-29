@@ -94,7 +94,7 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
         $types = array(
             '3' => __('IOSS', 'pr-shipping-dhl'),
             '4' => __('IOSS (DHL)', 'pr-shipping-dhl'),
-			'1' => __('Others', 'pr-shipping-dhl')
+			'1' => __('GST/VAT', 'pr-shipping-dhl')
         );
         return $types;
     }
