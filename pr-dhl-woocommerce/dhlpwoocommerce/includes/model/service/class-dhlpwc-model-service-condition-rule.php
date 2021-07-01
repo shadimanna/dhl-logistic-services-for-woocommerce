@@ -83,12 +83,12 @@ class DHLPWC_Model_Service_Condition_Rule extends DHLPWC_Model_Core_Singleton_Ab
             // Check if applicable
             if ($condition->input_type === DHLPWC_Model_Data_Condition_Rule::INPUT_TYPE_WEIGHT) {
                 $weight = $cart->get_cart_contents_weight();
-                if ($weight <= intval($condition->input_data)) {
+                if (floatval($weight) <= floatval($condition->input_data)) {
                     continue;
                 }
             } else if ($condition->input_type === DHLPWC_Model_Data_Condition_Rule::INPUT_TYPE_CART_TOTAL) {
                 $subtotal = $cart_subtotal;
-                if ($subtotal <= intval($condition->input_data)) {
+                if (floatval($subtotal) <= floatval($condition->input_data)) {
                     continue;
                 }
             }

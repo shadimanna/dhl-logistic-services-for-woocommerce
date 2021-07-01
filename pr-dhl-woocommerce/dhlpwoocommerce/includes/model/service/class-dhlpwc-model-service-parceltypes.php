@@ -19,7 +19,7 @@ class DHLPWC_Model_Service_Parceltypes extends DHLPWC_Model_Core_Singleton_Abstr
         $parcel_types = $connector->get(sprintf('parcel-types/%s', $sender_type), 1 * HOUR_IN_SECONDS);
         foreach($parcel_types as $parcel_type)
         {
-            $this->parcel_types[$parcel_type['key']] = new DHLPWC_Model_API_Data_Parceltype($parcel_type);;
+            $this->parcel_types[$parcel_type['key']] = new DHLPWC_Model_API_Data_Parceltype($parcel_type);
         }
     }
 
