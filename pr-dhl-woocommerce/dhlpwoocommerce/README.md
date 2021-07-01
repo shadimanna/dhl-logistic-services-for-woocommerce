@@ -1,5 +1,14 @@
 # DHL Parcel plugin for WooCommerce
  
+v1.3.10
+## Changes
+- Added a new bulk setting to print all labels with Same Day Delivery
+- Added a product setting to automatically use the parcel type mailbox based on conditions
+- Added a setting to display free shipping in different ways
+- Added snippet information to the settings interface for custom order numbers
+- Updated translation
+- Fixed an issue where ServicePoint Locator isn’t loaded depending on shipping zones
+ 
 v1.3.9
 ## Changes
 - Use multi-label API instead of PDFMerger
