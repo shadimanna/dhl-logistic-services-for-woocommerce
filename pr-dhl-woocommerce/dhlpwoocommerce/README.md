@@ -1,5 +1,9 @@
 # DHL Parcel plugin for WooCommerce
  
+v1.3.11
+## Changes
+- Fixed an issue where decimals were not calculated correctly in conditional rules for delivery options
+ 
 v1.3.10
 ## Changes
 - Added a new bulk setting to print all labels with Same Day Delivery
