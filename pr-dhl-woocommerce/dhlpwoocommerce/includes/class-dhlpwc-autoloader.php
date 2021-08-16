@@ -107,7 +107,7 @@ class DHLPWC_Autoloader
             $namespace = str_replace(DIRECTORY_SEPARATOR, '_', $sub_folder);
             if (strpos(strtolower($class), self::CLASS_PREFIX.strtolower($namespace)) === 0) {
                 // Use the deepest path possible
-                if (strlen($sub_folder) > $search) {
+                if (strlen($sub_folder) > strlen($search)) {
                     $search = $sub_folder;
                 }
             }
