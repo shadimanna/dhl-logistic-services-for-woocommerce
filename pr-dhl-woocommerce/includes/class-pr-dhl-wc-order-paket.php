@@ -551,9 +551,18 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
         if( ( $base_country_code == 'DE' ) && ( $this->is_shipping_domestic( $order_id ) ) ) {
             $dhl_label_items = $this->get_dhl_label_items($order_id);
 
-            $settings_default_ids = array(
+			$settings_default_ids = array(
                 'pr_dhl_is_codeable',
                 'pr_dhl_return_address_enabled',
+				'pr_dhl_return_name',
+				'pr_dhl_return_company',
+				'pr_dhl_return_address',
+				'pr_dhl_return_address_no',
+				'pr_dhl_return_address_city',
+				'pr_dhl_return_address_state',
+				'pr_dhl_return_address_zip',
+				'pr_dhl_return_phone',
+				'pr_dhl_return_email',
                 'pr_dhl_age_visual',
                 'pr_dhl_additional_insurance',
                 'pr_dhl_no_neighbor',
@@ -571,6 +580,10 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
                 if ( !isset($dhl_label_items[$default_id]) ) {
                     $dhl_label_items[$default_id] = isset( $this->shipping_dhl_settings['dhl_default_' . $id_name] ) ? $this->shipping_dhl_settings['dhl_default_' . $id_name] : '';
+					//Check alternate setting id format if not found in dhl_default prefix id
+					if ( !isset( $this->shipping_dhl_settings['dhl_default_' . $id_name] ) ) {
+						$dhl_label_items[$default_id] = isset( $this->shipping_dhl_settings['dhl_' . $id_name] ) ? $this->shipping_dhl_settings['dhl_' . $id_name] : '';
+					}
                 }
             }
 
