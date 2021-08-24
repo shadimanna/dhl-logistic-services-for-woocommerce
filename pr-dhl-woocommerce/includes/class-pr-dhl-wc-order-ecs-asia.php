@@ -44,6 +44,11 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 		// The Close out label download endpoint
 		add_action( 'init', array( $this, 'add_download_close_out_endpoint' ) );
 		add_action( 'parse_query', array( $this, 'process_download_close_out' ) );
+
+		// Order page metabox actions
+		add_action( 'wp_ajax_wc_shipment_dhl_check_incoterm_tax_id', array( $this, 'check_incoterm_tax_id_ajax' ) );
+		add_action( 'wp_ajax_wc_shipment_dhl_check_order_country_show_tax_id', array( $this, 'check_shipping_country_show_tax_id_ajax' ) );
+
 	}
 
 	public function add_download_close_out_endpoint() {
@@ -136,35 +141,98 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 		if( $this->is_crossborder_shipment( $order_id ) ) {
 
-			// Tax ID type drop down
-			$select_dhl_tax_id_types = array(
-					'' => __( ' ', 'pr-shipping-dhl' ),
-					'none' => __( '-- No Shipper Tax ID --', 'pr-shipping-dhl' )
-				);
-			$select_dhl_tax_id_types += $dhl_obj->get_dhl_tax_id_types();
-			woocommerce_wp_select( array(
-					'id'          		=> 'pr_dhl_tax_id_type',
-					'label'       		=> __( 'Shipper Tax ID Type:', 'pr-shipping-dhl' ),
+
+				// Tax ID type drop down
+				$select_dhl_tax_id_types = array(
+						'' => __( ' ', 'pr-shipping-dhl' ),
+						'none' => __( '-- No Shipper Tax ID --', 'pr-shipping-dhl' )
+					);
+				$select_dhl_tax_id_types += $dhl_obj->get_dhl_tax_id_types();
+				woocommerce_wp_select( array(
+						'id'          		=> 'pr_dhl_tax_id_type',
+						'label'       		=> __( 'Shipper Tax ID Type:', 'pr-shipping-dhl' ),
+						'description'		=> '',
+						'value'       		=> isset( $dhl_label_items['pr_dhl_tax_id_type'] ) ? $dhl_label_items['pr_dhl_tax_id_type'] : $this->shipping_dhl_settings['dhl_shipper_tax_id_type'],
+						'options'			=> $select_dhl_tax_id_types,
+						'custom_attributes'	=> array( $is_disabled => $is_disabled )
+					) );
+
+				woocommerce_wp_text_input( array(
+					'id'          		=> 'pr_dhl_tax_id',
+					'class'          	=> 'short',
+					'label'       		=> __( 'Shipper Tax ID:', 'pr-shipping-dhl' ),
+					'placeholder' 		=> '',
 					'description'		=> '',
-					'value'       		=> isset( $dhl_label_items['pr_dhl_tax_id_type'] ) ? $dhl_label_items['pr_dhl_tax_id_type'] : $this->shipping_dhl_settings['dhl_shipper_tax_id_type'],
-					'options'			=> $select_dhl_tax_id_types,
+					'value'       		=> isset( $dhl_label_items['pr_dhl_tax_id'] ) ? $dhl_label_items['pr_dhl_tax_id'] : $this->shipping_dhl_settings['dhl_shipper_tax_id'],
 					'custom_attributes'	=> array( $is_disabled => $is_disabled )
 				) );
 
-			woocommerce_wp_text_input( array(
-				'id'          		=> 'pr_dhl_tax_id',
-				'class'          	=> 'short',
-				'label'       		=> __( 'Shipper Tax ID:', 'pr-shipping-dhl' ),
-				'placeholder' 		=> '',
-				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_tax_id'] ) ? $dhl_label_items['pr_dhl_tax_id'] : $this->shipping_dhl_settings['dhl_shipper_tax_id'],
-				'custom_attributes'	=> array( $is_disabled => $is_disabled )
-			) );
-
-
-
 		}
 
+	}
+
+	function check_incoterm_tax_id_ajax() {
+
+		$order_id = wc_clean( $_POST[ 'order_id' ] );
+		$incoterm = wc_clean( $_POST[ 'incoterm' ] );
+
+		if ( $incoterm == 'DDU' &&
+			( $this->is_crossborder_shipment_europe( $order_id ) || $this->is_crossborder_shipment_great_britain( $order_id ) ) ) {
+			wp_send_json( array( 'hide_tax_id' => true, 'hide_tax_type' => true ) );
+		} else {
+			wp_send_json( array( 'hide_tax_id' => false, 'hide_tax_type' => false ) );
+		}
+
+		wp_die();
+	}
+
+	function check_shipping_country_show_tax_id_ajax() {
+
+		$order_id = wc_clean( $_POST[ 'order_id' ] );
+		$tax_id_type = wc_clean( $_POST[ 'tax_id_type' ] );
+
+		//If IOSS
+		if ( $tax_id_type == '3' ) {
+			if ( !$this->is_crossborder_shipment_europe( $order_id ) ) {
+				wp_send_json( array( 'hide_tax_id' => true) );
+			}
+		} elseif ( $tax_id_type == '1' ) { // If VAT/GST
+			if ( !$this->is_crossborder_shipment_europe( $order_id ) && !$this->is_crossborder_shipment_great_britain( $order_id ) ) {
+				wp_send_json( array( 'hide_tax_id' => true) );
+			}
+		} elseif ( $tax_id_type == '2' ) { // IF EORI
+			if ( !$this->is_crossborder_shipment_great_britain( $order_id ) ) {
+				wp_send_json( array( 'hide_tax_id' => true) );
+			}
+		}
+
+		wp_send_json( array( 'hide_tax_id' => false ) );
+		wp_die();
+	}
+
+
+	protected function is_crossborder_shipment_europe( $order_id ) {
+		$order = wc_get_order( $order_id );
+		$shipping_address = $order->get_address( 'shipping' );
+		$shipping_country = $shipping_address['country'];
+
+		if ( in_array( $shipping_country, PR_DHL()->get_eu_iso2() ) ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	protected function is_crossborder_shipment_great_britain( $order_id ) {
+		$order = wc_get_order( $order_id );
+		$shipping_address = $order->get_address( 'shipping' );
+		$shipping_country = $shipping_address['country'];
+
+		if ( $shipping_country == 'GB' ) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 
@@ -306,12 +374,30 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 			$args['order_details']['obox_service'] = $dhl_label_items['pr_dhl_obox_service'];
 		}
 
-		if ( ! empty( $dhl_label_items['pr_dhl_tax_id_type'] ) ) {
-			$args[ 'dhl_settings' ]['dh_tax_id_type'] = $dhl_label_items['pr_dhl_tax_id_type'];
-		}
-
 		if ( ! empty( $dhl_label_items['pr_dhl_tax_id'] ) ) {
 			$args[ 'dhl_settings' ]['dh_tax_id'] = $dhl_label_items['pr_dhl_tax_id'];
+		}
+
+		if ( ! empty( $dhl_label_items['pr_dhl_tax_id_type'] ) ) {
+			$args[ 'dhl_settings' ]['dh_tax_id_type'] = $dhl_label_items['pr_dhl_tax_id_type'];
+
+			// Override tax type and id sent in args, determine if we should send tax ID based on type and country
+			if ( $dhl_label_items['pr_dhl_tax_id_type'] == '3' ) { //If IOSS
+				if ( !$this->is_crossborder_shipment_europe( $order_id ) ) {
+					$args[ 'dhl_settings' ]['dh_tax_id'] = '';
+					$args[ 'dhl_settings' ]['dh_tax_id_type'] = 'none';
+				}
+			} elseif ( $dhl_label_items['pr_dhl_tax_id_type'] == '1' ) { // If VAT/GST
+				if ( !$this->is_crossborder_shipment_europe( $order_id ) && !$this->is_crossborder_shipment_great_britain( $order_id ) ) {
+					$args[ 'dhl_settings' ]['dh_tax_id'] = '';
+					$args[ 'dhl_settings' ]['dh_tax_id_type'] = 'none';
+				}
+			} elseif ( $dhl_label_items['pr_dhl_tax_id_type'] == '2' ) { // IF EORI
+				if ( !$this->is_crossborder_shipment_great_britain( $order_id ) ) {
+					$args[ 'dhl_settings' ]['dh_tax_id'] = '';
+					$args[ 'dhl_settings' ]['dh_tax_id_type'] = 'none';
+				}
+			}
 		}
 
 		return $args;
