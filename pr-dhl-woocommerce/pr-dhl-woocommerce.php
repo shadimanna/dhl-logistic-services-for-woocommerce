@@ -7,9 +7,9 @@
  * Author URI: http://dhl.com/woocommerce
  * Text Domain: pr-shipping-dhl
  * Domain Path: /lang
- * Version: 2.5.11
+ * Version: 2.5.12
  * WC requires at least: 3.0
- * WC tested up to: 5.1
+ * WC tested up to: 5.6
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "2.5.11";
+	private $version = "2.5.12";
 
 	/**
 	 * Instance to call certain functions globally within the plugin

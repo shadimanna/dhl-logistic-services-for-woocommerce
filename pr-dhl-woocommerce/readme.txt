@@ -80,7 +80,10 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
- 
+
+= 2.5.12 =
+* DHL eCS: Fixed phone field being empty, due to new shipping phone field in WC
+
 = 2.5.11 =
 * DHL Parcel: Fixed autoloader for PHP8
 
