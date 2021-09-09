@@ -2,7 +2,7 @@
 Contributors: DHL, shadim, utzfu
 Donate link: 
 Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL Parcel Benelux, DHL Parcel Luxembourg, DHL Paket Germany, WooCommerce, Woocom, Woo Commerce, Shipping, shiping, label creation, label printing, shipping rates, DHL Paket
-Requires at least: 4.1
+Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 5.6
 Stable tag: 2.6.0
