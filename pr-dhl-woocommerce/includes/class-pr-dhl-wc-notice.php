@@ -50,9 +50,9 @@ class PR_DHL_WC_Notice {
 		?>
 				<div id="dhl-optin-notice" class="notice notice-warning is-dismissible">
 					<form class="dhl-optin-notice-form" action="" method="post">
-						<label for="dhl-optin-user"><?php _e( 'Would you like DHL to contact you to help setup the Official DHL plugin?', 'pr-shipping-dhl' ); ?></label>
+						<label for="dhl-optin-user"><?php _e( 'Would you like DHL to contact you to help setup the Official DHL plugin?', 'dhl-for-woocommerce' ); ?></label>
 						<input name="dhl-optin-user" type="hidden" value="1" />
-						<input class="button-primary" type="submit" value="<?php _e( 'Yes', 'pr-shipping-dhl' ); ?>" />
+						<input class="button-primary" type="submit" value="<?php _e( 'Yes', 'dhl-for-woocommerce' ); ?>" />
 					</form>
 				</div>
 		<?php
@@ -78,8 +78,8 @@ class PR_DHL_WC_Notice {
 				$email_name = $current_user->user_firstname . ' ' . $current_user->user_lastname;
 			}
 
-			$subject = __('DHL Support Request from DHL WooCommerce plugin', 'pr-shipping-dhl');
-			$message = __('Please contact me to help me setup the plugin.', 'pr-shipping-dhl');
+			$subject = __('DHL Support Request from DHL WooCommerce plugin', 'dhl-for-woocommerce');
+			$message = __('Please contact me to help me setup the plugin.', 'dhl-for-woocommerce');
 			$headers[] = 'From: ' . $email_name . ' <' . $current_user->user_email . '>';
 			// send email to 'integration@dhl.com'
 			if( ! wp_mail( 'wp@progressus.io', $subject, $message, $headers ) ) {

@@ -135,9 +135,9 @@ abstract class PR_DHL_API_SOAP {
 			case 'string':
 				if( ( strlen($value) < $min_len ) || ( strlen($value) > $max_len ) ) {
 					if ( $min_len == $max_len ) {
-						throw new Exception( sprintf( __('The value must be %s characters.', 'pr-shipping-dhl'), $min_len) );
+						throw new Exception( sprintf( __('The value must be %s characters.', 'dhl-for-woocommerce'), $min_len) );
 					} else {
-						throw new Exception( sprintf( __('The value must be between %s and %s characters.', 'pr-shipping-dhl'), $min_len, $max_len ) );
+						throw new Exception( sprintf( __('The value must be between %s and %s characters.', 'dhl-for-woocommerce'), $min_len, $max_len ) );
 					}
 				}
 				break;

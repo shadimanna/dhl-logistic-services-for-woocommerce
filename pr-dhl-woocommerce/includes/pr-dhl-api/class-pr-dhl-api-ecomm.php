@@ -28,40 +28,40 @@ class PR_DHL_API_Ecomm extends PR_DHL_API {
 		$country_code = $this->country_code;
 
 		$americas_int =  array( 
-								// 'PKD' => __('DHL GlobalMail Packet Standard', 'pr-shipping-dhl'),
-								'PKY' => __('DHL Packet International', 'pr-shipping-dhl'),
-								// 'PKT' => __('DHL GlobalMail Packet Plus', 'pr-shipping-dhl'),
-								'PLY' => __('DHL Parcel International Standard', 'pr-shipping-dhl'),
-								'PLT' => __('DHL Parcel International Direct', 'pr-shipping-dhl'),
-								// 'PLX' => __('DHL Parcel International Expedited', 'pr-shipping-dhl'),
-								/*'PID' => __('DHL Parcel International Direct Standard', 'pr-shipping-dhl'),
-								'BMY' => __('DHL GobalMail Business Priority', 'pr-shipping-dhl'),
-								'BMD' => __('DHL GobalMail Business Standard', 'pr-shipping-dhl'),
-								'PIY' => __('DHL Parcel International Direct Priority', 'pr-shipping-dhl')
-								'43' => __('DHL GM Business Canada Post Lettermail', 'pr-shipping-dhl'),
-								'41' => __('DHL GM Business IPA', 'pr-shipping-dhl'),
-								'42' => __('DHL GM Business ISAL', 'pr-shipping-dhl'),
-								'46' => __('DHL GM Direct Canada Post Admail', 'pr-shipping-dhl'),
-								'44' => __('Workshare DHL GM Business Priority', 'pr-shipping-dhl'),
-								'45' => __('Workshare DHL GM Business Standard', 'pr-shipping-dhl'),
-								'69' => __('DHL GM Other', 'pr-shipping-dhl'),
-								'59' => __('DHL GM Parcel Canada Parcel Standard', 'pr-shipping-dhl'),
-								'51' => __('DHL GM Publication Canada Publication', 'pr-shipping-dhl'),
-								'47' => __('DHL GM Publication Priority', 'pr-shipping-dhl'),
-								'48' => __('DHL GM Publication Standard', 'pr-shipping-dhl')*/
+								// 'PKD' => __('DHL GlobalMail Packet Standard', 'dhl-for-woocommerce'),
+								'PKY' => __('DHL Packet International', 'dhl-for-woocommerce'),
+								// 'PKT' => __('DHL GlobalMail Packet Plus', 'dhl-for-woocommerce'),
+								'PLY' => __('DHL Parcel International Standard', 'dhl-for-woocommerce'),
+								'PLT' => __('DHL Parcel International Direct', 'dhl-for-woocommerce'),
+								// 'PLX' => __('DHL Parcel International Expedited', 'dhl-for-woocommerce'),
+								/*'PID' => __('DHL Parcel International Direct Standard', 'dhl-for-woocommerce'),
+								'BMY' => __('DHL GobalMail Business Priority', 'dhl-for-woocommerce'),
+								'BMD' => __('DHL GobalMail Business Standard', 'dhl-for-woocommerce'),
+								'PIY' => __('DHL Parcel International Direct Priority', 'dhl-for-woocommerce')
+								'43' => __('DHL GM Business Canada Post Lettermail', 'dhl-for-woocommerce'),
+								'41' => __('DHL GM Business IPA', 'dhl-for-woocommerce'),
+								'42' => __('DHL GM Business ISAL', 'dhl-for-woocommerce'),
+								'46' => __('DHL GM Direct Canada Post Admail', 'dhl-for-woocommerce'),
+								'44' => __('Workshare DHL GM Business Priority', 'dhl-for-woocommerce'),
+								'45' => __('Workshare DHL GM Business Standard', 'dhl-for-woocommerce'),
+								'69' => __('DHL GM Other', 'dhl-for-woocommerce'),
+								'59' => __('DHL GM Parcel Canada Parcel Standard', 'dhl-for-woocommerce'),
+								'51' => __('DHL GM Publication Canada Publication', 'dhl-for-woocommerce'),
+								'47' => __('DHL GM Publication Priority', 'dhl-for-woocommerce'),
+								'48' => __('DHL GM Publication Standard', 'dhl-for-woocommerce')*/
 								);
 
 		$asia_int = array(  
-							'PKG' => __('DHL Packet International Economy', 'pr-shipping-dhl'),
-							'PKD' => __('DHL Packet International Standard', 'pr-shipping-dhl'),
-							'PKM' => __('DHL Packet International Priority Manifest', 'pr-shipping-dhl'),
-							'PPS' => __('DHL Packet Plus International Standard', 'pr-shipping-dhl'),
-							'PPM' => __('DHL Packet Plus International Priority Manifest', 'pr-shipping-dhl'),
-							'PLD' => __('DHL Parcel International Standard', 'pr-shipping-dhl'),
-							'PLT' => __('DHL Parcel International Direct', 'pr-shipping-dhl'),
-							'PLE' => __('DHL Parcel International Direct Expedited', 'pr-shipping-dhl')
-							// 'AP7' => __('GM Paket Pus Manifest Clearance', 'pr-shipping-dhl'),
-							// 'PDP' => __('GM Parcel Direct Plus', 'pr-shipping-dhl')
+							'PKG' => __('DHL Packet International Economy', 'dhl-for-woocommerce'),
+							'PKD' => __('DHL Packet International Standard', 'dhl-for-woocommerce'),
+							'PKM' => __('DHL Packet International Priority Manifest', 'dhl-for-woocommerce'),
+							'PPS' => __('DHL Packet Plus International Standard', 'dhl-for-woocommerce'),
+							'PPM' => __('DHL Packet Plus International Priority Manifest', 'dhl-for-woocommerce'),
+							'PLD' => __('DHL Parcel International Standard', 'dhl-for-woocommerce'),
+							'PLT' => __('DHL Parcel International Direct', 'dhl-for-woocommerce'),
+							'PLE' => __('DHL Parcel International Direct Expedited', 'dhl-for-woocommerce')
+							// 'AP7' => __('GM Paket Pus Manifest Clearance', 'dhl-for-woocommerce'),
+							// 'PDP' => __('GM Parcel Direct Plus', 'dhl-for-woocommerce')
 							);
 
 		$dhl_prod_int = array();
@@ -104,28 +104,28 @@ class PR_DHL_API_Ecomm extends PR_DHL_API {
 		$country_code = $this->country_code;
 
 		$americas_dom = array(  
-								// '72' => __('DHL SM Flats Expedited', 'pr-shipping-dhl'),
-								// '73' => __('DHL SM Flats Ground', 'pr-shipping-dhl'),
-								'76' => __('DHL SM BPM Expedited', 'pr-shipping-dhl'),
-								'77' => __('DHL SM BPM Ground', 'pr-shipping-dhl'),
-								'36' => __('DHL SM Parcel Plus Expedited', 'pr-shipping-dhl'),
-								'83' => __('DHL SM Parcel Plus Ground', 'pr-shipping-dhl'),
-								'81' => __('DHL SM Parcel Expedited', 'pr-shipping-dhl'),
-								'82' => __('DHL SM Parcel Ground', 'pr-shipping-dhl'),
-								'631' => __('DHL SM Parcel Expedited Max', 'pr-shipping-dhl'),
-								// '80' => __('DHL SM Media Mail Ground', 'pr-shipping-dhl'),
-								// '284' => __('DHL SM Media Mail Expedited', 'pr-shipping-dhl'),
-								// '761' => __('DHL Parcel Metro Sameday', 'pr-shipping-dhl'),
-								// '531' => __('DHL Parcel return Light', 'pr-shipping-dhl'),
-								// '491' => __('DHL Parcel return Plus', 'pr-shipping-dhl'),
-								// '532' => __('DHL Parcel return Ground', 'pr-shipping-dhl')
-								// '384' => __('SM Marketing Parcel Expedited', 'pr-shipping-dhl'),
-								// '383' => __('SM Marketing Parcel Ground', 'pr-shipping-dhl'),
+								// '72' => __('DHL SM Flats Expedited', 'dhl-for-woocommerce'),
+								// '73' => __('DHL SM Flats Ground', 'dhl-for-woocommerce'),
+								'76' => __('DHL SM BPM Expedited', 'dhl-for-woocommerce'),
+								'77' => __('DHL SM BPM Ground', 'dhl-for-woocommerce'),
+								'36' => __('DHL SM Parcel Plus Expedited', 'dhl-for-woocommerce'),
+								'83' => __('DHL SM Parcel Plus Ground', 'dhl-for-woocommerce'),
+								'81' => __('DHL SM Parcel Expedited', 'dhl-for-woocommerce'),
+								'82' => __('DHL SM Parcel Ground', 'dhl-for-woocommerce'),
+								'631' => __('DHL SM Parcel Expedited Max', 'dhl-for-woocommerce'),
+								// '80' => __('DHL SM Media Mail Ground', 'dhl-for-woocommerce'),
+								// '284' => __('DHL SM Media Mail Expedited', 'dhl-for-woocommerce'),
+								// '761' => __('DHL Parcel Metro Sameday', 'dhl-for-woocommerce'),
+								// '531' => __('DHL Parcel return Light', 'dhl-for-woocommerce'),
+								// '491' => __('DHL Parcel return Plus', 'dhl-for-woocommerce'),
+								// '532' => __('DHL Parcel return Ground', 'dhl-for-woocommerce')
+								// '384' => __('SM Marketing Parcel Expedited', 'dhl-for-woocommerce'),
+								// '383' => __('SM Marketing Parcel Ground', 'dhl-for-woocommerce'),
 								);
 
-		$asia_dom = array( 'PDO' => __('DHL Parcel Domestic', 'pr-shipping-dhl') );
+		$asia_dom = array( 'PDO' => __('DHL Parcel Domestic', 'dhl-for-woocommerce') );
 
-		$vietnam_dom = array( 'PDE' => __('DHL Parcel Domestic Expedited', 'pr-shipping-dhl') );
+		$vietnam_dom = array( 'PDE' => __('DHL Parcel Domestic Expedited', 'dhl-for-woocommerce') );
 
 		$dhl_prod_dom = array();
 
@@ -169,20 +169,20 @@ class PR_DHL_API_Ecomm extends PR_DHL_API {
 		$country_code = $this->country_code;
 
 		$content_indicator = array( 
-									'01'=> __('Lithium Metal Contained in Equipment', 'pr-shipping-dhl'),
-									'04'=> __('Lithium-Ion Contained in Equipment', 'pr-shipping-dhl')
+									'01'=> __('Lithium Metal Contained in Equipment', 'dhl-for-woocommerce'),
+									'04'=> __('Lithium-Ion Contained in Equipment', 'dhl-for-woocommerce')
 								);
 
 		$content_indicator_us = array(
-										'01'=> __('Primary Contained in Equipment', 'pr-shipping-dhl'),
-										'02'=> __('Primary Packed with Equipment', 'pr-shipping-dhl'),
-										'03'=> __('Primary Stand-Alone', 'pr-shipping-dhl'),
-										'04'=> __('Secondary Contained in Equipment', 'pr-shipping-dhl'),
-										'05'=> __('Secondary Packed with Equipment', 'pr-shipping-dhl'),
-										'06'=> __('Secondary Stand-Alone', 'pr-shipping-dhl'),
-									 	'08'=> __('ORM-D (US domestic)', 'pr-shipping-dhl'),
-										'09'=> __('Small Quantity Provision (US domestic)', 'pr-shipping-dhl'),
-										'40'=> __('Limited quantities (destination Canada)', 'pr-shipping-dhl')
+										'01'=> __('Primary Contained in Equipment', 'dhl-for-woocommerce'),
+										'02'=> __('Primary Packed with Equipment', 'dhl-for-woocommerce'),
+										'03'=> __('Primary Stand-Alone', 'dhl-for-woocommerce'),
+										'04'=> __('Secondary Contained in Equipment', 'dhl-for-woocommerce'),
+										'05'=> __('Secondary Packed with Equipment', 'dhl-for-woocommerce'),
+										'06'=> __('Secondary Stand-Alone', 'dhl-for-woocommerce'),
+									 	'08'=> __('ORM-D (US domestic)', 'dhl-for-woocommerce'),
+										'09'=> __('Small Quantity Provision (US domestic)', 'dhl-for-woocommerce'),
+										'40'=> __('Limited quantities (destination Canada)', 'dhl-for-woocommerce')
 								);
 
 		$dhl_content_ind = array();

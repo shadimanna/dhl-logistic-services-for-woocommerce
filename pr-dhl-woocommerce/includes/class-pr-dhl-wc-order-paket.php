@@ -48,7 +48,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				woocommerce_wp_text_input( array(
 					'id'          		=> 'pr_dhl_cod_value',
 					'class'          	=> 'wc_input_decimal',
-					'label'       		=> __( 'COD Amount:', 'pr-shipping-dhl' ),
+					'label'       		=> __( 'COD Amount:', 'dhl-for-woocommerce' ),
 					'placeholder' 		=> '',
 					'description'		=> '',
 					'value'       		=> isset( $dhl_label_items['pr_dhl_cod_value'] ) ? $dhl_label_items['pr_dhl_cod_value'] : $order->get_total(),
@@ -62,7 +62,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 				woocommerce_wp_checkbox( array(
 					'id'          		=> 'pr_dhl_return_address_enabled',
-					'label'       		=> __( 'Create return label: ', 'pr-shipping-dhl' ),
+					'label'       		=> __( 'Create return label: ', 'dhl-for-woocommerce' ),
 					'placeholder' 		=> '',
 					'description'		=> '',
 					'value'       		=> isset( $dhl_label_items['pr_dhl_return_address_enabled'] ) ? $dhl_label_items['pr_dhl_return_address_enabled'] : $this->shipping_dhl_settings['dhl_default_return_address_enabled'],
@@ -71,7 +71,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 				woocommerce_wp_text_input( array(
 					'id'          		=> 'pr_dhl_return_name',
-					'label'       		=> __( 'Name:', 'pr-shipping-dhl' ),
+					'label'       		=> __( 'Name:', 'dhl-for-woocommerce' ),
 					'placeholder' 		=> '',
 					'description'		=> '',
 					'value'       		=> isset( $dhl_label_items['pr_dhl_return_name'] ) ? $dhl_label_items['pr_dhl_return_name'] : $this->shipping_dhl_settings['dhl_return_name'],
@@ -80,7 +80,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 				woocommerce_wp_text_input( array(
 					'id'          		=> 'pr_dhl_return_company',
-					'label'       		=> __( 'Company:', 'pr-shipping-dhl' ),
+					'label'       		=> __( 'Company:', 'dhl-for-woocommerce' ),
 					'placeholder' 		=> '',
 					'description'		=> '',
 					'value'       		=> isset( $dhl_label_items['pr_dhl_return_company'] ) ? $dhl_label_items['pr_dhl_return_company'] : $this->shipping_dhl_settings['dhl_return_company'],
@@ -89,7 +89,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 				woocommerce_wp_text_input( array(
 					'id'          		=> 'pr_dhl_return_address',
-					'label'       		=> __( 'Street Address:', 'pr-shipping-dhl' ),
+					'label'       		=> __( 'Street Address:', 'dhl-for-woocommerce' ),
 					'placeholder' 		=> '',
 					'description'		=> '',
 					'value'       		=> isset( $dhl_label_items['pr_dhl_return_address'] ) ? $dhl_label_items['pr_dhl_return_address'] : $this->shipping_dhl_settings['dhl_return_address'],
@@ -98,7 +98,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 				woocommerce_wp_text_input( array(
 					'id'          		=> 'pr_dhl_return_address_no',
-					'label'       		=> __( 'Street Address Number:', 'pr-shipping-dhl' ),
+					'label'       		=> __( 'Street Address Number:', 'dhl-for-woocommerce' ),
 					'placeholder' 		=> '',
 					'description'		=> '',
 					'value'       		=> isset( $dhl_label_items['pr_dhl_return_address_no'] ) ? $dhl_label_items['pr_dhl_return_address_no'] : $this->shipping_dhl_settings['dhl_return_address_no'],
@@ -107,7 +107,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 				woocommerce_wp_text_input( array(
 					'id'          		=> 'pr_dhl_return_address_city',
-					'label'       		=> __( 'City:', 'pr-shipping-dhl' ),
+					'label'       		=> __( 'City:', 'dhl-for-woocommerce' ),
 					'placeholder' 		=> '',
 					'description'		=> '',
 					'value'       		=> isset( $dhl_label_items['pr_dhl_return_address_city'] ) ? $dhl_label_items['pr_dhl_return_address_city'] : $this->shipping_dhl_settings['dhl_return_address_city'],
@@ -116,7 +116,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 				woocommerce_wp_text_input( array(
 					'id'          		=> 'pr_dhl_return_address_state',
-					'label'       		=> __( 'State:', 'pr-shipping-dhl' ),
+					'label'       		=> __( 'State:', 'dhl-for-woocommerce' ),
 					'placeholder' 		=> '',
 					'description'		=> '',
 					'value'       		=> isset( $dhl_label_items['pr_dhl_return_address_state'] ) ? $dhl_label_items['pr_dhl_return_address_state'] : $this->shipping_dhl_settings['dhl_return_address_state'],
@@ -125,7 +125,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 				woocommerce_wp_text_input( array(
 					'id'          		=> 'pr_dhl_return_address_zip',
-					'label'       		=> __( 'Postcode:', 'pr-shipping-dhl' ),
+					'label'       		=> __( 'Postcode:', 'dhl-for-woocommerce' ),
 					'placeholder' 		=> '',
 					'description'		=> '',
 					'value'       		=> isset( $dhl_label_items['dhl_return_address_zip'] ) ? $dhl_label_items['dhl_return_address_zip'] : $this->shipping_dhl_settings['dhl_return_address_zip'],
@@ -134,7 +134,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 				woocommerce_wp_text_input( array(
 					'id'          		=> 'pr_dhl_return_phone',
-					'label'       		=> __( 'Phone:', 'pr-shipping-dhl' ),
+					'label'       		=> __( 'Phone:', 'dhl-for-woocommerce' ),
 					'placeholder' 		=> '',
 					'description'		=> '',
 					'value'       		=> isset( $dhl_label_items['pr_dhl_return_phone'] ) ? $dhl_label_items['pr_dhl_return_phone'] : $this->shipping_dhl_settings['dhl_return_phone'],
@@ -143,7 +143,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 				woocommerce_wp_text_input( array(
 					'id'          		=> 'pr_dhl_return_email',
-					'label'       		=> __( 'Email:', 'pr-shipping-dhl' ),
+					'label'       		=> __( 'Email:', 'dhl-for-woocommerce' ),
 					'placeholder' 		=> '',
 					'description'		=> '',
 					'value'       		=> isset( $dhl_label_items['pr_dhl_return_email'] ) ? $dhl_label_items['pr_dhl_return_email'] : $this->shipping_dhl_settings['dhl_return_email'],
@@ -167,11 +167,11 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				// catch exception
 			}
 
-			$preferred_days[0] = __( 'none', 'pr-shipping-dhl' );
+			$preferred_days[0] = __( 'none', 'dhl-for-woocommerce' );
 
 			woocommerce_wp_select( array(
 				'id'          		=> 'pr_dhl_preferred_day',
-				'label'       		=> __( 'Preferred Day:', 'pr-shipping-dhl' ),
+				'label'       		=> __( 'Preferred Day:', 'dhl-for-woocommerce' ),
 				'description'		=> '',
 				'value'       		=> isset( $dhl_label_items['pr_dhl_preferred_day'] ) ? $dhl_label_items['pr_dhl_preferred_day'] : '',
 				'options'			=> $preferred_days,
@@ -182,7 +182,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 				woocommerce_wp_text_input( array(
 					'id'          		=> 'pr_dhl_preferred_location',
-					'label'       		=> __( 'Preferred Location (80 characters max): ', 'pr-shipping-dhl' ),
+					'label'       		=> __( 'Preferred Location (80 characters max): ', 'dhl-for-woocommerce' ),
 					'placeholder' 		=> '',
 					'description'		=> '',
 					'value'       		=> $dhl_label_items['pr_dhl_preferred_location'],
@@ -195,7 +195,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				$neighbor_info = $dhl_label_items['pr_dhl_preferred_neighbour_name'] . ', ' . $dhl_label_items['pr_dhl_preferred_neighbour_address'];
 				woocommerce_wp_text_input( array(
 					'id'          		=> 'pr_dhl_preferred_neighbor',
-					'label'       		=> __( 'Preferred Neighbor (80 characters max): ', 'pr-shipping-dhl' ),
+					'label'       		=> __( 'Preferred Neighbor (80 characters max): ', 'dhl-for-woocommerce' ),
 					'placeholder' 		=> '',
 					'description'		=> '',
 					'value'       		=> $neighbor_info,
@@ -207,7 +207,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			$visual_age = $dhl_obj->get_dhl_visual_age();
 			woocommerce_wp_select( array(
 				'id'          		=> 'pr_dhl_age_visual',
-				'label'       		=> __( 'Visual Age Check:', 'pr-shipping-dhl' ),
+				'label'       		=> __( 'Visual Age Check:', 'dhl-for-woocommerce' ),
 				'description'		=> '',
 				'value'       		=> isset( $dhl_label_items['pr_dhl_age_visual'] ) ? $dhl_label_items['pr_dhl_age_visual'] : $this->shipping_dhl_settings['dhl_default_age_visual'],
 				'options'			=> $visual_age,
@@ -216,7 +216,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 /*
 			woocommerce_wp_checkbox( array(
 				'id'          		=> 'pr_dhl_personally',
-				'label'       		=> __( 'Personally: ', 'pr-shipping-dhl' ),
+				'label'       		=> __( 'Personally: ', 'dhl-for-woocommerce' ),
 				'placeholder' 		=> '',
 				'description'		=> '',
 				'value'       		=> isset( $dhl_label_items['pr_dhl_personally'] ) ? $dhl_label_items['pr_dhl_personally'] : '',
@@ -225,7 +225,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 */
 			woocommerce_wp_checkbox( array(
 				'id'          		=> 'pr_dhl_no_neighbor',
-				'label'       		=> __( 'No Neighbour Delivery: ', 'pr-shipping-dhl' ),
+				'label'       		=> __( 'No Neighbour Delivery: ', 'dhl-for-woocommerce' ),
 				'placeholder' 		=> '',
 				'description'		=> '',
 				'value'       		=> isset( $dhl_label_items['pr_dhl_no_neighbor'] ) ? $dhl_label_items['pr_dhl_no_neighbor'] : $this->shipping_dhl_settings['dhl_default_no_neighbor'],
@@ -234,7 +234,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 			woocommerce_wp_checkbox( array(
 				'id'          		=> 'pr_dhl_named_person',
-				'label'       		=> __( 'Named Person Only: ', 'pr-shipping-dhl' ),
+				'label'       		=> __( 'Named Person Only: ', 'dhl-for-woocommerce' ),
 				'placeholder' 		=> '',
 				'description'		=> '',
 				'value'       		=> isset( $dhl_label_items['pr_dhl_named_person'] ) ? $dhl_label_items['pr_dhl_named_person'] : $this->shipping_dhl_settings['dhl_default_named_person'],
@@ -247,7 +247,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 			woocommerce_wp_checkbox( array(
 				'id'          		=> 'pr_dhl_identcheck',
-				'label'       		=> __( 'Ident-Check: ', 'pr-shipping-dhl' ),
+				'label'       		=> __( 'Ident-Check: ', 'dhl-for-woocommerce' ),
 				'placeholder' 		=> '',
 				'description'		=> '',
 				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck'] ) ? $dhl_label_items['pr_dhl_identcheck'] : $this->shipping_dhl_settings['dhl_default_identcheck'],
@@ -256,7 +256,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 /*
 			woocommerce_wp_text_input( array(
 				'id'          		=> 'pr_dhl_identcheck_fname',
-				'label'       		=> __( 'Identity Check - First Name: ', 'pr-shipping-dhl' ),
+				'label'       		=> __( 'Identity Check - First Name: ', 'dhl-for-woocommerce' ),
 				'placeholder' 		=> '',
 				'description'		=> '',
 				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_fname'] ) ? $dhl_label_items['pr_dhl_identcheck_fname'] : '',
@@ -265,7 +265,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 			woocommerce_wp_text_input( array(
 				'id'          		=> 'pr_dhl_identcheck_lname',
-				'label'       		=> __( 'Identity Check - Last Name: ', 'pr-shipping-dhl' ),
+				'label'       		=> __( 'Identity Check - Last Name: ', 'dhl-for-woocommerce' ),
 				'placeholder' 		=> '',
 				'description'		=> '',
 				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_lname'] ) ? $dhl_label_items['pr_dhl_identcheck_lname'] : '',
@@ -274,7 +274,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 */
 			woocommerce_wp_text_input( array(
 				'id'          		=> 'pr_dhl_identcheck_dob',
-				'label'       		=> __( 'Ident-Check - Date of Birth: ', 'pr-shipping-dhl' ),
+				'label'       		=> __( 'Ident-Check - Date of Birth: ', 'dhl-for-woocommerce' ),
 				'placeholder' 		=> '',
 				'description'		=> '',
 				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_dob'] ) ? $dhl_label_items['pr_dhl_identcheck_dob'] : $this->shipping_dhl_settings['dhl_default_identcheck_age'],
@@ -285,7 +285,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			// $visual_age = $dhl_obj->get_dhl_visual_age();
 			woocommerce_wp_select( array(
 				'id'          		=> 'pr_dhl_identcheck_age',
-				'label'       		=> __( 'Ident-Check - Minimum Age: ', 'pr-shipping-dhl' ),
+				'label'       		=> __( 'Ident-Check - Minimum Age: ', 'dhl-for-woocommerce' ),
 				'description'		=> '',
 				'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_age'] ) ? $dhl_label_items['pr_dhl_identcheck_age'] : '',
 				'options'			=> $visual_age,
@@ -296,7 +296,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 			woocommerce_wp_checkbox( array(
 				'id'          		=> 'pr_dhl_is_codeable',
-				'label'       		=> __( 'Print Only If Codeable: ', 'pr-shipping-dhl' ),
+				'label'       		=> __( 'Print Only If Codeable: ', 'dhl-for-woocommerce' ),
 				'placeholder' 		=> '',
 				'description'		=> '',
 				'value'       		=> isset( $dhl_label_items['pr_dhl_is_codeable'] ) ? $dhl_label_items['pr_dhl_is_codeable'] : $this->shipping_dhl_settings['dhl_default_is_codeable'],
@@ -307,7 +307,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 			woocommerce_wp_checkbox( array(
 				'id'          		=> 'pr_dhl_routing',
-				'label'       		=> __( 'Parcel Outlet Routing: ', 'pr-shipping-dhl' ),
+				'label'       		=> __( 'Parcel Outlet Routing: ', 'dhl-for-woocommerce' ),
 				'placeholder' 		=> '',
 				'description'		=> '',
 				'value'       		=> isset( $dhl_label_items['pr_dhl_routing'] ) ? $dhl_label_items['pr_dhl_routing'] : $this->shipping_dhl_settings['dhl_default_routing'],
@@ -316,7 +316,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
             woocommerce_wp_text_input( array(
                 'id'          		=> 'pr_dhl_routing_email',
-                'label'       		=> __( 'Parcel Outlet Routing - Email: ', 'pr-shipping-dhl' ),
+                'label'       		=> __( 'Parcel Outlet Routing - Email: ', 'dhl-for-woocommerce' ),
                 'placeholder' 		=> '',
                 'description'		=> '',
                 'value'       		=> isset( $dhl_label_items['pr_dhl_routing_email'] ) ? $dhl_label_items['pr_dhl_routing_email'] : $this->get_default_dhl_rounting_email( $order_id ),
@@ -331,7 +331,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				$duties_opt = $dhl_obj->get_dhl_duties();
 				woocommerce_wp_select( array(
 					'id'          		=> 'pr_dhl_duties',
-					'label'       		=> __( 'Duties:', 'pr-shipping-dhl' ),
+					'label'       		=> __( 'Duties:', 'dhl-for-woocommerce' ),
 					'description'		=> '',
 					'value'       		=> isset( $dhl_label_items['pr_dhl_duties'] ) ? $dhl_label_items['pr_dhl_duties'] : '',
 					'options'			=> $duties_opt,
@@ -341,7 +341,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				woocommerce_wp_text_input( array(
 					'id'          		=> 'pr_dhl_invoice_num',
 					'class'          	=> '',
-					'label'       		=> __( 'Invoice Number:', 'pr-shipping-dhl' ),
+					'label'       		=> __( 'Invoice Number:', 'dhl-for-woocommerce' ),
 					'placeholder' 		=> '',
 					'description'		=> '',
 					'value'       		=> isset( $dhl_label_items['pr_dhl_invoice_num'] ) ? $dhl_label_items['pr_dhl_invoice_num'] : $order_id,
@@ -358,7 +358,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 		woocommerce_wp_hidden_input( array(
 			'id'          		=> 'pr_dhl_email_notification',
-			'label'       		=> __( 'Email Notification:', 'pr-shipping-dhl' ),
+			'label'       		=> __( 'Email Notification:', 'dhl-for-woocommerce' ),
 			'placeholder' 		=> '',
 			'description'		=> '',
 			'value'       		=> isset( $dhl_label_items['pr_dhl_email_notification'] ) ? $dhl_label_items['pr_dhl_email_notification'] : false,
@@ -366,7 +366,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 		woocommerce_wp_checkbox( array(
 			'id'          		=> 'pr_dhl_additional_insurance',
-			'label'       		=> __( 'Additional Insurance:', 'pr-shipping-dhl' ),
+			'label'       		=> __( 'Additional Insurance:', 'dhl-for-woocommerce' ),
 			'placeholder' 		=> '',
 			'description'		=> '',
 			'value'       		=> isset( $dhl_label_items['pr_dhl_additional_insurance'] ) ? $dhl_label_items['pr_dhl_additional_insurance'] : $this->shipping_dhl_settings['dhl_default_additional_insurance'],
@@ -375,7 +375,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 		woocommerce_wp_checkbox( array(
 			'id'          		=> 'pr_dhl_premium',
-			'label'       		=> __( 'Premium: ', 'pr-shipping-dhl' ),
+			'label'       		=> __( 'Premium: ', 'dhl-for-woocommerce' ),
 			'placeholder' 		=> '',
 			'description'		=> '',
 			'value'       		=> isset( $dhl_label_items['pr_dhl_premium'] ) ? $dhl_label_items['pr_dhl_premium'] : $this->shipping_dhl_settings['dhl_default_premium'],
@@ -384,7 +384,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 		woocommerce_wp_checkbox( array(
 			'id'          		=> 'pr_dhl_bulky_goods',
-			'label'       		=> __( 'Bulky Goods: ', 'pr-shipping-dhl' ),
+			'label'       		=> __( 'Bulky Goods: ', 'dhl-for-woocommerce' ),
 			'placeholder' 		=> '',
 			'description'		=> '',
 			'value'       		=> isset( $dhl_label_items['pr_dhl_bulky_goods'] ) ? $dhl_label_items['pr_dhl_bulky_goods'] : $this->shipping_dhl_settings['dhl_default_bulky_goods'],
@@ -408,7 +408,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 		woocommerce_wp_checkbox( array(
 			'id'          		=> 'pr_dhl_multi_packages_enabled',
-			'label'       		=> __( 'Send multiple packages: ', 'pr-shipping-dhl' ),
+			'label'       		=> __( 'Send multiple packages: ', 'dhl-for-woocommerce' ),
 			'placeholder' 		=> '',
 			'description'		=> '',
 			'value'       		=> $packages_enabled,
@@ -418,7 +418,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		woocommerce_wp_select( array(
 			'id'	          	=> 'pr_dhl_total_packages',
 			'name'          	=> 'pr_dhl_total_packages',
-			'label'       		=>  __( 'Total Packages:', 'pr-shipping-dhl' ),
+			'label'       		=>  __( 'Total Packages:', 'dhl-for-woocommerce' ),
 			'value'				=> $total_packages,
 			'options'			=> $numbers,
 			'custom_attributes'	=> array( $is_disabled => $is_disabled, 'data-current' => $total_packages,  "autocomplete" => "off" ),
@@ -608,7 +608,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$shop_manager_actions = array();
 
 		$shop_manager_actions = array(
-			'pr_dhl_create_labels'      => __( 'DHL Create Labels', 'pr-shipping-dhl' )
+			'pr_dhl_create_labels'      => __( 'DHL Create Labels', 'dhl-for-woocommerce' )
 		);
 
 		return $shop_manager_actions;
@@ -622,7 +622,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 			if ( $orders_count < 1 ) {
 
-				return __( 'No orders selected for the DHL bulk action, please select orders before performing the DHL action.', 'pr-shipping-dhl' );
+				return __( 'No orders selected for the DHL bulk action, please select orders before performing the DHL action.', 'dhl-for-woocommerce' );
 
 			}
 
@@ -692,7 +692,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$tracking_link_str = '';
 		if (is_array( $tracking_number ) ) {
 			foreach ($tracking_number as $key => $value) {
-				$tracking_link[ $key ] = sprintf( __( '<a href="%s%s" target="_blank">%s</a>', 'pr-shipping-dhl' ), $this->get_tracking_url(), $value, $value);
+				$tracking_link[ $key ] = sprintf( __( '<a href="%s%s" target="_blank">%s</a>', 'dhl-for-woocommerce' ), $this->get_tracking_url(), $value, $value);
 			}
 
 			$tracking_link_str = implode('<br/>', $tracking_link);
@@ -711,8 +711,8 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			$new_columns[ $column_name ] = $column_info;
 
 			if ( 'order_total' === $column_name ) {
-				$new_columns['dhl_label_created']      = __( 'DHL Label Created', 'pr-shipping-dhl' );
-				$new_columns['dhl_tracking_number']    = __( 'DHL Tracking Number', 'pr-shipping-dhl' );
+				$new_columns['dhl_label_created']      = __( 'DHL Label Created', 'dhl-for-woocommerce' );
+				$new_columns['dhl_tracking_number']    = __( 'DHL Tracking Number', 'dhl-for-woocommerce' );
 			}
 		}
 

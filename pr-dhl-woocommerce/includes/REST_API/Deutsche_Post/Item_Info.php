@@ -114,7 +114,7 @@ class Item_Info {
 			),
             'dhl_product'       => array(
 				'rename' => 'product',
-				'error'  => __( 'DHL "Product" is empty!', 'pr-shipping-dhl' ),
+				'error'  => __( 'DHL "Product" is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $product ) use ($self) {
 
 					$product_info 	= explode( '-', $product );
@@ -128,15 +128,15 @@ class Item_Info {
 				'default'  => 'PRIORITY',
 				'validate' => function( $level ) {
 					if ( $level !== 'STANDARD' && $level !== 'PRIORITY' && $level !== 'REGISTERED' ) {
-						throw new Exception( __( 'Order "Service Level" is invalid', 'pr-shipping-dhl' ) );
+						throw new Exception( __( 'Order "Service Level" is invalid', 'dhl-for-woocommerce' ) );
 					}
 				},
 			),
 			'weight'            => array(
-				'error'    => __( 'Order "Weight" is empty!', 'pr-shipping-dhl' ),
+				'error'    => __( 'Order "Weight" is empty!', 'dhl-for-woocommerce' ),
 				'validate' => function( $weight ) {
 					if ( ! is_numeric( $weight ) ) {
-						throw new Exception( __( 'The order "Weight" must be a number', 'pr-shipping-dhl' ) );
+						throw new Exception( __( 'The order "Weight" must be a number', 'dhl-for-woocommerce' ) );
 					}
 				},
 				'sanitize' => function ( $weight ) use ($self) {
@@ -147,14 +147,14 @@ class Item_Info {
 				}
 			),
 			'currency'          => array(
-				'error' => __( 'Shop "Currency" is empty!', 'pr-shipping-dhl' ),
+				'error' => __( 'Shop "Currency" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'total_value'       => array(
 				'rename' => 'value',
-				'error'  => __( 'Shipment "Value" is empty!', 'pr-shipping-dhl' ),
+				'error'  => __( 'Shipment "Value" is empty!', 'dhl-for-woocommerce' ),
 				'validate' => function( $value ) {
 					if ( ! is_numeric( $value ) ) {
-						throw new Exception( __( 'The order "value" must be a number', 'pr-shipping-dhl' ) );
+						throw new Exception( __( 'The order "value" must be a number', 'dhl-for-woocommerce' ) );
 					}
 				},
 				'sanitize' => function( $value ) use ($self) {
@@ -180,11 +180,11 @@ class Item_Info {
 					if( !empty( $value ) ){
 						
 						if( !ctype_alnum( $value ) ){
-							throw new Exception( __( 'The importer customs reference "value" must be an alphanumeric', 'pr-shipping-dhl' ) );
+							throw new Exception( __( 'The importer customs reference "value" must be an alphanumeric', 'dhl-for-woocommerce' ) );
 						}
 
 						if( strlen( $value ) > 35 ){
-							throw new Exception( __( 'The importer customs reference "value" must be between 1 and 35 characters long', 'pr-shipping-dhl' ) );
+							throw new Exception( __( 'The importer customs reference "value" must be between 1 and 35 characters long', 'dhl-for-woocommerce' ) );
 						}
 						
 					}
@@ -197,11 +197,11 @@ class Item_Info {
 					if( !empty( $value ) ){
 
 						if( !ctype_alnum( $value ) ){
-							throw new Exception( __( 'The sender customs reference "value" must be an alphanumeric', 'pr-shipping-dhl' ) );
+							throw new Exception( __( 'The sender customs reference "value" must be an alphanumeric', 'dhl-for-woocommerce' ) );
 						}
 	
 						if( strlen( $value ) > 35 ){
-							throw new Exception( __( 'The sender customs reference "value" must be between 1 and 35 characters long', 'pr-shipping-dhl' ) );
+							throw new Exception( __( 'The sender customs reference "value" must be between 1 and 35 characters long', 'dhl-for-woocommerce' ) );
 						}
 
 					}
@@ -226,7 +226,7 @@ class Item_Info {
 		return array(
 			'name'      => array(
 				'default' => '',
-				'error'  => __( 'Recipient is empty!', 'pr-shipping-dhl' ),
+				'error'  => __( 'Recipient is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function( $name ) use ($self) {
 
 					return $self->string_length_sanitization( $name, 30 );
@@ -243,13 +243,13 @@ class Item_Info {
 				'default' => '',
 			),
 			'address_1' => array(
-				'error' => __( 'Shipping "Address 1" is empty!', 'pr-shipping-dhl' ),
+				'error' => __( 'Shipping "Address 1" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'address_2' => array(
 				'default' => '',
 			),
 			'city'      => array(
-				'error' => __( 'Shipping "City" is empty!', 'pr-shipping-dhl' ),
+				'error' => __( 'Shipping "City" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'postcode'  => array(
 				'default' => '',
@@ -258,7 +258,7 @@ class Item_Info {
 				'default' => '',
 			),
 			'country'   => array(
-				'error' => __( 'Shipping "Country" is empty!', 'pr-shipping-dhl' ),
+				'error' => __( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' ),
 			),
 		);
 	}
@@ -288,7 +288,7 @@ class Item_Info {
 
 					if ( $length < 4 || $length > 20 ) {
 						throw new Exception(
-							__( 'Item HS Code must be between 4 and 20 characters long', 'pr-shipping-dhl' )
+							__( 'Item HS Code must be between 4 and 20 characters long', 'dhl-for-woocommerce' )
 						);
 					}
 				},

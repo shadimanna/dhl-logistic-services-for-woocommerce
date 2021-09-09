@@ -56,7 +56,7 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 			$res = unlink( $label_path );
 			
 			if( ! $res ) {
-				throw new Exception( __('DHL Label could not be deleted!', 'pr-shipping-dhl' ) );
+				throw new Exception( __('DHL Label could not be deleted!', 'dhl-for-woocommerce' ) );
 			}
 		}
 	}
@@ -96,14 +96,14 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 		$label_url = PR_DHL()->get_dhl_label_folder_url() . $label_name;
 
 		if( validate_file($label_path) > 0 ) {
-			throw new Exception( __('Invalid file path!', 'pr-shipping-dhl' ) );
+			throw new Exception( __('Invalid file path!', 'dhl-for-woocommerce' ) );
 		}
 
 		$label_data_decoded = base64_decode($label_data);
 		$file_ret = file_put_contents( $label_path, $label_data_decoded );
 		
 		if( empty( $file_ret ) ) {
-			throw new Exception( __('DHL Label file cannot be saved!', 'pr-shipping-dhl' ) );
+			throw new Exception( __('DHL Label file cannot be saved!', 'dhl-for-woocommerce' ) );
 		}
 
 		return array( 'label_url' => $label_url, 'label_path' => $label_path);
@@ -113,20 +113,20 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 		// Validate set args
 		
 		if ( empty( $args['dhl_settings']['dhl_api_key'] ) ) {
-			throw new Exception( __('Please, provide the username in the DHL shipping settings', 'pr-shipping-dhl' ) );
+			throw new Exception( __('Please, provide the username in the DHL shipping settings', 'dhl-for-woocommerce' ) );
 		}
 
 		if ( empty( $args['dhl_settings']['dhl_api_secret'] )) {
-			throw new Exception( __('Please, provide the password for the username in the DHL shipping settings', 'pr-shipping-dhl') );
+			throw new Exception( __('Please, provide the password for the username in the DHL shipping settings', 'dhl-for-woocommerce') );
 		}
 
 		// Validate order details
 		if ( empty( $args['dhl_settings']['pickup'] ) ) {
-			throw new Exception( __('Please, provide a pickup account in the DHL shipping settings', 'pr-shipping-dhl' ) );
+			throw new Exception( __('Please, provide a pickup account in the DHL shipping settings', 'dhl-for-woocommerce' ) );
 		}
 
 		if ( empty( $args['dhl_settings']['distribution'] )) {
-			throw new Exception( __('Please, provide a distribution center in the DHL shipping settings', 'pr-shipping-dhl') );
+			throw new Exception( __('Please, provide a distribution center in the DHL shipping settings', 'dhl-for-woocommerce') );
 		}
 
 		if ( ! empty( $args['dhl_settings']['label_format'] ) ) {
@@ -148,19 +148,19 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 		}
 
 		if ( empty( $args['order_details']['dhl_product'] )) {
-			throw new Exception( __('DHL "Product" is empty!', 'pr-shipping-dhl') );
+			throw new Exception( __('DHL "Product" is empty!', 'dhl-for-woocommerce') );
 		}
 
 		if ( empty( $args['order_details']['order_id'] )) {
-			throw new Exception( __('Shop "Order ID" is empty!', 'pr-shipping-dhl') );
+			throw new Exception( __('Shop "Order ID" is empty!', 'dhl-for-woocommerce') );
 		}
 
 		if ( empty( $args['order_details']['weightUom'] )) {
-			throw new Exception( __('Shop "Weight Units of Measure" is empty!', 'pr-shipping-dhl') );
+			throw new Exception( __('Shop "Weight Units of Measure" is empty!', 'dhl-for-woocommerce') );
 		}
 
 		if ( empty( $args['order_details']['weight'] )) {
-			throw new Exception( __('Order "Weight" is empty!', 'pr-shipping-dhl') );
+			throw new Exception( __('Order "Weight" is empty!', 'dhl-for-woocommerce') );
 		}
 
 		// Validate weight
@@ -171,24 +171,24 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 		}
 
 		// if ( empty( $args['order_details']['duties'] )) {
-		// 	throw new Exception( __('DHL "Duties" is empty!', 'pr-shipping-dhl') );
+		// 	throw new Exception( __('DHL "Duties" is empty!', 'dhl-for-woocommerce') );
 		// }
 
 		if ( empty( $args['order_details']['currency'] )) {
-			throw new Exception( __('Shop "Currency" is empty!', 'pr-shipping-dhl') );
+			throw new Exception( __('Shop "Currency" is empty!', 'dhl-for-woocommerce') );
 		}
 
 		// Validate shipping address
 		if ( empty( $args['shipping_address']['address_1'] )) {
-			throw new Exception( __('Shipping "Address 1" is empty!', 'pr-shipping-dhl') );
+			throw new Exception( __('Shipping "Address 1" is empty!', 'dhl-for-woocommerce') );
 		}
 
 		if ( empty( $args['shipping_address']['city'] )) {
-			throw new Exception( __('Shipping "City" is empty!', 'pr-shipping-dhl') );
+			throw new Exception( __('Shipping "City" is empty!', 'dhl-for-woocommerce') );
 		}
 
 		if ( empty( $args['shipping_address']['country'] )) {
-			throw new Exception( __('Shipping "Country" is empty!', 'pr-shipping-dhl') );
+			throw new Exception( __('Shipping "Country" is empty!', 'dhl-for-woocommerce') );
 		}
 
 		// Add default values for required fields that might not be passed e.g. phone

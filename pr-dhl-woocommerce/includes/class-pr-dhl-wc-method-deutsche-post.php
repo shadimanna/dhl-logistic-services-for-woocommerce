@@ -12,11 +12,11 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
     public function __construct( $instance_id = 0 ) {
         $this->id = 'pr_dhl_dp';
         $this->instance_id = absint( $instance_id );
-        $this->method_title = __( 'Deutsche Post International', 'pr-shipping-dhl' );
+        $this->method_title = __( 'Deutsche Post International', 'dhl-for-woocommerce' );
         $this->method_description = sprintf(
             __(
                 'To start creating Deutsche Post shipping labels and return back a tracking number to your customers, please fill in your user credentials as provided by Deutsche Post. Not yet a customer? Please get a quote %shere%s.',
-                'pr-shipping-dhl'
+                'dhl-for-woocommerce'
             ),
             '<a href="https://www.deutschepost.com/en/business-customers/contact.html" target="_blank">',
             '</a>'
@@ -69,74 +69,74 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
             $dhl_obj = PR_DHL()->get_dhl_factory();
             $select_dhl_product_int = $dhl_obj->get_dhl_products_international();
         } catch ( Exception $e ) {
-            PR_DHL()->log_msg( __( 'Deutsche Post Products not displaying - ', 'pr-shipping-dhl' ) . $e->getMessage() );
+            PR_DHL()->log_msg( __( 'Deutsche Post Products not displaying - ', 'dhl-for-woocommerce' ) . $e->getMessage() );
         }
 
         $weight_units = get_option( 'woocommerce_weight_unit' );
 
         $this->form_fields = array(
             'dhl_api'                    => array(
-                'title'       => __( 'Account and API Settings', 'pr-shipping-dhl' ),
+                'title'       => __( 'Account and API Settings', 'dhl-for-woocommerce' ),
                 'type'        => 'title',
                 'description' => __(
                     'Please configure your account and API settings with Deutschepost International.',
-                    'pr-shipping-dhl'
+                    'dhl-for-woocommerce'
                 ),
                 'class'       => '',
             ),
             'dhl_account_num' => array(
-	            'title'             => __( 'Account Number (EKP)', 'pr-shipping-dhl' ),
+	            'title'             => __( 'Account Number (EKP)', 'dhl-for-woocommerce' ),
 	            'type'              => 'text',
-	            'description'       => __( 'Your account number (9; 10 or 15 digits, numerical), also called "EKP“. This will be provided by your local Deutsche Post sales organization.', 'pr-shipping-dhl' ),
+	            'description'       => __( 'Your account number (9; 10 or 15 digits, numerical), also called "EKP“. This will be provided by your local Deutsche Post sales organization.', 'dhl-for-woocommerce' ),
 	            'desc_tip'          => true,
 	            'default'           => '',
 	            'placeholder'		=> '1234567890',
 	            'custom_attributes'	=> array( 'maxlength' => '10' )
             ),
 	        'dhl_contact_name' => array(
-		        'title'             => __( 'Contact Name', 'pr-shipping-dhl' ),
+		        'title'             => __( 'Contact Name', 'dhl-for-woocommerce' ),
 		        'type'              => 'text',
-		        'description'       => __( 'Required for all customers. The name of the merchant, used as contact information on the Waybill.', 'pr-shipping-dhl' ),
+		        'description'       => __( 'Required for all customers. The name of the merchant, used as contact information on the Waybill.', 'dhl-for-woocommerce' ),
 		        'desc_tip'          => true,
 		        'default'           => '',
 		        'placeholder'		=> 'Contact Name',
 			),
 			'dhl_contact_phone_number' => array(
-		        'title'             => __( 'Contact Phone Number', 'pr-shipping-dhl' ),
+		        'title'             => __( 'Contact Phone Number', 'dhl-for-woocommerce' ),
 		        'type'              => 'text',
-		        'description'       => __( 'Required for DHL Express customers. The phone number of the merchant, used as contact information on the Waybill.', 'pr-shipping-dhl' ),
+		        'description'       => __( 'Required for DHL Express customers. The phone number of the merchant, used as contact information on the Waybill.', 'dhl-for-woocommerce' ),
 		        'desc_tip'          => true,
 		        'default'           => '',
 		        'placeholder'		=> '+4935120681234',
 	        ),
             'dhl_api_key'                => array(
-                'title'       => __( 'Client Id', 'pr-shipping-dhl' ),
+                'title'       => __( 'Client Id', 'dhl-for-woocommerce' ),
                 'type'        => 'text',
                 'description' => __(
                     'The client ID (a 36 digits alphanumerical string made from 5 blocks) is required for authentication and is provided to you within your contract.',
-                    'pr-shipping-dhl'
+                    'dhl-for-woocommerce'
                 ),
                 'desc_tip'    => true,
                 'default'     => '',
             ),
             'dhl_api_secret'             => array(
-                'title'       => __( 'Client Secret', 'pr-shipping-dhl' ),
+                'title'       => __( 'Client Secret', 'dhl-for-woocommerce' ),
                 'type'        => 'text',
                 'description' => __(
                     'The client secret (also a 36 digits alphanumerical string made from 5 blocks) is required for authentication (together with the client ID) and creates the tokens needed to ensure secure access. It is part of your contract provided by your Deutsche Post sales partner.',
-                    'pr-shipping-dhl'
+                    'dhl-for-woocommerce'
                 ),
                 'desc_tip'    => true,
                 'default'     => '',
             ),
             'dhl_sandbox'                => array(
-                'title'       => __( 'Sandbox Mode', 'pr-shipping-dhl' ),
+                'title'       => __( 'Sandbox Mode', 'dhl-for-woocommerce' ),
                 'type'        => 'checkbox',
-                'label'       => __( 'Enable Sandbox Mode', 'pr-shipping-dhl' ),
+                'label'       => __( 'Enable Sandbox Mode', 'dhl-for-woocommerce' ),
                 'default'     => 'no',
                 'description' => __(
                     'Please, tick here if you want to test the plug-in installation against the Deutsche Post Sandbox Environment. Labels generated via Sandbox cannot be used for shipping and you need to enter your client ID and client secret for the Sandbox environment instead of the ones for production!',
-                    'pr-shipping-dhl'
+                    'dhl-for-woocommerce'
                 ),
                 'desc_tip'    => true,
             ),
@@ -148,19 +148,19 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
                 ),
                 'description'       => __(
                     'Press the button for testing the connection against our Deutsche Post (depending on the selected environment this test is being done against the Sandbox or the Production Environment).',
-                    'pr-shipping-dhl'
+                    'dhl-for-woocommerce'
                 ),
                 'desc_tip'          => true,
             ),
             'dhl_debug'                  => array(
-                'title'       => __( 'Debug Log', 'pr-shipping-dhl' ),
+                'title'       => __( 'Debug Log', 'dhl-for-woocommerce' ),
                 'type'        => 'checkbox',
-                'label'       => __( 'Enable logging', 'pr-shipping-dhl' ),
+                'label'       => __( 'Enable logging', 'dhl-for-woocommerce' ),
                 'default'     => 'yes',
                 'description' => sprintf(
                     __(
                         'A log file containing the communication to the Deutsche Post server will be maintained if this option is checked. This can be used in case of technical issues and can be found %shere%s.',
-                        'pr-shipping-dhl'
+                        'dhl-for-woocommerce'
                     ),
                     '<a href="' . $log_path . '" target = "_blank">',
                     '</a>'
@@ -170,39 +170,39 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
 
         $this->form_fields += array(
             'dhl_pickup_dist'  => array(
-                'title'       => __( 'Shipping', 'pr-shipping-dhl' ),
+                'title'       => __( 'Shipping', 'dhl-for-woocommerce' ),
                 'type'        => 'title',
-                'description' => __( 'Please configure your shipping parameters underneath.', 'pr-shipping-dhl' ),
+                'description' => __( 'Please configure your shipping parameters underneath.', 'dhl-for-woocommerce' ),
                 'class'       => '',
             ),
             'dhl_default_product_int' => array(
-                'title'       => __( 'International Default Service', 'pr-shipping-dhl' ),
+                'title'       => __( 'International Default Service', 'dhl-for-woocommerce' ),
                 'type'        => 'select',
                 'description' => __(
                     'Please select your default Deutsche Post shipping service for cross-border shippments that you want to offer to your customers (you can always change this within each individual order afterwards).',
-                    'pr-shipping-dhl'
+                    'dhl-for-woocommerce'
                 ),
                 'desc_tip'    => true,
                 'options'     => $select_dhl_product_int,
                 'class'       => 'wc-enhanced-select',
             ),
             'dhl_add_weight_type'   => array(
-                'title'       => __( 'Additional Weight Type', 'pr-shipping-dhl' ),
+                'title'       => __( 'Additional Weight Type', 'dhl-for-woocommerce' ),
                 'type'        => 'select',
                 'description' => __(
                     'Select whether to add an absolute weight amount or percentage amount to the total product weight.',
-                    'pr-shipping-dhl'
+                    'dhl-for-woocommerce'
                 ),
                 'desc_tip'    => true,
                 'options'     => array( 'absolute' => 'Absolute', 'percentage' => 'Percentage' ),
                 'class'       => 'wc-enhanced-select',
             ),
             'dhl_add_weight'        => array(
-                'title'       => sprintf( __( 'Additional Weight (%s or %%)', 'pr-shipping-dhl' ), $weight_units ),
+                'title'       => sprintf( __( 'Additional Weight (%s or %%)', 'dhl-for-woocommerce' ), $weight_units ),
                 'type'        => 'text',
                 'description' => __(
                     'Add extra weight in addition to the products.  Either an absolute amount or percentage (e.g. 10 for 10%).',
-                    'pr-shipping-dhl'
+                    'dhl-for-woocommerce'
                 ),
                 'desc_tip'    => true,
                 'default'     => '',
@@ -211,59 +211,59 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
 			),
             /*
 			'dhl_packet_return' 	=> array(
-				'title'       => __( 'Packet Return', 'pr-shipping-dhl' ),
+				'title'       => __( 'Packet Return', 'dhl-for-woocommerce' ),
                 'type'        => 'checkbox',
-                'label'       => __( 'Enable', 'pr-shipping-dhl' ),
+                'label'       => __( 'Enable', 'dhl-for-woocommerce' ),
                 'default'     => 'no',
                 'description' => __(
                     'Please note that Packet Return needs to be activated by Deutsche Post. Please get in touch with your local DP Customer Service for more details.',
-                    'pr-shipping-dhl'
+                    'dhl-for-woocommerce'
                 ),
                 'desc_tip'    => true,
 			),
             */
             'dhl_tracking_note'     => array(
-                'title'       => __( 'Tracking Note', 'pr-shipping-dhl' ),
+                'title'       => __( 'Tracking Note', 'dhl-for-woocommerce' ),
                 'type'        => 'checkbox',
-                'label'       => __( 'Make Private', 'pr-shipping-dhl' ),
+                'label'       => __( 'Make Private', 'dhl-for-woocommerce' ),
                 'default'     => 'no',
                 'description' => __(
                     'Please, tick here to not send an email to the customer when the tracking number is added to the order.',
-                    'pr-shipping-dhl'
+                    'dhl-for-woocommerce'
                 ),
                 'desc_tip'    => true,
             ),
             'dhl_tracking_note_txt' => array(
-                'title'       => __( 'Tracking Note', 'pr-shipping-dhl' ),
+                'title'       => __( 'Tracking Note', 'dhl-for-woocommerce' ),
                 'type'        => 'textarea',
                 'description' => __(
                     'Set the custom text when adding the tracking number to the order notes. {tracking-link} is where the tracking number will be set.',
-                    'pr-shipping-dhl'
+                    'dhl-for-woocommerce'
                 ),
                 'desc_tip'    => false,
-                'default'     => __( 'Deutsche Post Tracking Number: {tracking-link}', 'pr-shipping-dhl' ),
+                'default'     => __( 'Deutsche Post Tracking Number: {tracking-link}', 'dhl-for-woocommerce' ),
             ),
         );
 
 	    $this->form_fields += array(
 		    'dhl_label_section'   => array(
-			    'title'           => __( 'Label options', 'pr-shipping-dhl' ),
+			    'title'           => __( 'Label options', 'dhl-for-woocommerce' ),
 			    'type'            => 'title',
-			    'description'     => __( 'Options for configuring your label preferences', 'pr-shipping-dhl' ),
+			    'description'     => __( 'Options for configuring your label preferences', 'dhl-for-woocommerce' ),
 		    ),
 	        'dhl_label_ref' => array(
-		        'title'             => __( 'Label Reference', 'pr-shipping-dhl' ),
+		        'title'             => __( 'Label Reference', 'dhl-for-woocommerce' ),
 		        'type'              => 'text',
 		        'custom_attributes'	=> array( 'maxlength' => '35' ),
-		        'description'       => sprintf( __( 'Use "%s" to send the order id as a reference and "%s" to send the customer email. This text is limited to 35 characters.', 'pr-shipping-dhl' ), '{order_id}' , '{email}', '{user_id}' ),
+		        'description'       => sprintf( __( 'Use "%s" to send the order id as a reference and "%s" to send the customer email. This text is limited to 35 characters.', 'dhl-for-woocommerce' ), '{order_id}' , '{email}', '{user_id}' ),
 		        'desc_tip'          => true,
 		        'default'           => '{order_id}'
 	        ),
 	        'dhl_label_ref_2' => array(
-		        'title'             => __( 'Label Reference 2', 'pr-shipping-dhl' ),
+		        'title'             => __( 'Label Reference 2', 'dhl-for-woocommerce' ),
 		        'type'              => 'text',
 		        'custom_attributes'	=> array( 'maxlength' => '35' ),
-		        'description'       => sprintf( __( 'Use "%s" to send the order id as a reference and "%s" to send the customer email. This text is limited to 35 characters.', 'pr-shipping-dhl' ), '{order_id}' , '{email}', '{user_id}' ),
+		        'description'       => sprintf( __( 'Use "%s" to send the order id as a reference and "%s" to send the customer email. This text is limited to 35 characters.', 'dhl-for-woocommerce' ), '{order_id}' , '{email}', '{user_id}' ),
 		        'desc_tip'          => true,
 		        'default'           => '{email}'
 	        ),
@@ -341,7 +341,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
 
 				if( empty( $value ) ){
 
-					$msg = __( 'Contact Phone Number required, please add in settings.', 'pr-shipping-dhl' );
+					$msg = __( 'Contact Phone Number required, please add in settings.', 'dhl-for-woocommerce' );
 					echo $this->get_message( $msg );
 					throw new Exception( $msg );
 					break;
@@ -364,7 +364,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
 			$dhl_obj->dhl_reset_connection();
         } catch ( Exception $e ) {
 
-            echo $this->get_message( __( 'Could not reset connection: ', 'pr-shipping-dhl' ) . $e->getMessage() );
+            echo $this->get_message( __( 'Could not reset connection: ', 'dhl-for-woocommerce' ) . $e->getMessage() );
             // throw $e;
         }
 		

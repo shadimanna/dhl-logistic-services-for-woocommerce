@@ -90,10 +90,10 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
             } elseif (isset( $response_body->Status->statusText )) {
             	$status_message = $response_body->Status->statusText;
             } else {
-            	$status_message = __('Contact Support', 'pr-shipping-dhl');
+            	$status_message = __('Contact Support', 'dhl-for-woocommerce');
             }
 
-		    throw new Exception( sprintf( __('Could not create label - %s', 'pr-shipping-dhl'), $status_message ) );
+		    throw new Exception( sprintf( __('Could not create label - %s', 'dhl-for-woocommerce'), $status_message ) );
 		} else {
 			// Give the server 1 second to create the PDF before downloading it
 			sleep(1);
@@ -170,7 +170,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		}
 
 		if( $response_body->Status->statusCode != 0 ) {
-			throw new Exception( sprintf( __('Could not delete label - %s', 'pr-shipping-dhl'), $response_body->Status->statusMessage ) );
+			throw new Exception( sprintf( __('Could not delete label - %s', 'dhl-for-woocommerce'), $response_body->Status->statusMessage ) );
 		}
 	}
 
@@ -197,7 +197,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			$res = unlink( $label_path );
 
 			if( ! $res ) {
-				throw new Exception( __('DHL Label could not be deleted!', 'pr-shipping-dhl' ) );
+				throw new Exception( __('DHL Label could not be deleted!', 'dhl-for-woocommerce' ) );
 			}
 		}
 	}
@@ -265,14 +265,14 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 		//windows path will not get exception
 		if( validate_file($data_path) > 0 && validate_file($data_path) !== 2 ) {
-			throw new Exception( __('Invalid file path!', 'pr-shipping-dhl' ) );
+			throw new Exception( __('Invalid file path!', 'dhl-for-woocommerce' ) );
 		}
 
         $label_data_decoded = base64_decode($label_data);
 		$file_ret = file_put_contents( $data_path, $label_data_decoded );
 
 		if( empty( $file_ret ) ) {
-			throw new Exception( __('File cannot be saved!', 'pr-shipping-dhl' ) );
+			throw new Exception( __('File cannot be saved!', 'dhl-for-woocommerce' ) );
 		}
 
 		return array( 'data_url' => $data_url, 'data_path' => $data_path);
@@ -282,49 +282,49 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		// Validate set args
 
 		if ( empty( $args['dhl_settings']['api_user'] ) ) {
-			throw new Exception( __('Please, provide the username in the DHL shipping settings', 'pr-shipping-dhl' ) );
+			throw new Exception( __('Please, provide the username in the DHL shipping settings', 'dhl-for-woocommerce' ) );
 		}
 
 		if ( empty( $args['dhl_settings']['api_pwd'] )) {
-			throw new Exception( __('Please, provide the password for the username in the DHL shipping settings', 'pr-shipping-dhl') );
+			throw new Exception( __('Please, provide the password for the username in the DHL shipping settings', 'dhl-for-woocommerce') );
 		}
 
 		// Validate order details
 		if ( empty( $args['dhl_settings']['account_num'] ) ) {
-			throw new Exception( __('Please, provide an account in the DHL shipping settings', 'pr-shipping-dhl' ) );
+			throw new Exception( __('Please, provide an account in the DHL shipping settings', 'dhl-for-woocommerce' ) );
 		}
 
 		if ( empty( $args['dhl_settings']['participation'] )) {
-			throw new Exception( __('Please, provide a participation number for the shipping method in the DHL shipping settings', 'pr-shipping-dhl') );
+			throw new Exception( __('Please, provide a participation number for the shipping method in the DHL shipping settings', 'dhl-for-woocommerce') );
 		}
 
 		if ( empty( $args['dhl_settings']['shipper_name'] )) {
-			throw new Exception( __('Please, provide a shipper name in the DHL shipping settings', 'pr-shipping-dhl') );
+			throw new Exception( __('Please, provide a shipper name in the DHL shipping settings', 'dhl-for-woocommerce') );
 		}
 
 		if ( empty( $args['dhl_settings']['shipper_address'] )) {
-			throw new Exception( __('Please, provide a shipper address in the DHL shipping settings', 'pr-shipping-dhl') );
+			throw new Exception( __('Please, provide a shipper address in the DHL shipping settings', 'dhl-for-woocommerce') );
 		}
 
 		if ( empty( $args['dhl_settings']['shipper_address_no'] )) {
-			throw new Exception( __('Please, provide a shipper address number in the DHL shipping settings', 'pr-shipping-dhl') );
+			throw new Exception( __('Please, provide a shipper address number in the DHL shipping settings', 'dhl-for-woocommerce') );
 		}
 
 		if ( empty( $args['dhl_settings']['shipper_address_city'] )) {
-			throw new Exception( __('Please, provide a shipper city in the DHL shipping settings', 'pr-shipping-dhl') );
+			throw new Exception( __('Please, provide a shipper city in the DHL shipping settings', 'dhl-for-woocommerce') );
 		}
 
 		if ( empty( $args['dhl_settings']['shipper_address_zip'] )) {
-			throw new Exception( __('Please, provide a shipper postcode in the DHL shipping settings', 'pr-shipping-dhl') );
+			throw new Exception( __('Please, provide a shipper postcode in the DHL shipping settings', 'dhl-for-woocommerce') );
 		}
 
 		if( $args['dhl_settings']['add_logo'] == 'yes' && empty( $args['dhl_settings']['shipper_reference'] ) ){
-			throw new Exception( __('Please, provide a shipper reference in the DHL shipping settings', 'pr-shipping-dhl') );
+			throw new Exception( __('Please, provide a shipper reference in the DHL shipping settings', 'dhl-for-woocommerce') );
 		}
 
 		// Order details
 		if ( empty( $args['order_details']['dhl_product'] )) {
-			throw new Exception( __('DHL "Product" is empty!', 'pr-shipping-dhl') );
+			throw new Exception( __('DHL "Product" is empty!', 'dhl-for-woocommerce') );
 		}
 
 		// return receiver
@@ -332,49 +332,49 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			if ( ( $args['order_details']['dhl_product'] != 'V01PAK' ) && ( $args['order_details']['dhl_product'] != 'V01PRIO' ) && ( $args['order_details']['dhl_product'] != 'V86PARCEL' ) && ( $args['order_details']['dhl_product'] != 'V55PAK' ) ){
 
-				throw new Exception( __('Returns are not supported by this DHL Service.', 'pr-shipping-dhl') );
+				throw new Exception( __('Returns are not supported by this DHL Service.', 'dhl-for-woocommerce') );
 			}
 
 			if ( empty( $args['dhl_settings']['return_name'] )) {
-				throw new Exception( __('Please, provide a return name in the DHL shipping settings', 'pr-shipping-dhl') );
+				throw new Exception( __('Please, provide a return name in the DHL shipping settings', 'dhl-for-woocommerce') );
 			}
 
 			if ( empty( $args['dhl_settings']['return_address'] )) {
-				throw new Exception( __('Please, provide a return address in the DHL shipping settings', 'pr-shipping-dhl') );
+				throw new Exception( __('Please, provide a return address in the DHL shipping settings', 'dhl-for-woocommerce') );
 			}
 
 			if ( empty( $args['dhl_settings']['return_address_no'] )) {
-				throw new Exception( __('Please, provide a return address number in the DHL shipping settings', 'pr-shipping-dhl') );
+				throw new Exception( __('Please, provide a return address number in the DHL shipping settings', 'dhl-for-woocommerce') );
 			}
 
 			if ( empty( $args['dhl_settings']['return_address_city'] )) {
-				throw new Exception( __('Please, provide a return city in the DHL shipping settings', 'pr-shipping-dhl') );
+				throw new Exception( __('Please, provide a return city in the DHL shipping settings', 'dhl-for-woocommerce') );
 			}
 
 			if ( empty( $args['dhl_settings']['return_address_zip'] )) {
-				throw new Exception( __('Please, provide a return postcode in the DHL shipping settings', 'pr-shipping-dhl') );
+				throw new Exception( __('Please, provide a return postcode in the DHL shipping settings', 'dhl-for-woocommerce') );
 			}
 		}
 
 		if ( empty( $args['order_details']['order_id'] )) {
-			throw new Exception( __('Shop "Order ID" is empty!', 'pr-shipping-dhl') );
+			throw new Exception( __('Shop "Order ID" is empty!', 'dhl-for-woocommerce') );
 		}
 
 		if ( empty( $args['order_details']['weightUom'] )) {
-			throw new Exception( __('Shop "Weight Units of Measure" is empty!', 'pr-shipping-dhl') );
+			throw new Exception( __('Shop "Weight Units of Measure" is empty!', 'dhl-for-woocommerce') );
 		}
 
 		if ( empty( $args['order_details']['weight'] )) {
-			throw new Exception( __('Order "Weight" is empty!', 'pr-shipping-dhl') );
+			throw new Exception( __('Order "Weight" is empty!', 'dhl-for-woocommerce') );
 		}
 
 		if ( isset( $args['order_details']['identcheck'] ) && ( $args['order_details']['identcheck'] == 'yes' ) ) {
 			if ( empty( $args['shipping_address']['first_name'] ) || empty( $args['shipping_address']['last_name'] ) ) {
-				throw new Exception( __('First name and last name must be passed for "Identity Check".', 'pr-shipping-dhl') );
+				throw new Exception( __('First name and last name must be passed for "Identity Check".', 'dhl-for-woocommerce') );
 			}
 
 			if ( empty( $args['order_details']['identcheck_dob'] ) && empty( $args['order_details']['identcheck_age'] ) ) {
-				throw new Exception( __('Either a "Date of Birth" or "Minimum Age" must be eneted for "Ident-Check".', 'pr-shipping-dhl') );
+				throw new Exception( __('Either a "Date of Birth" or "Minimum Age" must be eneted for "Ident-Check".', 'dhl-for-woocommerce') );
 			}
 		}
 
@@ -392,47 +392,47 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				for ($i=0; $i<intval($args['order_details']['total_packages']); $i++) {
 
 					if( empty($args['order_details']['packages_number'][$i]) ) {
-						throw new Exception( __('A package number is empty. Ensure all package details are filled in.', 'pr-shipping-dhl') );
+						throw new Exception( __('A package number is empty. Ensure all package details are filled in.', 'dhl-for-woocommerce') );
 					}
 
 					if( empty($args['order_details']['packages_weight'][$i]) ) {
-						throw new Exception( __('A package weight is empty. Ensure all package details are filled in.', 'pr-shipping-dhl') );
+						throw new Exception( __('A package weight is empty. Ensure all package details are filled in.', 'dhl-for-woocommerce') );
 					}
 
 					if( empty($args['order_details']['packages_length'][$i]) ) {
-						throw new Exception( __('A package length is empty. Ensure all package details are filled in.', 'pr-shipping-dhl') );
+						throw new Exception( __('A package length is empty. Ensure all package details are filled in.', 'dhl-for-woocommerce') );
 					}
 
 					if( empty($args['order_details']['packages_width'][$i]) ) {
-						throw new Exception( __('A package width is empty. Ensure all package details are filled in.', 'pr-shipping-dhl') );
+						throw new Exception( __('A package width is empty. Ensure all package details are filled in.', 'dhl-for-woocommerce') );
 					}
 
 					if( empty($args['order_details']['packages_height'][$i]) ) {
-						throw new Exception( __('A package height is empty. Ensure all package details are filled in.', 'pr-shipping-dhl') );
+						throw new Exception( __('A package height is empty. Ensure all package details are filled in.', 'dhl-for-woocommerce') );
 					}
 				}
 			}
 		}
 
 		// if ( empty( $args['order_details']['duties'] )) {
-		// 	throw new Exception( __('DHL "Duties" is empty!', 'pr-shipping-dhl') );
+		// 	throw new Exception( __('DHL "Duties" is empty!', 'dhl-for-woocommerce') );
 		// }
 
 		if ( empty( $args['order_details']['currency'] )) {
-			throw new Exception( __('Shop "Currency" is empty!', 'pr-shipping-dhl') );
+			throw new Exception( __('Shop "Currency" is empty!', 'dhl-for-woocommerce') );
 		}
 
 		if ( empty( $args['shipping_address']['city'] )) {
-			throw new Exception( __('Shipping "City" is empty!', 'pr-shipping-dhl') );
+			throw new Exception( __('Shipping "City" is empty!', 'dhl-for-woocommerce') );
 		}
 
 		if ( empty( $args['shipping_address']['country'] )) {
-			throw new Exception( __('Shipping "Country" is empty!', 'pr-shipping-dhl') );
+			throw new Exception( __('Shipping "Country" is empty!', 'dhl-for-woocommerce') );
 		}
 
 		// Validate shipping address
 		if ( empty( $args['shipping_address']['address_1'] )) {
-			throw new Exception( __('Shipping "Address 1" is empty!', 'pr-shipping-dhl') );
+			throw new Exception( __('Shipping "Address 1" is empty!', 'dhl-for-woocommerce') );
 		}
 
 
@@ -442,7 +442,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 		// If Packstation, post number is mandatory
 		if ( $this->pos_ps && empty( $args['shipping_address']['dhl_postnum'] ) ) {
-			throw new Exception( __('Post Number is missing, it is mandatory for "Packstation" delivery.', 'pr-shipping-dhl') );
+			throw new Exception( __('Post Number is missing, it is mandatory for "Packstation" delivery.', 'dhl-for-woocommerce') );
 		}
 
 		// Check address 2 if no parcel shop is being selected
@@ -459,7 +459,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
                     $address_exploded = explode('.', $args['shipping_address']['address_1']);
 
                     if( count($address_exploded) == 1 ) {
-                        throw new Exception(__('Shipping "Address 2" is empty!', 'pr-shipping-dhl'));
+                        throw new Exception(__('Shipping "Address 2" is empty!', 'dhl-for-woocommerce'));
                     }
                 }
 
@@ -673,7 +673,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			if( $product_number ) {
 				$account_number = $this->args['dhl_settings']['account_num'] . $matches[0] . $this->args['dhl_settings']['participation'];
 			} else {
-				throw new Exception( __('Could not create account number - no product number.', 'pr-shipping-dhl') );
+				throw new Exception( __('Could not create account number - no product number.', 'dhl-for-woocommerce') );
 			}
 
 			$this->args['order_details']['weight'] = $this->maybe_convert_weight( $this->args['order_details']['weight'], $this->args['order_details']['weightUom'] );
@@ -912,7 +912,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			if( PR_DHL()->is_crossborder_shipment( $this->args['shipping_address']['country'] ) ) {
 
 				if ( sizeof($this->args['items']) > self::DHL_MAX_ITEMS ) {
-					throw new Exception( sprintf( __('Only %s ordered items can be processed, your order has %s', 'pr-shipping-dhl'), self::DHL_MAX_ITEMS, sizeof($this->args['items']) ) );
+					throw new Exception( sprintf( __('Only %s ordered items can be processed, your order has %s', 'dhl-for-woocommerce'), self::DHL_MAX_ITEMS, sizeof($this->args['items']) ) );
 				}
 
 				$customsDetails = array();

@@ -82,7 +82,7 @@ class Client extends API_Client {
 
 		throw new Exception(
 			sprintf(
-				__( 'Failed to create label: %s', 'pr-shipping-dhl' ),
+				__( 'Failed to create label: %s', 'dhl-for-woocommerce' ),
 				$this->generate_error_details( $response_body )
 			)
 		);
@@ -145,7 +145,7 @@ class Client extends API_Client {
 
 		throw new Exception(
 			sprintf(
-				__( 'Failed to close out label: %s', 'pr-shipping-dhl' ),
+				__( 'Failed to close out label: %s', 'dhl-for-woocommerce' ),
 				$this->generate_error_details( $response_body, 'closeOutResponse' )
 			)
 		);
@@ -155,7 +155,7 @@ class Client extends API_Client {
 	public function check_status_code( $label_response, $response_type = 'labelResponse' ){
 		
 		if( !isset( $label_response->$response_type->bd->responseStatus->code ) ){
-			throw new Exception( __( 'Response status is not exist!', 'pr-shipping-dhl' ) );
+			throw new Exception( __( 'Response status is not exist!', 'dhl-for-woocommerce' ) );
 		}
 
 		return $label_response->$response_type->bd->responseStatus->code;
@@ -164,7 +164,7 @@ class Client extends API_Client {
 	public function get_label_content( $label_response ){
 
 		if( !isset( $label_response->labelResponse->bd->labels ) ){
-			throw new Exception( __( 'Label info is not exist!', 'pr-shipping-dhl' ) );
+			throw new Exception( __( 'Label info is not exist!', 'dhl-for-woocommerce' ) );
 		}
 
 		$labels_info 		= $label_response->labelResponse->bd->labels;
@@ -172,9 +172,9 @@ class Client extends API_Client {
 		foreach( $labels_info as $info ){
 
 			if( !isset( $info->content ) ){
-				throw new Exception( __( 'Label content is not exist!', 'pr-shipping-dhl' ) );
+				throw new Exception( __( 'Label content is not exist!', 'dhl-for-woocommerce' ) );
 			}elseif( !isset( $info->shipmentID ) ){
-				throw new Exception( __( 'Shipment ID is not exist!', 'pr-shipping-dhl' ) );
+				throw new Exception( __( 'Shipment ID is not exist!', 'dhl-for-woocommerce' ) );
 			}else{
 
 				return $info;
@@ -188,11 +188,11 @@ class Client extends API_Client {
 	public function get_closeout_content( $response, $shipment_ids ){
 
 		if( !isset( $response->closeOutResponse->bd->handoverID ) ){
-			throw new Exception( __( 'Handover ID does not exist!', 'pr-shipping-dhl' ) );
+			throw new Exception( __( 'Handover ID does not exist!', 'dhl-for-woocommerce' ) );
 		}
 
 		if( !isset( $response->closeOutResponse->bd->responseStatus->messageDetails ) && count( $shipment_ids ) < 1 ){
-			throw new Exception( __( 'Message Detail does not exist!', 'pr-shipping-dhl' ) );
+			throw new Exception( __( 'Message Detail does not exist!', 'dhl-for-woocommerce' ) );
 		}
 
 		return $response->closeOutResponse->bd;
@@ -256,7 +256,7 @@ class Client extends API_Client {
 
 		}else{
 
-			$error_exception .= __( 'Error message detail is not exist!', 'pr-shipping-dhl' );
+			$error_exception .= __( 'Error message detail is not exist!', 'dhl-for-woocommerce' );
 
 		}
 
@@ -520,7 +520,7 @@ class Client extends API_Client {
 
 		throw new Exception(
 			sprintf(
-				__( 'Failed to delete label: %s', 'pr-shipping-dhl' ),
+				__( 'Failed to delete label: %s', 'dhl-for-woocommerce' ),
 				$this->generate_error_details( $response_body, 'deleteShipmentResp' )
 			)
 		);

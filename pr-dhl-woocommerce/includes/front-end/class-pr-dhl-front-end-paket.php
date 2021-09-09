@@ -30,16 +30,16 @@ class PR_DHL_Front_End_Paket {
 		$this->init_hooks();
 
 		$this->preferred_services = array(
-								'pr_dhl_preferred_day' => __('Preferred Day', 'pr-shipping-dhl'),
-								'pr_dhl_preferred_location_neighbor' => __('Preferred Location or Neighbor', 'pr-shipping-dhl'),
-								'pr_dhl_preferred_location' => __('Preferred Location Address', 'pr-shipping-dhl'),
-								'pr_dhl_preferred_neighbour_name' => __('Preferred Neighbor Name', 'pr-shipping-dhl'),
-								'pr_dhl_preferred_neighbour_address' => __('Preferred Neighbor Address', 'pr-shipping-dhl')
+								'pr_dhl_preferred_day' => __('Preferred Day', 'dhl-for-woocommerce'),
+								'pr_dhl_preferred_location_neighbor' => __('Preferred Location or Neighbor', 'dhl-for-woocommerce'),
+								'pr_dhl_preferred_location' => __('Preferred Location Address', 'dhl-for-woocommerce'),
+								'pr_dhl_preferred_neighbour_name' => __('Preferred Neighbor Name', 'dhl-for-woocommerce'),
+								'pr_dhl_preferred_neighbour_address' => __('Preferred Neighbor Address', 'dhl-for-woocommerce')
 								);
 
 		$this->preferred_location_neighbor = array(
-								'preferred_location' => __('Location', 'pr-shipping-dhl'),
-								'preferred_neighbor' => __('Neighbor', 'pr-shipping-dhl')
+								'preferred_location' => __('Location', 'dhl-for-woocommerce'),
+								'preferred_neighbor' => __('Neighbor', 'dhl-for-woocommerce')
 								);
 
 	}
@@ -123,28 +123,28 @@ class PR_DHL_Front_End_Paket {
 			'packstation_icon'	=> PR_DHL_PLUGIN_DIR_URL . '/assets/img/packstation.png',
 			'parcelshop_icon'	=> PR_DHL_PLUGIN_DIR_URL . '/assets/img/parcelshop.png',
 			'post_office_icon'	=> PR_DHL_PLUGIN_DIR_URL . '/assets/img/post_office.png',
-			'opening_times'		=> __('Opening Times', 'pr-shipping-dhl'),
-			'monday'			=> __('Monday', 'pr-shipping-dhl'),
-			'tueday'			=> __('Tuesday', 'pr-shipping-dhl'),
-			'wednesday'			=> __('Wednesday', 'pr-shipping-dhl'),
-			'thrusday'			=> __('Thursday', 'pr-shipping-dhl'),
-			'friday'			=> __('Friday', 'pr-shipping-dhl'),
-			'satuday'			=> __('Saturday', 'pr-shipping-dhl'),
-			'sunday'			=> __('Sunday', 'pr-shipping-dhl'),
-			'services'			=> __('Services', 'pr-shipping-dhl'),
-			'yes'				=> __('Yes', 'pr-shipping-dhl'),
-			'no'				=> __('No', 'pr-shipping-dhl'),
-			'parking'			=> __('Parking', 'pr-shipping-dhl'),
-			'handicap'			=> __('Handicap Accessible', 'pr-shipping-dhl'),
+			'opening_times'		=> __('Opening Times', 'dhl-for-woocommerce'),
+			'monday'			=> __('Monday', 'dhl-for-woocommerce'),
+			'tueday'			=> __('Tuesday', 'dhl-for-woocommerce'),
+			'wednesday'			=> __('Wednesday', 'dhl-for-woocommerce'),
+			'thrusday'			=> __('Thursday', 'dhl-for-woocommerce'),
+			'friday'			=> __('Friday', 'dhl-for-woocommerce'),
+			'satuday'			=> __('Saturday', 'dhl-for-woocommerce'),
+			'sunday'			=> __('Sunday', 'dhl-for-woocommerce'),
+			'services'			=> __('Services', 'dhl-for-woocommerce'),
+			'yes'				=> __('Yes', 'dhl-for-woocommerce'),
+			'no'				=> __('No', 'dhl-for-woocommerce'),
+			'parking'			=> __('Parking', 'dhl-for-woocommerce'),
+			'handicap'			=> __('Handicap Accessible', 'dhl-for-woocommerce'),
 			'packstation'		=> PR_DHL_PACKSTATION,
 			'parcelShop'		=> PR_DHL_PARCELSHOP,
 			'postoffice'		=> PR_DHL_POST_OFFICE,
-			'branch'			=> __('Branch', 'pr-shipping-dhl'),
-			'select'			=> __('Select ', 'pr-shipping-dhl'),
-			'post_number'		=> __('Post Number ', 'pr-shipping-dhl'),
-			'post_number_tip'	=> __('<span class="dhl-tooltip" title="Indicate a preferred time, which suits you best for your parcel delivery by choosing one of the displayed time windows.">?</span>', 'pr-shipping-dhl'),
-			'no_api_key'	=> sprintf( __('%sPlease insert an API Key to enable the display of locations in the frontend on a map.%s', 'pr-shipping-dhl'), '<div class="woocommerce-error">', '<div>'),
-			'post_code_error'	=> __('Please enter a postcode to search locations.', 'pr-shipping-dhl'),
+			'branch'			=> __('Branch', 'dhl-for-woocommerce'),
+			'select'			=> __('Select ', 'dhl-for-woocommerce'),
+			'post_number'		=> __('Post Number ', 'dhl-for-woocommerce'),
+			'post_number_tip'	=> __('<span class="dhl-tooltip" title="Indicate a preferred time, which suits you best for your parcel delivery by choosing one of the displayed time windows.">?</span>', 'dhl-for-woocommerce'),
+			'no_api_key'	=> sprintf( __('%sPlease insert an API Key to enable the display of locations in the frontend on a map.%s', 'dhl-for-woocommerce'), '<div class="woocommerce-error">', '<div>'),
+			'post_code_error'	=> __('Please enter a postcode to search locations.', 'dhl-for-woocommerce'),
 		);
 
 		if( ! empty( $this->shipping_dhl_settings['dhl_payment_gateway'] ) ) {
@@ -225,7 +225,7 @@ class PR_DHL_Front_End_Paket {
 
 
 			if( ! isset( $this->shipping_dhl_settings ) || empty( $this->shipping_dhl_settings['dhl_shipping_methods'] ) ) {
-				throw new Exception( __( 'No shipping method enabled.', 'pr-shipping-dhl' ));
+				throw new Exception( __( 'No shipping method enabled.', 'dhl-for-woocommerce' ));
 			}
 
 			$wc_methods_dhl = $this->shipping_dhl_settings['dhl_shipping_methods'];
@@ -260,13 +260,13 @@ class PR_DHL_Front_End_Paket {
 						// $ship_method_slug = $this->get_shipping_method_slug( $value );
 
 						if ( in_array( $value, $wc_payment_dhl ) ) {
-							throw new Exception( __( 'Payment gateway excluded.', 'pr-shipping-dhl' ));
+							throw new Exception( __( 'Payment gateway excluded.', 'dhl-for-woocommerce' ));
 						}
 					}
 				} else {
 					// $ship_method_slug = $this->get_shipping_method_slug( $chosen_payment_method );
 					if ( in_array( $chosen_payment_method, $wc_payment_dhl ) ) {
-						throw new Exception( __( 'Payment gateway excluded.', 'pr-shipping-dhl' ));
+						throw new Exception( __( 'Payment gateway excluded.', 'dhl-for-woocommerce' ));
 					}
 				}
 			}
@@ -274,7 +274,7 @@ class PR_DHL_Front_End_Paket {
 
 		// if reached here and not enabled then it's due to the selected shipping method not being set for DHL services
 		if (! $display_preferred ) {
-			throw new Exception( __( 'Not enabled for selected shipping method.', 'pr-shipping-dhl' ));
+			throw new Exception( __( 'Not enabled for selected shipping method.', 'dhl-for-woocommerce' ));
 		}
 
 		return $display_preferred;
@@ -340,14 +340,14 @@ class PR_DHL_Front_End_Paket {
 			if ( ! empty( $post_data['pr_dhl_preferred_day'] ) ) {
 
 				if( ! empty( $this->shipping_dhl_settings['dhl_preferred_day_cost'] ) ) {
-					$cart->add_fee( __('DHL Preferred Day', 'pr-shipping-dhl'), $this->shipping_dhl_settings['dhl_preferred_day_cost'] );
+					$cart->add_fee( __('DHL Preferred Day', 'dhl-for-woocommerce'), $this->shipping_dhl_settings['dhl_preferred_day_cost'] );
 				}
 
 			}
 			/*
 			if( ! empty( $this->shipping_dhl_settings['dhl_cod_fee'] ) && $this->shipping_dhl_settings['dhl_cod_fee'] == 'yes' && isset( $post_data['payment_method'] ) && $post_data['payment_method'] == 'cod' ) {
 				// Add €2 fee to COD usage (Euro is being assumed as currency)
-				$cart->add_fee( __('DHL COD fee', 'pr-shipping-dhl'), 2 );
+				$cart->add_fee( __('DHL COD fee', 'dhl-for-woocommerce'), 2 );
 			}*/
 
 		} catch (Exception $e) {
@@ -374,12 +374,12 @@ class PR_DHL_Front_End_Paket {
 
 				if ( ( $dhl_label_options['pr_dhl_preferred_location_neighbor'] == 'preferred_location' ) && ( ! isset( $dhl_label_options['pr_dhl_preferred_location'] ) ) ) {
 
-					throw new Exception( __( 'Please enter the preferred location.', 'pr-shipping-dhl' ));
+					throw new Exception( __( 'Please enter the preferred location.', 'dhl-for-woocommerce' ));
 				}
 
 				if ( ( $dhl_label_options['pr_dhl_preferred_location_neighbor'] == 'preferred_neighbor' ) && ( ! isset( $dhl_label_options['pr_dhl_preferred_neighbour_name'] ) || ! isset( $dhl_label_options['pr_dhl_preferred_neighbour_address'] ) ) ) {
 
-					throw new Exception( __( 'Please enter the preferred neighbor name and address.', 'pr-shipping-dhl' ));
+					throw new Exception( __( 'Please enter the preferred neighbor name and address.', 'dhl-for-woocommerce' ));
 				}
 			}
 		}
@@ -466,7 +466,7 @@ class PR_DHL_Front_End_Paket {
 	}
 
 	public function add_parcel_finder_btn() {
-		// echo '<a id="dhl_parcel_finder" class="button" href="#dhl_parcel_finder_form">' . __('Parcel Finder', 'pr-shipping-dhl') . '</a>';
+		// echo '<a id="dhl_parcel_finder" class="button" href="#dhl_parcel_finder_form">' . __('Parcel Finder', 'dhl-for-woocommerce') . '</a>';
 
 		if( !$this->is_google_maps_enabled() ){
 			return ;
@@ -477,29 +477,29 @@ class PR_DHL_Front_End_Paket {
 		$dhl_logo = PR_DHL_PLUGIN_DIR_URL . '/assets/img/dhl-official.png';
 		echo '<a data-fancybox id="dhl_parcel_finder" class="button" data-src="#dhl_parcel_finder_form" href="javascript:;">' . $button_text . '<img src="' . $dhl_logo .'" class="dhl-co-logo"></a>';
 
-		// echo '<a id="dhl_parcel_finder_test" class="button" href="#dhl_parcel_finder_form_test">' . __('Parcel Finder TEST', 'pr-shipping-dhl') . '</a>';
+		// echo '<a id="dhl_parcel_finder_test" class="button" href="#dhl_parcel_finder_form_test">' . __('Parcel Finder TEST', 'dhl-for-woocommerce') . '</a>';
 		// echo '<div id="dhl_parcel_finder_form_test">TEST TEST</div>';
 
-		// echo '<a id="dhl_parcel_finder" class="button" href="' . PR_DHL_PLUGIN_DIR_URL . '/templates/checkout/dhl-parcel-finder.php">' . __('Parcel Finder', 'pr-shipping-dhl') . '</a>';
+		// echo '<a id="dhl_parcel_finder" class="button" href="' . PR_DHL_PLUGIN_DIR_URL . '/templates/checkout/dhl-parcel-finder.php">' . __('Parcel Finder', 'dhl-for-woocommerce') . '</a>';
 
 	}
 
 	protected function get_branch_location_text() {
 		$button_text = '';
 		if( $this->is_parcelshop_enabled() || $this->is_post_office_enabled() ) {
-			// $button_text = __('Search Packstation / Branch', 'pr-shipping-dhl')
-			$button_text = __('Branch', 'pr-shipping-dhl');
+			// $button_text = __('Search Packstation / Branch', 'dhl-for-woocommerce')
+			$button_text = __('Branch', 'dhl-for-woocommerce');
 		}
 
 		if( $this->is_packstation_enabled() ) {
 			if ( ! empty($button_text) ) {
-				$button_text = __(' / ', 'pr-shipping-dhl') . $button_text;
+				$button_text = __(' / ', 'dhl-for-woocommerce') . $button_text;
 			}
 
-			$button_text = __('Packstation', 'pr-shipping-dhl') . $button_text;
+			$button_text = __('Packstation', 'dhl-for-woocommerce') . $button_text;
 		}
 
-		$button_text = __('Search ', 'pr-shipping-dhl') . $button_text;
+		$button_text = __('Search ', 'dhl-for-woocommerce') . $button_text;
 
 		return $button_text;
 	}
@@ -541,7 +541,7 @@ class PR_DHL_Front_End_Paket {
 			$parcel_res = $dhl_obj->get_parcel_location( $args );
 
 			if ( ! isset( $parcel_res->parcelLocation ) ) {
-				throw new Exception( __('No parcel shops found', 'pr-shipping-dhl') );
+				throw new Exception( __('No parcel shops found', 'dhl-for-woocommerce') );
 			}
 
 			$res_count = 0;
@@ -584,7 +584,7 @@ class PR_DHL_Front_End_Paket {
 			}
 
 			if ( empty( $parcel_res_filtered ) ) {
-				throw new Exception( __('No Parcel Shops found. Ensure "Packstation" or Branch" filter is checked ', 'pr-shipping-dhl') );
+				throw new Exception( __('No Parcel Shops found. Ensure "Packstation" or Branch" filter is checked ', 'dhl-for-woocommerce') );
 
 			}
 
@@ -662,16 +662,16 @@ class PR_DHL_Front_End_Paket {
 	public function add_postnum_field( $checkout_fields ) {
 
 		$shipping_dhl_address_type = array(
-					'label'        => __( 'Address Type', 'pr-shipping-dhl' ),
+					'label'        => __( 'Address Type', 'dhl-for-woocommerce' ),
 					'required'     => true,
 					'type'         => 'select',
 					'class'        => array( 'shipping-dhl-address-type' ),
 					'clear'        => true,
-					'options'	   => array( 'normal' => __('Regular Address', 'pr-shipping-dhl'), 'dhl_packstation' => __('DHL Packstation', 'pr-shipping-dhl'), 'dhl_branch' => __('DHL Branch', 'pr-shipping-dhl') )
+					'options'	   => array( 'normal' => __('Regular Address', 'dhl-for-woocommerce'), 'dhl_packstation' => __('DHL Packstation', 'dhl-for-woocommerce'), 'dhl_branch' => __('DHL Branch', 'dhl-for-woocommerce') )
 				);
 
 		$shipping_dhl_postnum_branch = array(
-					'label'        => __( 'Post Number', 'pr-shipping-dhl' ),
+					'label'        => __( 'Post Number', 'dhl-for-woocommerce' ),
 					'required'     => false,
 					'type'         => 'text',
 					'class'        => array( 'shipping-dhl-postnum' ),
@@ -695,7 +695,7 @@ class PR_DHL_Front_End_Paket {
 	public function admin_order_add_postnum_field( $fields ) {
 
 		$shipping_dhl_postnum_branch = array(
-					'label'        => __( 'Post Number', 'pr-shipping-dhl' ),
+					'label'        => __( 'Post Number', 'dhl-for-woocommerce' ),
 					'required'     => false,
 					'type'         => 'text',
 					'class'        => array( 'shipping-dhl-postnum' ),
@@ -716,7 +716,7 @@ class PR_DHL_Front_End_Paket {
 			woocommerce_form_field('pr_dhl_email_notification', array(
 				'type' => 'checkbox',
 				'class' => array( 'pr-dhl-email-notification form-row-wide' ),
-				'label' => __('Activate Shipment Notification. When activated DHL will inform you via email about the shipment status of your order.', 'pr-shipping-dhl' ),
+				'label' => __('Activate Shipment Notification. When activated DHL will inform you via email about the shipment status of your order.', 'dhl-for-woocommerce' ),
 				),
 				'yes'
 			);
@@ -790,7 +790,7 @@ class PR_DHL_Front_End_Paket {
 			try {
 				$this->validate_extra_services_available();
 			} catch (Exception $e) {
-				wc_add_notice( __( '"DHL Locations" cannot be used - ', 'pr-shipping-dhl' ) . $e->getMessage(), 'error' );
+				wc_add_notice( __( '"DHL Locations" cannot be used - ', 'dhl-for-woocommerce' ) . $e->getMessage(), 'error' );
 				return;
 			}
 		}
@@ -798,23 +798,23 @@ class PR_DHL_Front_End_Paket {
 		if( $shipping_dhl_address_type == 'dhl_packstation' ) {
 
 			if( empty( $shipping_dhl_postnum ) ) {
-				wc_add_notice( __( 'Post Number is mandatory for a Packstation location.', 'pr-shipping-dhl' ), 'error' );
+				wc_add_notice( __( 'Post Number is mandatory for a Packstation location.', 'dhl-for-woocommerce' ), 'error' );
 				return;
 			}
 
 			if ( ! $pos_ps ) {
-				wc_add_notice( sprintf( __( 'The text "%s" must be included in the address.', 'pr-shipping-dhl' ), PR_DHL_PACKSTATION ), 'error' );
+				wc_add_notice( sprintf( __( 'The text "%s" must be included in the address.', 'dhl-for-woocommerce' ), PR_DHL_PACKSTATION ), 'error' );
 				return;
 			}
 
 		} elseif( $shipping_dhl_address_type == 'dhl_branch' ) {
 			if ( ! $pos_rs ) {
-				wc_add_notice( sprintf( __( 'The text "%s" must be included in the address.', 'pr-shipping-dhl' ), PR_DHL_PARCELSHOP ), 'error' );
+				wc_add_notice( sprintf( __( 'The text "%s" must be included in the address.', 'dhl-for-woocommerce' ), PR_DHL_PARCELSHOP ), 'error' );
 				return;
 			}
 
 			if ( ! $pos_po ) {
-				wc_add_notice( sprintf( __( 'The text "%s" must be included in the address.', 'pr-shipping-dhl' ), PR_DHL_POST_OFFICE ), 'error' );
+				wc_add_notice( sprintf( __( 'The text "%s" must be included in the address.', 'dhl-for-woocommerce' ), PR_DHL_POST_OFFICE ), 'error' );
 				return;
 			}
 
@@ -823,13 +823,13 @@ class PR_DHL_Front_End_Paket {
 		if ( ! empty( $shipping_dhl_postnum ) ) {
 
 			if( ! is_numeric( $shipping_dhl_postnum ) ) {
-				wc_add_notice( __( 'Post Number must be a number.', 'pr-shipping-dhl' ), 'error' );
+				wc_add_notice( __( 'Post Number must be a number.', 'dhl-for-woocommerce' ), 'error' );
 				return;
 			}
 
 			$post_num_len = strlen( $shipping_dhl_postnum );
 			if( $post_num_len < 6 || $post_num_len > 12 ) {
-				wc_add_notice( __( 'The post number you entered is not valid. Please correct the number.', 'pr-shipping-dhl' ), 'error' );
+				wc_add_notice( __( 'The post number you entered is not valid. Please correct the number.', 'dhl-for-woocommerce' ), 'error' );
 				return;
 			}
 		}

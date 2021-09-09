@@ -144,7 +144,7 @@ class PR_DHL_API_Auth_REST {
 		$this->client_secret = $client_secret;
 
 		if( empty( $this->client_id ) || empty( $this->client_secret ) ) {
-			throw new Exception( __('The "Cliend Id" or "Client Secret" is empty.','pr-shipping-dhl' ) );
+			throw new Exception( __('The "Cliend Id" or "Client Secret" is empty.','dhl-for-woocommerce' ) );
 		}
 
 		PR_DHL()->log_msg( 'Authorize User - Client ID: ' . $this->client_id );
@@ -172,7 +172,7 @@ class PR_DHL_API_Auth_REST {
 				break;
 			case '401':
 			default:
-				throw new Exception( __( 'Authentication failed: Please, check client ID and secret in the DHL shipping settings', 'pr-shipping-dhl' ) );
+				throw new Exception( __( 'Authentication failed: Please, check client ID and secret in the DHL shipping settings', 'dhl-for-woocommerce' ) );
 				break;
 		}		
 	}

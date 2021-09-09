@@ -17,7 +17,7 @@ if ( ! class_exists( 'PR_DHL_WC_Product_Paket' ) ) :
 class PR_DHL_WC_Product_Paket extends PR_DHL_WC_Product {
 
 	public function get_manufacture_tooltip() {
-		return __('Country of Manufacture', 'pr-shipping-dhl');
+		return __('Country of Manufacture', 'dhl-for-woocommerce');
 	}
 	
 	/**
@@ -29,8 +29,8 @@ class PR_DHL_WC_Product_Paket extends PR_DHL_WC_Product {
 	    woocommerce_wp_checkbox( 
 			array(
 				'id' => '_dhl_no_same_day_transfer',
-				'label' => __('Cannot Transfer On Day Of Order (DHL)', 'pr-shipping-dhl'),
-				'description' => __('This product cannot be transfered to DHL on the same day of the order.  Checking this disables preferred services on the checkout page.', 'pr-shipping-dhl'),
+				'label' => __('Cannot Transfer On Day Of Order (DHL)', 'dhl-for-woocommerce'),
+				'description' => __('This product cannot be transfered to DHL on the same day of the order.  Checking this disables preferred services on the checkout page.', 'dhl-for-woocommerce'),
 				// 'desc_tip' => 'false',
 			) 
 		);
