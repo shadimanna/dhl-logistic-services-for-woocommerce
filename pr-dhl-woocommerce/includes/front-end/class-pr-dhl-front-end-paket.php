@@ -700,6 +700,7 @@ class PR_DHL_Front_End_Paket {
 					'type'         => 'text',
 					'class'        => array( 'shipping-dhl-postnum' ),
 					'clear'        => true,
+					'show'		   => false,
 				);
 
 		if( $new_shipping_fields = $this->array_insert_before( 'address_1', $fields, 'dhl_postnum', $shipping_dhl_postnum_branch) ) {
