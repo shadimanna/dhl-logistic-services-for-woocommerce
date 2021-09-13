@@ -86,6 +86,7 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 * DHL Paket: Allow "Post Number" to be editable in the admin edit order page
 * DHL Paket: Added return ID number to the order note
 * DHL Paket: Fix issue with bulk create label when "Create Return Label default" setting checked
+* DHL Paket: Fix issue so the plugin is translatable on translate.wordpress.org
 
 = 2.5.12 =
 * DHL eCS: Fixed phone field being empty, due to new shipping phone field in WC
