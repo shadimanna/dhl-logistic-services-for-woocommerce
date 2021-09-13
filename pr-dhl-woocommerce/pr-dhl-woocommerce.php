@@ -7,7 +7,7 @@
  * Author URI: http://dhl.com/woocommerce
  * Text Domain: pr-shipping-dhl
  * Domain Path: /lang
- * Version: 2.5.12
+ * Version: 2.5.13
  * WC requires at least: 3.0
  * WC tested up to: 5.6
  *
@@ -34,7 +34,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "2.5.12";
+	private $version = "2.5.13";
 
 	/**
 	 * Instance to call certain functions globally within the plugin

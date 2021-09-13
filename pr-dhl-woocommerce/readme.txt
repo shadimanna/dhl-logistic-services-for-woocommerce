@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.1
 Requires PHP: 5.6
 Tested up to: 5.6
-Stable tag: 2.5.11
+Stable tag: 2.5.13
 WC requires at least: 3.0
 WC tested up to: 5.3
 License: GPLv2 or later
@@ -80,6 +80,12 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+ 
+= 2.5.13 =
+* DHL Parcel: Added a setting to set additional shipping fees for specific products
+* DHL Parcel: Added support for additional order status
+* DHL Parcel: Added automatic label creation and printing
+* DHL Parcel: Updated developer settings text to avoid confusion
 
 = 2.5.12 =
 * DHL eCS: Fixed phone field being empty, due to new shipping phone field in WC
