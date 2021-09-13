@@ -80,13 +80,19 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
-
+ 
 = 2.6.0 =
 * DHL Paket: Added "DHL Label Created" and "DHL Tracking Number" columns in order list
 * DHL Paket: Allow "Post Number" to be editable in the admin edit order page
 * DHL Paket: Added return ID number to the order note
 * DHL Paket: Fix issue with bulk create label when "Create Return Label default" setting checked
 * DHL Paket: Fix issue so the plugin is translatable on translate.wordpress.org
+
+= 2.5.13 =
+* DHL Parcel: Added a setting to set additional shipping fees for specific products
+* DHL Parcel: Added support for additional order status
+* DHL Parcel: Added automatic label creation and printing
+* DHL Parcel: Updated developer settings text to avoid confusion
 
 = 2.5.12 =
 * DHL eCS: Fixed phone field being empty, due to new shipping phone field in WC
