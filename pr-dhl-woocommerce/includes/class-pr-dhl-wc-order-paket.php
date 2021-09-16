@@ -31,6 +31,12 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		add_action( 'pr_shipping_dhl_label_created', array( $this, 'change_order_status' ), 10, 1 );
 		add_action( 'woocommerce_email_order_details', array( $this, 'add_tracking_info'), 10, 4 );
 		add_action( 'woocommerce_order_status_changed', array( $this, 'create_label_on_status_changed' ), 10, 4 );
+
+		// add 'DHL Request Pickup' to Order actions
+		add_action( 'woocommerce_order_actions', array( $this, 'add_order_meta_box_action_request_pickup' ) );
+		add_action( 'woocommerce_order_action_dhl_request_pickup',  array( $this, 'process_order_meta_box_action_request_pickup' ) );
+		add_action( 'woocommerce_order_actions_start', array( $this, 'add_order_meta_box_action_request_pickup_fields' ) );
+
 	}
 
 	public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
@@ -746,6 +752,181 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			return '&#10004';
 		}
 	}
+
+	public function add_order_meta_box_action_request_pickup( $actions ) {
+	    global $order;
+
+	    $actions['dhl_request_pickup'] = __( 'DHL Request Pickup', 'dhl-for-woocommerce' );
+	    return $actions;
+	}
+
+	public function add_order_meta_box_action_request_pickup_fields( $order_id ) {
+
+		echo '<li class="wide" id="dhl-paket-action-request-pickup">';
+
+		woocommerce_wp_radio( array(
+			'id'          		=> 'pr_dhl_request_pickup',
+			'label'       		=> __( 'Pickup Date: ', 'dhl-for-woocommerce' ),
+			'placeholder' 		=> '',
+			'description'		=> '',
+			'value'       		=> 'asap',
+			'class'				=> 'short',
+			'options'			=> array( 'asap' => __( 'Pickup ASAP', 'dhl-for-woocommerce' ), 'date' => __( 'Pickup Date', 'dhl-for-woocommerce' ) )
+		) );
+
+		woocommerce_wp_text_input( array(
+			'id'          		=> 'pr_dhl_request_pickup_date',
+			'label'       		=> __( 'Pickup Date: ', 'dhl-for-woocommerce' ),
+			'placeholder' 		=> '',
+			'description'		=> '',
+			'value'       		=> date('Y-m-d', strtotime('+1 day')),
+			'custom_attributes'	=> array( 'min' => date('Y-m-d'), 'max' => date('Y-m-d', strtotime('+30 days')) ),
+			'class'				=> 'short',
+			'type'	=> 'date'
+		) );
+
+		echo '<label>'.__( 'Business Hours for Pickup', 'dhl-for-woocommerce' ).'</label>';
+
+		woocommerce_wp_text_input( array(
+			'id'          		=> 'pr_dhl_request_pickup_hours_0_start',
+			'name'          		=> 'pr_dhl_request_pickup_hours[0][start]',
+			'label'       		=> __( 'From: ', 'dhl-for-woocommerce' ),
+			'placeholder' 		=> '',
+			'description'		=> '',
+			'value'       		=> '08:00',
+			//'custom_attributes'	=> array( 'min' => date('Y-m-d'), 'max' => date('Y-m-d', strtotime('+30 days')) ),
+			'class'				=> 'short',
+			'type'	=> 'time'
+		) );
+
+		woocommerce_wp_text_input( array(
+			'id'          		=> 'pr_dhl_request_pickup_hours_0_end',
+			'name'          		=> 'pr_dhl_request_pickup_hours[0][end]',
+			'label'       		=> __( 'To: ', 'dhl-for-woocommerce' ),
+			'placeholder' 		=> '',
+			'description'		=> '',
+			'value'       		=> '17:00',
+			//'custom_attributes'	=> array( 'min' => date('Y-m-d'), 'max' => date('Y-m-d', strtotime('+30 days')) ),
+			'class'				=> 'short',
+			'type'	=> 'time'
+		) );
+
+		echo '<label>'.__( '2nd Business Hours for Pickup (optional)', 'dhl-for-woocommerce' ).'</label>';
+
+		woocommerce_wp_text_input( array(
+			'id'          		=> 'pr_dhl_request_pickup_hours_1_start',
+			'name'          		=> 'pr_dhl_request_pickup_hours[1][start]',
+			'label'       		=> __( 'From: ', 'dhl-for-woocommerce' ),
+			'placeholder' 		=> '',
+			'description'		=> '',
+			//'value'       		=> date('Y-m-d', strtotime('+1 day')),
+			//'custom_attributes'	=> array( 'min' => date('Y-m-d'), 'max' => date('Y-m-d', strtotime('+30 days')) ),
+			'class'				=> 'short',
+			'type'	=> 'time'
+		) );
+
+		woocommerce_wp_text_input( array(
+			'id'          		=> 'pr_dhl_request_pickup_hours_1_end',
+			'name'          		=> 'pr_dhl_request_pickup_hours[1][end]',
+			'label'       		=> __( 'To: ', 'dhl-for-woocommerce' ),
+			'placeholder' 		=> '',
+			'description'		=> '',
+			//'value'       		=> date('Y-m-d', strtotime('+1 day')),
+			//'custom_attributes'	=> array( 'min' => date('Y-m-d'), 'max' => date('Y-m-d', strtotime('+30 days')) ),
+			'class'				=> 'short',
+			'type'	=> 'time'
+		) );
+
+		echo '</li>';
+	}
+
+	public function process_order_meta_box_action_request_pickup( $order ) {
+
+		$order_id = $order->ID;
+
+		$pickup_type = $_POST['pr_dhl_request_pickup'];
+		$pickup_date = $_POST['pr_dhl_request_pickup_date'];
+
+		$pickup_business_hours = isset($_POST['pr_dhl_request_pickup_hours']) ? $_POST['pr_dhl_request_pickup_hours'] : [];
+
+		// Gather args for DHL API call
+		$args = $this->get_label_args( $order_id );
+
+		// Allow third parties to modify the args to the DHL APIs
+		$args = apply_filters('pr_shipping_dhl_label_args', $args, $order_id );
+
+		$args['dhl_pickup_type'] = $pickup_type;
+		$args['dhl_pickup_date'] = $pickup_date;
+
+		$args['dhl_pickup_business_hours'] = $pickup_business_hours;
+
+		//$args['order_details']['bulky_goods'] = 1; // TEST bulky goods
+
+		//Get label (s)
+		$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
+		$tracking_number = $label_tracking_info['tracking_number'];
+		$tracking_numbers = [];
+
+		$tracking_link_str = '';
+		if ( is_array( $tracking_number ) ) {
+			foreach ($tracking_number as $key => $value) {
+				$tracking_numbers[] = $value;
+			}
+		} else {
+			$tracking_numbers[] = $tracking_number;
+		}
+
+		$args['dhl_pickup_label_tracking'] = $tracking_numbers;
+
+		$base_country_code 	= PR_DHL()->get_base_country();
+		$pickup_rest = new PR_DHL_API_REST_Paket( $base_country_code );
+		$pickup_response = $pickup_rest->request_dhl_pickup( $args );
+
+		//Error?
+		if ( isset($pickup_response->orderNumber) ) {
+
+			$response_pickup_order_number = isset($pickup_response->orderNumber) ? $pickup_response->orderNumber : '';
+			$response_pickup_date = isset($pickup_response->pickupDate) ? $pickup_response->pickupDate : '';
+			$response_pickup_free_of_charge = isset($pickup_response->freeOfCharge) ? $pickup_response->freeOfCharge : '';
+			$response_pickup_type = isset($pickup_response->pickupType) ? $pickup_response->pickupType : '';
+
+			// add the order note
+			$message = sprintf( __( 'DHL pickup scheduled for %s', 'dhl-for-woocommerce' ), $response_pickup_date );
+			$order->add_order_note( $message );
+
+		    // add the flag
+		   	update_post_meta( $order->id, '_pr_dhl_pickup_order_number', $pickup_order_number  );
+			update_post_meta( $order->id, '_pr_dhl_pickup_date', $pickup_date  );
+
+		} else {
+			//Errors
+			global $pickup_response_admin_notice;
+			if ( isset($pickup_response[0]->code) ) {
+				$pickup_response_admin_notice = $pickup_response[0]->message;
+			} else {
+				$pickup_response_admin_notice = __( 'Error message detail is not exist!', 'dhl-for-woocommerce' );
+			}
+
+			wp_die(
+				sprintf(
+					__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce'), $pickup_response_admin_notice )
+				);
+		}
+
+	}
+
+	public function maybe_show_admin_request_pickup() {
+		global $pickup_response_admin_notice;
+		if ( $pickup_response_admin_notice ) {
+			?>
+			<div class="notice notice-warning is-dismissible">
+                <p><?php echo sprintf(
+					__( 'Failed to request pickup: %s', 'dhl-for-woocommerce'), $pickup_response_admin_notice ); ?></p>
+            </div>
+			<?php
+		}
+	}
+
 }
 
 endif;
