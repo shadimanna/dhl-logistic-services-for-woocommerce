@@ -696,8 +696,7 @@ tr.dhlpwc-options-grid > td tr.dhlpwc-condition-rule td.dhlpwc-condition-vellips
 }
 
 p.dhlpwc_enable_method_limit_field,
-p.dhlpwc_send_with_bp_field,
-p.dhlpwc_additional_shipping_fee_field {
+p.dhlpwc_send_with_bp_field {
     border-top: solid 1px lightgray;
 }
 

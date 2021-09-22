@@ -84,7 +84,6 @@ class DHLPWC_Autoloader
         }
         $folders = glob($path.'*', GLOB_ONLYDIR | GLOB_MARK);
         $folder_names = array();
-
         foreach($folders as $folder) {
             if (substr($folder, 0, strlen($path)) == $path) {
                 $relative_path = substr($folder, strlen($root_path));
@@ -92,7 +91,6 @@ class DHLPWC_Autoloader
                 $folder_names = array_merge($folder_names, $this->get_all_sub_folders($folder, $root_path));
             }
         }
-
         return $folder_names;
     }
 
@@ -107,8 +105,11 @@ class DHLPWC_Autoloader
         $search = '';
         foreach($this->sub_folders as $sub_folder) {
             $namespace = str_replace(DIRECTORY_SEPARATOR, '_', $sub_folder);
-            if (strpos(strtolower($class), self::CLASS_PREFIX.strtolower($namespace)) === 0 && strlen($sub_folder) > strlen($search)) {
-                $search = $sub_folder;
+            if (strpos(strtolower($class), self::CLASS_PREFIX.strtolower($namespace)) === 0) {
+                // Use the deepest path possible
+                if (strlen($sub_folder) > strlen($search)) {
+                    $search = $sub_folder;
+                }
             }
         }
         return $search;

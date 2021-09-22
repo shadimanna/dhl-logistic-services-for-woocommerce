@@ -72,18 +72,6 @@ class DHLPWC_Controller_Admin_Product
             'desc_tip'    => false,
             'description' => __('Also allow mixing with other products. Total amount must not exceed the maximum for one mailbox parcel.', 'dhlpwc'),
         ));
-
-        woocommerce_wp_text_input(array(
-            'label'       => __('DHL additional shipping fee', 'dhlpwc'),
-            'id'          => 'dhlpwc_additional_shipping_fee',
-            'desc_tip'    => true,
-            'description' => __('Additional shipping fee. Will be multiplied by quantity. This price will still be added when shipping is free.', 'dhlpwc'),
-            'type'        => 'number',
-            'placeholder' => '0.00',
-            "custom_attributes" => array(
-                'min' => '0',
-            )
-        ));
     }
 
     public function save_custom_fields($post_id)
@@ -95,9 +83,6 @@ class DHLPWC_Controller_Admin_Product
 
         $value = isset($_POST['dhlpwc_selected_method_limit']) ? $_POST['dhlpwc_selected_method_limit'] : '';
         $product->update_meta_data('dhlpwc_selected_method_limit', $value);
-
-        $value = isset($_POST['dhlpwc_additional_shipping_fee']) ? $_POST['dhlpwc_additional_shipping_fee'] : '';
-        $product->update_meta_data('dhlpwc_additional_shipping_fee', str_replace(',', '.', $value));
 
         $value = isset($_POST['dhlpwc_send_with_bp']) ? $_POST['dhlpwc_send_with_bp'] : '';
         $product->update_meta_data('dhlpwc_send_with_bp', $value);

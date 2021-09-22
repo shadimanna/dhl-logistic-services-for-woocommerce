@@ -6,9 +6,10 @@ if (!class_exists('DHLPWC_Model_Service_Postcode')) :
 
 class DHLPWC_Model_Service_Postcode extends DHLPWC_Model_Core_Singleton_Abstract
 {
+
     protected $cached_countries;
 
-    protected $url = 'https://i18napis.appspot.com/address/data/';
+    protected $url = 'http://i18napis.appspot.com/address/data/';
 
     public function validate($postcode, $country_code)
     {
