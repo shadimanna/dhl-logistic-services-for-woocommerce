@@ -141,6 +141,7 @@ class Pickup_Request_Info {
 		foreach ( $args['dhl_pickup_label_tracking'] as $tracking ) {
 			$label_info = array(
 				'tracking_number' => $tracking,
+				'transportation_type' => $args['dhl_pickup_transportation_type'],
 			);
 			$label_shipping_info = $shipping_info + $label_info;
 			$this->shipments[] = Args_Parser::parse_args( $label_shipping_info, $this->get_shipment_info_schema() );
@@ -346,13 +347,13 @@ class Pickup_Request_Info {
  		return array(
 			'transportation_type'     => array(
 				'rename' => 'transportationType',
-				'default' => 'PAKET',
-				'sanitize' => function( $value, $args ) use ($self) {
-					if( isset( $args['bulky_goods'] ) && $args['bulky_goods'] ) {
-						return 'SPERRGUT';
-					}
-					return 'PAKET';
-				}
+				'default' => '',
+				// 'sanitize' => function( $value, $args ) use ($self) {
+				// 	if( isset( $args['bulky_goods'] ) && $args['bulky_goods'] ) {
+				// 		return 'SPERRGUT';
+				// 	}
+				// 	return 'PAKET';
+				// }
 			),
 			'tracking_number'	=> array(
 				'rename' => 'shipmentNumber',

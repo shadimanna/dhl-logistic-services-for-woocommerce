@@ -1,0 +1,86 @@
+( function( $ ) {
+
+	var wc_dhl_paket_pickup_bulk = {
+		// init Class
+		init: function() {
+			$( '#posts-filter' )
+				.on( 'change', '#bulk-action-selector-top', this.toggle_paket_pickup_modal );
+			$( '#posts-filter' )
+				.on( 'change', '#bulk-action-selector-bottom', this.toggle_paket_pickup_modal );
+
+			$( '#dhl-paket-action-request-pickup' )
+				.on( 'change', '[name=pr_dhl_request_pickup_modal]', this.show_hide_request_pickup_date_asap );
+			this.show_hide_request_pickup_date_asap();
+
+			$( '#dhl-paket-action-request-pickup')
+					.on( 'click', '#pr_dhl_pickup_proceed', this.submit_paket_pickup_modal );
+
+			this.update();
+		},
+
+		update: function () {
+			//jQuery('#TB_closeWindowButton').click();
+		},
+
+		toggle_paket_pickup_modal: function( evt ){
+			evt.preventDefault();
+
+			var value 		= jQuery( this ).val();
+			var post_form 	= jQuery( this ).parents('#posts-filter');
+
+			//post_form.find('.tablenav.bottom .dhl-awb-filter-container').remove();
+
+			if( 'pr_dhl_request_pickup' == value ){
+
+				tb_show( "", '#TB_inline?inlineId=dhl-paket-pickup-modal' );
+				jQuery(document).find('#TB_window').height(420);
+
+			}else{
+				//post_form.find( '.dhl-awb-filter-container' ).hide();
+				jQuery('#TB_closeWindowButton').click();
+
+			}
+
+		},
+
+		show_hide_request_pickup_date_asap: function () {
+			var pickup_checked = $( '#dhl-paket-action-request-pickup [name=pr_dhl_request_pickup_modal]:checked' ).val();
+
+			console.log('pickup_checked: '+ pickup_checked );
+
+			if ( pickup_checked == 'date' ) {
+				$( '#dhl-paket-action-request-pickup #pr_dhl_request_pickup_date_modal').prop('disabled', false);
+				$( '#dhl-paket-action-request-pickup .pr_dhl_request_pickup_date_field').show();
+			} else {
+				$( '#dhl-paket-action-request-pickup #pr_dhl_request_pickup_date_modal').prop('disabled', 'disabled');
+				$( '#dhl-paket-action-request-pickup .pr_dhl_request_pickup_date_field').hide();
+			}
+		},
+
+		submit_paket_pickup_modal: function( evt ){
+			evt.preventDefault();
+
+			var elemModal = jQuery('#dhl-paket-action-request-pickup');
+
+			var pickup_type 		= elemModal.find( 'input[name=pr_dhl_request_pickup_modal]:checked' ).val();
+			var pickup_date 		= elemModal.find( 'input[name=pr_dhl_request_pickup_date_modal]' ).val();
+			var transportation_type = elemModal.find( 'select[name=pr_dhl_request_pickup_transportation_type] :selected' ).val();
+
+
+			jQuery('#posts-filter [name=pr_dhl_request_pickup]').val(pickup_type);
+			jQuery('#posts-filter [name=pr_dhl_request_pickup_date]').val(pickup_date);
+			jQuery('#posts-filter [name=pr_dhl_request_transportation_type]').val(transportation_type);
+
+			console.log('type: '+ pickup_type + ' | date: ' + pickup_date+ ' | transportation_type: ' + transportation_type);
+
+			//jQuery('#TB_closeWindowButton').click();
+
+			//Submit bulk action
+			jQuery('#posts-filter #doaction').first().click();
+
+		}
+	};
+
+	wc_dhl_paket_pickup_bulk.init();
+
+} )( jQuery );

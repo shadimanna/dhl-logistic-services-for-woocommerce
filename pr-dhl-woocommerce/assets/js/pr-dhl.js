@@ -32,15 +32,6 @@ jQuery( function( $ ) {
 				.on( 'change', '#pr_dhl_multi_packages_enabled', this.show_hide_packages );
 			wc_shipment_dhl_label_items.show_hide_packages();
 
-			$( '#woocommerce-order-actions' )
-				.on( 'change', '[name=wc_order_action]', this.show_hide_order_actions_request_pickup );
-			wc_shipment_dhl_label_items.show_hide_order_actions_request_pickup();
-
-			$( '#woocommerce-order-actions' )
-				.on( 'change', '[name=pr_dhl_request_pickup]', this.show_hide_request_pickup_date_asap );
-			wc_shipment_dhl_label_items.show_hide_request_pickup_date_asap();
-
-
 		},
 
 		// Extract the entries for the given package attribute
@@ -229,28 +220,6 @@ jQuery( function( $ ) {
 			    	}
 			    }
 			});
-		},
-
-		show_hide_order_actions_request_pickup: function () {
-			var action = $( '#woocommerce-order-actions [name=wc_order_action] :selected' ).val();
-
-			if ( action == 'dhl_request_pickup' ) {
-				$('#dhl-paket-action-request-pickup').show();
-			} else {
-				$('#dhl-paket-action-request-pickup').hide();
-			}
-		},
-
-		show_hide_request_pickup_date_asap: function () {
-			var pickup_checked = $( '#woocommerce-order-actions [name=pr_dhl_request_pickup]:checked' ).val();
-
-			if ( pickup_checked == 'date' ) {
-				$('#pr_dhl_request_pickup_date').prop('disabled', false);
-				$('.pr_dhl_request_pickup_date_field').show();
-			} else {
-				$('#pr_dhl_request_pickup_date').prop('disabled', 'disabled');
-				$('.pr_dhl_request_pickup_date_field').hide();
-			}
 		},
 
 		save_dhl_label: function () {
