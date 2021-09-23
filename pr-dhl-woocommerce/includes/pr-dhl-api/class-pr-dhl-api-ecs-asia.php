@@ -355,11 +355,11 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 			),
 			'PPS' => array(
 				'name' 	    => __( 'Packet Plus International Standard', 'pr-shipping-dhl' ),
-				'origin_countries' => 'AU,CN,HK,IL,IN,MY,SG,TH'
+				'origin_countries' => 'AU,CN,HK,IL,IN,MY,SG,TH,VN'
 			),
 			'PPW' => array(
 				'name' 	    => __( 'Packet Plus Standard', 'pr-shipping-dhl' ),
-				'origin_countries' => 'AU,CN,HK,IL,IN,MY,SG,TH,VN'
+				'origin_countries' => 'CN,HK,MY,SG'
 			),
 			'PPR' => array(
 				'name' 	    => __( 'Destination Redelivery Services', 'pr-shipping-dhl' ),
@@ -371,11 +371,11 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 			),
 			'PKD' => array(
 				'name' 	    => __( 'Packet International Standard', 'pr-shipping-dhl' ),
-				'origin_countries' => 'CN,TH,HK,SG,AU,IN,MY'
+				'origin_countries' => 'CN,TH,HK,SG,AU,IN'
 			),
 			'PLT' => array(
 				'name' 	    => __( 'Parcel International Direct Standard', 'pr-shipping-dhl' ),
-				'origin_countries' => 'AU,CN,HK,IL,IN,MY,SG,TH'
+				'origin_countries' => 'AU,CN,HK,IL,IN,MY,SG,TH,VN'
 			),
 			'PLE' => array(
 				'name' 	    => __( 'Parcel International Direct Expedited', 'pr-shipping-dhl' ),
@@ -395,11 +395,11 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 			),
 			'PKG' => array(
 				'name' 	    => __( 'Packet International Economy', 'pr-shipping-dhl' ),
-				'origin_countries' => 'CN,HK,IN,TH'
+				'origin_countries' => 'CN,HK,IN,TH,SG'
 			),
 			'PKW' => array(
                 'name' 	    => __( 'Parcel International Direct Semi', 'pr-shipping-dhl' ),
-                'origin_countries' => 'CN,HK'
+                'origin_countries' => 'CN,HK,SG'
             ),
 		);
 
@@ -415,7 +415,7 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 			),
 			'PDE' => array(
 				'name' 	    => __( 'Parcel Domestic Expedited', 'pr-shipping-dhl' ),
-				'origin_countries' => 'AU,VN'
+				'origin_countries' => 'AU,VN,MY'
 			),/*
 			'PDR' => array(
 				'name' 	    => __( 'Parcel Return', 'pr-shipping-dhl' ),
