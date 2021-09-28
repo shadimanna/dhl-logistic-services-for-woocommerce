@@ -667,12 +667,12 @@ abstract class PR_DHL_WC_Order {
 		$shipping_address = $order->get_address( 'shipping' );
 
 		// If shipping phone number doesn't exist, try to get billing phone number
-		if( ! isset( $shipping_address['phone'] ) && isset( $billing_address['phone'] ) ) {
+		if( empty( $shipping_address['phone'] ) && ! empty( $billing_address['phone'] ) ) {
 			$shipping_address['phone'] = $billing_address['phone'];			
 		}
 
 		// If shipping email doesn't exist, try to get billing email
-		if( ! isset( $shipping_address['email'] ) && isset( $billing_address['email'] ) ) {
+		if( empty( $shipping_address['email'] ) && ! empty( $billing_address['email'] ) ) {
 			$shipping_address['email'] = $billing_address['email'];
 		}
 
