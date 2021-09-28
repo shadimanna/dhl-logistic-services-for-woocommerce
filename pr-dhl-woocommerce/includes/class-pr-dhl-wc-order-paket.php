@@ -33,8 +33,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		add_action( 'woocommerce_order_status_changed', array( $this, 'create_label_on_status_changed' ), 10, 4 );
 
 		// add 'DHL Request Pickup' to Order actions
-		add_action( 'bulk_actions-edit-shop_order', array($this, 'add_bulk_actions_pickup_request'), 11 );
-		add_action( 'handle_bulk_actions-edit-shop_order', array($this, 'do_bulk_actions_pickup_request'), 10, 3 );
+		add_action( 'handle_bulk_actions-edit-shop_order', array($this, 'process_bulk_actions_pickup_request'), 10, 3 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_modal_window_assets'));
 		add_action( 'manage_posts_extra_tablenav', array( $this, 'bulk_actions_fields_pickup_request'));
 		add_action( 'admin_footer', array( $this, 'modal_content_fields_pickup_request'));
@@ -616,7 +615,8 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$shop_manager_actions = array();
 
 		$shop_manager_actions = array(
-			'pr_dhl_create_labels'      => __( 'DHL Create Labels', 'dhl-for-woocommerce' )
+			'pr_dhl_create_labels'      => __( 'DHL Create Labels', 'dhl-for-woocommerce' ),
+			'pr_dhl_request_pickup'      => __( 'DHL Request Pickup', 'dhl-for-woocommerce' )
 		);
 
 		return $shop_manager_actions;
@@ -626,7 +626,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 		$orders_count 	= count( $order_ids );
 
-		if( 'pr_dhl_create_labels' === $action ){
+		if( 'pr_dhl_create_labels' === $action || 'pr_dhl_request_pickup' === $action ){
 
 			if ( $orders_count < 1 ) {
 
@@ -854,12 +854,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 	}
 
-	public function add_bulk_actions_pickup_request( $bulk_actions ) {
-		$bulk_actions['pr_dhl_request_pickup'] = __( 'DHL Request Pickup', 'dhl-for-woocommerce' );
-		return $bulk_actions;
-	}
-
-	public function do_bulk_actions_pickup_request( $redirect_url, $action, $post_ids ) {
+	public function process_bulk_actions_pickup_request( $redirect_url, $action, $post_ids ) {
 		if ( $action == 'pr_dhl_request_pickup' ) {
 
 			$pickup_type = isset($_GET['pr_dhl_request_pickup']) ? sanitize_text_field($_GET['pr_dhl_request_pickup']) : '';
@@ -871,19 +866,29 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	    		$array_messages = array( 'msg_user_id' => get_current_user_id() );
 			}
 
-			try {
-
-				foreach ($post_ids as $order_id) {
-					$new_array_messages = $this->process_order_action_request_pickup( $order_id, $pickup_type, $pickup_date, $transportation_type);
-					$array_messages = array_merge($array_messages, $new_array_messages);
-				}
-
-			} catch (Exception $e) {
+			$message = $this->validate_bulk_actions( $action, $post_ids );
+			if ( ! empty( $message ) ) {
 				array_push($array_messages, array(
 					'message' => $e->getMessage(),
 					'type' => 'error',
 				));
+			} else {
+
+				try {
+
+					foreach ($post_ids as $order_id) {
+						$new_array_messages = $this->process_order_action_request_pickup( $order_id, $pickup_type, $pickup_date, $transportation_type);
+						$array_messages = array_merge($array_messages, $new_array_messages);
+					}
+
+				} catch (Exception $e) {
+					array_push($array_messages, array(
+						'message' => $e->getMessage(),
+						'type' => 'error',
+					));
+				}
 			}
+
 
 			update_option( '_pr_dhl_bulk_action_confirmation', $array_messages );
 
@@ -898,7 +903,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		if( 'shop_order' === $typenow && 'edit.php' === $pagenow ) {
 			// Enqueue the assets
 			wp_enqueue_style('thickbox');
-			wp_enqueue_script('plugin-install');
+			wp_enqueue_script('thickbox');
 
 			wp_enqueue_script(
 				'wc-shipment-dhl-paket-pickup-bulk-js',
@@ -944,7 +949,22 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			<?php
 			echo '<div id="dhl-paket-action-request-pickup">';
 
-			echo '<h4><label>'.__( 'Select a date and transporation type for the DHL Pickup Request.', 'dhl-for-woocommerce' ).'</label></h4>';
+			//echo '<h4><label>'.__( 'Select a pickup date and transporation type for the DHL Pickup Request.', 'dhl-for-woocommerce' ).'</label></h4>';
+
+			$transport_options = [
+				'PAKET' => 'PAKET',
+				'SPERRGUT' => 'SPERRGUT'
+			];
+
+			woocommerce_wp_select( array(
+				'id'          		=> 'pr_dhl_request_pickup_transportation_type',
+				'label'       		=> __( 'Transportation Type:', 'dhl-for-woocommerce' ),
+				'description'		=> '',
+				'value'       		=> 'PAKET',
+				'options'			=> $transport_options,
+			) );
+
+			echo '<hr><br>';
 
 			woocommerce_wp_radio( array(
 				'id'          		=> 'pr_dhl_request_pickup_modal',
@@ -970,24 +990,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			) );
 
 			echo '</div>';
-			echo '<hr>';
-
-			$transport_options = [
-				'PAKET' => 'PAKET',
-				'SPERRGUT' => 'SPERRGUT'
-			];
-
-			woocommerce_wp_select( array(
-				'id'          		=> 'pr_dhl_request_pickup_transportation_type',
-				'label'       		=> __( 'Transportation Type:', 'dhl-for-woocommerce' ),
-				'description'		=> '',
-				'value'       		=> 'PAKET',
-				'options'			=> $transport_options,
-			) );
-
-			echo '<hr><br>';
-
-			echo '<button type="button" class="button button-primary" id="pr_dhl_pickup_proceed">'.__( 'Submit', 'dhl-for-woocommerce' ).'</button>';
+			echo '<hr><br><button type="button" class="button button-primary" id="pr_dhl_pickup_proceed">'.__( 'Submit', 'dhl-for-woocommerce' ).'</button>';
 
 			echo '</div>';
 			?>

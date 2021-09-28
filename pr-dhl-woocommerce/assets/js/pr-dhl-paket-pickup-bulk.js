@@ -26,14 +26,16 @@
 			evt.preventDefault();
 
 			var value 		= jQuery( this ).val();
+			var title 		= jQuery(':selected', this ).text();
 			var post_form 	= jQuery( this ).parents('#posts-filter');
 
 			//post_form.find('.tablenav.bottom .dhl-awb-filter-container').remove();
 
 			if( 'pr_dhl_request_pickup' == value ){
 
-				tb_show( "", '#TB_inline?inlineId=dhl-paket-pickup-modal' );
-				jQuery(document).find('#TB_window').height(420);
+				// Add a hidden thickbox link to use for bringing up the modal.
+				tb_show( "", '/?TB_inline=true&width=320&height=340&inlineId=dhl-paket-pickup-modal' );
+				jQuery("#TB_window #TB_ajaxWindowTitle").text(title);
 
 			}else{
 				//post_form.find( '.dhl-awb-filter-container' ).hide();

@@ -103,3 +103,11 @@ p.dhl-total-packages > label {
 #dhl-paket-action-request-pickup {
 	padding: 10px;
 }
+@media screen and (max-width: 782px) {
+	#dhl-paket-action-request-pickup {
+		padding: 0;
+	}
+	#dhl-paket-action-request-pickup p.form-field {
+		padding: 0 !important;
+	}
+}
