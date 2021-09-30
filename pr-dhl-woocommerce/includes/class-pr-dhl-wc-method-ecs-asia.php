@@ -81,8 +81,8 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 			$select_dhl_duties = $dhl_obj->get_dhl_duties();
 
 			$select_dhl_tax_id_types = array(
-					'' => __( ' ', 'pr-shipping-dhl' ),
-					'none' => __( '-- No Shipper Tax ID --', 'pr-shipping-dhl' )
+					'' => __( ' ', 'dhl-for-woocommerce' ),
+					'none' => __( '-- No Shipper Tax ID --', 'dhl-for-woocommerce' )
 				);
 			$select_dhl_tax_id_types += $dhl_obj->get_dhl_tax_id_types();
 
@@ -279,7 +279,7 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 				'description'       => sprintf( __( 'A log file containing the communication to the DHL server will be maintained if this option is checked. This can be used in case of technical issues and can be found %shere%s.', 'dhl-for-woocommerce' ), '<a href="' . $log_path . '" target = "_blank">', '</a>' )
 			),
             'dhl_shipper'           => array(
-                'title'           => __( 'Pickup / Shipper Address', 'pr-shipping-dhl' ),
+                'title'           => __( 'Pickup / Shipper Address', 'dhl-for-woocommerce' ),
                 'type'            => 'title',
                 'description'     => __( 'Enter Pickup & Shipper Address below.  This is used for Shipper Address with Tax ID and for the "Pickup Address" for the "DHL Parcel Metro" product.', 'dhl-for-woocommerce' ),
             ),
@@ -365,23 +365,23 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
                 'default'           => ''
             ),
 			'dhl_shipper_tax_info'           => array(
-                'title'           => __( 'Shipper Tax ID Defaults', 'pr-shipping-dhl' ),
+                'title'           => __( 'Shipper Tax ID Defaults', 'dhl-for-woocommerce' ),
                 'type'            => 'title',
-                'description'     => __( 'Enter the default Tax ID info below. ', 'pr-shipping-dhl' ),
+                'description'     => __( 'Enter the default Tax ID info below. ', 'dhl-for-woocommerce' ),
             ),
 			'dhl_shipper_tax_id_type' => array(
-                'title'             => __( 'Shipper Tax ID Type', 'pr-shipping-dhl' ),
+                'title'             => __( 'Shipper Tax ID Type', 'dhl-for-woocommerce' ),
                 'type'              => 'select',
-                'description'       => __( 'The default Tax ID Type for the shipper.', 'pr-shipping-dhl' ),
+                'description'       => __( 'The default Tax ID Type for the shipper.', 'dhl-for-woocommerce' ),
                 'desc_tip'          => true,
                 'options'           => $select_dhl_tax_id_types,
                 'class'				=> 'wc-enhanced-select',
                 'default'           => ''
             ),
             'dhl_shipper_tax_id' => array(
-                'title'             => __( 'Shipper Tax ID', 'pr-shipping-dhl' ),
+                'title'             => __( 'Shipper Tax ID', 'dhl-for-woocommerce' ),
                 'type'              => 'text',
-                'description'       => __( 'The default Tax ID for the shipper.', 'pr-shipping-dhl' ),
+                'description'       => __( 'The default Tax ID for the shipper.', 'dhl-for-woocommerce' ),
                 'desc_tip'          => true,
                 'default'           => ''
             ),

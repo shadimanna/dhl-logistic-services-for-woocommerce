@@ -144,13 +144,13 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 				// Tax ID type drop down
 				$select_dhl_tax_id_types = array(
-						'' => __( ' ', 'pr-shipping-dhl' ),
-						'none' => __( '-- No Shipper Tax ID --', 'pr-shipping-dhl' )
+						'' => __( ' ', 'dhl-for-woocommerce' ),
+						'none' => __( '-- No Shipper Tax ID --', 'dhl-for-woocommerce' )
 					);
 				$select_dhl_tax_id_types += $dhl_obj->get_dhl_tax_id_types();
 				woocommerce_wp_select( array(
 						'id'          		=> 'pr_dhl_tax_id_type',
-						'label'       		=> __( 'Shipper Tax ID Type:', 'pr-shipping-dhl' ),
+						'label'       		=> __( 'Shipper Tax ID Type:', 'dhl-for-woocommerce' ),
 						'description'		=> '',
 						'value'       		=> isset( $dhl_label_items['pr_dhl_tax_id_type'] ) ? $dhl_label_items['pr_dhl_tax_id_type'] : $this->shipping_dhl_settings['dhl_shipper_tax_id_type'],
 						'options'			=> $select_dhl_tax_id_types,
@@ -160,7 +160,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 				woocommerce_wp_text_input( array(
 					'id'          		=> 'pr_dhl_tax_id',
 					'class'          	=> 'short',
-					'label'       		=> __( 'Shipper Tax ID:', 'pr-shipping-dhl' ),
+					'label'       		=> __( 'Shipper Tax ID:', 'dhl-for-woocommerce' ),
 					'placeholder' 		=> '',
 					'description'		=> '',
 					'value'       		=> isset( $dhl_label_items['pr_dhl_tax_id'] ) ? $dhl_label_items['pr_dhl_tax_id'] : $this->shipping_dhl_settings['dhl_shipper_tax_id'],
