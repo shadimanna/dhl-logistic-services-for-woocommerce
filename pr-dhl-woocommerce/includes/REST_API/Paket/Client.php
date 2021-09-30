@@ -17,12 +17,6 @@ use stdClass;
 class Client extends API_Client {
 
 	/**
-	 * The DHL Account Number.
-	 *
-	 */
-	protected $account_num;
-
-	/**
 	 * The DHL Customer Portal Username
 	 *
 	 */
@@ -51,12 +45,12 @@ class Client extends API_Client {
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @param string $contact_name The contact name to use for creating orders.
+	 * @param string $customer_portal_user, $customer_portal_password The customer username and password
 	 */
-	public function __construct( $account_num, $customer_portal_user, $customer_portal_password, $base_url, API_Driver_Interface $driver, API_Auth_Interface $auth = null ) {
+	public function __construct( $customer_portal_user, $customer_portal_password, $base_url, API_Driver_Interface $driver, API_Auth_Interface $auth = null ) {
 		parent::__construct( $base_url, $driver, $auth );
 
-		$this->account_num = $account_num;
+		$this->billing_num = $billing_num;
 		$this->customer_portal_user = $customer_portal_user;
 		$this->customer_portal_password = $customer_portal_password;
 	}
@@ -91,10 +85,35 @@ class Client extends API_Client {
 
 			} elseif ( isset( $response->body[0]->code) ) {
 
-				return $response->body;
+				throw new Exception(
+					sprintf(
+						__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
+						$this->generate_error_details( $response->body )
+					)
+				);
 
 			}
 
+		} elseif ( $response->status >= 400 && $response->status <= 499  ) {
+
+			$error_msg = 'HTTP status: '. $response->status;
+
+			if ( $response->status == 400 ) {
+				$error_msg .= ' Bad Request. ';
+			} elseif ( $response->status == 401 ) {
+				$error_msg .= ' Authentication failed. Wrong credentials. ';
+			} elseif ( $response->status == 402 ) {
+				$error_msg .= ' Payment failed. ';
+			} elseif ( $response->status == 403 ) {
+				$error_msg .= ' Authentication failed. Insufficient priviledges. ';
+			}
+
+			throw new Exception(
+				sprintf(
+					__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
+					$this->generate_error_details( $error_msg . $response->body )
+				)
+			);
 		}
 
 		throw new Exception(
@@ -188,7 +207,6 @@ class Client extends API_Client {
 		if ( $request_pickup_info->business_hours ) {
 			$pickup_location_array['businessHours']	= $request_pickup_info->business_hours;
 		}
-
 
 		$request_data = array(
 			'customerDetails'   => array(

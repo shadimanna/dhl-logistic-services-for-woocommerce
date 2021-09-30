@@ -132,7 +132,7 @@ class Pickup_Request_Info {
 		);
 		$shipping_info = $shipping_info + $pickup_info;
 
-		$this->customer_details 			= Args_Parser::parse_args( $settings, $this->get_customer_details_schema() );
+		$this->customer_details 			= Args_Parser::parse_args( $args, $this->get_customer_details_schema() );
 		$this->pickup_contact 			= Args_Parser::parse_args( $settings, $this->get_pickup_contact_schema() );
 		$this->pickup_address 			= Args_Parser::parse_args( $settings, $this->get_pickup_address_schema() );
 		$this->pickup_details 		= Args_Parser::parse_args( $shipping_info, $this->get_pickup_info_schema() );
@@ -176,14 +176,14 @@ class Pickup_Request_Info {
 		$self = $this;
 
 		return array(
-			'account_num'      => array(
+			'dhl_pickup_billing_number'      => array(
 				'rename' => 'billingNumber',
 				//'error'  => __( '"Account Number" in settings is empty.', 'dhl-for-woocommerce' ),
 				'sanitize' => function( $account ) use ($self) {
 
                     if (empty($account)) {
                         throw new Exception(
-                            __( '"Account Number" in settings is empty.', 'dhl-for-woocommerce' )
+                            __( 'Check your settings "Account Number" and "Participation Number".', 'dhl-for-woocommerce' )
                         );
                     }
 

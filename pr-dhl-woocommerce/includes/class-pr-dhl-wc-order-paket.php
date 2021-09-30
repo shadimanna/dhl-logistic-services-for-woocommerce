@@ -18,6 +18,8 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 	protected $carrier = 'DHL Paket';
 
+	const DHL_PICKUP_PRODUCT = '08';
+
 	public function init_hooks(){
 
 		parent::init_hooks();
@@ -797,9 +799,13 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		}
 
 		$args['dhl_pickup_label_tracking'] = $tracking_numbers;
+		$args['dhl_pickup_billing_number'] = $args['dhl_settings']['account_num'].self::DHL_PICKUP_PRODUCT.$args['dhl_settings']['participation'];
 
-		// echo 'args: ';
-		// var_dump($args);
+		// Allow third parties to modify the args to the DHL APIs
+		$args = apply_filters('pr_shipping_dhl_paket_pickup_args', $args, $order_id );
+
+		// echo 'args: <pre>';
+		// print_r($args);
 		// die();
 
 		try {

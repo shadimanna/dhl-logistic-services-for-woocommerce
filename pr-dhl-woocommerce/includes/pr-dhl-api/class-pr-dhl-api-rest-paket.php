@@ -87,7 +87,6 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 	protected function create_api_client() {
 		// Create the API client, using this instance's driver and auth objects
 		return new Client(
-			$this->get_account_number(),
 			$this->get_customer_portal_username(),
 			$this->get_customer_portal_password(),
 			$this->get_api_url(),
@@ -240,7 +239,7 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 	}
 
 	/**
-	 * Retrieves the DHL Pickup Account Number
+	 * Retrieves the Sandbox DHL Pickup Account Number
 	 *
 	 * @since [*next-version*]
 	 *
@@ -248,15 +247,14 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 	 *
 	 * @throws Exception If failed to retrieve the EKP from the settings.
 	 */
-	public function get_account_number() {
+	public function maybe_get_sandbox_account_number() {
 		$is_sandbox = $this->get_setting( 'dhl_sandbox' );
 		$is_sandbox = filter_var($is_sandbox, FILTER_VALIDATE_BOOLEAN);
 		if ( $is_sandbox ) {
 			$sandbox_info = $this->sandbox_info_customer_portal();
 			return $sandbox_info['account_no'];
-		} else {
-			return $this->get_setting( 'dhl_account_num' );
 		}
+		return null;
 	}
 
 	/**
@@ -378,9 +376,9 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 		$uom 				= get_option( 'woocommerce_weight_unit' );
         $is_cross_border 	= PR_DHL()->is_crossborder_shipment( $args['shipping_address']['country'] );
 
-		// Maybe override account here for Sandbox user
-		if ( isset($args['dhl_settings']['account_num']) ) {
-			$args['dhl_settings']['account_num'] = $this->get_account_number();
+		// Maybe override account billing number here for Sandbox user
+		if ( $this->maybe_get_sandbox_account_number() ) {
+			$args['dhl_pickup_billing_number'] = $this->maybe_get_sandbox_account_number();
 		}
 
 		try {
