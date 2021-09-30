@@ -222,7 +222,7 @@ class Client extends API_Client {
 	 * @return string
 	 */
 	protected function request_pickup_route() {
-		return 'rest/pickup360/order';
+		return 'pickup360/order';
 	}
 
 }
