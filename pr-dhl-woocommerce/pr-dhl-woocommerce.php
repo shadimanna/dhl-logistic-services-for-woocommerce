@@ -5,11 +5,12 @@
  * Description: WooCommerce integration for DHL eCommerce, DHL Paket, DHL Parcel Europe (Benelux and Iberia) and Deutsche Post International
  * Author: DHL
  * Author URI: http://dhl.com/woocommerce
- * Text Domain: pr-shipping-dhl
+ * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
- * Version: 2.5.13
+ * Version: 2.6.0
  * WC requires at least: 3.0
  * WC tested up to: 5.6
+ * Requires at least: 4.6
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "2.5.13";
+	private $version = "2.6.0";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -130,7 +131,7 @@ class PR_DHL_WC {
 		$this->define( 'PR_DHL_LOG_DIR', $upload_dir['basedir'] . '/wc-logs/' );
 
 		// DHL specific URLs
-		$this->define( 'PR_DHL_BUTTON_TEST_CONNECTION', __( 'Test Connection', 'pr-shipping-dhl' ) );
+		$this->define( 'PR_DHL_BUTTON_TEST_CONNECTION', __( 'Test Connection', 'dhl-for-woocommerce' ) );
 
 		// DHL eCommerce
 		$this->define( 'PR_DHL_REST_AUTH_URL', 'https://api.dhlecommerce.com' );
@@ -153,9 +154,9 @@ class PR_DHL_WC {
 		$this->define( 'PR_DHL_PAKET_BUSSINESS_PORTAL', 'https://www.dhl-geschaeftskundenportal.de' );
 		$this->define( 'PR_DHL_PAKET_DEVELOPER_PORTAL', 'https://entwickler.dhl.de/' );
 
-		$this->define( 'PR_DHL_PACKSTATION', __('Packstation ', 'pr-shipping-dhl') );
-		$this->define( 'PR_DHL_PARCELSHOP', __('Postfiliale ', 'pr-shipping-dhl') );
-		$this->define( 'PR_DHL_POST_OFFICE', __('Postfiliale ', 'pr-shipping-dhl') );
+		$this->define( 'PR_DHL_PACKSTATION', __('Packstation ', 'dhl-for-woocommerce') );
+		$this->define( 'PR_DHL_PARCELSHOP', __('Postfiliale ', 'dhl-for-woocommerce') );
+		$this->define( 'PR_DHL_POST_OFFICE', __('Postfiliale ', 'dhl-for-woocommerce') );
 	}
 
 	/**
@@ -275,7 +276,7 @@ class PR_DHL_WC {
 	 * Localisation
 	 */
 	public function load_textdomain() {
-		load_plugin_textdomain( 'pr-shipping-dhl', false, dirname( plugin_basename(__FILE__) ) . '/lang/' );
+		load_plugin_textdomain( 'dhl-for-woocommerce', false, dirname( plugin_basename(__FILE__) ) . '/lang/' );
 	}
 
 	public function dhl_enqueue_scripts() {
@@ -372,7 +373,7 @@ class PR_DHL_WC {
 	public function notice_wc_required() {
 	?>
 		<div class="error">
-			<p><?php _e( 'WooCommerce DHL Integration requires WooCommerce to be installed and activated!', 'pr-shipping-dhl' ); ?></p>
+			<p><?php _e( 'WooCommerce DHL Integration requires WooCommerce to be installed and activated!', 'dhl-for-woocommerce' ); ?></p>
 		</div>
 	<?php
 	}
@@ -509,13 +510,13 @@ class PR_DHL_WC {
 			} elseif( $dhl_obj->is_dhl_deutsche_post() ) {
 			    list($api_user, $api_pwd) = $dhl_obj->get_api_creds();
 			} else {
-				throw new Exception( __('Country not supported', 'pr-shipping-dhl') );
-
+				throw new Exception( __('Country not supported', 'dhl-for-woocommerce') );
+				
 			}
 
 			$connection = $dhl_obj->dhl_test_connection( $api_user, $api_pwd );
-
-			$connection_msg = __('Connection Successful!', 'pr-shipping-dhl');
+				
+			$connection_msg = __('Connection Successful!', 'dhl-for-woocommerce');
 			$this->log_msg( $connection_msg );
 
 			wp_send_json( array(
@@ -526,8 +527,8 @@ class PR_DHL_WC {
 		} catch (Exception $e) {
 			$this->log_msg($e->getMessage());
 
-			wp_send_json( array(
-				'connection_error' => sprintf( __('Connection Failed: %s Make sure to save the settings before testing the connection. ', 'pr-shipping-dhl'), $e->getMessage() ),
+			wp_send_json( array( 
+				'connection_error' => sprintf( __('Connection Failed: %s Make sure to save the settings before testing the connection. ', 'dhl-for-woocommerce'), $e->getMessage() ),
 				'button_txt'			=> PR_DHL_BUTTON_TEST_CONNECTION
 				 ) );
 		}

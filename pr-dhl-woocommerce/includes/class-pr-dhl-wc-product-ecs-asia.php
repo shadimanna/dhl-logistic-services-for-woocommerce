@@ -17,7 +17,7 @@ if ( ! class_exists( 'PR_DHL_WC_Product_eCS_Asia' ) ) :
 class PR_DHL_WC_Product_eCS_Asia extends PR_DHL_WC_Product {
 
 	public function get_manufacture_tooltip() {
-		return __('Country of Manufacture. Mandatory for shipments exporting from China.', 'pr-shipping-dhl');
+		return __('Country of Manufacture. Mandatory for shipments exporting from China.', 'dhl-for-woocommerce');
 	}
 
 	/**
@@ -27,7 +27,7 @@ class PR_DHL_WC_Product_eCS_Asia extends PR_DHL_WC_Product {
 	 */
 	public function additional_product_settings() {
 	    
-	    $content_indicators = array( '0' => __('- select content indicator -', 'pr-shipping-dhl' ) );
+	    $content_indicators = array( '0' => __('- select content indicator -', 'dhl-for-woocommerce' ) );
 
 	    try {
 	    	
@@ -43,8 +43,8 @@ class PR_DHL_WC_Product_eCS_Asia extends PR_DHL_WC_Product {
 	    woocommerce_wp_select(
 	    	array(
 				'id' => '_dhl_dangerous_goods',
-				'label' => __('Content Indicator (DHL)', 'pr-shipping-dhl'),
-				'description' => __('The content indicator is used as dangerous goods classifier required for air transport.', 'pr-shipping-dhl'),
+				'label' => __('Content Indicator (DHL)', 'dhl-for-woocommerce'),
+				'description' => __('The content indicator is used as dangerous goods classifier required for air transport.', 'dhl-for-woocommerce'),
 				'desc_tip' => 'true',
 				/*'value' => $country_value,*/
 				'options'    => $content_indicators
@@ -54,8 +54,8 @@ class PR_DHL_WC_Product_eCS_Asia extends PR_DHL_WC_Product {
 		woocommerce_wp_textarea_input( 
 			array(
 				'id' => '_dhl_export_description',
-				'label' => __('Export Description (DHL)', 'pr-shipping-dhl'),
-				'description' => __('Product description to faciliate cross-border shipments. This field is limited to 50 charaters. Mandatory for shipments exporting from China, must be in Chinese characters.', 'pr-shipping-dhl'),
+				'label' => __('Export Description (DHL)', 'dhl-for-woocommerce'),
+				'description' => __('Product description to faciliate cross-border shipments. This field is limited to 50 charaters. Mandatory for shipments exporting from China, must be in Chinese characters.', 'dhl-for-woocommerce'),
 				'desc_tip' => 'true',
 				'placeholder' => 'Product export description...',
 				'custom_attributes'	=> array( 'maxlength' => '50' )

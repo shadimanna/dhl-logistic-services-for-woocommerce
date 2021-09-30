@@ -194,23 +194,23 @@ abstract class PR_DHL_API_REST {
 					$error_message .= ' ' . $response_body->backendError->message;
 				}
 
-				throw new Exception( __('400 - ', 'pr-shipping-dhl') . $error_message );
+				throw new Exception( __('400 - ', 'dhl-for-woocommerce') . $error_message );
 				break;
 			case '401':
-				throw new Exception( __('401 - Unauthorized Access - Invalid token or Authentication Header parameter', 'pr-shipping-dhl') );
+				throw new Exception( __('401 - Unauthorized Access - Invalid token or Authentication Header parameter', 'dhl-for-woocommerce') );
 				break;
 			case '408':
-				throw new Exception( __('408 - Request Timeout', 'pr-shipping-dhl') );
+				throw new Exception( __('408 - Request Timeout', 'dhl-for-woocommerce') );
 				break;
 			case '429':
-				throw new Exception( __('429 - Too many requests in given amount of time', 'pr-shipping-dhl') );
+				throw new Exception( __('429 - Too many requests in given amount of time', 'dhl-for-woocommerce') );
 				break;
 			case '503':
-				throw new Exception( __('503 - Service Unavailable', 'pr-shipping-dhl') );
+				throw new Exception( __('503 - Service Unavailable', 'dhl-for-woocommerce') );
 				break;
 			default:
 				if ( empty($response_body->message) ) {
-					$error_message = __('POST error or timeout occured. Please try again later.', 'pr-shipping-dhl');
+					$error_message = __('POST error or timeout occured. Please try again later.', 'dhl-for-woocommerce');
 				} else {
 					$error_message = str_replace('/', ' / ', $response_body->message);
 				}
@@ -260,23 +260,23 @@ abstract class PR_DHL_API_REST {
 				break;
 			case '400':
 				$error_message = str_replace('/', ' / ', $response_body->message);
-				throw new Exception( __('400 - ', 'pr-shipping-dhl') . $error_message );
+				throw new Exception( __('400 - ', 'dhl-for-woocommerce') . $error_message );
 				break;
 			case '401':
-				throw new Exception( __('401 - Unauthorized Access - Invalid token or Authentication Header parameter', 'pr-shipping-dhl') );
+				throw new Exception( __('401 - Unauthorized Access - Invalid token or Authentication Header parameter', 'dhl-for-woocommerce') );
 				break;
 			case '408':
-				throw new Exception( __('408 - Request Timeout', 'pr-shipping-dhl') );
+				throw new Exception( __('408 - Request Timeout', 'dhl-for-woocommerce') );
 				break;
 			case '429':
-				throw new Exception( __('429 - Too many requests in given amount of time', 'pr-shipping-dhl') );
+				throw new Exception( __('429 - Too many requests in given amount of time', 'dhl-for-woocommerce') );
 				break;
 			case '503':
-				throw new Exception( __('503 - Service Unavailable', 'pr-shipping-dhl') );
+				throw new Exception( __('503 - Service Unavailable', 'dhl-for-woocommerce') );
 				break;
 			default:
 				if ( empty($response_body->message) ) {
-					$error_message = __('GET error or timeout occured. Please try again later.', 'pr-shipping-dhl');
+					$error_message = __('GET error or timeout occured. Please try again later.', 'dhl-for-woocommerce');
 				} else {
 					$error_message = str_replace('/', ' / ', $response_body->message);
 				}
@@ -347,9 +347,9 @@ abstract class PR_DHL_API_REST {
 			case 'string':
 				if( ( strlen($value) < $min_len ) || ( strlen($value) > $max_len ) ) {
 					if ( $min_len == $max_len ) {
-						throw new Exception( sprintf( __('The value must be %s characters.', 'pr-shipping-dhl'), $min_len) );
+						throw new Exception( sprintf( __('The value must be %s characters.', 'dhl-for-woocommerce'), $min_len) );
 					} else {
-						throw new Exception( sprintf( __('The value must be between %s and %s characters.', 'pr-shipping-dhl'), $min_len, $max_len ) );
+						throw new Exception( sprintf( __('The value must be between %s and %s characters.', 'dhl-for-woocommerce'), $min_len, $max_len ) );
 					}
 				}
 				break;
