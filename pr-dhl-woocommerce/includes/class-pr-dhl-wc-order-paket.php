@@ -780,9 +780,9 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$args['dhl_pickup_date'] = $pickup_date;
 
 		$args['dhl_pickup_business_hours'] = $pickup_business_hours;
-		$args['dhl_pickup_transportation_type'] = $transportation_type;
+		//$args['dhl_pickup_transportation_type'] = $transportation_type; // Disabled, use bulky_goods to determine transportation type (see Pickup_Request_info.php)
 
-		//$args['order_details']['bulky_goods'] = 1; // TEST bulky goods
+		//$args['order_details']['bulky_goods'] = 'yes'; // TEST bulky goods
 
 		//Get label (s)
 		$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
@@ -803,10 +803,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 		// Allow third parties to modify the args to the DHL APIs
 		$args = apply_filters('pr_shipping_dhl_paket_pickup_args', $args, $order_id );
-
-		// echo 'args: <pre>';
-		// print_r($args);
-		// die();
 
 		try {
 
@@ -955,8 +951,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			<?php
 			echo '<div id="dhl-paket-action-request-pickup">';
 
-			//echo '<h4><label>'.__( 'Select a pickup date and transporation type for the DHL Pickup Request.', 'dhl-for-woocommerce' ).'</label></h4>';
-
+			/*
 			$transport_options = [
 				'PAKET' => 'PAKET',
 				'SPERRGUT' => 'SPERRGUT'
@@ -971,6 +966,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			) );
 
 			echo '<hr><br>';
+			*/
 
 			woocommerce_wp_radio( array(
 				'id'          		=> 'pr_dhl_request_pickup_modal',

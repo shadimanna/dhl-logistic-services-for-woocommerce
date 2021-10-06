@@ -71,6 +71,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			// error_log(print_r($response_body,true));
 			// error_log(print_r( $soap_client->__getLastRequest(), true ));
 			PR_DHL()->log_msg( 'Response: Successful');
+			PR_DHL()->log_msg( 'createShipmentOrder response: '. print_r( $response_body, true ));
 			return $this->process_label_response( $response_body, $args['order_details']['order_id'] );
 
 
