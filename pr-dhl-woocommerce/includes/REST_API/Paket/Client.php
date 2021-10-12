@@ -91,7 +91,6 @@ class Client extends API_Client {
 						$this->generate_error_details( $response->body )
 					)
 				);
-
 			}
 
 		} elseif ( $response->status >= 400 && $response->status <= 499  ) {

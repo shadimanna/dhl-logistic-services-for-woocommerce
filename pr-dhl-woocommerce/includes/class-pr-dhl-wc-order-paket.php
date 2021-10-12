@@ -951,6 +951,10 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			<?php
 			echo '<div id="dhl-paket-action-request-pickup">';
 
+			echo '<h3>'.__( 'Schedule a DHL Pickup Request.', 'dhl-for-woocommerce' ).'</h3>';
+			echo '<b>'.__( 'Your Shipper address and business hours from Settings will be used for the pickup.', 'dhl-for-woocommerce' ).'</b><br>';
+			echo '<hr>';
+
 			/*
 			$transport_options = [
 				'PAKET' => 'PAKET',
@@ -992,7 +996,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			) );
 
 			echo '</div>';
-			echo '<hr><br><button type="button" class="button button-primary" id="pr_dhl_pickup_proceed">'.__( 'Submit', 'dhl-for-woocommerce' ).'</button>';
+			echo '<br><button type="button" class="button button-primary" id="pr_dhl_pickup_proceed">'.__( 'Submit', 'dhl-for-woocommerce' ).'</button>';
 
 			echo '</div>';
 			?>

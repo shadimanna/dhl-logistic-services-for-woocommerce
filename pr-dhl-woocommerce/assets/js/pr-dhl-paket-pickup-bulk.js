@@ -27,7 +27,7 @@
 			if( 'pr_dhl_request_pickup' == value ){
 
 				// Show thickbox modal.
-				tb_show( "", '/?TB_inline=true&width=320&height=260&inlineId=dhl-paket-pickup-modal' );
+				tb_show( "", '/?TB_inline=true&width=320&height=290&inlineId=dhl-paket-pickup-modal' );
 				jQuery("#TB_window #TB_ajaxWindowTitle").text(title); // Set title
 
 			}else{

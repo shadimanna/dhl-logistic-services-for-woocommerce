@@ -144,7 +144,13 @@ class Pickup_Request_Info {
 				//'transportation_type' => $args['dhl_pickup_transportation_type'],
 			);
 			$label_shipping_info = $shipping_info + $label_info;
-			$this->shipments[] = Args_Parser::parse_args( $label_shipping_info, $this->get_shipment_info_schema() );
+			$shipment = Args_Parser::parse_args( $label_shipping_info, $this->get_shipment_info_schema() );
+
+			//Empty tracking number?
+			if ( isset( $shipment['shipmentNumber'] ) && empty( $shipment['shipmentNumber'] ) ) {
+				unset( $shipment['shipmentNumber'] );
+			}
+			$this->shipments[] = $shipment;
 		}
 
 		$this->business_hours 		= array();

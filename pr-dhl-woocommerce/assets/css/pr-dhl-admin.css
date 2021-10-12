@@ -101,8 +101,21 @@ p.dhl-total-packages > label {
 }
 
 #dhl-paket-action-request-pickup {
-	padding: 10px;
+	padding: 0 10px;
 }
+#dhl-paket-action-request-pickup h3 {
+	margin: 10px 0;
+	padding: 0 0;
+}
+
+#dhl-paket-action-request-pickup p.form-field {
+	margin: 5px 0;
+}
+#dhl-paket-action-request-pickup p.pr_dhl_request_pickup_date_modal_field {
+	margin: 0 0;
+	padding: 0;
+}
+
 @media screen and (max-width: 782px) {
 	#dhl-paket-action-request-pickup {
 		padding: 0;
