@@ -699,7 +699,8 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 				// An an order note for the AWB
 				$item_awb_note = __('Shipment AWB: ', 'dhl-for-woocommerce') . $shipment->awb;
 				// 'type' should alwasys be private for AWB
-				$item_wc_order->add_order_note( $item_awb_note, '', true );
+				$awb_note_type = apply_filters( 'pr_shipping_dhl_send_tracking_note_to_customer', '' );
+				$item_wc_order->add_order_note( $item_awb_note, $awb_note_type, true );
 
 				// Save the AWB in the list.
 				$awbs[] = $shipment->awb;

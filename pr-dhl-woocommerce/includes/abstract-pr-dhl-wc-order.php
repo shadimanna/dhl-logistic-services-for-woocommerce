@@ -1075,6 +1075,8 @@ abstract class PR_DHL_WC_Order {
 							$tracking_note_type = empty( $tracking_note_type ) ? 0 : 1;
 							// $label_url = $label_tracking_info['label_url'];
 
+							$tracking_note_type = apply_filters( 'pr_shipping_dhl_send_tracking_note_to_customer', $tracking_note_type );
+
 							$order->add_order_note( $tracking_note, $tracking_note_type, true );
 
 							++$label_count;
