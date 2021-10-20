@@ -363,7 +363,7 @@ class Pickup_Request_Info {
 			),
 			// 'tracking_number'	=> array(
 			// 	'rename' => 'shipmentNumber',
-			// 	'default' => '',
+			// 	'default' => 0,
 			// )
  		);
  	}
