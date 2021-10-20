@@ -32,6 +32,13 @@ jQuery( function( $ ) {
 				.on( 'change', '#pr_dhl_multi_packages_enabled', this.show_hide_packages );
 			wc_shipment_dhl_label_items.show_hide_packages();
 
+			$( '#woocommerce-shipment-dhl-label' )
+				.on( 'change', '#pr_dhl_duties', this.show_hide_incoterm_tax_id );
+			wc_shipment_dhl_label_items.show_hide_incoterm_tax_id();
+
+			$( '#woocommerce-shipment-dhl-label' )
+				.on( 'change', '#pr_dhl_tax_id_type', this.show_hide_tax_id );
+			wc_shipment_dhl_label_items.show_hide_tax_id();
 		},
 
 		// Extract the entries for the given package attribute
@@ -149,6 +156,65 @@ jQuery( function( $ ) {
 			    	}
 			    }
 			});
+		},
+
+		show_hide_tax_id: function () {
+			var tax_id_type = $('select#pr_dhl_tax_id_type :selected').val();
+
+			// If type is IOSS (DHL), or none selected
+			if ( tax_id_type == '4' || tax_id_type == 'none' || tax_id_type == '' ) {
+				$('.pr_dhl_tax_id_field').hide();
+				$('#pr_dhl_tax_id').val('');
+			} else {
+				$('.pr_dhl_tax_id_field').show();
+
+				// Country specific check based on tax id type selected
+				var data = {
+					action:                   'wc_shipment_dhl_check_order_country_show_tax_id',
+					order_id:                 woocommerce_admin_meta_boxes.post_id,
+					tax_id_type: 		      tax_id_type
+				};
+				$.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
+
+					if ( response.hide_tax_id == true ) {
+						$('.pr_dhl_tax_id_field').hide();
+						$('#pr_dhl_tax_id').val('');
+					} else {
+						$('.pr_dhl_tax_id_field').show();
+					}
+
+				});
+
+			}
+		},
+
+		show_hide_incoterm_tax_id: function () {
+			var incoterm_selected = $('select#pr_dhl_duties :selected').val();
+
+			var data = {
+				action:                   'wc_shipment_dhl_check_incoterm_tax_id',
+				order_id:                 woocommerce_admin_meta_boxes.post_id,
+				incoterm: 				  incoterm_selected
+			};
+
+			$.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
+
+				if ( response.hide_tax_id == true ) {
+					$('.pr_dhl_tax_id_field').hide();
+					$('#pr_dhl_tax_id').val('');
+				} else {
+					$('.pr_dhl_tax_id_field').show();
+				}
+
+				if ( response.hide_tax_type == true ) {
+					$('.pr_dhl_tax_id_type_field').hide();
+					$('#pr_dhl_tax_id_type').val('none');
+				} else {
+					$('.pr_dhl_tax_id_type_field').show();
+
+				}
+			});
+
 		},
 
 		show_hide_ident: function () {

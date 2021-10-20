@@ -1,5 +1,16 @@
 # DHL Parcel plugin for WooCommerce
  
+v1.3.13
+## Changes
+- Added a setting to set additional shipping fees for specific products
+- Added support for additional order status
+- Added automatic label creation and printing
+- Updated developer settings text to avoid confusion
+ 
+v1.3.12
+## Changes
+- Fixed autoloader for PHP8
+ 
 v1.3.11
 ## Changes
 - Fixed an issue where decimals were not calculated correctly in conditional rules for delivery options

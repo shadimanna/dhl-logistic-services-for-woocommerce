@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! class_exists( 'PR_DHL_WC_Order_eCS_Asia' ) ) :
 
 class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
-	
+
 	protected $carrier = 'DHL eCS Asia';
 
 	/**
@@ -44,6 +44,11 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 		// The Close out label download endpoint
 		add_action( 'init', array( $this, 'add_download_close_out_endpoint' ) );
 		add_action( 'parse_query', array( $this, 'process_download_close_out' ) );
+
+		// Order page metabox actions
+		add_action( 'wp_ajax_wc_shipment_dhl_check_incoterm_tax_id', array( $this, 'check_incoterm_tax_id_ajax' ) );
+		add_action( 'wp_ajax_wc_shipment_dhl_check_order_country_show_tax_id', array( $this, 'check_shipping_country_show_tax_id_ajax' ) );
+
 	}
 
 	public function add_download_close_out_endpoint() {
@@ -53,9 +58,9 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 	public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
 
 		$order 	= wc_get_order( $order_id );
-		
+
 		if( $this->is_crossborder_shipment( $order_id ) ) {
-			
+
 			// Duties drop down
 			$duties_opt = $dhl_obj->get_dhl_duties();
 			woocommerce_wp_select( array(
@@ -120,7 +125,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 			'value'       		=> isset( $dhl_label_items['pr_dhl_insurance_value'] ) ? $dhl_label_items['pr_dhl_insurance_value'] : $order->get_subtotal(),
 			'custom_attributes'	=> array( $is_disabled => $is_disabled )
 	) );
-		
+
 		if( $this->is_shipping_domestic( $order_id ) ) {
 
 			woocommerce_wp_checkbox( array(
@@ -134,8 +139,102 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 		}
 
+		if( $this->is_crossborder_shipment( $order_id ) ) {
+
+
+				// Tax ID type drop down
+				$select_dhl_tax_id_types = array(
+						'' => __( ' ', 'dhl-for-woocommerce' ),
+						'none' => __( '-- No Shipper Tax ID --', 'dhl-for-woocommerce' )
+					);
+				$select_dhl_tax_id_types += $dhl_obj->get_dhl_tax_id_types();
+				woocommerce_wp_select( array(
+						'id'          		=> 'pr_dhl_tax_id_type',
+						'label'       		=> __( 'Shipper Tax ID Type:', 'dhl-for-woocommerce' ),
+						'description'		=> '',
+						'value'       		=> isset( $dhl_label_items['pr_dhl_tax_id_type'] ) ? $dhl_label_items['pr_dhl_tax_id_type'] : $this->shipping_dhl_settings['dhl_shipper_tax_id_type'],
+						'options'			=> $select_dhl_tax_id_types,
+						'custom_attributes'	=> array( $is_disabled => $is_disabled )
+					) );
+
+				woocommerce_wp_text_input( array(
+					'id'          		=> 'pr_dhl_tax_id',
+					'class'          	=> 'short',
+					'label'       		=> __( 'Shipper Tax ID:', 'dhl-for-woocommerce' ),
+					'placeholder' 		=> '',
+					'description'		=> '',
+					'value'       		=> isset( $dhl_label_items['pr_dhl_tax_id'] ) ? $dhl_label_items['pr_dhl_tax_id'] : $this->shipping_dhl_settings['dhl_shipper_tax_id'],
+					'custom_attributes'	=> array( $is_disabled => $is_disabled )
+				) );
+
+		}
+
 	}
-	
+
+	function check_incoterm_tax_id_ajax() {
+
+		$order_id = wc_clean( $_POST[ 'order_id' ] );
+		$incoterm = wc_clean( $_POST[ 'incoterm' ] );
+
+		if ( $incoterm == 'DDU' &&
+			( $this->is_crossborder_shipment_europe( $order_id ) || $this->is_crossborder_shipment_great_britain( $order_id ) ) ) {
+			wp_send_json( array( 'hide_tax_id' => true, 'hide_tax_type' => true ) );
+		} else {
+			wp_send_json( array( 'hide_tax_id' => false, 'hide_tax_type' => false ) );
+		}
+
+		wp_die();
+	}
+
+	function check_shipping_country_show_tax_id_ajax() {
+
+		$order_id = wc_clean( $_POST[ 'order_id' ] );
+		$tax_id_type = wc_clean( $_POST[ 'tax_id_type' ] );
+
+		//If IOSS
+		if ( $tax_id_type == '3' ) {
+			if ( !$this->is_crossborder_shipment_europe( $order_id ) ) {
+				wp_send_json( array( 'hide_tax_id' => true) );
+			}
+		} elseif ( $tax_id_type == '1' ) { // If VAT/GST
+			if ( !$this->is_crossborder_shipment_europe( $order_id ) && !$this->is_crossborder_shipment_great_britain( $order_id ) ) {
+				wp_send_json( array( 'hide_tax_id' => true) );
+			}
+		} elseif ( $tax_id_type == '2' ) { // IF EORI
+			if ( !$this->is_crossborder_shipment_great_britain( $order_id ) ) {
+				wp_send_json( array( 'hide_tax_id' => true) );
+			}
+		}
+
+		wp_send_json( array( 'hide_tax_id' => false ) );
+		wp_die();
+	}
+
+
+	protected function is_crossborder_shipment_europe( $order_id ) {
+		$order = wc_get_order( $order_id );
+		$shipping_address = $order->get_address( 'shipping' );
+		$shipping_country = $shipping_address['country'];
+
+		if ( in_array( $shipping_country, PR_DHL()->get_eu_iso2() ) ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	protected function is_crossborder_shipment_great_britain( $order_id ) {
+		$order = wc_get_order( $order_id );
+		$shipping_address = $order->get_address( 'shipping' );
+		$shipping_country = $shipping_address['country'];
+
+		if ( $shipping_country == 'GB' ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 
 	/**
 	 * Order Tracking Save
@@ -144,10 +243,10 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 	 */
 	public function get_additional_meta_ids( ) {
 
-		return array( 'pr_dhl_duties', 'pr_dhl_description', 'pr_dhl_is_cod', 'pr_dhl_additional_insurance', 'pr_dhl_insurance_value', 'pr_dhl_obox_service' );
+		return array( 'pr_dhl_duties', 'pr_dhl_description', 'pr_dhl_is_cod', 'pr_dhl_additional_insurance', 'pr_dhl_insurance_value', 'pr_dhl_obox_service', 'pr_dhl_tax_id_type', 'pr_dhl_tax_id' );
 
 	}
-	
+
 	protected function get_tracking_url() {
 		$dhl_obj 	= PR_DHL()->get_dhl_factory();
 		$is_sandbox = $dhl_obj->get_setting( 'dhl_sandbox' );
@@ -166,7 +265,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 		foreach ($ordered_items as $key => $item) {
 			$product_id = $item['product_id'];
 			$product = wc_get_product( $product_id );
-			
+
 			// If product does not exist, i.e. deleted go to next one
 			if ( empty( $product ) ) {
 				continue;
@@ -203,7 +302,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 		$desc_array = array_unique($desc_array);
 		$desc_text = implode(', ', $desc_array);
 		$desc_text = mb_substr( $desc_text, 0, 50, 'UTF-8' );
-		
+
 		return $desc_text;
 	}
 
@@ -234,16 +333,15 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 		// Get package prefix
 		$args['order_details']['prefix'] = $this->shipping_dhl_settings['dhl_prefix'];
-		
+
 		// Get package prefix
 		if ( ! empty( $dhl_label_items['pr_dhl_description'] ) ) {
 			$args['order_details']['description'] = $dhl_label_items['pr_dhl_description'];
 		} else {
 			// If description is empty and it is an international shipment throw an error
 			if ( $this->is_crossborder_shipment( $order_id ) ) {
-				throw new Exception( __('The package description cannot be empty!', 'dhl-for-woocommerce') );
-				
-			}			
+				throw new Exception( __('The package description cannot be empty!', 'dhl-for-woocommerce') );			
+			}
 		}
 
 		if ( isset( $this->shipping_dhl_settings['dhl_order_note'] ) && $this->shipping_dhl_settings['dhl_order_note'] == 'yes' ) {
@@ -267,7 +365,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 			$args['order_details']['additional_insurance'] = $dhl_label_items['pr_dhl_additional_insurance'];
 		}
 
-		if ( ! empty( $dhl_label_items['pr_dhl_insurance_value'] ) ) { 
+		if ( ! empty( $dhl_label_items['pr_dhl_insurance_value'] ) ) {
 			$args['order_details']['insurance_value'] = $dhl_label_items['pr_dhl_insurance_value'];
 		}
 
@@ -275,9 +373,35 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 			$args['order_details']['obox_service'] = $dhl_label_items['pr_dhl_obox_service'];
 		}
 
+		if ( ! empty( $dhl_label_items['pr_dhl_tax_id'] ) ) {
+			$args[ 'dhl_settings' ]['dh_tax_id'] = $dhl_label_items['pr_dhl_tax_id'];
+		}
+
+		if ( ! empty( $dhl_label_items['pr_dhl_tax_id_type'] ) ) {
+			$args[ 'dhl_settings' ]['dh_tax_id_type'] = $dhl_label_items['pr_dhl_tax_id_type'];
+
+			// Override tax type and id sent in args, determine if we should send tax ID based on type and country
+			if ( $dhl_label_items['pr_dhl_tax_id_type'] == '3' ) { //If IOSS
+				if ( !$this->is_crossborder_shipment_europe( $order_id ) ) {
+					$args[ 'dhl_settings' ]['dh_tax_id'] = '';
+					$args[ 'dhl_settings' ]['dh_tax_id_type'] = 'none';
+				}
+			} elseif ( $dhl_label_items['pr_dhl_tax_id_type'] == '1' ) { // If VAT/GST
+				if ( !$this->is_crossborder_shipment_europe( $order_id ) && !$this->is_crossborder_shipment_great_britain( $order_id ) ) {
+					$args[ 'dhl_settings' ]['dh_tax_id'] = '';
+					$args[ 'dhl_settings' ]['dh_tax_id_type'] = 'none';
+				}
+			} elseif ( $dhl_label_items['pr_dhl_tax_id_type'] == '2' ) { // IF EORI
+				if ( !$this->is_crossborder_shipment_great_britain( $order_id ) ) {
+					$args[ 'dhl_settings' ]['dh_tax_id'] = '';
+					$args[ 'dhl_settings' ]['dh_tax_id_type'] = 'none';
+				}
+			}
+		}
+
 		return $args;
 	}
-	
+
 	// Pass args by reference to modify DG if needed
 	protected function get_label_item_args( $product_id, &$args ) {
 
@@ -292,7 +416,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 	    	} else {
 	    		$args['order_details']['dangerous_goods'] = $dangerous_goods;
 	    	}
-	    	
+
 		}
 
 		$new_item['item_export'] 		= get_post_meta( $product_id, '_dhl_export_description', true );
@@ -307,7 +431,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 		parent::save_default_dhl_label_items( $order_id );
 
 		$dhl_label_items = $this->get_dhl_label_items( $order_id );
-		
+
 		if( empty( $dhl_label_items['pr_dhl_description'] ) ) {
 			$dhl_label_items['pr_dhl_description'] = $this->get_package_description( $order_id );
 		}
@@ -336,6 +460,14 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
         if( empty( $dhl_label_items['pr_dhl_insurance_value'] ) ) {
             $dhl_label_items['pr_dhl_insurance_value'] = $order->get_subtotal();
         }
+
+		if( empty( $dhl_label_items['pr_dhl_tax_id_type'] ) ) {
+			$dhl_label_items['pr_dhl_tax_id_type'] = $this->shipping_dhl_settings['dhl_shipper_tax_id_type'];
+		}
+
+		if( empty( $dhl_label_items['pr_dhl_tax_id'] ) ) {
+			$dhl_label_items['pr_dhl_tax_id'] = $this->shipping_dhl_settings['dhl_shipper_tax_id'];
+		}
 
 		$this->save_dhl_label_items( $order_id, $dhl_label_items );
 	}
@@ -419,7 +551,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 	}
 
 	protected function get_download_label_url( $order_id ) {
-		
+
 		if( empty( $order_id ) ) {
 			return '';
 		}
@@ -429,7 +561,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 		if( empty( $label_tracking_info ) ) {
 			return '';
 		}
-		
+
 		// If no 'label_path' isset but a 'label_url' is set them return it...
 		// ... this indicates an old download style label!
 		if ( isset( $label_tracking_info['label_url'] ) ){
@@ -472,7 +604,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 	}
 
 	public function validate_bulk_actions( $action, $order_ids ) {
-		
+
 		$orders_count 	= count( $order_ids );
 
 		if( 'pr_dhl_create_labels' === $action ){
@@ -508,7 +640,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 	public function process_bulk_actions( $action, $order_ids, $orders_count, $dhl_force_product = false, $is_force_product_dom = false ) {
 
 		$array_messages = array();
-		
+
 		$action_arr = explode(':', $action);
 		if ( ! empty( $action_arr ) ) {
 			$action = $action_arr[0];
@@ -536,7 +668,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 				if( !isset( $closeout['handover_id'] ) ){
 					throw new Exception( __( 'Cannot get Handover ID!', 'dhl-for-woocommerce' ) );
 				}
-				
+
 				$message 	= '';
 
 				if( isset( $closeout['message'] ) ){
@@ -555,7 +687,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 						'type'    => 'success',
 					)
 				);
-				
+
 			} catch (Exception $exception) {
 				array_push(
 					$array_messages,
@@ -576,8 +708,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 				foreach ( $order_ids as $order_id ) {
 
-					if( !$this->is_crossborder_shipment( $order_id ) ){
-						
+					if( !$this->is_crossborder_shipment( $order_id ) ){						
 						throw new Exception( __( 'Local shipment found! Please pick international shipment only.', 'dhl-for-woocommerce' ) );
 					}
 					$label_tracking_info 	= $this->get_dhl_label_tracking( $order_id );
@@ -596,7 +727,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 						// Add post meta to identify if added to handover or not
 						update_post_meta( $order_id, '_pr_shipment_dhl_handover_note', 1 );
 					}
-					
+
 					$label_url 			= $this->generate_download_url( '/' . self::DHL_DOWNLOAD_CLOSE_OUT_ENDPOINT . '/' . $closeout['handover_id'] );
 
 					$manifest_text 	= sprintf(
@@ -622,7 +753,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 						'type'    => 'success',
 					)
 				);
-				
+
 			} catch (Exception $exception) {
 				array_push(
 					$array_messages,
@@ -669,11 +800,11 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 	public function process_download_close_out() {
 		global $wp_query;
-		
+
 		$dhl_close_out_id = isset($wp_query->query_vars[ self::DHL_DOWNLOAD_CLOSE_OUT_ENDPOINT ] )
 			? $wp_query->query_vars[ self::DHL_DOWNLOAD_CLOSE_OUT_ENDPOINT ]
 			: null;
-			
+
 		// If the endpoint param (aka the DHL order ID) is not in the query, we bail
 		if ( $dhl_close_out_id === null ) {
 			return;
@@ -681,7 +812,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 		$instance 	= PR_DHL()->get_dhl_factory();
 		$label_path = $instance->get_dhl_close_out_label_file_info( $dhl_close_out_id )->path;
-		
+
 		$array_messages = get_option( '_pr_dhl_bulk_action_confirmation' );
 		if ( empty( $array_messages ) || !is_array( $array_messages ) ) {
 			$array_messages = array( 'msg_user_id' => get_current_user_id() );
@@ -740,7 +871,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 			$items_qty = sizeof($order_ids);
 
 			try {
-				
+
 				// Get list of all DHL products and change key to name
 				$dhl_obj = PR_DHL()->get_dhl_factory();
 				$dhl_product_list = $dhl_obj->get_dhl_products_domestic() + $dhl_obj->get_dhl_products_international();
@@ -754,7 +885,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 				if ( empty( $dhl_label_items ) ) {
 					continue;
 				}
-				
+
 				// Add all weights
 				$total_weight += $dhl_label_items['pr_dhl_weight'];
 
@@ -877,7 +1008,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 				throw new Exception( __('Not all the file formats are the same.', 'dhl-for-woocommerce') );
 			}
 
-			$im = new Imagick($value);       
+			$im = new Imagick($value);
     		$all->addImage( $im );
 		}
 
@@ -888,10 +1019,10 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 		/* Append the images into one */
 		$all->resetIterator();
 		$combined = $all->appendImages(true);
-		// $ima = $im1->appendImages(true); 
+		// $ima = $im1->appendImages(true);
 		$combined->setImageFormat('png');
 		$combined->writeimage( $file_bulk_path );
-		
+
 		return array( 'file_bulk_path' => $file_bulk_path, 'file_bulk_url' => $file_bulk_url);
 	}
 
@@ -920,7 +1051,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 		$filename = 'dhl-label-bulk-' . time() . '.zpl';
 		$file_bulk_path = PR_DHL()->get_dhl_label_folder_dir() . $filename;
 		$file_bulk_url = PR_DHL()->get_dhl_label_folder_url() . $filename;
-		
+
 		$fp1 = fopen($file_bulk_path, 'a+');
 		fwrite($fp1, $files_content);
 
