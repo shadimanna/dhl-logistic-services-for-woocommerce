@@ -1,5 +1,9 @@
 # DHL Parcel plugin for WooCommerce
  
+v1.3.14
+## Changes
+- Added ServicePoint information for order completion mail
+ 
 v1.3.13
 ## Changes
 - Added a setting to set additional shipping fees for specific products
