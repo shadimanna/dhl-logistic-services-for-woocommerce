@@ -2,10 +2,10 @@
 Contributors: DHL, shadim, utzfu
 Donate link: 
 Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL Parcel Benelux, DHL Parcel Luxembourg, DHL Paket Germany, WooCommerce, Woocom, Woo Commerce, Shipping, shiping, label creation, label printing, shipping rates, DHL Paket
-Requires at least: 4.1
+Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 5.6
-Stable tag: 2.5.13
+Stable tag: 2.7.0
 WC requires at least: 3.0
 WC tested up to: 5.3
 License: GPLv2 or later
@@ -80,7 +80,24 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+
+= 2.7.0 =
+* DHL Paket: Add DHL Pickup request option in order bulk actions
  
+= 2.6.2 =
+* DHL Parcel: Added ServicePoint information for order completion mail
+
+= 2.6.1 =
+* DHL eCommerce Asia: Add required tax fields for European shipment destinations
+* DHL eCommerce Asia: Update DHL product list per country
+
+= 2.6.0 =
+* DHL Paket: Added "DHL Label Created" and "DHL Tracking Number" columns in order list
+* DHL Paket: Allow "Post Number" to be editable in the admin edit order page
+* DHL Paket: Added return ID number to the order note
+* DHL Paket: Fix issue with bulk create label when "Create Return Label default" setting checked
+* DHL Paket: Fix issue so the plugin is translatable on translate.wordpress.org
+
 = 2.5.13 =
 * DHL Parcel: Added a setting to set additional shipping fees for specific products
 * DHL Parcel: Added support for additional order status

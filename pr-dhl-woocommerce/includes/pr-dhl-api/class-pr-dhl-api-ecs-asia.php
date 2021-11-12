@@ -84,11 +84,22 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 
     public function get_dhl_duties() {
         $duties = array(
-            'DDU' => __('Duties Consignee Paid', 'pr-shipping-dhl'),
-            'DDP' => __('Duties Shipper Paid', 'pr-shipping-dhl')
+            'DDU' => __('Duties Consignee Paid', 'dhl-for-woocommerce'),
+            'DDP' => __('Duties Shipper Paid', 'dhl-for-woocommerce')
         );
         return $duties;
     }
+
+	public function get_dhl_tax_id_types() { 
+        $types = array(
+            '3' => __('IOSS', 'dhl-for-woocommerce'),
+            '4' => __('IOSS (DHL)', 'dhl-for-woocommerce'),
+			'1' => __('GST/VAT', 'dhl-for-woocommerce'),
+			'2' => __('EORI', 'dhl-for-woocommerce'),
+        );
+        return $types;
+    }
+
 
 	/**
 	 * Initializes the API client instance.
@@ -146,7 +157,7 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	protected function create_api_auth() {
 		// Get the saved DHL customer API credentials
 		list( $client_id, $client_secret ) = $this->get_api_creds();
-		
+
 		// Create the auth object using this instance's API driver and URL
 		return new Auth(
 			$this->api_driver,
@@ -263,7 +274,7 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 			$token = $this->api_auth->test_connection( $client_id, $client_secret );
 			// Save the token if successful
 			$this->api_auth->save_token( $token );
-			
+
 			return $token;
 		} catch ( Exception $e ) {
 			$this->api_auth->save_token( null );
@@ -282,13 +293,13 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 
 	public function get_dhl_content_indicator() {
 		return array(
-			'00' => __('Does not contain Lithium Batteries', 'pr-shipping-dhl' ),
-			'01' => __('Lithium Batteries in item', 'pr-shipping-dhl' ),
-			'02' => __('Lithium Batteries packed with item', 'pr-shipping-dhl' ),
-			'03' => __('Lithium Batteries only', 'pr-shipping-dhl' ),
-			'04' => __('Rechargeable Batteries in item', 'pr-shipping-dhl' ),
-			'05' => __('Rechargeable Batteries packed with item', 'pr-shipping-dhl' ),
-			'06' => __('Rechargeable Batteries only', 'pr-shipping-dhl' ),
+			'00' => __('Does not contain Lithium Batteries', 'dhl-for-woocommerce' ),
+			'01' => __('Lithium Batteries in item', 'dhl-for-woocommerce' ),
+			'02' => __('Lithium Batteries packed with item', 'dhl-for-woocommerce' ),
+			'03' => __('Lithium Batteries only', 'dhl-for-woocommerce' ),
+			'04' => __('Rechargeable Batteries in item', 'dhl-for-woocommerce' ),
+			'05' => __('Rechargeable Batteries packed with item', 'dhl-for-woocommerce' ),
+			'06' => __('Rechargeable Batteries only', 'dhl-for-woocommerce' ),
 		);
 	}
 
@@ -339,55 +350,59 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 
 		$products = array(
 			'PPM' => array(
-				'name' 	    => __( 'Packet Plus International Priority Manifest', 'pr-shipping-dhl' ),
+				'name' 	    => __( 'Packet Plus International Priority Manifest', 'dhl-for-woocommerce' ),
 				'origin_countries' => 'CN,HK,TH'
 			),
 			'PPS' => array(
-				'name' 	    => __( 'Packet Plus International Standard', 'pr-shipping-dhl' ),
+				'name' 	    => __( 'Packet Plus International Standard', 'dhl-for-woocommerce' ),
 				'origin_countries' => 'AU,CN,HK,IL,IN,MY,SG,TH'
 			),
 			'PPW' => array(
-				'name' 	    => __( 'Packet Plus Standard', 'pr-shipping-dhl' ),
-				'origin_countries' => 'AU,CN,HK,IL,IN,MY,SG,TH,VN'
+				'name' 	    => __( 'Packet Plus Standard', 'dhl-for-woocommerce' ),
+				'origin_countries' => 'AU,CN,HK,IL,IN,MY,SG,TH'
 			),
 			'PPR' => array(
-				'name' 	    => __( 'Destination Redelivery Services', 'pr-shipping-dhl' ),
-				'origin_countries' => 'AU,CN,HK,IL,IN,MY,SG,TH,VN'
+				'name' 	    => __( 'Destination Redelivery Services', 'dhl-for-woocommerce' ),
+				'origin_countries' => 'CN,HK'
 			),
 			'PKM' => array(
-				'name' 	    => __( 'Packet International Priority Manifest', 'pr-shipping-dhl' ),
+				'name' 	    => __( 'Packet International Priority Manifest', 'dhl-for-woocommerce' ),
 				'origin_countries' => 'CN,HK,TH'
 			),
 			'PKD' => array(
-				'name' 	    => __( 'Packet International Standard', 'pr-shipping-dhl' ),
-				'origin_countries' => 'CN,TH,HK,SG,AU,IN,MY'
+				'name' 	    => __( 'Packet International Standard', 'dhl-for-woocommerce' ),
+				'origin_countries' => 'CN,TH,HK,SG,AU,IN'
 			),
 			'PLT' => array(
-				'name' 	    => __( 'Parcel International Direct Standard', 'pr-shipping-dhl' ),
+				'name' 	    => __( 'Parcel International Direct Standard', 'dhl-for-woocommerce' ),
 				'origin_countries' => 'AU,CN,HK,IL,IN,MY,SG,TH'
 			),
 			'PLE' => array(
-				'name' 	    => __( 'Parcel International Direct Expedited', 'pr-shipping-dhl' ),
+				'name' 	    => __( 'Parcel International Direct Expedited', 'dhl-for-woocommerce' ),
 				'origin_countries' => 'IN,CN,HK,SG,TH,AU,MY'
 			),
 			'PLG' => array(
-				'name' 	    => __( 'Parcel International Direct Goods', 'pr-shipping-dhl' ),
-				'origin_countries' => 'AU,CN,HK,IL,IN,MY,SG,TH,VN'
+				'name' 	    => __( 'Parcel International Direct Goods', 'dhl-for-woocommerce' ),
+				'origin_countries' => 'CN,HK'
 			),
 			'PLD' => array(
-				'name' 	    => __( 'Parcel International Standard', 'pr-shipping-dhl' ),
+				'name' 	    => __( 'Parcel International Standard', 'dhl-for-woocommerce' ),
 				'origin_countries' => 'CN,HK,SG,AU,IN'
 			),
 			'PLR' => array(
-				'name' 	    => __( 'Destination Intended Return Services', 'pr-shipping-dhl' ),
-				'origin_countries' => 'AU,CN,HK,IL,IN,MY,SG,TH,VN'
+				'name' 	    => __( 'Destination Intended Return Services', 'dhl-for-woocommerce' ),
+				'origin_countries' => 'CN,HK'
 			),
 			'PKG' => array(
-				'name' 	    => __( 'Packet International Economy', 'pr-shipping-dhl' ),
+				'name' 	    => __( 'Packet International Economy', 'dhl-for-woocommerce' ),
 				'origin_countries' => 'CN,HK,IN,TH'
 			),
 			'PKW' => array(
-                'name' 	    => __( 'Parcel International Direct Semi', 'pr-shipping-dhl' ),
+                'name' 	    => __( 'Parcel International Direct Semi', 'dhl-for-woocommerce' ),
+                'origin_countries' => 'CN,HK'
+            ),
+            'PLB' => array(
+                'name' 	    => __( 'Bulky Goods Delivery', 'dhl-for-woocommerce' ),
                 'origin_countries' => 'CN,HK'
             ),
 		);
@@ -399,20 +414,24 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 
 		$products = array(
 			'PDO' => array(
-				'name' 	    => __( 'Parcel Domestic', 'pr-shipping-dhl' ),
+				'name' 	    => __( 'Parcel Domestic', 'dhl-for-woocommerce' ),
 				'origin_countries' => 'TH,VN,AU,MY'
 			),
 			'PDE' => array(
-				'name' 	    => __( 'Parcel Domestic Expedited', 'pr-shipping-dhl' ),
-				'origin_countries' => 'AU,VN'
+				'name' 	    => __( 'Parcel Domestic Expedited', 'dhl-for-woocommerce' ),
+				'origin_countries' => 'AU,VN,MY'
 			),/*
 			'PDR' => array(
-				'name' 	    => __( 'Parcel Return', 'pr-shipping-dhl' ),
+				'name' 	    => __( 'Parcel Return', 'dhl-for-woocommerce' ),
 				'origin_countries' => 'TH,VN,MY'
 			),*/
 			'SDP' => array(
-				'name' 	    => __( 'DHL Parcel Metro', 'pr-shipping-dhl' ),
+				'name' 	    => __( 'DHL Parcel Metro', 'dhl-for-woocommerce' ),
 				'origin_countries' => 'VN,TH,MY'
+			),
+			'ECO' => array(
+				'name' 	    => __( 'Parcel Economy Delivery', 'dhl-for-woocommerce' ),
+				'origin_countries' => 'TH'
 			),
 		);
 
@@ -438,7 +457,7 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		} catch (Exception $e) {
 			throw $e;
 		}
-		
+
 		// Create the shipping label
 
 		$label_info			= $this->api_client->create_label( $item_info );
@@ -446,7 +465,7 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		$label_pdf_data 	= ( $label_format == 'ZPL' )? $label_info->content : base64_decode( $label_info->content );
 		$shipment_id 		= $label_info->shipmentID;
 		$this->save_dhl_label_file( 'item', $shipment_id, $label_pdf_data );
-		
+
 		return array(
 			'label_path' 			=> $this->get_dhl_label_file_info( 'item', $shipment_id )->path,
 			'shipment_id' 			=> $shipment_id,
@@ -461,20 +480,20 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	 * @since [*next-version*]
 	 */
 	public function delete_dhl_label( $label_info ) {
-		
+
 		if ( ! isset( $label_info['label_path'] ) ) {
-			throw new Exception( __( 'DHL Label has no path!', 'pr-shipping-dhl' ) );
+			throw new Exception( __( 'DHL Label has no path!', 'dhl-for-woocommerce' ) );
 		}
 		$shipment_id 	= $label_info['shipment_id'];
 		$response 		= $this->api_client->delete_label( $shipment_id );
-			
+
 		$label_path = $label_info['label_path'];
 
 		if ( file_exists( $label_path ) ) {
 			$res = unlink( $label_path );
 
 			if ( ! $res ) {
-				throw new Exception( __( 'DHL Label could not be deleted!', 'pr-shipping-dhl' ) );
+				throw new Exception( __( 'DHL Label could not be deleted!', 'dhl-for-woocommerce' ) );
 			}
 		}
 	}
@@ -487,7 +506,7 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 	public function close_out_shipment( $shipment_ids = array() ){
 
 		$response 	= $this->api_client->close_out_labels( $this->country_code, $shipment_ids );
-		
+
 		$return = array();
 
 		if( isset( $response->handoverID ) ){
@@ -502,7 +521,7 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		if( isset( $response->responseStatus->messageDetails ) ){
 
 			foreach( $response->responseStatus->messageDetails as $msg ){
-				
+
 				if( isset( $msg->messageDetail ) ){
 					$return['message'] = $msg->messageDetail;
 				}
@@ -619,13 +638,13 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 
 		// Validate all file path including windows path
 		if ( validate_file( $file_info->path ) > 0 && validate_file( $file_info->path ) !== 2 ) {
-			throw new Exception( __( 'Invalid file path!', 'pr-shipping-dhl' ) );
+			throw new Exception( __( 'Invalid file path!', 'dhl-for-woocommerce' ) );
 		}
 
 		$file_ret = file_put_contents( $file_info->path, $data );
 
 		if ( empty( $file_ret ) ) {
-			throw new Exception( __( 'DHL label file cannot be saved!', 'pr-shipping-dhl' ) );
+			throw new Exception( __( 'DHL label file cannot be saved!', 'dhl-for-woocommerce' ) );
 		}
 
 		return $file_info;
@@ -656,7 +675,7 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 
 		// Throw error if the file could not be deleted
 		if (!$res) {
-			throw new Exception(__('DHL AWB Label could not be deleted!', 'pr-shipping-dhl'));
+			throw new Exception(__('DHL AWB Label could not be deleted!', 'dhl-for-woocommerce'));
 		}
 	}
 

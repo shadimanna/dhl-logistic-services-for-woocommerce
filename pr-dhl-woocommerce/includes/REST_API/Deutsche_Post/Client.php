@@ -88,7 +88,7 @@ class Client extends API_Client {
 			: strval( $response->body );
 
 		throw new Exception(
-			sprintf( __( 'API error: %s', 'pr-shipping-dhl' ), $message )
+			sprintf( __( 'API error: %s', 'dhl-for-woocommerce' ), $message )
 		);
 	}
 
@@ -121,7 +121,7 @@ class Client extends API_Client {
 			: strval( $response->body );
 
 		throw new Exception(
-			sprintf( __( 'API error: %s', 'pr-shipping-dhl' ), $message )
+			sprintf( __( 'API error: %s', 'dhl-for-woocommerce' ), $message )
 		);
 	}
 
@@ -155,7 +155,7 @@ class Client extends API_Client {
 			: strval( $response->body );
 
 		throw new Exception(
-			sprintf( __( 'API error: %s', 'pr-shipping-dhl' ), $message )
+			sprintf( __( 'API error: %s', 'dhl-for-woocommerce' ), $message )
 		);
 	}
 
@@ -177,7 +177,7 @@ class Client extends API_Client {
 
 		throw new Exception(
 			sprintf(
-				__( 'Failed to get items from the API: %s', 'pr-shipping-dhl' ),
+				__( 'Failed to get items from the API: %s', 'dhl-for-woocommerce' ),
 				implode( ', ', $response->body->messages )
 			)
 		);
@@ -282,7 +282,7 @@ class Client extends API_Client {
 
 		throw new Exception(
 			sprintf(
-				__( 'Failed to create order: %s', 'pr-shipping-dhl' ),
+				__( 'Failed to create order: %s', 'dhl-for-woocommerce' ),
 				implode( ', ', $response->body->messages )
 			)
 		);
@@ -336,7 +336,7 @@ class Client extends API_Client {
 			: strval($response->body);
 
 		throw new Exception(
-			sprintf(__('API error: %s', 'pr-shipping-dhl'), $message)
+			sprintf(__('API error: %s', 'dhl-for-woocommerce'), $message)
 		);
 	}
 
@@ -364,7 +364,7 @@ class Client extends API_Client {
 			: strval( $response->body );
 
 		throw new Exception(
-			sprintf( __( 'API error: %s', 'pr-shipping-dhl' ), $message )
+			sprintf( __( 'API error: %s', 'dhl-for-woocommerce' ), $message )
 		);
 	}
 

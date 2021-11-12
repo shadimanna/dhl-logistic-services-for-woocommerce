@@ -27,15 +27,15 @@ class PR_DHL_API_REST_Parcel extends PR_DHL_API_REST {
 		// Validate set args
 		
 		if ( empty( $args['account_num'] ) ) {
-			throw new Exception( __('Please, provide an account in the DHL shipping settings', 'pr-shipping-dhl' ) );
+			throw new Exception( __('Please, provide an account in the DHL shipping settings', 'dhl-for-woocommerce' ) );
 		}
 
 		if ( empty( $args['postcode'] ) ) {
-			throw new Exception( __('Please, provide the receiver postnumber.', 'pr-shipping-dhl' ) );
+			throw new Exception( __('Please, provide the receiver postnumber.', 'dhl-for-woocommerce' ) );
 		}
 
 		if ( empty( $args['start_date'] ) ) {
-			throw new Exception( __('Please, provide the shipment start date.', 'pr-shipping-dhl' ) );
+			throw new Exception( __('Please, provide the shipment start date.', 'dhl-for-woocommerce' ) );
 		}
 
 		$this->args = $args;

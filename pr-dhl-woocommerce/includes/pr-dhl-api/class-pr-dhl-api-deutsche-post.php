@@ -293,10 +293,10 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 */
 	public function get_dhl_products_international() {
 		return array(
-			'GMP-STANDARD' => __( 'Packet Standard', 'pr-shipping-dhl' ),
-			'GMP' => __( 'Packet Priority', 'pr-shipping-dhl' ),
-			'GPP' => __( 'Packet Plus', 'pr-shipping-dhl' ),
-			'GPT' => __( 'Packet Tracked', 'pr-shipping-dhl' ),
+			'GMP-STANDARD' => __( 'Packet Standard', 'dhl-for-woocommerce' ),
+			'GMP' => __( 'Packet Priority', 'dhl-for-woocommerce' ),
+			'GPP' => __( 'Packet Plus', 'dhl-for-woocommerce' ),
+			'GPT' => __( 'Packet Tracked', 'dhl-for-woocommerce' ),
 		);
 	}
 
@@ -359,7 +359,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 */
 	public function delete_dhl_label( $label_info ) {
 		if ( ! isset( $label_info['label_path'] ) ) {
-			throw new Exception( __( 'DHL Label has no path!', 'pr-shipping-dhl' ) );
+			throw new Exception( __( 'DHL Label has no path!', 'dhl-for-woocommerce' ) );
 		}
 
 		$label_path = $label_info['label_path'];
@@ -368,7 +368,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 			$res = unlink( $label_path );
 
 			if ( ! $res ) {
-				throw new Exception( __( 'DHL Label could not be deleted!', 'pr-shipping-dhl' ) );
+				throw new Exception( __( 'DHL Label could not be deleted!', 'dhl-for-woocommerce' ) );
 			}
 		}
 	}
@@ -516,13 +516,13 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 
 		// Validate the file path
 		if ( validate_file( $file_info->path ) > 0 && validate_file( $file_info->path ) !== 2 ) {
-			throw new Exception( __( 'Invalid file path!', 'pr-shipping-dhl' ) );
+			throw new Exception( __( 'Invalid file path!', 'dhl-for-woocommerce' ) );
 		}
 
 		$file_ret = file_put_contents( $file_info->path, $data );
 
 		if ( empty( $file_ret ) ) {
-			throw new Exception( __( 'DHL label file cannot be saved!', 'pr-shipping-dhl' ) );
+			throw new Exception( __( 'DHL label file cannot be saved!', 'dhl-for-woocommerce' ) );
 		}
 
 		return $file_info;
@@ -553,7 +553,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 
 		// Throw error if the file could not be deleted
 		if (!$res) {
-			throw new Exception(__('DHL AWB Label could not be deleted!', 'pr-shipping-dhl'));
+			throw new Exception(__('DHL AWB Label could not be deleted!', 'dhl-for-woocommerce'));
 		}
 	}
 
@@ -617,7 +617,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 
 		if( $pdfMerger === null ){
 
-			throw new Exception( __('Library conflict, could not merge PDF files. Please download PDF files individually.', 'pr-shipping-dhl') );
+			throw new Exception( __('Library conflict, could not merge PDF files. Please download PDF files individually.', 'dhl-for-woocommerce') );
 		}
 
 		foreach ( $order['shipments'] as $shipment ) {
@@ -632,7 +632,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 			// Ensure it is a PDF file
 			$ext = pathinfo($awb_label_info->path, PATHINFO_EXTENSION);
 			if ( stripos($ext, 'pdf') === false) {
-				throw new Exception( __('Not all the file formats are the same.', 'pr-shipping-dhl') );
+				throw new Exception( __('Not all the file formats are the same.', 'dhl-for-woocommerce') );
 			}
 
 			// Add to merge queue
@@ -697,7 +697,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 				update_post_meta( $item_wc_order_id, 'pr_dhl_dp_awb', $shipment->awb );
 
 				// An an order note for the AWB
-				$item_awb_note = __('Shipment AWB: ', 'pr-shipping-dhl') . $shipment->awb;
+				$item_awb_note = __('Shipment AWB: ', 'dhl-for-woocommerce') . $shipment->awb;
 				// 'type' should alwasys be private for AWB
 				$item_wc_order->add_order_note( $item_awb_note, '', true );
 
@@ -717,13 +717,13 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 
     public function get_dhl_nature_type() {
         return array(
-            'SALE_GOODS' => __( 'Sale Goods', 'pr-shipping-dhl' ),
-            'RETURN_GOODS' => __( 'Return Goods', 'pr-shipping-dhl' ),
-            'GIFT' => __( 'Gift', 'pr-shipping-dhl' ),
-            'COMMERCIAL_SAMPLE' => __( 'Commercial Sample', 'pr-shipping-dhl' ),
-            'DOCUMENTS' => __( 'Documents', 'pr-shipping-dhl' ),
-            'MIXED_CONTENTS' => __( 'Mixed Contents', 'pr-shipping-dhl' ),
-            'OTHERS' => __( 'Others', 'pr-shipping-dhl' ),
+            'SALE_GOODS' => __( 'Sale Goods', 'dhl-for-woocommerce' ),
+            'RETURN_GOODS' => __( 'Return Goods', 'dhl-for-woocommerce' ),
+            'GIFT' => __( 'Gift', 'dhl-for-woocommerce' ),
+            'COMMERCIAL_SAMPLE' => __( 'Commercial Sample', 'dhl-for-woocommerce' ),
+            'DOCUMENTS' => __( 'Documents', 'dhl-for-woocommerce' ),
+            'MIXED_CONTENTS' => __( 'Mixed Contents', 'dhl-for-woocommerce' ),
+            'OTHERS' => __( 'Others', 'dhl-for-woocommerce' ),
         );
     }
 }

@@ -56,7 +56,6 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
     const ACCESS_VALIDATION_RULE = 'validation_rule';
 
     const ACCESS_PRINTER = 'printer';
-    const ACCESS_AUTO_PRINT = 'auto_print';
 
     const ACCESS_LABEL_REQUEST = 'debug_label_request';
 
@@ -269,11 +268,6 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
             case self::ACCESS_USE_SHIPPING_ZONES:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
                 return $logic->check_use_shipping_zones();
-                break;
-
-            case self::ACCESS_AUTO_PRINT:
-                $logic = DHLPWC_Model_Logic_Access_Control::instance();
-                return $logic->check_auto_print();
                 break;
 
         }

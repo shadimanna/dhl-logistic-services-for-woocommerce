@@ -14,9 +14,9 @@ class Item_Info {
 
 	/**
 	 * The order id
-	 * 
+	 *
 	 * @since [*next-version*]
-	 * 
+	 *
 	 * @var int
 	 */
 	public $order_id;
@@ -47,7 +47,7 @@ class Item_Info {
 	 * @var array
 	 */
 	public $shipment_pieces;
-	
+
 	/**
 	 * The array of order recipient information.
 	 *
@@ -74,6 +74,15 @@ class Item_Info {
 	 * @var array[]
 	 */
 	public $shipper = array();
+
+	/**
+	 * The array of shipper address and tax information sub-arrays.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @var array[]
+	 */
+	public $shipper_address_w_tax = array();
 
 	/**
 	 * The array of content item information sub-arrays.
@@ -118,7 +127,7 @@ class Item_Info {
 		$this->isCrossBorder = $isCrossBorder;
 
 		$this->parse_args( $args, $uom );
-		
+
 	}
 
 	/**
@@ -131,12 +140,12 @@ class Item_Info {
 	 * @throws Exception If some data in $args did not pass validation.
 	 */
 	protected function parse_args( $args ) {
-        
+
 		$settings = $args[ 'dhl_settings' ];
 		$recipient_info = $args[ 'shipping_address' ] + $settings;
 		$shipping_info = $args[ 'order_details' ] + $settings;
 		$items_info = $args['items'];
-		
+
 		$this->body 			= Args_Parser::parse_args( $shipping_info, $this->get_body_info_schema() );
 		$this->shipment 		= Args_Parser::parse_args( $shipping_info, $this->get_shipment_info_schema() );
 		$this->consignee 		= Args_Parser::parse_args( $recipient_info, $this->get_recipient_info_schema() );
@@ -144,6 +153,10 @@ class Item_Info {
 		if( $args['order_details']['dhl_product'] == 'SDP') {
 		    $this->shipper 			= Args_Parser::parse_args( $settings, $this->get_shipper_info_schema() );
         }
+
+		if ( $this->isCrossBorder ) {
+			$this->shipper_address_w_tax = Args_Parser::parse_args( $settings, $this->get_shipper_address_w_tax_info_schema() );
+		}
 
 		$this->contents 		= array();
 		foreach ( $items_info as $item_info ) {
@@ -163,7 +176,7 @@ class Item_Info {
 		// Closures in PHP 5.3 do not inherit class context
 		// So we need to copy $this into a lexical variable and pass it to closures manually
 		$self = $this;
-		
+
 		return array(
 			'label_format' => array(
 				'default' => ''
@@ -192,7 +205,7 @@ class Item_Info {
 
 		return array(
 			'order_id'      => array(
-				'error'  => __( 'Shipment "Order ID" is empty!', 'pr-shipping-dhl' ),
+				'error'  => __( 'Shipment "Order ID" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'prefix' 		=> array(
 				'default' => 'DHL'
@@ -202,15 +215,15 @@ class Item_Info {
 				'validate' => function( $value ) {
 
 					if( empty( $value ) && $this->isCrossBorder ) {
-						throw new Exception( __( 'Shipment "Description" is empty!', 'pr-shipping-dhl' ) );
+						throw new Exception( __( 'Shipment "Description" is empty!', 'dhl-for-woocommerce' ) );
 					}
 				},
 			),
 			'weight'     => array(
-                'error'    => __( 'Order "Weight" is empty!', 'pr-shipping-dhl' ),
+                'error'    => __( 'Order "Weight" is empty!', 'dhl-for-woocommerce' ),
                 'validate' => function( $weight ) use ($self) {
                     if ( ! is_numeric( $weight ) || $weight <= 0 ) {
-                        throw new Exception( __( 'The order "Weight" must be a positive number', 'pr-shipping-dhl' ) );
+                        throw new Exception( __( 'The order "Weight" must be a positive number', 'dhl-for-woocommerce' ) );
                     }
                 },
                 'sanitize' => function ( $weight ) use ($self) {
@@ -231,7 +244,7 @@ class Item_Info {
 			),
 			'dhl_product' => array(
 				'rename' 	=> 'product_code',
-                'error'     => __( '"DHL Product" is empty!', 'pr-shipping-dhl' ),
+                'error'     => __( '"DHL Product" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'duties' => array(
 				'rename' 	=> 'incoterm',
@@ -239,15 +252,15 @@ class Item_Info {
 				'validate' => function( $value ) {
 
 					if( empty( $value ) && $this->isCrossBorder ) {
-						throw new Exception( __( 'Shipment "Duties" is empty!', 'pr-shipping-dhl' ) );
+						throw new Exception( __( 'Shipment "Duties" is empty!', 'dhl-for-woocommerce' ) );
 					}
 				},
 			),
 			'items_value' => array(
-				'error'  => __( 'Shipment "Value" is empty!', 'pr-shipping-dhl' ),
+				'error'  => __( 'Shipment "Value" is empty!', 'dhl-for-woocommerce' ),
 				'validate' => function( $value ) {
 					if ( ! is_numeric( $value ) ) {
-						throw new Exception( __( 'The order "value" must be a number', 'pr-shipping-dhl' ) );
+						throw new Exception( __( 'The order "value" must be a number', 'dhl-for-woocommerce' ) );
 					}
 				},
 				'sanitize' => function( $value ) use ($self) {
@@ -256,7 +269,7 @@ class Item_Info {
 				}
 			),
 			'currency' => array(
-				'error' => __( 'Shop "Currency" is empty!', 'pr-shipping-dhl' ),
+				'error' => __( 'Shop "Currency" is empty!', 'dhl-for-woocommerce' ),
 			),
             'cod_value' => array(
                 'default' => 0,
@@ -279,14 +292,14 @@ class Item_Info {
                 'rename' => 'insuranceValue',
                 'validate' => function( $value, $args ) {
                     if( isset( $args['additional_insurance'] ) && $args['additional_insurance'] == 'yes' && empty( $value ) ) {
-                        throw new Exception( __( 'The "Insurance Value" cannot be empty', 'pr-shipping-dhl' ) );
+                        throw new Exception( __( 'The "Insurance Value" cannot be empty', 'dhl-for-woocommerce' ) );
                     }
                 },
                 'sanitize' => function( $value, $args ) use ($self) {
                     if( isset( $args['additional_insurance'] ) && $args['additional_insurance'] == 'yes' ) {
 
                         $value = $self->float_round_sanitization( $value, 2 );
-					
+
 					} else {
                         $value = 0;
                     }
@@ -324,10 +337,10 @@ class Item_Info {
 		// Closures in PHP 5.3 do not inherit class context
 		// So we need to copy $this into a lexical variable and pass it to closures manually
 		$self = $this;
-		
+
 		return array(
 			'name'      => array(
-				'error'  => __( 'Recipient is empty!', 'pr-shipping-dhl' ),
+				'error'  => __( 'Recipient is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function( $name ) use ($self) {
 
 					return $self->string_length_sanitization( $name, 30 );
@@ -345,7 +358,7 @@ class Item_Info {
 			),
 			'address_1' => array(
 				'rename' => 'address1',
-				'error' => __( 'Shipping "Address 1" is empty!', 'pr-shipping-dhl' ),
+				'error' => __( 'Shipping "Address 1" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'address_2' => array(
 				'rename' => 'address2',
@@ -355,13 +368,13 @@ class Item_Info {
                 'validate' => function( $value ) {
 
                     if( empty( $value ) && $this->isCrossBorder ) {
-                        throw new Exception( __( 'Shipping "City" is empty!', 'pr-shipping-dhl' ) );
+                        throw new Exception( __( 'Shipping "City" is empty!', 'dhl-for-woocommerce' ) );
                     }
                 },
 			),
 			'postcode'  => array(
 				'rename' => 'postCode',
-				'error' => __( 'Shipping "Postcode" is empty!', 'pr-shipping-dhl' ),
+				'error' => __( 'Shipping "Postcode" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'district' => array(
 				'default' => ''
@@ -370,7 +383,7 @@ class Item_Info {
 				'default' => '',
 			),
 			'country'   => array(
-				'error' => __( 'Shipping "Country" is empty!', 'pr-shipping-dhl' ),
+				'error' => __( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' ),
 			),
 		);
 	}
@@ -391,12 +404,12 @@ class Item_Info {
 		return array(
 			'dhl_contact_name'      => array(
 				'rename' => 'name',
-				'error'  => __( '"Account Name" in settings is empty.', 'pr-shipping-dhl' ),
+				'error'  => __( '"Account Name" in settings is empty.', 'dhl-for-woocommerce' ),
 				'sanitize' => function( $name ) use ($self) {
 
                     if (empty($name)) {
                         throw new Exception(
-                            __( '"Account Name" in settings is empty.', 'pr-shipping-dhl' )
+                            __( '"Account Name" in settings is empty.', 'dhl-for-woocommerce' )
                         );
                     }
 
@@ -413,12 +426,12 @@ class Item_Info {
 			),
 			'dhl_address_1' => array(
 				'rename' => 'address1',
-				'error' => __( 'Base "Address 1" is empty!', 'pr-shipping-dhl' ),
+				'error' => __( 'Base "Address 1" is empty!', 'dhl-for-woocommerce' ),
                 'sanitize' => function( $name ) use ($self) {
 
                     if (empty($name)) {
                         throw new Exception(
-                            __( 'Base "Address 1" is empty!', 'pr-shipping-dhl' )
+                            __( 'Base "Address 1" is empty!', 'dhl-for-woocommerce' )
                         );
                     }
 
@@ -431,7 +444,7 @@ class Item_Info {
 			),
 			'dhl_city'      => array(
 				'rename' => 'city',
-				'error' => __( 'Base "City" is empty!', 'pr-shipping-dhl' ),
+				'error' => __( 'Base "City" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'dhl_district'     => array(
 				'rename' => 'district',
@@ -439,7 +452,7 @@ class Item_Info {
 			),
 			'dhl_postcode'  => array(
 				'rename' => 'postCode',
-				'error' => __( 'Base "Postcode" is empty!', 'pr-shipping-dhl' ),
+				'error' => __( 'Base "Postcode" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'dhl_state'     => array(
 				'rename' => 'state',
@@ -447,10 +460,116 @@ class Item_Info {
 			),
 			'dhl_country'   => array(
 				'rename' => 'country',
-				'error' => __( 'Base "Country" is empty!', 'pr-shipping-dhl' ),
-			),
+				'error' => __( 'Base "Country" is empty!', 'dhl-for-woocommerce' ),
+			)
 		);
 	}
+
+	/**
+	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing order shipper tax info.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return array
+	 */
+	protected function get_shipper_address_w_tax_info_schema() {
+
+		// Closures in PHP 5.3 do not inherit class context
+		// So we need to copy $this into a lexical variable and pass it to closures manually
+		$self = $this;
+
+		return array(
+			'dhl_contact_name'      => array(
+				'rename' => 'name',
+				'error'  => __( '"Account Name" in settings is empty.', 'dhl-for-woocommerce' ),
+				'sanitize' => function( $name ) use ($self) {
+
+                    if (empty($name)) {
+                        throw new Exception(
+                            __( '"Account Name" in settings is empty.', 'dhl-for-woocommerce' )
+                        );
+                    }
+
+					return $self->string_length_sanitization( $name, 30 );
+				}
+			),
+			'dhl_phone'     => array(
+				'rename' => 'phone',
+				'default' => '',
+			),
+			'dhl_email'     => array(
+				'rename' => 'email',
+				'default' => '',
+			),
+			'dhl_address_1' => array(
+				'rename' => 'address1',
+				'error' => __( 'Base "Address 1" is empty!', 'dhl-for-woocommerce' ),
+                'sanitize' => function( $name ) use ($self) {
+
+                    if (empty($name)) {
+                        throw new Exception(
+                            __( 'Base "Address 1" is empty!', 'dhl-for-woocommerce' )
+                        );
+                    }
+
+                    return $self->string_length_sanitization( $name, 50 );
+                }
+			),
+			'dhl_address_2' => array(
+				'rename' => 'address2',
+				'default' => '',
+			),
+			'dhl_city'      => array(
+				'rename' => 'city',
+				'error' => __( 'Base "City" is empty!', 'dhl-for-woocommerce' ),
+			),
+			'dhl_district'     => array(
+				'rename' => 'district',
+				'default' => '',
+			),
+			'dhl_postcode'  => array(
+				'rename' => 'postCode',
+				'error' => __( 'Base "Postcode" is empty!', 'dhl-for-woocommerce' ),
+			),
+			'dhl_state'     => array(
+				'rename' => 'state',
+				'default' => '',
+			),
+			'dhl_country'   => array(
+				'rename' => 'country',
+				'error' => __( 'Base "Country" is empty!', 'dhl-for-woocommerce' ),
+			),
+			'dh_tax_id_type'   => array(
+				'rename' => 'fiscalIdType',
+				'error' => __( 'You must select a "Shipper Tax ID Type", or select "-- No Shipper Tax ID --" to continue without a Shipper Tax ID.', 'dhl-for-woocommerce' ),
+				'sanitize' => function( $value, $args ) use ($self) {
+					if ( $value == 'none' ) {
+						return '';
+					} else {
+						return $self->string_length_sanitization( $value, 50 );
+					}
+
+                }
+			),
+			'dh_tax_id' => array(
+				'default' => '',
+				'rename' => 'fiscalId',
+				'validate' => function( $value, $args ) {
+                    if( isset( $args['dh_tax_id_type'] ) && $args['dh_tax_id_type'] != 'none' && $args['dh_tax_id_type'] != 4 && empty( $value ) ) {
+                        throw new Exception (
+							__( 'You must provide a "Shipper Tax ID", or to continue without a Shipper Tax ID you must select "-- No Shipper Tax ID --" for "Shipper Tax ID Type"."', 'dhl-for-woocommerce' )
+						);
+                    }
+                },
+                'sanitize' => function( $value, $args ) use ($self) {
+                    return $self->string_length_sanitization( $value, 50 );
+                }
+			),
+
+		);
+	}
+
+
 
 	/**
 	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing order content item info.
@@ -477,7 +596,7 @@ class Item_Info {
 
 					if ( $length < 6 || $length > 20 ) {
 						throw new Exception(
-							__( 'Item HS Code must be between 6 and 20 characters long', 'pr-shipping-dhl' )
+							__( 'Item HS Code must be between 6 and 20 characters long', 'dhl-for-woocommerce' )
 						);
 					}
 				},
@@ -499,10 +618,10 @@ class Item_Info {
 				}
 			),
 			'product_id'  => array(
-				'error' => __( 'Item "Product ID" is empty!', 'pr-shipping-dhl' ),
+				'error' => __( 'Item "Product ID" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'sku'         => array(
-				'error' => __( 'Item "Product SKU" is empty!', 'pr-shipping-dhl' ),
+				'error' => __( 'Item "Product SKU" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'item_value'       => array(
 				'rename' => 'value',
@@ -521,7 +640,7 @@ class Item_Info {
 					if( !is_numeric( $qty ) || $qty < 1 ){
 
 						throw new Exception(
-							__( 'Item quantity must be more than 1', 'pr-shipping-dhl' )
+							__( 'Item quantity must be more than 1', 'dhl-for-woocommerce' )
 						);
 
 					}
@@ -563,7 +682,7 @@ class Item_Info {
 				$weight = $weight / 35.274;
 				break;
 		}
-		
+
 		return round( $weight );
 	}
 

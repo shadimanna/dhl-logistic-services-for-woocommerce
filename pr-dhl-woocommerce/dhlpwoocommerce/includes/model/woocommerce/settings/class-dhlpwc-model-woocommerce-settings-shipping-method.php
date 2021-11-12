@@ -179,11 +179,23 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                         '</a>'
                     ),
                 ),
-            ),
-
-            $this->get_order_status_change_fields(),
-
-	        array(
+                'change_order_status_from_wc-pending' => array(
+                    'title'       => __('Apply status change when creating a label', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Change status if order is: Pending payment', 'dhlpwc'),
+                    'default'     => 'no',
+                    'class'       => 'change_order_status_from'
+                ),
+                'change_order_status_from_wc-processing' => array(
+                    'type'        => 'checkbox',
+                    'label'       => __('Change status if order is: Processing', 'dhlpwc'),
+                    'default'     => 'no',
+                ),
+                'change_order_status_from_wc-on-hold' => array(
+                    'type'        => 'checkbox',
+                    'label'       => __('Change status if order is: On hold', 'dhlpwc'),
+                    'default'     => 'no',
+                ),
                 'change_order_status_to' => array(
                     'type'    => 'select',
                     'options' => array_merge(
@@ -426,21 +438,6 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'type'        => 'text',
                     'placeholder' => sprintf(__('Example: %s', 'dhlpwc'), '1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d'),
                 ),
-                'enable_auto_print' => array(
-	                'title'       => __('Enable auto printer features', 'dhlpwc'),
-	                'type'        => 'checkbox',
-	                'label'       => __('Enable', 'dhlpwc'),
-	                'description' => __('Automatically create and print labels when order has a specific status and has no labels already', 'dhlpwc'),
-                ),
-                'auto_print_on_status' => array(
-	                'title'       => __('Auto print orders with this status', 'dhlpwc'),
-	                'type'    => 'select',
-	                'options' => array_merge(
-		                array('null' => __('Do not change order status', 'dhlpwc')),
-		                array_map(array($this, 'on_status_to_option_update'), wc_get_order_statuses())
-	                ),
-	                'default' => 'null',
-                ),
             ),
 
             array(
@@ -465,12 +462,12 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                 'debug_url'                         => array(
                     'title'       => __('By custom URL', 'dhlpwc'),
                     'type'        => 'text',
-                    'description' => __("Alternative API-URL. Used by developers. Will not be used if left empty (recommended).", 'dhlpwc'),
+                    'description' => __("Monitoring URL. Used by developers. Can be used for active monitoring, please contact support for this feature. Will not be used if left empty.", 'dhlpwc'),
                 ),
                 'debug_external_url' => array(
                     'title'       => __('External custom URL', 'dhlpwc'),
                     'type'        => 'text',
-                    'description' => __("Alternative secondary API-URL. Used by developers. Will not be used if left empty (recommended).", 'dhlpwc'),
+                    'description' => __("Alternative external URL. Used by developers. Will not be used if left empty.", 'dhlpwc'),
                 ),
 	            'enable_debug_requests' => array(
 		            'title'       => __('Log Requests for debugging', 'dhlpwc'),
@@ -1086,21 +1083,8 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
             $price = $this->price_conditions($price, $option, $package);
         }
 
-        $price += $this->get_additional_shipping_fee($package);
-
         // Allow developers to manipulate the calculated price
         return apply_filters('dhlpwc_calculate_price', $price, $free_or_discounted, $option, $package);
-    }
-
-    protected function get_additional_shipping_fee($package = array())
-    {
-        $additional_shipping_fee = 0;
-
-        foreach ($package['contents'] as $item) {
-            $additional_shipping_fee += (floatval(get_post_meta($item['product_id'], 'dhlpwc_additional_shipping_fee', true)) * $item['quantity']);
-        }
-
-        return $additional_shipping_fee;
     }
 
     protected function price_conditions($price, $option, $package)
@@ -1149,31 +1133,6 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
     protected function change_order_status_to_option_update($option)
     {
         return sprintf(__('Change status to: %s', 'dhlpwc'), $option);
-    }
-
-    protected function on_status_to_option_update($option)
-    {
-        return sprintf(__('On status: %s', 'dhlpwc'), $option);
-    }
-
-    protected function get_order_status_change_fields()
-    {
-    	$fields = array ();
-    	$order_statuses = wc_get_order_statuses();
-    	$add_title = true;
-        foreach ($order_statuses as $order_status_key => $order_status_label) {
-            $fields['change_order_status_from_' . $order_status_key] = array(
-                'type'        => 'checkbox',
-                'label'       => sprintf(__('Change status if order is: %s', 'dhlpwc'), $order_status_label),
-                'default'     => 'no',
-            );
-            if ($add_title) {
-                $fields['change_order_status_from_' . $order_status_key]['title'] = __('Apply status change when creating a label', 'dhlpwc');
-                $add_title = false;
-            }
-        }
-
-        return $fields;
     }
 }
 

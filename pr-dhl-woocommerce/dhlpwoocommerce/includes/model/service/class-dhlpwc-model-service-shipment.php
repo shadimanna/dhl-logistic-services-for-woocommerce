@@ -474,10 +474,11 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
         }
 
         $order = wc_get_order($order_id);
-        if (isset($shipping_method['change_order_status_from_wc-' . $order->get_status()]) && $shipping_method['change_order_status_from_wc-' . $order->get_status()] === 'yes') {
+        if ($order->get_status() === 'pending' && $shipping_method['change_order_status_from_wc-pending'] === 'yes'
+            || $order->get_status() === 'processing' && $shipping_method['change_order_status_from_wc-processing'] === 'yes'
+            || $order->get_status() === 'on-hold' && $shipping_method['change_order_status_from_wc-on-hold'] === 'yes') {
             $order->update_status($shipping_method['change_order_status_to']);
         }
-
         return;
     }
 }

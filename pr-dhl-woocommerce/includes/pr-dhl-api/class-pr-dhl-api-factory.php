@@ -38,7 +38,7 @@ class PR_DHL_API_Factory {
 				case 'UM':
 				case 'VI':
 				case 'CA':
-                    throw new Exception( __('The DHL plugin is not supported in your store\'s "Base Location"', 'pr-shipping-dhl') );
+                    throw new Exception( __('The DHL plugin is not supported in your store\'s "Base Location"', 'dhl-for-woocommerce') );
 				case 'SG':
 				case 'HK':
 				case 'TH':
@@ -104,7 +104,7 @@ class PR_DHL_API_Factory {
 					$dhl_obj = new PR_DHL_API_Deutsche_Post( $country_code );
 					break;
 				default:
-					throw new Exception( __('The DHL plugin is not supported in your store\'s "Base Location"', 'pr-shipping-dhl') );
+					throw new Exception( __('The DHL plugin is not supported in your store\'s "Base Location"', 'dhl-for-woocommerce') );
 			}
 		} catch (Exception $e) {
 			throw $e;
