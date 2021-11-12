@@ -1,5 +1,11 @@
 # DHL Parcel plugin for WooCommerce
  
+
+v1.3.15
+## Changes
+- Changed evening delivery times text to 17.30 - 22:00
+- Add order number in REFERENCE2 and add a filter to change it programmatically
+ 
 v1.3.14
 ## Changes
 - Added ServicePoint information for order completion mail
