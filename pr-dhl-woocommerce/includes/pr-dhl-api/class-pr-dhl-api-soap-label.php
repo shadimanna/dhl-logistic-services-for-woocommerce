@@ -12,7 +12,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 	 */
 	const PR_DHL_WSDL_LINK = 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/3.1/geschaeftskundenversand-api-3.1.wsdl';
 
-	const DHL_MAX_ITEMS = '6';
 	const DHL_RETURN_PRODUCT = '07';
 
 	private $pos_ps = false;
@@ -910,10 +909,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			// Add customs info
 			if( PR_DHL()->is_crossborder_shipment( $this->args['shipping_address']['country'] ) ) {
-
-				if ( sizeof($this->args['items']) > self::DHL_MAX_ITEMS ) {
-					throw new Exception( sprintf( __('Only %s ordered items can be processed, your order has %s', 'dhl-for-woocommerce'), self::DHL_MAX_ITEMS, sizeof($this->args['items']) ) );
-				}
 
 				$customsDetails = array();
 
