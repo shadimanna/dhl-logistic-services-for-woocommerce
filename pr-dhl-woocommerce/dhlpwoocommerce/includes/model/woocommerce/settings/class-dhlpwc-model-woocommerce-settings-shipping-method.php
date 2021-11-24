@@ -252,6 +252,13 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'description' => __("When creating a label, always add the order number as reference by default if the service is available.", 'dhlpwc'),
                     'default'     => 'no',
                 ),
+                'check_default_order_id_reference2' => array(
+                    'title'       => __('Automatically add the order number as a second reference, if possible', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Enable', 'dhlpwc'),
+                    'description' => __("When creating a label, always add the order number as second reference by default if the service is available.", 'dhlpwc'),
+                    'default'     => 'no',
+                ),
                 'check_default_return' => array(
                     'title'       => __('Always enable return label if available', 'dhlpwc'),
                     'type'        => 'checkbox',

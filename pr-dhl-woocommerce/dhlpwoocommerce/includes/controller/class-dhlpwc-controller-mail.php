@@ -23,7 +23,8 @@ class DHLPWC_Controller_Mail
     {
         $allowed_email_ids = array(
             'new_order',
-            'customer_on_hold_order'
+            'customer_on_hold_order',
+            'customer_completed_order',
         );
 
         // Continue only if it's a valid template

@@ -74,11 +74,17 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 		);
 
 		try {
-			
+
 			$dhl_obj = PR_DHL()->get_dhl_factory();
 			$select_dhl_product_int = $dhl_obj->get_dhl_products_international();
 			$select_dhl_product_dom = $dhl_obj->get_dhl_products_domestic();
 			$select_dhl_duties = $dhl_obj->get_dhl_duties();
+
+			$select_dhl_tax_id_types = array(
+					'' => __( ' ', 'dhl-for-woocommerce' ),
+					'none' => __( '-- No Shipper Tax ID --', 'dhl-for-woocommerce' )
+				);
+			$select_dhl_tax_id_types += $dhl_obj->get_dhl_tax_id_types();
 
 		} catch (Exception $e) {
 			PR_DHL()->log_msg( __('DHL Products not displaying - ', 'dhl-for-woocommerce') . $e->getMessage() );
@@ -273,9 +279,9 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 				'description'       => sprintf( __( 'A log file containing the communication to the DHL server will be maintained if this option is checked. This can be used in case of technical issues and can be found %shere%s.', 'dhl-for-woocommerce' ), '<a href="' . $log_path . '" target = "_blank">', '</a>' )
 			),
             'dhl_shipper'           => array(
-                'title'           => __( 'Pickup Address', 'dhl-for-woocommerce' ),
+                'title'           => __( 'Pickup / Shipper Address', 'dhl-for-woocommerce' ),
                 'type'            => 'title',
-                'description'     => __( 'Enter Pickup Address below.  This is used for the "DHL Parcel Metro" product only.', 'dhl-for-woocommerce' ),
+                'description'     => __( 'Enter Pickup & Shipper Address below.  This is used for Shipper Address with Tax ID and for the "Pickup Address" for the "DHL Parcel Metro" product.', 'dhl-for-woocommerce' ),
             ),
             'dhl_contact_name' => array(
                 'title'             => __( 'Name', 'dhl-for-woocommerce' ),
@@ -358,8 +364,57 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
                 'desc_tip'          => true,
                 'default'           => ''
             ),
+			'dhl_shipper_tax_info'           => array(
+                'title'           => __( 'Shipper Tax ID Defaults', 'dhl-for-woocommerce' ),
+                'type'            => 'title',
+                'description'     => __( 'Enter the default Tax ID info below. ', 'dhl-for-woocommerce' ),
+            ),
+			'dhl_shipper_tax_id_type' => array(
+                'title'             => __( 'Shipper Tax ID Type', 'dhl-for-woocommerce' ),
+                'type'              => 'select',
+                'description'       => __( 'The default Tax ID Type for the shipper.', 'dhl-for-woocommerce' ),
+                'desc_tip'          => true,
+                'options'           => $select_dhl_tax_id_types,
+                'class'				=> 'wc-enhanced-select',
+                'default'           => ''
+            ),
+            'dhl_shipper_tax_id' => array(
+                'title'             => __( 'Shipper Tax ID', 'dhl-for-woocommerce' ),
+                'type'              => 'text',
+                'description'       => __( 'The default Tax ID for the shipper.', 'dhl-for-woocommerce' ),
+                'desc_tip'          => true,
+                'default'           => ''
+            ),
 		);
+
 	}
+
+	public function admin_options() {
+
+        parent::admin_options();
+
+		// add js inline to show or hide conditional tax id based on tax id type
+        if ( isset( $this->form_fields['dhl_shipper_tax_id_type'] ) ) {
+
+            ob_start();
+            ?>
+                $( '#woocommerce_<?php echo $this->id; ?>_dhl_shipper_tax_id_type' ).change( function() {
+
+					var tax_id_type = $(this).val();
+
+                    if ( tax_id_type == '4' || tax_id_type == 'none' || tax_id_type == '' ) {
+						$( '#woocommerce_<?php echo $this->id; ?>_dhl_shipper_tax_id' ).closest( 'tr' ).hide();
+						$( '#woocommerce_<?php echo $this->id; ?>_dhl_shipper_tax_id' ).val('');
+                    } else {
+                        $( '#woocommerce_<?php echo $this->id; ?>_dhl_shipper_tax_id' ).closest( 'tr' ).show();
+                    }
+
+                } ).change();
+            <?php
+            wc_enqueue_js( ob_get_clean() );
+        }
+
+    }
 
 	/**
 	 * Generate Button HTML.
@@ -410,12 +465,11 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 		// $value = wc_clean( $_POST[ $this->plugin_id . $this->id . '_' . $key ] );
 
 		try {
-			
+
 			$dhl_obj = PR_DHL()->get_dhl_factory();
 			$dhl_obj->dhl_validate_field( 'pickup', $value );
 
-		} catch (Exception $e) {
-			
+		} catch (Exception $e) {			
 			echo $this->get_message( __('Pickup Account Number: ', 'dhl-for-woocommerce') . $e->getMessage() );
 			throw $e;
 
@@ -430,9 +484,9 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 	 */
 	public function validate_dhl_distribution_field( $key, $value ) {
 		// $value = wc_clean( $_POST[ $this->plugin_id . $this->id . '_' . $key ] );
-		
+
 		try {
-			
+
 			$dhl_obj = PR_DHL()->get_dhl_factory();
 			$dhl_obj->dhl_validate_field( 'distribution', $value );
 
@@ -502,9 +556,9 @@ class PR_DHL_WC_Method_eCS_Asia extends WC_Shipping_Method {
 	 * If there is an error thrown, will continue to save and validate fields, but will leave the erroring field out.
 	 */
 	public function process_admin_options() {
-		
+
 		try {
-			
+
 			$dhl_obj = PR_DHL()->get_dhl_factory();
 			$dhl_obj->dhl_reset_connection();
 
