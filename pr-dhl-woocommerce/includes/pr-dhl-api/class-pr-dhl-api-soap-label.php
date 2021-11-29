@@ -12,7 +12,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 	 */
 	const PR_DHL_WSDL_LINK = 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/3.1/geschaeftskundenversand-api-3.1.wsdl';
 
-	const DHL_MAX_ITEMS = '6';
 	const DHL_RETURN_PRODUCT = '07';
 
 	private $pos_ps = false;
@@ -365,9 +364,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			throw new Exception( __('Shop "Weight Units of Measure" is empty!', 'dhl-for-woocommerce') );
 		}
 
-		if ( empty( $args['order_details']['weight'] )) {
-			throw new Exception( __('Order "Weight" is empty!', 'dhl-for-woocommerce') );
-		}
+
 
 		if ( isset( $args['order_details']['identcheck'] ) && ( $args['order_details']['identcheck'] == 'yes' ) ) {
 			if ( empty( $args['shipping_address']['first_name'] ) || empty( $args['shipping_address']['last_name'] ) ) {
@@ -413,6 +410,12 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 					}
 				}
 			}
+		} else {
+
+			if ( empty( $args['order_details']['weight'] )) {
+				throw new Exception( __('Order "Weight" is empty!', 'dhl-for-woocommerce') );
+			}
+			
 		}
 
 		// if ( empty( $args['order_details']['duties'] )) {
@@ -912,10 +915,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			// Add customs info
 			if( PR_DHL()->is_crossborder_shipment( $this->args['shipping_address']['country'] ) ) {
 
-				if ( sizeof($this->args['items']) > self::DHL_MAX_ITEMS ) {
-					throw new Exception( sprintf( __('Only %s ordered items can be processed, your order has %s', 'dhl-for-woocommerce'), self::DHL_MAX_ITEMS, sizeof($this->args['items']) ) );
-				}
-
 				$customsDetails = array();
 
 				$item_description = '';
@@ -992,7 +991,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				$this->body_request['ShipmentOrder']['Shipment']['Receiver']['Address']['zip'] = '';
 			}
 
-			if( count( $shipment_items ) > 1 ){
+			if( count( $shipment_items ) > 0 ){
 				$shipment_order 	= $this->body_request['ShipmentOrder'];
 				$shipment_orders 	= array();
 				$sequence 			= 0;

@@ -30,7 +30,7 @@ Please choose your preferred delivery option.', 'dhl-for-woocommerce'); ?></td>
   ?>
 
     <tr class="dhl-co-tr">
-      <th colspan="2" class="dhl-pt"><?php _e('Preferred day: Delivery at your preferred day', 'dhl-for-woocommerce'); ?> <span class="dhl-tooltip" title="<?php _e('Choose one of the displayed days as your preferred day for your parcel delivery. Other days are not possible due to delivery processes.', 'dhl-for-woocommerce'); ?>">?</span></th>
+      <th colspan="2" class="dhl-pt"><?php _e('Delivery day: Delivery at your preferred day', 'dhl-for-woocommerce'); ?> <span class="dhl-tooltip" title="<?php _e('Choose one of the displayed days as your preferred day for your parcel delivery. Other days are not possible due to delivery processes.', 'dhl-for-woocommerce'); ?>">?</span></th>
     </tr>
     <tr class="dhl-co-tr">
       <td colspan="2">
@@ -73,7 +73,7 @@ Please choose your preferred delivery option.', 'dhl-for-woocommerce'); ?></td>
               } else { ?>
 
                 <i>
-                  <?php esc_html_e('Unfortunately, for the selected delivery address the service Preferred Day is not available', 'dhl-for-woocommerce' ); ?>
+                  <?php esc_html_e('Unfortunately, for the selected delivery address the service Delivery Day is not available', 'dhl-for-woocommerce' ); ?>
                 </i>
               
               <?php } ?>
@@ -92,7 +92,7 @@ Please choose your preferred delivery option.', 'dhl-for-woocommerce'); ?></td>
   ?>  
 
     <tr class="dhl-co-tr">
-      <th class="dhl-pt"><?php _e('Preferred location or neighbor', 'dhl-for-woocommerce'); ?></th>
+      <th class="dhl-pt"><?php _e('Drop-off location or neighbor', 'dhl-for-woocommerce'); ?></th>
       <td class="dhl-pt">
         <ul class="dhl-preferred-location">
           <li>
@@ -132,7 +132,7 @@ Please choose your preferred delivery option.', 'dhl-for-woocommerce'); ?></td>
   ?>
 
     <tr class="dhl-co-tr dhl-radio-toggle dhl-preferred_location">
-      <th colspan="2" class="dhl-pt"><?php _e('Preferred location: Delivery to your preferred drop-off location', 'dhl-for-woocommerce'); ?> <span class="dhl-tooltip" title="<?php _e('Choose a weather-protected and non-visible place on your property, where we can deposit the parcel in your absence.', 'dhl-for-woocommerce'); ?>">?</span></th>
+      <th colspan="2" class="dhl-pt"><?php _e('Drop-off location: Delivery to your preferred drop-off location', 'dhl-for-woocommerce'); ?> <span class="dhl-tooltip" title="<?php _e('Choose a weather-protected and non-visible place on your property, where we can deposit the parcel in your absence.', 'dhl-for-woocommerce'); ?>">?</span></th>
     </tr>
     <tr class="dhl-co-tr dhl-radio-toggle dhl-preferred_location">
       <td colspan="2"><input type="text" name="pr_dhl_preferred_location" data-index="0" id="pr_dhl_preferred_location" class="" <?php if( !empty($pr_dhl_preferred_location_selected) ) { echo 'value="' . $pr_dhl_preferred_location_selected . '"'; } ?> maxlength="80" placeholder="<?php _e('e.g. Garage, Terrace', 'dhl-for-woocommerce'); ?>" ></td>
@@ -145,7 +145,7 @@ Please choose your preferred delivery option.', 'dhl-for-woocommerce'); ?></td>
   ?>
 
     <tr class="dhl-co-tr dhl-radio-toggle dhl-preferred_neighbor">
-      <th colspan="2" class="dhl-pt"><?php _e('Preferred neighbour: Delivery to a neighbour of your choice', 'dhl-for-woocommerce'); ?> <span class="dhl-tooltip" title="<?php _e('Determine a person in your immediate neighborhood whom we can hand out your parcel in your absence. This person should live in the same building, directly opposite or next door.', 'dhl-for-woocommerce'); ?>">?</span></th>
+      <th colspan="2" class="dhl-pt"><?php _e('Neighbour: Delivery to a neighbour of your choice', 'dhl-for-woocommerce'); ?> <span class="dhl-tooltip" title="<?php _e('Determine a person in your immediate neighborhood whom we can hand out your parcel in your absence. This person should live in the same building, directly opposite or next door.', 'dhl-for-woocommerce'); ?>">?</span></th>
     </tr>
     <tr class="dhl-co-tr dhl-radio-toggle dhl-preferred_neighbor">
       <td colspan="2"><input type="text" name="pr_dhl_preferred_neighbour_name" data-index="0" id="pr_dhl_preferred_neighbour_name" class="" <?php if( !empty($pr_dhl_preferred_neighbour_name_selected) ) { echo 'value="' . $pr_dhl_preferred_neighbour_name_selected . '"'; } ?> maxlength="25" placeholder="<?php _e('First name, last name of neighbour', 'dhl-for-woocommerce'); ?>"></td>
