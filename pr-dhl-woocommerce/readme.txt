@@ -85,6 +85,8 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 * DHL Paket: Add Warenpost label size - 100x70mm
 * DHL Paket: Change preferred field labels
 * DHL Paket: Add link to modify DHL Notification Emails in settings
+* DHL Paket: Remove limitation of 6 items per order
+* DHL Paket: Fix weight 0 throwing error when using multiple packages option
 
 = 2.7.2 =
 * DHL Parcel: Fixed an issue with reference values not loading correctly
