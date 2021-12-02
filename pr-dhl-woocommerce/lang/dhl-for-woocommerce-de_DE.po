@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: DHL for WooCommerce\n"
-"POT-Creation-Date: 2021-12-02 11:53+0700\n"
-"PO-Revision-Date: 2021-12-02 11:55+0700\n"
+"POT-Creation-Date: 2021-12-02 18:35+0700\n"
+"PO-Revision-Date: 2021-12-02 18:35+0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -489,42 +489,42 @@ msgstr "Suche"
 
 #: dhlpwoocommerce/includes/model/service/class-dhlpwc-model-service-parcelshop.php:153
 #: dhlpwoocommerce/includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:712
-#: includes/class-pr-dhl-wc-method-paket.php:470
+#: includes/class-pr-dhl-wc-method-paket.php:471
 #: includes/front-end/class-pr-dhl-front-end-paket.php:127
 msgid "Monday"
 msgstr "Montag"
 
 #: dhlpwoocommerce/includes/model/service/class-dhlpwc-model-service-parcelshop.php:154
 #: dhlpwoocommerce/includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:713
-#: includes/class-pr-dhl-wc-method-paket.php:476
+#: includes/class-pr-dhl-wc-method-paket.php:477
 #: includes/front-end/class-pr-dhl-front-end-paket.php:128
 msgid "Tuesday"
 msgstr "Dienstag"
 
 #: dhlpwoocommerce/includes/model/service/class-dhlpwc-model-service-parcelshop.php:155
 #: dhlpwoocommerce/includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:714
-#: includes/class-pr-dhl-wc-method-paket.php:480
+#: includes/class-pr-dhl-wc-method-paket.php:481
 #: includes/front-end/class-pr-dhl-front-end-paket.php:129
 msgid "Wednesday"
 msgstr "Mittwoch"
 
 #: dhlpwoocommerce/includes/model/service/class-dhlpwc-model-service-parcelshop.php:156
 #: dhlpwoocommerce/includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:715
-#: includes/class-pr-dhl-wc-method-paket.php:484
+#: includes/class-pr-dhl-wc-method-paket.php:485
 #: includes/front-end/class-pr-dhl-front-end-paket.php:130
 msgid "Thursday"
 msgstr "Donnerstag"
 
 #: dhlpwoocommerce/includes/model/service/class-dhlpwc-model-service-parcelshop.php:157
 #: dhlpwoocommerce/includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:716
-#: includes/class-pr-dhl-wc-method-paket.php:488
+#: includes/class-pr-dhl-wc-method-paket.php:489
 #: includes/front-end/class-pr-dhl-front-end-paket.php:131
 msgid "Friday"
 msgstr "Freitag"
 
 #: dhlpwoocommerce/includes/model/service/class-dhlpwc-model-service-parcelshop.php:158
 #: dhlpwoocommerce/includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:717
-#: includes/class-pr-dhl-wc-method-paket.php:492
+#: includes/class-pr-dhl-wc-method-paket.php:493
 #: includes/front-end/class-pr-dhl-front-end-paket.php:132
 msgid "Saturday"
 msgstr "Samstag"
@@ -1476,24 +1476,24 @@ msgstr "Name der Bank"
 #: dhlpwoocommerce/includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:872
 #: dhlpwoocommerce/includes/view/order/meta/form/input/address.php:17
 #: includes/class-pr-dhl-wc-method-ecs-asia.php:310
-#: includes/class-pr-dhl-wc-method-paket.php:597
-#: includes/class-pr-dhl-wc-method-paket.php:673
+#: includes/class-pr-dhl-wc-method-paket.php:598
+#: includes/class-pr-dhl-wc-method-paket.php:674
 msgid "Company"
 msgstr "Firma"
 
 #: dhlpwoocommerce/includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:878
 #: dhlpwoocommerce/includes/view/order/meta/form/input/address.php:24
 #: includes/class-pr-dhl-wc-method-ecs-asia.php:361
-#: includes/class-pr-dhl-wc-method-paket.php:632
-#: includes/class-pr-dhl-wc-method-paket.php:708
+#: includes/class-pr-dhl-wc-method-paket.php:633
+#: includes/class-pr-dhl-wc-method-paket.php:709
 msgid "Postcode"
 msgstr "PLZ"
 
 #: dhlpwoocommerce/includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:883
 #: dhlpwoocommerce/includes/view/order/meta/form/input/address.php:31
 #: includes/class-pr-dhl-wc-method-ecs-asia.php:331
-#: includes/class-pr-dhl-wc-method-paket.php:618
-#: includes/class-pr-dhl-wc-method-paket.php:694
+#: includes/class-pr-dhl-wc-method-paket.php:619
+#: includes/class-pr-dhl-wc-method-paket.php:695
 #: templates/checkout/dhl-parcel-finder.php:24
 msgid "City"
 msgstr "Ort"
@@ -1542,8 +1542,8 @@ msgstr ""
 #: dhlpwoocommerce/includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:915
 #: dhlpwoocommerce/includes/view/order/meta/form/input/address.php:59
 #: includes/class-pr-dhl-wc-method-ecs-asia.php:294
-#: includes/class-pr-dhl-wc-method-paket.php:646
-#: includes/class-pr-dhl-wc-method-paket.php:722
+#: includes/class-pr-dhl-wc-method-paket.php:647
+#: includes/class-pr-dhl-wc-method-paket.php:723
 msgid "Email"
 msgstr "E-Mail"
 
@@ -2378,14 +2378,14 @@ msgstr ""
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:133
 #: includes/class-pr-dhl-wc-method-ecomm.php:284
 #: includes/class-pr-dhl-wc-method-ecs-asia.php:258
-#: includes/class-pr-dhl-wc-method-paket.php:403
+#: includes/class-pr-dhl-wc-method-paket.php:404
 msgid "Sandbox Mode"
 msgstr "Sandbox-Modus"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:135
 #: includes/class-pr-dhl-wc-method-ecomm.php:286
 #: includes/class-pr-dhl-wc-method-ecs-asia.php:260
-#: includes/class-pr-dhl-wc-method-paket.php:405
+#: includes/class-pr-dhl-wc-method-paket.php:406
 msgid "Enable Sandbox Mode"
 msgstr "Sandbox-Modus aktivieren"
 
@@ -2421,14 +2421,14 @@ msgstr ""
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:156
 #: includes/class-pr-dhl-wc-method-ecomm.php:301
 #: includes/class-pr-dhl-wc-method-ecs-asia.php:275
-#: includes/class-pr-dhl-wc-method-paket.php:425
+#: includes/class-pr-dhl-wc-method-paket.php:426
 msgid "Debug Log"
 msgstr "Debug Protokoll"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:158
 #: includes/class-pr-dhl-wc-method-ecomm.php:303
 #: includes/class-pr-dhl-wc-method-ecs-asia.php:277
-#: includes/class-pr-dhl-wc-method-paket.php:427
+#: includes/class-pr-dhl-wc-method-paket.php:428
 msgid "Enable logging"
 msgstr "Logging aktivieren"
 
@@ -2524,21 +2524,21 @@ msgstr ""
 #: includes/class-pr-dhl-wc-method-ecomm.php:257
 #: includes/class-pr-dhl-wc-method-ecs-asia.php:223
 #: includes/class-pr-dhl-wc-method-ecs-asia.php:231
-#: includes/class-pr-dhl-wc-method-paket.php:341
+#: includes/class-pr-dhl-wc-method-paket.php:342
 msgid "Tracking Note"
 msgstr "Sendungsbenachrichtigung"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:228
 #: includes/class-pr-dhl-wc-method-ecomm.php:251
 #: includes/class-pr-dhl-wc-method-ecs-asia.php:225
-#: includes/class-pr-dhl-wc-method-paket.php:343
+#: includes/class-pr-dhl-wc-method-paket.php:344
 msgid "Make Private"
 msgstr "Nicht senden"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:231
 #: includes/class-pr-dhl-wc-method-ecomm.php:253
 #: includes/class-pr-dhl-wc-method-ecs-asia.php:227
-#: includes/class-pr-dhl-wc-method-paket.php:345
+#: includes/class-pr-dhl-wc-method-paket.php:346
 msgid ""
 "Please, tick here to not send an email to the customer when the tracking "
 "number is added to the order."
@@ -2852,13 +2852,13 @@ msgstr ""
 
 #: includes/class-pr-dhl-wc-method-ecomm.php:261
 #: includes/class-pr-dhl-wc-method-ecs-asia.php:235
-#: includes/class-pr-dhl-wc-method-paket.php:353
+#: includes/class-pr-dhl-wc-method-paket.php:354
 msgid "DHL Tracking Number: {tracking-link}"
 msgstr "DHL Sendungsnnummer:  {tracking-link}"
 
 #: includes/class-pr-dhl-wc-method-ecomm.php:264
 #: includes/class-pr-dhl-wc-method-ecs-asia.php:238
-#: includes/class-pr-dhl-wc-method-paket.php:384
+#: includes/class-pr-dhl-wc-method-paket.php:385
 msgid "API Settings"
 msgstr "API Einstellungen"
 
@@ -2888,7 +2888,7 @@ msgstr ""
 
 #: includes/class-pr-dhl-wc-method-ecomm.php:288
 #: includes/class-pr-dhl-wc-method-ecs-asia.php:262
-#: includes/class-pr-dhl-wc-method-paket.php:407
+#: includes/class-pr-dhl-wc-method-paket.php:408
 #, fuzzy
 msgid ""
 "Please, tick here if you want to test the plug-in installation against the "
@@ -2915,7 +2915,7 @@ msgstr ""
 
 #: includes/class-pr-dhl-wc-method-ecomm.php:305
 #: includes/class-pr-dhl-wc-method-ecs-asia.php:279
-#: includes/class-pr-dhl-wc-method-paket.php:429
+#: includes/class-pr-dhl-wc-method-paket.php:430
 #, php-format
 msgid ""
 "A log file containing the communication to the DHL server will be maintained "
@@ -2928,13 +2928,13 @@ msgstr ""
 
 #: includes/class-pr-dhl-wc-method-ecomm.php:365
 #: includes/class-pr-dhl-wc-method-ecs-asia.php:473
-#: includes/class-pr-dhl-wc-method-paket.php:907
+#: includes/class-pr-dhl-wc-method-paket.php:908
 msgid "Pickup Account Number: "
 msgstr "Pickup Kontonummer: "
 
 #: includes/class-pr-dhl-wc-method-ecomm.php:387
 #: includes/class-pr-dhl-wc-method-ecs-asia.php:495
-#: includes/class-pr-dhl-wc-method-paket.php:929
+#: includes/class-pr-dhl-wc-method-paket.php:930
 msgid "Distribution Center: "
 msgstr "Vertriebszentrum"
 
@@ -3111,8 +3111,8 @@ msgid ""
 msgstr ""
 
 #: includes/class-pr-dhl-wc-method-ecs-asia.php:287
-#: includes/class-pr-dhl-wc-method-paket.php:590
-#: includes/class-pr-dhl-wc-method-paket.php:666
+#: includes/class-pr-dhl-wc-method-paket.php:591
+#: includes/class-pr-dhl-wc-method-paket.php:667
 msgid "Name"
 msgstr "Name"
 
@@ -3176,8 +3176,8 @@ msgid "Enter Pickup City."
 msgstr "Geben Sie Absender Stadt."
 
 #: includes/class-pr-dhl-wc-method-ecs-asia.php:338
-#: includes/class-pr-dhl-wc-method-paket.php:625
-#: includes/class-pr-dhl-wc-method-paket.php:701
+#: includes/class-pr-dhl-wc-method-paket.php:626
+#: includes/class-pr-dhl-wc-method-paket.php:702
 msgid "State"
 msgstr "Land"
 
@@ -3232,7 +3232,7 @@ msgid "The default Tax ID for the shipper."
 msgstr ""
 
 #: includes/class-pr-dhl-wc-method-paket.php:26
-#: includes/class-pr-dhl-wc-method-paket.php:887
+#: includes/class-pr-dhl-wc-method-paket.php:888
 #: includes/pr-dhl-api/class-pr-dhl-api-paket.php:97
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-paket.php:324
 msgid "DHL Paket"
@@ -3291,12 +3291,16 @@ msgid "Shipping Label Settings"
 msgstr "Versandlabel Einstellungen"
 
 #: includes/class-pr-dhl-wc-method-paket.php:169
-#, php-format
+#, fuzzy, php-format
+#| msgid ""
+#| "Please configure the shipping label settings.  Would you like to "
+#| "customize the DHL shipment notification? You can now add your online "
+#| "shop’s name and logo and we will display it in the DHL shipment "
+#| "notification. To upload your logo please use the following %slink%s."
 msgid ""
-"Please configure the shipping label settings.  Would you like to customize "
-"the DHL shipment notification? You can now add your online shop’s name and "
-"logo and we will display it in the DHL shipment notification. To upload your "
-"logo please use the following %slink%s."
+"Would you like to customize the DHL shipment notification? You can now add "
+"your online shop’s name and logo and we will display it in the DHL shipment "
+"notification. To upload your logo please use the following %slink%s."
 msgstr ""
 "Möchten Sie die DHL Paketankündigung individualisieren? Sie können ab sofort "
 "Ihr Logo und den gewünschten Shop-Namen in der Paketankündigung anzeigen "
@@ -3395,7 +3399,7 @@ msgstr ""
 #: includes/class-pr-dhl-wc-method-paket.php:269
 #: includes/class-pr-dhl-wc-method-paket.php:278
 #: includes/class-pr-dhl-wc-method-paket.php:286
-#: includes/class-pr-dhl-wc-method-paket.php:660
+#: includes/class-pr-dhl-wc-method-paket.php:661
 msgid "Checked"
 msgstr "Auswählen"
 
@@ -3544,82 +3548,82 @@ msgstr ""
 "leitcodierbar ist. Für nicht.leitcodierbare Adressen berechnet DHL einen "
 "Zuschlag."
 
-#: includes/class-pr-dhl-wc-method-paket.php:325
+#: includes/class-pr-dhl-wc-method-paket.php:326
 msgid "Logo"
 msgstr "Logo"
 
-#: includes/class-pr-dhl-wc-method-paket.php:327
+#: includes/class-pr-dhl-wc-method-paket.php:328
 msgid "Add Logo"
 msgstr "Logo hinzufügen"
 
-#: includes/class-pr-dhl-wc-method-paket.php:329
+#: includes/class-pr-dhl-wc-method-paket.php:330
 msgid "The logo will be added from your DHL dashboard settings."
 msgstr "Es wird das Logo aus Ihren DHL Dashboard hinzugefügt"
 
-#: includes/class-pr-dhl-wc-method-paket.php:333
+#: includes/class-pr-dhl-wc-method-paket.php:334
 #, fuzzy
 #| msgid "Payment Reference"
 msgid "Shipper Reference"
 msgstr "Zahlungsreferenz"
 
-#: includes/class-pr-dhl-wc-method-paket.php:335
+#: includes/class-pr-dhl-wc-method-paket.php:336
 msgid "Add shipper reference."
 msgstr "Versender-Referenz hinzufügen"
 
-#: includes/class-pr-dhl-wc-method-paket.php:349
+#: includes/class-pr-dhl-wc-method-paket.php:350
 #, fuzzy
 #| msgid "Tracking Note"
 msgid "Tracking Text"
 msgstr "Sendungsbenachrichtigung"
 
-#: includes/class-pr-dhl-wc-method-paket.php:351
+#: includes/class-pr-dhl-wc-method-paket.php:352
 msgid ""
 "Set the custom text when adding the tracking number to the order notes or "
 "completed email. {tracking-link} is where the tracking number will be set."
 msgstr ""
 
-#: includes/class-pr-dhl-wc-method-paket.php:356
+#: includes/class-pr-dhl-wc-method-paket.php:357
 #, fuzzy
 #| msgid "Tracking Note"
 msgid "Tracking Email"
 msgstr "Sendungsbenachrichtigung"
 
-#: includes/class-pr-dhl-wc-method-paket.php:358
+#: includes/class-pr-dhl-wc-method-paket.php:359
 msgid "Add tracking text in completed email"
 msgstr "Text zur Sendungsverfolgung in der Bestellbestätigung hinzufügen"
 
-#: includes/class-pr-dhl-wc-method-paket.php:359
+#: includes/class-pr-dhl-wc-method-paket.php:360
 msgid "Please, tick here to add tracking text when completed email is sent."
 msgstr ""
 "Bitte anhaken, wenn text in der Bestellbestätigung hinzugefügt werden soll"
 
-#: includes/class-pr-dhl-wc-method-paket.php:365
+#: includes/class-pr-dhl-wc-method-paket.php:366
 #, fuzzy
 #| msgid "DHL Create Labels"
 msgid "Create Label on Status"
 msgstr "DHL Label erzeugen"
 
-#: includes/class-pr-dhl-wc-method-paket.php:367
+#: includes/class-pr-dhl-wc-method-paket.php:368
 msgid "Create label on specific status."
 msgstr "Label abhängig vom Status generieren."
 
-#: includes/class-pr-dhl-wc-method-paket.php:368
+#: includes/class-pr-dhl-wc-method-paket.php:369
 msgid "Select the order status."
 msgstr "Bitte wahlen Sie den Bestellstatus."
 
-#: includes/class-pr-dhl-wc-method-paket.php:375
+#: includes/class-pr-dhl-wc-method-paket.php:376
 msgid "Order Status"
 msgstr "Bestellstatus"
 
-#: includes/class-pr-dhl-wc-method-paket.php:377
+#: includes/class-pr-dhl-wc-method-paket.php:378
 msgid "Change to Completed"
 msgstr "Auf Abgeschlossen setzen"
 
-#: includes/class-pr-dhl-wc-method-paket.php:378
+#: includes/class-pr-dhl-wc-method-paket.php:379
 msgid "Please, tick here to change the order status when label is generated."
 msgstr "Bitte Häckchen setzen, wenn der Status geändert werden soll."
 
-#: includes/class-pr-dhl-wc-method-paket.php:386
+#: includes/class-pr-dhl-wc-method-paket.php:387
 msgid ""
 "Please configure your access towards the DHL Paket APIs by means of "
 "authentication."
@@ -3627,11 +3631,11 @@ msgstr ""
 "Bitte tragen Sie hier Ihre Zugangsdaten zum DHL Geschäftskundenportal ein, "
 "um die API Verbindung herzustellen."
 
-#: includes/class-pr-dhl-wc-method-paket.php:389
+#: includes/class-pr-dhl-wc-method-paket.php:390
 msgid "Username"
 msgstr "Benutzername"
 
-#: includes/class-pr-dhl-wc-method-paket.php:391
+#: includes/class-pr-dhl-wc-method-paket.php:392
 #, php-format
 msgid ""
 "Your username for the DHL business customer portal. Please note the lower "
@@ -3640,11 +3644,11 @@ msgstr ""
 "Ihr Benutzername für das DHL Geschäftskunden Portal. Bitte beachten Sie die "
 "Kleinschreibung. Sie können Ihren Zugang %shier%s testen."
 
-#: includes/class-pr-dhl-wc-method-paket.php:396
+#: includes/class-pr-dhl-wc-method-paket.php:397
 msgid "Password"
 msgstr "Passwort"
 
-#: includes/class-pr-dhl-wc-method-paket.php:398
+#: includes/class-pr-dhl-wc-method-paket.php:399
 #, php-format
 msgid ""
 "Your password for the DHL business customer portal. Please note the new "
@@ -3655,50 +3659,50 @@ msgstr ""
 "Neuvergabe des Passworts nach 3 (Standard User) oder 12 (System User) "
 "Monaten und testen Sie vorab ihre Zugangsdaten %shier%s"
 
-#: includes/class-pr-dhl-wc-method-paket.php:411
+#: includes/class-pr-dhl-wc-method-paket.php:412
 #, fuzzy
 #| msgid "Username"
 msgid "Sandbox Username"
 msgstr "Benutzername"
 
-#: includes/class-pr-dhl-wc-method-paket.php:413
+#: includes/class-pr-dhl-wc-method-paket.php:414
 #, php-format
 msgid ""
 "Your sandbox username is the same as for the DHL developer portal. You can "
 "create an account %shere%s."
 msgstr ""
 
-#: includes/class-pr-dhl-wc-method-paket.php:418
+#: includes/class-pr-dhl-wc-method-paket.php:419
 #, fuzzy
 #| msgid "Sandbox Mode"
 msgid "Sandbox Password"
 msgstr "Sandbox-Modus"
 
-#: includes/class-pr-dhl-wc-method-paket.php:420
+#: includes/class-pr-dhl-wc-method-paket.php:421
 #, php-format
 msgid ""
 "Your sandbox password is the same as for the DHL developer portal. You can "
 "create an account %shere%s."
 msgstr ""
 
-#: includes/class-pr-dhl-wc-method-paket.php:440
+#: includes/class-pr-dhl-wc-method-paket.php:441
 msgid "Preferred Service"
 msgstr "DHL Wunschzustellung"
 
-#: includes/class-pr-dhl-wc-method-paket.php:442
+#: includes/class-pr-dhl-wc-method-paket.php:443
 msgid "Preferred service options."
 msgstr "Empfangsoptionen im Frontend."
 
-#: includes/class-pr-dhl-wc-method-paket.php:445
+#: includes/class-pr-dhl-wc-method-paket.php:446
 #: includes/front-end/class-pr-dhl-front-end-paket.php:33
 msgid "Preferred Day"
 msgstr "Liefertag"
 
-#: includes/class-pr-dhl-wc-method-paket.php:447
+#: includes/class-pr-dhl-wc-method-paket.php:448
 msgid "Enable Preferred Day"
 msgstr "Liefertag aktivieren"
 
-#: includes/class-pr-dhl-wc-method-paket.php:449
+#: includes/class-pr-dhl-wc-method-paket.php:450
 msgid ""
 "Enabling this will display a front-end option for the user to select their "
 "preferred day of delivery."
@@ -3706,11 +3710,11 @@ msgstr ""
 "Durch Aktivierung wird dem Kunden im Frontend die Option einer Liefertag "
 "Zustellung angezeigt."
 
-#: includes/class-pr-dhl-wc-method-paket.php:453
+#: includes/class-pr-dhl-wc-method-paket.php:454
 msgid "Preferred Day Price"
 msgstr "Aufpreis Liefertag"
 
-#: includes/class-pr-dhl-wc-method-paket.php:455
+#: includes/class-pr-dhl-wc-method-paket.php:456
 msgid ""
 "Insert gross value as surcharge for the preferred day. Insert 0 to offer "
 "service for free."
@@ -3719,11 +3723,11 @@ msgstr ""
 "Geben Sie 0 ein, um den Service konstenfrei anzubieten. Nutzen Sie . als "
 "Dezimalzeichen."
 
-#: includes/class-pr-dhl-wc-method-paket.php:461
+#: includes/class-pr-dhl-wc-method-paket.php:462
 msgid "Cut Off Time"
 msgstr "Cut-off Zeit"
 
-#: includes/class-pr-dhl-wc-method-paket.php:463
+#: includes/class-pr-dhl-wc-method-paket.php:464
 msgid ""
 "The cut-off time is the latest possible order time up to which the minimum "
 "preferred day (day of order + 2 working days) can be guaranteed. As soon as "
@@ -3736,23 +3740,23 @@ msgstr ""
 "Zeit überschritten ist, wird der im Front-End angezeigte frühstmögliche "
 "Liefertag um einen Tag nach hinten verschoben (Bestelltag+3)."
 
-#: includes/class-pr-dhl-wc-method-paket.php:468
+#: includes/class-pr-dhl-wc-method-paket.php:469
 msgid "Exclusion of transfer days"
 msgstr "Ausschluss von Übergabetagen"
 
-#: includes/class-pr-dhl-wc-method-paket.php:471
+#: includes/class-pr-dhl-wc-method-paket.php:472
 msgid "Exclude days to transfer packages to DHL."
 msgstr "Hier die Tage ankreuzen, an denen Sie keine Pakete an DHL übergeben."
 
-#: includes/class-pr-dhl-wc-method-paket.php:495
+#: includes/class-pr-dhl-wc-method-paket.php:496
 msgid "Preferred Location"
 msgstr "Ablageort:"
 
-#: includes/class-pr-dhl-wc-method-paket.php:497
+#: includes/class-pr-dhl-wc-method-paket.php:498
 msgid "Enable Preferred Location"
 msgstr "Ablageort aktivieren"
 
-#: includes/class-pr-dhl-wc-method-paket.php:499
+#: includes/class-pr-dhl-wc-method-paket.php:500
 msgid ""
 "Enabling this will display a front-end option for the user to select their "
 "preferred location."
@@ -3760,15 +3764,15 @@ msgstr ""
 "Durch Aktivierung wird dem Kunden im Frontend die Option einer Ablageort "
 "Zustellung angezeigt."
 
-#: includes/class-pr-dhl-wc-method-paket.php:503
+#: includes/class-pr-dhl-wc-method-paket.php:504
 msgid "Preferred Neighbour"
 msgstr "Nachbar"
 
-#: includes/class-pr-dhl-wc-method-paket.php:505
+#: includes/class-pr-dhl-wc-method-paket.php:506
 msgid "Enable Preferred Neighbour"
 msgstr "Nachbar aktivieren"
 
-#: includes/class-pr-dhl-wc-method-paket.php:507
+#: includes/class-pr-dhl-wc-method-paket.php:508
 msgid ""
 "Enabling this will display a front-end option for the user to select their "
 "preferred neighbour."
@@ -3776,11 +3780,11 @@ msgstr ""
 "Durch Aktivierung wird dem Kunden im Frontend die Option gegeben, einen "
 "bevorzugten Nachbar anzugeben."
 
-#: includes/class-pr-dhl-wc-method-paket.php:511
+#: includes/class-pr-dhl-wc-method-paket.php:512
 msgid "Shipping Methods"
 msgstr "Versandarten"
 
-#: includes/class-pr-dhl-wc-method-paket.php:513
+#: includes/class-pr-dhl-wc-method-paket.php:514
 msgid ""
 "Select the Shipping Methods to display the enabled DHL Paket preferred "
 "services and Location Finder below. You can press \"ctrl\" to select "
@@ -3791,11 +3795,11 @@ msgstr ""
 "halten, um mehrere Optionen anzuklicken, ein weiteres Drücken deaktiviert "
 "die Option wieder."
 
-#: includes/class-pr-dhl-wc-method-paket.php:519
+#: includes/class-pr-dhl-wc-method-paket.php:520
 msgid "Exclude Payment Gateways"
 msgstr "Ausschluss von Zahlungsmethoden"
 
-#: includes/class-pr-dhl-wc-method-paket.php:522
+#: includes/class-pr-dhl-wc-method-paket.php:523
 msgid ""
 "Select the Payment Gateways to hide the enabled DHL Paket preferred services "
 "and Location Finder below. You can press \"ctrl\" to select multiple options "
@@ -3806,11 +3810,11 @@ msgstr ""
 "halten der “Strg”-Taste mehrere Optionen gleichzeitig auswählen, ein Klick "
 "auf eine bereits ausgewählte Option deaktiviert diese wieder."
 
-#: includes/class-pr-dhl-wc-method-paket.php:528
+#: includes/class-pr-dhl-wc-method-paket.php:529
 msgid "Location Finder"
 msgstr "Standortsuche"
 
-#: includes/class-pr-dhl-wc-method-paket.php:530
+#: includes/class-pr-dhl-wc-method-paket.php:531
 msgid ""
 "Please define the parameters for the display of dhl locations in the shop "
 "frontend."
@@ -3818,7 +3822,7 @@ msgstr ""
 "Bitte konfigurieren Sie hier, was die Standortsuche im Frontend anzeigen "
 "soll."
 
-#: includes/class-pr-dhl-wc-method-paket.php:533
+#: includes/class-pr-dhl-wc-method-paket.php:534
 #: includes/front-end/class-pr-dhl-front-end-paket.php:499
 #: templates/checkout/dhl-parcel-finder.php:36
 #, fuzzy
@@ -3826,11 +3830,11 @@ msgstr ""
 msgid "Packstation"
 msgstr "Ort"
 
-#: includes/class-pr-dhl-wc-method-paket.php:535
+#: includes/class-pr-dhl-wc-method-paket.php:536
 msgid "Enable Packstation"
 msgstr "Packstationen anzeigen"
 
-#: includes/class-pr-dhl-wc-method-paket.php:537
+#: includes/class-pr-dhl-wc-method-paket.php:538
 msgid ""
 "Enabling this will display Packstation locations on Google Maps when "
 "searching for drop off locations on the front-end."
@@ -3838,16 +3842,16 @@ msgstr ""
 "Bei Aktivierung der Checkbox Paketshop werden auf einer Google Karte im "
 "Frontend Paketshops zum Direktversand angeboten."
 
-#: includes/class-pr-dhl-wc-method-paket.php:541
-#: includes/class-pr-dhl-wc-method-paket.php:973
+#: includes/class-pr-dhl-wc-method-paket.php:542
+#: includes/class-pr-dhl-wc-method-paket.php:974
 msgid "Parcelshop"
 msgstr "Paketshop"
 
-#: includes/class-pr-dhl-wc-method-paket.php:543
+#: includes/class-pr-dhl-wc-method-paket.php:544
 msgid "Enable Parcelshop"
 msgstr "Paketshops anzeigen"
 
-#: includes/class-pr-dhl-wc-method-paket.php:545
+#: includes/class-pr-dhl-wc-method-paket.php:546
 msgid ""
 "Enabling this will display Parcelshop locations on Google Maps when "
 "searching for drop off locations on the front-end."
@@ -3855,16 +3859,16 @@ msgstr ""
 "Bei Aktivierung der Checkbox Postfiliale werden auf einer Google Karte im "
 "Frontend Postfilialen zum Direktversand angeboten."
 
-#: includes/class-pr-dhl-wc-method-paket.php:549
-#: includes/class-pr-dhl-wc-method-paket.php:981
+#: includes/class-pr-dhl-wc-method-paket.php:550
+#: includes/class-pr-dhl-wc-method-paket.php:982
 msgid "Post Office"
 msgstr "Postfiliale"
 
-#: includes/class-pr-dhl-wc-method-paket.php:551
+#: includes/class-pr-dhl-wc-method-paket.php:552
 msgid "Enable Post Office"
 msgstr "Postfilialen anzeigen"
 
-#: includes/class-pr-dhl-wc-method-paket.php:553
+#: includes/class-pr-dhl-wc-method-paket.php:554
 msgid ""
 "Enabling this will display Post Office locations on Google Maps when "
 "searching for drop off locations on the front-end."
@@ -3872,16 +3876,16 @@ msgstr ""
 "Durch Aktivierung werden auf der Google-Maps Karte von der Standortsuche im "
 "Frontend Postfilialen angezeigt."
 
-#: includes/class-pr-dhl-wc-method-paket.php:557
-#: includes/class-pr-dhl-wc-method-paket.php:989
+#: includes/class-pr-dhl-wc-method-paket.php:558
+#: includes/class-pr-dhl-wc-method-paket.php:990
 msgid "Google Maps"
 msgstr "Google Maps"
 
-#: includes/class-pr-dhl-wc-method-paket.php:559
+#: includes/class-pr-dhl-wc-method-paket.php:560
 msgid "Enable Google Maps"
 msgstr "Google Maps aktivieren"
 
-#: includes/class-pr-dhl-wc-method-paket.php:561
+#: includes/class-pr-dhl-wc-method-paket.php:562
 #, fuzzy
 #| msgid ""
 #| "Enabling this will display Parcelshop locations on Google Maps when "
@@ -3891,22 +3895,22 @@ msgstr ""
 "Bei Aktivierung der Checkbox Postfiliale werden auf einer Google Karte im "
 "Frontend Postfilialen zum Direktversand angeboten."
 
-#: includes/class-pr-dhl-wc-method-paket.php:565
+#: includes/class-pr-dhl-wc-method-paket.php:566
 msgid "Limit Results"
 msgstr "Ergebnisse reduzieren"
 
-#: includes/class-pr-dhl-wc-method-paket.php:567
+#: includes/class-pr-dhl-wc-method-paket.php:568
 msgid "Limit displayed results, from 1 to at most 50."
 msgstr ""
 "Hier legen Sie die maximale Anzahl an DHL Standorten fest die dem Kunden im "
 "Frontend auf der Google Karte angezeigt werden. Es kann zwischen 1 und 50 "
 "Standorten gewählt werden."
 
-#: includes/class-pr-dhl-wc-method-paket.php:574
+#: includes/class-pr-dhl-wc-method-paket.php:575
 msgid "API Key"
 msgstr "API Schlüssel"
 
-#: includes/class-pr-dhl-wc-method-paket.php:576
+#: includes/class-pr-dhl-wc-method-paket.php:577
 #, php-format
 msgid ""
 "The Google Maps API Key is necassary to display the DHL Locations on a "
@@ -3916,84 +3920,84 @@ msgstr ""
 "Karte anzuzeigen. <br/>Klicken Sie %shier%s, um einen kostenlosen Google "
 "Maps Schlüssel zu erhalten."
 
-#: includes/class-pr-dhl-wc-method-paket.php:585
+#: includes/class-pr-dhl-wc-method-paket.php:586
 msgid "Shipper Address"
 msgstr "Adresse des Absenders"
 
-#: includes/class-pr-dhl-wc-method-paket.php:587
+#: includes/class-pr-dhl-wc-method-paket.php:588
 msgid "Enter Shipper Address below."
 msgstr ""
 "Tragen Sie hier die Absenderadresse ein, welche auf dem Label erscheinen "
 "soll."
 
-#: includes/class-pr-dhl-wc-method-paket.php:592
+#: includes/class-pr-dhl-wc-method-paket.php:593
 msgid "Enter Shipper Name."
 msgstr "Absender-Name."
 
-#: includes/class-pr-dhl-wc-method-paket.php:599
+#: includes/class-pr-dhl-wc-method-paket.php:600
 msgid "Enter Shipper Company."
 msgstr "Absender-Unternehmen."
 
-#: includes/class-pr-dhl-wc-method-paket.php:604
-#: includes/class-pr-dhl-wc-method-paket.php:680
+#: includes/class-pr-dhl-wc-method-paket.php:605
+#: includes/class-pr-dhl-wc-method-paket.php:681
 msgid "Street Address"
 msgstr "Straße"
 
-#: includes/class-pr-dhl-wc-method-paket.php:606
+#: includes/class-pr-dhl-wc-method-paket.php:607
 msgid "Enter Shipper Street Address."
 msgstr "Absender-Adresse."
 
-#: includes/class-pr-dhl-wc-method-paket.php:611
-#: includes/class-pr-dhl-wc-method-paket.php:687
+#: includes/class-pr-dhl-wc-method-paket.php:612
+#: includes/class-pr-dhl-wc-method-paket.php:688
 msgid "Street Address Number"
 msgstr "Hausnummer"
 
-#: includes/class-pr-dhl-wc-method-paket.php:613
+#: includes/class-pr-dhl-wc-method-paket.php:614
 msgid "Enter Shipper Street Address Number."
 msgstr "Absender-Hausnummer."
 
-#: includes/class-pr-dhl-wc-method-paket.php:620
+#: includes/class-pr-dhl-wc-method-paket.php:621
 msgid "Enter Shipper City."
 msgstr "Geben Sie Absender Stadt."
 
-#: includes/class-pr-dhl-wc-method-paket.php:627
+#: includes/class-pr-dhl-wc-method-paket.php:628
 msgid "Enter Shipper County."
 msgstr "Absender-Land."
 
-#: includes/class-pr-dhl-wc-method-paket.php:634
+#: includes/class-pr-dhl-wc-method-paket.php:635
 msgid "Enter Shipper Postcode."
 msgstr "Versender Postleitzahl eingeben."
 
-#: includes/class-pr-dhl-wc-method-paket.php:639
-#: includes/class-pr-dhl-wc-method-paket.php:715
+#: includes/class-pr-dhl-wc-method-paket.php:640
+#: includes/class-pr-dhl-wc-method-paket.php:716
 msgid "Phone Number"
 msgstr "Telefonnummer"
 
-#: includes/class-pr-dhl-wc-method-paket.php:641
-#: includes/class-pr-dhl-wc-method-paket.php:717
+#: includes/class-pr-dhl-wc-method-paket.php:642
+#: includes/class-pr-dhl-wc-method-paket.php:718
 msgid "Enter Phone Number."
 msgstr "Telefonnummer eingeben."
 
-#: includes/class-pr-dhl-wc-method-paket.php:648
-#: includes/class-pr-dhl-wc-method-paket.php:724
+#: includes/class-pr-dhl-wc-method-paket.php:649
+#: includes/class-pr-dhl-wc-method-paket.php:725
 msgid "Enter Email."
 msgstr "Email eintragen."
 
-#: includes/class-pr-dhl-wc-method-paket.php:653
+#: includes/class-pr-dhl-wc-method-paket.php:654
 msgid "Return Address"
 msgstr "Retouren-Adresse"
 
-#: includes/class-pr-dhl-wc-method-paket.php:655
+#: includes/class-pr-dhl-wc-method-paket.php:656
 msgid "Enter Return Address below."
 msgstr "Geben Sie unten ihre Retouren-Adresse ein."
 
-#: includes/class-pr-dhl-wc-method-paket.php:658
+#: includes/class-pr-dhl-wc-method-paket.php:659
 #, fuzzy
 #| msgid "Create return label: "
 msgid "Create Return Label default"
 msgstr "Retouren Label erzeugen: "
 
-#: includes/class-pr-dhl-wc-method-paket.php:662
+#: includes/class-pr-dhl-wc-method-paket.php:663
 #, fuzzy
 #| msgid ""
 #| "Please, tick here if you want the \"Print Only If Codeable\" option to be "
@@ -4006,66 +4010,66 @@ msgstr ""
 "leitcodierbar ist. Für nicht.leitcodierbare Adressen berechnet DHL einen "
 "Zuschlag."
 
-#: includes/class-pr-dhl-wc-method-paket.php:668
+#: includes/class-pr-dhl-wc-method-paket.php:669
 msgid "Enter Return Name."
 msgstr "Retouren-Name eintragen."
 
-#: includes/class-pr-dhl-wc-method-paket.php:675
+#: includes/class-pr-dhl-wc-method-paket.php:676
 msgid "Enter Return Company."
 msgstr "Retouren-Firma eintragen."
 
-#: includes/class-pr-dhl-wc-method-paket.php:682
+#: includes/class-pr-dhl-wc-method-paket.php:683
 msgid "Enter Return Street Address."
 msgstr "Retouren-Straße eintragen."
 
-#: includes/class-pr-dhl-wc-method-paket.php:689
+#: includes/class-pr-dhl-wc-method-paket.php:690
 msgid "Enter Return Street Address Number."
 msgstr "Retouren-Hausnummer eintragen."
 
-#: includes/class-pr-dhl-wc-method-paket.php:696
+#: includes/class-pr-dhl-wc-method-paket.php:697
 msgid "Enter Return City."
 msgstr "Retouren-Ort eingeben."
 
-#: includes/class-pr-dhl-wc-method-paket.php:703
+#: includes/class-pr-dhl-wc-method-paket.php:704
 msgid "Enter Return County."
 msgstr "Retouren-Land eingeben."
 
-#: includes/class-pr-dhl-wc-method-paket.php:710
+#: includes/class-pr-dhl-wc-method-paket.php:711
 msgid "Enter Return Postcode."
 msgstr "Retouren-Postleitzahl eingeben."
 
-#: includes/class-pr-dhl-wc-method-paket.php:729
+#: includes/class-pr-dhl-wc-method-paket.php:730
 msgid "Bank Details"
 msgstr "Bankverbindung"
 
-#: includes/class-pr-dhl-wc-method-paket.php:731
+#: includes/class-pr-dhl-wc-method-paket.php:732
 msgid "Enter your bank details needed for services that use COD."
 msgstr ""
 "Geben Sie die Bankverbindung an, die zur Überweisung von Nachnahmebeträgen "
 "genutzt werden soll."
 
-#: includes/class-pr-dhl-wc-method-paket.php:734
+#: includes/class-pr-dhl-wc-method-paket.php:735
 msgid "Account Owner"
 msgstr "Konto Inhaber"
 
-#: includes/class-pr-dhl-wc-method-paket.php:738
+#: includes/class-pr-dhl-wc-method-paket.php:739
 msgid "Bank Name"
 msgstr "Name der Bank"
 
-#: includes/class-pr-dhl-wc-method-paket.php:742
+#: includes/class-pr-dhl-wc-method-paket.php:743
 msgid "IBAN"
 msgstr "IBAN"
 
-#: includes/class-pr-dhl-wc-method-paket.php:746
+#: includes/class-pr-dhl-wc-method-paket.php:747
 msgid "BIC"
 msgstr "BIC"
 
-#: includes/class-pr-dhl-wc-method-paket.php:750
+#: includes/class-pr-dhl-wc-method-paket.php:751
 msgid "Payment Reference"
 msgstr "Zahlungsreferenz"
 
-#: includes/class-pr-dhl-wc-method-paket.php:753
-#: includes/class-pr-dhl-wc-method-paket.php:761
+#: includes/class-pr-dhl-wc-method-paket.php:754
+#: includes/class-pr-dhl-wc-method-paket.php:762
 #, php-format
 msgid ""
 "Use \"%s\" to send the order id as a bank reference and \"%s\" to send the "
@@ -4075,56 +4079,56 @@ msgstr ""
 "Benutzen Sie “%s”, um die Kunden-Email zu senden. Die Eingabe ist auf 35 "
 "Zeichen beschränkt."
 
-#: includes/class-pr-dhl-wc-method-paket.php:758
+#: includes/class-pr-dhl-wc-method-paket.php:759
 msgid "Payment Reference 2"
 msgstr "Zahlungsreferenz 2"
 
-#: includes/class-pr-dhl-wc-method-paket.php:779
+#: includes/class-pr-dhl-wc-method-paket.php:780
 msgid "Business Hours (for DHL Pickup Request)"
 msgstr ""
 
-#: includes/class-pr-dhl-wc-method-paket.php:781
+#: includes/class-pr-dhl-wc-method-paket.php:782
 msgid "The business hours available for DHL Pickup."
 msgstr ""
 
-#: includes/class-pr-dhl-wc-method-paket.php:784
-#: includes/class-pr-dhl-wc-method-paket.php:799
+#: includes/class-pr-dhl-wc-method-paket.php:785
+#: includes/class-pr-dhl-wc-method-paket.php:800
 msgid "From: "
 msgstr ""
 
-#: includes/class-pr-dhl-wc-method-paket.php:789
-#: includes/class-pr-dhl-wc-method-paket.php:804
+#: includes/class-pr-dhl-wc-method-paket.php:790
+#: includes/class-pr-dhl-wc-method-paket.php:805
 msgid "To: "
 msgstr ""
 
-#: includes/class-pr-dhl-wc-method-paket.php:794
+#: includes/class-pr-dhl-wc-method-paket.php:795
 msgid "Additional Business Hours (for DHL Pickup Request)"
 msgstr ""
 
-#: includes/class-pr-dhl-wc-method-paket.php:796
+#: includes/class-pr-dhl-wc-method-paket.php:797
 msgid "Optional, if additional business hours are needed."
 msgstr ""
 
-#: includes/class-pr-dhl-wc-method-paket.php:884
+#: includes/class-pr-dhl-wc-method-paket.php:885
 msgid "Method Title"
 msgstr "Name der Methode"
 
-#: includes/class-pr-dhl-wc-method-paket.php:886
+#: includes/class-pr-dhl-wc-method-paket.php:887
 #, fuzzy
 msgid "This controls the title which the user sees during checkout."
 msgstr "Der Titel, den der Benutzer während der Bezahlung sieht."
 
-#: includes/class-pr-dhl-wc-method-paket.php:1007
+#: includes/class-pr-dhl-wc-method-paket.php:1008
 msgid "In order to use logo, you need to set a shipper reference first."
 msgstr ""
 "Um das Logo zu aktivieren, müssen Sie eine Versender-Referenz einrichten."
 
-#: includes/class-pr-dhl-wc-method-paket.php:1034
+#: includes/class-pr-dhl-wc-method-paket.php:1035
 #, php-format
 msgid "In order to show %s, you need to set a Google API Key first."
 msgstr "Sie benötigen %s, einen Google Maps API Schlüssel."
 
-#: includes/class-pr-dhl-wc-method-paket.php:1036
+#: includes/class-pr-dhl-wc-method-paket.php:1037
 #, php-format
 msgid "In order to show %s on a map, you need to set a Google API Key first."
 msgstr "Sie benötigen %s,  einen Google Maps API Schlüssel."
