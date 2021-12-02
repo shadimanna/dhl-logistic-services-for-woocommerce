@@ -166,7 +166,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			'dhl_general'     => array(
 				'title'           => __( 'Shipping Label Settings', 'dhl-for-woocommerce' ),
 				'type'            => 'title',
-				'description'     => sprintf( __( 'Please configure the shipping label settings.  Would you like to customize the DHL shipment notification? You can now add your online shop’s name and logo and we will display it in the DHL shipment notification. To upload your logo please use the following %slink%s.!', 'dhl-for-woocommerce' ), '<a href="' . PR_DHL_PAKET_NOTIFICATION_EMAIL . '" target = "_blank">', '</a>' ),
+				'description'     => sprintf( __( 'Would you like to customize the DHL shipment notification? You can now add your online shop’s name and logo and we will display it in the DHL shipment notification. To upload your logo please use the following %slink%s.', 'dhl-for-woocommerce' ), '<a href="' . PR_DHL_PAKET_NOTIFICATION_EMAIL . '" target = "_blank">', '</a>' ),
 			),
 			'dhl_default_product_dom' => array(
 				'title'             => __( 'Domestic Default Service', 'dhl-for-woocommerce' ),
