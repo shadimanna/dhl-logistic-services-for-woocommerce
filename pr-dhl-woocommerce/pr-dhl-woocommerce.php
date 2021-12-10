@@ -210,7 +210,6 @@ class PR_DHL_WC {
     public function init_hooks() {
         add_action( 'init', array( $this, 'init' ), 1 );
         add_action( 'init', array( $this, 'load_textdomain' ) );
-        add_action( 'init', array( $this, 'set_payment_gateways' ) );
 
         add_action( 'admin_enqueue_scripts', array( $this, 'dhl_enqueue_scripts') );
 
@@ -627,25 +626,6 @@ class PR_DHL_WC {
 		return $dhl_obj->get_dhl_preferred_day_time( $postcode, $shipping_dhl_settings['dhl_account_num'], $cutoff_time, $exclusion_work_day );
 	}
 
-	public function set_payment_gateways() {
-		try {
-			$dhl_obj = $this->get_dhl_factory();
-
-			if( $dhl_obj->is_dhl_paket() ) {
-				$wc_payment_gateways = WC()->payment_gateways()->payment_gateways();
-
-				foreach ($wc_payment_gateways as $key => $gateway) {
-					$this->payment_gateway_titles[ $key ] = $gateway->get_method_title();
-				}
-			}
-		} catch (Exception $e) {
-			add_action( 'admin_notices', array( $this, 'environment_check' ) );
-		}
-	}
-
-	public function get_payment_gateways( ) {
-		return $this->payment_gateway_titles;
-	}
 
 	/**
 	 * Function return whether the sender and receiver country is the same territory
