@@ -90,7 +90,11 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 		$order_status_options = array_merge( $order_status_options, $this->get_order_statuses() );
 
-		$payment_gateway_titles = PR_DHL()->get_payment_gateways();
+		$payment_gateway_titles = [];
+		$wc_payment_gateways = WC()->payment_gateways()->payment_gateways();
+		foreach ($wc_payment_gateways as $gatekey => $gateway) {
+			$payment_gateway_titles[ $gatekey ] = $gateway->get_method_title();
+		}
 
 		$log_path = PR_DHL()->get_log_url();
 
