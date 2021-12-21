@@ -79,8 +79,6 @@ class PR_DHL_WC {
 	 */
 	protected $logger = null;
 
-	private $payment_gateway_titles = array();
-
 	protected $base_country_code = '';
 
 	// 'LI', 'CH', 'NO'
