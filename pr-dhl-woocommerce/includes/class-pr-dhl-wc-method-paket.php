@@ -317,6 +317,9 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'910-300-600' => 'Thermo printer 103 x 199 mm',
 					'910-300-610' => 'Thermo printer 103 x 202 mm',
 					'910-300-710' => 'Laser printer 105 x 208 mm',
+					'910-300-410' => 'Laser printer 103 x 150 mm',
+					'910-300-300' => 'Laser printer 105 x 148 mm',
+					'910-300-300-oZ' => 'Laser printer 105 x 148 mm (without additional labels)',
 					'100x70mm'	  => '100 x 70 mm (only for Warenpost)'
 				),
 				'default' 			=> '910-300-700',
@@ -811,7 +814,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 	}
 
-	// Set specific field options after initialization 
+	// Set specific field options after initialization
 	public function after_init_set_field_options ( $fields ) {
 
 		if ( isset( $fields['dhl_payment_gateway'] ) ) {
