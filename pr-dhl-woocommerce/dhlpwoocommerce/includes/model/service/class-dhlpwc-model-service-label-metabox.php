@@ -129,20 +129,6 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
                             }
                         }
 
-                        if (!empty($option_data) && is_array($option_data) && array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE2, $option_data)) {
-                            $logic = DHLPWC_Model_Logic_Shipment::instance();
-                            $value = $logic->get_reference2_data($option_data);
-                        } else {
-                            $access_service = DHLPWC_Model_Service_Access_Control::instance();
-                            $default_order_id_reference2 = $access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DEFAULT_ORDER_ID_REFERENCE2);
-
-                            if ($default_order_id_reference2) {
-                                $value = apply_filters('dhlpwc_default_reference2_value', $order_id, $order_id);
-                            } else {
-                                $value = null;
-                            }
-                        }
-
                         $option->input_template = DHLPWC_Model_API_Data_Option::INPUT_TEMPLATE_TEXT;
                         $option->input_template_data = array(
                             'placeholder' => __('Reference', 'dhlpwc'),
