@@ -108,7 +108,8 @@ jQuery(document).ready(function($) {
 
     }).on('click', '.dhlpwc-parcelshop-option-change', function(e) {
         e.preventDefault();
-        if ($('[id^=shipping_method_][id$=_dhlpwc-parcelshop]').is(':checked')) {
+        var dhlpwc_parcelshop_input = $('[id^=shipping_method_][id$=_dhlpwc-parcelshop]')
+        if (dhlpwc_parcelshop_input.is(':checked') || dhlpwc_parcelshop_input.attr('type') === 'hidden') {
             $(document.body).trigger('dhlpwc:show_parcelshop_selection_modal');
         }
 
