@@ -667,6 +667,7 @@ class PR_DHL_Front_End_Paket {
 					'type'         => 'select',
 					'class'        => array( 'shipping-dhl-address-type' ),
 					'clear'        => true,
+					'default'      => 'normal',
 					'options'	   => array( 'normal' => __('Regular Address', 'dhl-for-woocommerce'), 'dhl_packstation' => __('DHL Packstation', 'dhl-for-woocommerce'), 'dhl_branch' => __('DHL Branch', 'dhl-for-woocommerce') )
 				);
 
