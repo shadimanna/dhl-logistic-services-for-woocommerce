@@ -787,7 +787,7 @@ class PR_DHL_Front_End_Paket {
 		$pos_rs = PR_DHL()->is_parcelshop( $shipping_address_1 );
 		$pos_po = PR_DHL()->is_post_office( $shipping_address_1 );
 
-		if( $shipping_dhl_address_type != 'normal' ) {
+		if( !empty($shipping_dhl_address_type) && $shipping_dhl_address_type != 'normal' ) {
 			// check shipping method and payment gateway first
 			try {
 				$this->validate_extra_services_available();
