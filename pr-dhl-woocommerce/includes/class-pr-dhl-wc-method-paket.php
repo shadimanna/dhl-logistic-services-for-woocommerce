@@ -816,14 +816,15 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 	// Set specific field options after initialization
 	public function after_init_set_field_options ( $fields ) {
-
 		if ( isset( $fields['dhl_payment_gateway'] ) ) {
 			$payment_gateway_titles = [];
-			$wc_payment_gateways = WC()->payment_gateways->payment_gateways();
-			foreach ($wc_payment_gateways as $gatekey => $gateway) {
-				$payment_gateway_titles[ $gatekey ] = $gateway->get_method_title();
+			if ( isset( WC()->payment_gateways ) ) {
+				$wc_payment_gateways = WC()->payment_gateways->payment_gateways();
+				foreach ($wc_payment_gateways as $gatekey => $gateway) {
+					$payment_gateway_titles[ $gatekey ] = $gateway->get_method_title();
+				}
+				$fields['dhl_payment_gateway']['options'] = $payment_gateway_titles;
 			}
-			$fields['dhl_payment_gateway']['options'] = $payment_gateway_titles;
 		}
 		return $fields;
 	}
