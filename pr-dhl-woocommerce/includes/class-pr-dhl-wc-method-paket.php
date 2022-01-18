@@ -39,6 +39,8 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 		add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'process_admin_options' ) );
 
+		add_filter( 'woocommerce_settings_api_form_fields_' .$this->id, array( $this, 'after_init_set_field_options' ) );
+
 	}
 
 	/**
@@ -89,8 +91,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		);
 
 		$order_status_options = array_merge( $order_status_options, $this->get_order_statuses() );
-
-		$payment_gateway_titles = PR_DHL()->get_payment_gateways();
 
 		$log_path = PR_DHL()->get_log_url();
 
@@ -166,7 +166,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			'dhl_general'     => array(
 				'title'           => __( 'Shipping Label Settings', 'dhl-for-woocommerce' ),
 				'type'            => 'title',
-				'description'     => __( 'Please configure the shipping label settings.', 'dhl-for-woocommerce' ),
+				'description'     => sprintf( __( 'Would you like to customize the DHL shipment notification? You can now add your online shop’s name and logo and we will display it in the DHL shipment notification. To upload your logo please use the following %slink%s.', 'dhl-for-woocommerce' ), '<a href="' . PR_DHL_PAKET_NOTIFICATION_EMAIL . '" target = "_blank">', '</a>' ),
 			),
 			'dhl_default_product_dom' => array(
 				'title'             => __( 'Domestic Default Service', 'dhl-for-woocommerce' ),
@@ -317,6 +317,9 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'910-300-600' => 'Thermo printer 103 x 199 mm',
 					'910-300-610' => 'Thermo printer 103 x 202 mm',
 					'910-300-710' => 'Laser printer 105 x 208 mm',
+					'910-300-410' => 'Laser printer 103 x 150 mm',
+					'910-300-300' => 'Laser printer 105 x 148 mm',
+					'910-300-300-oZ' => 'Laser printer 105 x 148 mm (without additional labels)',
 					'100x70mm'	  => '100 x 70 mm (only for Warenpost)'
 				),
 				'default' 			=> '910-300-700',
@@ -522,7 +525,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'default' 			=> 'cod',
 					'description'       => __( 'Select the Payment Gateways to hide the enabled DHL Paket preferred services and Location Finder below. You can press "ctrl" to select multiple options or click on a selected option to deselect it.', 'dhl-for-woocommerce' ),
 					'desc_tip'          => true,
-					'options'           => $payment_gateway_titles,
+					'options'           => [],
 					'class'          => 'wc-enhanced-select',
 				),
 				'dhl_parcel_finder'           => array(
@@ -808,34 +811,22 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			),
 		);
 
-		/*
-			echo '<label>'.__( '2nd Business Hours for Pickup (optional)', 'dhl-for-woocommerce' ).'</label>';
 
-			woocommerce_wp_text_input( array(
-				'id'          		=> 'pr_dhl_request_pickup_hours_1_start',
-				'name'          		=> 'pr_dhl_request_pickup_hours[1][start]',
-				'label'       		=> __( 'From: ', 'dhl-for-woocommerce' ),
-				'placeholder' 		=> '',
-				'description'		=> '',
-				//'value'       		=> date('Y-m-d', strtotime('+1 day')),
-				//'custom_attributes'	=> array( 'min' => date('Y-m-d'), 'max' => date('Y-m-d', strtotime('+30 days')) ),
-				'class'				=> 'short',
-				'type'	=> 'time'
-			) );
+	}
 
-			woocommerce_wp_text_input( array(
-				'id'          		=> 'pr_dhl_request_pickup_hours_1_end',
-				'name'          		=> 'pr_dhl_request_pickup_hours[1][end]',
-				'label'       		=> __( 'To: ', 'dhl-for-woocommerce' ),
-				'placeholder' 		=> '',
-				'description'		=> '',
-				//'value'       		=> date('Y-m-d', strtotime('+1 day')),
-				//'custom_attributes'	=> array( 'min' => date('Y-m-d'), 'max' => date('Y-m-d', strtotime('+30 days')) ),
-				'class'				=> 'short',
-				'type'	=> 'time'
-			) );
-
-			*/
+	// Set specific field options after initialization
+	public function after_init_set_field_options ( $fields ) {
+		if ( isset( $fields['dhl_payment_gateway'] ) ) {
+			$payment_gateway_titles = [];
+			if ( WC()->payment_gateways ) {
+				$wc_payment_gateways = WC()->payment_gateways->payment_gateways();
+				foreach ($wc_payment_gateways as $gatekey => $gateway) {
+					$payment_gateway_titles[ $gatekey ] = $gateway->get_method_title();
+				}
+				$fields['dhl_payment_gateway']['options'] = $payment_gateway_titles;
+			}
+		}
+		return $fields;
 	}
 
 	/**

@@ -340,7 +340,7 @@ class PR_DHL_Front_End_Paket {
 			if ( ! empty( $post_data['pr_dhl_preferred_day'] ) ) {
 
 				if( ! empty( $this->shipping_dhl_settings['dhl_preferred_day_cost'] ) ) {
-					$cart->add_fee( __('DHL Preferred Day', 'dhl-for-woocommerce'), $this->shipping_dhl_settings['dhl_preferred_day_cost'] );
+					$cart->add_fee( __('DHL Delivery Day', 'dhl-for-woocommerce'), $this->shipping_dhl_settings['dhl_preferred_day_cost'] );
 				}
 
 			}
@@ -667,6 +667,7 @@ class PR_DHL_Front_End_Paket {
 					'type'         => 'select',
 					'class'        => array( 'shipping-dhl-address-type' ),
 					'clear'        => true,
+					'default'      => 'normal',
 					'options'	   => array( 'normal' => __('Regular Address', 'dhl-for-woocommerce'), 'dhl_packstation' => __('DHL Packstation', 'dhl-for-woocommerce'), 'dhl_branch' => __('DHL Branch', 'dhl-for-woocommerce') )
 				);
 
@@ -786,7 +787,7 @@ class PR_DHL_Front_End_Paket {
 		$pos_rs = PR_DHL()->is_parcelshop( $shipping_address_1 );
 		$pos_po = PR_DHL()->is_post_office( $shipping_address_1 );
 
-		if( $shipping_dhl_address_type != 'normal' ) {
+		if( !empty($shipping_dhl_address_type) && $shipping_dhl_address_type != 'normal' ) {
 			// check shipping method and payment gateway first
 			try {
 				$this->validate_extra_services_available();

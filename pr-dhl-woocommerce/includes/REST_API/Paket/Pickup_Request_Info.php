@@ -361,10 +361,10 @@ class Pickup_Request_Info {
 					return 'PAKET';
 				}
 			),
-			// 'tracking_number'	=> array(
-			// 	'rename' => 'shipmentNumber',
-			// 	'default' => 0,
-			// )
+			'tracking_number'	=> array(
+				'rename' => 'shipmentNumber',
+				'default' => 0,
+			)
  		);
  	}
 

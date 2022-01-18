@@ -754,6 +754,11 @@ jQuery(document).ready(function($) {
           '<div id="dhlpwc_snippet_default_reference_value" style="display:none;"><p><pre>' + dhlpwc_settings_object.snippet_default_reference_value + '</pre></p></div>'
         );
 
+        $('input#woocommerce_dhlpwc_check_default_order_id_reference2').closest('fieldset').append(
+          '<p>' + dhlpwc_settings_object.snippet_description_message + ' <a href="#TB_inline?&width=800&height=400&inlineId=dhlpwc_snippet_default_reference2_value" class="thickbox">' + dhlpwc_settings_object.snippet_button_message + '</a></p>' +
+          '<div id="dhlpwc_snippet_default_reference2_value" style="display:none;"><p><pre>' + dhlpwc_settings_object.snippet_default_reference2_value + '</pre></p></div>'
+        );
+
     });
 
     $(document.body).trigger('dhlpwc:init_test_connection_button');

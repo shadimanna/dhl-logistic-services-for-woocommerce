@@ -47,8 +47,7 @@ class PR_DHL_API_Factory {
 				case 'VN':
 				case 'AU':
 				case 'IN':
-					$dhl_obj = new PR_DHL_API_eCS_Asia( $country_code );
-					break;
+					throw new Exception( __('The DHL plugin is not supported in your store\'s "Base Location"', 'dhl-for-woocommerce') );
 				case 'DE':
 					$dhl_obj = new PR_DHL_API_Paket( $country_code );
 					break;

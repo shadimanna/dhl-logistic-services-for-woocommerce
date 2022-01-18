@@ -7,7 +7,7 @@
  * Author URI: http://dhl.com/woocommerce
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
- * Version: 2.7.0
+ * Version: 2.7.4
  * WC requires at least: 3.0
  * WC tested up to: 5.6
  * Requires at least: 4.6
@@ -35,7 +35,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "2.7.0";
+	private $version = "2.7.4";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -78,8 +78,6 @@ class PR_DHL_WC {
 	 * @var PR_DHL_Logger
 	 */
 	protected $logger = null;
-
-	private $payment_gateway_titles = array();
 
 	protected $base_country_code = '';
 
@@ -153,6 +151,7 @@ class PR_DHL_WC {
 		$this->define( 'PR_DHL_PAKET_TRACKING_URL', 'https://www.dhl.de/de/privatkunden/dhl-sendungsverfolgung.html?piececode=' );
 		$this->define( 'PR_DHL_PAKET_BUSSINESS_PORTAL', 'https://www.dhl-geschaeftskundenportal.de' );
 		$this->define( 'PR_DHL_PAKET_DEVELOPER_PORTAL', 'https://entwickler.dhl.de/' );
+		$this->define( 'PR_DHL_PAKET_NOTIFICATION_EMAIL', 'https://www.dhl.de/de/geschaeftskunden/paket/versandsoftware/dhl-paketankuendigung/formular.html' );
 
 		$this->define( 'PR_DHL_PACKSTATION', __('Packstation ', 'dhl-for-woocommerce') );
 		$this->define( 'PR_DHL_PARCELSHOP', __('Postfiliale ', 'dhl-for-woocommerce') );
@@ -209,7 +208,6 @@ class PR_DHL_WC {
     public function init_hooks() {
         add_action( 'init', array( $this, 'init' ), 1 );
         add_action( 'init', array( $this, 'load_textdomain' ) );
-        add_action( 'init', array( $this, 'set_payment_gateways' ) );
 
         add_action( 'admin_enqueue_scripts', array( $this, 'dhl_enqueue_scripts') );
 
@@ -626,25 +624,6 @@ class PR_DHL_WC {
 		return $dhl_obj->get_dhl_preferred_day_time( $postcode, $shipping_dhl_settings['dhl_account_num'], $cutoff_time, $exclusion_work_day );
 	}
 
-	public function set_payment_gateways() {
-		try {
-			$dhl_obj = $this->get_dhl_factory();
-
-			if( $dhl_obj->is_dhl_paket() ) {
-				$wc_payment_gateways = WC()->payment_gateways()->payment_gateways();
-
-				foreach ($wc_payment_gateways as $key => $gateway) {
-					$this->payment_gateway_titles[ $key ] = $gateway->get_method_title();
-				}
-			}
-		} catch (Exception $e) {
-			add_action( 'admin_notices', array( $this, 'environment_check' ) );
-		}
-	}
-
-	public function get_payment_gateways( ) {
-		return $this->payment_gateway_titles;
-	}
 
 	/**
 	 * Function return whether the sender and receiver country is the same territory
