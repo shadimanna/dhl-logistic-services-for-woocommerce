@@ -758,7 +758,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	}
 
 
-	public function process_order_action_request_pickup( $order_id, $pickup_type, $pickup_date, $transportation_type) {
+	public function process_order_action_request_pickup( $order_id, $pickup_type, $pickup_date, $transportation_type = null) {
 
 		$array_messages = array();
 
@@ -782,7 +782,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$args['dhl_pickup_business_hours'] = $pickup_business_hours;
 		//$args['dhl_pickup_transportation_type'] = $transportation_type; // Disabled, use bulky_goods to determine transportation type (see Pickup_Request_info.php)
 
-		//$args['order_details']['bulky_goods'] = 'yes'; // TEST bulky goods
+		//$args['order_details']['bulky_goods'] = 'yes'; // TEST, override set bulky goods
 
 		//Get label (s)
 		$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
@@ -859,9 +859,9 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	public function process_bulk_actions_pickup_request( $redirect_url, $action, $post_ids ) {
 		if ( $action == 'pr_dhl_request_pickup' ) {
 
-			$pickup_type = isset($_GET['pr_dhl_request_pickup']) ? sanitize_text_field($_GET['pr_dhl_request_pickup']) : '';
-			$pickup_date = isset($_GET['pr_dhl_request_pickup_date']) ? sanitize_text_field($_GET['pr_dhl_request_pickup_date']) : '';
-			$transportation_type = isset($_GET['pr_dhl_request_transportation_type']) ? sanitize_text_field($_GET['pr_dhl_request_transportation_type']) : '';
+			$pickup_type = isset($_GET['dhlpickup']) ? sanitize_text_field($_GET['dhlpickup']) : '';
+			$pickup_date = isset($_GET['dhlpickup_d']) ? sanitize_text_field($_GET['dhlpickup_d']) : '';
+			$transportation_type = isset($_GET['dhlpickup_t']) ? sanitize_text_field($_GET['dhlpickup_t']) : '';
 
 			$array_messages = get_option( '_pr_dhl_bulk_action_confirmation' );
 	    	if ( empty( $array_messages ) || !is_array( $array_messages ) ) {
@@ -894,7 +894,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 			update_option( '_pr_dhl_bulk_action_confirmation', $array_messages );
 
-			$redirect_url = add_query_arg('dhl_request_pickup', count($post_ids), $redirect_url);
+			$redirect_url = add_query_arg('dhl_pickup_done', count($post_ids), $redirect_url);
 		}
 		return $redirect_url;
 	}
@@ -924,20 +924,23 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 			//Hidden inputs
 			woocommerce_wp_hidden_input( array(
-				'id'          		=> 'pr_dhl_request_pickup',
-				'name'          		=> 'pr_dhl_request_pickup',
+				'id'          		=> 'dhlpickup',
+				'name'          		=> 'dhlpickup',
 				'value'       		=> 'asap',
 			));
 			woocommerce_wp_hidden_input( array(
-				'id'          		=> 'pr_dhl_request_pickup_date',
-				'name'          		=> 'pr_dhl_request_pickup_date',
+				'id'          		=> 'dhlpickup_d',
+				'name'          		=> 'dhlpickup_d',
 				'value'       		=> date('Y-m-d', strtotime('+1 day')),
 			));
+			/*
+			//Disabled here, set later if bulky goods is yes on order product
 			woocommerce_wp_hidden_input( array(
-				'id'          		=> 'pr_dhl_request_transportation_type',
-				'name'          		=> 'pr_dhl_request_transportation_type',
+				'id'          		=> 'dhlpickup_t',
+				'name'          		=> 'dhlpickup_t',
 				'value'       		=> 'PAKET',
 			));
+			*/
 		}
 	}
 
