@@ -586,9 +586,9 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 		$this->form_fields += array(
 			'dhl_shipper'           => array(
-				'title'           => __( 'Shipper Address', 'dhl-for-woocommerce' ),
+				'title'           => __( 'Shipper Address / Pickup Request Address', 'dhl-for-woocommerce' ),
 				'type'            => 'title',
-				'description'     => __( 'Enter Shipper Address below.', 'dhl-for-woocommerce' ),
+				'description'     => __( 'Enter Shipper Address. This address is also used for Pickup Requests.<br/>Note: For pickup requests to be accepted, this address must match a pickup address saved to your DHL Portal.', 'dhl-for-woocommerce' ),
 			),
 			'dhl_shipper_name' => array(
 				'title'             => __( 'Name', 'dhl-for-woocommerce' ),

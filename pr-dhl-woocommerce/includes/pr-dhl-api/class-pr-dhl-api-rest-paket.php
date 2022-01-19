@@ -367,14 +367,9 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 	 *
 	 * @since [*next-version*]
 	 */
-	public function request_dhl_pickup ( $args ) {
-
-		$order_id = isset( $args[ 'order_details' ][ 'order_id' ] )
-			? $args[ 'order_details' ][ 'order_id' ]
-			: null;
+	public function request_dhl_pickup ( $args, $forcePortalPickupAddressMatch = true ) {
 
 		$uom 				= get_option( 'woocommerce_weight_unit' );
-        $is_cross_border 	= PR_DHL()->is_crossborder_shipment( $args['shipping_address']['country'] );
 
 		// Maybe override account billing number here for Sandbox user
 		if ( $this->maybe_get_sandbox_account_number() ) {
@@ -382,14 +377,58 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 		}
 
 		try {
-			$request_pickup_info = new Pickup_Request_Info( $args, $uom, $is_cross_border );
+			$request_pickup_info = new Pickup_Request_Info( $args, $uom );
 		} catch (Exception $e) {
 			throw $e;
 		}
 
+		// Verify pickup address with DHL portal pickup address first
+		if ( $forcePortalPickupAddressMatch ) {
+
+			$blnIncludeBillingNumber = false;
+
+			$zipCode = $request_pickup_info->pickup_address['zip'];
+			$localAddress = $request_pickup_info->pickup_address;
+
+			try {
+				$pickup_location_response = $this->api_client->get_pickup_location( $zipCode );
+
+				$foundPickupLocMatch = false;
+				foreach ( $pickup_location_response as $pickup_address ) {
+
+					if ( $pickup_address && isset( $pickup_address->pickupLocation) ) {
+						$portalAddress = ( isset($pickup_address->pickupLocation->pickupAddress->nativeAddress )) ? $pickup_address->pickupLocation->pickupAddress->nativeAddress : null;
+						if ( $portalAddress->streetName == $localAddress['streetName']
+							&& $portalAddress->houseNumber == $localAddress['houseNumber']
+							&& $portalAddress->city == $localAddress['city']
+							&& $portalAddress->zip == $localAddress['zip']
+							&& $portalAddress->countryIso2Code == $localAddress['countryIso2Code'] )
+						{
+							$foundPickupLocMatch = true;
+							break;
+						}
+
+					}
+				}
+
+				if ( ! $foundPickupLocMatch ) {
+					throw new Exception(
+						__('Your Shipper Address must match a Pickup address on your DHL Portal.', 'dhl-for-woocommerce')
+					);
+				}
+
+			} catch (Exception $e) {
+				throw $e;
+			}
+
+		} else {
+			//If we are not matching a Pickup address, then we need to include the billing number
+			$blnIncludeBillingNumber = true;
+		}
+
 		// Create the shipping label
 		try {
-			$request_pickup_response = $this->api_client->create_pickup_request( $request_pickup_info );
+			$request_pickup_response = $this->api_client->create_pickup_request( $request_pickup_info, $blnIncludeBillingNumber );
 		} catch (Exception $e) {
 			throw $e;
 		}
