@@ -58,11 +58,11 @@
 
 			var pickup_type 		= elemModal.find( 'input[name=pr_dhl_request_pickup_modal]:checked' ).val();
 			var pickup_date 		= elemModal.find( 'input[name=pr_dhl_request_pickup_date_modal]' ).val();
-			var transportation_type = elemModal.find( 'select[name=pr_dhl_request_pickup_transportation_type] :selected' ).val();
+			//var transportation_type = elemModal.find( 'select[name=pr_dhl_request_pickup_transportation_type] :selected' ).val();
 
-			jQuery('#posts-filter [name=pr_dhl_request_pickup]').val(pickup_type);
-			jQuery('#posts-filter [name=pr_dhl_request_pickup_date]').val(pickup_date);
-			jQuery('#posts-filter [name=pr_dhl_request_transportation_type]').val(transportation_type);
+			jQuery('#posts-filter [name=dhlpickup]').val(pickup_type);
+			jQuery('#posts-filter [name=dhlpickup_d]').val(pickup_date);
+			//jQuery('#posts-filter [name=dhlpickup_t]').val(transportation_type);
 
 			//console.log('type: '+ pickup_type + ' | date: ' + pickup_date+ ' | transportation_type: ' + transportation_type);
 
