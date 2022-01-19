@@ -823,8 +823,8 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				$order->add_order_note( $message );
 
 			    // add the flag
-			   	update_post_meta( $order_id, '_pr_dhl_pickup_order_number', $pickup_order_number  );
-				update_post_meta( $order_id, '_pr_dhl_pickup_date', $pickup_date  );
+			   	update_post_meta( $order_id, '_pr_dhl_pickup_order_number', $response_pickup_order_number  );
+				update_post_meta( $order_id, '_pr_dhl_pickup_date', $response_pickup_date  );
 
 				array_push($array_messages, array(
 					'message' => sprintf( __( 'Order #%s: DHL Pickup Request created', 'dhl-for-woocommerce'), $order->get_order_number() ),
