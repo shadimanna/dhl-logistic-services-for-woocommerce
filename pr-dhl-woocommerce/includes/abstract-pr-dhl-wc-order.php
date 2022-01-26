@@ -349,6 +349,9 @@ abstract class PR_DHL_WC_Order {
 
 		$return_label_number = $this->get_return_label_number( $order_id );
 		if ( $return_label_number ) {
+			if ( is_array($return_label_number) ) {
+				$return_label_number = implode(', ', $return_label_number);
+			}
 			$tracking_note_return_label = sprintf( __( "\n Return Label Number: %s", 'dhl-for-woocommerce' ), $return_label_number);
 			$tracking_note_new  = $tracking_note_new . $tracking_note_return_label;
 		}
@@ -684,7 +687,7 @@ abstract class PR_DHL_WC_Order {
 
 		// If shipping phone number doesn't exist, try to get billing phone number
 		if( empty( $shipping_address['phone'] ) && ! empty( $billing_address['phone'] ) ) {
-			$shipping_address['phone'] = $billing_address['phone'];			
+			$shipping_address['phone'] = $billing_address['phone'];
 		}
 
 		// If shipping email doesn't exist, try to get billing email
