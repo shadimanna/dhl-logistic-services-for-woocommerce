@@ -346,6 +346,7 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 								'V55PAK' => __('DHL Paket Connect', 'dhl-for-woocommerce'),
 								'V54EPAK' => __('DHL Europaket (B2B)', 'dhl-for-woocommerce'),
 								'V53WPAK' => __('DHL Paket International', 'dhl-for-woocommerce'),
+								'V66WPI' => __('DHL Warenpost International', 'dhl-for-woocommerce'),
 								);
 
 		$dhl_prod_int = array();
