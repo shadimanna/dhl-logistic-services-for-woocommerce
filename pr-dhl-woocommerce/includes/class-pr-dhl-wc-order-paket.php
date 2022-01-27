@@ -774,6 +774,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		}
 	}
 
+
 	public function process_orders_action_request_pickup( $order_ids = [], $pickup_type, $pickup_date, $transportation_type = null) {
 
 		$array_messages = array();
