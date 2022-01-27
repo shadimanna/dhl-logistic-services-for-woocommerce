@@ -775,7 +775,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	}
 
 
-	public function process_orders_action_request_pickup( $order_ids = [], $pickup_type, $pickup_date) {
+	public function process_orders_action_request_pickup( $order_ids = [], $pickup_type, $pickup_date, $transportation_type = null) {
 
 		$array_messages = array();
 
@@ -862,8 +862,8 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 					$message = sprintf( __( 'DHL pickup scheduled for %s', 'dhl-for-woocommerce' ), $response_pickup_date );
 					$order->add_order_note( $message );
 
-				   	update_post_meta( $order_id, '_pr_dhl_pickup_order_number', $pickup_order_number  );
-					update_post_meta( $order_id, '_pr_dhl_pickup_date', $pickup_date  );
+				   	update_post_meta( $order_id, '_pr_dhl_pickup_order_number', $response_pickup_order_number  );
+					update_post_meta( $order_id, '_pr_dhl_pickup_date', $response_pickup_date  );
 
 					$order_numbers[] = $order->get_order_number();
 				}
