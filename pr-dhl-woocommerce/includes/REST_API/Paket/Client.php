@@ -50,7 +50,6 @@ class Client extends API_Client {
 	public function __construct( $customer_portal_user, $customer_portal_password, $base_url, API_Driver_Interface $driver, API_Auth_Interface $auth = null ) {
 		parent::__construct( $base_url, $driver, $auth );
 
-		$this->billing_num = $billing_num;
 		$this->customer_portal_user = $customer_portal_user;
 		$this->customer_portal_password = $customer_portal_password;
 	}
@@ -63,7 +62,7 @@ class Client extends API_Client {
 	 * @param class $pickup_request_info Pickup_Request_Info
 	 *
 	 */
-	public function create_pickup_request ( Pickup_Request_Info $pickup_request_info ){
+	public function create_pickup_request ( Pickup_Request_Info $pickup_request_info, $blnIncludeBillingNumber = false ){
 
 		$route 	= $this->request_pickup_route();
 
@@ -72,7 +71,7 @@ class Client extends API_Client {
 			'DPDHL-User-Authentication-Token' => base64_encode( $this->customer_portal_user . ':' . $this->customer_portal_password )
 		);
 
-		$data = $this->request_pickup_info_to_request_data( $pickup_request_info );
+		$data = $this->request_pickup_info_to_request_data( $pickup_request_info, $blnIncludeBillingNumber );
 
 		$response = $this->post($route, $data, $headers);
 		$response_body = $response->body;
@@ -92,6 +91,63 @@ class Client extends API_Client {
 					)
 				);
 			}
+
+		} elseif ( $response->status >= 400 && $response->status <= 499  ) {
+
+			$error_msg = 'HTTP status: '. $response->status;
+
+			if ( $response->status == 400 ) {
+				$error_msg .= ' Bad Request. ';
+			} elseif ( $response->status == 401 ) {
+				$error_msg .= ' Authentication failed. Wrong credentials. ';
+			} elseif ( $response->status == 402 ) {
+				$error_msg .= ' Payment failed. ';
+			} elseif ( $response->status == 403 ) {
+				$error_msg .= ' Authentication failed. Insufficient priviledges. ';
+			}
+
+			throw new Exception(
+				sprintf(
+					__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
+					$this->generate_error_details( $error_msg . $response->body )
+				)
+			);
+		}
+
+		throw new Exception(
+			sprintf(
+				__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
+				$this->generate_error_details( $response->body )
+			)
+		);
+	}
+
+	/**
+	 * Create get pickup locations request
+	 *
+	 * @since [*next-version*]
+	 *
+	 *
+	 */
+	public function get_pickup_location( $zipCode = '' ){
+
+		$route 	= $this->get_pickup_location_route();
+
+		//Customer business portal user auth
+		$headers = array(
+			'DPDHL-User-Authentication-Token' => base64_encode( $this->customer_portal_user . ':' . $this->customer_portal_password )
+		);
+
+		$data = [];
+		$data = ['zipCode' => $zipCode];
+
+		$response = $this->get($route, $data, $headers);
+
+		$response_body = $response->body;
+
+		if ( $response->status === 200 ) {
+
+			return $response->body;
 
 		} elseif ( $response->status >= 400 && $response->status <= 499  ) {
 
@@ -181,7 +237,7 @@ class Client extends API_Client {
 	 *
 	 * @return array The request data for the given item info object.
 	 */
-	protected function request_pickup_info_to_request_data( Pickup_Request_Info $request_pickup_info ) {
+	protected function request_pickup_info_to_request_data( Pickup_Request_Info $request_pickup_info, $blnIncludeBillingNumber ) {
 
 		//Pickup date
 		if ( $request_pickup_info->pickup_details['dhl_pickup_type'] == 'date' ) { //date or asap
@@ -208,9 +264,6 @@ class Client extends API_Client {
 		}
 
 		$request_data = array(
-			'customerDetails'   => array(
-				'billingNumber' 	=> $request_pickup_info->customer_details['billingNumber'],
-			),
 			'pickupLocation' 	=> $pickup_location_array,
 			'pickupDetails'	  => array(
 				'pickupDate' 	=> $pickup_info_array,
@@ -228,8 +281,17 @@ class Client extends API_Client {
 			)
 		);
 
+		// Include customer details billing number (if excluded, we're forcing DHL to look for existing Pickup address in customers portal)
+		if ( $blnIncludeBillingNumber ) {
+			$request_data['customerDetails']  = array(
+				'billingNumber' 	=> $request_pickup_info->customer_details['billingNumber'],
+			);
+		}
+
         return $request_data;
 	}
+
+
 
 	/**
 	 * Prepares an API route with the customer namespace and EKP.
@@ -241,5 +303,17 @@ class Client extends API_Client {
 	protected function request_pickup_route() {
 		return 'pickup360/order';
 	}
+
+	/**
+	 * Prepares an API route with the customer namespace and EKP.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return string
+	 */
+	protected function get_pickup_location_route() {
+		return 'pickup360/pickuplocation';
+	}
+
 
 }

@@ -13,15 +13,6 @@ use PR\DHL\Utils\Args_Parser;
 class Pickup_Request_Info {
 
 	/**
-	 * The order id
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @var int
-	 */
-	public $order_id;
-
-	/**
 	 * The array of customer details.
 	 *
 	 * @since [*next-version*]
@@ -85,15 +76,6 @@ class Pickup_Request_Info {
 	protected $weightUom;
 
 	/**
-	 * Is the shipment cross-border or domestic
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @var boolean
-	 */
-	public $isCrossBorder;
-
-	/**
 	 * Constructor.
 	 *
 	 * @since [*next-version*]
@@ -103,10 +85,9 @@ class Pickup_Request_Info {
 	 *
 	 * @throws Exception If some data in $args did not pass validation.
 	 */
-	public function __construct( $args, $uom, $isCrossBorder ) {
+	public function __construct( $args, $uom ) {
 		//$this->parse_args( $args );
 		$this->weightUom 	= $uom;
-		$this->isCrossBorder = $isCrossBorder;
 
 		$this->parse_args( $args, $uom );
 
@@ -124,33 +105,28 @@ class Pickup_Request_Info {
 	protected function parse_args( $args ) {
 
 		$settings = $args[ 'dhl_settings' ];
-		$shipping_info = $args[ 'order_details' ] + $settings;
+		//$shipping_info = $args[ 'order_details' ] + $settings;
 
 		$pickup_info = array(
 			'dhl_pickup_type' => $args['dhl_pickup_type'],
 			'dhl_pickup_date' => $args['dhl_pickup_date']
 		);
-		$shipping_info = $shipping_info + $pickup_info;
 
 		$this->customer_details 			= Args_Parser::parse_args( $args, $this->get_customer_details_schema() );
 		$this->pickup_contact 			= Args_Parser::parse_args( $settings, $this->get_pickup_contact_schema() );
 		$this->pickup_address 			= Args_Parser::parse_args( $settings, $this->get_pickup_address_schema() );
-		$this->pickup_details 		= Args_Parser::parse_args( $shipping_info, $this->get_pickup_info_schema() );
+		$this->pickup_details 		= Args_Parser::parse_args( $pickup_info, $this->get_pickup_info_schema() );
 
 		$this->shipments 		= array();
-		foreach ( $args['dhl_pickup_label_tracking'] as $tracking ) {
-			$label_info = array(
-				'tracking_number' => $tracking,
-				//'transportation_type' => $args['dhl_pickup_transportation_type'],
-			);
-			$label_shipping_info = $shipping_info + $label_info;
-			$shipment = Args_Parser::parse_args( $label_shipping_info, $this->get_shipment_info_schema() );
+		foreach ( $args['dhl_pickup_shipments'] as $shipment_info ) {
+	
+			$pickup_shipment = Args_Parser::parse_args( $shipment_info, $this->get_shipment_info_schema() );
 
 			//Empty tracking number?
-			if ( isset( $shipment['shipmentNumber'] ) && empty( $shipment['shipmentNumber'] ) ) {
-				unset( $shipment['shipmentNumber'] );
+			if ( isset( $pickup_shipment['shipmentNumber'] ) && empty( $pickup_shipment['shipmentNumber'] ) ) {
+				unset( $pickup_shipment['shipmentNumber'] );
 			}
-			$this->shipments[] = $shipment;
+			$this->shipments[] = $pickup_shipment;
 		}
 
 		$this->business_hours 		= array();
@@ -219,29 +195,29 @@ class Pickup_Request_Info {
 			'dhl_pickup_type'         => array(
 				'default' => 'asap'
 			),
-			'weight'     => array(
-                'error'    => __( 'Order "Weight" is empty!', 'dhl-for-woocommerce' ),
-                'validate' => function( $weight ) use ($self) {
-                    if ( ! is_numeric( $weight ) || $weight <= 0 ) {
-                        throw new Exception( __( 'The order "Weight" must be a positive number', 'dhl-for-woocommerce' ) );
-                    }
-                },
-                'sanitize' => function ( $weight ) use ($self) {
-
-                    $weight = $self->maybe_convert_to_grams( $weight, $self->weightUom );
-
-                    return $weight;
-                }
-			),
-			'weightUom'  => array(
-				'sanitize' => function ( $uom ) use ($self) {
-
-					return ( $uom != 'G' )? 'G' : $uom;
-				}
-			),
-			'dimensionUom'     => array(
-				'default' => 'CM'
-			)
+			// 'weight'     => array(
+            //     'error'    => __( 'Order "Weight" is empty!', 'dhl-for-woocommerce' ),
+            //     'validate' => function( $weight ) use ($self) {
+            //         if ( ! is_numeric( $weight ) || $weight <= 0 ) {
+            //             throw new Exception( __( 'The order "Weight" must be a positive number', 'dhl-for-woocommerce' ) );
+            //         }
+            //     },
+            //     'sanitize' => function ( $weight ) use ($self) {
+			//
+            //         $weight = $self->maybe_convert_to_grams( $weight, $self->weightUom );
+			//
+            //         return $weight;
+            //     }
+			// ),
+			// 'weightUom'  => array(
+			// 	'sanitize' => function ( $uom ) use ($self) {
+			//
+			// 		return ( $uom != 'G' )? 'G' : $uom;
+			// 	}
+			// ),
+			// 'dimensionUom'     => array(
+			// 	'default' => 'CM'
+			// )
 		);
 	}
 
@@ -354,16 +330,10 @@ class Pickup_Request_Info {
 			'transportation_type'     => array(
 				'rename' => 'transportationType',
 				'default' => 'PAKET',
-				'sanitize' => function( $value, $args ) use ($self) {
-					if( isset( $args['bulky_goods'] ) && $args['bulky_goods'] == 'yes' ) {
-						return 'SPERRGUT';
-					}
-					return 'PAKET';
-				}
 			),
 			'tracking_number'	=> array(
 				'rename' => 'shipmentNumber',
-				'default' => 0,
+				'default' => '',
 			)
  		);
  	}
