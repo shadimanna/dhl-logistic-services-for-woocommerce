@@ -47,6 +47,27 @@ EOD;
         return esc_html($snippet);
     }
 
+    public function create_order_label_note()
+    {
+        $snippet = <<<'EOD'
+// The following example code can be added to the child theme's functions.php file
+add_action('dhlpwc_create_label', 'dhlpwc_add_order_note_on_create_label', 10, 2);
+
+function dhlpwc_add_order_note_on_create_label($order_id, $label_data)
+{
+    // Create an order note with create label data
+    $order = new WC_Order($order_id);
+    if ($label_data['is_return'] !== true) {
+        $note = __('Creating label with tracking code: ' . $label_data['tracker_code']);
+    } else {
+        $note = __('Creating a return label with tracking code: ' . $label_data['tracker_code']);
+    }
+    $order->add_order_note($note);
+}
+EOD;
+        return esc_html($snippet);
+    }
+
 }
 
 endif;

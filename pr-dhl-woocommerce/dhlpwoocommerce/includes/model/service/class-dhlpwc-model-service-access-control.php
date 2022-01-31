@@ -247,15 +247,15 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
                 return $logic->check_default_hide_sender_address();
                 break;
 
-	        case self::ACCESS_PRINTER:
-		        $logic = DHLPWC_Model_Logic_Access_Control::instance();
-		        return $logic->check_printer();
-		        break;
+            case self::ACCESS_PRINTER:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_printer();
+                break;
 
-	        case self::ACCESS_LABEL_REQUEST:
-		        $logic = DHLPWC_Model_Logic_Access_Control::instance();
-		        return $logic->check_label_request();
-		        break;
+            case self::ACCESS_LABEL_REQUEST:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_label_request();
+                break;
 
             case self::ACCESS_DEBUG:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
