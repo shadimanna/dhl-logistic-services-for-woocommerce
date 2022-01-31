@@ -77,7 +77,7 @@ jQuery(function($) {
   });
 });
 
-function gm_authFailure() { 
+function gm_authFailure() {
   // alert('gm_authFailure');
   jQuery('.woocommerce-checkout #dhl_parcel_finder_form #dhl_google_map').before( pr_dhl_checkout_frontend.no_api_key );
 };
@@ -101,35 +101,35 @@ jQuery(document).ready(function($) {
     init: function() {
       // $( document.body ).on( 'click', 'a.showcoupon', this.show_coupon_form );
       $( document.body ).on( 'click', '#dhl_parcel_finder', this.init_form );
-      
+
       $( document.body ).on( 'click', '.parcelshop-select-btn', this.selectedShop );
-      
+
       $( document.body ).on( 'change', '#shipping_dhl_address_type', this.address_type );
-      
+
       wc_checkout_dhl_parcelfinder.address_type();
 
       $( 'form#checkout_dhl_parcel_finder' ).submit( this.submit );
     },
     address_type: function() {
         var address_type = $('.woocommerce-checkout #shipping_dhl_address_type').val();
-		
+
         if (address_type == 'dhl_packstation') {
           $( '.woocommerce-checkout #shipping_dhl_postnum_field' ).show();
           // If does not have span or span with "required" class, add it
-          if ( ! $( '.woocommerce-checkout #shipping_dhl_postnum_field label span' ).length || 
+          if ( ! $( '.woocommerce-checkout #shipping_dhl_postnum_field label span' ).length ||
              ( ! $( '.woocommerce-checkout #shipping_dhl_postnum_field label span' ).hasClass('required') ) ) {
               $( '.woocommerce-checkout #shipping_dhl_postnum_field label' ).append(' <span class="required">*</span>');
           }
         } else if (address_type == 'dhl_branch') {
           $( '.woocommerce-checkout #shipping_dhl_postnum_field' ).show();
-          // remove "required" span tag  
+          // remove "required" span tag
           $( '.woocommerce-checkout #shipping_dhl_postnum_field label .required' ).remove();
         } else {
           $( '.woocommerce-checkout #shipping_dhl_postnum_field' ).hide();
         }
     },
     init_form: function() {
-      
+
       var gmap_country = $('.woocommerce-checkout #billing_country').val();
       $('#dhl_parcelfinder_country').val( gmap_country );
 
@@ -153,7 +153,7 @@ jQuery(document).ready(function($) {
       var $form = $( this );
 
       $('#dhl_parcel_finder_form #checkout_dhl_parcel_finder .woocommerce-error').remove();
-      
+
       if ( $form.is( '.processing' ) ) {
         return false;
       }
@@ -213,11 +213,7 @@ jQuery(document).ready(function($) {
         return;
       }
 
-      if( ! wc_checkout_dhl_parcelfinder.parcelShops ) {
-        return;
-      }
-
-      var uluru = {lat: wc_checkout_dhl_parcelfinder.parcelShops[0].location.latitude, lng: wc_checkout_dhl_parcelfinder.parcelShops[0].location.longitude };
+      var uluru = {lat: wc_checkout_dhl_parcelfinder.parcelShops[0].place.geo.latitude, lng: wc_checkout_dhl_parcelfinder.parcelShops[0].place.geo.longitude };
       var map = new google.maps.Map(document.getElementById('dhl_google_map'), {
         zoom: 13,
         center: uluru
@@ -225,41 +221,41 @@ jQuery(document).ready(function($) {
 
       var infoWinArray = [];
       $.each(wc_checkout_dhl_parcelfinder.parcelShops, function(key,value) {
-        var uluru = {lat: value.location.latitude, lng: value.location.longitude};
+        var uluru = {lat: value.place.geo.latitude, lng: value.place.geo.longitude};
 
         // Get opening times
         var openingTimes = '<h5 class="parcel_subtitle">' + pr_dhl_checkout_frontend.opening_times + '</h5>';
         var prev_day = 0;
         var day_of_week;
-        $.each(value.psfTimeinfos, function(key_times,value_times) {
-          if( value_times.type == 'openinghour' ) {
-            switch (value_times.weekday) {
-              case 1:
+        $.each(value.openingHours, function(key_times,value_times) {
+
+            switch (value_times.dayOfWeek) {
+              case "http://schema.org/Monday":
                 day_of_week = pr_dhl_checkout_frontend.monday;
                 break;
-              case 2:
+              case "http://schema.org/Tuesday":
                 day_of_week = pr_dhl_checkout_frontend.tueday;
-                break; 
-              case 3:
+                break;
+              case "http://schema.org/Wednesday":
                 day_of_week = pr_dhl_checkout_frontend.wednesday;
                 break;
-              case 4:
+              case "http://schema.org/Thursday":
                 day_of_week = pr_dhl_checkout_frontend.thrusday;
                 break;
-              case 5:
+              case "http://schema.org/Friday":
                 day_of_week = pr_dhl_checkout_frontend.friday;
-                break; 
-              case 6:
+                break;
+              case "http://schema.org/Saturday":
                 day_of_week = pr_dhl_checkout_frontend.satuday;
                 break;
-              case 7:
+              case "http://schema.org/Sunday":
                 day_of_week = pr_dhl_checkout_frontend.sunday;
                 break;
-              
+
             }
 
             if( prev_day ) {
-              if( prev_day == value_times.weekday ) {
+              if( prev_day == value_times.dayOfWeek ) {
                 openingTimes += ', ';
               } else {
                 openingTimes += '<br/>' + day_of_week + ': ';
@@ -268,46 +264,49 @@ jQuery(document).ready(function($) {
               openingTimes += day_of_week + ': ';
             }
 
-            prev_day = value_times.weekday;
+            prev_day = value_times.dayOfWeek;
 
-            openingTimes += value_times.timefrom + ' - ' + value_times.timeto;
+            openingTimes += value_times.opens + ' - ' + value_times.closes;
 
-          }
-          
         });
 
         // Get services
         var shopServices = '<h5 class="parcel_subtitle">' + pr_dhl_checkout_frontend.services + '</h5>';
         var shopServicesParking = ': ' + pr_dhl_checkout_frontend.no;
         var shopServicesHandicap = ': ' + pr_dhl_checkout_frontend.no;
-        $.each(value.psfServicetypes, function(key_services,value_services) {
+        $.each(value.serviceTypes, function(key_services,value_services) {
           switch (value_services) {
             case 'parking':
               shopServicesParking = ': ' + pr_dhl_checkout_frontend.yes;
               break;
-            case 'handicappedAccess':
+            case 'handicapped-access':
               shopServicesHandicap = ': ' + pr_dhl_checkout_frontend.yes;
-              break; 
+              break;
           }
 
         });
-        
+
         shopServices += pr_dhl_checkout_frontend.parking + shopServicesParking + '<br/>';
         shopServices += pr_dhl_checkout_frontend.handicap + shopServicesHandicap + '<br/>';
 
-        
-        switch (value.shopType) {
-          case 'packStation':
+
+        switch (value.location.type) {
+          case 'locker':
             var gmap_marker_icon = pr_dhl_checkout_frontend.packstation_icon;
             var shop_name = pr_dhl_checkout_frontend.packstation;
             var shop_label = pr_dhl_checkout_frontend.packstation;
             break;
-          case 'parcelShop':
+          case 'servicepoint':
             var gmap_marker_icon = pr_dhl_checkout_frontend.parcelshop_icon;
             var shop_name = pr_dhl_checkout_frontend.parcelShop;
             var shop_label = pr_dhl_checkout_frontend.branch;
-            break; 
-          case 'postOffice':
+            break;
+          case 'postoffice':
+            var gmap_marker_icon = pr_dhl_checkout_frontend.post_office_icon;
+            var shop_name = pr_dhl_checkout_frontend.postoffice;
+            var shop_label = pr_dhl_checkout_frontend.branch;
+            break;
+          case 'postbank':
             var gmap_marker_icon = pr_dhl_checkout_frontend.post_office_icon;
             var shop_name = pr_dhl_checkout_frontend.postoffice;
             var shop_label = pr_dhl_checkout_frontend.branch;
@@ -319,17 +318,17 @@ jQuery(document).ready(function($) {
             break;
         }
 
-        shop_name += ' ' + value.primaryKeyZipRegion;
+        shop_name += ' ' + value.location.keywordId;
 
         var contentString = '<div id="parcel-content">'+
                 '<div id="site-notice">'+
                 '</div>'+
                 '<h4 class="parcel-title">' + shop_name + '</h4>'+
                 '<div id="bodyContent">'+
-                '<div>' + value.street + ' ' + value.houseNo + '</br>' + value.city + ' ' + value.zipCode + '</div>'+
+                '<div>' + value.place.address.streetAddress + '</br>' + value.place.address.addressLocality + ' ' + value.place.address.postalCode + '</div>'+
                 openingTimes +
                 shopServices +
-                '<button type="button" class="parcelshop-select-btn" id="' + value.id + '">' + pr_dhl_checkout_frontend.select + '</button>'+
+                '<button type="button" class="parcelshop-select-btn" id="' + value.location.ids[0].locationId + '">' + pr_dhl_checkout_frontend.select + '</button>'+
                 '</div>'+
                 '</div>';
 
@@ -337,7 +336,7 @@ jQuery(document).ready(function($) {
               content: contentString,
               maxWidth: 300
             });
-        
+
         infoWinArray.push(infowindow);
 
 
@@ -354,7 +353,7 @@ jQuery(document).ready(function($) {
           infowindow.open(map, marker);
         });
 
-      }); 
+      });
 
       // Clear all info windows
       function clearOverlays() {
@@ -372,17 +371,21 @@ jQuery(document).ready(function($) {
 
       $.each(wc_checkout_dhl_parcelfinder.parcelShops, function(key,value) {
 
-        if( value.id == parcelShopId ) {
-          switch (value.shopType) {
-            case 'packStation':
+        if( value.location.ids[0].locationId == parcelShopId ) {
+          switch (value.location.type) {
+            case 'locker':
               var shop_name = pr_dhl_checkout_frontend.packstation;
               $('.woocommerce-checkout #shipping_dhl_address_type').val('dhl_packstation').trigger('change');
               break;
-            case 'parcelShop':
+            case 'servicepoint':
               var shop_name = pr_dhl_checkout_frontend.parcelShop;
               $('.woocommerce-checkout #shipping_dhl_address_type').val('dhl_branch').trigger('change');
-              break; 
-            case 'postOffice':
+              break;
+            case 'postoffice':
+              var shop_name = pr_dhl_checkout_frontend.postoffice;
+              $('.woocommerce-checkout #shipping_dhl_address_type').val('dhl_branch').trigger('change');
+              break;
+            case 'postbank':
               var shop_name = pr_dhl_checkout_frontend.postoffice;
               $('.woocommerce-checkout #shipping_dhl_address_type').val('dhl_branch').trigger('change');
               break;
@@ -395,23 +398,23 @@ jQuery(document).ready(function($) {
           $('.woocommerce-checkout #shipping_first_name').val( $('.woocommerce-checkout #billing_first_name').val() );
           $('.woocommerce-checkout #shipping_last_name').val( $('.woocommerce-checkout #billing_last_name').val() );
           // $('.woocommerce-checkout #shipping_company').val( '' );
-          $('.woocommerce-checkout #shipping_address_1').val( shop_name + ' ' + value.primaryKeyZipRegion );
+          $('.woocommerce-checkout #shipping_address_1').val( shop_name + ' ' + value.location.keywordId );
           $('.woocommerce-checkout #shipping_address_2').val( '' );
-          $('.woocommerce-checkout #shipping_postcode').val( value.zipCode );
-          $('.woocommerce-checkout #shipping_city').val( value.city );
+          $('.woocommerce-checkout #shipping_postcode').val( value.place.address.postalCode );
+          $('.woocommerce-checkout #shipping_city').val( value.place.address.addressLocality );
 
           $.fancybox.close();
         }
       });
     }
   };
-  
+
   if ( jQuery("[data-fancybox]").length > 0 ) {
 
     jQuery("[data-fancybox]").fancybox({
       modal: true
     });
-      
+
   }
 
   wc_checkout_dhl_parcelfinder.init();
