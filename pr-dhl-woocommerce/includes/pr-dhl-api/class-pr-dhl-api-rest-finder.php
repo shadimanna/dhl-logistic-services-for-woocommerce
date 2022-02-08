@@ -31,7 +31,7 @@ class PR_DHL_API_REST_Finder extends PR_DHL_API_REST {
 
 			$response_body = $this->get_request();
 
-			PR_DHL()->log_msg( 'Response: Successful');
+			//PR_DHL()->log_msg( 'Response: Successful');
 
 			return $response_body;
 		} catch (Exception $e) {
@@ -112,13 +112,13 @@ class PR_DHL_API_REST_Finder extends PR_DHL_API_REST {
 		    	)
 		);
 
-		PR_DHL()->log_msg( 'GET Request Headers: ' . print_r( $wp_request_headers, true ) );
+		//PR_DHL()->log_msg( 'GET Request Headers: ' . print_r( $wp_request_headers, true ) );
 
 		$response_code = wp_remote_retrieve_response_code( $wp_dhl_rest_response );
 		$response_body = json_decode( wp_remote_retrieve_body( $wp_dhl_rest_response ) );
 
 		PR_DHL()->log_msg( 'GET Response Code: ' . $response_code );
-		PR_DHL()->log_msg( 'GET Response Body: ' . print_r( $response_body, true ) );
+		//PR_DHL()->log_msg( 'GET Response Body: ' . print_r( $response_body, true ) );
 
 		switch ( $response_code ) {
 			case '200':
