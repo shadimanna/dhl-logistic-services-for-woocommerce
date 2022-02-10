@@ -145,6 +145,11 @@ class PR_DHL_WC {
 		$this->define( 'PR_DHL_CIG_PWD', 'egOcb8buCPuqxFDf9fyOdWz6z7pKAQ' );
 		$this->define( 'PR_DHL_CIG_AUTH', 'https://cig.dhl.de/services/production/soap' );
 
+		// DHL Global api.dhl.com
+		$this->define( 'PR_DHL_GLOBAL_URL', 'https://api.dhl.com' );
+		$this->define( 'PR_DHL_GLOBAL_API', 'l7do9bl8gS6y9aHys0u3NR5uqAufPARS' );
+		$this->define( 'PR_DHL_GLOBAL_SECRET', '3128XM6J5XHt6knH' );
+
 		// To use Sandbox, define 'PR_DHL_SANDBOX' to be 'true' and set 'PR_DHL_CIG_USR_QA' and 'PR_DHL_CIG_PWD_QA' outside this plugin
 		$this->define( 'PR_DHL_CIG_AUTH_QA', 'https://cig.dhl.de/services/sandbox/soap' );
 

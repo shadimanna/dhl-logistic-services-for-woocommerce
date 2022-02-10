@@ -12,7 +12,6 @@ class PR_DHL_API_REST_Finder extends PR_DHL_API_REST {
 	 *
 	 * @since [*next-version*]
 	 */
-	const API_URL_PRODUCTION = 'https://api.dhl.com/';
 
 	public function __construct() {}
 
@@ -43,14 +42,6 @@ class PR_DHL_API_REST_Finder extends PR_DHL_API_REST {
 	protected function set_arguments( $args ) {
 		// Validate set args
 
-		if ( empty( $args['dhl_settings']['api_user'] ) ) {
-			throw new Exception( __('Please, provide the username in the DHL shipping settings', 'dhl-for-woocommerce' ) );
-		}
-
-		if ( empty( $args['dhl_settings']['api_pwd'] )) {
-			throw new Exception( __('Please, provide the password for the username in the DHL shipping settings', 'dhl-for-woocommerce') );
-		}
-
 		if ( empty( $args['shipping_address']['city'] ) && empty( $args['shipping_address']['postcode'] ) ) {
 			throw new Exception( __('Shipping "City" and "Postcode" are empty!', 'dhl-for-woocommerce') );
 		}
@@ -79,8 +70,7 @@ class PR_DHL_API_REST_Finder extends PR_DHL_API_REST {
 
 	protected function set_header( $authorization = '' ) {
 		$dhl_header['Accept'] = 'application/json';
-		//$dhl_header['X-EKP'] = $this->args['account_num'];
-		$dhl_header['DHL-API-Key'] = '64zQ1dGifbYPb1CGr0xaXmxeaoAjDgil';
+		$dhl_header['DHL-API-Key'] = $this->get_api_key();
 
 		if ( !empty( $authorization ) ) {
 			$dhl_header['Authorization'] = $authorization;
@@ -93,12 +83,9 @@ class PR_DHL_API_REST_Finder extends PR_DHL_API_REST {
 
 		$rest_auth = '';
 		$api_url = $this->get_api_url();
-		if ( is_array( $api_url ) ) {
-			$rest_auth = $this->get_basic_auth_encode( $api_url['user'], $api_url['password'] );
-			$api_url = str_replace('/soap', '/rest', $api_url['auth_url'] );
-		}
+		$api_url = trailingslashit($api_url);
 
-		$this->set_header( $rest_auth );
+		$this->set_header();
 
 		$wp_request_url = $api_url . $this->get_endpoint() . '?' . $this->get_query_string();
 		$wp_request_headers = $this->get_header();
@@ -164,36 +151,24 @@ class PR_DHL_API_REST_Finder extends PR_DHL_API_REST {
 	 *
 	 * @return string
 	 *
-	 * @throws Exception If failed to determine if using the sandbox API or not.
 	 */
 	public function get_api_url() {
-		$api_url = self::API_URL_PRODUCTION;
+		$api_url = defined( 'PR_DHL_GLOBAL_URL' )? PR_DHL_GLOBAL_URL : '';
 		return $api_url;
 	}
 
-	/*
-	protected function set_message() {
-		if( ! empty( $this->args ) ) {
-
-			$shipping_address = implode(' ', $this->args['shipping_address']);
-
-			$dhl_label_body =
-				array(
-					'Version' =>
-						array(
-								'majorRelease' => '2',
-								'minorRelease' => '2'
-						),
-					'address' => $shipping_address,
-					'countrycode' => $this->args['shipping_address']['country']
-				);
-
-			// Unset/remove any items that are empty strings or 0, even if required!
-			$this->body_request = $this->walk_recursive_remove( $dhl_label_body );
-
-			return $this->body_request;
-		}
-
+	/**
+	 * Retrieves the API KEY.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return string
+	 *
+	 */
+	public function get_api_key() {
+		$api_key = defined( 'PR_DHL_GLOBAL_API' )? PR_DHL_GLOBAL_API : '';
+		return $api_key;
 	}
-	*/
+
+
 }
