@@ -4,10 +4,10 @@ Donate link:
 Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL Parcel Benelux, DHL Parcel Luxembourg, DHL Paket Germany, WooCommerce, Woocom, Woo Commerce, Shipping, shiping, label creation, label printing, shipping rates, DHL Paket
 Requires at least: 4.6
 Requires PHP: 5.6
-Tested up to: 5.6
-Stable tag: 2.7.6
+Tested up to: 5.9
+Stable tag: 2.8.1
 WC requires at least: 3.0
-WC tested up to: 5.3
+WC tested up to: 6.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -80,6 +80,18 @@ Click [here](www.dhl.com/faqs) for our FAQs or check out our [integration page](
 
 
 == Changelog ==
+ 
+= 2.8.1 =
+* DHL Parcel: Added a new available action hook for label creation
+
+= 2.8.0 =
+* DHL Paket: Updated PDFMerger to be compatible with PHP 8.0
+* DHL Paket: Add Warenpost International product
+* DHL Paket: Bug fix - Ensure multiple return shipment ids are display
+* DHL Paket: Shorten packet field names to avoid long query string with WC order search
+* DHL Paket: Verify "WC()->payment_gateways" exists, to avoid calling on null
+* DHL Paket: Fix Apple Pay conflict with "address type" field
+* DHL eCS Asia: Remove eCS Asia from the plugin
 
 = 2.7.6 =
 * DHL Paket: Unify Pickup API call when selecting multiple orders to be picked up

@@ -905,8 +905,8 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         return true;
     }
 
-	  public function check_label_request()
-	  {
+    public function check_label_request()
+    {
         $shipping_method = get_option('woocommerce_dhlpwc_settings');
 
         if (empty($shipping_method)) {
@@ -930,7 +930,7 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         }
 
         return true;
-	  }
+    }
 
     public function check_validation_rule($identifier)
     {
