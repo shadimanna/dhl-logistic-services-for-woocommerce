@@ -538,7 +538,8 @@ class PR_DHL_Front_End_Paket {
 			$args['shipping_address']['city'] = $parcelfinder_city;
 			$args['shipping_address']['country'] = $parcelfinder_country;
 			$args['dhl_parcel_limit'] = $this->shipping_dhl_settings['dhl_parcel_limit'];
-
+			$args['dhl_packstation_filter'] = $packstation_filter;
+			$args['dhl_branch_filter'] = $branch_filter;
 
 			$parcel_res = $dhl_obj->get_parcel_location( $args );
 
@@ -565,14 +566,14 @@ class PR_DHL_Front_End_Paket {
 							foreach ($value->serviceTypes as $service_type) {
 								// Only display shops that accept parcels.
 								// Not needed 'parcelacceptance'
-								if( $service_type == 'parcel:pick-up' ) {
+								if( in_array( $service_type, ['parcel:pick-up', 'parcel:pick-up-unregistered', 'parcel:pick-up-registered']) ) {
 									array_push($parcel_res_filtered, $value);
 									$res_count++;
 									break;
 								}
 							}
 						} else {
-							if( $value->serviceTypes == 'parcel:pick-up' ) {
+							if( in_array( $value->serviceTypes, ['parcel:pick-up', 'parcel:pick-up-unregistered', 'parcel:pick-up-registered']) ) {
 								array_push($parcel_res_filtered, $value);
 								$res_count++;
 							}

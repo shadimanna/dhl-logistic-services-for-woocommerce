@@ -57,13 +57,28 @@ class PR_DHL_API_REST_Finder extends PR_DHL_API_REST {
 
 		$finder_query_string = array(
 			'radius' => 2000, //in meters
-			'limit' => ($args['dhl_parcel_limit']) ? $args['dhl_parcel_limit'] : 10,
-			'serviceType'		=> 'parcel:pick-up',
+			'limit' => ($this->args['dhl_parcel_limit']) ? $this->args['dhl_parcel_limit'] : 10,
+			//'serviceType'		=> 'parcel:pick-up',
 			'streetAddress' 	=> $this->args['shipping_address']['address'],
 			'zipCode'			=> $this->args['shipping_address']['postcode'],
 			'addressLocality' 	=> $this->args['shipping_address']['city'],
 			'countryCode' 		=> $this->args['shipping_address']['country']
 		);
+
+		// by serviceType
+		// For Post office, Branch use parcel:pick-up
+		// For Packstation (locker) use
+		//   parcel:pick-up-registered ==== Germany
+		//   parcel:pick-up-unregistered ===== Europe, excluding Germany
+		if ( $this->args['dhl_packstation_filter'] == 'true' && $this->args['dhl_branch_filter'] != 'true' ) {
+			if ( $this->args['shipping_address']['country'] == 'DE' ) {
+				$finder_query_string['serviceType'] = 'parcel:pick-up-registered';
+			} else {
+				$finder_query_string['serviceType'] = 'pick-up-unregistered';
+			}
+		} else {
+			$finder_query_string['serviceType'] = 'parcel:pick-up';
+		}
 
 		$this->query_string = http_build_query($finder_query_string);
 	}
@@ -105,7 +120,7 @@ class PR_DHL_API_REST_Finder extends PR_DHL_API_REST {
 		$response_body = json_decode( wp_remote_retrieve_body( $wp_dhl_rest_response ) );
 
 		PR_DHL()->log_msg( 'GET Response Code: ' . $response_code );
-		//PR_DHL()->log_msg( 'GET Response Body: ' . print_r( $response_body, true ) );
+		PR_DHL()->log_msg( 'GET Response Body: ' . print_r( $response_body, true ) );
 
 		switch ( $response_code ) {
 			case '200':
