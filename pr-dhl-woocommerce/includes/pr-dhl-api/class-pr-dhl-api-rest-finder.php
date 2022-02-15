@@ -120,7 +120,7 @@ class PR_DHL_API_REST_Finder extends PR_DHL_API_REST {
 		$response_body = json_decode( wp_remote_retrieve_body( $wp_dhl_rest_response ) );
 
 		PR_DHL()->log_msg( 'GET Response Code: ' . $response_code );
-		PR_DHL()->log_msg( 'GET Response Body: ' . print_r( $response_body, true ) );
+		//PR_DHL()->log_msg( 'GET Response Body: ' . print_r( $response_body, true ) );
 
 		switch ( $response_code ) {
 			case '200':
