@@ -30,7 +30,7 @@ class PR_DHL_Front_End_Paket {
 		$this->init_hooks();
 
 		$this->preferred_services = array(
-								'pr_dhl_preferred_day' => __('Preferred Day', 'dhl-for-woocommerce'),
+								'pr_dhl_preferred_day' => __('Delivery Day', 'dhl-for-woocommerce'),
 								'pr_dhl_preferred_location_neighbor' => __('Preferred Location or Neighbor', 'dhl-for-woocommerce'),
 								'pr_dhl_preferred_location' => __('Preferred Location Address', 'dhl-for-woocommerce'),
 								'pr_dhl_preferred_neighbour_name' => __('Preferred Neighbor Name', 'dhl-for-woocommerce'),

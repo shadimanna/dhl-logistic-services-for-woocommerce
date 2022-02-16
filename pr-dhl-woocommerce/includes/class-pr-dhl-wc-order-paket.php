@@ -180,7 +180,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 			woocommerce_wp_select( array(
 				'id'          		=> 'pr_dhl_preferred_day',
-				'label'       		=> __( 'Preferred Day:', 'dhl-for-woocommerce' ),
+				'label'       		=> __( 'Delivery Day:', 'dhl-for-woocommerce' ),
 				'description'		=> '',
 				'value'       		=> isset( $dhl_label_items['pr_dhl_preferred_day'] ) ? $dhl_label_items['pr_dhl_preferred_day'] : '',
 				'options'			=> $preferred_days,
