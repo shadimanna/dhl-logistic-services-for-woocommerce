@@ -76,7 +76,9 @@ More detailed instructions on how to set up your store and configure it are cons
 == Changelog ==
  
 = 2.8.2 =
+* DHL Paket: Fix drop-off points. Switched to Unified REST API for drop-off points.
 * DHL Paket: Remove PDFMerge unnecessary fonts
+* DHL Paket: "Delivery Day" text fixes
 
 = 2.8.1 =
 * DHL Parcel: Added a new available action hook for label creation
