@@ -251,9 +251,12 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
     {
         $view = new DHLPWC_Template('order.meta.form.sizes-headline');
         $option_texts = $selected_options;
-        array_walk($option_texts, function(&$value, &$key) {
-            $value = DHLPWC_Model_Service_Translation::instance()->option($value);
-        });
+        $option_texts = array_map(
+            function ($value) {
+                return DHLPWC_Model_Service_Translation::instance()->option($value);
+            },
+            $option_texts
+        );
 
         $size_view = $view->render(array(
             'message' => implode(' + ', $option_texts),
