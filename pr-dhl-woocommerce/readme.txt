@@ -20,10 +20,10 @@ DHL’s official extension for WooCommerce on WordPress. Manage your national an
 
 * DHL Paket (Germany) 
 * Deutsche Post International (all European countries)
+* DHL Parcel (Benelux)
 
 The following DHL services are no longer supported by this plugin:
 
-* DHL Parcel (Benelux): Please use instead the following plugin: [link] 
 * DHL eCommerce Asia (AU, CN, HK, IN, VN, TH, SG, MY): Please use instead the following plugin: [link]
 
 == Features ==
@@ -42,7 +42,7 @@ The following DHL services are no longer supported by this plugin:
 
 == Availability by countries and prerequisites == 
 
-Based on your sender country and shipping preference, different access credentials for **DHL Paket and DHL Parcel Europe** are required for the configuration: 
+Based on your sender country and shipping preference, different access credentials for **DHL Paket and and Deutsche Post International** are required for the configuration: 
 
 **DHL Paket for Germany**: Log in with your business customer portal credentials. (not a customer yet? Click [here](https://www.dhl.de/de/geschaeftskunden/paket/plugin-kunde-werden/angebot-dhl-geschaeftskunden-online.html?source=woocommerce) for **DHL Paket**)
 
