@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 5.9
-Stable tag: 2.8.2
+Stable tag: 2.8.3
 WC requires at least: 3.0
 WC tested up to: 6.1
 License: GPLv2 or later
@@ -74,6 +74,10 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
+ 
+= 2.8.3 =
+* DHL Parcel: Fixed a deprecation warning on sorted package sized in the label creation screen for PHP 8 compatibility
+* DHL Parcel: Fixed a reference warning in the label creation screen for PHP 8 compatibility
  
 = 2.8.2 =
 * DHL Paket: Fix drop-off points. Switched to Unified REST API for drop-off points.

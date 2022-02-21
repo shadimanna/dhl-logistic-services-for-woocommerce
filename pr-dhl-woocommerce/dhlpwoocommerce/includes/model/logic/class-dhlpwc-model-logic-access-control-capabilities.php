@@ -32,10 +32,14 @@ class DHLPWC_Model_Logic_Access_Control_Capabilities extends DHLPWC_Model_Core_S
     {
         if ($one->max_weight_kg === $two->max_weight_kg) {
             // Weight is the same, sort by dimensions
-            return $one->dimensions->max_length_cm * $one->dimensions->max_height_cm * $one->dimensions->max_width_cm >
-                $two->dimensions->max_length_cm * $two->dimensions->max_height_cm * $two->dimensions->max_width_cm;
+            $dimension_one = $one->dimensions->max_length_cm * $one->dimensions->max_height_cm * $one->dimensions->max_width_cm;
+            $dimension_two = $two->dimensions->max_length_cm * $two->dimensions->max_height_cm * $two->dimensions->max_width_cm;
+            if ($dimension_one === $dimension_two) {
+                return 0;
+            }
+            return $dimension_one > $dimension_two ? 1 : -1;
         }
-        return $one->max_weight_kg > $two->max_weight_kg;
+        return $one->max_weight_kg > $two->max_weight_kg ? 1 : -1;
     }
 
     public function filter_unique_options($capabilities)

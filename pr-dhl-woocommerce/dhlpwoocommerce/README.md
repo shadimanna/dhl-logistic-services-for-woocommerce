@@ -1,5 +1,9 @@
 # DHL Parcel plugin for WooCommerce
  
+v1.3.18
+## Changes
+- Added a new available action hook for label creation
+ 
 v1.3.17
 ## Changes
 - Small fix for ServicePoint locator in checkout
