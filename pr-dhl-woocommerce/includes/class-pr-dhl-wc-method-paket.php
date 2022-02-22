@@ -96,6 +96,12 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 		$select_dhl_product = array( '0' => __( '- Select DHL Product -', 'dhl-for-woocommerce' ) );
 
+		$select_dhl_desc_default = array(
+			'product_name' => __('Product Name', 'dhl-for-woocommerce'),
+			'product_cat' => __('Product Categories', 'dhl-for-woocommerce'),
+			'product_tag' => __('Product Tags', 'dhl-for-woocommerce'),
+		);
+
 		try {
 
 			$dhl_obj = PR_DHL()->get_dhl_factory();
@@ -304,6 +310,15 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'default'           => '',
 				'placeholder'		=> '',
 				'class'				=> 'wc_input_decimal'
+			),
+			'dhl_desc_default' => array(
+				'title'             => __( 'Package Description', 'dhl-for-woocommerce' ),
+				'type'              => 'select',
+				'description'       => __( 'Prefill the package description with one of the options.', 'dhl-for-woocommerce' ),
+				'desc_tip'          => true,
+				'default'			=> 'product_name',
+				'options'           => $select_dhl_desc_default,
+				'class'				=> 'wc-enhanced-select'
 			),
 			'dhl_label_format' => array(
 				'title'             => __( 'Label Format', 'dhl-for-woocommerce' ),
