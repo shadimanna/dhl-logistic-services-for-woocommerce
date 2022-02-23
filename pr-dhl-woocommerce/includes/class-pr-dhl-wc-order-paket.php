@@ -728,7 +728,17 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$base_country_code 	= PR_DHL()->get_base_country();
 
 		if( ( $base_country_code == 'DE' ) && ( $this->is_shipping_domestic( $order_id ) ) ) {
-			return parent::is_cod_payment_method( $order_id );
+			$order = wc_get_order( $order_id );
+			$payment_method = $order->get_payment_method();
+			$dhl_cod_payment_methods = $this->shipping_dhl_settings['dhl_cod_payment_methods'];
+			if ( is_array($dhl_cod_payment_methods) ) {
+				if ( in_array($payment_method, $dhl_cod_payment_methods) ) {
+					return true;
+				}
+			} else {
+				exit();
+				return parent::is_cod_payment_method( $order_id );
+			}
 		} else {
 		    return false;
         }

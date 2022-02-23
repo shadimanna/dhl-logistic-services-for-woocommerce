@@ -543,6 +543,15 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'options'           => [],
 					'class'          => 'wc-enhanced-select',
 				),
+				'dhl_cod_payment_methods' => array(
+					'title'             => __( 'COD Payment Gateways', 'dhl-for-woocommerce' ),
+					'type'              => 'multiselect',
+					'default' 			=> 'cod',
+					'description'       => __( 'Select the Payment Gateways to use with DHL COD services. You can press "ctrl" to select multiple options or click on a selected option to deselect it.', 'dhl-for-woocommerce' ),
+					'desc_tip'          => true,
+					'options'           => [],
+					'class'          => 'wc-enhanced-select',
+				),
 				'dhl_parcel_finder'           => array(
 					'title'           => __( 'Location Finder', 'dhl-for-woocommerce' ),
 					'type'            => 'title',
@@ -831,14 +840,19 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 	// Set specific field options after initialization
 	public function after_init_set_field_options ( $fields ) {
-		if ( isset( $fields['dhl_payment_gateway'] ) ) {
+		if ( isset( $fields['dhl_payment_gateway'] ) || isset( $fields['dhl_cod_payment_methods'] ) ) {
 			$payment_gateway_titles = [];
 			if ( WC()->payment_gateways ) {
 				$wc_payment_gateways = WC()->payment_gateways->payment_gateways();
 				foreach ($wc_payment_gateways as $gatekey => $gateway) {
 					$payment_gateway_titles[ $gatekey ] = $gateway->get_method_title();
 				}
-				$fields['dhl_payment_gateway']['options'] = $payment_gateway_titles;
+				if ( isset( $fields['dhl_payment_gateway'] ) ) {
+					$fields['dhl_payment_gateway']['options'] = $payment_gateway_titles;
+				}
+				if ( isset( $fields['dhl_cod_payment_methods'] ) ) {
+					$fields['dhl_cod_payment_methods']['options'] = $payment_gateway_titles;
+				}
 			}
 		}
 		return $fields;
