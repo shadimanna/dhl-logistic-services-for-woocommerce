@@ -16,15 +16,16 @@ The official DHL for WooCommerce plugin allows you to automate your e-commerce o
 
 == Description ==
 
-DHL’s official extension for WooCommerce on WordPress. Manage your national and international shipments easily. The “DHL Shipping Germany” – plugin is compatible with the following DHL service offerings depending on your origin country: 
+DHL’s official extension for WooCommerce on WordPress. Manage your national and international shipments easily. The “DHL for WooCommerce” – plugin is compatible with the following DHL service offerings depending on your origin country: 
 
 * DHL Paket (Germany) 
-* Deutsche Post International (all European countries)
 * DHL Parcel (Benelux)
+* Deutsche Post International (all European countries)
+
 
 The following DHL services are no longer supported by this plugin:
 
-* DHL eCommerce Asia (AU, CN, HK, IN, VN, TH, SG, MY): Please use instead the following plugin: [link]
+* DHL eCommerce Asia (TH, MY): Please use instead the following plugin [here](https://github.com/shadimanna/dhl-for-woocommerece-ecs).
 
 == Features ==
 
@@ -38,13 +39,16 @@ The following DHL services are no longer supported by this plugin:
 8. The “**print only if codeable**” – option you can activate in the DHL settings will check whether the address is correct or not before generating the label.
 9. **Bulk Label Creation** allows you to create multiple DHL Labels at once.
 10. **Return Parcel Handling** allows you to print a return label with a “return address” so your customer can return the shipment easily.
+11. **For Parcel Benelux**, this plugin has certified compatibility with WMPL that enables you to leverage multilingual capabilities. Click [here](https://wpml.org/plugin/dhl-for-woocommerce/) for further information.
 
 
 == Availability by countries and prerequisites == 
 
-Based on your sender country and shipping preference, different access credentials for **DHL Paket and and Deutsche Post International** are required for the configuration: 
+Based on your sender country and shipping preference, different access credentials for **DHL Paket, DHL Parcel NL and Deutsche Post International** are required for the configuration: 
 
 **DHL Paket for Germany**: Log in with your business customer portal credentials. (not a customer yet? Click [here](https://www.dhl.de/de/geschaeftskunden/paket/plugin-kunde-werden/angebot-dhl-geschaeftskunden-online.html?source=woocommerce) for **DHL Paket**)
+
+**DHL Parcel for Benelux**: Please self-generate your API credentials with your business customer portal account. (not a customer yet? Click [here](https://www.dhlparcel.nl/en/business/get-quote) for **DHL Parcel Benelux**).
 
 **Deutsche Post International for Europe**: ask your sales contact for credentials for this plugin. (not a customer yet? Click [here](https://www.deutschepost.com/en/business-customers/contact/email.html)).
 
@@ -55,6 +59,7 @@ Based on your sender country and shipping preference, different access credentia
 1. Go to WooCommerce-->Settings->Shipping and select the upper DHL unit (depending on your home country this is DHL Paket, DHL (Parcel) for WooCommerce  or Deutsche Post) to configure the plugin.
 
 ...for **DHL Paket (Germany)**: you need your EKP number (10 digits) and add the participation numbers (2 digits) to the respective products available (you will find the participation numbers in the DHL business customer portal).
+...for **DHL Parcel Europe (Benelux)**: you need your self-generated API credentials (UserID and Key). Push the “Test connection” and the fields below will be prefilled automatically.
 ...for **Deutsche Post International**: you need your customer account number (EKP) and API credentials.
 
 
@@ -74,7 +79,10 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
- 
+
+= 2.8.4 =
+* Revert plugin naming and description
+
 = 2.8.3 =
 * DHL Parcel: Fixed a deprecation warning on sorted package sized in the label creation screen for PHP 8 compatibility
 * DHL Parcel: Fixed a reference warning in the label creation screen for PHP 8 compatibility
