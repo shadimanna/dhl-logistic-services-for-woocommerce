@@ -461,15 +461,15 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'description'     => __( 'Preferred service options.', 'dhl-for-woocommerce' ),
 				),
 				'dhl_preferred_day' => array(
-					'title'             => __( 'Preferred Day', 'dhl-for-woocommerce' ),
+					'title'             => __( 'Delivery Day', 'dhl-for-woocommerce' ),
 					'type'              => 'checkbox',
-					'label'             => __( 'Enable Preferred Day', 'dhl-for-woocommerce' ),
+					'label'             => __( 'Enable Delivery Day', 'dhl-for-woocommerce' ),
 					'default'           => 'yes',
 					'description'       => __( 'Enabling this will display a front-end option for the user to select their preferred day of delivery.', 'dhl-for-woocommerce' ),
 					'desc_tip'          => true,
 				),
 				'dhl_preferred_day_cost' => array(
-					'title'             => __( 'Preferred Day Price', 'dhl-for-woocommerce' ),
+					'title'             => __( 'Delivery Day Price', 'dhl-for-woocommerce' ),
 					'type'              => 'text',
 					'description'       => __( 'Insert gross value as surcharge for the preferred day. Insert 0 to offer service for free.', 'dhl-for-woocommerce' ),
 					'desc_tip'          => true,

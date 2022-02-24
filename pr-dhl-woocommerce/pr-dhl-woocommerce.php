@@ -2,12 +2,12 @@
 /**
  * Plugin Name: DHL for WooCommerce
  * Plugin URI: https://github.com/shadimanna/dhl-logistic-services-for-woocommerce
- * Description: WooCommerce integration for DHL eCommerce, DHL Paket, DHL Parcel Europe (Benelux and Iberia) and Deutsche Post International
+ * Description: WooCommerce integration for DHL Paket, DHL Parcel Europe (Benelux and Iberia) and Deutsche Post International
  * Author: DHL
- * Author URI: http://dhl.com/woocommerce
+ * Author URI: http://dhl.com/
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
- * Version: 2.7.6
+ * Version: 2.8.4
  * WC requires at least: 3.0
  * WC tested up to: 5.6
  * Requires at least: 4.6
@@ -35,7 +35,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "2.7.6";
+	private $version = "2.8.4";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -144,6 +144,11 @@ class PR_DHL_WC {
 		$this->define( 'PR_DHL_CIG_USR', 'dhl_woocommerce_plugin_2_2' );
 		$this->define( 'PR_DHL_CIG_PWD', 'egOcb8buCPuqxFDf9fyOdWz6z7pKAQ' );
 		$this->define( 'PR_DHL_CIG_AUTH', 'https://cig.dhl.de/services/production/soap' );
+
+		// DHL Global api.dhl.com
+		$this->define( 'PR_DHL_GLOBAL_URL', 'https://api.dhl.com' );
+		$this->define( 'PR_DHL_GLOBAL_API', 'l7do9bl8gS6y9aHys0u3NR5uqAufPARS' );
+		$this->define( 'PR_DHL_GLOBAL_SECRET', '3128XM6J5XHt6knH' );
 
 		// To use Sandbox, define 'PR_DHL_SANDBOX' to be 'true' and set 'PR_DHL_CIG_USR_QA' and 'PR_DHL_CIG_PWD_QA' outside this plugin
 		$this->define( 'PR_DHL_CIG_AUTH_QA', 'https://cig.dhl.de/services/sandbox/soap' );

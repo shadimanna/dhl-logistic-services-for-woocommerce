@@ -30,7 +30,7 @@ class PR_DHL_Front_End_Paket {
 		$this->init_hooks();
 
 		$this->preferred_services = array(
-								'pr_dhl_preferred_day' => __('Preferred Day', 'dhl-for-woocommerce'),
+								'pr_dhl_preferred_day' => __('Delivery Day', 'dhl-for-woocommerce'),
 								'pr_dhl_preferred_location_neighbor' => __('Preferred Location or Neighbor', 'dhl-for-woocommerce'),
 								'pr_dhl_preferred_location' => __('Preferred Location Address', 'dhl-for-woocommerce'),
 								'pr_dhl_preferred_neighbour_name' => __('Preferred Neighbor Name', 'dhl-for-woocommerce'),
@@ -537,40 +537,43 @@ class PR_DHL_Front_End_Paket {
 			$args['shipping_address']['postcode'] = $parcelfinder_postcode;
 			$args['shipping_address']['city'] = $parcelfinder_city;
 			$args['shipping_address']['country'] = $parcelfinder_country;
+			$args['dhl_parcel_limit'] = $this->shipping_dhl_settings['dhl_parcel_limit'];
+			$args['dhl_packstation_filter'] = $packstation_filter;
+			$args['dhl_branch_filter'] = $branch_filter;
 
 			$parcel_res = $dhl_obj->get_parcel_location( $args );
 
-			if ( ! isset( $parcel_res->parcelLocation ) ) {
+			if ( ! isset( $parcel_res->locations ) ) {
 				throw new Exception( __('No parcel shops found', 'dhl-for-woocommerce') );
 			}
 
 			$res_count = 0;
 			$parcel_res_filtered = array();
-			foreach ($parcel_res->parcelLocation as $key => $value) {
+			foreach ($parcel_res->locations as $key => $value) {
 
 				if( ( $this->is_packstation_enabled() &&
 						( $packstation_filter == 'true' ) &&
-						( $value->shopType == 'packStation' ) ) ||
+						( $value->location->type == 'locker' ) ) ||
 					( $this->is_parcelshop_enabled() &&
 						( $branch_filter  == 'true' ) &&
-						( $value->shopType == 'parcelShop' ) ) ||
+						( $value->location->type == 'servicepoint' ) ) ||
 					( $this->is_post_office_enabled() &&
 						( $branch_filter == 'true'  ) &&
-						( $value->shopType == 'postOffice' ) ) ) {
+						( $value->location->type == 'postoffice' || $value->location->type == 'postbank' ) ) ) {
 
-					if ($value->psfServicetypes ) {
-						if( is_array( $value->psfServicetypes ) ) {
-							foreach ($value->psfServicetypes as $service_type) {
+					if ($value->serviceTypes ) {
+						if( is_array( $value->serviceTypes ) ) {
+							foreach ($value->serviceTypes as $service_type) {
 								// Only display shops that accept parcels.
 								// Not needed 'parcelacceptance'
-								if( $service_type == 'parcelpickup' ) {
+								if( in_array( $service_type, ['parcel:pick-up', 'parcel:pick-up-unregistered', 'parcel:pick-up-registered']) ) {
 									array_push($parcel_res_filtered, $value);
 									$res_count++;
 									break;
 								}
 							}
 						} else {
-							if( $value->psfServicetypes == 'parcelpickup' ) {
+							if( in_array( $value->serviceTypes, ['parcel:pick-up', 'parcel:pick-up-unregistered', 'parcel:pick-up-registered']) ) {
 								array_push($parcel_res_filtered, $value);
 								$res_count++;
 							}
