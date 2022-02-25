@@ -736,7 +736,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 					return true;
 				}
 			} else {
-				exit();
 				return parent::is_cod_payment_method( $order_id );
 			}
 		} else {
@@ -749,7 +748,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		if( isset( $this->shipping_dhl_settings['dhl_change_order_status_completed'] ) && ( $this->shipping_dhl_settings['dhl_change_order_status_completed'] == 'yes' ) ) {
 			$order = wc_get_order( $order_id );
 			$order->update_status('completed');
-
 		}
 	}
 
