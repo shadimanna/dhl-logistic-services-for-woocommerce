@@ -314,9 +314,9 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			'dhl_desc_default' => array(
 				'title'             => __( 'Package Description', 'dhl-for-woocommerce' ),
 				'type'              => 'select',
-				'description'       => __( 'Prefill the package description with one of the options.', 'dhl-for-woocommerce' ),
+				'description'       => __( 'Prefill the customs package description with one of the options for cross-border packages.', 'dhl-for-woocommerce' ),
 				'desc_tip'          => true,
-				'default'			=> 'product_name',
+				'default'			=> 'product_cat',
 				'options'           => $select_dhl_desc_default,
 				'class'				=> 'wc-enhanced-select'
 			),
