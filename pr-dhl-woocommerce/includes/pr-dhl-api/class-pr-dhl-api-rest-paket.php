@@ -399,16 +399,15 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 
 					if ( $pickup_address && isset( $pickup_address->pickupLocation) ) {
 						$portalAddress = ( isset($pickup_address->pickupLocation->pickupAddress->nativeAddress )) ? $pickup_address->pickupLocation->pickupAddress->nativeAddress : null;
-						if ( $portalAddress->streetName == $localAddress['streetName']
-							&& $portalAddress->houseNumber == $localAddress['houseNumber']
-							&& $portalAddress->city == $localAddress['city']
-							&& $portalAddress->zip == $localAddress['zip']
-							&& $portalAddress->countryIso2Code == $localAddress['countryIso2Code'] )
-						{
-							$foundPickupLocMatch = true;
-							break;
-						}
-
+						if ( strtolower(preg_replace("/[^A-Za-z0-9]/", '', $portalAddress->streetName)) == strtolower(preg_replace("/[^A-Za-z0-9]/", '', $localAddress['streetName']))
+				            && strtolower(preg_replace("/[^A-Za-z0-9]/", '', $portalAddress->houseNumber)) == strtolower(preg_replace("/[^A-Za-z0-9]/", '', $localAddress['houseNumber']))
+				            && strtolower(preg_replace("/[^A-Za-z0-9]/", '', $portalAddress->city)) == strtolower(preg_replace("/[^A-Za-z0-9]/", '', $localAddress['city']))
+				            && strtolower(preg_replace("/[^A-Za-z0-9]/", '', $portalAddress->zip)) == strtolower(preg_replace("/[^A-Za-z0-9]/", '', $localAddress['zip']))
+				            && strtolower(preg_replace("/[^A-Za-z0-9]/", '', $portalAddress->countryIso2Code)) == strtolower(preg_replace("/[^A-Za-z0-9]/", '', $localAddress['countryIso2Code'])) )
+				        {
+				            $foundPickupLocMatch = true;
+				            break;
+				        }
 					}
 				}
 

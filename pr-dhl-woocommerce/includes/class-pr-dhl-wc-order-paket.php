@@ -849,7 +849,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	}
 
 
-	public function process_orders_action_request_pickup( $order_ids = [], $pickup_type, $pickup_date, $transportation_type = null) {
+	public function process_orders_action_request_pickup( $order_ids, $pickup_type, $pickup_date, $transportation_type = null) {
 
 		$array_messages = array();
 
@@ -870,6 +870,8 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$pickup_shipments = [];
 		foreach ( $order_ids as $order_id ) {
 			$order = wc_get_order( $order_id );
+
+			$this->save_default_dhl_label_items( $order_id );
 
 			// Gather args for DHL API call
 			$order_args = $this->get_label_args( $order_id );
