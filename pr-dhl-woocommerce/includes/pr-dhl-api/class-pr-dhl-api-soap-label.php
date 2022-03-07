@@ -948,6 +948,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 						'exportTypeDescription' => $item_description,
 						'termsOfTrade' => $this->args['order_details']['duties'],
 						'placeOfCommital' => $this->args['shipping_address']['country'],
+						'customsCurrency' => $this->args['order_details']['currency'],
 						'ExportDocPosition' => $customsDetails
 					);
 			}
