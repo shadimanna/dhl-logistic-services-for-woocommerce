@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 5.9
-Stable tag: 2.8.6
+Stable tag: 2.8.7
 WC requires at least: 3.0
 WC tested up to: 6.1
 License: GPLv2 or later
@@ -79,7 +79,11 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
- 
+
+= 2.8.7 =
+* DHL Paket: Add order currency in customs export
+* DHL Paket: Fix pickup address matching issue
+
 = 2.8.6 =
 * DHL Parcel: Added additional sanitization, escapes and validation
 * DHL Parcel: Updated readme
