@@ -90,22 +90,22 @@ class DHLPWC_Controller_Admin_Product
     {
         $product = wc_get_product($post_id);
 
-        $value = isset($_POST['dhlpwc_enable_method_limit']) ? $_POST['dhlpwc_enable_method_limit'] : '';
+        $value = wc_clean($_POST['dhlpwc_enable_method_limit']) === 'yes' ? 'yes' : '';
         $product->update_meta_data('dhlpwc_enable_method_limit', $value);
 
-        $value = isset($_POST['dhlpwc_selected_method_limit']) ? $_POST['dhlpwc_selected_method_limit'] : '';
+        $value = isset($_POST['dhlpwc_selected_method_limit']) && is_array($_POST['dhlpwc_selected_method_limit']) ? wc_clean($_POST['dhlpwc_selected_method_limit']) : '';
         $product->update_meta_data('dhlpwc_selected_method_limit', $value);
 
-        $value = isset($_POST['dhlpwc_additional_shipping_fee']) ? $_POST['dhlpwc_additional_shipping_fee'] : '';
+        $value = wc_clean($_POST['dhlpwc_additional_shipping_fee']);
         $product->update_meta_data('dhlpwc_additional_shipping_fee', str_replace(',', '.', $value));
 
-        $value = isset($_POST['dhlpwc_send_with_bp']) ? $_POST['dhlpwc_send_with_bp'] : '';
+        $value = wc_clean($_POST['dhlpwc_send_with_bp']) === 'yes' ? 'yes' : '';
         $product->update_meta_data('dhlpwc_send_with_bp', $value);
 
-        $value = isset($_POST['dhlpwc_send_with_bp_count']) && is_numeric($_POST['dhlpwc_send_with_bp_count']) && intval($_POST['dhlpwc_send_with_bp_count']) > 0 ? $_POST['dhlpwc_send_with_bp_count'] : '';
+        $value = isset($_POST['dhlpwc_send_with_bp_count']) && is_numeric($_POST['dhlpwc_send_with_bp_count']) && intval($_POST['dhlpwc_send_with_bp_count']) > 0 ? wc_clean($_POST['dhlpwc_send_with_bp_count']) : '';
         $product->update_meta_data('dhlpwc_send_with_bp_count', $value);
 
-        $value = isset($_POST['dhlpwc_send_with_bp_mix']) ? $_POST['dhlpwc_send_with_bp_mix'] : '';
+        $value = wc_clean($_POST['dhlpwc_send_with_bp_mix']) === 'yes' ? 'yes' : '';
         $product->update_meta_data('dhlpwc_send_with_bp_mix', $value);
 
         $product->save();

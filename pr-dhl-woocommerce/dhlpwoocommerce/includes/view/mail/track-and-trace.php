@@ -7,7 +7,7 @@
         <tbody>
         <?php foreach ($tracking_codesets as $tracking_codeset) : ?>
             <tr>
-            <td class="td" style="text-align:<?php echo $text_align; ?>;">
+            <td class="td" style="text-align:<?php echo esc_attr($text_align) ?>;">
                 <a href="<?php echo esc_url($tracking_codeset['url']) ?>"><?php echo esc_attr($tracking_codeset['code']); ?></a>
             </td>
             </tr>

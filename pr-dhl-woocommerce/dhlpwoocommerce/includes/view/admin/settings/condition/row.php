@@ -7,7 +7,7 @@
     <td>
         <select class="dhlpwc-global-shipping-setting dhlpwc-condition-field dhlpwc-condition-input-type">
             <?php foreach ($input_types as $key => $input_type) : ?>
-            <option value="<?php echo $key ?>"><?php echo $input_type ?></option>
+            <option value="<?php echo esc_attr($key) ?>"><?php echo esc_html($input_type) ?></option>
             <?php endforeach ?>
         </select>
     </td>
@@ -23,7 +23,7 @@
     <td>
         <select class="dhlpwc-global-shipping-setting dhlpwc-condition-field dhlpwc-condition-input-action">
             <?php foreach ($input_actions as $key => $input_action) : ?>
-            <option value="<?php echo $key ?>"><?php echo $input_action ?></option>
+            <option value="<?php echo esc_attr($key) ?>"><?php echo esc_html($input_action) ?></option>
             <?php endforeach ?>
         </select>
     </td>
