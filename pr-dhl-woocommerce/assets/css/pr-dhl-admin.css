@@ -27,7 +27,8 @@ ul.wc_dhl_error{
 }
 
 #dhl_label_created {
-	width:7%;
+	width: 10ch;
+	min-width: 55px;
 	/*text-align:center*/
 }
 
@@ -75,7 +76,7 @@ ul.wc_dhl_error{
 
 p.dhl-total-packages > label {
   padding-bottom: 10px !important;
-} 
+}
 
 .package_header_field,
 .package_item_field {
@@ -91,9 +92,35 @@ p.dhl-total-packages > label {
 .package_item input {
   width: 40px !important;
 
+}
+
 .dhl-awb-filter-container{
 	clear:both;
 	margin-top:9px;
 	margin-bottom:9px;
+}
 
+#dhl-paket-action-request-pickup {
+	padding: 0 10px;
+}
+#dhl-paket-action-request-pickup h3 {
+	margin: 10px 0;
+	padding: 0 0;
+}
+
+#dhl-paket-action-request-pickup p.form-field {
+	margin: 5px 0;
+}
+#dhl-paket-action-request-pickup p.pr_dhl_request_pickup_date_modal_field {
+	margin: 0 0;
+	padding: 0;
+}
+
+@media screen and (max-width: 782px) {
+	#dhl-paket-action-request-pickup {
+		padding: 0;
+	}
+	#dhl-paket-action-request-pickup p.form-field {
+		padding: 0 !important;
+	}
 }

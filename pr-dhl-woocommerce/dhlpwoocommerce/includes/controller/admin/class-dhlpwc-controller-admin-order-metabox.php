@@ -31,15 +31,15 @@ class DHLPWC_Controller_Admin_Order_Metabox
             add_action('wp_ajax_dhlpwc_metabox_terminal_search', array($this, 'terminal_search'));
             add_action('wp_ajax_dhlpwc_metabox_parcelshop_search', array($this, 'parcelshop_search'));
 
-	        $service = DHLPWC_Model_Service_Access_Control::instance();
-	        if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_PRINTER)) {
-		        add_action('wp_ajax_dhlpwc_label_print',  array($this, 'print_label'));
-	        }
+            $service = DHLPWC_Model_Service_Access_Control::instance();
+            if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_PRINTER)) {
+                add_action('wp_ajax_dhlpwc_label_print',  array($this, 'print_label'));
+            }
 
-	        $service = DHLPWC_Model_Service_Access_Control::instance();
-	        if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_LABEL_REQUEST)) {
-		        add_action('wp_ajax_dhlpwc_print_label_request',  array($this, 'print_label_request'));
-	        }
+            $service = DHLPWC_Model_Service_Access_Control::instance();
+            if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_LABEL_REQUEST)) {
+                add_action('wp_ajax_dhlpwc_print_label_request',  array($this, 'print_label_request'));
+            }
         }
     }
 
@@ -174,58 +174,58 @@ class DHLPWC_Controller_Admin_Order_Metabox
         wp_send_json($json_response->to_array(), 200);
     }
 
-	/**
-	 * Handler for the label_print AJAX call
-	 */
-	public function print_label()
-	{
-		$post_id = wc_clean($_POST['post_id']);
-		$label_id = wc_clean($_POST['label_id']);
+    /**
+     * Handler for the label_print AJAX call
+     */
+    public function print_label()
+    {
+        $post_id = wc_clean($_POST['post_id']);
+        $label_id = wc_clean($_POST['label_id']);
 
-		$service = new DHLPWC_Model_Service_Printer();
-		$success = $service->send($label_id);
+        $service = new DHLPWC_Model_Service_Printer();
+        $success = $service->send($label_id);
 
-		// Set Flash message
-		$messages = DHLPWC_Model_Core_Flash_Message::instance();
-		if ($success) {
-			$messages->add_notice(__('Sent to printer successfully.', 'dhlpwc'), 'dhlpwc_label_meta');
-		} else {
-			$messages->add_warning(__('Failed to send to printer.', 'dhlpwc'), 'dhlpwc_label_meta');
-		}
+        // Set Flash message
+        $messages = DHLPWC_Model_Core_Flash_Message::instance();
+        if ($success) {
+            $messages->add_notice(__('Sent to printer successfully.', 'dhlpwc'), 'dhlpwc_label_meta');
+        } else {
+            $messages->add_warning(__('Failed to send to printer.', 'dhlpwc'), 'dhlpwc_label_meta');
+        }
 
-		// Send JSON response
-		$json_response = new DHLPWC_Model_Response_JSON();
-		$json_response->set_data(array(
-			'view' => $this->load_all($post_id)
-		));
-		wp_send_json($json_response->to_array(), 200);
-	}
+        // Send JSON response
+        $json_response = new DHLPWC_Model_Response_JSON();
+        $json_response->set_data(array(
+            'view' => $this->load_all($post_id)
+        ));
+        wp_send_json($json_response->to_array(), 200);
+    }
 
-	/**
-	 * Handler for the label_print AJAX call
-	 */
-	public function print_label_request()
-	{
-		$post_id = wc_clean($_GET['post_id']);
-		$label_id = wc_clean($_GET['label_id']);
+    /**
+     * Handler for the label_print AJAX call
+     */
+    public function print_label_request()
+    {
+        $post_id = wc_clean($_GET['post_id']);
+        $label_id = wc_clean($_GET['label_id']);
 
-		// Get Label
-		$label_service = DHLPWC_Model_Service_Order_Meta::instance();
-		$label = $label_service->get_label($post_id, $label_id);
+        // Get Label
+        $label_service = DHLPWC_Model_Service_Order_Meta::instance();
+        $label = $label_service->get_label($post_id, $label_id);
 
-		if ($label === false) {
-			echo __('Label not found', 'dhlpwc');
-			exit;
-		}
+        if ($label === false) {
+            echo esc_html(__('Label not found', 'dhlpwc'));
+            exit;
+        }
 
-		if (empty($label['request'])) {
-			echo __('Label request not found', 'dhlpwc');
-			exit;
-		}
+        if (empty($label['request'])) {
+            echo esc_html(__('Label request not found', 'dhlpwc'));
+            exit;
+        }
 
-		echo $label['request'];
-		exit;
-	}
+        echo esc_html($label['request']);
+        exit;
+    }
 
     public function load_options()
     {
@@ -281,7 +281,7 @@ class DHLPWC_Controller_Admin_Order_Metabox
      */
     public function metabox_content()
     {
-        echo $this->load_all(get_the_ID());
+        echo dhlpwc_esc_template($this->load_all(get_the_ID()));
     }
 
     /**
@@ -347,6 +347,13 @@ class DHLPWC_Controller_Admin_Order_Metabox
                 $option_service->add_key_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE, $preselected_options);
                 $reference_value = apply_filters('dhlpwc_default_reference_value', $order_id, $order_id);
                 $option_service->add_key_value_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE, $reference_value, $option_data);
+            }
+
+            $default_order_id_reference2 = $option_service->default_order_id_reference2($order_id, $preselected_options, $to_business);
+            if ($default_order_id_reference2) {
+                $option_service->add_key_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE2, $preselected_options);
+                $reference2_value = apply_filters('dhlpwc_default_reference2_value', $order_id, $order_id);
+                $option_service->add_key_value_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE2, $reference2_value, $option_data);
             }
 
             // Default option settings

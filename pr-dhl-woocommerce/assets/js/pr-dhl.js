@@ -39,7 +39,6 @@ jQuery( function( $ ) {
 			$( '#woocommerce-shipment-dhl-label' )
 				.on( 'change', '#pr_dhl_tax_id_type', this.show_hide_tax_id );
 			wc_shipment_dhl_label_items.show_hide_tax_id();
-
 		},
 
 		// Extract the entries for the given package attribute

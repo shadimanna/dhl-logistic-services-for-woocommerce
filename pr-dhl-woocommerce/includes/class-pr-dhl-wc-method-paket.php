@@ -38,7 +38,9 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		$this->init_settings();
 
 		add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'process_admin_options' ) );
-		
+
+		add_filter( 'woocommerce_settings_api_form_fields_' .$this->id, array( $this, 'after_init_set_field_options' ) );
+
 	}
 
 	/**
@@ -66,13 +68,13 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 	}
 
 	public function get_order_statuses(){
-		
+
 		$wc_order_statuses = wc_get_order_statuses();
 
 		foreach( $this->excluded_order_statuses() as $status ){
 			unset( $wc_order_statuses[ $status ] );
 		}
-		
+
 		return $wc_order_statuses;
 	}
 
@@ -85,24 +87,28 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		$wc_shipping_methods = WC()->shipping->get_shipping_methods();
 		$wc_shipping_titles = wp_list_pluck($wc_shipping_methods, 'method_title', 'id');
 		$order_status_options = array(
-			'none' => __( 'None', 'dhl-for-woocommerce'), 
+			'none' => __( 'None', 'dhl-for-woocommerce'),
 		);
-		
+
 		$order_status_options = array_merge( $order_status_options, $this->get_order_statuses() );
-		
-		$payment_gateway_titles = PR_DHL()->get_payment_gateways();
 
 		$log_path = PR_DHL()->get_log_url();
 
 		$select_dhl_product = array( '0' => __( '- Select DHL Product -', 'dhl-for-woocommerce' ) );
 
+		$select_dhl_desc_default = array(
+			'product_name' => __('Product Name', 'dhl-for-woocommerce'),
+			'product_cat' => __('Product Categories', 'dhl-for-woocommerce'),
+			'product_tag' => __('Product Tags', 'dhl-for-woocommerce'),
+		);
+
 		try {
-			
+
 			$dhl_obj = PR_DHL()->get_dhl_factory();
 			$select_dhl_product_int = $dhl_obj->get_dhl_products_international();
 			$select_dhl_product_dom = $dhl_obj->get_dhl_products_domestic();
 			$select_dhl_visual_age 	= $dhl_obj->get_dhl_visual_age();
-			
+
 		} catch (Exception $e) {
 			PR_DHL()->log_msg( __('DHL Products not displaying - ', 'dhl-for-woocommerce') . $e->getMessage() );
 		}
@@ -166,7 +172,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			'dhl_general'     => array(
 				'title'           => __( 'Shipping Label Settings', 'dhl-for-woocommerce' ),
 				'type'            => 'title',
-				'description'     => __( 'Please configure the shipping label settings.', 'dhl-for-woocommerce' ),
+				'description'     => sprintf( __( 'Would you like to customize the DHL shipment notification? You can now add your online shop’s name and logo and we will display it in the DHL shipment notification. To upload your logo please use the following %slink%s.', 'dhl-for-woocommerce' ), '<a href="' . PR_DHL_PAKET_NOTIFICATION_EMAIL . '" target = "_blank">', '</a>' ),
 			),
 			'dhl_default_product_dom' => array(
 				'title'             => __( 'Domestic Default Service', 'dhl-for-woocommerce' ),
@@ -188,10 +194,10 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'title'             => __( 'Send Customer Email', 'dhl-for-woocommerce' ),
 				'type'              => 'select',
 				'description'             => __( 'Please select whether to send the customer\'s email to DHL or not. "Customer Confirmation" displays a confirmation on the checkout page and "Confirmed via terms & condition" assumes confirmation via the website terms & conditions.', 'dhl-for-woocommerce' ),
-				'options'           => array( 
-					'no' 		=> __( 'Do not send', 'dhl-for-woocommerce'), 
-					'yes' 		=> __( 'Customer confirmation', 'dhl-for-woocommerce'), 
-					'sendviatc' => __( 'Confirmed via terms & condition', 'dhl-for-woocommerce'), 
+				'options'           => array(
+					'no' 		=> __( 'Do not send', 'dhl-for-woocommerce'),
+					'yes' 		=> __( 'Customer confirmation', 'dhl-for-woocommerce'),
+					'sendviatc' => __( 'Confirmed via terms & condition', 'dhl-for-woocommerce'),
 				),
 				'default'           => 'sendviatc',
 				'desc_tip'          => true,
@@ -200,9 +206,9 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'title'             => __( 'Send Customer Phone', 'dhl-for-woocommerce' ),
 				'type'              => 'select',
 				'description'       => __( 'Please select whether to send the customer\'s phone to DHL or not. "Confirmed via terms & condition" assumes confirmation via the website terms & conditions.', 'dhl-for-woocommerce' ),
-				'options'           => array( 
-					'no' 		=> __( 'Do not send', 'dhl-for-woocommerce'), 
-					'sendviatc' => __( 'Confirmed via terms & condition', 'dhl-for-woocommerce'), 
+				'options'           => array(
+					'no' 		=> __( 'Do not send', 'dhl-for-woocommerce'),
+					'sendviatc' => __( 'Confirmed via terms & condition', 'dhl-for-woocommerce'),
 				),
 				'default'           => 'sendviatc',
 				'desc_tip'          => true,
@@ -305,18 +311,31 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'placeholder'		=> '',
 				'class'				=> 'wc_input_decimal'
 			),
+			'dhl_desc_default' => array(
+				'title'             => __( 'Package Description', 'dhl-for-woocommerce' ),
+				'type'              => 'select',
+				'description'       => __( 'Prefill the customs package description with one of the options for cross-border packages.', 'dhl-for-woocommerce' ),
+				'desc_tip'          => true,
+				'default'			=> 'product_cat',
+				'options'           => $select_dhl_desc_default,
+				'class'				=> 'wc-enhanced-select'
+			),
 			'dhl_label_format' => array(
 				'title'             => __( 'Label Format', 'dhl-for-woocommerce' ),
 				'type'              => 'select',
 				'description'       => __( 'Select one of the formats to generate the shipping label in.', 'dhl-for-woocommerce' ),
 				'desc_tip'          => true,
-				'options'           => array( 
-					'A4' => 'A4', 
-					'910-300-700' => 'Laser printer 105 x 205 mm', 
-					'910-300-700-oZ' => 'Laser printer 105 x 205 mm (no info)', 
-					'910-300-600' => 'Thermo printer 103 x 199 mm', 
-					'910-300-610' => 'Thermo printer 103 x 202 mm', 
-					'910-300-710' => 'Laser printer 105 x 208 mm' 
+				'options'           => array(
+					'A4' => 'A4',
+					'910-300-700' => 'Laser printer 105 x 205 mm',
+					'910-300-700-oZ' => 'Laser printer 105 x 205 mm (no info)',
+					'910-300-600' => 'Thermo printer 103 x 199 mm',
+					'910-300-610' => 'Thermo printer 103 x 202 mm',
+					'910-300-710' => 'Laser printer 105 x 208 mm',
+					'910-300-410' => 'Laser printer 103 x 150 mm',
+					'910-300-300' => 'Laser printer 105 x 148 mm',
+					'910-300-300-oZ' => 'Laser printer 105 x 148 mm (without additional labels)',
+					'100x70mm'	  => '100 x 70 mm (only for Warenpost)'
 				),
 				'default' 			=> '910-300-700',
 				'class'				=> 'wc-enhanced-select'
@@ -442,15 +461,15 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'description'     => __( 'Preferred service options.', 'dhl-for-woocommerce' ),
 				),
 				'dhl_preferred_day' => array(
-					'title'             => __( 'Preferred Day', 'dhl-for-woocommerce' ),
+					'title'             => __( 'Delivery Day', 'dhl-for-woocommerce' ),
 					'type'              => 'checkbox',
-					'label'             => __( 'Enable Preferred Day', 'dhl-for-woocommerce' ),
+					'label'             => __( 'Enable Delivery Day', 'dhl-for-woocommerce' ),
 					'default'           => 'yes',
 					'description'       => __( 'Enabling this will display a front-end option for the user to select their preferred day of delivery.', 'dhl-for-woocommerce' ),
 					'desc_tip'          => true,
 				),
 				'dhl_preferred_day_cost' => array(
-					'title'             => __( 'Preferred Day Price', 'dhl-for-woocommerce' ),
+					'title'             => __( 'Delivery Day Price', 'dhl-for-woocommerce' ),
 					'type'              => 'text',
 					'description'       => __( 'Insert gross value as surcharge for the preferred day. Insert 0 to offer service for free.', 'dhl-for-woocommerce' ),
 					'desc_tip'          => true,
@@ -521,7 +540,16 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'default' 			=> 'cod',
 					'description'       => __( 'Select the Payment Gateways to hide the enabled DHL Paket preferred services and Location Finder below. You can press "ctrl" to select multiple options or click on a selected option to deselect it.', 'dhl-for-woocommerce' ),
 					'desc_tip'          => true,
-					'options'           => $payment_gateway_titles,
+					'options'           => [],
+					'class'          => 'wc-enhanced-select',
+				),
+				'dhl_cod_payment_methods' => array(
+					'title'             => __( 'COD Payment Gateways', 'dhl-for-woocommerce' ),
+					'type'              => 'multiselect',
+					'default' 			=> 'cod',
+					'description'       => __( 'Select the Payment Gateways to use with DHL COD services. You can press "ctrl" to select multiple options or click on a selected option to deselect it.', 'dhl-for-woocommerce' ),
+					'desc_tip'          => true,
+					'options'           => [],
 					'class'          => 'wc-enhanced-select',
 				),
 				'dhl_parcel_finder'           => array(
@@ -582,9 +610,9 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 		$this->form_fields += array(
 			'dhl_shipper'           => array(
-				'title'           => __( 'Shipper Address', 'dhl-for-woocommerce' ),
+				'title'           => __( 'Shipper Address / Pickup Request Address', 'dhl-for-woocommerce' ),
 				'type'            => 'title',
-				'description'     => __( 'Enter Shipper Address below.', 'dhl-for-woocommerce' ),
+				'description'     => __( 'Enter Shipper Address. This address is also used for Pickup Requests.<br/>Note: For pickup requests to be accepted, this address must match a pickup address saved to your DHL Portal.', 'dhl-for-woocommerce' ),
 			),
 			'dhl_shipper_name' => array(
 				'title'             => __( 'Name', 'dhl-for-woocommerce' ),
@@ -771,6 +799,63 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'custom_attributes'	=> array( 'maxlength' => '35' )
 			),*/
 		);
+
+
+		// Business Hours for DHL Pickkup Request
+		$this->form_fields += array(
+			'dhl_business_hours'           => array(
+				'title'           => __( 'Business Hours (for DHL Pickup Request)', 'dhl-for-woocommerce' ),
+				'type'            => 'title',
+				'description'     => __( 'The business hours available for DHL Pickup.', 'dhl-for-woocommerce' ),
+			),
+			'dhl_business_hours_1_start'           => array(
+				'title'           => __( 'From: ', 'dhl-for-woocommerce' ),
+				'type'            => 'time',
+				'default'       	  => '08:00',
+			),
+			'dhl_business_hours_1_end'           => array(
+				'title'           => __( 'To: ', 'dhl-for-woocommerce' ),
+				'type'            => 'time',
+				'default'       	  => '17:00',
+			),
+			'dhl_business_hours2'           => array(
+				'title'           => __( 'Additional Business Hours (for DHL Pickup Request)', 'dhl-for-woocommerce' ),
+				'type'            => 'title',
+				'description'     => __( 'Optional, if additional business hours are needed.', 'dhl-for-woocommerce' ),
+			),
+			'dhl_business_hours_2_start'           => array(
+				'title'           => __( 'From: ', 'dhl-for-woocommerce' ),
+				'type'            => 'time',
+				'default'       	  => '',
+			),
+			'dhl_business_hours_2_end'           => array(
+				'title'           => __( 'To: ', 'dhl-for-woocommerce' ),
+				'type'            => 'time',
+				'default'       	  => '',
+			),
+		);
+
+
+	}
+
+	// Set specific field options after initialization
+	public function after_init_set_field_options ( $fields ) {
+		if ( isset( $fields['dhl_payment_gateway'] ) || isset( $fields['dhl_cod_payment_methods'] ) ) {
+			$payment_gateway_titles = [];
+			if ( WC()->payment_gateways ) {
+				$wc_payment_gateways = WC()->payment_gateways->payment_gateways();
+				foreach ($wc_payment_gateways as $gatekey => $gateway) {
+					$payment_gateway_titles[ $gatekey ] = $gateway->get_method_title();
+				}
+				if ( isset( $fields['dhl_payment_gateway'] ) ) {
+					$fields['dhl_payment_gateway']['options'] = $payment_gateway_titles;
+				}
+				if ( isset( $fields['dhl_cod_payment_methods'] ) ) {
+					$fields['dhl_cod_payment_methods']['options'] = $payment_gateway_titles;
+				}
+			}
+		}
+		return $fields;
 	}
 
 	/**
@@ -834,12 +919,12 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		$value = wc_clean( $_POST[ $this->plugin_id . $this->id . '_' . $key ] );
 
 		try {
-			
+
 			$dhl_obj = PR_DHL()->get_dhl_factory();
 			$dhl_obj->dhl_validate_field( 'pickup', $value );
 
 		} catch (Exception $e) {
-			
+
 			echo $this->get_message( __('Pickup Account Number: ', 'dhl-for-woocommerce') . $e->getMessage() );
 			throw $e;
 
@@ -854,9 +939,9 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 	 */
 	public function validate_dhl_distribution_field( $key ) {
 		$value = wc_clean( $_POST[ $this->plugin_id . $this->id . '_' . $key ] );
-		
+
 		try {
-			
+
 			$dhl_obj = PR_DHL()->get_dhl_factory();
 			$dhl_obj->dhl_validate_field( 'distribution', $value );
 
@@ -879,14 +964,14 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 		if ( empty( $google_maps_api ) ) {
 
-			if ( isset( $_POST[ $this->plugin_id . $this->id . '_dhl_display_packstation' ] ) || 
-				 isset( $_POST[ $this->plugin_id . $this->id . '_dhl_display_parcelshop' ] ) || 
+			if ( isset( $_POST[ $this->plugin_id . $this->id . '_dhl_display_packstation' ] ) ||
+				 isset( $_POST[ $this->plugin_id . $this->id . '_dhl_display_parcelshop' ] ) ||
 				 isset( $_POST[ $this->plugin_id . $this->id . '_dhl_display_post_office' ] ) ) {
 
 					$error_message = __('In order to show the dhl locations on a map, you need to insert a Google API Key. Otherwise, please deactivate the locations.', 'dhl-for-woocommerce');
 					echo $this->get_message( $error_message );
 					throw new Exception( $error_message );
-				
+
 			}
 		}
 
@@ -930,20 +1015,20 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 	 * @see validate_settings_fields()
 	 */
 	public function validate_dhl_add_logo_field( $key ) {
-		
+
 		if ( ! isset( $_POST[ $this->plugin_id . $this->id . '_' . $key ] ) ) {
 			return 'no';
 		}
 
 		// Verify shipper reference set
 		$shipper_reference = $_POST[ $this->plugin_id . $this->id . '_dhl_shipper_reference' ];
-		
+
 		if ( empty( $shipper_reference ) ) {
 
-			$error_message = __('In order to use logo, you need to set a shipper reference first.', 'dhl-for-woocommerce');	
-			
+			$error_message = __('In order to use logo, you need to set a shipper reference first.', 'dhl-for-woocommerce');
+
 			echo $this->get_message( $error_message );
-			
+
 			return 'no';
 		}
 
@@ -965,15 +1050,15 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 		// If not return 'no'
 		if ( empty( $google_maps_api_key ) ) {
-			
-			if( $key == 'dhl_display_google_maps' ){ 
-				$error_message = sprintf( __('In order to show %s, you need to set a Google API Key first.', 'dhl-for-woocommerce'), $location_type );	
+
+			if( $key == 'dhl_display_google_maps' ){
+				$error_message = sprintf( __('In order to show %s, you need to set a Google API Key first.', 'dhl-for-woocommerce'), $location_type );
 			}else{
 				$error_message = sprintf( __('In order to show %s on a map, you need to set a Google API Key first.', 'dhl-for-woocommerce'), $location_type );
 			}
-			
+
 			echo $this->get_message( $error_message );
-			
+
 			return 'no';
 		}
 

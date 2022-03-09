@@ -10,9 +10,10 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 	/**
 	 * WSDL definitions
 	 */
-	const PR_DHL_WSDL_LINK = 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/3.1/geschaeftskundenversand-api-3.1.wsdl';
+	//const PR_DHL_WSDL_LINK = 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/3.1/geschaeftskundenversand-api-3.1.wsdl';
 
-	const DHL_MAX_ITEMS = '6';
+	const PR_DHL_WSDL_LINK = PR_DHL_PLUGIN_DIR_PATH . '/includes/pr-dhl-api/wsdl/3.2/geschaeftskundenversand-api-3.2.0.wsdl';
+
 	const DHL_RETURN_PRODUCT = '07';
 
 	private $pos_ps = false;
@@ -71,6 +72,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			// error_log(print_r($response_body,true));
 			// error_log(print_r( $soap_client->__getLastRequest(), true ));
 			PR_DHL()->log_msg( 'Response: Successful');
+			PR_DHL()->log_msg( 'createShipmentOrder response: '. print_r( $response_body, true ));
 			return $this->process_label_response( $response_body, $args['order_details']['order_id'] );
 
 
@@ -364,9 +366,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			throw new Exception( __('Shop "Weight Units of Measure" is empty!', 'dhl-for-woocommerce') );
 		}
 
-		if ( empty( $args['order_details']['weight'] )) {
-			throw new Exception( __('Order "Weight" is empty!', 'dhl-for-woocommerce') );
-		}
+
 
 		if ( isset( $args['order_details']['identcheck'] ) && ( $args['order_details']['identcheck'] == 'yes' ) ) {
 			if ( empty( $args['shipping_address']['first_name'] ) || empty( $args['shipping_address']['last_name'] ) ) {
@@ -412,6 +412,12 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 					}
 				}
 			}
+		} else {
+
+			if ( empty( $args['order_details']['weight'] )) {
+				throw new Exception( __('Order "Weight" is empty!', 'dhl-for-woocommerce') );
+			}
+
 		}
 
 		// if ( empty( $args['order_details']['duties'] )) {
@@ -911,10 +917,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			// Add customs info
 			if( PR_DHL()->is_crossborder_shipment( $this->args['shipping_address']['country'] ) ) {
 
-				if ( sizeof($this->args['items']) > self::DHL_MAX_ITEMS ) {
-					throw new Exception( sprintf( __('Only %s ordered items can be processed, your order has %s', 'dhl-for-woocommerce'), self::DHL_MAX_ITEMS, sizeof($this->args['items']) ) );
-				}
-
 				$customsDetails = array();
 
 				$item_description = '';
@@ -942,10 +944,11 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				$dhl_label_body['ShipmentOrder']['Shipment']['ExportDocument'] =
 					array(
 						'invoiceNumber' => $this->args['order_details']['invoice_num'],
-						'exportType' => 'OTHER',
+						'exportType' => apply_filters( 'pr_shipping_dhl_paket_label_shipment_export_type', 'OTHER'),
 						'exportTypeDescription' => $item_description,
 						'termsOfTrade' => $this->args['order_details']['duties'],
 						'placeOfCommital' => $this->args['shipping_address']['country'],
+						'customsCurrency' => $this->args['order_details']['currency'],
 						'ExportDocPosition' => $customsDetails
 					);
 			}
@@ -991,7 +994,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				$this->body_request['ShipmentOrder']['Shipment']['Receiver']['Address']['zip'] = '';
 			}
 
-			if( count( $shipment_items ) > 1 ){
+			if( count( $shipment_items ) > 0 ){
 				$shipment_order 	= $this->body_request['ShipmentOrder'];
 				$shipment_orders 	= array();
 				$sequence 			= 0;

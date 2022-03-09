@@ -101,26 +101,29 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
         $label_logic = DHLPWC_Model_Logic_Label::instance();
         $pdf_info = $label_logic->create_pdf_file($order_id, $label['pdf']);
 
-	    $label_data = array(
-		    'label_id' => $label['labelId'],
-		    'label_type' => $label['labelType'],
-		    'label_size' => $label_size,
-		    'tracker_code' => $label['trackerCode'],
-		    'routing_code' => $label['routingCode'],
-		    'order_reference' => $label['orderReference'],
+        $label_data = array(
+            'label_id' => $label['labelId'],
+            'label_type' => $label['labelType'],
+            'label_size' => $label_size,
+            'tracker_code' => $label['trackerCode'],
+            'routing_code' => $label['routingCode'],
+            'order_reference' => $label['orderReference'],
 
-		    'pdf' => array(
-			    'url' => $pdf_info['url'],
-			    'path' => $pdf_info['path'],
-		    )
-	    );
+            'pdf' => array(
+                'url' => $pdf_info['url'],
+                'path' => $pdf_info['path'],
+            )
+        );
 
-	    // Save label request or not
-	    $service = DHLPWC_Model_Service_Access_Control::instance();
-	    $debug_label_requests = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_LABEL_REQUEST);
-	    if ($debug_label_requests) {
-		    $label_data['request'] = json_encode($shipment_data);
-	    }
+        // Save label request or not
+        $service = DHLPWC_Model_Service_Access_Control::instance();
+        $debug_label_requests = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_LABEL_REQUEST);
+        if ($debug_label_requests) {
+            $label_data['request'] = json_encode($shipment_data);
+        }
+
+        // Create label do action hook
+        do_action('dhlpwc_create_label', $order_id, $label_data);
 
         $meta = new DHLPWC_Model_Service_Order_Meta();
         $meta->save_label($order_id, $label_data);
@@ -144,27 +147,30 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
 
             $return_pdf_info = $label_logic->create_pdf_file($order_id, $return_label['pdf']);
 
-	        $label_data = array(
-		        'label_id' => $return_label['labelId'],
-		        'label_type' => $return_label['labelType'],
-		        'label_size' => $label_size,
-		        'tracker_code' => $return_label['trackerCode'],
-		        'routing_code' => $return_label['routingCode'],
-		        'order_reference' => $return_label['orderReference'],
-		        'is_return' => true,
+            $label_data = array(
+                'label_id' => $return_label['labelId'],
+                'label_type' => $return_label['labelType'],
+                'label_size' => $label_size,
+                'tracker_code' => $return_label['trackerCode'],
+                'routing_code' => $return_label['routingCode'],
+                'order_reference' => $return_label['orderReference'],
+                'is_return' => true,
 
-		        'pdf' => array(
-			        'url' => $return_pdf_info['url'],
-			        'path' => $return_pdf_info['path'],
-		        ),
-	        );
+                'pdf' => array(
+                    'url' => $return_pdf_info['url'],
+                    'path' => $return_pdf_info['path'],
+                ),
+            );
 
-	        // Save label request or not
-	        $service = DHLPWC_Model_Service_Access_Control::instance();
-	        $debug_label_requests = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_LABEL_REQUEST);
-	        if ($debug_label_requests) {
-		        $label_data['request'] = json_encode($return_shipment_data);
-	        }
+            // Save label request or not
+            $service = DHLPWC_Model_Service_Access_Control::instance();
+            $debug_label_requests = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_LABEL_REQUEST);
+            if ($debug_label_requests) {
+                $label_data['request'] = json_encode($return_shipment_data);
+            }
+
+            // Create label do action hook
+            do_action('dhlpwc_create_label', $order_id, $label_data);
 
             $return_meta = new DHLPWC_Model_Service_Order_Meta();
             $return_meta->save_label($order_id, $label_data);
@@ -285,6 +291,10 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
                     case (DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE):
                         $reference_value = apply_filters('dhlpwc_default_reference_value', $order_id, $order_id);
                         $option_data[DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE] = $reference_value;
+                        break;
+                    case (DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE2):
+                        $reference2_value = apply_filters('dhlpwc_default_reference2_value', $order_id, $order_id);
+                        $option_data[DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE2] = $reference2_value;
                         break;
                 }
             }

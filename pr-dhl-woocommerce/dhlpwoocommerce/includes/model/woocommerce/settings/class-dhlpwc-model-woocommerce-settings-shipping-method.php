@@ -183,7 +183,7 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
 
             $this->get_order_status_change_fields(),
 
-	        array(
+            array(
                 'change_order_status_to' => array(
                     'type'    => 'select',
                     'options' => array_merge(
@@ -250,6 +250,13 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'type'        => 'checkbox',
                     'label'       => __('Enable', 'dhlpwc'),
                     'description' => __("When creating a label, always add the order number as reference by default if the service is available.", 'dhlpwc'),
+                    'default'     => 'no',
+                ),
+                'check_default_order_id_reference2' => array(
+                    'title'       => __('Automatically add the order number as a second reference, if possible', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Enable', 'dhlpwc'),
+                    'description' => __("When creating a label, always add the order number as second reference by default if the service is available.", 'dhlpwc'),
                     'default'     => 'no',
                 ),
                 'check_default_return' => array(
@@ -427,19 +434,19 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'placeholder' => sprintf(__('Example: %s', 'dhlpwc'), '1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d'),
                 ),
                 'enable_auto_print' => array(
-	                'title'       => __('Enable auto printer features', 'dhlpwc'),
-	                'type'        => 'checkbox',
-	                'label'       => __('Enable', 'dhlpwc'),
-	                'description' => __('Automatically create and print labels when order has a specific status and has no labels already', 'dhlpwc'),
+                    'title'       => __('Enable auto printer features', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Enable', 'dhlpwc'),
+                    'description' => __('Automatically create and print labels when order has a specific status and has no labels already', 'dhlpwc'),
                 ),
                 'auto_print_on_status' => array(
-	                'title'       => __('Auto print orders with this status', 'dhlpwc'),
-	                'type'    => 'select',
-	                'options' => array_merge(
-		                array('null' => __('Do not change order status', 'dhlpwc')),
-		                array_map(array($this, 'on_status_to_option_update'), wc_get_order_statuses())
-	                ),
-	                'default' => 'null',
+                    'title'       => __('Auto print orders with this status', 'dhlpwc'),
+                    'type'    => 'select',
+                    'options' => array_merge(
+                        array('null' => __('Do not change order status', 'dhlpwc')),
+                        array_map(array($this, 'on_status_to_option_update'), wc_get_order_statuses())
+                    ),
+                    'default' => 'null',
                 ),
             ),
 
@@ -450,12 +457,12 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'type'        => 'title',
                     'description' => __('Settings for developers.', 'dhlpwc'),
                 ),
-	            'enable_debug'                      => array(
-		            'title'       => __('Report errors', 'dhlpwc'),
-		            'type'        => 'checkbox',
-		            'label'       => __('Enable', 'dhlpwc'),
-		            'description' => __('Enable this and select one of the reporting methods below to automatically send errors of this plugin to the development team.', 'dhlpwc'),
-	            ),
+                'enable_debug'                      => array(
+                    'title'       => __('Report errors', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Enable', 'dhlpwc'),
+                    'description' => __('Enable this and select one of the reporting methods below to automatically send errors of this plugin to the development team.', 'dhlpwc'),
+                ),
                 'enable_debug_mail'                 => array(
                     'title'       => __('By mail', 'dhlpwc'),
                     'type'        => 'checkbox',
@@ -472,12 +479,12 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'type'        => 'text',
                     'description' => __("Alternative secondary API-URL. Used by developers. Will not be used if left empty (recommended).", 'dhlpwc'),
                 ),
-	            'enable_debug_requests' => array(
-		            'title'       => __('Log Requests for debugging', 'dhlpwc'),
-		            'type'        => 'checkbox',
-		            'label'       => __('Enable', 'dhlpwc'),
-		            'description' => __('Enable this and you can check your request.', 'dhlpwc'),
-	            ),
+                'enable_debug_requests' => array(
+                    'title'       => __('Log Requests for debugging', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Enable', 'dhlpwc'),
+                    'description' => __('Enable this and you can check your request.', 'dhlpwc'),
+                ),
 
                 // Feedback
                 'feedback_settings'                => array(
@@ -1158,9 +1165,9 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
 
     protected function get_order_status_change_fields()
     {
-    	$fields = array ();
-    	$order_statuses = wc_get_order_statuses();
-    	$add_title = true;
+        $fields = array ();
+        $order_statuses = wc_get_order_statuses();
+        $add_title = true;
         foreach ($order_statuses as $order_status_key => $order_status_label) {
             $fields['change_order_status_from_' . $order_status_key] = array(
                 'type'        => 'checkbox',

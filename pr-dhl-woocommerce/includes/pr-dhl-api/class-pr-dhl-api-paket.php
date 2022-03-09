@@ -16,9 +16,10 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		$this->country_code = $country_code;
 		try {
 			$this->dhl_label = new PR_DHL_API_SOAP_Label( );
-			$this->dhl_finder = new PR_DHL_API_SOAP_Finder( );
+			//$this->dhl_finder = new PR_DHL_API_SOAP_Finder( );
+			$this->dhl_finder = new PR_DHL_API_REST_Finder( );
 		} catch (Exception $e) {
-			throw $e;	
+			throw $e;
 		}
 	}
 
@@ -32,7 +33,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		// $dhl_sandbox = $this->get_settings('dhl_sandbox');
 		// error_log(print_r($dhl_sandbox,true));
 		// $dhl_sandbox = isset( $dhl_sandbox ) ? $dhl_sandbox : '';
-		
+
 		if ( isset($args['sandbox']) && ($args['sandbox'] == 'yes' ) ) {
 			$sandbox_info = $this->sandbox_info();
 			$args['api_user'] = $sandbox_info['username'];
@@ -56,7 +57,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		$args['dhl_settings'] = $this->maybe_sandbox( $args['dhl_settings'] );
 		return parent::get_parcel_location( $args );
 	}
-	
+
 	/**
 	 * Retrieves all of the Deutsche Post settings.
 	 *
@@ -70,11 +71,12 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 
 	public function get_dhl_products_international() {
 		$country_code = $this->country_code;
-		
-		$germany_int =  array( 
+
+		$germany_int =  array(
 								'V55PAK' => __('DHL Paket Connect', 'dhl-for-woocommerce'),
 								'V54EPAK' => __('DHL Europaket (B2B)', 'dhl-for-woocommerce'),
 								'V53WPAK' => __('DHL Paket International', 'dhl-for-woocommerce'),
+								'V66WPI' => __('DHL Warenpost International', 'dhl-for-woocommerce'),
 								);
 
 		$dhl_prod_int = array();
@@ -93,7 +95,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 	public function get_dhl_products_domestic() {
 		$country_code = $this->country_code;
 
-		$germany_dom = array(  
+		$germany_dom = array(
 								'V01PAK' => __('DHL Paket', 'dhl-for-woocommerce'),
 								'V01PRIO' => __('DHL Paket PRIO', 'dhl-for-woocommerce'),
 								'V62WP' => __('DHL Warenpost National', 'dhl-for-woocommerce'),
@@ -120,7 +122,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 
 		// Get existing timezone to reset afterwards
 		$current_timzone = date_default_timezone_get();
-		// Always set and get DE timezone and check against it. 
+		// Always set and get DE timezone and check against it.
 		date_default_timezone_set('Europe/Berlin');
 
 		// Get existing time locale
@@ -129,7 +131,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		// $wp_locale = get_locale();
 		// setlocale(LC_TIME, $wp_locale);
 		// setlocale(LC_TIME, 'de_DE', 'deu_deu', 'de_DE.utf8', 'German', 'deu/ger', 'de_DE@euro', 'de', 'ge');
-		
+
 		$tz_obj = new DateTimeZone( 'Europe/Berlin' );
 		$today = new DateTime("now", $tz_obj);	// Should the order date be passed as a variable?
 		$today_de_timestamp = $today->getTimestamp();
@@ -172,11 +174,11 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		} else {
 			$args['account_num'] = $account_num;
 		}
-		
+
 		$dhl_parcel_services = new PR_DHL_API_REST_Parcel();
 		// error_log(print_r($args,true));
 		$preferred_services = $dhl_parcel_services->get_dhl_parcel_services($args);
-		
+
 		$preferred_day_time = array();
 		$preferred_day_time['preferred_day'] = $this->get_dhl_preferred_day( $preferred_services );
 
@@ -190,15 +192,15 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 
 	protected function get_dhl_preferred_day( $preferred_services ) {
 		$day_of_week_arr = array(
-		            '1' => __('Mon', 'dhl-for-woocommerce'), 
-		            '2' => __('Tue', 'dhl-for-woocommerce'), 
+		            '1' => __('Mon', 'dhl-for-woocommerce'),
+		            '2' => __('Tue', 'dhl-for-woocommerce'),
 		            '3' => __('Wed', 'dhl-for-woocommerce'),
 		            '4' => __('Thu', 'dhl-for-woocommerce'),
 		            '5' => __('Fri', 'dhl-for-woocommerce'),
 		            '6' => __('Sat', 'dhl-for-woocommerce'),
 		            '7' => __('Sun', 'dhl-for-woocommerce')
 		        );
-		
+
 		$preferred_days = array();
 		if( isset( $preferred_services->preferredDay->available ) && $preferred_services->preferredDay->available && isset( $preferred_services->preferredDay->validDays ) ) {
 
@@ -210,7 +212,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 
 				$preferred_days[ $week_date ] = $day_of_week_arr[ $day_of_week ];
 			}
-			
+
 			// Add none option
 			array_unshift( $preferred_days, __('none', 'dhl-for-woocommerce') );
 		}

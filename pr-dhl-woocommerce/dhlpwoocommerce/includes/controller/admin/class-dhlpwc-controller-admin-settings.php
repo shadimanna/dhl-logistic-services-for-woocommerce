@@ -166,6 +166,7 @@ class DHLPWC_Controller_Admin_Settings
                 'snippet_description_message'               => esc_html(__('To customize this functionality, please use our filters.', 'dhlpwc')),
                 'snippet_button_message'                    => esc_html(__('Click here for an example snippet', 'dhlpwc')),
                 'snippet_default_reference_value'           => DHLPWC_Model_Service_Snippets::instance()->default_order_reference(),
+                'snippet_default_reference2_value'          => DHLPWC_Model_Service_Snippets::instance()->default_order_reference2(),
                 'condition_templates'                       => $condition_templates,
                 'currency_symbol'                           => get_woocommerce_currency_symbol(),
                 'currency_pos'                              => get_option('woocommerce_currency_pos'),

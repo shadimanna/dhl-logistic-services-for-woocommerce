@@ -140,7 +140,14 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
                             $logic = DHLPWC_Model_Logic_Shipment::instance();
                             $value = $logic->get_reference2_data($option_data);
                         } else {
-                            $value = null;
+                            $access_service = DHLPWC_Model_Service_Access_Control::instance();
+                            $default_order_id_reference2 = $access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DEFAULT_ORDER_ID_REFERENCE2);
+
+                            if ($default_order_id_reference2) {
+                                $value = apply_filters('dhlpwc_default_reference2_value', $order_id, $order_id);
+                            } else {
+                                $value = null;
+                            }
                         }
 
                         $option->input_template = DHLPWC_Model_API_Data_Option::INPUT_TEMPLATE_TEXT;
@@ -244,9 +251,12 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
     {
         $view = new DHLPWC_Template('order.meta.form.sizes-headline');
         $option_texts = $selected_options;
-        array_walk($option_texts, function(&$value, &$key) {
-            $value = DHLPWC_Model_Service_Translation::instance()->option($value);
-        });
+        $option_texts = array_map(
+            function ($value) {
+                return DHLPWC_Model_Service_Translation::instance()->option($value);
+            },
+            $option_texts
+        );
 
         $size_view = $view->render(array(
             'message' => implode(' + ', $option_texts),
@@ -287,8 +297,8 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
         $tracking_url = $service->get_url($label['tracker_code'], $postcode, $locale);
 
         $service = DHLPWC_Model_Service_Access_Control::instance();
-	    $printer = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_PRINTER);
-	    $debug_label_requests = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_LABEL_REQUEST);
+        $printer = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_PRINTER);
+        $debug_label_requests = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_LABEL_REQUEST);
 
         $actions = array();
         $actions[] = array(
@@ -318,12 +328,12 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
         );
 
         if ($debug_label_requests && !empty($label['request'])) {
-	        $actions[] = array(
-		        'url'    => admin_url('admin-ajax.php?action=dhlpwc_print_label_request&post_id=' . $post_id . '&label_id=' . $label['label_id']),
-		        'name'   => __('Show Label Request', 'dhlpwc'),
-		        'action' => "dhlpwc_action_request",
-		        'external_link' => false
-	        );
+            $actions[] = array(
+                'url'           => admin_url('admin-ajax.php?action=dhlpwc_print_label_request&post_id=' . $post_id . '&label_id=' . $label['label_id']),
+                'name'          => __('Show Label Request', 'dhlpwc'),
+                'action'        => "dhlpwc_action_request",
+                'external_link' => false
+            );
         }
 
         // Create template
