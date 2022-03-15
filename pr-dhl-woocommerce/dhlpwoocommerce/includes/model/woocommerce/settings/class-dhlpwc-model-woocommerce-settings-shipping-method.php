@@ -36,7 +36,7 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
         parent::__construct($instance_id);
 
         $this->id = 'dhlpwc';
-        $this->method_title = __('DHL for WooCommerce', 'dhlpwc');
+        $this->method_title = DHLPWC_IS_STANDALONE ? __('DHL Parcel for WooCommerce', 'dhlpwc') : __('DHL for WooCommerce', 'dhlpwc');
         $this->method_description = __('This is the official DHL Plugin for WooCommerce in WordPress. Do you have a WooCommerce webshop and are you looking for an easy way to process shipments within the Netherlands and abroad? This plugin offers you many options. You can easily create shipping labels and offer multiple delivery options in your webshop. Set up your account below.', 'dhlpwc');
         $this->instance_id           = absint( $instance_id );
         $this->title = $this->method_title;
@@ -441,12 +441,12 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                 ),
                 'auto_print_on_status' => array(
                     'title'       => __('Auto print orders with this status', 'dhlpwc'),
-                    'type'    => 'select',
-                    'options' => array_merge(
+                    'type'        => 'select',
+                    'options'     => array_merge(
                         array('null' => __('Do not change order status', 'dhlpwc')),
                         array_map(array($this, 'on_status_to_option_update'), wc_get_order_statuses())
                     ),
-                    'default' => 'null',
+                    'default'     => 'null',
                 ),
             ),
 
@@ -484,6 +484,17 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'type'        => 'checkbox',
                     'label'       => __('Enable', 'dhlpwc'),
                     'description' => __('Enable this and you can check your request.', 'dhlpwc'),
+                ),
+                'debug_migrate_notification' => array(
+                    'title'       => __('Test migrate notification', 'dhlpwc'),
+                    'type'        => 'select',
+                    'options' => array(
+                        ''     => __('Off', 'dhlpwc'),
+                        'low'  => __('Show low level notification', 'dhlpwc'),
+                        'mid'  => __('Show middle level notification', 'dhlpwc'),
+                        'high' => __('Show high level notification', 'dhlpwc'),
+                    ),
+                    'default'     => '',
                 ),
 
                 // Feedback
