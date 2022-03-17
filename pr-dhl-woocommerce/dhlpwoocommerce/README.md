@@ -1,4 +1,10 @@
 # DHL Parcel for WooCommerce
+
+v2.0.0
+## Changes
+- Added additional sanitization, escapes and validation
+- Updated readme
+- Standalone release 
  
 v1.3.19
 ## Changes

@@ -1,10 +1,10 @@
-=== DHL for WooCommerce ===
+=== DHL Parcel for WooCommerce ===
 Contributors:         dhlparcel, dhlsupport, shindhl
-Tags:                 DHL, DHL Parcel, DHL Parcel NL, DHL Parcel Benelux, WooCommerce, Shipping, Shipping labels, Shipping rates
+Tags:                 DHL, DHL Parcel, DHL Parcel for WooCommerce, DHLParcel, DHL Parcel NL, DHL Parcel Benelux, WooCommerce, Shipping, Shipping labels, Shipping rates
 Requires at least:    4.7.16
 Requires PHP:         5.6
 Tested up to:         5.9
-Stable tag:           2.0.0
+Stable tag:           2.0.1
 WC requires at least: 3.0.0
 WC tested up to:      5.3.0
 License:              GPL v3 or later
@@ -34,7 +34,7 @@ Use the free official DHL Parcel for WooCommerce plugin to professionalize your 
 1. Choose from various **automation rules** to ship faster than ever.
 1. Experience **premium support**, timely compatibility updates and bug fixes.
 
-This this plugin has certified compatibility with WMPL that enables you to leverage multilingual capabilities. Click [here](https://wpml.org/plugin/dhl-for-woocommerce/) for further information.
+This plugin has certified compatibility with WMPL that enables you to leverage multilingual capabilities. Click [here](https://wpml.org/plugin/dhl-for-woocommerce/) for further information.
 
 = Availability by countries and prerequisites =
 
@@ -52,6 +52,11 @@ This plug-in can be used by online stores that ship orders from the Benelux regi
 A “Google Maps API Key” is required if you wish to display DHL locations on a map for your customers.
 
 == Changelog ==
+
+= 2.0.0 =
+* Added additional sanitization, escapes and validation
+* Updated readme
+* Standalone release
 
 = 1.3.19 =
 * Fixed a deprecation warning on sorted package sized in the label creation screen for PHP 8 compatibility
@@ -307,7 +312,7 @@ A “Google Maps API Key” is required if you wish to display DHL locations on 
 
 == Frequently Asked Questions ==
 
-Do you have any questions about our WooCommerce plug-in? We are ready to assist you and we will try to provide you with an answer as soon as possible. In need of a quick solution? See if your question is in the shortlist below. If you didn’t find what you were looking for, we will gladly assist you if you send us an [e-mail](mailto:cimparcel@dhl.com) or call us at 088 34 54 333.
+Do you have any questions about our WooCommerce plug-in? We are ready to assist you and we will try to provide you with an answer as soon as possible. In need of a quick solution? See if your question is in the shortlist below or check our [manual](https://www.dhlparcel.nl/sites/default/files/content/PDF/Manual_WooCommerce_plug-in_EN.pdf). If you didn’t find what you were looking for, we will gladly assist you if you send us an [e-mail](mailto:cimparcel@dhl.com) or call us at 088 34 54 333.
 
 = How to get started =
 
@@ -340,7 +345,6 @@ What additional services can be picked from depends on the chosen delivery metho
 * Saturday delivery: delivery on Saturday between 9 AM and 3 PM.
 * Expresser: delivery next day before 11 AM.
 * Hide sender: you will be able to show an alternative shipper name and address on the shipping label.
-* Cash on delivery: upon delivery the recipient will need to pay the amount specified by you.
 * Construction site delivery: delivery on locations that are under construction.
 * Ex works: the recipient will pay DHL the shipping costs.
 

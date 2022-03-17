@@ -7,10 +7,10 @@ if (!class_exists('DHLPWC_Controller_Admin_Settings')) :
 class DHLPWC_Controller_Admin_Settings
 {
 
-    const NOTICE_TAG_PREFIX = 'dhlpwc_';
+    const NOTICE_TAG_PREFIX = 'dhlpwc_notice_';
 
-    const NOTICE_TAG_COUNTRY = 'country';
-    const NOTICE_TAG_API_SETTINGS = 'api_settings';
+    const NOTICE_TAG_COUNTRY = self::NOTICE_TAG_PREFIX . 'country';
+    const NOTICE_TAG_API_SETTINGS = self::NOTICE_TAG_PREFIX . 'api_settings';
 
     public function __construct()
     {
@@ -48,8 +48,8 @@ class DHLPWC_Controller_Admin_Settings
     {
         add_submenu_page(
             'woocommerce',
-            __('DHL for WooCommerce', 'dhlpwc'),
-            __('DHL for WooCommerce', 'dhlpwc'),
+            DHLPWC_IS_STANDALONE ? __('DHL Parcel for WooCommerce', 'dhlpwc') : __('DHL for WooCommerce', 'dhlpwc'),
+            DHLPWC_IS_STANDALONE ? __('DHL Parcel for WooCommerce', 'dhlpwc') : __('DHL for WooCommerce', 'dhlpwc'),
             'manage_options',
             'dhlpwc-menu-link',
             array($this, 'forward_settings_location')
@@ -74,7 +74,6 @@ class DHLPWC_Controller_Admin_Settings
         }
 
         // Remove prefix
-        $notice_tag = substr($notice_tag, strlen(self::NOTICE_TAG_PREFIX));
         $value = true;
         $time = 7 * DAY_IN_SECONDS; // These are important messages, but we don't want to be too obnoxious. Make these messages return per week.
         set_site_transient($notice_tag, $value, $time);
@@ -286,9 +285,14 @@ class DHLPWC_Controller_Admin_Settings
 
     public function show_notice($notice_tag, $messages, $admin_link = null)
     {
+        // Add prefix if missing
+        if (substr($notice_tag, 0, strlen(self::NOTICE_TAG_PREFIX)) !== self::NOTICE_TAG_PREFIX) {
+            $notice_tag = self::NOTICE_TAG_PREFIX.$notice_tag;
+        }
+
         $view = new DHLPWC_Template('admin.notice');
         $view->render(array(
-            'notice_tag' => self::NOTICE_TAG_PREFIX.$notice_tag,
+            'notice_tag' => $notice_tag,
             'messages'   => $messages,
             'admin_link' => $admin_link,
         ));
@@ -296,8 +300,9 @@ class DHLPWC_Controller_Admin_Settings
 
     public function add_settings_link($links)
     {
+        $aria_label = DHLPWC_IS_STANDALONE ? __('View DHL Parcel for WooCommerce settings', 'dhlpwc') : __('View DHL for WooCommerce settings', 'dhlpwc');
         $action_links = array(
-            'settings' => '<a href="' . admin_url('admin.php?page=wc-settings&tab=shipping&section=dhlpwc') . '" aria-label="' . esc_attr__('View DHL for WooCommerce settings', 'dhlpwc') . '">' . esc_html__('Settings', 'woocommerce') . '</a>',
+            'settings' => '<a href="' . admin_url('admin.php?page=wc-settings&tab=shipping&section=dhlpwc') . '" aria-label="' . esc_attr($aria_label) . '">' . esc_html__('Settings', 'woocommerce') . '</a>',
         );
 
         return array_merge($action_links, $links);

@@ -932,6 +932,26 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         return true;
     }
 
+    public function check_debug_migrate_notification()
+    {
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
+
+
+        if (empty($shipping_method)) {
+            return null;
+        }
+
+        if (empty($shipping_method['debug_migrate_notification'])) {
+            return null;
+        }
+
+        if (!in_array($shipping_method['debug_migrate_notification'], array('low', 'mid', 'high'))) {
+            return null;
+        }
+
+        return $shipping_method['debug_migrate_notification'];
+    }
+
     public function check_validation_rule($identifier)
     {
         if (!is_string($identifier)) {

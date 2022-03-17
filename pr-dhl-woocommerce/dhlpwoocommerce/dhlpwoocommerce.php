@@ -4,7 +4,7 @@
  * Plugin URI:           https://www.dhlparcel.nl
  * Description:          This is the official DHL Parcel for WooCommerce plugin.
  * Author:               DHL Parcel
- * Version:              2.0.0
+ * Version:              2.0.1
  * Requires at least:    4.7.16
  * Tested up to:         5.9
  * Requires PHP:         5.6
@@ -54,6 +54,7 @@ class DHLPWC
         $this->define('DHLPWC_PLUGIN_URL', plugins_url('/', __FILE__));
 
         $this->define('DHLPWC_RELATIVE_PLUGIN_DIR', $this->get_relative_plugin_dir());
+        $this->define('DHLPWC_IS_STANDALONE', $this->is_standalone());
 
         // Load translation
         load_plugin_textdomain('dhlpwc', false, DHLPWC_RELATIVE_PLUGIN_DIR . DIRECTORY_SEPARATOR .'languages' );
@@ -73,6 +74,7 @@ class DHLPWC
 
         // These controllers will not be encapsulated in an availability check, due to it providing screens
         // necessary to enable the plugin and setting up the plugin.
+        new DHLPWC_Controller_Admin_Migrate();
         new DHLPWC_Controller_Settings();
         new DHLPWC_Controller_Admin_Settings();
 
@@ -126,12 +128,36 @@ class DHLPWC
         return true;
     }
 
-    protected function load_alternative_plugin() {
+    protected function is_standalone()
+    {
+        if (
+            (
+                is_array($active_plugins = apply_filters('active_plugins', get_option('active_plugins')))
+                && (
+                    in_array('dhlpwc/dhlpwoocommerce.php', $active_plugins) ||
+                    in_array('dhlpwoocommerce/dhlpwoocommerce.php', $active_plugins)
+                )
+            ) || (
+                is_array($active_sitewide_plugins = apply_filters('active_plugins', get_site_option('active_sitewide_plugins')))
+                && (
+                    array_key_exists('dhlpwc/dhlpwoocommerce.php', $active_sitewide_plugins) ||
+                    array_key_exists('dhlpwoocommerce/dhlpwoocommerce.php', $active_sitewide_plugins)
+                )
+            )
+        ) {
+            return true;
+        }
+        return false;
+    }
+
+    protected function load_alternative_plugin()
+    {
         $switch_loading = get_option('woocommerce_dhlpwc_switch_loading');
         return boolval($switch_loading);
     }
 
-    protected function define($name, $value) {
+    protected function define($name, $value)
+    {
         if (!defined($name)) {
             define($name, $value);
         }
