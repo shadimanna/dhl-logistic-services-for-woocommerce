@@ -1,4 +1,9 @@
 # DHL Parcel for WooCommerce
+ 
+v2.0.1
+## Changes
+- Added a migration notification for current users
+- Updated listing tags
 
 v2.0.0
 ## Changes
