@@ -19,6 +19,7 @@ jQuery(document).ready(function($) {
         $.post(ajaxurl, data);
 
         $('div.dhlpwc-dismissable-migrate-notice button.notice-dismiss').trigger('click');
+
     });
 
 });

@@ -4,7 +4,7 @@
  * Plugin URI:           https://www.dhlparcel.nl
  * Description:          This is the official DHL Parcel for WooCommerce plugin.
  * Author:               DHL Parcel
- * Version:              2.0.1
+ * Version:              2.0.2
  * Requires at least:    4.7.16
  * Tested up to:         5.9
  * Requires PHP:         5.6
@@ -17,6 +17,20 @@
  */
 
 if (!defined('ABSPATH')) { exit; }
+
+// Prevent double plugin loading
+if ((
+    is_array($active_plugins = apply_filters('active_plugins', get_option('active_plugins')))
+    && (in_array('dhlpwc/dhlpwoocommerce.php', $active_plugins) || in_array('dhlpwoocommerce/dhlpwoocommerce.php', $active_plugins))
+) || (
+    is_array($active_sitewide_plugins = apply_filters('active_plugins', get_site_option('active_sitewide_plugins')))
+    && (array_key_exists('dhlpwc/dhlpwoocommerce.php', $active_sitewide_plugins) || array_key_exists('dhlpwoocommerce/dhlpwoocommerce.php', $active_sitewide_plugins))
+)) {
+    if (strpos(plugin_dir_path(__FILE__), 'dhl-for-woocommerce') !== false) {
+        // Stand-alone plugin detected, pretend loading code from collaboration codebase.
+        exit;
+    }
+}
 
 if (!class_exists('DHLPWC')) :
 
@@ -152,6 +166,9 @@ class DHLPWC
 
     protected function load_alternative_plugin()
     {
+        if (DHLPWC_IS_STANDALONE) {
+            return false;
+        }
         $switch_loading = get_option('woocommerce_dhlpwc_switch_loading');
         return boolval($switch_loading);
     }
