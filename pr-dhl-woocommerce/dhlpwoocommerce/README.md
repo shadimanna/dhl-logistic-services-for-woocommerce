@@ -1,5 +1,10 @@
 # DHL Parcel for WooCommerce
  
+v2.0.2
+## Changes
+- Updated migration notice text
+- Migration notice made translatable
+ 
 v2.0.1
 ## Changes
 - Added a migration notification for current users
