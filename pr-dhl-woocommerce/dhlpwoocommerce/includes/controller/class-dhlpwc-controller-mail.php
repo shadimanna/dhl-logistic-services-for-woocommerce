@@ -75,6 +75,9 @@ class DHLPWC_Controller_Mail
         $service = DHLPWC_Model_Service_Postcode::instance();
         $postcode = $service->get_postcode_from_order($order->get_id());
 
+        $service = DHLPWC_Model_Service_Order_Meta::instance();
+        $country_code = $service->get_country_code($order->get_id());
+
         $service = DHLPWC_Model_Service_Track_Trace::instance();
         $tracking_codes = $service->get_track_trace_from_order($order->get_id());
 
@@ -82,7 +85,7 @@ class DHLPWC_Controller_Mail
         $tracking_codesets = array();
         foreach($tracking_codes as $tracking_code) {
             $tracking_codeset = array();
-            $tracking_codeset['url'] = $service->get_url($tracking_code, $postcode, $locale);
+            $tracking_codeset['url'] = $service->get_url($tracking_code, $postcode, $locale, $country_code);
             $tracking_codeset['code'] = $tracking_code;
             $tracking_codesets[] = $tracking_codeset;
         }

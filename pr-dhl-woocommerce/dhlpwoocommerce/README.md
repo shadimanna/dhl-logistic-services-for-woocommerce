@@ -1,5 +1,9 @@
 # DHL Parcel for WooCommerce
  
+v2.0.3
+## Changes
+- Fixed a bug with pages not loading when DHL for WooCommerce and DHL Parcel for WooCommerce are both activated
+ 
 v2.0.2
 ## Changes
 - Updated migration notice text
