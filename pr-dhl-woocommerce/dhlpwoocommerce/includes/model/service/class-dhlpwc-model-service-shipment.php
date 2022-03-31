@@ -210,6 +210,7 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
         $bulk_fail = 0;
 
         foreach ($order_ids as $order_id) {
+            $selected_size = $bulk_size;
 
             // Generate to business option
             $access_service = DHLPWC_Model_Service_Access_Control::instance();
@@ -226,13 +227,22 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
 
             if ($option_service->send_with_bp($order_id)) {
                 // Simulate bp_only print when eligible for BP
-                $bulk_size = 'bp_only';
+                $service = DHLPWC_Model_Service_Access_Control::instance();
+                $sizes = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CAPABILITY_PARCELTYPE, array(
+                    'order_id' => $order_id,
+                    'options' => [DHLPWC_Model_Meta_Order_Option_Preference::OPTION_BP],
+                    'to_business' => $to_business,
+                ));
+
+                if (!empty($sizes)) {
+                    $selected_size = 'bp_only';
+                }
             }
 
             // Only apply special delivery method logic if it's not an PS.
             if (!in_array(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PS, $preset_options)) {
                 // BP preference
-                if ($bulk_size === 'bp_only') {
+                if ($selected_size === 'bp_only') {
                     if ( in_array(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_DOOR, $preset_options)) {
                         // Remove DOOR
                         $preset_options = array_diff($preset_options, [DHLPWC_Model_Meta_Order_Option_Preference::OPTION_DOOR]);
@@ -313,7 +323,7 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
                 continue;
             } else {
                 $label_size = null;
-                switch($bulk_size) {
+                switch($selected_size) {
                     case 'bp_only':
                     case 'smallest':
                         // Select smallest size available

@@ -293,8 +293,11 @@ class DHLPWC_Model_Service_Label_Metabox extends DHLPWC_Model_Core_Singleton_Abs
         $service = DHLPWC_Model_Service_Postcode::instance();
         $postcode = $service->get_postcode_from_order($post_id);
 
+        $service = DHLPWC_Model_Service_Order_Meta::instance();
+        $country_code = $service->get_country_code($post_id);
+
         $service = DHLPWC_Model_Service_Track_Trace::instance();
-        $tracking_url = $service->get_url($label['tracker_code'], $postcode, $locale);
+        $tracking_url = $service->get_url($label['tracker_code'], $postcode, $locale, $country_code);
 
         $service = DHLPWC_Model_Service_Access_Control::instance();
         $printer = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_PRINTER);
