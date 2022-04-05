@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 5.9
-Stable tag: 2.8.3
+Stable tag: 2.8.6
 WC requires at least: 3.0
 WC tested up to: 6.1
 License: GPLv2 or later
@@ -79,6 +79,17 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
+ 
+= 2.8.6 =
+* DHL Parcel: Added additional sanitization, escapes and validation
+* DHL Parcel: Updated readme
+* DHL Parcel: Standalone release
+
+= 2.8.5 =
+* DHL Paket: Add DHL COD setting to set which payment gateway is COD
+* DHL Paket: Add "Package Description" setting to set customs description based on product name, category or tag.
+* DHL Paket: Add WP Filter hook to modify "Export Type".
+* DHL Paket: Fix "undefined" text in Location Finder modal.
 
 = 2.8.4 =
 * Revert plugin naming and description

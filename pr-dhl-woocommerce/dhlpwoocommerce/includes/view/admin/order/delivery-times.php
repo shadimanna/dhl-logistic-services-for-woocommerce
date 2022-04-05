@@ -11,7 +11,7 @@
             <?php if (!empty($time_left)) : ?>
                 <?php echo sprintf(__('Expected in %s', 'dhlpwc'), '<b>'.esc_attr($time_left).'</b>') ?><br/>
             <?php else : ?>
-                <b><?php echo __('Selected date has passed', 'dhlpwc') ?></b><br/>
+                <b><?php echo esc_html(__('Selected date has passed', 'dhlpwc')) ?></b><br/>
             <?php endif ?>
             <i>- <?php echo esc_attr($delivery_time->date) ?> <?php _e('from', 'dhlpwc') ?> <?php echo esc_attr($delivery_time->start_time) ?> <?php _e('to', 'dhlpwc') ?> <?php echo esc_attr($delivery_time->end_time) ?></i>
         </div>

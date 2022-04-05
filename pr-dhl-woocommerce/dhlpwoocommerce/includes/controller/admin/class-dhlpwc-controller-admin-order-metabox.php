@@ -214,16 +214,16 @@ class DHLPWC_Controller_Admin_Order_Metabox
         $label = $label_service->get_label($post_id, $label_id);
 
         if ($label === false) {
-            echo __('Label not found', 'dhlpwc');
+            echo esc_html(__('Label not found', 'dhlpwc'));
             exit;
         }
 
         if (empty($label['request'])) {
-            echo __('Label request not found', 'dhlpwc');
+            echo esc_html(__('Label request not found', 'dhlpwc'));
             exit;
         }
 
-        echo $label['request'];
+        echo esc_html($label['request']);
         exit;
     }
 
@@ -281,7 +281,7 @@ class DHLPWC_Controller_Admin_Order_Metabox
      */
     public function metabox_content()
     {
-        echo $this->load_all(get_the_ID());
+        echo dhlpwc_esc_template($this->load_all(get_the_ID()));
     }
 
     /**

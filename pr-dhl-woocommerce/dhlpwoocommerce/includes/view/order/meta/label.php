@@ -19,5 +19,5 @@
 <?php endif ?>
 <br/>
 <?php if (isset($actions)) : ?>
-    <?php echo $actions ?>
+    <?php echo dhlpwc_esc_template($actions) ?>
 <?php endif ?>
