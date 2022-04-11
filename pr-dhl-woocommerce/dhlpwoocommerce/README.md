@@ -1,5 +1,25 @@
 # DHL Parcel for WooCommerce
  
+v2.0.3
+## Changes
+- Fixed a bug with pages not loading when DHL for WooCommerce and DHL Parcel for WooCommerce are both activated
+ 
+v2.0.2
+## Changes
+- Updated migration notice text
+- Migration notice made translatable
+ 
+v2.0.1
+## Changes
+- Added a migration notification for current users
+- Updated listing tags
+
+v2.0.0
+## Changes
+- Added additional sanitization, escapes and validation
+- Updated readme
+- Standalone release 
+ 
 v1.3.19
 ## Changes
 - Fixed a deprecation warning on sorted package sized in the label creation screen for PHP 8 compatibility

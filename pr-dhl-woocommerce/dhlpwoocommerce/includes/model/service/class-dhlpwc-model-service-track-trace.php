@@ -11,9 +11,10 @@ class DHLPWC_Model_Service_Track_Trace extends DHLPWC_Model_Core_Singleton_Abstr
     const QUERY_POSTCODE = 'pc';
     const QUERY_LANDCODE = 'lc';
 
+    protected $url_be = 'https://www.dhlparcel.be/nl/particulieren/volg-je-zending';
     protected $url = 'https://www.dhlparcel.nl/nl/volg-uw-zending-0';
 
-    public function get_url($tracking_code = null, $postcode = null, $locale = null)
+    public function get_url($tracking_code = null, $postcode = null, $locale = null, $country_code = null)
     {
         $query_args = array();
         if ($tracking_code !== null) {
@@ -28,7 +29,12 @@ class DHLPWC_Model_Service_Track_Trace extends DHLPWC_Model_Core_Singleton_Abstr
             $query_args[self::QUERY_LANDCODE] = urlencode($locale);
         }
 
-        return add_query_arg($query_args, $this->url);
+        $tracking_url = $this->url;
+        if ($country_code === 'BE') {
+            $tracking_url = $this->url_be;
+        }
+
+        return add_query_arg($query_args, $tracking_url);
     }
 
     public function get_track_trace_from_order($order_id)

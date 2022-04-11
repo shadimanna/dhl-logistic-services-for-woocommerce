@@ -45,6 +45,12 @@ class DHLPWC_Model_Service_Order_Meta extends DHLPWC_Model_Core_Singleton_Abstra
         return false;
     }
 
+    public function get_country_code($order_id)
+    {
+        $order = wc_get_order($order_id);
+        $address = $order->get_address('shipping') ?: $order->get_address();
+        return strtoupper($address['country']);
+    }
 }
 
 endif;

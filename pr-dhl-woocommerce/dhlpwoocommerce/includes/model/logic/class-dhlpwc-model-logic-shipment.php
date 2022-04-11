@@ -65,7 +65,7 @@ class DHLPWC_Model_Logic_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
         if ($alternate_return) {
             $service = DHLPWC_Model_Service_Settings::instance();
             $receiver = $this->prepare_address_data($service->get_return_address()->to_array(), true);
-        } elseif (!empty($shipment_data->on_behalf_of->address)) {
+        } else if (!empty($shipment_data->on_behalf_of->address)) {
             $receiver = $shipment_data->on_behalf_of;
         } else {
             $receiver = $shipment_data->shipper;
@@ -186,7 +186,11 @@ class DHLPWC_Model_Logic_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
     protected function version_string()
     {
         $wp_version = get_bloginfo('version');
-        $application_string = sprintf('WordPress:%1$s', $wp_version);
+        if (DHLPWC_IS_STANDALONE) {
+            $application_string = sprintf('WooCommerce:%1$s', WC()->version);
+        } else {
+            $application_string = sprintf('WordPress:%1$s', $wp_version);
+        }
         return substr($application_string, 0, 16);
     }
 
@@ -255,7 +259,7 @@ class DHLPWC_Model_Logic_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
             if (preg_match("/\d/", $address['number']) !== 1) {
                 $address['street'] = trim($raw);
                 $address['number'] = '';
-            } elseif (!$skip_addition_check) {
+            } else if (!$skip_addition_check) {
                 preg_match('/([\d]+)[ .-]*(.*)/i', $address['number'], $number_parts);
                 $address['number'] = isset($number_parts[1]) ? trim($number_parts[1]) : '';
                 $address['addition'] = isset($number_parts[2]) ? trim($number_parts[2]) : '';

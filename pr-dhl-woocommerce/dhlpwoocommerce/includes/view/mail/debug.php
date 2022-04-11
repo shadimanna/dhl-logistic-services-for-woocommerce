@@ -54,12 +54,12 @@
 
             <p style="">
                 Warm regards,<br>
-                DHL for WooCommerce plugin team
+                DHL <?php if (DHLPWC_IS_STANDALONE) : ?>Parcel <?php endif ?>for WooCommerce plugin team
             </p>
 
             <div style="text-align:center; border-top:1px solid #eee;padding:5px 0 0 0;" id="email_footer">
                 <small style="font-size:11px; color:#999; line-height:14px;">
-                    You have received this email because you are part of the DHL for WooCommerce plugin debug mailing list.
+                    You have received this email because you are part of the DHL <?php if (DHLPWC_IS_STANDALONE) : ?>Parcel <?php endif ?>for WooCommerce plugin debug mailing list.
                 </small>
             </div>
 
