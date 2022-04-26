@@ -46,7 +46,7 @@ The following DHL services are no longer supported by this plugin:
 
 Based on your sender country and shipping preference, different access credentials for **DHL Paket, DHL Parcel NL and Deutsche Post International** are required for the configuration: 
 
-**DHL Paket for Germany**: Log in with your business customer portal credentials. (not a customer yet? Click [here](https://www.dhl.de/de/geschaeftskunden/paket/plugin-kunde-werden/angebot-dhl-geschaeftskunden-online.html?source=woocommerce) for **DHL Paket**)
+**DHL Paket for Germany**: Log in with your business customer portal credentials. (not a customer yet? Click [here](http://www.dhl.de/dhl-kundewerden?source=woocommerce&cid=c_dhloka_de_woocommerce) for **DHL Paket**)
 
 **DHL Parcel for Benelux**: Please self-generate your API credentials with your business customer portal account. (not a customer yet? Click [here](https://www.dhlparcel.nl/en/business/get-quote) for **DHL Parcel Benelux**).
 
