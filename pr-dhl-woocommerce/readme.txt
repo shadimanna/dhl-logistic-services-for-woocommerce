@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 5.9
-Stable tag: 2.8.7
+Stable tag: 2.8.12
 WC requires at least: 3.0
 WC tested up to: 6.1
 License: GPLv2 or later
@@ -79,6 +79,26 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
+
+= 2.8.12 =
+* DHL Paket: Fix Shipper Address, House Number not allowing a letter
+* DHL Paket: Fix Default Premium setting when creating international labels in bulk
+ 
+= 2.8.11 =
+* DHL Parcel: Updated tracking url for Belgium
+* DHL Parcel: Updated product-based automatic mailbox selection to work with areas where mailbox delivery is not available when used with bulk actions
+* DHL Parcel: Fixed an issue where product-based automatic mailbox selection is being applied to sequential orders when used in a bulk action
+ 
+= 2.8.10 =
+* DHL Parcel: Fixed a bug with pages not loading when DHL for WooCommerce and DHL Parcel for WooCommerce are both activated
+ 
+= 2.8.9 =
+* DHL Parcel: Updated migration notice text
+* DHL Parcel: Migration notice made translatable
+ 
+= 2.8.8 =
+* DHL Parcel: Added a migration notification for current users
+* DHL Parcel: Updated listing tags
 
 = 2.8.7 =
 * DHL Paket: Add order currency in customs export

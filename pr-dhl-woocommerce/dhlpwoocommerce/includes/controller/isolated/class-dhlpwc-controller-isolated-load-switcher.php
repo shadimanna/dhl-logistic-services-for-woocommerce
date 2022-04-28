@@ -134,7 +134,7 @@ class DHLPWC_Controller_Isolated_Load_Switcher
         if ($this->is_plugin_screen(false) && !boolval(apply_filters('dhlpwc_dpi_is_configured', $this->check_dpi_configured()))) {
             // Show load switcher on DPI settings
             $message = __('Were you looking to use DHL Parcel instead? %sClick here to switch%s (this will turn off Deutsche Post International).', 'dhlpwc');
-        } else if ($this->is_plugin_screen(true) && !$this->check_parcel_configured()) {
+        } else if ($this->is_plugin_screen(true) && !$this->check_parcel_configured() && !DHLPWC_IS_STANDALONE) {
             // Show load switcher on Parcel settings
             $message = __('Were you looking to use Deutsche Post International instead? %sClick here to switch%s (this will turn off DHL Parcel).', 'dhlpwc');
         } else {

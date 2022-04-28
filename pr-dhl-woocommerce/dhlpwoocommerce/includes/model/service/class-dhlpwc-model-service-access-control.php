@@ -48,6 +48,7 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
     const ACCESS_DEBUG = 'debug';
     const ACCESS_DEBUG_EXTERNAL = 'debug_external';
     const ACCESS_DEBUG_MAIL = 'debug_mail';
+    const ACCESS_DEBUG_MIGRATE = 'debug_migrate';
 
     const ACCESS_CAPABILITY_PARCELTYPE = 'capability_parceltype';
     const ACCESS_CAPABILITY_OPTIONS = 'capability_options';
@@ -255,6 +256,11 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
             case self::ACCESS_LABEL_REQUEST:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
                 return $logic->check_label_request();
+                break;
+
+            case self::ACCESS_DEBUG_MIGRATE:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_debug_migrate_notification();
                 break;
 
             case self::ACCESS_DEBUG:
