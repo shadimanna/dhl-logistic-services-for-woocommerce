@@ -1054,7 +1054,10 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	}
 
 	public function bulk_actions_fields_pickup_request() {
-		global $pagenow, $typenow;
+		global $pagenow, $typenow, $thepostid, $post;
+
+		//Bugfix, warnings shown for Order table results with no Orders
+		if ( empty( $thepostid ) && empty( $post ) ) return;
 
 		if( 'shop_order' === $typenow && 'edit.php' === $pagenow ) {
 
@@ -1081,7 +1084,10 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	}
 
 	public function modal_content_fields_pickup_request() {
-		global $pagenow, $typenow;
+		global $pagenow, $typenow, $thepostid, $post;
+
+		//Bugfix, warnings shown for Order table results with no Orders
+		if ( empty( $thepostid ) && empty( $post ) ) return;
 
 		if( 'shop_order' === $typenow && 'edit.php' === $pagenow ) {
 		?>
