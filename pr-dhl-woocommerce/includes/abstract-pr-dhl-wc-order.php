@@ -159,27 +159,35 @@ abstract class PR_DHL_WC_Order {
 				'id'    => 'pr_dhl_label_nonce',
 				'value' => wp_create_nonce( 'create-dhl-label' )
 			) );
+			
+			echo '<div class="shipment-dhl-row-container shipment-dhl-row-service">';
+				echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon-service"></span> ' . __( 'Service', 'dhl-for-woocommerce' ) . '</div>';
+				woocommerce_wp_select ( array(
+					'id'          		=> 'pr_dhl_product',
+					'label'       		=> __( 'Service selected:', 'dhl-for-woocommerce' ),
+					'description'		=> '',
+					'value'       		=> $selected_dhl_product,
+					'options'			=> $dhl_product_list,
+					'custom_attributes'	=> array( $is_disabled => $is_disabled )
+				) );
+			echo '</div>';
+			
+			echo '<div class="shipment-dhl-row-container shipment-dhl-row-weight">';
 
-			woocommerce_wp_select ( array(
-				'id'          		=> 'pr_dhl_product',
-				'label'       		=> __( 'Service selected:', 'dhl-for-woocommerce' ),
-				'description'		=> '',
-				'value'       		=> $selected_dhl_product,
-				'options'			=> $dhl_product_list,
-				'custom_attributes'	=> array( $is_disabled => $is_disabled )
-			) );
+				$weight_units = get_option( 'woocommerce_weight_unit' );
 
-			$weight_units = get_option( 'woocommerce_weight_unit' );
-			// Get weight UoM and add in label
-			woocommerce_wp_text_input( array(
-				'id'          		=> 'pr_dhl_weight',
-				'label'       		=> sprintf( __( 'Estimated shipment weight (%s) based on items ordered: ', 'dhl-for-woocommerce' ), $weight_units),
-				'placeholder' 		=> '',
-				'description'		=> '',
-				'value'       		=> $selected_weight_val,
-				'custom_attributes'	=> array( $is_disabled => $is_disabled ),
-				'class'				=> 'wc_input_decimal' // adds JS to validate input is in price format
-			) );
+				// Get weight UoM and add in label
+				echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon-weight"></span> ' . __( 'Weight', 'dhl-for-woocommerce' ) . '</div>';			
+				woocommerce_wp_text_input( array(
+					'id'          		=> 'pr_dhl_weight',
+					'label'       		=> sprintf( __( 'Estimated shipment weight (%s) based on items ordered: ', 'dhl-for-woocommerce' ), $weight_units),
+					'placeholder' 		=> '',
+					'description'		=> '',
+					'value'       		=> $selected_weight_val,
+					'custom_attributes'	=> array( $is_disabled => $is_disabled ),
+					'class'				=> 'wc_input_decimal' // adds JS to validate input is in price format
+				) );
+			echo '</div>';
 
 			$this->additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj );
 
