@@ -57,7 +57,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 			if( $this->is_cod_payment_method( $order_id ) ) {
 				echo '<div class="shipment-dhl-row-container shipment-dhl-row-cod">';
-					echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon-cod-amount"></span> ' . __( 'COD', 'dhl-for-woocommerce' ) . '</div>';
+					echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon shipment-dhl-icon-cod-amount"></span> ' . __( 'COD', 'dhl-for-woocommerce' ) . '</div>';
 					woocommerce_wp_text_input( array(
 						'id'          		=> 'pr_dhl_cod_value',
 						'class'          	=> 'wc_input_decimal',
@@ -75,7 +75,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				echo '<hr/>';
 
 				echo '<div class="shipment-dhl-row-container shipment-dhl-row-return-addr">';
-					echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon-return-addr"></span> ' . __( 'Return Address', 'dhl-for-woocommerce' ) . '</div>';
+					echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon shipment-dhl-icon-return-addr"></span> ' . __( 'Return Address', 'dhl-for-woocommerce' ) . '</div>';
 
 					woocommerce_wp_checkbox( array(
 						'id'          		=> 'pr_dhl_return_address_enabled',
@@ -189,7 +189,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			$preferred_days[0] = __( 'none', 'dhl-for-woocommerce' );
 
 			echo '<div class="shipment-dhl-row-container shipment-dhl-row-delivery-options">';
-				echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon-delivery-options"></span> ' . __( 'Delivery Options', 'dhl-for-woocommerce' ) . '</div>';
+				echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon shipment-dhl-icon-delivery-options"></span> ' . __( 'Delivery Options', 'dhl-for-woocommerce' ) . '</div>';
 
 				woocommerce_wp_select( array(
 					'id'          		=> 'pr_dhl_preferred_day',
@@ -228,7 +228,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			echo '</div>'; // END -- Delivery Options
 			
 			echo '<div class="shipment-dhl-row-container shipment-dhl-row-additional-services">';
-				echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon-additional-services"></span> ' . __( 'Additional Services', 'dhl-for-woocommerce' ) . '</div>';
+				echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon shipment-dhl-icon-additional-services"></span> ' . __( 'Additional Services', 'dhl-for-woocommerce' ) . '</div>';
 
 				// Visual age, need 16 or 18, drop down
 				$visual_age = $dhl_obj->get_dhl_visual_age();
@@ -358,7 +358,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			if( $this->is_crossborder_shipment( $order_id ) ) {
 
 				echo '<div class="shipment-dhl-row-container shipment-dhl-row-non-domestic">';
-					echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon-non-domestic"></span> ' . __( 'Non Domestic', 'dhl-for-woocommerce' ) . '</div>';
+					echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon shipment-dhl-icon-non-domestic"></span> ' . __( 'Non Domestic', 'dhl-for-woocommerce' ) . '</div>';
 
 					// Duties drop down
 					$duties_opt = $dhl_obj->get_dhl_duties();
@@ -391,7 +391,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	public function crossborder_and_domestic_fields( $dhl_label_items, $is_disabled ){
 
 		echo '<div class="shipment-dhl-row-container shipment-dhl-crossborder-domestic">';
-			echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon-crossborder-domestic"></span> ' . __( 'Crossborder and Domestic', 'dhl-for-woocommerce' ) . '</div>';
+			echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon shipment-dhl-icon-crossborder-domestic"></span> ' . __( 'Crossborder and Domestic', 'dhl-for-woocommerce' ) . '</div>';
 
 			woocommerce_wp_hidden_input( array(
 				'id'          		=> 'pr_dhl_email_notification',
@@ -445,7 +445,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		for ( $i = 1; $i <= 50; $i++ ) $numbers[$i] = $i;
 
 		echo '<div class="shipment-dhl-row-container shipment-dhl-row-packages">';
-			echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon-packages"></span> ' . __( 'Multiple Packages', 'dhl-for-woocommerce' ) . '</div>';
+			echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon shipment-dhl-icon-packages"></span> ' . __( 'Multiple Packages', 'dhl-for-woocommerce' ) . '</div>';
 
 			woocommerce_wp_checkbox( array(
 				'id'          		=> 'pr_dhl_multi_packages_enabled',

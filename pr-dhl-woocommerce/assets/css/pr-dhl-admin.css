@@ -124,3 +124,53 @@ p.dhl-total-packages > label {
 		padding: 0 !important;
 	}
 }
+
+.shipment-dhl-icon-container {
+	font-size:14px;
+	font-weight:700;
+}
+
+.shipment-dhl-icon-container .shipment-dhl-icon {
+	display:inline-block;
+	margin-right:5px;
+	font-family:dashicons;
+	font-size:16px;
+	position:relative;
+}
+
+.shipment-dhl-icon-container .shipment-dhl-icon:before {
+	position:relative;
+	top:2px;
+}
+
+.shipment-dhl-icon-container .shipment-dhl-icon-service:before {
+	content: "\f457";
+}
+
+.shipment-dhl-icon-container .shipment-dhl-icon-weight:before {
+	content: "\f108";
+}
+
+.shipment-dhl-icon-container .shipment-dhl-icon-packages:before {
+	content: "\f541";
+}
+
+.shipment-dhl-icon-container .shipment-dhl-icon-return-addr:before {
+	content: "\f102";
+}
+
+.shipment-dhl-icon-container .shipment-dhl-icon-return-addr:before {
+	content: "\f102";
+}
+
+.shipment-dhl-icon-container .shipment-dhl-icon-delivery-options:before {
+	content: "\f508";
+}
+
+.shipment-dhl-icon-container .shipment-dhl-icon-additional-services:before {
+	content: "\f154";
+}
+
+.shipment-dhl-icon-container .shipment-dhl-icon-crossborder-domestic:before {
+	content: "\f15f";
+}

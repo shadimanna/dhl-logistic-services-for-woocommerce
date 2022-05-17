@@ -161,7 +161,7 @@ abstract class PR_DHL_WC_Order {
 			) );
 			
 			echo '<div class="shipment-dhl-row-container shipment-dhl-row-service">';
-				echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon-service"></span> ' . __( 'Service', 'dhl-for-woocommerce' ) . '</div>';
+				echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon shipment-dhl-icon-service"></span> ' . __( 'Service', 'dhl-for-woocommerce' ) . '</div>';
 				woocommerce_wp_select ( array(
 					'id'          		=> 'pr_dhl_product',
 					'label'       		=> __( 'Service selected:', 'dhl-for-woocommerce' ),
@@ -177,7 +177,7 @@ abstract class PR_DHL_WC_Order {
 				$weight_units = get_option( 'woocommerce_weight_unit' );
 
 				// Get weight UoM and add in label
-				echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon-weight"></span> ' . __( 'Weight', 'dhl-for-woocommerce' ) . '</div>';			
+				echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon shipment-dhl-icon-weight"></span> ' . __( 'Weight', 'dhl-for-woocommerce' ) . '</div>';			
 				woocommerce_wp_text_input( array(
 					'id'          		=> 'pr_dhl_weight',
 					'label'       		=> sprintf( __( 'Estimated shipment weight (%s) based on items ordered: ', 'dhl-for-woocommerce' ), $weight_units),
