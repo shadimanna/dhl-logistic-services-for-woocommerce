@@ -325,7 +325,13 @@ class Client extends API_Client {
 	 */
 	public function get_awb_label( $awb )
 	{
-		$response = $this->get(sprintf('dpi/shipping/v1/shipments/%s/awblabels', $awb));
+		$response = $this->get(
+			sprintf('dpi/shipping/v1/shipments/%s/awblabels', $awb),
+			array(),
+			array(
+				'Accept' => 'application/pdf',
+			)
+		);
 
 		if ($response->status === 200) {
 			return $response->body;
