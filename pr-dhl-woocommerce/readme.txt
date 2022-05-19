@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 5.9
-Stable tag: 2.8.12
+Stable tag: 2.8.13
 WC requires at least: 3.0
 WC tested up to: 6.1
 License: GPLv2 or later
@@ -16,16 +16,16 @@ The official DHL for WooCommerce plugin allows you to automate your e-commerce o
 
 == Description ==
 
-DHL’s official extension for WooCommerce on WordPress. Manage your national and international shipments easily. The “DHL for WooCommerce” – plugin is compatible with the following DHL service offerings depending on your origin country: 
+DHL’s official extension for WooCommerce on WordPress. Manage your national and international shipments easily. The “DHL for WooCommerce” – plugin is compatible with the following DHL service offerings depending on your origin country:
 
 * DHL Paket (Germany) 
-* DHL Parcel (Benelux)
 * Deutsche Post International (all European countries)
 
 
 The following DHL services are no longer supported by this plugin:
 
 * DHL eCommerce Asia (TH, MY): Please use instead the following plugin [here](https://github.com/shadimanna/dhl-for-woocommerece-ecs).
+* DHL Parcel for WooCommerce (for online stores that ship orders from the Benelux region): Please use instead the following plugin [here](https://wordpress.org/plugins/dhlpwc/).
 
 == Features ==
 
@@ -39,27 +39,23 @@ The following DHL services are no longer supported by this plugin:
 8. The “**print only if codeable**” – option you can activate in the DHL settings will check whether the address is correct or not before generating the label.
 9. **Bulk Label Creation** allows you to create multiple DHL Labels at once.
 10. **Return Parcel Handling** allows you to print a return label with a “return address” so your customer can return the shipment easily.
-11. **For Parcel Benelux**, this plugin has certified compatibility with WMPL that enables you to leverage multilingual capabilities. Click [here](https://wpml.org/plugin/dhl-for-woocommerce/) for further information.
 
 
 == Availability by countries and prerequisites == 
 
-Based on your sender country and shipping preference, different access credentials for **DHL Paket, DHL Parcel NL and Deutsche Post International** are required for the configuration: 
+Based on your sender country and shipping preference, different access credentials for **DHL Paket, DHL Parcel NL and Deutsche Post International** are required for the configuration: 
 
-**DHL Paket for Germany**: Log in with your business customer portal credentials. (not a customer yet? Click [here](https://www.dhl.de/dhl-kundewerden?source=woocommerce&cid=c_dhloka_de_woocommerce) for **DHL Paket**)
+**DHL Paket for Germany**: Log in with your business customer portal credentials. (not a customer yet? Click [here](http://www.dhl.de/dhl-kundewerden?source=woocommerce&cid=c_dhloka_de_woocommerce) for **DHL Paket**)
 
-**DHL Parcel for Benelux**: Please self-generate your API credentials with your business customer portal account. (not a customer yet? Click [here](https://www.dhlparcel.nl/en/business/get-quote) for **DHL Parcel Benelux**).
-
-**Deutsche Post International for Europe**: ask your sales contact for credentials for this plugin. (not a customer yet? Click [here](https://www.deutschepost.com/en/business-customers/contact/email.html)).
+**Deutsche Post International for Europe**: ask your sales contact for credentials for this plugin. (not a customer yet? Click [here](https://www.deutschepost.com/en/business-customers/contact/email.html)).
 
 == Installation & Configuration ==
 
 1. Upload the downloaded plugin files to your `/wp-content/plugins/DHL-for-WooCommerce` directory, **OR** install the plugin through the WordPress plugins screen directly.
-1. Activate the plugin through the 'Plugins' screen in WordPress.
-1. Go to WooCommerce-->Settings->Shipping and select the upper DHL unit (depending on your home country this is DHL Paket, DHL (Parcel) for WooCommerce  or Deutsche Post) to configure the plugin.
+2. Activate the plugin through the 'Plugins' screen in WordPress.
+3. Go to WooCommerce–>Settings->Shipping and select the upper DHL unit (depending on your home country this is DHL Paket, DHL (Parcel) for WooCommerce or Deutsche Post) to configure the plugin.
 
 ...for **DHL Paket (Germany)**: you need your EKP number (10 digits) and add the participation numbers (2 digits) to the respective products available (you will find the participation numbers in the DHL business customer portal).
-...for **DHL Parcel Europe (Benelux)**: you need your self-generated API credentials (UserID and Key). Push the “Test connection” and the fields below will be prefilled automatically.
 ...for **Deutsche Post International**: you need your customer account number (EKP) and API credentials.
 
 
@@ -79,6 +75,11 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
+
+= 2.8.13 =
+* DHL Paket: Modify account creation link
+* DPI: Modify Production API URL
+* DPI: Ensure AWB always returns PDF content type
 
 = 2.8.12 =
 * DHL Paket: Fix Shipper Address, House Number not allowing a letter

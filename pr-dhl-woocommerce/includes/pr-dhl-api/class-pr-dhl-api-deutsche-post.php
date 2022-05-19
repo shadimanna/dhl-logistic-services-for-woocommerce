@@ -20,14 +20,14 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 *
 	 * @since [*next-version*]
 	 */
-	const API_URL_PRODUCTION = 'https://api.deutschepost.com/';
+	const API_URL_PRODUCTION = 'https://api.dhl.com/';
 
 	/**
 	 * The URL to the sandbox API.
 	 *
 	 * @since [*next-version*]
 	 */
-	const API_URL_SANDBOX = 'https://api-qa.deutschepost.com/';
+	const API_URL_SANDBOX = 'https://api-sandbox.dhl.com/';
 
 	/**
 	 * The transient name where the API access token is stored.
