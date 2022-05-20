@@ -123,14 +123,16 @@ function DHLPaketMenuBuilder(){
 
 	} ).on( 'dhlpaket:deselect_settings', function() {
 		jQuery.each(dhlpaket_settings_menu_collection, function(e, dhlpaket_settings) {
+			dhlpaket_settings.tab_item.removeClass('dhlpaket-active');
             dhlpaket_settings.title.removeClass('dhlpaket-active');
             dhlpaket_settings.description.removeClass('dhlpaket-active');
-            dhlpaket_settings.settings.css('display', 'none');
+            dhlpaket_settings.settings.removeClass('dhlpaket-active');
         });
 	} ).on( 'dhlpaket:select_settings', function( e, index ) {
-		dhlpaket_settings_menu_collection[index].title.addClass( 'dhlpwc-active' );
-        dhlpaket_settings_menu_collection[index].description.addClass( 'dhlpwc-active' );
-        dhlpaket_settings_menu_collection[index].settings.css( 'display', 'inline-block' );
+		dhlpaket_settings_menu_collection[index].tab_item.addClass('dhlpaket-active');
+		dhlpaket_settings_menu_collection[index].title.addClass( 'dhlpaket-active' );
+        dhlpaket_settings_menu_collection[index].description.addClass( 'dhlpaket-active' );
+        dhlpaket_settings_menu_collection[index].settings.addClass( 'dhlpaket-active' );
         // Sending out event for other scripts
         jQuery(document.body).trigger( 'dhlpaket:settings_clicked', [ dhlpaket_settings_menu_collection[index].title.attr( 'id' ) ] );
 	} );
