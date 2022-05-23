@@ -994,6 +994,17 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				$this->body_request['ShipmentOrder']['Shipment']['Receiver']['Address']['zip'] = '';
 			}
 
+			// Set shipping address Zip to null if Country is United Arab Emirates (and other countries will no zip) (this passes the SOAP required zip field check, but ensures no zip is sent)
+			if ( isset($this->body_request['ShipmentOrder']['Shipment']['Receiver']['Address']) ) {
+				if ( isset($this->args['shipping_address']['country']) && in_array( $this->args['shipping_address']['country'], ['AE', 'AG', 'AI', 'AO', 'AW', 'BF', 'BI', 'BJ', 'BO', 'BS', 'BW', 'BZ',
+						'CD', 'CF', 'CG', 'CI', 'CM', 'CO', 'DJ', 'DM', 'ER', 'FJ', 'GA', 'GD', 'GH', 'GM', 'GQ', 'HK', 'IE', 'JM', 'KI',
+						'KM', 'KN', 'KP', 'LC', 'LY', 'ML', 'MO', 'MR', 'MW', 'NA', 'NR', 'QA', 'RW', 'SC', 'SL', 'SR', 'ST', 'TD', 'TG', 'UG', 'ZW']) ) {
+					if ( empty($this->body_request['ShipmentOrder']['Shipment']['Receiver']['Address']['zip']) ) {
+						$this->body_request['ShipmentOrder']['Shipment']['Receiver']['Address']['zip'] = null; // Cannot be empty string, must be null
+					}
+				}
+			}
+
 			if( count( $shipment_items ) > 0 ){
 				$shipment_order 	= $this->body_request['ShipmentOrder'];
 				$shipment_orders 	= array();
@@ -1042,6 +1053,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				}
 				$this->body_request['ShipmentOrder'] = $shipment_orders;
 			}
+
+			//die(print_r($this->body_request, true));
 
 			// error_log(print_r($this->body_request, true));
 			return $this->body_request;
