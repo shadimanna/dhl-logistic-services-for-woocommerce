@@ -1,5 +1,11 @@
 # DHL Parcel for WooCommerce
  
+v2.0.4
+## Changes
+- Updated tracking url for Belgium
+- Updated product-based automatic mailbox selection to work with areas where mailbox delivery is not available when used with bulk actions
+- Fixed an issue where product-based automatic mailbox selection is being applied to sequential orders when used in a bulk action
+ 
 v2.0.3
 ## Changes
 - Fixed a bug with pages not loading when DHL for WooCommerce and DHL Parcel for WooCommerce are both activated
