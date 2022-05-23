@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 5.9
-Stable tag: 2.8.13
+Stable tag: 2.8.14
 WC requires at least: 3.0
 WC tested up to: 6.1
 License: GPLv2 or later
@@ -75,6 +75,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
+ 
+= 2.8.14 =
+* DHL Parcel: Updated the migration notice when to change colors
 
 = 2.8.13 =
 * DHL Paket: Modify account creation link
