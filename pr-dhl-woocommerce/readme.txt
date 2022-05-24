@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 6.0
-Stable tag: 2.8.16
+Stable tag: 2.8.15
 WC requires at least: 3.0
 WC tested up to: 6.5.1
 License: GPLv2 or later
