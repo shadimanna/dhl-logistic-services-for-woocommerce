@@ -4,10 +4,10 @@ Donate link:
 Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL Parcel Benelux, DHL Parcel Luxembourg, DHL Paket Germany, WooCommerce, Woocom, Woo Commerce, Shipping, shiping, label creation, label printing, shipping rates, DHL Paket
 Requires at least: 4.6
 Requires PHP: 5.6
-Tested up to: 5.9
-Stable tag: 2.8.15
+Tested up to: 6.0
+Stable tag: 2.8.16
 WC requires at least: 3.0
-WC tested up to: 6.1
+WC tested up to: 6.5.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
