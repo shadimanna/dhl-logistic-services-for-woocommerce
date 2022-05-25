@@ -655,16 +655,27 @@ class PR_DHL_WC {
 	/**
 	 * Function return whether the sender and receiver country is "crossborder" i.e. needs CUSTOMS declarations (outside EU)
 	 */
-	public function is_crossborder_shipment( $country_receiver ) {
+	public function is_crossborder_shipment( $shipping_address ) {
 
-		if ($this->is_shipping_domestic( $country_receiver )) {
+		if ($this->is_shipping_domestic( $shipping_address['country'] )) {
 			return false;
 		}
 
 		// Is sender country in EU...
 		if ( in_array( $this->base_country_code, $this->eu_iso2 ) ) {
 			// ... and receiver country is in EU means NOT crossborder!
-			if ( in_array( $country_receiver, $this->eu_iso2 ) ) {
+			if ( in_array( $shipping_address['country'], $this->eu_iso2 ) ) {
+				/* Check for EU exception territories. There exist exceptions where although a country
+					is part of the EU, not all of the country may be. See Canary Islands and Spain. */
+				switch ( $shipping_address['country'] ) {
+					case 'ES':
+						$postcode_prefix = substr( $shipping_address['zip'], 0, 2 );
+						$canary_island_postcode_prefixes = array( '35', '38' );
+						if ( in_array( $postcode_prefix, $canary_island_postcode_prefixes, true ) ) {
+							return true;
+						}
+						break;
+				}
 				return false;
 			} else {
 				return true;

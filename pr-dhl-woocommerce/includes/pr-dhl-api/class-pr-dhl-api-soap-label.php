@@ -915,7 +915,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			}
 
 			// Add customs info
-			if( PR_DHL()->is_crossborder_shipment( $this->args['shipping_address']['country'] ) ) {
+			if( PR_DHL()->is_crossborder_shipment( $this->args['shipping_address'] ) ) {
 
 				$customsDetails = array();
 
