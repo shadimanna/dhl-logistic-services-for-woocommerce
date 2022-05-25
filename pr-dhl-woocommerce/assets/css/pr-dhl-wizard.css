@@ -1,0 +1,65 @@
+.pr-dhl-wc-wizard-overlay {
+    position:fixed;
+    top:0px;
+    bottom:0px;
+    left:0px;
+    right:0px;
+    z-index:999;
+    background-color:rgba( 0, 0, 0, 0.5 );
+    display:block;
+}
+
+.pr-dhl-wc-wizard-container {
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform: translate( -50%, -50% );
+    -moz-transform: translate( -50%, -50% );
+    -webkit-transform: translate( -50%, -50% );
+    text-align:center;
+}
+
+.pr-dhl-wc-wizard {
+    width: 500px;
+    min-height: 400px;
+    background-color:#fff;
+}
+
+.pr-dhl-wc-wizard .wizard-header {
+    padding:20px 10px;
+    text-align:center;
+    background-color:#facc0f;
+}
+
+.pr-dhl-wc-wizard .wizard .wizard-buttons .wizard-btn.btn {
+    position:absolute;
+    top:50%;
+    margin-top:-20px;
+    left:auto;
+    right:auto;
+    color:#fff;
+    background-color:transparent;
+    border:0px;
+}
+
+.pr-dhl-wc-wizard .wizard .wizard-buttons .wizard-btn.btn.prev {
+    left: -70px;
+}
+
+.pr-dhl-wc-wizard .wizard .wizard-buttons .wizard-btn.btn.next {
+    right: -70px;
+}
+
+.pr-dhl-wc-wizard .wizard .wizard-buttons .wizard-btn.btn span {
+    color:#fff;
+    font-size:30px;
+    width:30px;
+    height:30px;
+}
+
+.pr-dhl-wc-wizard-container .pr-dhl-wc-skip-wizard {
+    line-height:3em;
+    font-weight:700;
+    color:#fff;
+    text-decoration:none;
+}

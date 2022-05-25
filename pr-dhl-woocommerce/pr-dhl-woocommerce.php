@@ -209,6 +209,8 @@ class PR_DHL_WC {
 
         $this->get_pr_dhl_wc_product();
         $this->get_pr_dhl_wc_order();
+
+		new PR_DHL_WC_Wizard();
     }
 
     public function init_hooks() {
