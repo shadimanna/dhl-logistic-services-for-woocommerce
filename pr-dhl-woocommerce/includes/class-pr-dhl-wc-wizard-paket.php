@@ -20,13 +20,29 @@ class PR_DHL_WC_Wizard_Paket extends PR_DHL_WC_Wizard {
 		add_action( 'wp_ajax_nopriv_save_wizard_fields', array( $this, 'save_wizard_fields' ) );
 	}
 
+	public function all_wizard_field_names() {
+		return array(
+			'dhl_account_num',
+		);
+	}
+
 	public function save_wizard_fields() {
 		$nonce = $_POST['nonce'];
 		if ( ! wp_verify_nonce( $nonce, 'dhl-wizard-nonce' ) ) {
 			wp_send_json_error( array( 'errortext' => __( 'Security check', 'dhl-for-woocommerce' ) ) );
 		}
+		
+		$all_settings = get_option( 'woocommerce_pr_dhl_paket_settings', array() );
+		$fields       = $_POST['fields'];
 
-		wp_send_json_success( array( 'form' => 'good' ) );
+		foreach( $fields as $field ) {
+			if ( in_array( $field['field'], $this->all_wizard_field_names() ) ) {
+				$all_settings[ $field['field'] ] = $field['value'];
+			}
+		}
+
+		update_option( 'woocommerce_pr_dhl_paket_settings', $all_settings );
+		wp_send_json_success( array( 'message' => 'good' ) );
 	}
 
 	public function display_wizard() {
@@ -56,7 +72,20 @@ class PR_DHL_WC_Wizard_Paket extends PR_DHL_WC_Wizard {
 									<?php _e( 'Your DHL account number (10 digits - numerical), also called "EKP". This will be provided by your local DHL sales organization.', 'dhl-for-woocommerce' ); ?>
 								</div>
 								<div class="form-group">
-									<input type="text" name="wizard_dhl_ekp" class="form-control required" id="wizard_dhl_ekp" placeholder="<?php _e( 'Enter your EKP', 'dhl-for-woocommerce' ); ?>">
+									<input type="text" name="dhl_account_num" class="form-control required wizard-dhl-field" id="wizard_dhl_account_num" placeholder="<?php _e( 'Enter your EKP', 'dhl-for-woocommerce' ); ?>">
+								</div>
+								<div class="form-group">
+									<button class="button-next"><?php _e( 'Next' , 'dhl-for-woocommerce' ); ?></button>
+								</div>
+							</div>
+
+							<div class="wizard-step" data-title="Step 3">
+								<h4 class="wizard-title"><?php _e( 'Account Number (EKP)', 'dhl-for-woocommerce' ); ?></h4>
+								<div class="wizard-description">
+									<?php _e( 'Your DHL account number (10 digits - numerical), also called "EKP". This will be provided by your local DHL sales organization.', 'dhl-for-woocommerce' ); ?>
+								</div>
+								<div class="form-group">
+									<input type="text" name="dhl_account_ss" class="form-control required wizard-dhl-field" id="wizard_dhl_account_ss" placeholder="<?php _e( 'Enter your EKP', 'dhl-for-woocommerce' ); ?>">
 								</div>
 								<div class="form-group">
 									<button class="button-next"><?php _e( 'Next' , 'dhl-for-woocommerce' ); ?></button>
