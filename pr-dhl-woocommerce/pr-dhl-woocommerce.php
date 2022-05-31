@@ -209,8 +209,6 @@ class PR_DHL_WC {
 
         $this->get_pr_dhl_wc_product();
         $this->get_pr_dhl_wc_order();
-
-		new PR_DHL_WC_Wizard_Paket();
     }
 
     public function init_hooks() {
@@ -310,6 +308,8 @@ class PR_DHL_WC {
 					PR_DHL_VERSION
 				);
 				// wp_localize_script( 'wc-shipment-dhl-paket-settings-js', 'dhl_paket_settings_obj', PR_DHL_WC_Method_Paket::sandbox_info() );
+
+				$this->wizard_enqueue_scripts();
 			}
 
             wp_enqueue_script(
@@ -321,6 +321,28 @@ class PR_DHL_WC {
             wp_localize_script( 'wc-shipment-dhl-testcon-js', 'dhl_test_con_obj', $test_con_data );
         }
 
+	}
+
+	public function wizard_enqueue_scripts() {
+		wp_enqueue_style( 'wc-shipment-lib-wizard-css', PR_DHL_PLUGIN_DIR_URL . '/assets/css/wizard.library.css' );
+		wp_enqueue_style( 'wc-shipment-dhl-wizard-css', PR_DHL_PLUGIN_DIR_URL . '/assets/css/pr-dhl-wizard.css' );
+		wp_enqueue_script(
+			'wc-shipment-lib-wizard-js',
+			PR_DHL_PLUGIN_DIR_URL . '/assets/js/wizard.library.js',
+			array(),
+			PR_DHL_VERSION
+		);
+		wp_enqueue_script(
+			'wc-shipment-dhl-wizard-js',
+			PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-wizard.js',
+			array(),
+			PR_DHL_VERSION,
+			true
+		);
+
+		wp_localize_script( 'wc-shipment-dhl-wizard-js', 'dhl_wizard_obj', array(
+			'all_fields' => PR_DHL_WC_Wizard_Paket::all_wizard_field_names(),
+		) );
 	}
 
 	/**

@@ -13,26 +13,19 @@ jQuery( document ).ready( function(){
     const wizard = new Wizard(args);
     
     wizard.init();
-    
-    //jQuery( document ).on( 'nextWizard', pr_dhl_wizard_next_wizard );
 
     var next_buttons = jQuery(".button-next");
     next_buttons.on( 'click', pr_dhl_wizard_next_button );
+
+    var finish_button = jQuery(".button-finish");
+    finish_button.on( 'click', pr_dhl_wizard_finish_button );
 });
 
 function pr_dhl_wizard_next_button( evt ) {
     evt.preventDefault();
-    pr_dhl_wizard_save_fields();
-}
 
-function pr_dhl_wizard_save_fields() {
     var active_wizard = jQuery( '.wizard-content .wizard-step.active' );
     var active_fields = active_wizard.find( '.wizard-dhl-field' );
-
-    if ( 1 > active_fields.length ) {
-        jQuery('.wizard-btn.btn.next').click();
-        return;
-    }
 
     var all_fields = dhl_wizard_obj.all_fields;
     var field_values = [];
@@ -51,37 +44,22 @@ function pr_dhl_wizard_save_fields() {
         }
     } );
 
-    console.log( 'tes field values' );
-    console.log( field_values );
+    pr_dhl_wizard_update_fields( field_values );
 
-    if ( field_values.length > 0 ) {
-        jQuery.ajax({
-            method: "POST",
-            url: dhl_wizard_obj.ajaxurl,
-            data: {
-                'action': 'save_wizard_fields',
-                'nonce': dhl_wizard_obj.nonce,
-                'fields': field_values
-            },
-            beforeSend: function() {
-                console.log( 'before send' );
-            },
-            success: function( resp ) {
-                console.log( 'success' );
-                if ( resp.success ) {
-                    jQuery('.wizard-btn.btn.next').click();
-                } else {
-                    alert( resp.errortext );
-                }
-            },
-            error: function( data ) {
-                console.log( data );
-                console.log( 'error' );
-            }
-        });
-    } else {
-        console.log( 'no field values' );
-        console.log( field_values );
-        jQuery('.wizard-btn.btn.next').click();
+    jQuery('.wizard-btn.btn.next').click();
+}
+
+function pr_dhl_wizard_finish_button( evt ) {
+    evt.preventDefault();
+
+    jQuery('.wizard-btn.btn.submit').click();
+}
+
+function pr_dhl_wizard_update_fields( fields ) {
+    for( var idx = 0; idx < fields.length; idx++ ) {
+        var field_name = fields[ idx ].name;
+        var field_value = fields[ idx ].value;
+
+        jQuery( '#woocommerce_pr_dhl_paket_' + field_name ).val( field_value );
     }
 }

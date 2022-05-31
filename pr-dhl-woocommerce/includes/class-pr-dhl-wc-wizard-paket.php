@@ -14,35 +14,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( ! class_exists( 'PR_DHL_WC_Wizard_Paket' ) ) :
 
-class PR_DHL_WC_Wizard_Paket extends PR_DHL_WC_Wizard {
-	public function init() {
-		add_action( 'wp_ajax_save_wizard_fields', array( $this, 'save_wizard_fields' ) );
-		add_action( 'wp_ajax_nopriv_save_wizard_fields', array( $this, 'save_wizard_fields' ) );
-	}
+class PR_DHL_WC_Wizard_Paket {
 
-	public function all_wizard_field_names() {
+	public function __construct() {
+		add_action( 'admin_footer', array( $this, 'display_wizard' ), 10 );
+    }
+
+	public static function all_wizard_field_names() {
 		return array(
 			'dhl_account_num',
 		);
-	}
-
-	public function save_wizard_fields() {
-		$nonce = $_POST['nonce'];
-		if ( ! wp_verify_nonce( $nonce, 'dhl-wizard-nonce' ) ) {
-			wp_send_json_error( array( 'errortext' => __( 'Security check', 'dhl-for-woocommerce' ) ) );
-		}
-		
-		$all_settings = get_option( 'woocommerce_pr_dhl_paket_settings', array() );
-		$fields       = $_POST['fields'];
-
-		foreach( $fields as $field ) {
-			if ( in_array( $field['field'], $this->all_wizard_field_names() ) ) {
-				$all_settings[ $field['field'] ] = $field['value'];
-			}
-		}
-
-		update_option( 'woocommerce_pr_dhl_paket_settings', $all_settings );
-		wp_send_json_success( array( 'message' => 'good' ) );
 	}
 
 	public function display_wizard() {
@@ -80,15 +61,78 @@ class PR_DHL_WC_Wizard_Paket extends PR_DHL_WC_Wizard {
 							</div>
 
 							<div class="wizard-step" data-title="Step 3">
-								<h4 class="wizard-title"><?php _e( 'Account Number (EKP)', 'dhl-for-woocommerce' ); ?></h4>
+								<h4 class="wizard-title"><?php _e( 'API Settings', 'dhl-for-woocommerce' ); ?></h4>
 								<div class="wizard-description">
-									<?php _e( 'Your DHL account number (10 digits - numerical), also called "EKP". This will be provided by your local DHL sales organization.', 'dhl-for-woocommerce' ); ?>
+									<?php _e( 'Please configure your access towards the DHL Paket APIs by means of authentication.', 'dhl-for-woocommerce' ); ?>
 								</div>
 								<div class="form-group">
-									<input type="text" name="dhl_account_ss" class="form-control required wizard-dhl-field" id="wizard_dhl_account_ss" placeholder="<?php _e( 'Enter your EKP', 'dhl-for-woocommerce' ); ?>">
+									<input type="text" name="dhl_api_user" class="form-control required wizard-dhl-field" id="wizard_dhl_api_user" placeholder="<?php _e( 'Your username for the DHL business customer portal', 'dhl-for-woocommerce' ); ?>">
+								</div>
+								<div class="form-group">
+									<input type="text" name="dhl_api_pwd" class="form-control required wizard-dhl-field" id="wizard_dhl_api_pwd" placeholder="<?php _e( 'Your password for the DHL business customer portal', 'dhl-for-woocommerce' ); ?>">
 								</div>
 								<div class="form-group">
 									<button class="button-next"><?php _e( 'Next' , 'dhl-for-woocommerce' ); ?></button>
+								</div>
+							</div>
+
+							<div class="wizard-step" data-title="Step 4">
+								<h4 class="wizard-title"><?php _e( 'Participation Number', 'dhl-for-woocommerce' ); ?></h4>
+								<div class="wizard-description">
+									<?php _e( 'The participation number consists of the last two characters of the respective accounting number, which you will find in your DHL contract data (for example, 01).', 'dhl-for-woocommerce' ); ?>
+								</div>
+								<div class="form-group">
+									<input type="text" name="dhl_participation_V01PAK" class="form-control required wizard-dhl-field" id="wizard_dhl_participation_V01PAK" placeholder="<?php _e( 'Regular product', 'dhl-for-woocommerce' ); ?>">
+								</div>
+								<div class="form-group">
+									<button class="button-next"><?php _e( 'Next' , 'dhl-for-woocommerce' ); ?></button>
+								</div>
+							</div>
+
+							<div class="wizard-step" data-title="Step 5">
+								<h4 class="wizard-title"><?php _e( 'Shipper Address', 'dhl-for-woocommerce' ); ?></h4>
+								<div class="wizard-description">
+									<?php _e( 'Enter Shipper Address. This address is also used for Pickup Requests.', 'dhl-for-woocommerce' ); ?>
+								</div>
+								<div class="form-group">
+									<input type="text" name="dhl_shipper_name" class="form-control required wizard-dhl-field" id="wizard_dhl_shipper_name" placeholder="<?php _e( 'Name', 'dhl-for-woocommerce' ); ?>">
+								</div>
+								<div class="form-group">
+									<input type="text" name="dhl_shipper_company" class="form-control required wizard-dhl-field" id="wizard_dhl_shipper_company" placeholder="<?php _e( 'Company', 'dhl-for-woocommerce' ); ?>">
+								</div>
+								<div class="form-group">
+									<input type="text" name="dhl_shipper_address" class="form-control required wizard-dhl-field" id="wizard_dhl_shipper_address" placeholder="<?php _e( 'Street Address', 'dhl-for-woocommerce' ); ?>">
+								</div>
+								<div class="form-group">
+									<input type="text" name="dhl_shipper_address_no" class="form-control required wizard-dhl-field" id="wizard_dhl_shipper_address_no" placeholder="<?php _e( 'Street Address Number', 'dhl-for-woocommerce' ); ?>">
+								</div>
+								<div class="form-group">
+									<input type="text" name="dhl_shipper_address_city" class="form-control required wizard-dhl-field" id="wizard_dhl_shipper_address_city" placeholder="<?php _e( 'City', 'dhl-for-woocommerce' ); ?>">
+								</div>
+								<div class="form-group">
+									<input type="text" name="dhl_shipper_address_state" class="form-control required wizard-dhl-field" id="wizard_dhl_shipper_address_state" placeholder="<?php _e( 'State', 'dhl-for-woocommerce' ); ?>">
+								</div>
+								<div class="form-group">
+									<input type="text" name="dhl_shipper_address_zip" class="form-control required wizard-dhl-field" id="wizard_dhl_shipper_address_zip" placeholder="<?php _e( 'Postcode', 'dhl-for-woocommerce' ); ?>">
+								</div>
+								<div class="form-group">
+									<input type="text" name="dhl_shipper_address_phone" class="form-control required wizard-dhl-field" id="wizard_dhl_shipper_address_phone" placeholder="<?php _e( 'Postcode', 'dhl-for-woocommerce' ); ?>">
+								</div>
+								<div class="form-group">
+									<input type="text" name="dhl_shipper_address_email" class="form-control required wizard-dhl-field" id="wizard_dhl_shipper_address_email" placeholder="<?php _e( 'Postcode', 'dhl-for-woocommerce' ); ?>">
+								</div>
+								<div class="form-group">
+									<button class="button-next"><?php _e( 'Next' , 'dhl-for-woocommerce' ); ?></button>
+								</div>
+							</div>
+
+							<div class="wizard-step" data-title="Step 6">
+								<h4 class="wizard-title"><?php _e( 'All set', 'dhl-for-woocommerce' ); ?></h4>
+								<div class="wizard-description">
+									<?php _e( 'You can find all additional settings under WooCommerce > Settings > Shipping > DHL Paket', 'dhl-for-woocommerce' ); ?>
+								</div>
+								<div class="form-group">
+									<button class="button-finish"><?php _e( 'Finish Setup' , 'dhl-for-woocommerce' ); ?></button>
 								</div>
 							</div>
 						</aside>
