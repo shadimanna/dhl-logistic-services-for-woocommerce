@@ -64,27 +64,26 @@ function pr_dhl_wizard_update_fields() {
     var active_wizard = jQuery( '.wizard-content .wizard-step.active' );
     var active_fields = active_wizard.find( '.wizard-dhl-field' );
 
-    var all_fields = dhl_wizard_obj.all_fields;
     var field_values = [];
 
     active_fields.each( function( idx ) {
         var field       = jQuery( this );
         var field_name  = field.prop( 'name' );
-        
-        if ( all_fields.indexOf( field_name ) > -1 ) {
-            var field_value = field.val();
+        var field_value = field.val();
 
-            field_values.push( {
-                'name': field_name,
-                'value': field_value
-            } );
-        }
+        field_values.push( {
+            'name': field_name,
+            'value': field_value
+        } );
     } );
-console.log( field_values );
+
     for( var idx = 0; idx < field_values.length; idx++ ) {
         var field_name = field_values[ idx ].name;
         var field_value = field_values[ idx ].value;
+        var field = jQuery( '#woocommerce_pr_dhl_paket_' + field_name );
 
-        jQuery( '#woocommerce_pr_dhl_paket_' + field_name ).val( field_value );
+        if ( 0 < field.length ) {
+            field.val( field_value );
+        }
     }
 }

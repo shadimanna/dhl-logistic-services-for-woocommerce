@@ -20,31 +20,6 @@ class PR_DHL_WC_Wizard_Paket {
 		add_action( 'admin_footer', array( $this, 'display_wizard' ), 10 );
     }
 
-	public static function all_wizard_field_names() {
-		return array(
-			'dhl_account_num',
-			'dhl_api_sandbox_user',
-			'dhl_api_sandbox_pwd',
-			'dhl_participation_V01PAK',
-			'dhl_participation_V01PRIO',
-			'dhl_participation_V62WP',
-			'dhl_participation_V55PAK',
-			'dhl_participation_V54EPAK',
-			'dhl_participation_V53WPAK',
-			'dhl_participation_V66WPI',
-			'dhl_participation_return',
-			'dhl_shipper_name',
-			'dhl_shipper_company',
-			'dhl_shipper_address',
-			'dhl_shipper_address_no',
-			'dhl_shipper_address_city',
-			'dhl_shipper_address_state',
-			'dhl_shipper_address_zip',
-			'dhl_shipper_address_phone',
-			'dhl_shipper_address_email',
-		);
-	}
-
 	public function display_wizard() {
 	?>
 		<div class="pr-dhl-wc-wizard-overlay">

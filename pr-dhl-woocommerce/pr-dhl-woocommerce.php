@@ -339,10 +339,6 @@ class PR_DHL_WC {
 			PR_DHL_VERSION,
 			true
 		);
-
-		wp_localize_script( 'wc-shipment-dhl-wizard-js', 'dhl_wizard_obj', array(
-			'all_fields' => PR_DHL_WC_Wizard_Paket::all_wizard_field_names(),
-		) );
 	}
 
 	/**
