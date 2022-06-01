@@ -41,7 +41,9 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 		add_filter( 'woocommerce_settings_api_form_fields_' .$this->id, array( $this, 'after_init_set_field_options' ) );
 
-		new PR_DHL_WC_Wizard_Paket();
+		if ( empty( get_option( 'woocommerce_pr_dhl_paket_settings', array() ) ) ) {
+			new PR_DHL_WC_Wizard_Paket();
+		}
 	}
 
 	/**
