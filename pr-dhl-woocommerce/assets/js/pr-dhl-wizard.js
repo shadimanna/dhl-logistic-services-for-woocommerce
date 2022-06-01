@@ -1,6 +1,12 @@
 
 
 jQuery( document ).ready( function(){
+    var wizard_overlay = jQuery( '.pr-dhl-wc-wizard-overlay' );
+    
+    if ( 1 > wizard_overlay.length ) {
+        return;
+    }
+
     let args = {
         "wz_nav_style": "dots", // dots, tabs, progress
         "wz_ori" : "horizontal",
@@ -14,6 +20,11 @@ jQuery( document ).ready( function(){
     
     wizard.init();
 
+    wizard_overlay.find( '#wizard_dhl_participation_V01PAK' ).on( 'change', function( evt ){
+        var participant_value = jQuery( this ).val();
+        wizard_overlay.find( '.wizard-dhl-field.participation-field' ).val( participant_value );
+    } );
+
     jQuery( document ).on( 'nextWizard', pr_dhl_wizard_update_fields );
 
     jQuery( document ).on( 'submitWizard', function (e) {
@@ -24,7 +35,7 @@ jQuery( document ).ready( function(){
     close_button.on( 'click', function( evt ) {
         evt.preventDefault();
 
-        jQuery( '.pr-dhl-wc-wizard-overlay' ).addClass( 'hidden' );
+        wizard_overlay.addClass( 'hidden' );
     } );
 
     var next_buttons = jQuery(".button-next");
@@ -69,7 +80,7 @@ function pr_dhl_wizard_update_fields() {
             } );
         }
     } );
-
+console.log( field_values );
     for( var idx = 0; idx < field_values.length; idx++ ) {
         var field_name = field_values[ idx ].name;
         var field_value = field_values[ idx ].value;
