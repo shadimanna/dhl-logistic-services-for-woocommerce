@@ -23,6 +23,18 @@ class PR_DHL_WC_Wizard_Paket {
 	public static function all_wizard_field_names() {
 		return array(
 			'dhl_account_num',
+			'dhl_api_sandbox_user',
+			'dhl_api_sandbox_pwd',
+			'dhl_participation_V01PAK',
+			'dhl_shipper_name',
+			'dhl_shipper_company',
+			'dhl_shipper_address',
+			'dhl_shipper_address_no',
+			'dhl_shipper_address_city',
+			'dhl_shipper_address_state',
+			'dhl_shipper_address_zip',
+			'dhl_shipper_address_phone',
+			'dhl_shipper_address_email',
 		);
 	}
 
@@ -66,10 +78,10 @@ class PR_DHL_WC_Wizard_Paket {
 									<?php _e( 'Please configure your access towards the DHL Paket APIs by means of authentication.', 'dhl-for-woocommerce' ); ?>
 								</div>
 								<div class="form-group">
-									<input type="text" name="dhl_api_user" class="form-control required wizard-dhl-field" id="wizard_dhl_api_user" placeholder="<?php _e( 'Your username for the DHL business customer portal', 'dhl-for-woocommerce' ); ?>">
+									<input type="text" name="dhl_api_sandbox_user" class="form-control required wizard-dhl-field" id="wizard_dhl_api_sandbox_user" placeholder="<?php _e( 'Username', 'dhl-for-woocommerce' ); ?>">
 								</div>
 								<div class="form-group">
-									<input type="text" name="dhl_api_pwd" class="form-control required wizard-dhl-field" id="wizard_dhl_api_pwd" placeholder="<?php _e( 'Your password for the DHL business customer portal', 'dhl-for-woocommerce' ); ?>">
+									<input type="password" name="dhl_api_sandbox_pwd" class="form-control required wizard-dhl-field" id="wizard_dhl_api_sandbox_pwd" placeholder="<?php _e( 'Password', 'dhl-for-woocommerce' ); ?>">
 								</div>
 								<div class="form-group">
 									<button class="button-next"><?php _e( 'Next' , 'dhl-for-woocommerce' ); ?></button>
@@ -138,7 +150,7 @@ class PR_DHL_WC_Wizard_Paket {
 						</aside>
 					</form>
 				</div>
-				<a href="#" class="pr-dhl-wc-skip-wizard"><?php _e( 'Skip this', 'dhl-for-woocommerce' ); ?></a>
+				<a href="#" class="pr-dhl-wc-skip-wizard"><span class="dashicons dashicons-no"></span></a>
 			</div>
 		</div>
 	<?php 

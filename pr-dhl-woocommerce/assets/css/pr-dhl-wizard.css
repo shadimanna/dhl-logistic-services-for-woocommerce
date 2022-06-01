@@ -9,6 +9,10 @@
     display:block;
 }
 
+.pr-dhl-wc-wizard-overlay.hidden{
+    display:none;
+}
+
 .pr-dhl-wc-wizard-container {
     position:absolute;
     top:50%;
@@ -53,6 +57,10 @@
     margin-bottom:20px;
 }
 
+.pr-dhl-wc-wizard .wizard-content.container .form-group {
+    margin-bottom:13px;
+}
+
 .pr-dhl-wc-wizard .wizard-content.container input {
     width:100%;
     padding:4px 8px;
@@ -60,7 +68,7 @@
 
 .pr-dhl-wc-wizard .button-next,
 .pr-dhl-wc-wizard .button-finish {
-    margin-top:20px;
+    margin-top:8px;
     position:relative;
     cursor:pointer;
     background-color:#d40009;
@@ -122,7 +130,11 @@
 }
 
 .pr-dhl-wc-wizard-container .pr-dhl-wc-skip-wizard {
-    line-height:3em;
+    position:absolute;
+    top:5px;
+    right:5px;
+    line-height:1em;
+    font-size:18px;
     font-weight:700;
     color:#fff;
     text-decoration:none;

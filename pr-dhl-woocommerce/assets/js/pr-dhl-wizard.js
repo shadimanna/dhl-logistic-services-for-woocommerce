@@ -14,6 +14,19 @@ jQuery( document ).ready( function(){
     
     wizard.init();
 
+    jQuery( document ).on( 'nextWizard', pr_dhl_wizard_update_fields );
+
+    jQuery( document ).on( 'submitWizard', function (e) {
+        jQuery( 'p.submit button.woocommerce-save-button' ).click();
+    });
+
+    var close_button = jQuery( '.pr-dhl-wc-skip-wizard' );
+    close_button.on( 'click', function( evt ) {
+        evt.preventDefault();
+
+        jQuery( '.pr-dhl-wc-wizard-overlay' ).addClass( 'hidden' );
+    } );
+
     var next_buttons = jQuery(".button-next");
     next_buttons.on( 'click', pr_dhl_wizard_next_button );
 
@@ -23,6 +36,19 @@ jQuery( document ).ready( function(){
 
 function pr_dhl_wizard_next_button( evt ) {
     evt.preventDefault();
+
+    pr_dhl_wizard_update_fields();
+
+    jQuery('.wizard-btn.btn.next').click();
+}
+
+function pr_dhl_wizard_finish_button( evt ) {
+    evt.preventDefault();
+    jQuery('.wizard-btn.btn.finish').click();
+    jQuery( 'p.submit button.woocommerce-save-button' ).click();
+}
+
+function pr_dhl_wizard_update_fields() {
 
     var active_wizard = jQuery( '.wizard-content .wizard-step.active' );
     var active_fields = active_wizard.find( '.wizard-dhl-field' );
@@ -44,21 +70,9 @@ function pr_dhl_wizard_next_button( evt ) {
         }
     } );
 
-    pr_dhl_wizard_update_fields( field_values );
-
-    jQuery('.wizard-btn.btn.next').click();
-}
-
-function pr_dhl_wizard_finish_button( evt ) {
-    evt.preventDefault();
-
-    jQuery('.wizard-btn.btn.submit').click();
-}
-
-function pr_dhl_wizard_update_fields( fields ) {
-    for( var idx = 0; idx < fields.length; idx++ ) {
-        var field_name = fields[ idx ].name;
-        var field_value = fields[ idx ].value;
+    for( var idx = 0; idx < field_values.length; idx++ ) {
+        var field_name = field_values[ idx ].name;
+        var field_value = field_values[ idx ].value;
 
         jQuery( '#woocommerce_pr_dhl_paket_' + field_name ).val( field_value );
     }
