@@ -820,19 +820,16 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'type'            => 'time',
 				'default'       	  => '17:00',
 			),
-			'dhl_business_hours2'           => array(
-				'title'           => __( 'Additional Business Hours (for DHL Pickup Request)', 'dhl-for-woocommerce' ),
-				'type'            => 'title',
-				'description'     => __( 'Optional, if additional business hours are needed.', 'dhl-for-woocommerce' ),
-			),
 			'dhl_business_hours_2_start'           => array(
-				'title'           => __( 'From: ', 'dhl-for-woocommerce' ),
+				'title'           => __( '(Additional Business Hours) From: ', 'dhl-for-woocommerce' ),
 				'type'            => 'time',
+				'description'     => __( 'Optional, if additional business hours are needed.', 'dhl-for-woocommerce' ),
 				'default'       	  => '',
 			),
 			'dhl_business_hours_2_end'           => array(
-				'title'           => __( 'To: ', 'dhl-for-woocommerce' ),
+				'title'           => __( '(Additional Business Hours) To: ', 'dhl-for-woocommerce' ),
 				'type'            => 'time',
+				'description'     => __( 'Optional, if additional business hours are needed.', 'dhl-for-woocommerce' ),
 				'default'       	  => '',
 			),
 		);
