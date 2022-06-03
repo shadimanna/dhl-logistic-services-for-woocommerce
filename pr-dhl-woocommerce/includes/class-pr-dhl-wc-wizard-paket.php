@@ -18,9 +18,39 @@ class PR_DHL_WC_Wizard_Paket {
 
 	public function __construct() {
 		add_action( 'admin_footer', array( $this, 'display_wizard' ), 10 );
+		add_action( 'admin_notices', array( $this, 'wizard_notice' ) );
     }
 
+	public function wizard_notice() {
+		$screen    = get_current_screen();
+        $screen_id = $screen ? $screen->id : '';
+
+        if ( 'woocommerce_page_wc-settings' !== $screen_id ) {
+			return;
+		}
+
+		if ( ! isset( $_GET['section'] ) || $_GET['section'] != 'pr_dhl_paket' ) {
+			return;
+		}
+	?>
+		<div class="updated notice is-dismissible">
+			<p><?php _e( 'Welcome to DHL plugin! You\'re almost there, but we think this wizard might help you setup the plugin.', 'dhl-for-woocommerce' ); ?></p>
+			<p><a href="#" id="pr-dhl-open-wizard-button" class="button button-primary"><?php _e( 'Run wizard', 'dhl-for-woocommerce' ); ?></a> <a href="javascript:window.location.reload()" class="button"><?php _e( 'dismiss', 'dhl-for-woocommerce' ); ?></a></p>
+		</div>
+	<?php
+	}
+
 	public function display_wizard() {
+		$screen    = get_current_screen();
+        $screen_id = $screen ? $screen->id : '';
+
+        if ( 'woocommerce_page_wc-settings' !== $screen_id ) {
+			return;
+		}
+
+		if ( ! isset( $_GET['section'] ) || $_GET['section'] != 'pr_dhl_paket' ) {
+			return;
+		}
 	?>
 		<div class="pr-dhl-wc-wizard-overlay">
 			<div class="pr-dhl-wc-wizard-container">
