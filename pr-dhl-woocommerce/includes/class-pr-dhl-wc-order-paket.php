@@ -486,6 +486,9 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	}
 
 	protected function get_tracking_url() {
+		if ( $this->shipping_dhl_settings['dhl_tracking_url_language'] == 'en' ) {
+			return PR_DHL_PAKET_TRACKING_URL_EN;
+		}
 		return PR_DHL_PAKET_TRACKING_URL;
 	}
 
