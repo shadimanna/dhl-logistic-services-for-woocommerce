@@ -222,6 +222,8 @@ class PR_DHL_WC {
         add_action( 'wp_ajax_test_dhl_connection', array( $this, 'test_dhl_connection_callback' ) );
         // Add state field for 'VN'
         add_filter( 'woocommerce_states', array( $this, 'add_vn_states' ) );
+
+		add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ) );
     }
 
 	public function get_pr_dhl_wc_order() {
@@ -318,6 +320,27 @@ class PR_DHL_WC {
             wp_localize_script( 'wc-shipment-dhl-testcon-js', 'dhl_test_con_obj', $test_con_data );
         }
 
+	}
+
+	/**
+	 * Add class in admin body tag.
+	 * 
+	 * @param $classes string Registered classes.
+	 *
+	 * @return $classes
+	 */
+	public function add_admin_body_class( $classes ) {
+		$screen    = get_current_screen();
+        $screen_id = $screen ? $screen->id : '';
+
+        if ( 'woocommerce_page_wc-settings' === $screen_id ) {
+
+			if( isset( $_GET['section'] ) && $_GET['section'] == 'pr_dhl_paket' ){
+				$classes .= ' pr_dhl_paket';
+			}
+		}
+		
+		return $classes;
 	}
 
 	/**
