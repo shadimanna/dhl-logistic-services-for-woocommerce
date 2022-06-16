@@ -163,6 +163,9 @@ class PR_DHL_WC_Wizard_Paket {
 									<?php _e( 'You can find all additional settings under WooCommerce > Settings > Shipping > DHL Paket', 'dhl-for-woocommerce' ); ?>
 								</div>
 								<div class="form-group">
+									<input type="hidden" name="dhl_participation_finish" class="form-control wizard-dhl-field participation-field" id="wizard_dhl_participation_finish" />
+								</div>
+								<div class="form-group">
 									<button class="button-finish"><?php _e( 'Finish Setup' , 'dhl-for-woocommerce' ); ?></button>
 								</div>
 							</div>
