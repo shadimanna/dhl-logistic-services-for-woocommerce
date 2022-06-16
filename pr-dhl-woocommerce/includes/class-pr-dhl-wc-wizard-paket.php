@@ -147,10 +147,10 @@ class PR_DHL_WC_Wizard_Paket {
 									<input type="text" name="dhl_shipper_address_zip" class="form-control required wizard-dhl-field" id="wizard_dhl_shipper_address_zip" placeholder="<?php _e( 'Postcode', 'dhl-for-woocommerce' ); ?>">
 								</div>
 								<div class="form-group">
-									<input type="text" name="dhl_shipper_address_phone" class="form-control wizard-dhl-field" id="wizard_dhl_shipper_address_phone" placeholder="<?php _e( 'Postcode', 'dhl-for-woocommerce' ); ?>">
+									<input type="text" name="dhl_shipper_phone" class="form-control wizard-dhl-field" id="wizard_dhl_shipper_phone" placeholder="<?php _e( 'Phone', 'dhl-for-woocommerce' ); ?>">
 								</div>
 								<div class="form-group">
-									<input type="text" name="dhl_shipper_address_email" class="form-control wizard-dhl-field" id="wizard_dhl_shipper_address_email" placeholder="<?php _e( 'Postcode', 'dhl-for-woocommerce' ); ?>">
+									<input type="text" name="dhl_shipper_email" class="form-control wizard-dhl-field" id="wizard_dhl_email" placeholder="<?php _e( 'Email', 'dhl-for-woocommerce' ); ?>">
 								</div>
 								<div class="form-group">
 									<button class="button-next"><?php _e( 'Next' , 'dhl-for-woocommerce' ); ?></button>
