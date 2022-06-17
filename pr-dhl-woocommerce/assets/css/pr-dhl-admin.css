@@ -424,3 +424,7 @@ h3#woocommerce_pr_dhl_paket_dhl_bank:before {
 h3#woocommerce_pr_dhl_paket_dhl_business_hours:before {
 	content:"\f469";
 }
+
+body.woocommerce_page_wc-settings.pr_dhl_paket p.submit button.woocommerce-save-button {
+	margin-left:290px;
+}
