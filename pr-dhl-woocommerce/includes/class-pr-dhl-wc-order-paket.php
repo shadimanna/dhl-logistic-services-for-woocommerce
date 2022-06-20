@@ -506,11 +506,21 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			return '';
 		}
 
+		$parent_product_id = 0;
+		if ( $product->get_type() === 'variation' ) {
+			 $parent_product_id = $product->get_parent_id();
+		}
+
 		$desc_array = array();
 
 		switch ($dhl_desc_default) {
 			case 'product_cat':
-				$product_terms = get_the_terms( $product_id, 'product_cat' );
+				// If child product, get terms from parent
+				if ( $parent_product_id ) {
+					$product_terms = get_the_terms( $parent_product_id, 'product_cat' );
+				} else {
+					$product_terms = get_the_terms( $product_id, 'product_cat' );
+				}
 				if ( $product_terms ) {
 					foreach ($product_terms as $key => $product_term) {
 						array_push( $desc_array, $product_term->name );
@@ -518,7 +528,12 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				}
 				break;
 			case 'product_tag':
-				$product_terms = get_the_terms( $product_id, 'product_tag' );
+				// If child product, get terms from parent
+				if ( $parent_product_id ) {
+					$product_terms = get_the_terms( $parent_product_id, 'product_tag' );
+				} else {
+					$product_terms = get_the_terms( $product_id, 'product_tag' );
+				}
 				if ( $product_terms ) {
 					foreach ($product_terms as $key => $product_term) {
 						array_push( $desc_array, $product_term->name );
