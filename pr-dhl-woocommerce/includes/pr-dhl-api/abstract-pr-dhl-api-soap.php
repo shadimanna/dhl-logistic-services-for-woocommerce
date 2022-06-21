@@ -58,7 +58,16 @@ abstract class PR_DHL_API_SOAP {
 		return $this->dhl_soap_auth->get_access_token( $client_id, $client_secret );
 	}
 
+	protected function maybe_convert_decimal( $number ) {
+		$dec_sep = wc_get_price_decimal_separator();
+		$number  = str_replace( $dec_sep, '.', $number );
+
+		return $number;
+	}
+
 	protected function maybe_convert_weight( $weight, $UoM ) {
+		$weight = $this->maybe_convert_decimal( $weight );
+
 		switch ( $UoM ) {
 			case 'g':
 				$weight = $weight / 1000;
