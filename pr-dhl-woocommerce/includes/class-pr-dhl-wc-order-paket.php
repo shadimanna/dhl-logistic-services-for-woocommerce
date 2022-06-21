@@ -450,10 +450,10 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		if ( empty( $packages_enabled ) ) {
 			echo '	<div class="package_item">
 						<div class="package_item_field package_number first"><input type="text" name="pr_dhl_packages_number[]" data-sequence="1" value="1" maxlength="70" /></div>
-						<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_weight[]" placeholder="'.$weight_uom.'" /></div>
-						<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_length[]" placeholder="'.$dim_uom.'" /></div>
-						<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_width[]" placeholder="'.$dim_uom.'" /></div>
-						<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_height[]" placeholder="'.$dim_uom.'" /></div>
+						<div class="package_item_field clearable"><input type="text" class="wc_input_decimal" name="pr_dhl_packages_weight[]" placeholder="'.$weight_uom.'" /></div>
+						<div class="package_item_field clearable"><input type="text" class="wc_input_decimal" name="pr_dhl_packages_length[]" placeholder="'.$dim_uom.'" /></div>
+						<div class="package_item_field clearable"><input type="text" class="wc_input_decimal" name="pr_dhl_packages_width[]" placeholder="'.$dim_uom.'" /></div>
+						<div class="package_item_field clearable"><input type="text" class="wc_input_decimal" name="pr_dhl_packages_height[]" placeholder="'.$dim_uom.'" /></div>
 					</div>';
 		} else {
 			for ($i=0, $seq=1; $i<intval($total_packages); $i++, $seq++) {
@@ -465,10 +465,10 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 				echo '	<div class="package_item">
 						<div class="package_item_field package_number first"><input type="text" name="pr_dhl_packages_number[]" data-sequence="'.$seq.'" value="'.$number.'" maxlength="70" autocomplete="off" disabled /></div>
-						<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_weight[]" value="'.$weight.'" placeholder="'.$weight_uom.'" autocomplete="off" '. $is_disabled .'/></div>
-						<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_length[]" value="'.$length.'" placeholder="'.$dim_uom.'" autocomplete="off" '. $is_disabled .'/></div>
-						<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_width[]" value="'.$width.'" placeholder="'.$dim_uom.'" autocomplete="off" '. $is_disabled .'/></div>
-						<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_height[]" value="'.$height.'" placeholder="'.$dim_uom.'" autocomplete="off" '. $is_disabled .'/></div>
+						<div class="package_item_field clearable"><input type="text" class="wc_input_decimal" name="pr_dhl_packages_weight[]" value="'.$weight.'" placeholder="'.$weight_uom.'" autocomplete="off" '. $is_disabled .'/></div>
+						<div class="package_item_field clearable"><input type="text" class="wc_input_decimal" name="pr_dhl_packages_length[]" value="'.$length.'" placeholder="'.$dim_uom.'" autocomplete="off" '. $is_disabled .'/></div>
+						<div class="package_item_field clearable"><input type="text" class="wc_input_decimal" name="pr_dhl_packages_width[]" value="'.$width.'" placeholder="'.$dim_uom.'" autocomplete="off" '. $is_disabled .'/></div>
+						<div class="package_item_field clearable"><input type="text" class="wc_input_decimal" name="pr_dhl_packages_height[]" value="'.$height.'" placeholder="'.$dim_uom.'" autocomplete="off" '. $is_disabled .'/></div>
 					</div>';
 			}
 		}
