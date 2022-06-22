@@ -41,6 +41,10 @@ class PR_DHL_WC_Wizard_Paket {
 	}
 
 	public function display_wizard() {
+		if ( ! empty( get_option( 'woocommerce_pr_dhl_paket_settings', array() ) ) ) {
+			return;
+		}
+
 		$screen    = get_current_screen();
         $screen_id = $screen ? $screen->id : '';
 

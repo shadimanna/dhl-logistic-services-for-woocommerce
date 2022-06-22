@@ -312,7 +312,9 @@ class PR_DHL_WC {
 				);
 				// wp_localize_script( 'wc-shipment-dhl-paket-settings-js', 'dhl_paket_settings_obj', PR_DHL_WC_Method_Paket::sandbox_info() );
 
-				$this->wizard_enqueue_scripts();
+				if ( empty( get_option( 'woocommerce_pr_dhl_paket_settings', array() ) ) ) {
+					$this->wizard_enqueue_scripts();
+				}
 			}
 
             wp_enqueue_script(
