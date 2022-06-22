@@ -59,6 +59,8 @@ abstract class PR_DHL_API_SOAP {
 	}
 
 	protected function maybe_convert_weight( $weight, $UoM ) {
+		$weight = wc_format_decimal( $weight );
+
 		switch ( $UoM ) {
 			case 'g':
 				$weight = $weight / 1000;
@@ -76,6 +78,8 @@ abstract class PR_DHL_API_SOAP {
 	}
 
 	protected function maybe_convert_centimeters( $dimension, $UoM ) {
+		$dimension = wc_format_decimal( $dimension );
+
 		switch ( $UoM ) {
 			case 'm':
 				$dimension = $dimension * 100;

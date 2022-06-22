@@ -358,7 +358,8 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			if( $this->is_crossborder_shipment( $order_id ) ) {
 
 				echo '<div class="shipment-dhl-row-container shipment-dhl-row-non-domestic">';
-					echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon shipment-dhl-icon-non-domestic"></span> ' . __( 'Non Domestic', 'dhl-for-woocommerce' ) . '</div>';
+					echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon shipment-dhl-icon-crossborder-domestic"></span> ' . __( 'Crossborder', 'dhl-for-woocommerce' ) . '</div>';
+
 
 					// Duties drop down
 					$duties_opt = $dhl_obj->get_dhl_duties();
@@ -383,51 +384,52 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				echo '</div>'; // END -- Non Domestic
 			}
 
-			$this->crossborder_and_domestic_fields( $dhl_label_items, $is_disabled );
+			echo '<div class="shipment-dhl-row-container shipment-dhl-row-additional-services">';
+				echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon shipment-dhl-icon-additional-services"></span> ' . __( 'Additional Services', 'dhl-for-woocommerce' ) . '</div>';
+
+				$this->crossborder_and_domestic_fields( $dhl_label_items, $is_disabled );
+
+			echo '</div>'; // END -- Additional fields
 		}
 
 	}
 
 	public function crossborder_and_domestic_fields( $dhl_label_items, $is_disabled ){
 
-		echo '<div class="shipment-dhl-row-container shipment-dhl-crossborder-domestic">';
-			echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon shipment-dhl-icon-crossborder-domestic"></span> ' . __( 'Crossborder and Domestic', 'dhl-for-woocommerce' ) . '</div>';
+		woocommerce_wp_hidden_input( array(
+			'id'          		=> 'pr_dhl_email_notification',
+			'label'       		=> __( 'Email Notification:', 'dhl-for-woocommerce' ),
+			'placeholder' 		=> '',
+			'description'		=> '',
+			'value'       		=> isset( $dhl_label_items['pr_dhl_email_notification'] ) ? $dhl_label_items['pr_dhl_email_notification'] : false,
+		) );
 
-			woocommerce_wp_hidden_input( array(
-				'id'          		=> 'pr_dhl_email_notification',
-				'label'       		=> __( 'Email Notification:', 'dhl-for-woocommerce' ),
-				'placeholder' 		=> '',
-				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_email_notification'] ) ? $dhl_label_items['pr_dhl_email_notification'] : false,
-			) );
+		woocommerce_wp_checkbox( array(
+			'id'          		=> 'pr_dhl_additional_insurance',
+			'label'       		=> __( 'Additional Insurance:', 'dhl-for-woocommerce' ),
+			'placeholder' 		=> '',
+			'description'		=> '',
+			'value'       		=> isset( $dhl_label_items['pr_dhl_additional_insurance'] ) ? $dhl_label_items['pr_dhl_additional_insurance'] : $this->shipping_dhl_settings['dhl_default_additional_insurance'],
+			'custom_attributes'	=> array( $is_disabled => $is_disabled )
+		) );
 
-			woocommerce_wp_checkbox( array(
-				'id'          		=> 'pr_dhl_additional_insurance',
-				'label'       		=> __( 'Additional Insurance:', 'dhl-for-woocommerce' ),
-				'placeholder' 		=> '',
-				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_additional_insurance'] ) ? $dhl_label_items['pr_dhl_additional_insurance'] : $this->shipping_dhl_settings['dhl_default_additional_insurance'],
-				'custom_attributes'	=> array( $is_disabled => $is_disabled )
-			) );
+		woocommerce_wp_checkbox( array(
+			'id'          		=> 'pr_dhl_premium',
+			'label'       		=> __( 'Premium: ', 'dhl-for-woocommerce' ),
+			'placeholder' 		=> '',
+			'description'		=> '',
+			'value'       		=> isset( $dhl_label_items['pr_dhl_premium'] ) ? $dhl_label_items['pr_dhl_premium'] : $this->shipping_dhl_settings['dhl_default_premium'],
+			'custom_attributes'	=> array( $is_disabled => $is_disabled )
+		) );
 
-			woocommerce_wp_checkbox( array(
-				'id'          		=> 'pr_dhl_premium',
-				'label'       		=> __( 'Premium: ', 'dhl-for-woocommerce' ),
-				'placeholder' 		=> '',
-				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_premium'] ) ? $dhl_label_items['pr_dhl_premium'] : $this->shipping_dhl_settings['dhl_default_premium'],
-				'custom_attributes'	=> array( $is_disabled => $is_disabled )
-			) );
-
-			woocommerce_wp_checkbox( array(
-				'id'          		=> 'pr_dhl_bulky_goods',
-				'label'       		=> __( 'Bulky Goods: ', 'dhl-for-woocommerce' ),
-				'placeholder' 		=> '',
-				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_bulky_goods'] ) ? $dhl_label_items['pr_dhl_bulky_goods'] : $this->shipping_dhl_settings['dhl_default_bulky_goods'],
-				'custom_attributes'	=> array( $is_disabled => $is_disabled )
-			) );
-		echo '</div>';
+		woocommerce_wp_checkbox( array(
+			'id'          		=> 'pr_dhl_bulky_goods',
+			'label'       		=> __( 'Bulky Goods: ', 'dhl-for-woocommerce' ),
+			'placeholder' 		=> '',
+			'description'		=> '',
+			'value'       		=> isset( $dhl_label_items['pr_dhl_bulky_goods'] ) ? $dhl_label_items['pr_dhl_bulky_goods'] : $this->shipping_dhl_settings['dhl_default_bulky_goods'],
+			'custom_attributes'	=> array( $is_disabled => $is_disabled )
+		) );
 	}
 
 	protected function add_package_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
@@ -478,10 +480,10 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			if ( empty( $packages_enabled ) ) {
 				echo '	<div class="package_item">
 							<div class="package_item_field package_number first"><input type="text" name="pr_dhl_packages_number[]" data-sequence="1" value="1" maxlength="70" /></div>
-							<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_weight[]" placeholder="'.$weight_uom.'" /></div>
-							<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_length[]" placeholder="'.$dim_uom.'" /></div>
-							<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_width[]" placeholder="'.$dim_uom.'" /></div>
-							<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_height[]" placeholder="'.$dim_uom.'" /></div>
+							<div class="package_item_field clearable"><input class="wc_input_decimal" type="text" name="pr_dhl_packages_weight[]" placeholder="'.$weight_uom.'" /></div>
+							<div class="package_item_field clearable"><input class="wc_input_decimal" type="text" name="pr_dhl_packages_length[]" placeholder="'.$dim_uom.'" /></div>
+							<div class="package_item_field clearable"><input class="wc_input_decimal" type="text" name="pr_dhl_packages_width[]" placeholder="'.$dim_uom.'" /></div>
+							<div class="package_item_field clearable"><input class="wc_input_decimal" type="text" name="pr_dhl_packages_height[]" placeholder="'.$dim_uom.'" /></div>
 						</div>';
 			} else {
 				for ($i=0, $seq=1; $i<intval($total_packages); $i++, $seq++) {
@@ -493,10 +495,10 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 					echo '	<div class="package_item">
 							<div class="package_item_field package_number first"><input type="text" name="pr_dhl_packages_number[]" data-sequence="'.$seq.'" value="'.$number.'" maxlength="70" autocomplete="off" disabled /></div>
-							<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_weight[]" value="'.$weight.'" placeholder="'.$weight_uom.'" autocomplete="off" '. $is_disabled .'/></div>
-							<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_length[]" value="'.$length.'" placeholder="'.$dim_uom.'" autocomplete="off" '. $is_disabled .'/></div>
-							<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_width[]" value="'.$width.'" placeholder="'.$dim_uom.'" autocomplete="off" '. $is_disabled .'/></div>
-							<div class="package_item_field clearable"><input type="text" name="pr_dhl_packages_height[]" value="'.$height.'" placeholder="'.$dim_uom.'" autocomplete="off" '. $is_disabled .'/></div>
+							<div class="package_item_field clearable"><input type="text" class="wc_input_decimal" name="pr_dhl_packages_weight[]" value="'.$weight.'" placeholder="'.$weight_uom.'" autocomplete="off" '. $is_disabled .'/></div>
+							<div class="package_item_field clearable"><input type="text" class="wc_input_decimal" name="pr_dhl_packages_length[]" value="'.$length.'" placeholder="'.$dim_uom.'" autocomplete="off" '. $is_disabled .'/></div>
+							<div class="package_item_field clearable"><input type="text" class="wc_input_decimal" name="pr_dhl_packages_width[]" value="'.$width.'" placeholder="'.$dim_uom.'" autocomplete="off" '. $is_disabled .'/></div>
+							<div class="package_item_field clearable"><input type="text" class="wc_input_decimal" name="pr_dhl_packages_height[]" value="'.$height.'" placeholder="'.$dim_uom.'" autocomplete="off" '. $is_disabled .'/></div>
 						</div>';
 				}
 			}
@@ -515,6 +517,9 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	}
 
 	protected function get_tracking_url() {
+		if ( $this->shipping_dhl_settings['dhl_tracking_url_language'] == 'en' ) {
+			return PR_DHL_PAKET_TRACKING_URL_EN;
+		}
 		return PR_DHL_PAKET_TRACKING_URL;
 	}
 
@@ -532,11 +537,21 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			return '';
 		}
 
+		$parent_product_id = 0;
+		if ( $product->get_type() === 'variation' ) {
+			 $parent_product_id = $product->get_parent_id();
+		}
+
 		$desc_array = array();
 
 		switch ($dhl_desc_default) {
 			case 'product_cat':
-				$product_terms = get_the_terms( $product_id, 'product_cat' );
+				// If child product, get terms from parent
+				if ( $parent_product_id ) {
+					$product_terms = get_the_terms( $parent_product_id, 'product_cat' );
+				} else {
+					$product_terms = get_the_terms( $product_id, 'product_cat' );
+				}
 				if ( $product_terms ) {
 					foreach ($product_terms as $key => $product_term) {
 						array_push( $desc_array, $product_term->name );
@@ -544,7 +559,12 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				}
 				break;
 			case 'product_tag':
-				$product_terms = get_the_terms( $product_id, 'product_tag' );
+				// If child product, get terms from parent
+				if ( $parent_product_id ) {
+					$product_terms = get_the_terms( $parent_product_id, 'product_tag' );
+				} else {
+					$product_terms = get_the_terms( $product_id, 'product_tag' );
+				}
 				if ( $product_terms ) {
 					foreach ($product_terms as $key => $product_term) {
 						array_push( $desc_array, $product_term->name );

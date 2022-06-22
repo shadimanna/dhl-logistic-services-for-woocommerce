@@ -74,11 +74,6 @@ jQuery( function( $ ) {
 					if (!numbers[i].length || !weights[i].length || !lengths[i].length || !widths[i].length || !heights[i].length) {
 						error = true;
 						break;
-					} else {
-						if (!$.isNumeric(weights[i]) || !$.isNumeric(lengths[i]) || !$.isNumeric(widths[i]) || !$.isNumeric(heights[i])) {
-							invalid_number = true;
-							break;
-						}
 					}
 				}
 
