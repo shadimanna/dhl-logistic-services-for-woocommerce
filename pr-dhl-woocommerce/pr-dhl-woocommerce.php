@@ -7,9 +7,10 @@
  * Author URI: http://dhl.com/
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
- * Version: 2.8.15
+ * Version: 2.8.16
+ * Tested up to: 6.0
  * WC requires at least: 3.0
- * WC tested up to: 5.6
+ * WC tested up to: 6.5.1
  * Requires at least: 4.6
  *
  * This program is free software: you can redistribute it and/or modify
@@ -35,7 +36,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "2.8.15";
+	private $version = "2.8.16";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -154,6 +155,7 @@ class PR_DHL_WC {
 		$this->define( 'PR_DHL_CIG_AUTH_QA', 'https://cig.dhl.de/services/sandbox/soap' );
 
 		$this->define( 'PR_DHL_PAKET_TRACKING_URL', 'https://www.dhl.de/de/privatkunden/dhl-sendungsverfolgung.html?piececode=' );
+		$this->define( 'PR_DHL_PAKET_TRACKING_URL_EN', 'https://www.dhl.de/en/privatkunden/dhl-sendungsverfolgung.html?piececode=' );
 		$this->define( 'PR_DHL_PAKET_BUSSINESS_PORTAL', 'https://www.dhl-geschaeftskundenportal.de' );
 		$this->define( 'PR_DHL_PAKET_DEVELOPER_PORTAL', 'https://entwickler.dhl.de/' );
 		$this->define( 'PR_DHL_PAKET_NOTIFICATION_EMAIL', 'https://www.dhl.de/de/geschaeftskunden/paket/versandsoftware/dhl-paketankuendigung/formular.html' );

@@ -340,7 +340,7 @@ class PR_DHL_Front_End_Paket {
 			if ( ! empty( $post_data['pr_dhl_preferred_day'] ) ) {
 
 				if( ! empty( $this->shipping_dhl_settings['dhl_preferred_day_cost'] ) ) {
-					$cart->add_fee( __('DHL Delivery Day', 'dhl-for-woocommerce'), $this->shipping_dhl_settings['dhl_preferred_day_cost'] );
+					$cart->add_fee( __('DHL Delivery Day', 'dhl-for-woocommerce'), wc_format_decimal( $this->shipping_dhl_settings['dhl_preferred_day_cost'] ) );
 				}
 
 			}

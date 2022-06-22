@@ -44,7 +44,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			switch ( $key ) {
 				case 'weight':
-					$this->validate( $value );
+					$this->validate( wc_format_decimal( $value ) );
 					break;
 				case 'hs_code':
 					$this->validate( $value, 'string', 4, 11 );
@@ -944,7 +944,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				$dhl_label_body['ShipmentOrder']['Shipment']['ExportDocument'] =
 					array(
 						'invoiceNumber' => $this->args['order_details']['invoice_num'],
-						'exportType' => apply_filters( 'pr_shipping_dhl_paket_label_shipment_export_type', 'OTHER'),
+						'exportType' => apply_filters( 'pr_shipping_dhl_paket_label_shipment_export_type', 'COMMERCIAL_GOODS'),
 						'exportTypeDescription' => $item_description,
 						'termsOfTrade' => $this->args['order_details']['duties'],
 						'placeOfCommital' => $this->args['shipping_address']['country'],
