@@ -4,10 +4,10 @@ Donate link:
 Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL Parcel Benelux, DHL Parcel Luxembourg, DHL Paket Germany, WooCommerce, Woocom, Woo Commerce, Shipping, shiping, label creation, label printing, shipping rates, DHL Paket
 Requires at least: 4.6
 Requires PHP: 5.6
-Tested up to: 5.9
-Stable tag: 2.8.13
+Tested up to: 6.0
+Stable tag: 2.8.16
 WC requires at least: 3.0
-WC tested up to: 6.1
+WC tested up to: 6.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -45,7 +45,7 @@ The following DHL services are no longer supported by this plugin:
 
 Based on your sender country and shipping preference, different access credentials for **DHL Paket, DHL Parcel NL and Deutsche Post International** are required for the configuration: 
 
-**DHL Paket for Germany**: Log in with your business customer portal credentials. (not a customer yet? Click [here](http://www.dhl.de/dhl-kundewerden?source=woocommerce&cid=c_dhloka_de_woocommerce) for **DHL Paket**)
+**DHL Paket for Germany**: Log in with your business customer portal credentials. (not a customer yet? Click [here](https://www.dhl.de/dhl-kundewerden?source=woocommerce&cid=c_dhloka_de_woocommerce) for **DHL Paket**)
 
 **Deutsche Post International for Europe**: ask your sales contact for credentials for this plugin. (not a customer yet? Click [here](https://www.deutschepost.com/en/business-customers/contact/email.html)).
 
@@ -75,6 +75,21 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
+
+= 2.8.16 =
+* DHL Paket: Fix decimal field does not follow general decimal setting.
+* DHL Paket: Bump the tested up to.
+* DHL Paket: Change default export type to Sale of goods.
+* DHL Paket: Return cat/tags of parent for export description.
+* DHL Paket: Add setting for Tracking url language.
+
+= 2.8.15 =
+* DHL Paket: Fix for countries with no zip format. Error creating a label.
+* DHL Paket: Fix the displayed warning in the empty row in order table.
+* DHL Paket: Update Readme description.
+
+= 2.8.14 =
+* DHL Parcel: Updated the migration notice when to change colors
 
 = 2.8.13 =
 * DHL Paket: Modify account creation link

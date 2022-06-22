@@ -430,6 +430,19 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'default'           => 'no',
 				'class'				=> ''
 			),
+			'dhl_tracking_url_language' => array(
+				'title'             => __( 'Tracking URL Language', 'dhl-for-woocommerce' ),
+				'type'              => 'select',
+				'label' 			=> __( 'Select the tracking link language.', 'dhl-for-woocommerce'),
+				'description'       => __( 'Select language of the tracking link page.', 'dhl-for-woocommerce' ),
+				'desc_tip'          => true,
+				'options'           => [
+					'de' => 'German',
+					'en' => 'English'
+				],
+				'class'				=> 'wc-enhanced-select',
+				'default'           => 'de',
+			),
 			'dhl_create_label_on_status' => array(
 				'title'             => __( 'Create Label on Status', 'dhl-for-woocommerce' ),
 				'type'              => 'select',

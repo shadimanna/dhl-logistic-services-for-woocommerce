@@ -107,7 +107,7 @@ class DHLPWC_Controller_Admin_Migrate
             return -1;
         }
 
-        $mid_date = DateTime::createFromFormat('d-m-Y', '1-6-2022');
+        $mid_date = DateTime::createFromFormat('d-m-Y', '1-5-2022');
         $mid_date->setTime(0, 0, 0);
         $mid_date_timestamp = $mid_date->getTimestamp();
 
