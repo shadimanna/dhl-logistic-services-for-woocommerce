@@ -387,7 +387,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			echo '<div class="shipment-dhl-row-container shipment-dhl-row-additional-services">';
 				echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon shipment-dhl-icon-additional-services"></span> ' . __( 'Additional Services', 'dhl-for-woocommerce' ) . '</div>';
 
-			$this->crossborder_and_domestic_fields( $dhl_label_items, $is_disabled );
+				$this->crossborder_and_domestic_fields( $dhl_label_items, $is_disabled );
 
 			echo '</div>'; // END -- Additional fields
 		}
@@ -396,44 +396,40 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 	public function crossborder_and_domestic_fields( $dhl_label_items, $is_disabled ){
 
-		// echo '<div class="shipment-dhl-row-container shipment-dhl-crossborder-domestic">';
-			// echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon shipment-dhl-icon-crossborder-domestic"></span> ' . __( 'Crossborder and Domestic', 'dhl-for-woocommerce' ) . '</div>';
+		woocommerce_wp_hidden_input( array(
+			'id'          		=> 'pr_dhl_email_notification',
+			'label'       		=> __( 'Email Notification:', 'dhl-for-woocommerce' ),
+			'placeholder' 		=> '',
+			'description'		=> '',
+			'value'       		=> isset( $dhl_label_items['pr_dhl_email_notification'] ) ? $dhl_label_items['pr_dhl_email_notification'] : false,
+		) );
 
-			woocommerce_wp_hidden_input( array(
-				'id'          		=> 'pr_dhl_email_notification',
-				'label'       		=> __( 'Email Notification:', 'dhl-for-woocommerce' ),
-				'placeholder' 		=> '',
-				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_email_notification'] ) ? $dhl_label_items['pr_dhl_email_notification'] : false,
-			) );
+		woocommerce_wp_checkbox( array(
+			'id'          		=> 'pr_dhl_additional_insurance',
+			'label'       		=> __( 'Additional Insurance:', 'dhl-for-woocommerce' ),
+			'placeholder' 		=> '',
+			'description'		=> '',
+			'value'       		=> isset( $dhl_label_items['pr_dhl_additional_insurance'] ) ? $dhl_label_items['pr_dhl_additional_insurance'] : $this->shipping_dhl_settings['dhl_default_additional_insurance'],
+			'custom_attributes'	=> array( $is_disabled => $is_disabled )
+		) );
 
-			woocommerce_wp_checkbox( array(
-				'id'          		=> 'pr_dhl_additional_insurance',
-				'label'       		=> __( 'Additional Insurance:', 'dhl-for-woocommerce' ),
-				'placeholder' 		=> '',
-				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_additional_insurance'] ) ? $dhl_label_items['pr_dhl_additional_insurance'] : $this->shipping_dhl_settings['dhl_default_additional_insurance'],
-				'custom_attributes'	=> array( $is_disabled => $is_disabled )
-			) );
+		woocommerce_wp_checkbox( array(
+			'id'          		=> 'pr_dhl_premium',
+			'label'       		=> __( 'Premium: ', 'dhl-for-woocommerce' ),
+			'placeholder' 		=> '',
+			'description'		=> '',
+			'value'       		=> isset( $dhl_label_items['pr_dhl_premium'] ) ? $dhl_label_items['pr_dhl_premium'] : $this->shipping_dhl_settings['dhl_default_premium'],
+			'custom_attributes'	=> array( $is_disabled => $is_disabled )
+		) );
 
-			woocommerce_wp_checkbox( array(
-				'id'          		=> 'pr_dhl_premium',
-				'label'       		=> __( 'Premium: ', 'dhl-for-woocommerce' ),
-				'placeholder' 		=> '',
-				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_premium'] ) ? $dhl_label_items['pr_dhl_premium'] : $this->shipping_dhl_settings['dhl_default_premium'],
-				'custom_attributes'	=> array( $is_disabled => $is_disabled )
-			) );
-
-			woocommerce_wp_checkbox( array(
-				'id'          		=> 'pr_dhl_bulky_goods',
-				'label'       		=> __( 'Bulky Goods: ', 'dhl-for-woocommerce' ),
-				'placeholder' 		=> '',
-				'description'		=> '',
-				'value'       		=> isset( $dhl_label_items['pr_dhl_bulky_goods'] ) ? $dhl_label_items['pr_dhl_bulky_goods'] : $this->shipping_dhl_settings['dhl_default_bulky_goods'],
-				'custom_attributes'	=> array( $is_disabled => $is_disabled )
-			) );
-		// echo '</div>';
+		woocommerce_wp_checkbox( array(
+			'id'          		=> 'pr_dhl_bulky_goods',
+			'label'       		=> __( 'Bulky Goods: ', 'dhl-for-woocommerce' ),
+			'placeholder' 		=> '',
+			'description'		=> '',
+			'value'       		=> isset( $dhl_label_items['pr_dhl_bulky_goods'] ) ? $dhl_label_items['pr_dhl_bulky_goods'] : $this->shipping_dhl_settings['dhl_default_bulky_goods'],
+			'custom_attributes'	=> array( $is_disabled => $is_disabled )
+		) );
 	}
 
 	protected function add_package_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
