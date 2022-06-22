@@ -79,6 +79,9 @@ More detailed instructions on how to set up your store and configure it are cons
 = 2.8.16 =
 * DHL Paket: Fix decimal field does not follow general decimal setting.
 * DHL Paket: Bump the tested up to.
+* DHL Paket: Change default export type to Sale of goods.
+* DHL Paket: Return cat/tags of parent for export description.
+* DHL Paket: Add setting for Tracking url language.
 
 = 2.8.15 =
 * DHL Paket: Fix for countries with no zip format. Error creating a label.
