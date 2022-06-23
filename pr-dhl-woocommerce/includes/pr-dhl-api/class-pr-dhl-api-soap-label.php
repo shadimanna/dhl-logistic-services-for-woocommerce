@@ -702,6 +702,11 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				$receiver_name2 = '';
 			}
 
+			$receiver_name3 = '';
+			if(  isset( $this->args['shipping_address']['name3'] ) && ! empty( $this->args['shipping_address']['name3'] ) ) {
+				$receiver_name3 = $this->args['shipping_address']['name3'];
+			}
+
 			$berlin_date = new DateTime('now', new DateTimeZone('Europe/Berlin') );
 
 
@@ -780,9 +785,9 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 												'Address' =>
 													array(
 														'name2' => $receiver_name2,
+														'name3' => $receiver_name3,
 														'streetName' => $this->args['shipping_address']['address_1'],
 														'streetNumber' => $this->args['shipping_address']['address_2'],
-														// 'addressAddition' => $this->args['shipping_address']['address_2'],
 														'zip' => $this->args['shipping_address']['postcode'],
 														'city' => $this->args['shipping_address']['city'],
 														'Origin' =>
