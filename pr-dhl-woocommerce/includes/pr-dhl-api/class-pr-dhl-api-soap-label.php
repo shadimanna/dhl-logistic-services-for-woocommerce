@@ -44,7 +44,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			switch ( $key ) {
 				case 'weight':
-					$this->validate( $value );
+					$this->validate( wc_format_decimal( $value ) );
 					break;
 				case 'hs_code':
 					$this->validate( $value, 'string', 4, 11 );

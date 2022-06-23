@@ -36,7 +36,7 @@ Please choose your preferred delivery option.', 'dhl-for-woocommerce'); ?></td>
       <td colspan="2">
         <?php echo sprintf(
           __( 'There is a surcharge of %s incl. VAT for this service.*', 'dhl-for-woocommerce' ),
-          wc_price($shipping_dhl_settings['dhl_preferred_day_cost']));
+          wc_price( wc_format_decimal( $shipping_dhl_settings['dhl_preferred_day_cost'] ) ) );
         ?>
       </td>
     </tr>

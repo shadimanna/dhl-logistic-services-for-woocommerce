@@ -5,9 +5,9 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 6.0
-Stable tag: 2.8.15
+Stable tag: 2.8.16
 WC requires at least: 3.0
-WC tested up to: 6.5.1
+WC tested up to: 6.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -75,6 +75,13 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
+
+= 2.8.16 =
+* DHL Paket: Fix decimal field does not follow general decimal setting.
+* DHL Paket: Bump the tested up to.
+* DHL Paket: Change default export type to Sale of goods.
+* DHL Paket: Return cat/tags of parent for export description.
+* DHL Paket: Add setting for Tracking url language.
 
 = 2.8.15 =
 * DHL Paket: Fix for countries with no zip format. Error creating a label.

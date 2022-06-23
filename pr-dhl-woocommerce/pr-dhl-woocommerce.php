@@ -7,10 +7,10 @@
  * Author URI: http://dhl.com/
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
- * Version: 2.8.15
+ * Version: 2.8.16
  * Tested up to: 6.0
  * WC requires at least: 3.0
- * WC tested up to: 6.5.1
+ * WC tested up to: 6.6
  * Requires at least: 4.6
  *
  * This program is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "2.8.15";
+	private $version = "2.8.16";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
