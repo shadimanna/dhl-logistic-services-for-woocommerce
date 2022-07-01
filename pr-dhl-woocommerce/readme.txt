@@ -78,8 +78,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 = 2.8.17 =
 * DHL Paket: Add wizard modal box for the first install only.
-* DHL Paket: Separate the settings section using tabs.
-* DHL Paket: Add icons for each order section.
+* DHL Paket: Organize the settings UI section into tabs.
+* DHL Paket: Organize the order label UI into logical sections.
+* DHL Paket: Add support for "name3" in the API.
 
 = 2.8.16 =
 * DHL Paket: Fix decimal field does not follow general decimal setting.
