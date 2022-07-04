@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL P
 Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 6.0
-Stable tag: 2.8.17
+Stable tag: 2.9.0
 WC requires at least: 3.0
 WC tested up to: 6.6
 License: GPLv2 or later
@@ -76,7 +76,7 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
-= 2.8.17 =
+= 2.9.0 =
 * DHL Paket: Add wizard modal box for the first install only.
 * DHL Paket: Organize the settings UI section into tabs.
 * DHL Paket: Organize the order label UI into logical sections.
