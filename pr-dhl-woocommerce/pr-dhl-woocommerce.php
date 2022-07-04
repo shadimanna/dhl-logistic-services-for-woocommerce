@@ -7,10 +7,10 @@
  * Author URI: http://dhl.com/
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
- * Version: 2.8.16
+ * Version: 2.9.0
  * Tested up to: 6.0
  * WC requires at least: 3.0
- * WC tested up to: 6.5.1
+ * WC tested up to: 6.6
  * Requires at least: 4.6
  *
  * This program is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "2.8.16";
+	private $version = "2.9.0";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -224,6 +224,8 @@ class PR_DHL_WC {
         add_action( 'wp_ajax_test_dhl_connection', array( $this, 'test_dhl_connection_callback' ) );
         // Add state field for 'VN'
         add_filter( 'woocommerce_states', array( $this, 'add_vn_states' ) );
+
+		add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ) );
     }
 
 	public function get_pr_dhl_wc_order() {
@@ -309,6 +311,10 @@ class PR_DHL_WC {
 					PR_DHL_VERSION
 				);
 				// wp_localize_script( 'wc-shipment-dhl-paket-settings-js', 'dhl_paket_settings_obj', PR_DHL_WC_Method_Paket::sandbox_info() );
+
+				if ( empty( get_option( 'woocommerce_pr_dhl_paket_settings', array() ) ) ) {
+					$this->wizard_enqueue_scripts();
+				}
 			}
 
             wp_enqueue_script(
@@ -320,6 +326,45 @@ class PR_DHL_WC {
             wp_localize_script( 'wc-shipment-dhl-testcon-js', 'dhl_test_con_obj', $test_con_data );
         }
 
+	}
+
+	public function wizard_enqueue_scripts() {
+		wp_enqueue_style( 'wc-shipment-lib-wizard-css', PR_DHL_PLUGIN_DIR_URL . '/assets/css/wizard.library.css' );
+		wp_enqueue_style( 'wc-shipment-dhl-wizard-css', PR_DHL_PLUGIN_DIR_URL . '/assets/css/pr-dhl-wizard.css' );
+		wp_enqueue_script(
+			'wc-shipment-lib-wizard-js',
+			PR_DHL_PLUGIN_DIR_URL . '/assets/js/wizard.library.js',
+			array(),
+			PR_DHL_VERSION
+		);
+		wp_enqueue_script(
+			'wc-shipment-dhl-wizard-js',
+			PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-wizard.js',
+			array(),
+			PR_DHL_VERSION,
+			true
+		);
+	}
+
+	/**
+	 * Add class in admin body tag.
+	 * 
+	 * @param $classes string Registered classes.
+	 *
+	 * @return $classes
+	 */
+	public function add_admin_body_class( $classes ) {
+		$screen    = get_current_screen();
+        $screen_id = $screen ? $screen->id : '';
+
+        if ( 'woocommerce_page_wc-settings' === $screen_id ) {
+
+			if( isset( $_GET['section'] ) && $_GET['section'] == 'pr_dhl_paket' ){
+				$classes .= ' pr_dhl_paket';
+			}
+		}
+		
+		return $classes;
 	}
 
 	/**
