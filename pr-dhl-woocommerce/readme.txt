@@ -1,4 +1,4 @@
-=== DHL for WooCommerce ===
+=== DHL Shipping Germany for WooCommerce ===
 Contributors: DHL, shadim, utzfu
 Donate link: 
 Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL Paket Germany, WooCommerce, Woocom, Woo Commerce, Shipping, shiping, label creation, label printing, DHL Paket
