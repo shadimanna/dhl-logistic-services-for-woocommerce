@@ -507,6 +507,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		}
 
 		$parent_product_id = 0;
+		$parent_product = null;
 		if ( $product->get_type() === 'variation' ) {
 			 $parent_product_id = $product->get_parent_id();
 		}
@@ -541,7 +542,14 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				}
 				break;
 			case 'product_name':
-				array_push( $desc_array, $product->get_title() );
+				if ( $product->is_type('variation') ) {
+					$parent_product = wc_get_product( $parent_product_id );
+					$variation_title = wc_get_formatted_variation( $product, true, false );
+					$product_name = $parent_product->get_title().' : '.$variation_title;
+				} else {
+					$product_name = $product->get_title();
+				}
+				array_push( $desc_array, $product_name);
 				break;
 
 		}
