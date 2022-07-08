@@ -637,21 +637,24 @@ class PR_DHL_WC {
 	 */
 	public function is_shipping_domestic( $country_receiver ) {
 
+		$is_domestic = false;
+
 		// If base is US territory
 		if( in_array( $this->base_country_code, $this->us_territories ) ) {
 
 			// ...and destination is US territory, then it is "domestic"
 			if( in_array( $country_receiver, $this->us_territories ) ) {
-				return true;
+				$is_domestic = true;
 			} else {
-				return false;
+				$is_domestic = false;
 			}
 
 		} elseif( $country_receiver == $this->base_country_code ) {
-			return true;
+			$is_domestic = true;
 		} else {
-			return false;
+			$is_domestic = false;
 		}
+		return apply_filters( 'pr_dhl_is_domestic_shipment', (bool)$is_domestic, $country_receiver );
 	}
 
 	/**
@@ -659,21 +662,24 @@ class PR_DHL_WC {
 	 */
 	public function is_crossborder_shipment( $country_receiver ) {
 
+		$is_crossborder = false;
 		if ($this->is_shipping_domestic( $country_receiver )) {
-			return false;
+			$is_crossborder = false;
+		} else {
+			// Is sender country in EU...
+			if ( in_array( $this->base_country_code, $this->eu_iso2 ) ) {
+				// ... and receiver country is in EU means NOT crossborder!
+				if ( in_array( $country_receiver, $this->eu_iso2 ) ) {
+					$is_crossborder = false;
+				} else {
+					$is_crossborder = true;
+				}
+			} else {
+				$is_crossborder = true;
+			}
 		}
 
-		// Is sender country in EU...
-		if ( in_array( $this->base_country_code, $this->eu_iso2 ) ) {
-			// ... and receiver country is in EU means NOT crossborder!
-			if ( in_array( $country_receiver, $this->eu_iso2 ) ) {
-				return false;
-			} else {
-				return true;
-			}
-		} else {
-			return true;
-		}
+		return apply_filters( 'pr_dhl_is_crossborder_shipment', (bool)$is_crossborder, $country_receiver );
 	}
 
 	public function get_eu_iso2() {
