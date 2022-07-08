@@ -594,8 +594,11 @@ abstract class PR_DHL_WC_Order {
 		$shipping_address = $order->get_address( 'shipping' );
 		$shipping_country = $shipping_address['country'];
 
-		$is_domestic = PR_DHL()->is_shipping_domestic( $shipping_country );
-		return apply_filters( 'pr_shipping_dhl_is_domestic_shipment', (bool)$is_domestic, $shipping_country, $order_id );
+		if( PR_DHL()->is_shipping_domestic( $shipping_country ) ) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	protected function is_crossborder_shipment( $order_id ) {
@@ -603,8 +606,11 @@ abstract class PR_DHL_WC_Order {
 		$shipping_address = $order->get_address( 'shipping' );
 		$shipping_country = $shipping_address['country'];
 
-		$is_crossborder = PR_DHL()->is_crossborder_shipment( $shipping_country );
-		return apply_filters( 'pr_shipping_dhl_is_crossborder_shipment', (bool)$is_crossborder, $shipping_country, $order_id );
+		if( PR_DHL()->is_crossborder_shipment( $shipping_country ) ) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	// This function gathers all of the data from WC to send to DHL API
