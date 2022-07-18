@@ -140,6 +140,31 @@ class DHLPWC_Model_Service_Order_Meta_Option extends DHLPWC_Model_Core_Singleton
         return true;
     }
 
+    public function default_pers_note($order_id, $options, $to_business)
+    {
+        $service = DHLPWC_Model_Service_Access_Control::instance();
+        $send_pers_note_checked = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DEFAULT_PERS_NOTE);
+        if (!$send_pers_note_checked) {
+            return false;
+        }
+
+        $allowed_shipping_options = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_CAPABILITY_ORDER_OPTIONS, array(
+            'order_id'    => $order_id,
+            'options'     => $options,
+            'to_business' => $to_business,
+        ));
+
+        $exclusions = $this->get_exclusions($allowed_shipping_options, $options);
+
+        // Disable automatic checking of personal note if there are no parceltypes for it
+        if (!array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PERS_NOTE, $allowed_shipping_options)
+            || in_array(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PERS_NOTE, $exclusions)) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function default_order_id_reference($order_id, $options, $to_business)
     {
         $service = DHLPWC_Model_Service_Access_Control::instance();

@@ -245,6 +245,13 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'description' => __("When creating a label, always select the age check 18+ option by default if the service is available.", 'dhlpwc'),
                     'default'     => 'no',
                 ),
+                'check_default_pers_note' => array(
+                    'title'       => __('Always enable message to the recipient if available', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Enable', 'dhlpwc'),
+                    'description' => __("When creating a label, always select the message to the recipient option by default if the service is available.", 'dhlpwc'),
+                    'default'     => 'no',
+                ),
                 'check_default_order_id_reference' => array(
                     'title'       => __('Automatically add the order number as a reference, if possible', 'dhlpwc'),
                     'type'        => 'checkbox',

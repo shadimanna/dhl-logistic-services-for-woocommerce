@@ -1,5 +1,9 @@
 # DHL Parcel for WooCommerce
  
+v2.0.5
+## Changes
+- Updated the migration notice when to change colors
+ 
 v2.0.4
 ## Changes
 - Updated tracking url for Belgium

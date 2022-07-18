@@ -342,6 +342,12 @@ class DHLPWC_Controller_Admin_Order_Metabox
             }
 
             // Default option settings
+            $default_pers_note = $option_service->default_pers_note($order_id, $preselected_options, $to_business);
+            if ($default_pers_note) {
+                $option_service->add_key_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PERS_NOTE, $preselected_options);
+            }
+
+            // Default option settings
             $default_order_id_reference = $option_service->default_order_id_reference($order_id, $preselected_options, $to_business);
             if ($default_order_id_reference) {
                 $option_service->add_key_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_REFERENCE, $preselected_options);

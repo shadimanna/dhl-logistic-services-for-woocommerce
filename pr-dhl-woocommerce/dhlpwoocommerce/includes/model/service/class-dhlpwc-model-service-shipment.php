@@ -284,6 +284,12 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
             }
 
             // Default option settings
+            $default_pers_note = $option_service->default_pers_note($order_id, $preselected_options, $to_business);
+            if ($default_pers_note) {
+                $option_service->add_key_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PERS_NOTE, $preselected_options);
+            }
+
+            // Default option settings
             $default_return = $option_service->default_return($order_id, $preselected_options, $to_business);
             if ($default_return) {
                 $option_service->add_key_to_stack(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_ADD_RETURN_LABEL, $preselected_options);
