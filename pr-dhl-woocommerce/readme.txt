@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL Paket Germany, WooCommerce, W
 Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 6.0
-Stable tag: 2.9.1
+Stable tag: 2.9.2
 WC requires at least: 3.0
 WC tested up to: 6.6
 License: GPLv2 or later
@@ -75,6 +75,12 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
+ 
+= 2.9.2 =
+* DHL Parcel: Added a setting to automatically enable the service: send a message to recipient
+* DHL Parcel: Improved street and housenumber parsing
+* DHL Parcel: Fixed an issue with price rules in shipping zones not using the right delimiter settings
+* DHL Parcel: Tested for WordPress 6.0
 
 = 2.9.1 =
 * DHL Paket: Modify plugin title

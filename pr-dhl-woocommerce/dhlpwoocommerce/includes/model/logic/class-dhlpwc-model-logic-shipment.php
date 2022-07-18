@@ -221,6 +221,8 @@ class DHLPWC_Model_Logic_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
     protected function prepare_street_address($address)
     {
         $skip_addition_check = false;
+        $skip_reverse_check = false;
+        $cutout = '';
 
         if (!isset($address['street'])) {
             $address['street'] = trim(join(' ', array(
@@ -228,18 +230,37 @@ class DHLPWC_Model_Logic_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
                 isset($address['address_2']) ? trim($address['address_2']) : ''
             )));
 
-            // Determine if we need to cutoff the first word from parsing (when contains digit AND number)
-            $raw_parts = explode(' ', trim($address['street']));
-            $street_prefix = '';
-            $street_first_word = reset($raw_parts);
-            preg_match('/[0-9]+[a-zA-Z]+/i', trim($street_first_word), $first_word_parts);
-            if (!empty($first_word_parts)) {
-                $street_prefix = $street_first_word . ' ';
-                unset($raw_parts[key($raw_parts)]);
-            }
-            $raw = implode(' ', $raw_parts);
+            // Cutout starting special numbers from regular parsing logic
+            $parsable_parts = explode(' ', trim($address['street']), 2);
 
-            preg_match('/([^0-9]*)\s*(.*)/i', trim($raw), $street_parts);
+            // Check if it has a number with letters
+            if (preg_match('/[0-9]+[a-z]+/i', reset($parsable_parts)) === 1) {
+                $cutout = reset($parsable_parts) . ' ';
+                $skip_reverse_check = true;
+                unset($parsable_parts[0]);
+
+            // Check if it has a number with more than just letters, but also other available numbers
+            } else if (preg_match('/[0-9]+[^0-9]+/', reset($parsable_parts)) === 1 && preg_match('/\d/', end($parsable_parts)) === 1) {
+                $cutout = reset($parsable_parts) . ' ';
+                $skip_reverse_check = true;
+                unset($parsable_parts[0]);
+
+            // Check if it has something before a number
+            } else if (preg_match('/[^0-9]+[0-9]+/', reset($parsable_parts)) === 1) {
+                $cutout = reset($parsable_parts) . ' ';
+                $skip_reverse_check = true;
+                unset($parsable_parts[0]);
+
+            // Check if starts with number (with anything), but also has numbers in the rest of the address
+            } else if (preg_match('/[^0-9]*[0-9]+[^0-9]*/', reset($parsable_parts)) === 1 && preg_match('/\d/', end($parsable_parts)) === 1) {
+                $cutout = reset($parsable_parts) . ' ';
+                $skip_reverse_check = true;
+                unset($parsable_parts[0]);
+            }
+
+            $parsable_street = implode(' ', $parsable_parts);
+
+            preg_match('/([^0-9]*)\s*(.*)/', trim($parsable_street), $street_parts);
             $address = array_merge($address, [
                 'street' => isset($street_parts[1]) ? trim($street_parts[1]) : '',
                 'number' => isset($street_parts[2]) ? trim($street_parts[2]) : '',
@@ -247,33 +268,58 @@ class DHLPWC_Model_Logic_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
             ]);
 
             // Check if $street is empty
-            if (strlen($address['street']) === 0) {
+            if (strlen($address['street']) === 0 && !$skip_reverse_check) {
                 // Try a reverse parse
-                preg_match('/([\d]+[\w.-]*)\s*(.*)/i', trim($raw), $street_parts);
+                preg_match('/([\d]+[\w.-]*)\s*(.*)/i', trim($parsable_street), $street_parts);
                 $address['street'] = isset($street_parts[2]) ? trim($street_parts[2]) : '';
                 $address['number'] = isset($street_parts[1]) ? trim($street_parts[1]) : '';
                 $skip_addition_check = true;
             }
 
-            // Check if $number has numbers
-            if (preg_match("/\d/", $address['number']) !== 1) {
-                $address['street'] = trim($raw);
+            // Check if $number has no numbers
+            if (preg_match('/\d/', $address['number']) === 0) {
+                $address['street'] = trim($parsable_street);
                 $address['number'] = '';
+
+            // Addition check
             } else if (!$skip_addition_check) {
-                preg_match('/([\d]+)[ .-]*(.*)/i', $address['number'], $number_parts);
-                $address['number'] = isset($number_parts[1]) ? trim($number_parts[1]) : '';
-                $address['addition'] = isset($number_parts[2]) ? trim($number_parts[2]) : '';
+                // If there are no letters, but has additional spaced numbers, use last number as number, no addition
+                preg_match('/([^a-z]+)\s+([\d]+)$/i', $address['number'], $number_parts);
+                if (isset($number_parts[2])) {
+                    $address['street'] .= ' ' . $number_parts[1];
+                    $address['number'] = $number_parts[2];
+
+                // Regular number / addition split
+                } else {
+                    preg_match('/([\d]+)[ .-]*(.*)/i', $address['number'], $number_parts);
+                    $address['number'] = isset($number_parts[1]) ? trim($number_parts[1]) : '';
+                    $address['addition'] = isset($number_parts[2]) ? trim($number_parts[2]) : '';
+                }
             }
 
             // Reassemble street
             if (isset($address['street'])) {
-                $address['street'] = $street_prefix . $address['street'];
+                $address['street'] = $cutout . $address['street'];
             }
         }
 
         // Be sure these fields are filled
         $address['number'] = isset($address['number']) ? $address['number'] : '';
         $address['addition'] = isset($address['addition']) ? $address['addition'] : '';
+
+        // Clean any starting punctuations
+        preg_match('/^[[:punct:]\s]+(.*)/', $address['street'], $clean_street);
+        if (isset($clean_street[1])) {
+            $address['street'] = $clean_street[1];
+        }
+        preg_match('/^[[:punct:]\s]+(.*)/', $address['number'], $clean_number);
+        if (isset($clean_number[1])) {
+            $address['number'] = $clean_number[1];
+        }
+        preg_match('/^[[:punct:]\s]+(.*)/', $address['addition'], $clean_addition);
+        if (isset($clean_addition[1])) {
+            $address['addition'] = $clean_addition[1];
+        }
 
         return $address;
     }

@@ -99,6 +99,33 @@ class DHLPWC_Model_Service_Settings extends DHLPWC_Model_Core_Singleton_Abstract
         return $shipping_method['printer_id'];
     }
 
+    public function format_shipping_zones_settings($setting)
+    {
+        if (!is_string($setting)) {
+            return $setting;
+        }
+
+        $data = json_decode($setting, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return $setting;
+        }
+
+        if (!is_array($data)) {
+            return $setting;
+        }
+
+        foreach ($data as $key => $value) {
+            if (!isset($value['input_action']) || !isset($value['input_action_data'])) {
+                continue;
+            }
+
+            $data[$key] = $this->format_option_condition($value);
+        }
+
+        return json_encode($data);
+    }
+
     public function format_settings($data)
     {
         if (!is_array($data)) {
