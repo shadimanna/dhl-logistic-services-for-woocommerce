@@ -742,7 +742,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 											array(
 												'product' => $this->args['order_details']['dhl_product'],
 												'accountNumber' => $account_number,
-												'accountNumber' => $account_number,
 												'shipmentDate' => $berlin_date->format('Y-m-d'),
 												'ShipmentItem' =>
 													array(
