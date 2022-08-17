@@ -23,7 +23,8 @@ jQuery( function( $ ) {
 			wc_shipment_dhl_label_items.show_hide_routing();
 
 			$( '#woocommerce-shipment-dhl-label' )
-				.on( 'change', '#pr_dhl_product', this.validate_product_return );
+				.on( 'change', '#pr_dhl_product', this.validate_product_return )
+				.on( 'change', '#pr_dhl_product', this.enable_disable_PDDP );
 
 			$( '#woocommerce-shipment-dhl-label' )
 				.on( 'change', 'select#pr_dhl_total_packages', this.process_package_action );
@@ -509,6 +510,17 @@ jQuery( function( $ ) {
 			});
 
 			return false;
+		},
+
+		enable_disable_PDDP: function () {
+			var selected_product = $( '#pr_dhl_product' ).val();
+
+			if( selected_product === 'V53WPAK' ) {
+				$('#pr_dhl_PDDP').removeAttr('disabled');
+			} else {
+				$('#pr_dhl_PDDP').prop('disabled', 'disabled');
+				$('#pr_dhl_PDDP').prop( "checked", false );
+			}
 		},
 
 		enable_disable_duties: function () {
