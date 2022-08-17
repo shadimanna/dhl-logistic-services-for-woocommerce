@@ -469,7 +469,11 @@ jQuery( function( $ ) {
 						    });
 
 				    	});
-				    });
+
+						//Check PDDP service
+						wc_shipment_dhl_label_items.enable_disable_PDDP();
+						wc_shipment_dhl_label_items.enable_disable_duties();
+					});
 
 					$( '#dhl-label-print').remove();
 					$( '#shipment-dhl-label-form' ).append(dhl_label_data.main_button);
