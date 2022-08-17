@@ -520,6 +520,7 @@ jQuery( function( $ ) {
 			} else {
 				$('#pr_dhl_PDDP').prop('disabled', 'disabled');
 				$('#pr_dhl_PDDP').prop( "checked", false );
+				$('#pr_dhl_duties').removeAttr('disabled');
 			}
 		},
 
