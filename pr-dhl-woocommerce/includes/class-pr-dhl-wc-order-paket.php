@@ -1219,9 +1219,9 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 		if( $shipping_country == "GB" ) {
 			return true;
-		} else {
-			return false;
 		}
+        
+        return false;
 	}
 
 }
