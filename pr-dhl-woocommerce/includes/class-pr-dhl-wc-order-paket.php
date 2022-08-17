@@ -362,15 +362,17 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 
                     // PDDP
-                    $PDDP_enabled = isset( $dhl_label_items['pr_dhl_PDDP'] ) ? $dhl_label_items['pr_dhl_PDDP'] : '';
-                    woocommerce_wp_checkbox( array(
-                        'id'          		=> 'pr_dhl_PDDP',
-                        'label'       		=> __( 'POSTAL DELIVERED DUTY PAID: ', 'dhl-for-woocommerce' ),
-                        'placeholder' 		=> '',
-                        'description'		=> '',
-                        'value'       		=> $PDDP_enabled,
-                        'custom_attributes'	=> array( $is_disabled => $is_disabled )
-                    ) );
+                    if( $this->is_UK_shipment( $order_id ) ) {
+	                    $PDDP_enabled = $dhl_label_items['pr_dhl_PDDP'] ?? '';
+	                    woocommerce_wp_checkbox( array(
+		                    'id'          		=> 'pr_dhl_PDDP',
+		                    'label'       		=> __( 'POSTAL DELIVERED DUTY PAID: ', 'dhl-for-woocommerce' ),
+		                    'placeholder' 		=> '',
+		                    'description'		=> '',
+		                    'value'       		=> $PDDP_enabled,
+		                    'custom_attributes'	=> array( $is_disabled => $is_disabled )
+	                    ) );
+                    }
 
 					// Duties drop down
 					$duties_opt = $dhl_obj->get_dhl_duties();
@@ -1207,6 +1209,18 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			?>
 		</div>
 		<?php
+		}
+	}
+
+	protected function is_UK_shipment( $order_id ) {
+		$order = wc_get_order( $order_id );
+		$shipping_address = $order->get_address( 'shipping' );
+		$shipping_country = $shipping_address['country'];
+
+		if( $shipping_country == "GB" ) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 
