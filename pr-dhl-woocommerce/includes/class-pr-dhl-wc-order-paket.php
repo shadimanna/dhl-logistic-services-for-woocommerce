@@ -365,7 +365,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
                     $PDDP_enabled = isset( $dhl_label_items['pr_dhl_PDDP'] ) ? $dhl_label_items['pr_dhl_PDDP'] : '';
                     woocommerce_wp_checkbox( array(
                         'id'          		=> 'pr_dhl_PDDP',
-                        'label'       		=> __( 'PDDP: ', 'dhl-for-woocommerce' ),
+                        'label'       		=> __( 'POSTAL DELIVERED DUTY PAID: ', 'dhl-for-woocommerce' ),
                         'placeholder' 		=> '',
                         'description'		=> '',
                         'value'       		=> $PDDP_enabled,
