@@ -45,7 +45,7 @@ class PR_DHL_Front_End_Paket {
 								);
 
 		$this->cdp_service = array(
-								'pr_dhl_cdp' => __('Delivery option', 'dhl-for-woocommerce')
+								'pr_dhl_delivery_option' => __('Delivery option', 'dhl-for-woocommerce')
 		);
 	}
 
@@ -302,7 +302,8 @@ class PR_DHL_Front_End_Paket {
 
 	protected function validate_cdp_available( ) {
 		$shipping_country = WC()->customer->get_shipping_country();
-		if( $shipping_country == 'SE' || $shipping_country == 'FI' || $shipping_country == 'BE' || $shipping_country == 'AT' ) {
+		$valid_countries = array('SE', 'FI', 'BE', 'AT');
+		if( in_array($shipping_country,$valid_countries) ) {
 			// Check if COD payment gateway selected
 			$wc_payment_dhl = $this->shipping_dhl_settings['dhl_payment_gateway'];
 			$chosen_payment_method = WC()->session->get( 'chosen_payment_method' );

@@ -16,8 +16,8 @@ $logo_url = PR_DHL_PLUGIN_DIR_URL . '/assets/img/dhl-official.png';
                         type="radio"
                         name="pr_dhl_delivery_option"
                         data-index="0" id="dhl_home_deliver_option"
-                        value="0"
-                        class="home_deliver" >
+                        value="home_deliver"
+                        class="" >
                 <label for="dhl_home_deliver_option"><?php _e('Home delivery', 'dhl-for-woocommerce'); ?></label>
             </li>
             <li>
