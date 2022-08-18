@@ -60,7 +60,6 @@ class PR_DHL_Front_End_Paket {
 
 		if( $this->is_cdp_enabled() ) {
 			add_action( 'woocommerce_review_order_after_shipping', array( $this, 'add_cdp_fields' ) );
-			add_action( 'woocommerce_checkout_process', array( $this, 'verify_cdp_fields' ) );
 			add_action( 'woocommerce_checkout_order_processed', array( $this, 'process_cdp_fields' ), 10, 2 );
 		}
 
@@ -447,7 +446,7 @@ class PR_DHL_Front_End_Paket {
 		}
 	}
 
-	public function verify_cdp_fields() {
+	public function prepare_cdp_fields() {
 		// save the posted preferences to the order so can be used when generating label
 		$dhl_label_options = array();
 		if ( ! isset( $_POST ) ) {
@@ -465,7 +464,7 @@ class PR_DHL_Front_End_Paket {
 
 	public function process_cdp_fields( $order_id, $posted ) {
 		// save the posted preferences to the order so can be used when generating label
-		$dhl_label_options = $this->verify_cdp_fields();
+		$dhl_label_options = $this->prepare_cdp_fields();
 
 		if( !empty($dhl_label_options)) {
 			PR_DHL()->get_pr_dhl_wc_order()->save_dhl_label_items( $order_id, $dhl_label_options );
