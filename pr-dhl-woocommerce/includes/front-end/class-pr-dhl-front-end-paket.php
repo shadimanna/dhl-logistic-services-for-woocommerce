@@ -45,7 +45,7 @@ class PR_DHL_Front_End_Paket {
 								);
 
 		$this->cdp_service = array(
-								'pr_dhl_delivery_option' => __('Delivery option', 'dhl-for-woocommerce')
+								'pr_dhl_cdp_delivery' => __('Delivery option', 'dhl-for-woocommerce')
 		);
 	}
 

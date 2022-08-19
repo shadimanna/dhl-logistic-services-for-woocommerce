@@ -1205,7 +1205,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
     public function is_cdp_delivery( $dhl_label_items ) {
 
-	    if( isset($dhl_label_items['pr_dhl_delivery_option']) && "cpd" === $dhl_label_items['pr_dhl_delivery_option'] ){
+	    if( isset($dhl_label_items['pr_dhl_cdp_delivery']) && "yes" === $dhl_label_items['pr_dhl_cdp_delivery'] ){
             return true;
 	    }
 

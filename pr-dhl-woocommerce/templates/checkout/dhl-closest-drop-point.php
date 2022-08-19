@@ -14,18 +14,18 @@ $logo_url = PR_DHL_PLUGIN_DIR_URL . '/assets/img/dhl-official.png';
                 <input
                         checked="checked"
                         type="radio"
-                        name="pr_dhl_delivery_option"
+                        name="pr_dhl_cdp_delivery"
                         data-index="0" id="dhl_home_deliver_option"
-                        value="home_deliver"
+                        value="no"
                         class="" >
                 <label for="dhl_home_deliver_option"><?php _e('Home delivery', 'dhl-for-woocommerce'); ?></label>
             </li>
             <li>
                 <input
                         type="radio"
-                        name="pr_dhl_delivery_option"
+                        name="pr_dhl_cdp_delivery"
                         data-index="0" id="dhl_cdp_option"
-                        value="cdp"
+                        value="yes"
                         class="" >
                 <label for="dhl_cdp_option"><?php _e('Closest Drop Point', 'dhl-for-woocommerce'); ?></label>
             </li>
