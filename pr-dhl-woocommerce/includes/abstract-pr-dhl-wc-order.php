@@ -503,7 +503,13 @@ abstract class PR_DHL_WC_Order {
 	 * @return void
 	 */
 	public function save_dhl_label_items( $order_id, $tracking_items ) {
-		update_post_meta( $order_id, '_pr_shipment_dhl_label_items', $tracking_items );
+		$dhl_label_items = get_post_meta( $order_id, '_pr_shipment_dhl_label_items', true );
+        if( !is_array( $dhl_label_items ) || empty( $dhl_label_items ) ){
+	        update_post_meta( $order_id, '_pr_shipment_dhl_label_items', $tracking_items );
+        } else {
+            $dhl_label_items = array_merge( $dhl_label_items, $tracking_items );
+            update_post_meta( $order_id, '_pr_shipment_dhl_label_items', $dhl_label_items );
+        }
 	}
 
 	/*
