@@ -1214,6 +1214,11 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 	protected function is_UK_shipment( $order_id ) {
 		$order = wc_get_order( $order_id );
+
+		if ( ! is_a( $order, 'WC_Order' ) ) {
+			return false;
+		}
+
 		$shipping_address = $order->get_address( 'shipping' );
 		$shipping_country = $shipping_address['country'];
 
