@@ -1217,7 +1217,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$shipping_address = $order->get_address( 'shipping' );
 		$shipping_country = $shipping_address['country'];
 
-		if( $shipping_country == "GB" ) {
+		if( 'GB' === $shipping_country ) {
 			return true;
 		}
         

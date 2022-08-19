@@ -519,7 +519,7 @@ jQuery( function( $ ) {
 		enable_disable_PDDP: function () {
 			var selected_product = $( '#pr_dhl_product' ).val();
 
-			if( selected_product === 'V53WPAK' ) {
+			if( 'V53WPAK' === selected_product ) {
 				$('#pr_dhl_PDDP').removeAttr('disabled');
 			} else {
 				$('#pr_dhl_PDDP').prop('disabled', 'disabled');
