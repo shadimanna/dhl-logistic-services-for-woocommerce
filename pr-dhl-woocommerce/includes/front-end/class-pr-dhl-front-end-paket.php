@@ -114,7 +114,7 @@ class PR_DHL_Front_End_Paket {
 
 	protected function is_cdp_enabled() {
 
-		if( isset( $this->shipping_dhl_settings['dhl_closest_drop_point'] ) && ( $this->shipping_dhl_settings['dhl_closest_drop_point'] == 'yes' )  ) {
+		if( isset( $this->shipping_dhl_settings['dhl_closest_drop_point'] ) && ( 'yes' === $this->shipping_dhl_settings['dhl_closest_drop_point'] )  ) {
 			return true;
 		}
 
