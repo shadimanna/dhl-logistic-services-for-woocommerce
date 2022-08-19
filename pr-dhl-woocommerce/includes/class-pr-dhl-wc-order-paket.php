@@ -396,6 +396,15 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 	public function crossborder_and_domestic_fields( $dhl_label_items, $is_disabled ){
 
+		woocommerce_wp_checkbox( array(
+			'id'          		=> 'pr_dhl_cdp_delivery',
+			'label'       		=> esc_html__( 'Closest drop-point delivery: ', 'dhl-for-woocommerce' ),
+			'placeholder' 		=> '',
+			'description'		=> '',
+			'value'       		=> $this->is_cdp_delivery( $dhl_label_items ) ? $dhl_label_items['pr_dhl_cdp_delivery'] : "",
+			'custom_attributes'	=> array( $is_disabled => $is_disabled )
+		) );
+
 		woocommerce_wp_hidden_input( array(
 			'id'          		=> 'pr_dhl_email_notification',
 			'label'       		=> __( 'Email Notification:', 'dhl-for-woocommerce' ),
@@ -517,7 +526,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	 * Function for saving tracking items
 	 */
 	public function get_additional_meta_ids( ) {
-		return array( 'pr_dhl_cod_value', 'pr_dhl_preferred_day', 'pr_dhl_preferred_location', 'pr_dhl_preferred_neighbor', 'pr_dhl_duties', 'pr_dhl_age_visual', 'pr_dhl_email_notification', 'pr_dhl_additional_insurance', 'pr_dhl_personally', 'pr_dhl_no_neighbor', 'pr_dhl_named_person', 'pr_dhl_premium', 'pr_dhl_bulky_goods', 'pr_dhl_is_codeable', 'pr_dhl_identcheck', 'pr_dhl_identcheck_dob', 'pr_dhl_identcheck_age', 'pr_dhl_return_address_enabled', 'pr_dhl_return_name', 'pr_dhl_return_company', 'pr_dhl_return_address','pr_dhl_return_address_no', 'pr_dhl_return_address_city', 'pr_dhl_return_address_state', 'pr_dhl_return_address_zip', 'pr_dhl_return_phone', 'pr_dhl_return_email', 'pr_dhl_routing', 'pr_dhl_routing_email', 'pr_dhl_total_packages', 'pr_dhl_multi_packages_enabled', 'pr_dhl_packages_number', 'pr_dhl_packages_weight', 'pr_dhl_packages_length', 'pr_dhl_packages_width', 'pr_dhl_packages_height', 'pr_dhl_invoice_num', 'pr_dhl_description' );
+		return array( 'pr_dhl_cdp_delivery', 'pr_dhl_cod_value', 'pr_dhl_preferred_day', 'pr_dhl_preferred_location', 'pr_dhl_preferred_neighbor', 'pr_dhl_duties', 'pr_dhl_age_visual', 'pr_dhl_email_notification', 'pr_dhl_additional_insurance', 'pr_dhl_personally', 'pr_dhl_no_neighbor', 'pr_dhl_named_person', 'pr_dhl_premium', 'pr_dhl_bulky_goods', 'pr_dhl_is_codeable', 'pr_dhl_identcheck', 'pr_dhl_identcheck_dob', 'pr_dhl_identcheck_age', 'pr_dhl_return_address_enabled', 'pr_dhl_return_name', 'pr_dhl_return_company', 'pr_dhl_return_address','pr_dhl_return_address_no', 'pr_dhl_return_address_city', 'pr_dhl_return_address_state', 'pr_dhl_return_address_zip', 'pr_dhl_return_phone', 'pr_dhl_return_email', 'pr_dhl_routing', 'pr_dhl_routing_email', 'pr_dhl_total_packages', 'pr_dhl_multi_packages_enabled', 'pr_dhl_packages_number', 'pr_dhl_packages_weight', 'pr_dhl_packages_length', 'pr_dhl_packages_width', 'pr_dhl_packages_height', 'pr_dhl_invoice_num', 'pr_dhl_description' );
 	}
 
 	protected function get_tracking_url() {

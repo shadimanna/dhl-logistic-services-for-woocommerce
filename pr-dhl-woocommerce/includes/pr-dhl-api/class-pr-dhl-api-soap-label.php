@@ -582,7 +582,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
                                                     'name' => 'ParcelOutletRouting'
                                 ),
 								'cdp_delivery'   => array(
-									'name' => 'CDP'
+													'name' => 'CDP'
 								)
 								);
 
