@@ -451,8 +451,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			throw new Exception( __('Post Number is missing, it is mandatory for "Packstation" delivery.', 'dhl-for-woocommerce') );
 		}
 
-		// Check address 2 if no parcel shop is being selected
-		if ( ! $this->pos_ps && ! $this->pos_rs && ! $this->pos_po ) {
+		// Check address 2 if inside Germany and no parcel shop is being selected
+		if ( 'DE' === $args['shipping_address']['country'] && ! $this->pos_ps && ! $this->pos_rs && ! $this->pos_po ) {
 			// If address 2 missing, set last piece of an address to be address 2
 			if ( empty( $args['shipping_address']['address_2'] )) {
 			    $set_key = false;
