@@ -85,6 +85,14 @@ class PR_DHL_WC {
 	// 'LI', 'CH', 'NO'
 	protected $eu_iso2 = array( 'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SI', 'SK', 'ES', 'SE');
 
+    // Exceptions for EU that STILL require customs
+    protected $eu_exceptions = array(
+            'DK' => array(
+	            'Färöer' => '100/999', // 100 to 999
+                'Grönland' => '39xx' // any code start with 39
+            )
+    );
+
 	// These are all considered domestic by DHL
 	protected $us_territories = array( 'US', 'GU', 'AS', 'PR', 'UM', 'VI' );
 
@@ -702,16 +710,16 @@ class PR_DHL_WC {
 	/**
 	 * Function return whether the sender and receiver country is "crossborder" i.e. needs CUSTOMS declarations (outside EU)
 	 */
-	public function is_crossborder_shipment( $country_receiver ) {
+	public function is_crossborder_shipment( $shipping_address ) {
 
-		if ($this->is_shipping_domestic( $country_receiver )) {
+		if ($this->is_shipping_domestic( $shipping_address['country'] )) {
 			return false;
 		}
 
 		// Is sender country in EU...
 		if ( in_array( $this->base_country_code, $this->eu_iso2 ) ) {
 			// ... and receiver country is in EU means NOT crossborder!
-			if ( in_array( $country_receiver, $this->eu_iso2 ) ) {
+			if ( in_array( $shipping_address['country'], $this->eu_iso2 ) && !$this->is_eu_exception($shipping_address) ) {
 				return false;
 			} else {
 				return true;
@@ -720,6 +728,46 @@ class PR_DHL_WC {
 			return true;
 		}
 	}
+
+    public function is_eu_exception( $shipping_address ) {
+        if ( isset($this->eu_exceptions[$shipping_address['country']]) && isset( $this->eu_exceptions[$shipping_address['country']][$shipping_address['city']]) ) {
+
+            //Check if Postcode/ZIP is in exception list
+            $postcode = $shipping_address['postcode'];
+
+            // if postcode is not set
+            if('' === $postcode)
+                return true;
+
+	        // Multiple postcode
+	        $multi_postcode = explode("&", $postcode);
+            foreach ($multi_postcode as $true_postcode) {
+	            // Single postcode
+	            if($shipping_address['postcode'] == $true_postcode){
+		            return true;
+	            }
+
+	            // Postcode rage
+	            $postcode_range = explode("/", $true_postcode);
+	            if(count($postcode_range) > 1) {
+		            if($shipping_address['postcode'] >= $postcode_range[0] && $shipping_address['postcode'] <= $postcode_range[1]) {
+			            return true;
+		            }
+	            }
+
+	            // Postcode pattern
+	            // if postcode contains xx remove it
+	            if(false !== strpos('x', $true_postcode)){
+		            $postcode_start = str_replace('x', '', $true_postcode);
+		            if(0 === strpos($shipping_address['postcode'], $postcode_start)){
+			            return true;
+		            }
+	            }
+            }
+        }
+
+	    return false;
+    }
 
 	public function get_eu_iso2() {
 		return $this->eu_iso2;

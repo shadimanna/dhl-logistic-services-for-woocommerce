@@ -451,7 +451,7 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 
 		$uom 				= get_option( 'woocommerce_weight_unit' );
 		$label_format 		= $args['dhl_settings']['label_format'];
-        $is_cross_border 	= PR_DHL()->is_crossborder_shipment( $args['shipping_address']['country'] );
+        $is_cross_border 	= PR_DHL()->is_crossborder_shipment( $args['shipping_address'] );
 		try {
 			$item_info = new Item_Info( $args, $uom, $is_cross_border );
 		} catch (Exception $e) {

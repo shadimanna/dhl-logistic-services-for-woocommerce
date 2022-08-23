@@ -347,7 +347,7 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 				);
 
 			// Add customs info
-			if( PR_DHL()->is_crossborder_shipment( $this->args['shipping_address']['country'] ) ) {
+			if( PR_DHL()->is_crossborder_shipment( $this->args['shipping_address'] ) ) {
 
 				$customsDetails = array();
 				foreach ($this->args['items'] as $key => $item) {
