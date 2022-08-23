@@ -87,9 +87,47 @@ class PR_DHL_WC {
 
     // Exceptions for EU that STILL require customs
     protected $eu_exceptions = array(
+            //numeric key : no predefined states in WooCommerce for this country
             'DK' => array(
-	            'Färöer' => '100/999', // 100 to 999
-                'Grönland' => '39xx' // any code start with 39
+	            '100/999', // 100 to 999
+                '39xx' // any code start with 39
+            ),
+            'DE' => array(
+	            'DE-SH' => '27498', // Heligoland
+	            'DE-BW' => '78266&CH-8238' // 2 codes Büsingen am Hochrhein
+            ),
+            'FI' => array(
+	            '22xxx'
+            ),
+            'FR' => array(
+	            '987xx',
+                '988xx',
+                '973xx',
+                '971xx',
+                '972xx',
+                '976xx',
+                '974xx'
+            ),
+            //State without specific postcode
+            'GR' => array(
+	            '630 86' // Berg Athos
+            ),
+            'IT' => array(
+	            'SO' => '23041',
+                'CO' => '22061',
+            ),
+            'NL' => array(
+	            'Aruba' => '',
+	            'Bonaire' => '',
+	            'Curaçao' => '',
+	            'Saba' => '',
+	            'Sint Eustatius' => '',
+	            'Sint Maarten' => ''
+            ),
+            'ES' => array(
+	            'CE' => '51xxx',
+	            'ML' => '52xxx',
+                'GC' => '35xxx&38xxx',
             )
     );
 
@@ -730,40 +768,41 @@ class PR_DHL_WC {
 	}
 
     public function is_eu_exception( $shipping_address ) {
-        if ( isset($this->eu_exceptions[$shipping_address['country']]) && isset( $this->eu_exceptions[$shipping_address['country']][$shipping_address['city']]) ) {
+        if ( isset($this->eu_exceptions[$shipping_address['country']]) ) {
+            // if shipping postcode is not set check state also if EU exception state has no postcode return true.
+            if(isset( $this->eu_exceptions[$shipping_address['country']][$shipping_address['state']]) && ('' === $shipping_address['postcode'] || '' === $this->eu_exceptions[$shipping_address['country']][$shipping_address['state']])) {
+	            return true;
+            }
 
-            //Check if Postcode/ZIP is in exception list
-            $postcode = $shipping_address['postcode'];
-
-            // if postcode is not set
-            if('' === $postcode)
-                return true;
-
-	        // Multiple postcode
-	        $multi_postcode = explode("&", $postcode);
-            foreach ($multi_postcode as $true_postcode) {
-	            // Single postcode
-	            if($shipping_address['postcode'] == $true_postcode){
-		            return true;
-	            }
-
-	            // Postcode rage
-	            $postcode_range = explode("/", $true_postcode);
-	            if(count($postcode_range) > 1) {
-		            if($shipping_address['postcode'] >= $postcode_range[0] && $shipping_address['postcode'] <= $postcode_range[1]) {
+            //check country postcodes
+            foreach ($this->eu_exceptions[$shipping_address['country']] as $state => $postcode) {
+	            // Multiple postcode
+	            $exception_postcodes = explode("&", $postcode);
+	            foreach ($exception_postcodes as $true_postcode) {
+		            // Single postcode
+		            if($shipping_address['postcode'] == $true_postcode){
 			            return true;
 		            }
-	            }
 
-	            // Postcode pattern
-	            // if postcode contains xx remove it
-	            if(false !== strpos('x', $true_postcode)){
-		            $postcode_start = str_replace('x', '', $true_postcode);
-		            if(0 === strpos($shipping_address['postcode'], $postcode_start)){
-			            return true;
+		            // Postcode rage
+		            $postcode_range = explode("/", $true_postcode);
+		            if(count($postcode_range) > 1) {
+			            if($shipping_address['postcode'] >= $postcode_range[0] && $shipping_address['postcode'] <= $postcode_range[1]) {
+				            return true;
+			            }
+		            }
+
+		            // Postcode pattern
+		            // if postcode contains xx remove it
+		            if(false !== strpos($true_postcode, 'x')){
+			            $postcode_start = str_replace('x', '', $true_postcode);
+			            if(0 === strpos($shipping_address['postcode'], $postcode_start)){
+				            return true;
+			            }
 		            }
 	            }
             }
+
         }
 
 	    return false;
