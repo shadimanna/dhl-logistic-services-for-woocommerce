@@ -768,14 +768,17 @@ class PR_DHL_WC {
 	}
 
     public function is_eu_exception( $shipping_address ) {
-        if ( isset($this->eu_exceptions[$shipping_address['country']]) ) {
+        //Allow user to edit EU exception states
+        $eu_exception =  apply_filters( 'pr_dhl_eu_exceptions', $this->eu_exceptions );
+
+        if ( isset($eu_exception[$shipping_address['country']]) ) {
             // if shipping postcode is not set check state also if EU exception state has no postcode return true.
-            if(isset( $this->eu_exceptions[$shipping_address['country']][$shipping_address['state']]) && ('' === $shipping_address['postcode'] || '' === $this->eu_exceptions[$shipping_address['country']][$shipping_address['state']])) {
+            if(isset( $eu_exception[$shipping_address['country']][$shipping_address['state']]) && ('' === $shipping_address['postcode'] || '' === $this->eu_exceptions[$shipping_address['country']][$shipping_address['state']])) {
 	            return true;
             }
 
             //check country postcodes
-            foreach ($this->eu_exceptions[$shipping_address['country']] as $state => $postcode) {
+            foreach ($eu_exception[$shipping_address['country']] as $state => $postcode) {
 	            // Multiple postcode
 	            $exception_postcodes = explode("&", $postcode);
 	            foreach ($exception_postcodes as $true_postcode) {
@@ -802,7 +805,6 @@ class PR_DHL_WC {
 		            }
 	            }
             }
-
         }
 
 	    return false;
