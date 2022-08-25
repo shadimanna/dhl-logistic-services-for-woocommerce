@@ -678,8 +678,10 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
 		$api_client->remove_item_from_order( $item_barcode );
 
-		delete_post_meta( $order_id, 'pr_dhl_dp_item_barcode' );
-		delete_post_meta( $order_id, 'pr_dhl_dp_item_id' );
+		$order = wc_get_order( $order_id );
+		$order->delete_meta_data( 'pr_dhl_dp_item_barcode' );
+		$order->delete_meta_data( 'pr_dhl_dp_item_id' );
+		$order->save();
 
 		// continue as usual
 		parent::delete_label_ajax();

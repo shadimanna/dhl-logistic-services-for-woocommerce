@@ -1045,8 +1045,9 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 					$message = sprintf( __( 'DHL pickup scheduled for %s', 'dhl-for-woocommerce' ), $response_pickup_date );
 					$order->add_order_note( $message );
 
-				   	update_post_meta( $order_id, '_pr_dhl_pickup_order_number', $response_pickup_order_number  );
-					update_post_meta( $order_id, '_pr_dhl_pickup_date', $response_pickup_date  );
+					$order->update_meta_data( '_pr_dhl_pickup_order_number', $response_pickup_order_number );
+					$order->update_meta_data( '_pr_dhl_pickup_date', $response_pickup_date );
+					$order->save();
 
 					$order_numbers[] = $order->get_order_number();
 				}
