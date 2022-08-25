@@ -356,9 +356,7 @@ class DHLPWC_Model_Service_Order_Meta_Option extends DHLPWC_Model_Core_Singleton
         } else {
             $connectors_data['id'] = $value;
         }
-	    $order = wc_get_order( $order_id );
-	    $order->update_meta_data( self::ORDER_CONNECTORS_DATA, $connectors_data );
-	    $order->save();
+        update_post_meta($order_id, self::ORDER_CONNECTORS_DATA, $connectors_data);
     }
 
     protected function get_exclusions($allowed_shipping_options, $options)

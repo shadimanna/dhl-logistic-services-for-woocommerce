@@ -43,22 +43,17 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
             'timestamp' => strtotime($date . ' ' . $start_time . ' ' . wc_timezone_string()),
         ));
 
-	    $order = wc_get_order( $order_id );
-	    $order->update_meta_data( self::ORDER_CONNECTORS_DATE_PREFERENCE, date_create_from_format('d-m-Y', $date)->format('Y-m-d') );
-	    $order->update_meta_data( self::ORDER_TIME_SELECTION, $meta_object->to_array() );
-        return $order->save();
+        update_post_meta($order_id, self::ORDER_CONNECTORS_DATE_PREFERENCE, date_create_from_format('d-m-Y', $date)->format('Y-m-d'));
+        return update_post_meta($order_id, self::ORDER_TIME_SELECTION, $meta_object->to_array());
     }
 
-	/**
-	 * @param $order_id
-	 *
-	 * @return int
-	 */
+    /**
+     * @param $order_id
+     * @return bool
+     */
     public function delete_order_time_selection($order_id)
     {
-	    $order = wc_get_order( $order_id );
-	    $order->delete_meta_data( self::ORDER_TIME_SELECTION );
-	    return $order->save();
+        return delete_post_meta($order_id, self::ORDER_TIME_SELECTION);
     }
 
     /**
