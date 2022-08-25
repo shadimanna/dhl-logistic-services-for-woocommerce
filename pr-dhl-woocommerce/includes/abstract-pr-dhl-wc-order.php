@@ -1,5 +1,5 @@
 <?php
-use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
+use PR\DHL\Utils\COTUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -80,7 +80,7 @@ abstract class PR_DHL_WC_Order {
 	 * @access public
 	 */
 	public function add_meta_box() {
-		$screen = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+		$screen = COTUtil::custom_orders_table_usage_is_enabled()
 			? wc_get_page_screen_id( 'shop-order' )
 			: 'shop_order';
 		add_meta_box( 'woocommerce-shipment-dhl-label', sprintf( __( '%s Label & Tracking', 'dhl-for-woocommerce' ), $this->service), array( $this, 'meta_box' ), $screen, 'side', 'high' );
