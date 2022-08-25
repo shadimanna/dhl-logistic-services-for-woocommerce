@@ -27,7 +27,9 @@ class DHLPWC_Model_Logic_Order_Meta extends DHLPWC_Model_Core_Singleton_Abstract
         }
         /** @var DHLPWC_Model_Meta_Abstract $meta_object */
         $stack[$stack_id] = $meta_object->to_array();
-        update_post_meta($order_id, $meta_key, $stack);
+	    $order = wc_get_order( $order_id );
+	    $order->update_meta_data( $meta_key, $stack );
+	    $order->save();
         return $stack_id;
     }
 
@@ -42,8 +44,10 @@ class DHLPWC_Model_Logic_Order_Meta extends DHLPWC_Model_Core_Singleton_Abstract
             $merged_object = new $class($merged_data);
             $stack[$stack_id] = $merged_object->to_array();
 
-            update_post_meta($order_id, $meta_key, $stack);
-            return $merged_object;
+	        $order = wc_get_order( $order_id );
+	        $order->update_meta_data( $meta_key, $stack );
+	        $order->save();
+	        return $merged_object;
         }
         return false;
     }
@@ -59,7 +63,9 @@ class DHLPWC_Model_Logic_Order_Meta extends DHLPWC_Model_Core_Singleton_Abstract
         $stack[$stack_id] = null;
         unset($stack[$stack_id]);
 
-        update_post_meta($order_id, $meta_key, $stack);
+	    $order = wc_get_order( $order_id );
+	    $order->update_meta_data( $meta_key, $stack );
+	    $order->save();
 
         return $object;
     }

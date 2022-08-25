@@ -458,7 +458,9 @@ abstract class PR_DHL_WC_Order {
 			$tracking_items['label_path'] = wp_slash( $tracking_items['label_path'] );
 		}
 
-		update_post_meta( $order_id, '_pr_shipment_dhl_label_tracking', $tracking_items );
+		$order = wc_get_order( $order_id );
+		$order->update_meta_data( '_pr_shipment_dhl_label_tracking', $tracking_items );
+		$order->save();
 
 		$tracking_details = array(
 			'carrier' 			=> $this->carrier,
@@ -489,8 +491,9 @@ abstract class PR_DHL_WC_Order {
 	 * @return void
 	 */
 	public function delete_dhl_label_tracking( $order_id ) {
-		delete_post_meta( $order_id, '_pr_shipment_dhl_label_tracking' );
-
+		$order = wc_get_order( $order_id );
+		$order->delete_meta_data( '_pr_shipment_dhl_label_tracking' );
+		$order->save();
 		do_action( 'pr_delete_dhl_label_tracking', $order_id );
 	}
 
@@ -503,7 +506,9 @@ abstract class PR_DHL_WC_Order {
 	 * @return void
 	 */
 	public function save_dhl_label_items( $order_id, $tracking_items ) {
-		update_post_meta( $order_id, '_pr_shipment_dhl_label_items', $tracking_items );
+		$order = wc_get_order( $order_id );
+		$order->update_meta_data( '_pr_shipment_dhl_label_items', $tracking_items );
+		$order->save();
 	}
 
 	/*

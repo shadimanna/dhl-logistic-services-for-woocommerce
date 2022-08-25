@@ -517,7 +517,9 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 				array_push( $dhl_products, $dhl_label_product );
 
 				// Add post meta to identify if added to handover or not
-				update_post_meta( $order_id, '_pr_shipment_dhl_handover_note', 1 );
+				$order = wc_get_order( $order_id );
+				$order->update_meta_data( '_pr_shipment_dhl_handover_note', 1 );
+				$order->save();
 			}
 			// There should a unique list of products listed not one for each order!
 			$dhl_products = array_unique($dhl_products);
