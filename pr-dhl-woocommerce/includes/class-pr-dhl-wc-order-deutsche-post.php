@@ -1,5 +1,5 @@
 <?php
-use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
+use PR\DHL\Utils\COTUtil;
 
 if ( ! defined( 'ABSPATH' ) || class_exists( 'PR_DHL_WC_Order_Ecomm', false ) ) {
 	exit;
@@ -153,7 +153,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 * Adds the DHL order info meta box to the WooCommerce order page.
 	 */
 	public function add_dhl_order_meta_box() {
-		$screen = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+		$screen = COTUtil::custom_orders_table_usage_is_enabled()
 			? wc_get_page_screen_id( 'shop-order' )
 			: 'shop_order';
 		add_meta_box(
