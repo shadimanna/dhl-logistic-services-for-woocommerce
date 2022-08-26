@@ -142,7 +142,8 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 */
 	protected function can_delete_label($order_id) {
 		$dhl_obj = PR_DHL()->get_dhl_factory();
-		$dhl_order_id = get_post_meta( $order_id, 'pr_dhl_dp_order', true );
+		$order = wc_get_order( $order_id );
+		$dhl_order_id = $order->get_meta('pr_dhl_dp_order');
 		$dhl_order = $dhl_obj->api_client->get_order($dhl_order_id);
 		$dhl_order_created = !empty($dhl_order['shipments']);
 
@@ -339,7 +340,9 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
 		// Get the DHL order that this WooCommerce order was submitted in
 		$dhl_obj = PR_DHL()->get_dhl_factory();
-		$dhl_order_id = get_post_meta( $wc_order_id, 'pr_dhl_dp_order', true );
+
+		$order = $theorder ?? wc_get_order( $wc_order_id );
+		$dhl_order_id = $order->get_meta(  'pr_dhl_dp_order' );
 		$dhl_order = $dhl_obj->api_client->get_order($dhl_order_id);
 
 		$dhl_items = $dhl_order['items'];
@@ -525,7 +528,8 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		check_ajax_referer( 'pr_dhl_order_ajax', 'pr_dhl_order_nonce' );
 		$order_id = wc_clean( $_POST[ 'order_id' ] );
 
-		$item_barcode = get_post_meta( $order_id, 'pr_dhl_dp_item_barcode', true );
+		$order = wc_get_order( $order_id );
+		$item_barcode = $order->get_meta('pr_dhl_dp_item_barcode' );
 
 		if ( ! empty( $item_barcode ) ) {
 			PR_DHL()->get_dhl_factory()->api_client->add_item_to_order( $item_barcode, $order_id );
@@ -671,8 +675,9 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		$api_client = PR_DHL()->get_dhl_factory()->api_client;
 
 		// If the order has an associated DHL item ...
-		$dhl_item_id = get_post_meta( $order_id, 'pr_dhl_dp_item_id', true);
-		$item_barcode = get_post_meta( $order_id, 'pr_dhl_dp_item_barcode', true);
+		$order = wc_get_order( $order_id );
+		$dhl_item_id = $order->get_meta('pr_dhl_dp_item_id' );
+		$item_barcode = $order->get_meta('pr_dhl_dp_item_barcode' );
 
 		if ( ! empty( $dhl_item_id ) ) {
 			// Delete it from the API
@@ -683,8 +688,6 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		}
 
 		$api_client->remove_item_from_order( $item_barcode );
-
-		$order = wc_get_order( $order_id );
 		$order->delete_meta_data( 'pr_dhl_dp_item_barcode' );
 		$order->delete_meta_data( 'pr_dhl_dp_item_id' );
 		$order->save();
@@ -729,7 +732,8 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	protected function get_tracking_link( $order_id )
 	{
 		// Get the item barcode
-		$barcode = get_post_meta( $order_id,'pr_dhl_dp_item_barcode', true );
+		$order = wc_get_order( $order_id );
+		$barcode = $order->get_meta('pr_dhl_dp_item_barcode' );
 		if ( empty( $barcode ) ) {
 			return '';
 		}
@@ -878,8 +882,9 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 * @throws Exception If failed to get the DHL object from the factory.
 	 */
 	private function get_order_status( $order_id ) {
-		$barcode = get_post_meta( $order_id, 'pr_dhl_dp_item_barcode', true );
-		$awb = get_post_meta( $order_id, 'pr_dhl_dp_awb', true );
+		$order = wc_get_order( $order_id );
+		$barcode = $order->get_meta('pr_dhl_dp_item_barcode' );
+		$awb = $order->get_meta('pr_dhl_dp_awb' );
 
 		if ( !empty( $awb ) ) {
 			return self::STATUS_IN_SHIPMENT;
@@ -954,7 +959,8 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			// Ensure the selected orders have a label created, otherwise don't add them to the order
 			
 			foreach ( $order_ids as $order_id ) {
-				$item_barcode = get_post_meta( $order_id, 'pr_dhl_dp_item_barcode', true );
+				$order = wc_get_order( $order_id );
+				$item_barcode = $order->get_meta('pr_dhl_dp_item_barcode' );
 				// If item has no barcode, return the error message
 				if ( empty( $item_barcode ) ) {
 					return __(
@@ -1028,7 +1034,8 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 				}
 
 				// Get the DHL item barcode for this WC order
-				$item_barcode = get_post_meta( $order_id, 'pr_dhl_dp_item_barcode', true );
+				$order = wc_get_order( $order_id );
+				$item_barcode = $order->get_meta('pr_dhl_dp_item_barcode' );
 				// Add the DHL item barcode to the current DHL order
 				$client->add_item_to_order($item_barcode, $order_id);
 			}

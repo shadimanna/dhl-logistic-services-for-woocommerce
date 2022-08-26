@@ -516,7 +516,8 @@ abstract class PR_DHL_WC_Order {
 	 * @return tracking items
 	 */
 	public function get_dhl_label_tracking( $order_id ) {
-		return get_post_meta( $order_id, '_pr_shipment_dhl_label_tracking', true );
+		$order = wc_get_order( $order_id );
+		return $order->get_meta('_pr_shipment_dhl_label_tracking' );
 	}
 
 	/**
@@ -560,7 +561,8 @@ abstract class PR_DHL_WC_Order {
 	 * @return label items
 	 */
 	public function get_dhl_label_items( $order_id ) {
-		return get_post_meta( $order_id, '_pr_shipment_dhl_label_items', true );
+		$order = wc_get_order( $order_id );
+		return $order->get_meta('_pr_shipment_dhl_label_items' );
 	}
 
 	/*
@@ -783,7 +785,7 @@ abstract class PR_DHL_WC_Order {
 		}
 
 		// Check if post number exists then send over
-		if( $shipping_dhl_postnum = get_post_meta( $order_id, '_shipping_dhl_postnum', true ) ) {
+		if( $shipping_dhl_postnum = $order->get_meta('_shipping_dhl_postnum' ) ) {
 			$shipping_address['dhl_postnum'] = $shipping_dhl_postnum;
 		}
 
