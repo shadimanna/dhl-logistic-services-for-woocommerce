@@ -318,7 +318,8 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 		$order_id = isset( $args[ 'order_details' ][ 'order_id' ] )
 			? $args[ 'order_details' ][ 'order_id' ]
 			: null;
-		$item_barcode = get_post_meta( $order_id, 'pr_dhl_dp_item_barcode', true );
+		$order = wc_get_order( $order_id );
+		$item_barcode = $order->get_meta('pr_dhl_dp_item_barcode' );
 
 		// If order has no saved barcode, create the DHL item and get the barcode
 		if ( empty( $item_barcode ) ) {
@@ -335,7 +336,6 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 			$item_id = $item_response->id;
 
 			// Save it in the order
-			$order = wc_get_order( $order_id );
 			$order->update_meta_data( 'pr_dhl_dp_item_barcode', $item_barcode );
 			$order->update_meta_data( 'pr_dhl_dp_item_id', $item_id );
 			$order->save();

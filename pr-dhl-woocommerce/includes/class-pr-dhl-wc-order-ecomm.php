@@ -331,7 +331,8 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 	}
 
 	private function get_hangover_status( $order_id ) {
-		$handover = get_post_meta( $order_id, '_pr_shipment_dhl_handover_note', true );
+		$order = wc_get_order( $order_id );
+		$handover = $order->get_meta('_pr_shipment_dhl_handover_note' );
 
 		if( empty( $handover ) ) {
 			return '<strong>&ndash;</strong>';

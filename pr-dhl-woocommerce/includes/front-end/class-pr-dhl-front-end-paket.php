@@ -853,7 +853,7 @@ class PR_DHL_Front_End_Paket {
 		$pos_po = PR_DHL()->is_post_office( $address['address_1'] );
 
 		if( ($pos_ps || $pos_rs || $pos_po ) &&
-			( ! empty( $shipping_dhl_postnum = get_post_meta( $order_id, '_shipping_dhl_postnum', true ) ) ) ) {
+			( ! empty( $shipping_dhl_postnum = $order->get_meta('_shipping_dhl_postnum') ) ) ) {
 			$address['dhl_postnum'] = $shipping_dhl_postnum;
 		}
 
