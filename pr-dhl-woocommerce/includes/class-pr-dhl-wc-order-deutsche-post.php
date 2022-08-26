@@ -168,9 +168,9 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
 	public function change_meta_box_title( $text ){
 
-		global $pagenow;
-	
-		if (( $pagenow == 'post.php' ) && (get_post_type() == 'shop_order')) {
+		global $pagenow,$theorder;
+
+		if (( $pagenow == 'post.php' ) && (get_post_type() == 'shop_order') || ( $theorder instanceof WC_Order )) {
 			if( $text == '%s Label & Tracking' ){
 				$text = '%s Label';
 			}
@@ -327,8 +327,10 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			}
 			// Otherwise get the current post ID
 			else {
-				global $post;
-				$wc_order_id = $post->ID;
+				global $post,$theorder;
+				$wc_order_id = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+					? $theorder->get_id()
+					: $post->ID;
 			}
 		}
 
@@ -843,9 +845,11 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	}
 
 	public function add_order_status_column_content( $column ) {
-		global $post;
+		global $post, $theorder;
 
-		$order_id = $post->ID;
+		$order_id = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+			? $theorder->get_id()
+			: $post->ID;
 
 		if ( !$order_id ) {
 			return;

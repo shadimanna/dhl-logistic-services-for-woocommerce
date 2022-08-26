@@ -92,9 +92,11 @@ abstract class PR_DHL_WC_Order {
 	 * @access public
 	 */
 	public function meta_box() {
-		global $woocommerce, $post;
+		global $woocommerce, $post, $theorder;
 
-		$order_id = $post->ID;
+		$order_id = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+			? $theorder->get_id()
+			: $post->ID;
 		// Get saved label input fields or set default values
 		$dhl_label_items = $this->get_dhl_label_items( $order_id );
 
