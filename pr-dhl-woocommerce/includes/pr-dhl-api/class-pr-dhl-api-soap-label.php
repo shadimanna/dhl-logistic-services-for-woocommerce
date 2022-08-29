@@ -464,28 +464,28 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
                     // Break address into pieces by '.'
                     $address_exploded = explode('.', $args['shipping_address']['address_1']);
 					// Check if address 2 empty and its in Germany
-                    if( count($address_exploded) == 1 && 'DE' === $args['shipping_address']['country'] ) {
+	                if ( 1 === count( $address_exploded ) && 'DE' === $args['shipping_address']['country'] ) {
                         throw new Exception(__('Shipping "Address 2" is empty!', 'dhl-for-woocommerce'));
                     }
                 }
 
-				if( count($address_exploded) > 1 ) {
+				if ( count( $address_exploded ) > 1 ) {
 					// Loop through address and set number value only...
 					// ...last found number will be 'address_2'
-					foreach ($address_exploded as $address_key => $address_value) {
-						if (is_numeric($address_value)) {
+					foreach ( $address_exploded as $address_key => $address_value ) {
+						if ( is_numeric( $address_value ) ) {
 							// Set last index as street number
 							$set_key = $address_key;
 						}
 					}
 
 					// If no number was found, then take last part of address no matter what it is
-					if( $set_key === false ) {
+					if( false === $set_key ) {
 						$set_key = $address_key;
 					}
 
 					// The number is the first part of address 1
-					if( $set_key == 0 ) {
+					if( 0 === $set_key ) {
 						// Set "address_2" first, as first part
 						$args['shipping_address']['address_2'] = implode( ' ', array_slice( $address_exploded, 0, 1 ) );
 						// Remove "address_2" from "address_1"
