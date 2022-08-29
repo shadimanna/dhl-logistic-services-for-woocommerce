@@ -35,6 +35,7 @@ if (!class_exists('DHLPWC_Model_Service_Label_Metabox')) :
             DHLPWC_Model_Meta_Order_Option_Preference::OPTION_S,
             //DHLPWC_Model_Meta_Order_Option_Preference::OPTION_IS_BULKY,
             DHLPWC_Model_Meta_Order_Option_Preference::OPTION_AGE_CHECK,
+            DHLPWC_Model_Meta_Order_Option_Preference::OPTION_BMC,
         );
 
         public function order_labels($order_id, $labels)

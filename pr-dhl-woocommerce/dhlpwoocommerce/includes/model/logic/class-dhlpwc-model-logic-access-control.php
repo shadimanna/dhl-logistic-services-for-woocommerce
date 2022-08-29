@@ -750,6 +750,25 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         return true;
     }
 
+    public function check_same_day_as_time_window()
+    {
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
+
+        if (empty($shipping_method)) {
+            return true;
+        }
+
+        if (!isset($shipping_method['same_day_as_time_window'])) {
+            return true;
+        }
+
+        if ($shipping_method['same_day_as_time_window'] == 'no') {
+            return false;
+        }
+
+        return true;
+    }
+
     public function check_delivery_times_active()
     {
         if (!$this->check_delivery_times_enabled()) {

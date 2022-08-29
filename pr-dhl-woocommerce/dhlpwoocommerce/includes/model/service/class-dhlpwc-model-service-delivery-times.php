@@ -15,6 +15,9 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
     const SHIPPING_PRIORITY_TODAY = 'shipping_priority_today';
     const SHIPPING_PRIORITY_ASAP = 'shipping_priority_asap';
 
+    CONST DEFAULT_SELECTION_SDD = 'sdd';
+    const DEFAULT_SELECTION_HOME = 'home';
+
     /**
      * @param $order_id
      * @param $data
@@ -149,6 +152,54 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
      * @param DHLPWC_Model_Data_Delivery_Time[] $delivery_times
      * @return DHLPWC_Model_Data_Delivery_Time[] array
      */
+    public function remove_same_day_time_frame($delivery_times, $no_neighbour = fals)
+    {
+        $service = DHLPWC_Model_Service_Shipping_Preset::instance();
+        if ($no_neighbour) {
+            $code_same_day = 'no_neighbour_same_day';
+        } else {
+            $code_same_day = 'same_day';
+        }
+        $preset = $service->find_preset($code_same_day);
+        $same_day_id = $preset->frontend_id;
+
+        foreach ($delivery_times as $k => $delivery_time) {
+            if ($delivery_time->preset_frontend_id == $same_day_id) {
+                unset($delivery_times[$k]);
+            }
+        }
+
+        return $delivery_times;
+    }
+
+    /**
+     * @param DHLPWC_Model_Data_Delivery_Time[] $delivery_times
+     * @return DHLPWC_Model_Data_Delivery_Time|false
+     */
+    public function get_same_day_time_frame($delivery_times, $no_neighbour = false)
+    {
+        $service = DHLPWC_Model_Service_Shipping_Preset::instance();
+        if ($no_neighbour) {
+            $code_same_day = 'no_neighbour_same_day';
+        } else {
+            $code_same_day = 'same_day';
+        }
+        $preset = $service->find_preset($code_same_day);
+        $same_day_id = $preset->frontend_id;
+
+        foreach ($delivery_times as $k => $delivery_time) {
+            if ($delivery_time->preset_frontend_id == $same_day_id) {
+                return $delivery_time;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param DHLPWC_Model_Data_Delivery_Time[] $delivery_times
+     * @return DHLPWC_Model_Data_Delivery_Time[] array
+     */
     public function filter_time_frames($delivery_times, $no_neighbour = false, $selected = null)
     {
         $filtered_times = array();
@@ -221,6 +272,12 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
                         // Check if same day shipping is allowed
                         if ($same_day_enabled && $same_day_allowed) {
                             $delivery_time->preset_frontend_id = $same_day_id;
+
+                            if ($selected === null && $this->get_default_time_window_selection() === self::DEFAULT_SELECTION_SDD) {
+                                $selected = true;
+                                $delivery_time->selected = true;
+                            }
+
                             $filtered_times[] = $delivery_time;
                         }
                     }
@@ -245,7 +302,7 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
                                 $delivery_time->preset_frontend_id = $home_id;
 
                                 // Auto-select first default entry (non-evening) if no selection has been made
-                                if ($selected === null) {
+                                if ($selected === null && $this->get_default_time_window_selection() === self::DEFAULT_SELECTION_HOME) {
                                     $selected = true;
                                     $delivery_time->selected = true;
                                 }
@@ -314,6 +371,28 @@ class DHLPWC_Model_Service_Delivery_Times extends DHLPWC_Model_Core_Singleton_Ab
             }
         }
         return $check_allowed;
+    }
+
+    public function get_default_time_window_selection()
+    {
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
+
+        if (empty($shipping_method)) {
+            return self::DEFAULT_SELECTION_HOME;
+        }
+
+        if (!isset($shipping_method['delivery_times_default'])) {
+            return self::DEFAULT_SELECTION_HOME;
+        }
+
+        if ($shipping_method['delivery_times_default'] == '') {
+            return self::DEFAULT_SELECTION_HOME;
+        }
+        if ($shipping_method['delivery_times_default'] == DHLPWC_Model_Service_Delivery_Times::DEFAULT_SELECTION_SDD) {
+            return self::DEFAULT_SELECTION_SDD;
+        }
+
+        return self::DEFAULT_SELECTION_HOME;
     }
 
     protected function get_minimum_timestamp($code)

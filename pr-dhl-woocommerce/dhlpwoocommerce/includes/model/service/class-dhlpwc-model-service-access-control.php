@@ -40,6 +40,7 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
     const ACCESS_CHECKOUT_PARCELSHOP = 'checkout_parcelshop';
 
     const ACCESS_DELIVERY_TIMES = 'delivery_times';
+    const ACCESS_SAME_DAY_AS_TIME_WINDOW = 'same_day_as_time_window';
     const ACCESS_DELIVERY_TIMES_ACTIVE = 'delivery_times_active';
     const ACCESS_SHIPPING_DAY = 'shipping_day';
 
@@ -214,6 +215,11 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
             case self::ACCESS_DELIVERY_TIMES:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
                 return $logic->check_delivery_times_enabled();
+                break;
+
+            case self::ACCESS_SAME_DAY_AS_TIME_WINDOW:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_same_day_as_time_window();
                 break;
 
             case self::ACCESS_DELIVERY_TIMES_ACTIVE:
