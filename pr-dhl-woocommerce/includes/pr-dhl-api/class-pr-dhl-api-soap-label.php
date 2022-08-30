@@ -12,7 +12,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 	 */
 	//const PR_DHL_WSDL_LINK = 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/3.1/geschaeftskundenversand-api-3.1.wsdl';
 
-	const PR_DHL_WSDL_LINK = PR_DHL_PLUGIN_DIR_PATH . '/includes/pr-dhl-api/wsdl/3.2/geschaeftskundenversand-api-3.2.0.wsdl';
+	const PR_DHL_WSDL_LINK = PR_DHL_PLUGIN_DIR_PATH . '/includes/pr-dhl-api/wsdl/3.3.2/geschaeftskundenversand-api-3.3.2.wsdl';
 
 	const DHL_RETURN_PRODUCT = '07';
 
@@ -578,12 +578,15 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 								'identcheck' => array(
 													'name' => 'IdentCheck'
 													),
-                                'routing'   => array(
-                                                    'name' => 'ParcelOutletRouting'
-                                ),
-								'cdp_delivery'   => array(
+                'routing'   => array(
+                          'name' => 'ParcelOutletRouting'
+                           ),
+                'PDDP'   => array(
+                          'name' => 'PDDP'
+                          ),
+                'cdp_delivery'   => array(
 													'name' => 'CDP'
-								)
+                          )								
 								);
 
 			$services = array();
@@ -744,7 +747,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 										'ShipmentDetails' =>
 											array(
 												'product' => $this->args['order_details']['dhl_product'],
-												'accountNumber' => $account_number,
 												'accountNumber' => $account_number,
 												'shipmentDate' => $berlin_date->format('Y-m-d'),
 												'ShipmentItem' =>
