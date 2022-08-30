@@ -578,12 +578,15 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 								'identcheck' => array(
 													'name' => 'IdentCheck'
 													),
-                                'routing'   => array(
-                                                    'name' => 'ParcelOutletRouting'
-                                ),
-                                'PDDP'   => array(
-                                                     'name' => 'PDDP'
-                                )
+                'routing'   => array(
+                          'name' => 'ParcelOutletRouting'
+                           ),
+                'PDDP'   => array(
+                          'name' => 'PDDP'
+                          ),
+                'cdp_delivery'   => array(
+													'name' => 'CDP'
+                          )								
 								);
 
 			$services = array();
