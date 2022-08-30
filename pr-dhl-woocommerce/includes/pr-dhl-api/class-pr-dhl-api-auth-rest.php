@@ -59,7 +59,7 @@ class PR_DHL_API_Auth_REST {
 	private function __clone() { }
    	
    	// Stopping unserialize of object
-	private function __wakeup() { }
+	public function __wakeup() { }
 
 	public static function get_instance( ) {
 
