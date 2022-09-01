@@ -456,6 +456,10 @@ class PR_DHL_WC {
 		return apply_filters( 'pr_shipping_dhl_base_country', $country_code['country'] );
 	}
 
+    public function get_base_postcode() {
+        return apply_filters( 'pr_shipping_dhl_base_postcode', get_option( 'woocommerce_store_postcode' ) );
+    }
+
 	/**
 	 * Create a DHL object from the factory based on country.
 	 */
@@ -723,8 +727,12 @@ class PR_DHL_WC {
             $is_crossborder = false;
 		}
 
+        $base_address = [
+                'country' => $this->base_country_code,
+                'postcode'      => $this->get_base_postcode()
+        ];
 		// Is sender country in EU...
-		if ( in_array( $this->base_country_code, $this->eu_iso2 ) ) {
+		if ( in_array( $this->base_country_code, $this->eu_iso2 ) && !$this->is_eu_exception( $base_address ) ) {
 			// ... and receiver country is in EU means NOT crossborder!
 			if ( in_array( $shipping_address['country'], $this->eu_iso2 ) && !$this->is_eu_exception( $shipping_address ) ) {
                 $is_crossborder = false;
