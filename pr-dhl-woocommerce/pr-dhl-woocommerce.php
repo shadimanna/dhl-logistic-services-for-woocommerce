@@ -91,7 +91,7 @@ class PR_DHL_WC {
             'DE' => [ '27498', '78266', 'CH-8238' ],
             'FI' => [ '22' ],
             'FR' => [ '987', '988', '973', '971', '972', '976', '974' ],
-            'GR' => [ '630 86' ],
+            'GR' => [ '63086' ],
             'IT' => [ '23041', '22061' ],
             'ES' => [ '51', '52', '35', '38' ]
     );
@@ -733,13 +733,23 @@ class PR_DHL_WC {
 	}
 
     public function is_eu_exception( $shipping_address ) {
+        $shipping_postcode = trim( $shipping_address['postcode'] );
+
         //Allow user to edit EU exception states
         $eu_exception =  apply_filters( 'pr_dhl_eu_exceptions', $this->eu_exceptions );
 
         if ( isset( $eu_exception[ $shipping_address['country'] ] ) ) {
             //check country postcodes
             foreach ( $eu_exception[ $shipping_address['country'] ] as $postcode ) {
-                if( 0 === strpos( $shipping_address['postcode'], $postcode ) ){
+                // Postcode rage
+                $postcode_range = explode("-", $postcode);
+                if(count($postcode_range) > 1) {
+                    if( $shipping_postcode >= $postcode_range[0] && $shipping_postcode <= $postcode_range[1] ) {
+                        return true;
+                    }
+                }
+
+                if( 0 === strpos( $shipping_postcode, $postcode ) ){
                     return true;
                 }
             }
