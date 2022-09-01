@@ -4,7 +4,7 @@
  * Plugin URI:           https://www.dhlparcel.nl
  * Description:          This is the official DHL Parcel for WooCommerce plugin.
  * Author:               DHL Parcel
- * Version:              2.0.6
+ * Version:              2.0.7
  * Requires at least:    4.7.16
  * Tested up to:         6.0
  * Requires PHP:         5.6

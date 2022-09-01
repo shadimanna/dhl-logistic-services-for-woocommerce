@@ -42,6 +42,7 @@ class DHLPWC_Model_Service_Translation extends DHLPWC_Model_Core_Singleton_Abstr
                 DHLPWC_Model_Meta_Order_Option_Preference::OPTION_S                => __('Saturday delivery', 'dhlpwc'),
                 DHLPWC_Model_Meta_Order_Option_Preference::OPTION_AGE_CHECK        => __('Age check 18+', 'dhlpwc'),
                 DHLPWC_Model_Meta_Order_Option_Preference::OPTION_PERS_NOTE        => __('Message to the recipient', 'dhlpwc'),
+                DHLPWC_Model_Meta_Order_Option_Preference::OPTION_BMC              => __('Secure delivery by code', 'dhlpwc'),
             ];
         }
         if (!array_key_exists($key, $this->options)) {

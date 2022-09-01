@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-06-23 08:41+0200\n"
+"POT-Creation-Date: 2022-07-18 11:09+0200\n"
 "PO-Revision-Date: 2017-10-06 12:50+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.1\n"
+"X-Generator: Poedit 3.1.1\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;esc_attr_e;_n;_n:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -176,131 +176,131 @@ msgid ""
 "will still be added when shipping is free."
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:51
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:52
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:53
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:54
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:39
 msgid "DHL Parcel for WooCommerce"
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:51
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:52
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:53
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:54
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:39
 msgid "DHL for WooCommerce"
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:71
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:73
 msgid "Unknown tag"
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:97
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:99
 msgid "Connection successful"
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:97
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:99
 msgid "Authentication failed"
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:112
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:114
 msgid "Printers found"
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:112
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:114
 msgid "No printers found"
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:155
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:157
 msgid "Test connection and retrieve account data"
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:156
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:159
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:158
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:161
 msgid "Please wait..."
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:157
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:159
 msgid "Accounts found. Click to use."
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:158
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:160
 msgid "Search for printers linked to account"
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:160
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:162
 msgid "Printers found. Click to use."
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:161
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:163
 msgid ""
 "You need to check the same day delivery option to use this shipping "
 "method"
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:162
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:164
 msgid ""
 "You need to check the no neighbours same day delivery option to use "
 "this shipping method"
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:163
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:165
 msgid "You need to check this option to use the same day delivery"
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:164
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:166
 msgid ""
 "You need to check this option to use the no neighbour same day delivery"
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:165
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:167
 msgid "To customize this functionality, please use our filters."
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:166
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:168
 msgid "Click here for an example snippet"
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:262
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:271
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:274
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:277
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:264
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:273
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:276
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:279
 #, php-format
 msgid "Missing %1$s from %2$s"
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:262
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:264
 msgid "Country / State"
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:262
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:264
 msgid "General"
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:271
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:273
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:207
 msgid "UserID"
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:271
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:274
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:277
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:273
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:276
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:279
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:198
 msgid "Account details"
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:274
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:276
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:212
 msgid "Key"
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:277
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:279
 #: includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:222
 msgid "AccountID"
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:303
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:305
 msgid "View DHL Parcel for WooCommerce settings"
 msgstr ""
 
-#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:303
+#: includes/controller/admin/class-dhlpwc-controller-admin-settings.php:305
 msgid "View DHL for WooCommerce settings"
 msgstr ""
 
@@ -396,45 +396,45 @@ msgid ""
 "today"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:134
+#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:135
 #: includes/model/service/class-dhlpwc-model-service-translation.php:35
 msgid "Reference"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:155
+#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:156
 #: includes/model/service/class-dhlpwc-model-service-translation.php:36
 msgid "Second reference"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:162
+#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:163
 msgid "Message"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:178
+#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:179
 msgid "In euros (€)"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:241
+#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:242
 msgid "No matching capabilities found."
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:310
+#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:311
 msgid "Download PDF label"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:317
+#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:318
 msgid "Print PDF label"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:324
+#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:325
 msgid "Follow track & trace"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:330
+#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:331
 msgid "Delete PDF label"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:337
+#: includes/model/service/class-dhlpwc-model-service-label-metabox.php:338
 msgid "Show Label Request"
 msgstr ""
 
@@ -646,79 +646,83 @@ msgstr ""
 msgid "Message to the recipient"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-translation.php:58
-msgid "Small"
+#: includes/model/service/class-dhlpwc-model-service-translation.php:45
+msgid "Secure delivery by code"
 msgstr ""
 
 #: includes/model/service/class-dhlpwc-model-service-translation.php:59
-msgid "Medium"
+msgid "Small"
 msgstr ""
 
 #: includes/model/service/class-dhlpwc-model-service-translation.php:60
-msgid "Large"
+msgid "Medium"
 msgstr ""
 
 #: includes/model/service/class-dhlpwc-model-service-translation.php:61
-msgid "Pallet"
+msgid "Large"
 msgstr ""
 
 #: includes/model/service/class-dhlpwc-model-service-translation.php:62
-msgid "Bulky"
+msgid "Pallet"
 msgstr ""
 
 #: includes/model/service/class-dhlpwc-model-service-translation.php:63
-msgid "Roll"
+msgid "Bulky"
 msgstr ""
 
 #: includes/model/service/class-dhlpwc-model-service-translation.php:64
-msgid "Extra Small"
+msgid "Roll"
 msgstr ""
 
 #: includes/model/service/class-dhlpwc-model-service-translation.php:65
+msgid "Extra Small"
+msgstr ""
+
+#: includes/model/service/class-dhlpwc-model-service-translation.php:66
 msgid "Extra Large"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-translation.php:79
+#: includes/model/service/class-dhlpwc-model-service-translation.php:80
 msgid "Mailbox only"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-translation.php:80
+#: includes/model/service/class-dhlpwc-model-service-translation.php:81
 msgid "Smallest"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-translation.php:81
+#: includes/model/service/class-dhlpwc-model-service-translation.php:82
 msgid "Small only"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-translation.php:82
+#: includes/model/service/class-dhlpwc-model-service-translation.php:83
 msgid "Medium only"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-translation.php:83
+#: includes/model/service/class-dhlpwc-model-service-translation.php:84
 msgid "Large only"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-translation.php:84
+#: includes/model/service/class-dhlpwc-model-service-translation.php:85
 msgid "Extra Small only"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-translation.php:85
+#: includes/model/service/class-dhlpwc-model-service-translation.php:86
 msgid "Extra Large only"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-translation.php:86
+#: includes/model/service/class-dhlpwc-model-service-translation.php:87
 msgid "Roll only"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-translation.php:87
+#: includes/model/service/class-dhlpwc-model-service-translation.php:88
 msgid "Bulky only"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-translation.php:88
+#: includes/model/service/class-dhlpwc-model-service-translation.php:89
 msgid "Largest only"
 msgstr ""
 
-#: includes/model/service/class-dhlpwc-model-service-translation.php:107
+#: includes/model/service/class-dhlpwc-model-service-translation.php:108
 msgid ""
 "Once the shipment has been scanned, simply follow it with track & "
 "trace. Once the delivery is planned you will see the expected delivery "
