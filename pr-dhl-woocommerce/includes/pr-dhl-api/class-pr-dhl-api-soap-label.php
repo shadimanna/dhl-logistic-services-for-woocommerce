@@ -463,12 +463,14 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
                 if( count($address_exploded) == 1 ) {
                     // Break address into pieces by '.'
                     $address_exploded = explode('.', $args['shipping_address']['address_1']);
-					// Check if address 2 empty and its in Germany
+
+					// If no address number and in Germany, return error
 	                if ( 1 === count( $address_exploded ) && 'DE' === $args['shipping_address']['country'] ) {
-                        throw new Exception(__('Shipping "Address 2" is empty!', 'dhl-for-woocommerce'));
+                        throw new Exception(__('Shipping street number is missing!', 'dhl-for-woocommerce'));
                     }
                 }
 
+                // If greater than 1, means there are two parts to the address...otherwise Address 2 is empty which is possible in some countries outside of Germany
 				if ( count( $address_exploded ) > 1 ) {
 					// Loop through address and set number value only...
 					// ...last found number will be 'address_2'
