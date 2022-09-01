@@ -116,14 +116,6 @@ class PR_DHL_WC {
 	            'SO' => '23041',
                 'CO' => '22061',
             ),
-            'NL' => array(
-	            'Aruba' => '',
-	            'Bonaire' => '',
-	            'Curaçao' => '',
-	            'Saba' => '',
-	            'Sint Eustatius' => '',
-	            'Sint Maarten' => ''
-            ),
             'ES' => array(
 	            'CE' => '51xxx',
 	            'ML' => '52xxx',
