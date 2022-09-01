@@ -735,6 +735,11 @@ class PR_DHL_WC {
     public function is_eu_exception( $shipping_address ) {
         $shipping_postcode = trim( $shipping_address['postcode'] );
 
+        //Check if its filtered
+        $filtered_postcode = apply_filters( 'pr_dhl_eu_exception_postcode', $shipping_postcode );
+        if( $filtered_postcode )
+            return true;
+
         //Allow user to edit EU exception states
         $eu_exception =  apply_filters( 'pr_dhl_eu_exceptions', $this->eu_exceptions );
 
