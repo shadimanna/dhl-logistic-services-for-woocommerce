@@ -736,14 +736,9 @@ class PR_DHL_WC {
         $is_eu_exception = false;
         $shipping_postcode = trim( $shipping_address['postcode'] );
 
-       
-        if( $filtered_postcode ) {
-            $is_eu_exception = true;
-        }
-
-        if ( isset( $eu_exception[ $shipping_address['country'] ] ) ) {
+        if ( isset( $this->eu_exceptions[ $shipping_address['country'] ] ) ) {
             //check country postcodes
-            foreach ( $eu_exception[ $shipping_address['country'] ] as $postcode ) {
+            foreach ( $this->eu_exceptions[ $shipping_address['country'] ] as $postcode ) {
                 // Postcode rage
                 $postcode_range = explode("-", $postcode);
                 if(count($postcode_range) > 1) {
@@ -758,7 +753,7 @@ class PR_DHL_WC {
             }
         }
 
-	    return apply_filters( 'pr_dhl_eu_exception_postcode', $is_eu_exception, $shipping_address, $eu_exception );
+	    return apply_filters( 'pr_dhl_eu_exception_postcode', $is_eu_exception, $shipping_address, $this->eu_exceptions );
     }
 
 	public function get_eu_iso2() {
