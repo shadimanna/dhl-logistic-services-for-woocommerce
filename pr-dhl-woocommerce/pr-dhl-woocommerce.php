@@ -714,22 +714,21 @@ class PR_DHL_WC {
 	 * Function return whether the sender and receiver country is "crossborder" i.e. needs CUSTOMS declarations (outside EU)
 	 */
 	public function is_crossborder_shipment( $shipping_address ) {
+        $is_crossborder = true;
 
 		if ($this->is_shipping_domestic( $shipping_address['country'] )) {
-			return false;
+            $is_crossborder = false;
 		}
 
 		// Is sender country in EU...
 		if ( in_array( $this->base_country_code, $this->eu_iso2 ) ) {
 			// ... and receiver country is in EU means NOT crossborder!
-			if ( in_array( $shipping_address['country'], $this->eu_iso2 ) && !$this->is_eu_exception($shipping_address) ) {
-				return false;
-			} else {
-				return true;
+			if ( in_array( $shipping_address['country'], $this->eu_iso2 ) && !$this->is_eu_exception( $shipping_address ) ) {
+                $is_crossborder = false;
 			}
-		} else {
-			return true;
 		}
+
+        return apply_filters( 'pr_dhl_is_crossborder_shipment', (bool)$is_crossborder, $shipping_address['country'] );
 	}
 
     public function is_eu_exception( $shipping_address ) {
