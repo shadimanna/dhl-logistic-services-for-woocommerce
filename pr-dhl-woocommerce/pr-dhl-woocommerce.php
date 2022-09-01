@@ -733,15 +733,13 @@ class PR_DHL_WC {
 	}
 
     public function is_eu_exception( $shipping_address ) {
+        $is_eu_exception = false;
         $shipping_postcode = trim( $shipping_address['postcode'] );
 
-        //Check if its filtered
-        $filtered_postcode = apply_filters( 'pr_dhl_eu_exception_postcode', false, $shipping_postcode );
-        if( $filtered_postcode )
-            return true;
-
-        //Allow user to edit EU exception states
-        $eu_exception =  apply_filters( 'pr_dhl_eu_exceptions', $this->eu_exceptions );
+       
+        if( $filtered_postcode ) {
+            $is_eu_exception = true;
+        }
 
         if ( isset( $eu_exception[ $shipping_address['country'] ] ) ) {
             //check country postcodes
@@ -750,17 +748,17 @@ class PR_DHL_WC {
                 $postcode_range = explode("-", $postcode);
                 if(count($postcode_range) > 1) {
                     if( $shipping_postcode >= $postcode_range[0] && $shipping_postcode <= $postcode_range[1] ) {
-                        return true;
+                        $is_eu_exception = true;
                     }
                 }
 
                 if( 0 === strpos( $shipping_postcode, $postcode ) ){
-                    return true;
+                    $is_eu_exception = true;
                 }
             }
         }
 
-	    return false;
+	    return apply_filters( 'pr_dhl_eu_exception_postcode', $is_eu_exception, $shipping_address, $eu_exception );
     }
 
 	public function get_eu_iso2() {
