@@ -736,7 +736,7 @@ class PR_DHL_WC {
         $shipping_postcode = trim( $shipping_address['postcode'] );
 
         //Check if its filtered
-        $filtered_postcode = apply_filters( 'pr_dhl_eu_exception_postcode', $shipping_postcode );
+        $filtered_postcode = apply_filters( 'pr_dhl_eu_exception_postcode', false, $shipping_postcode );
         if( $filtered_postcode )
             return true;
 
