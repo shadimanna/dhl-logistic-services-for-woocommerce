@@ -87,40 +87,13 @@ class PR_DHL_WC {
 
     // Exceptions for EU that STILL require customs
     protected $eu_exceptions = array(
-            //numeric key : no predefined states in WooCommerce for this country
-            'DK' => array(
-	            '100/999', // 100 to 999
-                '39xx' // any code start with 39
-            ),
-            'DE' => array(
-	            'DE-SH' => '27498', // Heligoland
-	            'DE-BW' => '78266&CH-8238' // 2 codes Büsingen am Hochrhein
-            ),
-            'FI' => array(
-	            '22xxx'
-            ),
-            'FR' => array(
-	            '987xx',
-                '988xx',
-                '973xx',
-                '971xx',
-                '972xx',
-                '976xx',
-                '974xx'
-            ),
-            //State without specific postcode
-            'GR' => array(
-	            '630 86' // Berg Athos
-            ),
-            'IT' => array(
-	            'SO' => '23041',
-                'CO' => '22061',
-            ),
-            'ES' => array(
-	            'CE' => '51xxx',
-	            'ML' => '52xxx',
-                'GC' => '35xxx&38xxx',
-            )
+            'DK' => [ '100-999', '39' ],
+            'DE' => [ '27498', '78266', 'CH-8238' ],
+            'FI' => [ '22' ],
+            'FR' => [ '987', '988', '973', '971', '972', '976', '974' ],
+            'GR' => [ '630 86' ],
+            'IT' => [ '23041', '22061' ],
+            'ES' => [ '51', '52', '35', '38' ]
     );
 
 	// These are all considered domestic by DHL
@@ -763,39 +736,12 @@ class PR_DHL_WC {
         //Allow user to edit EU exception states
         $eu_exception =  apply_filters( 'pr_dhl_eu_exceptions', $this->eu_exceptions );
 
-        if ( isset($eu_exception[$shipping_address['country']]) ) {
-            // if shipping postcode is not set check state also if EU exception state has no postcode return true.
-            if(isset( $eu_exception[$shipping_address['country']][$shipping_address['state']]) && ('' === $shipping_address['postcode'] || '' === $this->eu_exceptions[$shipping_address['country']][$shipping_address['state']])) {
-	            return true;
-            }
-
+        if ( isset( $eu_exception[ $shipping_address['country'] ] ) ) {
             //check country postcodes
-            foreach ($eu_exception[$shipping_address['country']] as $state => $postcode) {
-	            // Multiple postcode
-	            $exception_postcodes = explode("&", $postcode);
-	            foreach ($exception_postcodes as $true_postcode) {
-		            // Single postcode
-		            if($shipping_address['postcode'] == $true_postcode){
-			            return true;
-		            }
-
-		            // Postcode rage
-		            $postcode_range = explode("/", $true_postcode);
-		            if(count($postcode_range) > 1) {
-			            if($shipping_address['postcode'] >= $postcode_range[0] && $shipping_address['postcode'] <= $postcode_range[1]) {
-				            return true;
-			            }
-		            }
-
-		            // Postcode pattern
-		            // if postcode contains xx remove it
-		            if(false !== strpos($true_postcode, 'x')){
-			            $postcode_start = str_replace('x', '', $true_postcode);
-			            if(0 === strpos($shipping_address['postcode'], $postcode_start)){
-				            return true;
-			            }
-		            }
-	            }
+            foreach ( $eu_exception[ $shipping_address['country'] ] as $postcode ) {
+                if( 0 === strpos( $shipping_address['postcode'], $postcode ) ){
+                    return true;
+                }
             }
         }
 
