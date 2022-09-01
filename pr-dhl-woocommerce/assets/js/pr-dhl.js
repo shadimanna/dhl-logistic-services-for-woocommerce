@@ -136,7 +136,7 @@ jQuery( function( $ ) {
 		show_hide_return: function () {
 			var is_checked = $( '#pr_dhl_return_address_enabled' ).prop('checked');
 
-			$( '#shipment-dhl-label-form' ).children().each( function () {
+			$( '.shipment-dhl-row-return-addr' ).children().each( function () {
 
 				// If class exists, and is not 'pr_dhl_return_address_enabled' but is 'pr_dhl_return_' field
 			    if( ( $(this).attr("class") ) &&
@@ -215,7 +215,7 @@ jQuery( function( $ ) {
 		show_hide_ident: function () {
 			var is_checked = $( '#pr_dhl_identcheck' ).prop('checked');
 
-			$( '#shipment-dhl-label-form' ).children().each( function () {
+			$( '.shipment-dhl-row-additional-services' ).children().each( function () {
 
 				// If class exists, and is not 'pr_dhl_return_address_enabled' but is 'pr_dhl_return_' field
 			    if( ( $(this).attr("class") ) &&
@@ -235,7 +235,7 @@ jQuery( function( $ ) {
 		show_hide_routing: function () {
 			var is_checked = $( '#pr_dhl_routing' ).prop('checked');
 
-			$( '#shipment-dhl-label-form' ).children().each( function () {
+			$( '.shipment-dhl-row-additional-services' ).children().each( function () {
 
 				// If class exists, and is not 'pr_dhl_return_address_enabled' but is 'pr_dhl_return_' field
 			    if( ( $(this).attr("class") ) &&
@@ -266,7 +266,7 @@ jQuery( function( $ ) {
 				$('#pr_dhl_weight').removeAttr('disabled');
 	    	}
 
-			$( '#shipment-dhl-label-form' ).children().each( function () {
+			$( '.shipment-dhl-row-packages' ).children().each( function () {
 				// If class exists, and is not 'pr_dhl_multi_packages_enabled' but is 'pr_dhl_total_packages' or 'total_packages_container' fields
 			    if( ( $(this).attr("class") ) &&
 			    	( $(this).attr("class").indexOf('pr_dhl_multi_packages_enabled') == -1 ) &&

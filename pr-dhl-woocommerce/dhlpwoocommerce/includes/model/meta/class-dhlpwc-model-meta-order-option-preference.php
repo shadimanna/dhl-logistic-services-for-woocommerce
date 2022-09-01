@@ -32,6 +32,7 @@ class DHLPWC_Model_Meta_Order_Option_Preference extends DHLPWC_Model_Meta_Abstra
     const OPTION_S = 'S'; // Saturday delivery
     const OPTION_IS_BULKY = 'IS_BULKY'; // Piece is bulky
     const OPTION_AGE_CHECK = 'AGE_CHECK'; // Age check of recipient by courier
+    const OPTION_BMC = 'BMC'; // Secure delivery by code
 
     // TODO Temp
     const INPUT_NUMBER = 'number';

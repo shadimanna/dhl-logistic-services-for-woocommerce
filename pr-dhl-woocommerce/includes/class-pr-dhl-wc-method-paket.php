@@ -41,6 +41,9 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 		add_filter( 'woocommerce_settings_api_form_fields_' .$this->id, array( $this, 'after_init_set_field_options' ) );
 
+		if ( empty( get_option( 'woocommerce_pr_dhl_paket_settings', array() ) ) ) {
+			new PR_DHL_WC_Wizard_Paket();
+		}
 	}
 
 	/**
@@ -77,6 +80,13 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 		return $wc_order_statuses;
 	}
+
+	/**
+     * @inheritdoc
+     */
+    public function get_admin_options_html() {
+        return '<div id="dhlpaket_shipping_method_settings"><div class="dhlpaket_tab_menu"></div><div class="dhlpaket_tab_content">' . parent::get_admin_options_html() . '</div></div>';
+    }
 
 	/**
 	 * Initialize integration settings form fields.
@@ -116,10 +126,10 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		$weight_units = get_option( 'woocommerce_weight_unit' );
 
 		$this->form_fields = array(
-			'dhl_pickup_dist'     => array(
-				'title'           => __( 'Shipping and Pickup', 'dhl-for-woocommerce' ),
+			'dhl_pickup_api_dist'     => array(
+				'title'           => __( 'Account and API Settings', 'dhl-for-woocommerce' ),
 				'type'            => 'title',
-				'description'     => __( 'Please configure your shipping parameters underneath.', 'dhl-for-woocommerce' ),
+				'description'     => __( 'Please configure your shipping parameters and your access towards the DHL Paket APIs by means of authentication.', 'dhl-for-woocommerce' ),
 			),
 			'dhl_account_num' => array(
 				'title'             => __( 'Account Number (EKP)', 'dhl-for-woocommerce' ),
@@ -129,6 +139,49 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'default'           => '',
 				'placeholder'		=> '1234567890',
 				'custom_attributes'	=> array( 'maxlength' => '10' )
+			),
+			'dhl_api_user' => array(
+				'title'             => __( 'Username', 'dhl-for-woocommerce' ),
+				'type'              => 'text',
+				'description'       => sprintf( __( 'Your username for the DHL business customer portal. Please note the lower case and test your access data in advance at %shere%s.', 'dhl-for-woocommerce' ), '<a href="' . PR_DHL_PAKET_BUSSINESS_PORTAL . '" target = "_blank">', '</a>' ),
+				'desc_tip'          => false,
+				'default'           => ''
+			),
+			'dhl_api_pwd' => array(
+				'title'             => __( 'Password', 'dhl-for-woocommerce' ),
+				'type'              => 'password',
+				'description'       => sprintf( __( 'Your password for the DHL business customer portal. Please note the new assignment of the password to 3 (Standard User) or 12 (System User) months and test your access data in advance at %shere%s', 'dhl-for-woocommerce' ), '<a href="' . PR_DHL_PAKET_BUSSINESS_PORTAL . '" target = "_blank">', '</a>' ),
+				'desc_tip'          => false,
+				'default'           => ''
+			),
+			'dhl_sandbox' => array(
+				'title'             => __( 'Sandbox Mode', 'dhl-for-woocommerce' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Enable Sandbox Mode', 'dhl-for-woocommerce' ),
+				'default'           => 'no',
+				'description'       => __( 'Please, tick here if you want to test the plug-in installation against the DHL Sandbox Environment. Labels generated via Sandbox cannot be used for shipping and you need to enter your client ID and client secret for the Sandbox environment instead of the ones for production!', 'dhl-for-woocommerce' ),
+				'desc_tip'          => true,
+			),
+			'dhl_api_sandbox_user' => array(
+				'title'             => __( 'Sandbox Username', 'dhl-for-woocommerce' ),
+				'type'              => 'text',
+				'description'       => sprintf( __( 'Your sandbox username is the same as for the DHL developer portal. You can create an account %shere%s.', 'dhl-for-woocommerce' ), '<a href="' . PR_DHL_PAKET_DEVELOPER_PORTAL . '" target = "_blank">', '</a>' ),
+				'desc_tip'          => false,
+				'default'           => ''
+			),
+			'dhl_api_sandbox_pwd' => array(
+				'title'             => __( 'Sandbox Password', 'dhl-for-woocommerce' ),
+				'type'              => 'password',
+				'description'       => sprintf( __( 'Your sandbox password is the same as for the DHL developer portal. You can create an account %shere%s.', 'dhl-for-woocommerce' ), '<a href="' . PR_DHL_PAKET_DEVELOPER_PORTAL . '" target = "_blank">', '</a>' ),
+				'desc_tip'          => false,
+				'default'           => ''
+			),
+			'dhl_debug' => array(
+				'title'             => __( 'Debug Log', 'dhl-for-woocommerce' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'Enable logging', 'dhl-for-woocommerce' ),
+				'default'           => 'no',
+				'description'       => sprintf( __( 'A log file containing the communication to the DHL server will be maintained if this option is checked. This can be used in case of technical issues and can be found %shere%s.', 'dhl-for-woocommerce' ), '<a href="' . $log_path . '" target = "_blank">', '</a>' )
 			),
 			'dhl_participation_title'     => array(
 				'title'           => __( 'DHL Products and Participation Number', 'dhl-for-woocommerce' ),
@@ -412,54 +465,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'default'           => 'no',
 				'class'				=> ''
 			),
-			'dhl_api'           => array(
-				'title'           => __( 'API Settings', 'dhl-for-woocommerce' ),
-				'type'            => 'title',
-				'description'     => __( 'Please configure your access towards the DHL Paket APIs by means of authentication.', 'dhl-for-woocommerce' ),
-			),
-			'dhl_api_user' => array(
-				'title'             => __( 'Username', 'dhl-for-woocommerce' ),
-				'type'              => 'text',
-				'description'       => sprintf( __( 'Your username for the DHL business customer portal. Please note the lower case and test your access data in advance at %shere%s.', 'dhl-for-woocommerce' ), '<a href="' . PR_DHL_PAKET_BUSSINESS_PORTAL . '" target = "_blank">', '</a>' ),
-				'desc_tip'          => false,
-				'default'           => ''
-			),
-			'dhl_api_pwd' => array(
-				'title'             => __( 'Password', 'dhl-for-woocommerce' ),
-				'type'              => 'password',
-				'description'       => sprintf( __( 'Your password for the DHL business customer portal. Please note the new assignment of the password to 3 (Standard User) or 12 (System User) months and test your access data in advance at %shere%s', 'dhl-for-woocommerce' ), '<a href="' . PR_DHL_PAKET_BUSSINESS_PORTAL . '" target = "_blank">', '</a>' ),
-				'desc_tip'          => false,
-				'default'           => ''
-			),
-			'dhl_sandbox' => array(
-				'title'             => __( 'Sandbox Mode', 'dhl-for-woocommerce' ),
-				'type'              => 'checkbox',
-				'label'             => __( 'Enable Sandbox Mode', 'dhl-for-woocommerce' ),
-				'default'           => 'no',
-				'description'       => __( 'Please, tick here if you want to test the plug-in installation against the DHL Sandbox Environment. Labels generated via Sandbox cannot be used for shipping and you need to enter your client ID and client secret for the Sandbox environment instead of the ones for production!', 'dhl-for-woocommerce' ),
-				'desc_tip'          => true,
-			),
-			'dhl_api_sandbox_user' => array(
-				'title'             => __( 'Sandbox Username', 'dhl-for-woocommerce' ),
-				'type'              => 'text',
-				'description'       => sprintf( __( 'Your sandbox username is the same as for the DHL developer portal. You can create an account %shere%s.', 'dhl-for-woocommerce' ), '<a href="' . PR_DHL_PAKET_DEVELOPER_PORTAL . '" target = "_blank">', '</a>' ),
-				'desc_tip'          => false,
-				'default'           => ''
-			),
-			'dhl_api_sandbox_pwd' => array(
-				'title'             => __( 'Sandbox Password', 'dhl-for-woocommerce' ),
-				'type'              => 'password',
-				'description'       => sprintf( __( 'Your sandbox password is the same as for the DHL developer portal. You can create an account %shere%s.', 'dhl-for-woocommerce' ), '<a href="' . PR_DHL_PAKET_DEVELOPER_PORTAL . '" target = "_blank">', '</a>' ),
-				'desc_tip'          => false,
-				'default'           => ''
-			),
-			'dhl_debug' => array(
-				'title'             => __( 'Debug Log', 'dhl-for-woocommerce' ),
-				'type'              => 'checkbox',
-				'label'             => __( 'Enable logging', 'dhl-for-woocommerce' ),
-				'default'           => 'no',
-				'description'       => sprintf( __( 'A log file containing the communication to the DHL server will be maintained if this option is checked. This can be used in case of technical issues and can be found %shere%s.', 'dhl-for-woocommerce' ), '<a href="' . $log_path . '" target = "_blank">', '</a>' )
-			)
 		);
 
 		$base_country_code = PR_DHL()->get_base_country();
@@ -477,7 +482,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'title'             => __( 'Delivery Day', 'dhl-for-woocommerce' ),
 					'type'              => 'checkbox',
 					'label'             => __( 'Enable Delivery Day', 'dhl-for-woocommerce' ),
-					'default'           => 'yes',
 					'description'       => __( 'Enabling this will display a front-end option for the user to select their preferred day of delivery.', 'dhl-for-woocommerce' ),
 					'desc_tip'          => true,
 				),
@@ -527,7 +531,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'title'             => __( 'Preferred Location', 'dhl-for-woocommerce' ),
 					'type'              => 'checkbox',
 					'label'             => __( 'Enable Preferred Location', 'dhl-for-woocommerce' ),
-					'default'           => 'yes',
 					'description'       => __( 'Enabling this will display a front-end option for the user to select their preferred location.', 'dhl-for-woocommerce' ),
 					'desc_tip'          => true,
 				),
@@ -535,7 +538,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'title'             => __( 'Preferred Neighbour', 'dhl-for-woocommerce' ),
 					'type'              => 'checkbox',
 					'label'             => __( 'Enable Preferred Neighbour', 'dhl-for-woocommerce' ),
-					'default'           => 'yes',
 					'description'       => __( 'Enabling this will display a front-end option for the user to select their preferred neighbour.', 'dhl-for-woocommerce' ),
 					'desc_tip'          => true,
 				),
@@ -574,7 +576,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'title'             => __( 'Packstation', 'dhl-for-woocommerce' ),
 					'type'              => 'checkbox',
 					'label'             => __( 'Enable Packstation', 'dhl-for-woocommerce' ),
-					'default'           => 'yes',
 					'description'       => __( 'Enabling this will display Packstation locations on Google Maps when searching for drop off locations on the front-end.', 'dhl-for-woocommerce' ),
 					'desc_tip'          => true,
 				),
@@ -582,7 +583,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'title'             => __( 'Parcelshop', 'dhl-for-woocommerce' ),
 					'type'              => 'checkbox',
 					'label'             => __( 'Enable Parcelshop', 'dhl-for-woocommerce' ),
-					'default'           => 'yes',
 					'description'       => __( 'Enabling this will display Parcelshop locations on Google Maps when searching for drop off locations on the front-end.', 'dhl-for-woocommerce' ),
 					'desc_tip'          => true,
 				),
@@ -590,7 +590,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'title'             => __( 'Post Office', 'dhl-for-woocommerce' ),
 					'type'              => 'checkbox',
 					'label'             => __( 'Enable Post Office', 'dhl-for-woocommerce' ),
-					'default'           => 'yes',
 					'description'       => __( 'Enabling this will display Post Office locations on Google Maps when searching for drop off locations on the front-end.', 'dhl-for-woocommerce' ),
 					'desc_tip'          => true,
 				),
@@ -598,7 +597,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'title'             => __( 'Google Maps', 'dhl-for-woocommerce' ),
 					'type'              => 'checkbox',
 					'label'             => __( 'Enable Google Maps', 'dhl-for-woocommerce' ),
-					'default'           => 'yes',
 					'description'       => __( 'Enabling this will display Google Maps on the front-end.', 'dhl-for-woocommerce' ),
 					'desc_tip'          => true,
 				),
@@ -831,19 +829,16 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'type'            => 'time',
 				'default'       	  => '17:00',
 			),
-			'dhl_business_hours2'           => array(
-				'title'           => __( 'Additional Business Hours (for DHL Pickup Request)', 'dhl-for-woocommerce' ),
-				'type'            => 'title',
-				'description'     => __( 'Optional, if additional business hours are needed.', 'dhl-for-woocommerce' ),
-			),
 			'dhl_business_hours_2_start'           => array(
-				'title'           => __( 'From: ', 'dhl-for-woocommerce' ),
+				'title'           => __( '(Additional Business Hours) From: ', 'dhl-for-woocommerce' ),
 				'type'            => 'time',
+				'description'     => __( 'Optional, if additional business hours are needed.', 'dhl-for-woocommerce' ),
 				'default'       	  => '',
 			),
 			'dhl_business_hours_2_end'           => array(
-				'title'           => __( 'To: ', 'dhl-for-woocommerce' ),
+				'title'           => __( '(Additional Business Hours) To: ', 'dhl-for-woocommerce' ),
 				'type'            => 'time',
+				'description'     => __( 'Optional, if additional business hours are needed.', 'dhl-for-woocommerce' ),
 				'default'       	  => '',
 			),
 		);

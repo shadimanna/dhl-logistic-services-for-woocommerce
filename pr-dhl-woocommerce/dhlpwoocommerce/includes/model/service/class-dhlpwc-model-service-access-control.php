@@ -30,6 +30,7 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
     const ACCESS_DISPLAY_ZERO_FEE_TEXT = 'display_zero_fee_text';
     const ACCESS_DEFAULT_SEND_SIGNATURE = 'default_send_signature';
     const ACCESS_DEFAULT_AGE_CHECK = 'default_age_check';
+    const ACCESS_DEFAULT_PERS_NOTE = 'default_pers_note';
     const ACCESS_DEFAULT_ORDER_ID_REFERENCE = 'default_order_id_reference';
     const ACCESS_DEFAULT_ORDER_ID_REFERENCE2 = 'default_order_id_reference2';
     const ACCESS_DEFAULT_RETURN = 'default_return';
@@ -39,6 +40,7 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
     const ACCESS_CHECKOUT_PARCELSHOP = 'checkout_parcelshop';
 
     const ACCESS_DELIVERY_TIMES = 'delivery_times';
+    const ACCESS_SAME_DAY_AS_TIME_WINDOW = 'same_day_as_time_window';
     const ACCESS_DELIVERY_TIMES_ACTIVE = 'delivery_times_active';
     const ACCESS_SHIPPING_DAY = 'shipping_day';
 
@@ -175,6 +177,11 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
                 return $logic->check_default_age_check();
                 break;
 
+            case self::ACCESS_DEFAULT_PERS_NOTE:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_default_pers_note();
+                break;
+
             case self::ACCESS_DEFAULT_ORDER_ID_REFERENCE:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
                 return $logic->check_default_order_id_reference();
@@ -208,6 +215,11 @@ class DHLPWC_Model_Service_Access_Control extends DHLPWC_Model_Core_Singleton_Ab
             case self::ACCESS_DELIVERY_TIMES:
                 $logic = DHLPWC_Model_Logic_Access_Control::instance();
                 return $logic->check_delivery_times_enabled();
+                break;
+
+            case self::ACCESS_SAME_DAY_AS_TIME_WINDOW:
+                $logic = DHLPWC_Model_Logic_Access_Control::instance();
+                return $logic->check_same_day_as_time_window();
                 break;
 
             case self::ACCESS_DELIVERY_TIMES_ACTIVE:

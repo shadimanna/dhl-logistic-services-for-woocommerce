@@ -163,14 +163,37 @@ class DHLPWC_Controller_Cart
                     $delivery_times = $service->get_time_frames($postal_code, $country_code, $selected);
                     $delivery_times = $service->filter_time_frames($delivery_times, !empty($no_neighbour), $selected);
 
-                    // Show delivery times
-                    if (!empty($delivery_times)) {
+                    $service = DHLPWC_Model_Service_Access_Control::instance();
+                    $sdd_as_time_window = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_SAME_DAY_AS_TIME_WINDOW);
+                    $is_sdd_method =  $chosen_shipping === 'dhlpwc-home-same-day' || $chosen_shipping === 'dhlpwc-home-no-neighbour-same-day';
+
+                    if (empty($delivery_times)) {
+                        break;
+                    }
+
+                    if ($sdd_as_time_window || !$is_sdd_method) {
+                        // Remove today as delivery time when same say is a separate shipping method
+                        if (!$sdd_as_time_window) {
+                            $service = DHLPWC_Model_Service_Delivery_Times::instance();
+                            $delivery_times = $service->remove_same_day_time_frame($delivery_times, !empty($no_neighbour));
+                        }
+
                         $view = new DHLPWC_Template('cart.delivery-times-option');
                         $view->render(array(
                             'country_code'   => $country_code,
                             'postal_code'    => $postal_code,
                             'delivery_times' => $delivery_times,
                         ));
+                    } elseif ($is_sdd_method && !$sdd_as_time_window) {
+                        $service = DHLPWC_Model_Service_Delivery_Times::instance();
+                        $sdd_delivery_time = $service->get_same_day_time_frame($delivery_times, !empty($no_neighbour));
+
+                        if ($sdd_delivery_time) {
+                            $view = new DHLPWC_Template('cart.delivery-times-info-box');
+                            $view->render(array(
+                                'delivery_time' => $sdd_delivery_time,
+                            ));
+                        }
                     }
 
                     break;
@@ -288,13 +311,17 @@ class DHLPWC_Controller_Cart
                 $dependencies[] = 'selectWoo';
             }
 
+            $service = DHLPWC_Model_Service_Access_Control::instance();
+            $sdd_as_time_window = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_SAME_DAY_AS_TIME_WINDOW);
+
             wp_enqueue_script( 'dhlpwc-checkout-delivery-time-script', DHLPWC_PLUGIN_URL . 'assets/js/dhlpwc.deliverytime.js', $dependencies);
             wp_localize_script(
                 'dhlpwc-checkout-delivery-time-script',
                 'dhlpwc_delivery_time_object',
                 array(
-                    'ajax_url'          => admin_url('admin-ajax.php'),
-                    'select_woo_active' => $select_woo_active ? 'true' : 'false',
+                    'ajax_url'           => admin_url('admin-ajax.php'),
+                    'select_woo_active'  => $select_woo_active ? 'true' : 'false',
+                    'sdd_as_time_window' => $sdd_as_time_window ? true : false
                 )
             );
         }

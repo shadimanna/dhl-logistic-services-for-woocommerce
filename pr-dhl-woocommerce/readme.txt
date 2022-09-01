@@ -1,11 +1,11 @@
-=== DHL for WooCommerce ===
+=== DHL Shipping Germany for WooCommerce ===
 Contributors: DHL, shadim, utzfu
 Donate link: 
-Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL express, DHL Parcel NL, DHL Parcel Benelux, DHL Parcel Luxembourg, DHL Paket Germany, WooCommerce, Woocom, Woo Commerce, Shipping, shiping, label creation, label printing, shipping rates, DHL Paket
+Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL Paket Germany, WooCommerce, Woocom, Woo Commerce, Shipping, shiping, label creation, label printing, DHL Paket
 Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 6.0
-Stable tag: 2.8.16
+Stable tag: 2.9.3
 WC requires at least: 3.0
 WC tested up to: 6.6
 License: GPLv2 or later
@@ -75,6 +75,25 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
+ 
+= 2.9.3 =
+* DHL Parcel: Added a new service option: Secure delivery by code
+* DHL Parcel: Added an option to show Same Day Delivery as a separate shipping method when delivery times are enabled
+ 
+= 2.9.2 =
+* DHL Parcel: Added a setting to automatically enable the service: send a message to recipient
+* DHL Parcel: Improved street and housenumber parsing
+* DHL Parcel: Fixed an issue with price rules in shipping zones not using the right delimiter settings
+* DHL Parcel: Tested for WordPress 6.0
+
+= 2.9.1 =
+* DHL Paket: Modify plugin title
+
+= 2.9.0 =
+* DHL Paket: Add wizard modal box for the first install only.
+* DHL Paket: Organize the settings UI section into tabs.
+* DHL Paket: Organize the order label UI into logical sections.
+* DHL Paket: Add support for "name3" in the API.
 
 = 2.8.16 =
 * DHL Paket: Fix decimal field does not follow general decimal setting.

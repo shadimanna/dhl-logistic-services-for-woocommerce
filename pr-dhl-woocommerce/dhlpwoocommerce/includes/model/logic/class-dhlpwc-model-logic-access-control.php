@@ -560,6 +560,25 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         return true;
     }
 
+    public function check_default_pers_note()
+    {
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
+
+        if (empty($shipping_method)) {
+            return false;
+        }
+
+        if (!isset($shipping_method['check_default_pers_note'])) {
+            return false;
+        }
+
+        if ($shipping_method['check_default_pers_note'] != 'yes') {
+            return false;
+        }
+
+        return true;
+    }
+
     public function check_default_order_id_reference()
     {
         $shipping_method = get_option('woocommerce_dhlpwc_settings');
@@ -725,6 +744,25 @@ class DHLPWC_Model_Logic_Access_Control extends DHLPWC_Model_Core_Singleton_Abst
         }
 
         if ($shipping_method['enable_delivery_times'] != 'yes') {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function check_same_day_as_time_window()
+    {
+        $shipping_method = get_option('woocommerce_dhlpwc_settings');
+
+        if (empty($shipping_method)) {
+            return true;
+        }
+
+        if (!isset($shipping_method['same_day_as_time_window'])) {
+            return true;
+        }
+
+        if ($shipping_method['same_day_as_time_window'] == 'no') {
             return false;
         }
 

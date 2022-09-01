@@ -29,7 +29,9 @@ class DHLPWC_Controller_Admin_Settings
         $collaboration_name = 'dhl-for-woocommerce/pr-dhl-woocommerce.php';
         add_filter('plugin_action_links_' . $collaboration_name, array($this, 'add_settings_link'), 10, 1);
         add_filter('option_woocommerce_dhlpwc_settings', array($this, 'filter_settings_before_get'));
+        add_filter('woocommerce_shipping_dhlpwc_instance_option', array($this, 'filter_settings_shipping_zones_before_get'));
         add_filter('pre_update_option_woocommerce_dhlpwc_settings', array($this, 'filter_settings_before_save'));
+        add_filter('woocommerce_shipping_dhlpwc_instance_settings_values', array($this, 'filter_settings_before_save'));
 
         $service = DHLPWC_Model_Service_Access_Control::instance();
         if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_SUBMENU_LINK)) {
@@ -311,6 +313,11 @@ class DHLPWC_Controller_Admin_Settings
     public function filter_settings_before_get($data)
     {
         return DHLPWC_Model_Service_Settings::instance()->format_settings($data);
+    }
+
+    public function filter_settings_shipping_zones_before_get($data)
+    {
+        return DHLPWC_Model_Service_Settings::instance()->format_shipping_zones_settings($data);
     }
 
     public function filter_settings_before_save($data)

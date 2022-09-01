@@ -4,13 +4,13 @@ Tags:                 DHL, DHL Parcel, DHL Parcel for WooCommerce, DHLParcel, DH
 Requires at least:    4.7.16
 Requires PHP:         5.6
 Tested up to:         5.9
-Stable tag:           2.0.5
+Stable tag:           2.0.7
 WC requires at least: 3.0.0
 WC tested up to:      5.3.0
 License:              GPL v3 or later
 License URI:          https://www.gnu.org/licenses/gpl-3.0.html
 
-The official DHL Parcel for WooCommerce plugin allows you to automate your e-commerce order process. Covering shipping services from DHL Parcel (Benelux).
+DHL Parcel (Benelux) presents: The official DHL Parcel for WooCommerce plugin to automate your e-commerce shipping process.
 
 == Description ==
 
@@ -52,6 +52,15 @@ This plug-in can be used by online stores that ship orders from the Benelux regi
 A “Google Maps API Key” is required if you wish to display DHL locations on a map for your customers.
 
 == Changelog ==
+ 
+= 2.0.6 =
+- Added a setting to automatically enable the service: send a message to recipient
+- Improved street and housenumber parsing
+- Fixed an issue with price rules in shipping zones not using the right delimiter settings
+- Tested for WordPress 6.0
+ 
+= 2.0.5 =
+- Updated the migration notice when to change colors
  
 = 2.0.4 =
 - Updated tracking url for Belgium
