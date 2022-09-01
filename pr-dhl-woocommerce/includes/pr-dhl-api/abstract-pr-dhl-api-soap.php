@@ -59,7 +59,7 @@ abstract class PR_DHL_API_SOAP {
 	}
 
 	protected function maybe_convert_weight( $weight, $UoM ) {
-		$weight = wc_format_decimal( $weight );
+		$weight = floatval( wc_format_decimal( $weight ) );
 
 		switch ( $UoM ) {
 			case 'g':
@@ -78,7 +78,7 @@ abstract class PR_DHL_API_SOAP {
 	}
 
 	protected function maybe_convert_centimeters( $dimension, $UoM ) {
-		$dimension = wc_format_decimal( $dimension );
+		$dimension = floatval( wc_format_decimal( $dimension ) );
 
 		switch ( $UoM ) {
 			case 'm':

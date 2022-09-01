@@ -259,8 +259,8 @@ abstract class PR_DHL_API_REST {
 			case '201':
 				break;
 			case '400':
-				$error_message = str_replace('/', ' / ', $response_body->message);
-				throw new Exception( __('400 - ', 'dhl-for-woocommerce') . $error_message );
+				$error_message = ! empty( $response_body->message ) ? str_replace( '/', ' / ', $response_body->message ) : __( 'Unknown Error!', 'dhl-for-woocommerce' );
+				throw new Exception( __( '400 - ', 'dhl-for-woocommerce' ) . $error_message );
 				break;
 			case '401':
 				throw new Exception( __('401 - Unauthorized Access - Invalid token or Authentication Header parameter', 'dhl-for-woocommerce') );

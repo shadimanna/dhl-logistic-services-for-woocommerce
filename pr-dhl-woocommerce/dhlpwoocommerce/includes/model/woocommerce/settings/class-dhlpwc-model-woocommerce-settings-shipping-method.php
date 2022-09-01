@@ -687,6 +687,24 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
                     'label'       => __('Enable', 'dhlpwc'),
                     'description' => __('Show delivery date and time selection in the checkout and show delivery dates in the dashboard.', 'dhlpwc'),
                 ),
+                'delivery_times_default' => array(
+                    'title'       => __('Default time window selection', 'dhlpwc'),
+                    'type'        => 'select',
+                    'label'       => __('Enable', 'dhlpwc'),
+                    'description' => __('Show same day as a time window option, not as separate shipping method.', 'dhlpwc'),
+                    'options'     => array(
+                                        DHLPWC_Model_Service_Delivery_Times::DEFAULT_SELECTION_HOME => 'First option for home delivery (default)',
+                                        DHLPWC_Model_Service_Delivery_Times::DEFAULT_SELECTION_SDD => 'Same day, if available'
+                                     ),
+                    'default'     => DHLPWC_Model_Service_Delivery_Times::DEFAULT_SELECTION_HOME,
+                ),
+                'same_day_as_time_window' => array(
+                    'title'       => __('Show same day delivery as delivery time', 'dhlpwc'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Enable', 'dhlpwc'),
+                    'description' => __('Show same day as a time window option, not as separate shipping method.', 'dhlpwc'),
+                    'default'     => 'yes',
+                ),
                 'enable_delivery_times_stock_check' => array(
                     'title'       => __('Check stock', 'dhlpwc'),
                     'type'        => 'checkbox',
@@ -968,6 +986,7 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
         // When using delivery times and it is not showing (out of stock, unsupported country, or unavailable), don't allow same day delivery to show
         if ($access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DELIVERY_TIMES)) {
             $delivery_times_active = $access_service->check(DHLPWC_Model_Service_Access_Control::ACCESS_DELIVERY_TIMES_ACTIVE);
+
             if (!$delivery_times_active) {
                 if (array_key_exists(DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SDD, $allowed_shipping_options)) {
                     $allowed_shipping_options[DHLPWC_Model_Meta_Order_Option_Preference::OPTION_SDD] = null;
@@ -1088,11 +1107,11 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
 
     protected function calculate_cost($package = array(), $option = null)
     {
-        $price = $this->get_option('price_option_' . $option);
+        $price = floatval($this->get_option('price_option_' . $option));
 
         // Apply condition rules before free/discount
         if ($this->get_option(self::RULES_AFTER_FREE) !== 'yes') {
-            $price = $this->price_conditions($price, $option, $package);
+            $price = floatval($this->price_conditions($price, $option, $package));
         }
 
         // Free/discount price calculation
@@ -1108,7 +1127,7 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
 
         // Apply condition rules after free/discount
         if ($this->get_option(self::RULES_AFTER_FREE) === 'yes') {
-            $price = $this->price_conditions($price, $option, $package);
+            $price = floatval($this->price_conditions($price, $option, $package));
         }
 
         $price += $this->get_additional_shipping_fee($package);
@@ -1154,7 +1173,7 @@ class DHLPWC_Model_WooCommerce_Settings_Shipping_Method extends WC_Shipping_Meth
 
     protected function get_free_price($option)
     {
-        return round($this->get_option('free_price_option_' . $option), wc_get_price_decimals());
+        return round(floatval($this->get_option('free_price_option_' . $option)), wc_get_price_decimals());
     }
 
     protected function get_subtotal_price($package = array())

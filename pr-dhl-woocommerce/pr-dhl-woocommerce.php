@@ -7,7 +7,7 @@
  * Author URI: http://dhl.com/
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
- * Version: 2.9.2
+ * Version: 2.9.3
  * Tested up to: 6.0
  * WC requires at least: 3.0
  * WC tested up to: 6.6
@@ -36,7 +36,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "2.9.2";
+	private $version = "2.9.3";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -693,21 +693,24 @@ class PR_DHL_WC {
 	 */
 	public function is_shipping_domestic( $country_receiver ) {
 
+		$is_domestic = false;
+
 		// If base is US territory
 		if( in_array( $this->base_country_code, $this->us_territories ) ) {
 
 			// ...and destination is US territory, then it is "domestic"
 			if( in_array( $country_receiver, $this->us_territories ) ) {
-				return true;
+				$is_domestic = true;
 			} else {
-				return false;
+				$is_domestic = false;
 			}
 
 		} elseif( $country_receiver == $this->base_country_code ) {
-			return true;
+			$is_domestic = true;
 		} else {
-			return false;
+			$is_domestic = false;
 		}
+		return apply_filters( 'pr_dhl_is_domestic_shipment', (bool)$is_domestic, $country_receiver );
 	}
 
 	/**
