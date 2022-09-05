@@ -723,18 +723,18 @@ class PR_DHL_WC {
 	public function is_crossborder_shipment( $shipping_address ) {
         $is_crossborder = true;
 
-		if ($this->is_shipping_domestic( $shipping_address['country'] )) {
+		if ( $this->is_shipping_domestic( $shipping_address['country'] ) ) {
             $is_crossborder = false;
 		}
 
         $base_address = [
-                'country' => $this->base_country_code,
-                'postcode'      => $this->get_base_postcode()
+            'country'  => $this->base_country_code,
+            'postcode' => $this->get_base_postcode()
         ];
 		// Is sender country in EU...
-		if ( in_array( $this->base_country_code, $this->eu_iso2 ) && !$this->is_eu_exception( $base_address ) ) {
-			// ... and receiver country is in EU means NOT crossborder!
-			if ( in_array( $shipping_address['country'], $this->eu_iso2 ) && !$this->is_eu_exception( $shipping_address ) ) {
+        if ( in_array( $this->base_country_code, $this->eu_iso2 ) && ! $this->is_eu_exception( $base_address ) ) {
+            // ... and receiver country is in EU means NOT crossborder!
+            if ( in_array( $shipping_address['country'], $this->eu_iso2 ) && ! $this->is_eu_exception( $shipping_address ) ) {
                 $is_crossborder = false;
 			}
 		}
@@ -743,7 +743,7 @@ class PR_DHL_WC {
 	}
 
     public function is_eu_exception( $shipping_address ) {
-        $is_eu_exception = false;
+        $is_eu_exception   = false;
         $shipping_postcode = trim( $shipping_address['postcode'] );
 
         if ( isset( $this->eu_exceptions[ $shipping_address['country'] ] ) ) {
@@ -751,13 +751,13 @@ class PR_DHL_WC {
             foreach ( $this->eu_exceptions[ $shipping_address['country'] ] as $postcode ) {
                 // Postcode rage
                 $postcode_range = explode("-", $postcode);
-                if(count($postcode_range) > 1) {
-                    if( $shipping_postcode >= $postcode_range[0] && $shipping_postcode <= $postcode_range[1] ) {
+                if ( count( $postcode_range ) > 1 ) {
+                    if ( $shipping_postcode >= $postcode_range[0] && $shipping_postcode <= $postcode_range[1] ) {
                         $is_eu_exception = true;
                     }
                 }
 
-                if( 0 === strpos( $shipping_postcode, $postcode ) ){
+                if ( 0 === strpos( $shipping_postcode, $postcode ) ) {
                     $is_eu_exception = true;
                 }
             }

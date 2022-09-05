@@ -613,7 +613,7 @@ abstract class PR_DHL_WC_Order {
 		$order = wc_get_order( $order_id );
 		$shipping_address = $order->get_address( 'shipping' );
 
-		if( PR_DHL()->is_crossborder_shipment( $shipping_address ) ) {
+		if ( PR_DHL()->is_crossborder_shipment( $shipping_address ) ) {
 			return true;
 		} else {
 			return false;
