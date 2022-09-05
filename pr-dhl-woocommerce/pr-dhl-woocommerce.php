@@ -85,6 +85,17 @@ class PR_DHL_WC {
 	// 'LI', 'CH', 'NO'
 	protected $eu_iso2 = array( 'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SI', 'SK', 'ES', 'SE');
 
+    // Exceptions for EU that STILL require customs
+    protected $eu_exceptions = array(
+            'DK' => [ '100-999', '39' ],
+            'DE' => [ '27498', '78266', 'CH-8238' ],
+            'FI' => [ '22' ],
+            'FR' => [ '987', '988', '973', '971', '972', '976', '974' ],
+            'GR' => [ '63086' ],
+            'IT' => [ '23041', '22061' ],
+            'ES' => [ '51', '52', '35', '38' ]
+    );
+
 	// These are all considered domestic by DHL
 	protected $us_territories = array( 'US', 'GU', 'AS', 'PR', 'UM', 'VI' );
 
@@ -445,6 +456,10 @@ class PR_DHL_WC {
 		return apply_filters( 'pr_shipping_dhl_base_country', $country_code['country'] );
 	}
 
+    public function get_base_postcode() {
+        return apply_filters( 'pr_shipping_dhl_base_postcode', WC()->countries->get_base_postcode() );
+    }
+
 	/**
 	 * Create a DHL object from the factory based on country.
 	 */
@@ -705,27 +720,51 @@ class PR_DHL_WC {
 	/**
 	 * Function return whether the sender and receiver country is "crossborder" i.e. needs CUSTOMS declarations (outside EU)
 	 */
-	public function is_crossborder_shipment( $country_receiver ) {
+	public function is_crossborder_shipment( $shipping_address ) {
+        $is_crossborder = true;
 
-		$is_crossborder = false;
-		if ($this->is_shipping_domestic( $country_receiver )) {
-			$is_crossborder = false;
-		} else {
-			// Is sender country in EU...
-			if ( in_array( $this->base_country_code, $this->eu_iso2 ) ) {
-				// ... and receiver country is in EU means NOT crossborder!
-				if ( in_array( $country_receiver, $this->eu_iso2 ) ) {
-					$is_crossborder = false;
-				} else {
-					$is_crossborder = true;
-				}
-			} else {
-				$is_crossborder = true;
+		if ( $this->is_shipping_domestic( $shipping_address['country'] ) ) {
+            $is_crossborder = false;
+		}
+
+        $base_address = [
+            'country'  => $this->base_country_code,
+            'postcode' => $this->get_base_postcode()
+        ];
+		// Is sender country in EU...
+        if ( in_array( $this->base_country_code, $this->eu_iso2 ) && ! $this->is_eu_exception( $base_address ) ) {
+            // ... and receiver country is in EU means NOT crossborder!
+            if ( in_array( $shipping_address['country'], $this->eu_iso2 ) && ! $this->is_eu_exception( $shipping_address ) ) {
+                $is_crossborder = false;
 			}
 		}
 
-		return apply_filters( 'pr_dhl_is_crossborder_shipment', (bool)$is_crossborder, $country_receiver );
+        return apply_filters( 'pr_dhl_is_crossborder_shipment', (bool)$is_crossborder, $shipping_address['country'] );
 	}
+
+    public function is_eu_exception( $shipping_address ) {
+        $is_eu_exception   = false;
+        $shipping_postcode = trim( $shipping_address['postcode'] );
+
+        if ( isset( $this->eu_exceptions[ $shipping_address['country'] ] ) ) {
+            //check country postcodes
+            foreach ( $this->eu_exceptions[ $shipping_address['country'] ] as $postcode ) {
+                // Postcode rage
+                $postcode_range = explode("-", $postcode);
+                if ( count( $postcode_range ) > 1 ) {
+                    if ( $shipping_postcode >= $postcode_range[0] && $shipping_postcode <= $postcode_range[1] ) {
+                        $is_eu_exception = true;
+                    }
+                }
+
+                if ( 0 === strpos( $shipping_postcode, $postcode ) ) {
+                    $is_eu_exception = true;
+                }
+            }
+        }
+
+	    return apply_filters( 'pr_dhl_eu_exception', $is_eu_exception, $shipping_address, $this->eu_exceptions );
+    }
 
 	public function get_eu_iso2() {
 		return $this->eu_iso2;
