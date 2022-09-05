@@ -457,7 +457,7 @@ class PR_DHL_WC {
 	}
 
     public function get_base_postcode() {
-        return apply_filters( 'pr_shipping_dhl_base_postcode', get_option( 'woocommerce_store_postcode' ) );
+        return apply_filters( 'pr_shipping_dhl_base_postcode', WC()->countries->get_base_postcode() );
     }
 
 	/**
