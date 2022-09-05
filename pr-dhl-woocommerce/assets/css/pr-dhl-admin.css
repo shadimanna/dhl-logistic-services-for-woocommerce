@@ -108,7 +108,8 @@ div#shipment-dhl-label-form > div:nth-of-type(even) {
 .pr_dhl_bulky_goods_field,
 .pr_dhl_identcheck_field,
 .pr_dhl_is_codeable_field,
-.pr_dhl_routing_field  {
+.pr_dhl_routing_field,
+.pr_dhl_PDDP_field {
 	display: flex;
 }
 
@@ -127,13 +128,15 @@ div#shipment-dhl-label-form > div:nth-of-type(even) {
 .pr_dhl_bulky_goods_field label,
 .pr_dhl_identcheck_field label,
 .pr_dhl_is_codeable_field label,
-.pr_dhl_routing_field label {
+.pr_dhl_routing_field label,
+.pr_dhl_PDDP_field label{
 	order: 2;
 	margin-left: 4px;
 }
 
 
-.pr_dhl_multi_packages_enabled_field input {
+.pr_dhl_multi_packages_enabled_field input,
+.pr_dhl_PDDP_field input{
 	margin: 10px 10px 15px 0;
 }
 
