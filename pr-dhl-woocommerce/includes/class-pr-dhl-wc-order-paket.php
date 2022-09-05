@@ -362,14 +362,14 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 
                     // PDDP
-                    if( $this->is_UK_shipment( $order_id ) ) {
+                    if ( $this->is_UK_shipment( $order_id ) ) {
 	                    $PDDP_value = $dhl_label_items['pr_dhl_PDDP'] ?? '';
 	                    woocommerce_wp_checkbox( array(
 		                    'id'          		=> 'pr_dhl_PDDP',
 		                    'label'       		=> esc_html__( 'Postal Delivered Duty Paid::', 'dhl-for-woocommerce' ),
 		                    'placeholder' 		=> '',
 		                    'description'		=> '',
-		                    'value'       		=> esc_attr($PDDP_value),
+		                    'value'       		=> esc_attr( $PDDP_value ),
 		                    'custom_attributes'	=> array( $is_disabled => $is_disabled )
 	                    ) );
                     }
