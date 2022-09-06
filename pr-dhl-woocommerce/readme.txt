@@ -77,14 +77,12 @@ More detailed instructions on how to set up your store and configure it are cons
 == Changelog ==
  
 = 3.0.0 =
-* DHL Paket: Added Closest Drop Point (CDP) service
 * DHL Paket: Added Postal Delivered Duty Paid (PDDP) service
 * DHL Paket: Added support for EU exceptions that require customs e.g. Canary Islands
 * DHL Paket: Fix - allow empty street number outside of Germany
 * DHL Paket: Fix - round error message
 * DHL Paket: Fix - PHP 8.0 error for private function that should be public
 * DHL Paket: Fix - add back variant name in product description
-
 
 = 2.9.3 =
 * DHL Parcel: Added a new service option: Secure delivery by code
