@@ -12,7 +12,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 	 */
 	//const PR_DHL_WSDL_LINK = 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/3.1/geschaeftskundenversand-api-3.1.wsdl';
 
-	const PR_DHL_WSDL_LINK = PR_DHL_PLUGIN_DIR_PATH . '/includes/pr-dhl-api/wsdl/3.3.2/geschaeftskundenversand-api-3.3.2.wsdl';
+	const PR_DHL_WSDL_LINK = PR_DHL_PLUGIN_DIR_PATH . '/includes/pr-dhl-api/wsdl/3.4.0/geschaeftskundenversand-api-3.4.0.wsdl';
 
 	const DHL_RETURN_PRODUCT = '07';
 
