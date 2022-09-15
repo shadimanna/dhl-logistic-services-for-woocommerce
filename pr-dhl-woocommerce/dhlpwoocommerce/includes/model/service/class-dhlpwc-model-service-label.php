@@ -10,6 +10,22 @@ if (!class_exists('DHLPWC_Model_Service_Label')) :
 class DHLPWC_Model_Service_Label extends DHLPWC_Model_Core_Singleton_Abstract
 {
 
+    public function single($label_id)
+    {
+        if (empty($label_id)) {
+            return null;
+        }
+
+        $logic = DHLPWC_Model_Logic_Label::instance();
+        $path = $logic->single_pdf($label_id);
+
+        if (!$path) {
+            return null;
+        }
+
+        return $path;
+    }
+
     public function combine($order_ids)
     {
         if (!is_array($order_ids) || empty($order_ids)) {
@@ -23,17 +39,17 @@ class DHLPWC_Model_Service_Label extends DHLPWC_Model_Core_Singleton_Abstract
 
         switch ($bulk_combine) {
             case DHLPWC_Model_WooCommerce_Settings_Shipping_Method::COMBINE_A4:
-                $combined = $logic->combine_pdfs($order_ids, 'L', 3);
+                $path = $logic->combine_pdfs($order_ids, 'L', 3);
                 break;
             default:
-                $combined = $logic->combine_pdfs($order_ids);
+                $path = $logic->combine_pdfs($order_ids);
         }
 
-        if (!$combined) {
+        if (!$path) {
             return null;
         }
 
-        return $combined['url'];
+        return $path;
     }
 
     /**

@@ -98,21 +98,13 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
             return false;
         }
 
-        $label_logic = DHLPWC_Model_Logic_Label::instance();
-        $pdf_info = $label_logic->create_pdf_file($order_id, $label['pdf']);
-
         $label_data = array(
             'label_id' => $label['labelId'],
             'label_type' => $label['labelType'],
             'label_size' => $label_size,
             'tracker_code' => $label['trackerCode'],
-            'routing_code' => $label['routingCode'],
+            'routing_code' => null,
             'order_reference' => $label['orderReference'],
-
-            'pdf' => array(
-                'url' => $pdf_info['url'],
-                'path' => $pdf_info['path'],
-            )
         );
 
         // Save label request or not
@@ -145,21 +137,14 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
                 return false;
             }
 
-            $return_pdf_info = $label_logic->create_pdf_file($order_id, $return_label['pdf']);
-
             $label_data = array(
                 'label_id' => $return_label['labelId'],
                 'label_type' => $return_label['labelType'],
                 'label_size' => $label_size,
                 'tracker_code' => $return_label['trackerCode'],
-                'routing_code' => $return_label['routingCode'],
+                'routing_code' => null,
                 'order_reference' => $return_label['orderReference'],
                 'is_return' => true,
-
-                'pdf' => array(
-                    'url' => $return_pdf_info['url'],
-                    'path' => $return_pdf_info['path'],
-                ),
             );
 
             // Save label request or not
@@ -184,22 +169,19 @@ class DHLPWC_Model_Service_Shipment extends DHLPWC_Model_Core_Singleton_Abstract
     protected function get_first_piece($response)
     {
         // TODO currently the code handles single pieces, but can be expanded for multiple pieces in the future
-        $current_label_id = null;
-
-        if (!empty($response['pieces'])) {
-            foreach($response['pieces'] as $label_response) {
-                if (!empty($label_response['labelId'])) {
-                    $current_label_id = $label_response['labelId'];
-                }
-            }
-        }
-
-        if (!$current_label_id) {
+        if (empty($response['pieces'])) {
             return false;
         }
 
-        $connector = DHLPWC_Model_API_Connector::instance();
-        $label = $connector->get(sprintf('labels/%s', $current_label_id));
+        foreach($response['pieces'] as $label_response) {
+            if (!empty($label_response['labelId'])) {
+                $label = $label_response;
+            }
+        }
+
+        if (empty($label)) {
+            return false;
+        }
 
         return $label;
     }
