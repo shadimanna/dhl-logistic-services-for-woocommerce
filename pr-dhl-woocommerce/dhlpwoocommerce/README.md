@@ -1,5 +1,10 @@
 # DHL Parcel for WooCommerce
  
+v2.0.7
+## Changes
+- Added a new service option: Secure delivery by code
+- Added an option to show Same Day Delivery as a separate shipping method when delivery times are enabled
+ 
 v2.0.6
 ## Changes
 - Added a setting to automatically enable the service: send a message to recipient

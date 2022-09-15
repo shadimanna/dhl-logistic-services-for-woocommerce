@@ -4,7 +4,7 @@ Tags:                 DHL, DHL Parcel, DHL Parcel for WooCommerce, DHLParcel, DH
 Requires at least:    4.7.16
 Requires PHP:         5.6
 Tested up to:         5.9
-Stable tag:           2.0.7
+Stable tag:           2.0.8
 WC requires at least: 3.0.0
 WC tested up to:      5.3.0
 License:              GPL v3 or later
@@ -52,6 +52,10 @@ This plug-in can be used by online stores that ship orders from the Benelux regi
 A “Google Maps API Key” is required if you wish to display DHL locations on a map for your customers.
 
 == Changelog ==
+ 
+= 2.0.7 =
+- Added a new service option: Secure delivery by code
+- Added an option to show Same Day Delivery as a separate shipping method when delivery times are enabled
  
 = 2.0.6 =
 - Added a setting to automatically enable the service: send a message to recipient

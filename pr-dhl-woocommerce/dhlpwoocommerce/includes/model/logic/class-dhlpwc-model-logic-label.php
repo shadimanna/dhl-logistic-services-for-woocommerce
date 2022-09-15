@@ -10,22 +10,43 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
     const FILE_PREFIX = 'dhlpwc-label-';
     const BATCH_FILE_PREFIX = 'dhlpwc-labels-';
 
-    public function create_pdf_file($order_id, $base64_pdf)
+    public function single_pdf($label_id)
     {
-        $pdf = base64_decode($base64_pdf);
-        $file_name = self::FILE_PREFIX . $order_id . '_' . str_shuffle((string)time() . rand(1000, 9999)) . '.pdf';
-        $upload_path = wp_upload_dir();
-        $path = $upload_path['path'] . DIRECTORY_SEPARATOR . $file_name;
-        $url = $upload_path['url'] . '/' . $file_name;
+        $connector = DHLPWC_Model_API_Connector::instance();
+        $label = $connector->get(sprintf('labels/%s', $label_id));
+
+        $pdf = base64_decode($label['pdf']);
+        $file_name = self::FILE_PREFIX . rand(100000, 999999) . '_' . str_shuffle((string)time() . rand(1000, 9999)) . '.pdf';
+        $upload_path = get_temp_dir();
+        $path = $upload_path . DIRECTORY_SEPARATOR . $file_name;
 
         // TODO, handle errors
         //$file_save_status = file_put_contents($path, $pdf);
         file_put_contents($path, $pdf);
 
-        return array(
-            'url' => $url,
-            'path' => $path
-        );
+        return $path;
+    }
+
+    public function get_pdf_url($label)
+    {
+        if (isset($label['pdf']) && isset($label['pdf']['url']) && isset($label['pdf']['path'])) {
+            $path = $label['pdf']['path'];
+            if (!$this->validate_pdf_file($path)) {
+                // Attempt to fix path
+                $path = $this->restore_pdf_path($path);
+            }
+            if ($this->validate_pdf_file($path)) {
+                return $label['pdf']['url'];
+            }
+        }
+
+        if (isset($label['label_id'])) {
+            // Not found
+            admin_url('edit.php?post_type=shop_order');
+        }
+
+        return admin_url('edit.php?post_type=shop_order&action=dhlpwc_download_label&label_id='.$label['label_id']);
+
     }
 
     public function combine_pdfs($order_ids, $orientation = null, $stack = 0)
@@ -53,9 +74,8 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
         $order_id_tag = substr($order_id_tag,0,20); // Limit the length if a lot of orders are selected
 
         $file_name = self::BATCH_FILE_PREFIX . $order_id_tag . '_' . str_shuffle((string)time() . rand(1000, 9999)) . '.pdf';
-        $upload_dir = wp_upload_dir();
-        $path = $upload_dir['path'] . DIRECTORY_SEPARATOR . $file_name;
-        $url = $upload_dir['url'] . '/' . $file_name;
+        $upload_dir = get_temp_dir();
+        $path = $upload_dir . DIRECTORY_SEPARATOR . $file_name;
 
         $response = $connector->stream('labels/multi', $path, array(
             'missingLabelPolicy' => 'skip',
@@ -67,10 +87,7 @@ class DHLPWC_Model_Logic_Label extends DHLPWC_Model_Core_Singleton_Abstract
             return null;
         }
 
-        return array(
-            'url' => $url,
-            'path' => $path
-        );
+        return $path;
     }
 
     protected function restore_pdf_path($path)

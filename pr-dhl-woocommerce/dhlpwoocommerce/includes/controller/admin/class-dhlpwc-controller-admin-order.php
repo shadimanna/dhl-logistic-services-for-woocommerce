@@ -56,6 +56,8 @@ class DHLPWC_Controller_Admin_Order
             add_action('admin_notices', array($this, 'bulk_create_notice'));
         }
 
+        add_action('admin_action_dhlpwc_download_label', array($this, 'download_label'));
+
         if ($service->check(DHLPWC_Model_Service_Access_Control::ACCESS_BULK_DOWNLOAD)) {
             add_filter('bulk_actions-edit-shop_order', array($this, 'add_bulk_download_action'));
             add_action('admin_action_dhlpwc_download_labels', array($this, 'download_multiple_labels'));
@@ -283,6 +285,30 @@ class DHLPWC_Controller_Admin_Order
         }
     }
 
+    public function download_label()
+    {
+        $label_id = isset($_GET['label_id']) && is_string($_GET['label_id']) ? wc_clean($_GET['label_id']) : null;
+
+        if (!$label_id) {
+            wp_redirect('');
+        }
+
+        $service = DHLPWC_Model_Service_Label::instance();
+        $path = $service->single($label_id);
+
+        if (!$path) {
+            wp_redirect('');
+        }
+
+        $file = explode(DIRECTORY_SEPARATOR, $path);
+        header('Content-type: application/pdf');
+        header('Content-Disposition: attachment; filename="'.end($file).'"');
+        header('Cache-Control: must-revalidate');
+        header('Content-Length: ' . filesize($path));
+        readfile($path);
+        exit;
+    }
+
     public function add_bulk_download_action($bulk_actions)
     {
         $bulk_actions['dhlpwc_download_labels'] = __('DHL - Download label', 'dhlpwc');
@@ -294,13 +320,18 @@ class DHLPWC_Controller_Admin_Order
         $order_ids = isset($_GET['post']) && is_array($_GET['post']) ? wc_clean($_GET['post']) : array();
 
         $service = DHLPWC_Model_Service_Label::instance();
-        $url = $service->combine($order_ids);
+        $path = $service->combine($order_ids);
 
-        if (!$url) {
+        if (!$path) {
             wp_redirect('');
         }
 
-        wp_redirect($url);
+        $file = explode(DIRECTORY_SEPARATOR, $path);
+        header('Content-type: application/pdf');
+        header('Content-Disposition: attachment; filename="'.end($file).'"');
+        header('Cache-Control: must-revalidate');
+        header('Content-Length: ' . filesize($path));
+        readfile($path);
         exit;
     }
 
@@ -416,9 +447,10 @@ class DHLPWC_Controller_Admin_Order
                         continue;
                     }
                     $is_return = (!empty($label['is_return'])) ? $label['is_return'] : false;
+                    $logic = DHLPWC_Model_Logic_Label::instance();
 
                     $view->render(array(
-                        'url'               => $label['pdf']['url'],
+                        'url'               => $logic->get_pdf_url($label),
                         'label_size'        => $label['label_size'],
                         'label_description' => DHLPWC_Model_Service_Translation::instance()->parcelType($label['label_size']),
                         'tracker_code'      => $label['tracker_code'],

@@ -305,9 +305,11 @@ if (!class_exists('DHLPWC_Model_Service_Label_Metabox')) :
             $printer = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_PRINTER);
             $debug_label_requests = $service->check(DHLPWC_Model_Service_Access_Control::ACCESS_LABEL_REQUEST);
 
+            $logic = DHLPWC_Model_Logic_Label::instance();
+
             $actions = array();
             $actions[] = array(
-                'url'    => $label['pdf']['url'],
+                'url'    => $logic->get_pdf_url($label),
                 'name'   => __('Download PDF label', 'dhlpwc'),
                 'action' => "dhlpwc_action_download",
             );
