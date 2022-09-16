@@ -443,7 +443,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			'custom_attributes'	=> array( $is_disabled => $is_disabled )
 		) );
 
-        if( !$this->is_cdp_delivery( $dhl_label_items ) ){
+        if ( ! $this->is_cdp_delivery( $dhl_label_items ) ) {
 	        $bulky_is_disabled = $is_disabled;
 	        woocommerce_wp_checkbox( array(
 		        'id'          		=> 'pr_dhl_bulky_goods',
@@ -1242,7 +1242,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
     public function is_cdp_delivery( $dhl_label_items ) {
 
-	    if( isset($dhl_label_items['pr_dhl_cdp_delivery']) && "yes" === $dhl_label_items['pr_dhl_cdp_delivery'] ){
+	    if ( isset( $dhl_label_items[ 'pr_dhl_cdp_delivery' ] ) && "yes" === $dhl_label_items[ 'pr_dhl_cdp_delivery' ] ) {
             return true;
 	    }
 
