@@ -444,6 +444,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		) );
 
         if ( ! $this->is_cdp_delivery( $dhl_label_items ) ) {
+
 	        $bulky_is_disabled = $is_disabled;
 	        woocommerce_wp_checkbox( array(
 		        'id'          		=> 'pr_dhl_bulky_goods',
@@ -453,6 +454,18 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		        'value'       		=> isset( $dhl_label_items['pr_dhl_bulky_goods'] ) ? $dhl_label_items['pr_dhl_bulky_goods'] : $this->shipping_dhl_settings['dhl_default_bulky_goods'],
 		        'custom_attributes'	=> array( $bulky_is_disabled => $bulky_is_disabled )
 	        ) );
+
+        } else {
+
+            woocommerce_wp_checkbox( array(
+                'id'          		=> 'pr_dhl_cdp_delivery_display',
+                'label'       		=> esc_html__( 'Closest drop-point delivery: ', 'dhl-for-woocommerce' ),
+                'placeholder' 		=> '',
+                'description'		=> '',
+                'value'       		=> "yes",
+                'custom_attributes'	=> array( 'disabled' => 'disabled' )
+            ) );
+
         }
 	}
 

@@ -557,36 +557,36 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 								'preferred_day' => array(
 													'name' => 'PreferredDay' ,
 													'type' => 'details'),
-								'personally' => array(
+								'personally'     => array(
 													'name' => 'Personally'
 													),
-								'no_neighbor' => array(
+								'no_neighbor'   => array(
 													'name' => 'NoNeighbourDelivery'
 													),
-								'named_person' => array(
+								'named_person'  => array(
 													'name' => 'NamedPersonOnly' ,
 													),
-								'premium' => array(
+								'premium'       => array(
 													'name' => 'Premium'
 													),
 								'additional_insurance' => array(
 													'name' => 'AdditionalInsurance'
 													),
-								'bulky_goods' => array(
+								'bulky_goods'   => array(
 													'name' => 'BulkyGoods'
 													),
-								'identcheck' => array(
+								'identcheck'    => array(
 													'name' => 'IdentCheck'
 													),
-                'routing'   => array(
-                          'name' => 'ParcelOutletRouting'
-                           ),
-                'PDDP'   => array(
-                          'name' => 'PDDP'
-                          ),
-                'cdp_delivery'   => array(
-													'name' => 'CDP'
-                          )								
+                                'routing'       => array(
+                                                    'name' => 'ParcelOutletRouting'
+                                                    ),
+                                'PDDP'          => array(
+                                                    'name' => 'PDDP'
+                                                    ),
+                                'cdp_delivery'   => array(
+                                                    'name' => 'CDP'
+                                                    )
 								);
 
 			$services = array();

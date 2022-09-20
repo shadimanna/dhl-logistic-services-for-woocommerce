@@ -288,7 +288,7 @@ class PR_DHL_WC {
 
 	public function dhl_enqueue_scripts() {
 		// Enqueue Styles
-		wp_enqueue_style( 'wc-shipment-dhl-label-css', PR_DHL_PLUGIN_DIR_URL . '/assets/css/pr-dhl-admin.css' );
+		wp_enqueue_style( 'wc-shipment-dhl-label-css', PR_DHL_PLUGIN_DIR_URL . '/assets/css/pr-dhl-admin.css', array(), '1.1' );
 
 		// Enqueue Scripts
         $screen    = get_current_screen();
