@@ -301,18 +301,23 @@ class PR_DHL_Front_End_Paket {
 
 	protected function validate_cdp_available( ) {
 		$shipping_country = WC()->customer->get_shipping_country();
-		$valid_countries = array('SE', 'FI', 'BE', 'AT');
-		if( in_array($shipping_country,$valid_countries) ) {
+		$valid_countries = array( 'SE', 'FI', 'BE', 'AT' );
+
+		if( in_array( $shipping_country, $valid_countries ) ) {
 			// Check if COD payment gateway selected
-			$wc_payment_dhl = $this->shipping_dhl_settings['dhl_payment_gateway'];
-			$chosen_payment_method = WC()->session->get( 'chosen_payment_method' );
-			if( isset( $chosen_payment_method ) && ! empty( $wc_payment_dhl) ) {
+			$wc_payment_dhl         = $this->shipping_dhl_settings[ 'dhl_payment_gateway' ];
+			$chosen_payment_method  = WC()->session->get( 'chosen_payment_method' );
+
+			if( isset( $chosen_payment_method ) && ! empty( $wc_payment_dhl ) ) {
+
 				if( is_array( $chosen_payment_method ) ) {
-					foreach ($chosen_payment_method as $key => $value) {
+
+					foreach ( $chosen_payment_method as $key => $value ) {
 						if ( in_array( $value, $wc_payment_dhl ) ) {
 							return false;
 						}
 					}
+
 				} elseif ( in_array( $chosen_payment_method, $wc_payment_dhl ) ) {
 					return false;
 				}
@@ -362,7 +367,7 @@ class PR_DHL_Front_End_Paket {
 	}
 
 	public function add_cdp_fields( ) {
-		if($this->validate_cdp_available()){
+		if ( $this->validate_cdp_available() ) {
 			wc_get_template( 'checkout/dhl-closest-drop-point.php', [], '', PR_DHL_PLUGIN_DIR_PATH . '/templates/' );
 		}
 	}
@@ -466,7 +471,7 @@ class PR_DHL_Front_End_Paket {
 		// save the posted preferences to the order so can be used when generating label
 		$dhl_label_options = $this->prepare_cdp_fields();
 
-		if( !empty($dhl_label_options)) {
+		if ( ! empty( $dhl_label_options ) ) {
 			PR_DHL()->get_pr_dhl_wc_order()->save_dhl_label_items( $order_id, $dhl_label_options );
 		}
 	}
