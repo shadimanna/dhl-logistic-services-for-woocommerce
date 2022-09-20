@@ -100,6 +100,7 @@ div#shipment-dhl-label-form > div:nth-of-type(even) {
 
 
 .pr_dhl_weight_field,
+.pr_dhl_cdp_delivery_display_field,
 .pr_dhl_multi_packages_enabled_field,
 .pr_dhl_named_person_field,
 .pr_dhl_no_neighbor_field,
@@ -120,6 +121,7 @@ div#shipment-dhl-label-form > div:nth-of-type(even) {
 }
 
 .pr_dhl_weight_field label,
+.pr_dhl_cdp_delivery_display_field label,
 .pr_dhl_multi_packages_enabled_field label,
 .pr_dhl_named_person_field label,
 .pr_dhl_no_neighbor_field label,
