@@ -12,7 +12,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 	 */
 	//const PR_DHL_WSDL_LINK = 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/3.1/geschaeftskundenversand-api-3.1.wsdl';
 
-	const PR_DHL_WSDL_LINK = PR_DHL_PLUGIN_DIR_PATH . '/includes/pr-dhl-api/wsdl/3.3.2/geschaeftskundenversand-api-3.3.2.wsdl';
+	const PR_DHL_WSDL_LINK = PR_DHL_PLUGIN_DIR_PATH . '/includes/pr-dhl-api/wsdl/3.4.0/geschaeftskundenversand-api-3.4.0.wsdl';
 
 	const DHL_RETURN_PRODUCT = '07';
 
@@ -561,33 +561,36 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 								'preferred_day' => array(
 													'name' => 'PreferredDay' ,
 													'type' => 'details'),
-								'personally' => array(
+								'personally'     => array(
 													'name' => 'Personally'
 													),
-								'no_neighbor' => array(
+								'no_neighbor'   => array(
 													'name' => 'NoNeighbourDelivery'
 													),
-								'named_person' => array(
+								'named_person'  => array(
 													'name' => 'NamedPersonOnly' ,
 													),
-								'premium' => array(
+								'premium'       => array(
 													'name' => 'Premium'
 													),
 								'additional_insurance' => array(
 													'name' => 'AdditionalInsurance'
 													),
-								'bulky_goods' => array(
+								'bulky_goods'   => array(
 													'name' => 'BulkyGoods'
 													),
-								'identcheck' => array(
+								'identcheck'    => array(
 													'name' => 'IdentCheck'
 													),
-                                'routing'   => array(
+                                'routing'       => array(
                                                     'name' => 'ParcelOutletRouting'
-                                ),
-                                'PDDP'   => array(
-                                                     'name' => 'PDDP'
-                                )
+                                                    ),
+                                'PDDP'          => array(
+                                                    'name' => 'PDDP'
+                                                    ),
+                                'cdp_delivery'   => array(
+                                                    'name' => 'CDP'
+                                                    )
 								);
 
 			$services = array();

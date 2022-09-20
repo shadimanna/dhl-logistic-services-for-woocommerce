@@ -478,6 +478,13 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'type'            => 'title',
 					'description'     => __( 'Preferred service options.', 'dhl-for-woocommerce' ),
 				),
+				'dhl_closest_drop_point' => array(
+					'title'             => __( 'Closest Drop Point', 'dhl-for-woocommerce' ),
+					'type'              => 'checkbox',
+					'label'             => __( 'Enable Closest Drop Point', 'dhl-for-woocommerce' ),
+					'description'       => __( 'Enabling this will display a front-end option for the user to select delivery option (Home address or CDP delivery).', 'dhl-for-woocommerce' ),
+					'desc_tip'          => true,
+				),
 				'dhl_preferred_day' => array(
 					'title'             => __( 'Delivery Day', 'dhl-for-woocommerce' ),
 					'type'              => 'checkbox',
