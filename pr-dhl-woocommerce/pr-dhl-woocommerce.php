@@ -205,9 +205,9 @@ class PR_DHL_WC {
 		if ( class_exists( 'WC_Shipping_Method' ) ) {
 			$this->base_country_code = $this->get_base_country();
 
-            $this->define_constants();
-            $this->includes();
-            $this->init_hooks();
+			$this->define_constants();
+			$this->includes();
+			$this->init_hooks();
 		} else {
 			// Throw an admin error informing the user this plugin needs WooCommerce to function
 			add_action( 'admin_notices', array( $this, 'notice_wc_required' ) );
@@ -260,7 +260,7 @@ class PR_DHL_WC {
                 }
 
 				// Enable legacy Parcel notice
-                $this->shipping_dhl_notice = new PR_DHL_WC_Notice_Legacy_Parcel();
+				$this->shipping_dhl_notice = new PR_DHL_WC_Notice_Legacy_Parcel();
 
 				// Ensure DHL Labels folder exists
 				$this->dhl_label_folder_check();
