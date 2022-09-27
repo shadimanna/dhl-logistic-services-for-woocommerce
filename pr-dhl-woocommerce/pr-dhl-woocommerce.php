@@ -74,6 +74,13 @@ class PR_DHL_WC {
 	protected $shipping_dhl_notice = null;
 
 	/**
+	 * DHL Shipping DHL Parcel (Legacy) notice
+	 *
+	 * @var PR_DHL_WC_Notice
+	 */
+	protected $shipping_dhl_legacy_parcel_notice = null;
+
+	/**
 	 * DHL Shipping Order for label and tracking.
 	 *
 	 * @var PR_DHL_Logger
@@ -251,6 +258,9 @@ class PR_DHL_WC {
 				} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
 				    $this->shipping_dhl_order = new PR_DHL_WC_Order_Deutsche_Post();
                 }
+
+				// Enable legacy Parcel notice
+                $this->shipping_dhl_notice = new PR_DHL_WC_Notice_Legacy_Parcel();
 
 				// Ensure DHL Labels folder exists
 				$this->dhl_label_folder_check();
