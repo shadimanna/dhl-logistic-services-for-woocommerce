@@ -7,7 +7,7 @@
  * Author URI: http://dhl.com/
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
- * Version: 3.1.0
+ * Version: 3.1.1
  * Tested up to: 6.0
  * WC requires at least: 3.0
  * WC tested up to: 6.6
@@ -36,7 +36,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "3.1.0";
+	private $version = "3.1.1";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -198,14 +198,9 @@ class PR_DHL_WC {
 		if ( class_exists( 'WC_Shipping_Method' ) ) {
 			$this->base_country_code = $this->get_base_country();
 
-			// Load plugin except for DHL Parcel countries
-			$dhl_parcel_countries = array('NL', 'BE', 'LU');
-
-			if (!in_array($this->base_country_code, $dhl_parcel_countries) || apply_filters('pr_shipping_dhl_bypass_load_plugin', false)) {
-				$this->define_constants();
-				$this->includes();
-				$this->init_hooks();
-			}
+            $this->define_constants();
+            $this->includes();
+            $this->init_hooks();
 		} else {
 			// Throw an admin error informing the user this plugin needs WooCommerce to function
 			add_action( 'admin_notices', array( $this, 'notice_wc_required' ) );
@@ -896,6 +891,4 @@ if( ! function_exists('PR_DHL') ) {
 	}
 
 	$PR_DHL_WC = PR_DHL();
-
-	include( 'dhlpwoocommerce/dhlpwoocommerce.php' );
 }
