@@ -260,7 +260,7 @@ class PR_DHL_WC {
                 }
 
 				// Enable legacy Parcel notice
-				$this->shipping_dhl_notice = new PR_DHL_WC_Notice_Legacy_Parcel();
+				$this->shipping_dhl_legacy_parcel_notice = new PR_DHL_WC_Notice_Legacy_Parcel();
 
 				// Ensure DHL Labels folder exists
 				$this->dhl_label_folder_check();
