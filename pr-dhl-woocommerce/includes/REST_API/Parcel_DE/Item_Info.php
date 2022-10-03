@@ -101,8 +101,8 @@ class Item_Info {
 		$items_info     = $args['items'];
 
 		$this->shipment         = Args_Parser::parse_args( $shipping_info, $this->get_shipment_info_schema() );
-        $this->shipper          = Args_Parser::parse_args( $settings, $this->get_shipper_info_schema() );
-        $this->contactAddress   = Args_Parser::parse_args( $settings, $this->get_contact_address_schema() );
+        $this->shipper          = Args_Parser::parse_args( $shipping_info, $this->get_shipper_info_schema() );
+        $this->contactAddress   = Args_Parser::parse_args( $recipient_info, $this->get_contact_address_schema() );
 
 		$this->details = array();
 		foreach ( $items_info as $item_info ) {
