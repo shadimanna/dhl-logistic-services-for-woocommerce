@@ -24,7 +24,7 @@ DHL’s official extension for WooCommerce on WordPress. Manage your national an
 
 The following DHL services are no longer supported by this plugin:
 
-* DHL eCommerce Asia (TH, MY): Please use instead the following plugin [here](https://github.com/shadimanna/dhl-for-woocommerece-ecs).
+* DHL eCommerce Asia (TH, MY): Please use instead the following plugin [here]( https://wordpress.org/plugins/dhl-ecommerce-asia-for-woocommerce/ ).
 * DHL Parcel for WooCommerce (for online stores that ship orders from the Benelux region): Please use instead the following plugin [here](https://wordpress.org/plugins/dhlpwc/).
 
 == Features ==
