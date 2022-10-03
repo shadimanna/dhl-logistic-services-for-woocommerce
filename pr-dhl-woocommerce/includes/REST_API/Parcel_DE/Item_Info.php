@@ -82,7 +82,7 @@ class Item_Info {
 	 */
 	public function __construct( $args, $weightUom = 'g' ) {
 		$this->weightUom = $weightUom;
-		$this->parse_args( $args, $weightUom );
+		$this->parse_args( $args );
 	}
 
 	/**
@@ -306,79 +306,86 @@ class Item_Info {
 	 *
 	 * @return array
 	 */
-	protected function get_content_item_info_schema()
-	{
+	protected function get_content_item_info_schema() {
 		// Closures in PHP 5.3 do not inherit class context
 		// So we need to copy $this into a lexical variable and pass it to closures manually
 		$self = $this;
 
 		return array(
-			'hs_code'     => array(
+            'item_description'  => array(
+                'rename' => 'itemDescription',
+                'default' => '',
+                'sanitize' => function( $description ) use ($self) {
+
+                    return $self->string_length_sanitization( $description, 33 );
+                }
+            ),
+            'country_origin'    => array(
+                'rename'    => 'countryOfOrigin',
+                'default'   => PR_DHL()->get_base_country(),
+                'sanitize' => function( $countryCode ) use ($self) {
+
+                    return $self->country_code_to_alpha3( $countryCode );
+                }
+            ),
+			'hs_code'           => array(
+                'rename' => 'hsCode',
 				'default'  => '',
 				'validate' => function( $hs_code ) {
 					$length = is_string( $hs_code ) ? strlen( $hs_code ) : 0;
 
-					if (empty($length)) {
+					if ( empty( $length ) ) {
 						return;
 					}
 
-					if ( $length < 4 || $length > 20 ) {
+					if ( $length < 4 || $length > 11 ) {
 						throw new Exception(
-							__( 'Item HS Code must be between 4 and 20 characters long', 'dhl-for-woocommerce' )
+							__( 'Item HS Code must be between 4 and 11 characters long', 'dhl-for-woocommerce' )
 						);
 					}
 				},
 			),
-			'item_description' => array(
-				'rename' => 'description',
-				'default' => '',
-				'sanitize' => function( $description ) use ($self) {
+            'qty'               => array(
+                'rename'    => 'packagedQuantity',
+                'default'   => 1,
+            ),
+            'item_value'        => array(
+                'rename'    => 'value',
+                'default'   => [
+                    'currency'  => PR_DHL()->get_currency_symbol(),
+                    'amount'    => 0,
+                ],
+                'sanitize'  => function( $value, $args ) use ($self) {
 
-					return $self->string_length_sanitization( $description, 33 );
-				}
-			),
-			'item_export' => array(
-				'rename' => 'description_export',
+                    $qty 			= isset( $args['qty'] ) && is_numeric( $args['qty'] )? floatval( $args['qty'] ) : 1;
+                    $total_value 	= floatval( $value[ 'amount' ] ) * $qty;
+
+                    return [
+                        'currency'  => $value[ 'currency' ],
+                        'amount'    => (string) $self->float_round_sanitization( $total_value, 2 )
+                    ] ;
+                }
+            ),
+            'item_weight'       => array(
+                'rename'    => 'itemWeight',
+                'default'   => [
+                    'uom'      => $self->weightUom,
+                    'value'    => 1,
+                ],
+                'sanitize'  => function ( $weight ) use ($self) {
+                    return [
+                        'uom'      => $self->weightUom,
+                        'value'    => (string) $self->float_round_sanitization( $weight, 3 )
+                    ];
+                }
+            ),
+            'item_export'       => array(
+				'rename' => 'exportDescription',
 				'default' => '',
 				'sanitize' => function( $description_export ) use ($self) {
-
-					return $self->string_length_sanitization( $description_export, 33 );
+					return $self->string_length_sanitization( $description_export, 80 );
 				}
-			),
-			'product_id'  => array(
-				'default' => '',
-			),
-			'sku'         => array(
-				'default' => '',
-			),
-			'item_value'       => array(
-				'rename' => 'value',
-				'default' => 0,
-				'sanitize' => function( $value, $args ) use ($self) {
-					
-					$qty 			= isset( $args['qty'] ) && is_numeric( $args['qty'] )? floatval( $args['qty'] ) : 1;
-					$total_value 	= floatval( $value ) * $qty;
-					
-					return (string) $self->float_round_sanitization( $total_value, 2 );
-				}
-			),
-			'country_origin' => array(
-				'rename' => 'origin',
-				'default' => PR_DHL()->get_base_country(),
-			),
-			'qty'         => array(
-				'default' => 1,
-			),
-			'item_weight'      => array(
-				'rename' => 'weight',
-				'default' => 1,
-				'sanitize' => function ( $weight ) use ($self) {
-
-					$weight = $self->maybe_convert_to_grams( $weight, $self->weightUom );
-
-					return $weight;
-				}
-			),
+			)
 		);
 	}
 
