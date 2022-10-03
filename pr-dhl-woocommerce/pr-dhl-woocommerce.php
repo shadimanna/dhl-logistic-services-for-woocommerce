@@ -456,6 +456,10 @@ class PR_DHL_WC {
 		return apply_filters( 'pr_shipping_dhl_base_country', $country_code['country'] );
 	}
 
+    public function get_currency_symbol() {
+        return apply_filters( 'pr_shipping_dhl_currency_symbol', get_woocommerce_currency_symbol() );
+    }
+
     public function get_base_postcode() {
         return apply_filters( 'pr_shipping_dhl_base_postcode', WC()->countries->get_base_postcode() );
     }
