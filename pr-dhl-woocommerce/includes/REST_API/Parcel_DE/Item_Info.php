@@ -36,7 +36,7 @@ class Item_Info {
 	 *
 	 * @var array
 	 */
-	public $consignee;
+	public $contactAddress;
 
 	/**
 	 * Details for the shipment, such as dimensions, content
@@ -100,8 +100,9 @@ class Item_Info {
 		$shipping_info  = $args[ 'order_details' ] + $settings;
 		$items_info     = $args['items'];
 
-		$this->shipment = Args_Parser::parse_args( $shipping_info, $this->get_shipment_info_schema() );
-        $this->shipper  = Args_Parser::parse_args( $settings, $this->get_shipper_info_schema() );
+		$this->shipment         = Args_Parser::parse_args( $shipping_info, $this->get_shipment_info_schema() );
+        $this->shipper          = Args_Parser::parse_args( $settings, $this->get_shipper_info_schema() );
+        $this->contactAddress   = Args_Parser::parse_args( $settings, $this->get_contact_address_schema() );
 
 		$this->details = array();
 		foreach ( $items_info as $item_info ) {
@@ -232,6 +233,68 @@ class Item_Info {
                     return $self->country_code_to_alpha3( $countryCode );
                 }
             ),
+        );
+    }
+
+    /**
+     * Retrieves the args scheme to use with {@link Args_Parser} for parsing consignee info.
+     *
+     * @since [*next-version*]
+     *
+     * @return array
+     */
+    protected function get_contact_address_schema() {
+        // Closures in PHP 5.3 do not inherit class context
+        // So we need to copy $this into a lexical variable and pass it to closures manually
+        $self = $this;
+
+        return array(
+            'name'      => array(
+                'rename' => 'name1',
+                'error'  => __( 'Recipient name is empty!', 'dhl-for-woocommerce' ),
+                'sanitize' => function( $name ) use ($self) {
+
+                    return $self->string_length_sanitization( $name, 50 );
+                }
+            ),
+            'address_1' => array(
+                'rename' => 'addressStreet',
+                'error' => __( 'Shipping "Address 1" is empty!', 'dhl-for-woocommerce' ),
+            ),
+            'address_2' => array(
+                'rename' => 'addressHouse',
+                'default' => '',
+            ),
+            'postcode'  => array(
+                'rename' => 'postalCode',
+                'error' => __( 'Shipping "Postcode" is empty!', 'dhl-for-woocommerce' ),
+            ),
+            'city'      => array(
+                'error' => __( 'Shipping "City" is empty!', 'dhl-for-woocommerce' )
+            ),
+            'state'     => array(
+                'default' => '',
+            ),
+            'country'   => array(
+                'sanitize'  => function( $countryCode ) use ( $self ) {
+                    if ( empty( $countryCode ) ) {
+                        throw new Exception(
+                            __( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' )
+                        );
+                    }
+                    return $self->country_code_to_alpha3( $countryCode );
+                }
+            ),
+            'phone'     => array(
+                'default' => '',
+                'sanitize' => function( $phone ) use ($self) {
+
+                    return $self->string_length_sanitization( $phone, 20 );
+                }
+            ),
+            'email'     => array(
+                'default' => '',
+            )
         );
     }
 
