@@ -596,7 +596,7 @@ abstract class PR_DHL_WC_Order {
 		if ( ! empty( $this->shipping_dhl_settings['dhl_add_weight'] ) ) {
 
 			if ( $this->shipping_dhl_settings['dhl_add_weight_type'] == 'absolute' ) {
-				$total_weight += $this->shipping_dhl_settings['dhl_add_weight'];
+				$total_weight += wc_format_decimal( $this->shipping_dhl_settings['dhl_add_weight'] );
 			} elseif ( $this->shipping_dhl_settings['dhl_add_weight_type'] == 'percentage' ) {
 				$total_weight += $total_weight * ( $this->shipping_dhl_settings['dhl_add_weight'] / 100 );
 			}
