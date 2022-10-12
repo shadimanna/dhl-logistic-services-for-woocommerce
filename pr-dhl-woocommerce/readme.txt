@@ -76,6 +76,10 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 3.1.2 =
+* DHL Paket: Fix - Disable bulk button after pressed to avoid duplicate label creation.
+* DHL Paket: Fix - Additional setting weight after WC decimal modification 
+
 = 3.1.1 =
 * DHL Parcel: Removed DHL Parcel Benelux
 * DHL Parcel: Added a notification for DHL Parcel Benelux users
