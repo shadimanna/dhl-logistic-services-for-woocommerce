@@ -695,11 +695,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$args['api_pwd'] 	= $this->shipping_dhl_settings['dhl_api_pwd'];
 		$args['sandbox'] 	= $this->shipping_dhl_settings['dhl_sandbox'];
 
-		// If there are multiple tracking numbers, get the first one to search for the string in order notes
-		if (is_array( $args['tracking_number'] ) ) {
-			$args['tracking_number'] = $args['tracking_number'][0];
-		}
-
 		return $args;
 	}
 

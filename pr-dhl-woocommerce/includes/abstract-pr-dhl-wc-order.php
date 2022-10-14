@@ -239,6 +239,41 @@ abstract class PR_DHL_WC_Order {
 		}
 	}
 
+		/**
+		 * Delete label in process
+		 *
+		 * @param Int $order_id ID of the order object.
+		 *
+		 * @return String.
+		 */
+		public function processing_delete_label( $order_id ) {
+			$args = $this->delete_label_args( $order_id );
+
+			// If no tracking number, just continue. We cannot delete the tracking.
+			if ( empty( $args['tracking_number'] ) ) {
+				return '';
+			}
+
+			$dhl_obj = PR_DHL()->get_dhl_factory();
+
+			// Delete meta data first in case there is an error with the API call.
+			$this->delete_dhl_label_tracking( $order_id );
+
+			if ( is_array( $args['tracking_number'] ) ) {
+				foreach ( $args['tracking_number'] as $tracking_number ) {
+					$del_label_args                    = $args;
+					$del_label_args['tracking_number'] = $tracking_number;
+					$dhl_obj->delete_dhl_label( $del_label_args );
+				}
+			} else {
+				$dhl_obj->delete_dhl_label( $args );
+			}
+
+			$tracking_number_to_delete_note = is_array( $args['tracking_number'] ) ? $args['tracking_number'][0] : $args['tracking_number'];
+
+			return $tracking_number_to_delete_note;
+		}
+
 	abstract public function get_additional_meta_ids();
 	/**
 	 * Order Tracking Save AJAX
@@ -292,14 +327,11 @@ abstract class PR_DHL_WC_Order {
 
 		try {
 
-			$args = $this->delete_label_args( $order_id );
-			$dhl_obj = PR_DHL()->get_dhl_factory();
+			$tracking_num = $this->processing_delete_label( $order_id );
 
-			// Delete meta data first in case there is an error with the API call
-			$this->delete_dhl_label_tracking( $order_id );
-			$dhl_obj->delete_dhl_label( $args );
-
-			$tracking_num = $args['tracking_number'];
+			if ( empty( $tracking_num ) ) {
+				throw new Exception( esc_html__( 'There are no tracking number to delete.', 'dhl-for-woocommerce' ) );
+			}
 
 			wp_send_json( array(
 				'download_msg' => __('Your DHL label is ready to download, click the "Download Label" button above"', 'dhl-for-woocommerce'),
@@ -1186,19 +1218,12 @@ abstract class PR_DHL_WC_Order {
 				continue;
 			}
 
-			$args = $this->delete_label_args( $order_id );
-			$dhl_obj = PR_DHL()->get_dhl_factory();
-
-			// Delete meta data first in case there is an error with the API call
-			$this->delete_dhl_label_tracking( $order_id );
-			$dhl_obj->delete_dhl_label( $args );
+			$tracking_num = $this->processing_delete_label( $order_id );
 
 			// If no tracking number, just continue. We cannot delete the order notes anyway.
-			if ( empty( $args['tracking_number'] ) ) {
+			if ( empty( $tracking_number ) ) {
 				continue;
 			}
-
-			$tracking_number = is_array( $args['tracking_number'] ) ? $args['tracking_number'][0] : $args['tracking_number'];
 
 			$order_notes = wc_get_order_notes(
 				array(
