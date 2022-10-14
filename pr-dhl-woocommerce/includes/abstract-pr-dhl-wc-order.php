@@ -1130,7 +1130,7 @@ abstract class PR_DHL_WC_Order {
 							++$label_count;
 
 							array_push($array_messages, array(
-                                'message' => sprintf( __( 'Order #%s: DHL label Created', 'smart-send-shipping'), $order->get_order_number() ),
+                                'message' => sprintf( __( 'Order #%s: DHL label Created', 'dhl-for-woocommerce'), $order->get_order_number() ),
                                 'type' => 'success',
                             ));
 
@@ -1144,7 +1144,7 @@ abstract class PR_DHL_WC_Order {
 
 				} catch (Exception $e) {
 					array_push($array_messages, array(
-	                    'message' => sprintf( __( 'Order #%s: %s', 'smart-send-shipping'), $order->get_order_number(), $e->getMessage() ),
+	                    'message' => sprintf( __( 'Order #%s: %s', 'dhl-for-woocommerce'), $order->get_order_number(), $e->getMessage() ),
 	                    'type' => 'error',
 	                ));
 				}
@@ -1188,7 +1188,7 @@ abstract class PR_DHL_WC_Order {
                 ));
 			}
 		} elseif ( 'pr_dhl_delete_labels' === $action ) {
-			$this->delete_label_in_bulk( $order_ids );
+			$array_messages = $this->delete_label_in_bulk( $order_ids );
 		}
 
 		return $array_messages;
@@ -1199,11 +1199,14 @@ abstract class PR_DHL_WC_Order {
 	 * 
 	 * @param Array<Int> $order_ids List of Order IDs.
 	 *
+	 * @return Array.
 	 */
-	public function delete_label_in_bulk( $order_ids ) {
+	protected function delete_label_in_bulk( $order_ids ) {
 		if ( empty( $order_ids ) || ! is_array( $order_ids ) ) {
-			return;
+			return array();
 		}
+
+		$array_messages = array();
 
 		foreach( $order_ids as $order_id ) {
 			$order = wc_get_order( $order_id );
@@ -1212,37 +1215,61 @@ abstract class PR_DHL_WC_Order {
 				continue;
 			}
 
-			$label_tracking = $this->get_dhl_label_tracking( $order_id );
+			try {
+				$label_tracking = $this->get_dhl_label_tracking( $order_id );
 
-			if ( empty( $label_tracking ) ) {
-				continue;
-			}
-
-			$tracking_num = $this->processing_delete_label( $order_id );
-
-			// If no tracking number, just continue. We cannot delete the order notes anyway.
-			if ( empty( $tracking_number ) ) {
-				continue;
-			}
-
-			$order_notes = wc_get_order_notes(
-				array(
-					'order_id' => $order_id,
-					'limit'    => -1,
-					'type'     => 'customer',
-				)
-			);
-
-			foreach( $order_notes as $order_note ) {
-				if ( empty( $order_note->content ) ) {
+				if ( empty( $label_tracking ) ) {
 					continue;
 				}
-				
-				if ( false !== strpos( $order_note->content, $tracking_number ) ) {
-					wc_delete_order_note( $order_note->id );
+
+				$tracking_number = $this->processing_delete_label( $order_id );
+
+				// If no tracking number, just continue. We cannot delete the order notes anyway.
+				if ( empty( $tracking_number ) ) {
+					continue;
 				}
+
+				$order_notes = wc_get_order_notes(
+					array(
+						'order_id' => $order_id,
+						'limit'    => -1,
+						'type'     => 'customer',
+					)
+				);
+
+				$order_notes = array_map(
+					function( $order_note ) use ( $tracking_number ) {
+						if ( empty( $order_note->content ) ) {
+							return $order_note;
+						}
+						
+						if ( false !== strpos( $order_note->content, $tracking_number ) ) {
+							wc_delete_order_note( $order_note->id );
+						}
+						return $order_note;
+					},
+					$order_notes
+				);
+
+				array_push(
+					$array_messages,
+					array(
+						'message' => sprintf( esc_html__( 'Order #%s: DHL Label Deleted', 'dhl-for-woocommerce' ), $order->get_order_number() ),
+						'type'    => 'success',
+					)
+				);
+			} catch ( Exception $e ) {
+				array_push( 
+					$array_messages,
+					array(
+						'message' => sprintf( __( 'Order #%s: %s', 'dhl-for-woocommerce'), $order->get_order_number(), $e->getMessage() ),
+						'type' => 'error',
+					)
+				);
 			}
 		}
+
+		return $array_messages;
 	}
 
 	/**
