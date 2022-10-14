@@ -23,7 +23,7 @@
 			var bulkactions = jQuery( this ).closest( '.bulkactions' );
 			var bulkdropdown = bulkactions.find( 'select[name=action]' );
 
-			if ( 'pr_dhl_create_labels' === bulkdropdown.val() ) {
+			if ( 'pr_dhl_create_labels' === bulkdropdown.val() || 'pr_dhl_delete_labels' === bulkdropdown.val() ) {
 				jQuery( this ).prop( 'disabled', true );
 				jQuery( '#posts-filter' ).submit();
 			}

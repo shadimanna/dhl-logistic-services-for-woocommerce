@@ -1155,9 +1155,69 @@ abstract class PR_DHL_WC_Order {
                     'type' => 'error',
                 ));
 			}
+		} elseif ( 'pr_dhl_delete_labels' === $action ) {
+			$this->delete_label_in_bulk( $order_ids );
 		}
 
 		return $array_messages;
+	}
+
+	/**
+	 * Delete DHL in bulk.
+	 * 
+	 * @param Array<Int> $order_ids List of Order IDs.
+	 *
+	 */
+	public function delete_label_in_bulk( $order_ids ) {
+		if ( empty( $order_ids ) || ! is_array( $order_ids ) ) {
+			return;
+		}
+
+		foreach( $order_ids as $order_id ) {
+			$order = wc_get_order( $order_id );
+
+			if ( ! is_a( $order, 'WC_Order' ) ) {
+				continue;
+			}
+
+			$label_tracking = $this->get_dhl_label_tracking( $order_id );
+
+			if ( empty( $label_tracking ) ) {
+				continue;
+			}
+
+			$args = $this->delete_label_args( $order_id );
+			$dhl_obj = PR_DHL()->get_dhl_factory();
+
+			// Delete meta data first in case there is an error with the API call
+			$this->delete_dhl_label_tracking( $order_id );
+			$dhl_obj->delete_dhl_label( $args );
+
+			// If no tracking number, just continue. We cannot delete the order notes anyway.
+			if ( empty( $args['tracking_number'] ) ) {
+				continue;
+			}
+
+			$tracking_number = is_array( $args['tracking_number'] ) ? $args['tracking_number'][0] : $args['tracking_number'];
+
+			$order_notes = wc_get_order_notes(
+				array(
+					'order_id' => $order_id,
+					'limit'    => -1,
+					'type'     => 'customer',
+				)
+			);
+
+			foreach( $order_notes as $order_note ) {
+				if ( empty( $order_note->content ) ) {
+					continue;
+				}
+				
+				if ( false !== strpos( $order_note->content, $tracking_number ) ) {
+					wc_delete_order_note( $order_note->id );
+				}
+			}
+		}
 	}
 
 	/**

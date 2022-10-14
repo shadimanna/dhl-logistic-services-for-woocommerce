@@ -811,8 +811,9 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$shop_manager_actions = array();
 
 		$shop_manager_actions = array(
-			'pr_dhl_create_labels'      => __( 'DHL Create Labels', 'dhl-for-woocommerce' ),
-			'pr_dhl_request_pickup'      => __( 'DHL Request Pickup', 'dhl-for-woocommerce' )
+			'pr_dhl_create_labels'  => __( 'DHL Create Labels', 'dhl-for-woocommerce' ),
+			'pr_dhl_delete_labels'  => __( 'DHL Delete Labels', 'dhl-for-woocommerce' ),
+			'pr_dhl_request_pickup' => __( 'DHL Request Pickup', 'dhl-for-woocommerce' )
 		);
 
 		return $shop_manager_actions;
