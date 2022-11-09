@@ -95,14 +95,16 @@ class Item_Info {
 	 * @throws Exception If some data in $args did not pass validation.
 	 */
 	protected function parse_args( $args ) {
-		$settings       = $args[ 'dhl_settings' ];
-		$recipient_info = $args[ 'shipping_address' ] + $settings;
-		$shipping_info  = $args[ 'order_details' ] + $settings;
+		$settings       = $args['dhl_settings'];
+		$recipient_info = $args['shipping_address'] + $settings;
+		$shipping_info  = $args['order_details'] + $settings;
 		$items_info     = $args['items'];
 
-		$this->shipment         = Args_Parser::parse_args( $shipping_info, $this->get_shipment_info_schema() );
-        $this->shipper          = Args_Parser::parse_args( $shipping_info, $this->get_shipper_info_schema() );
-        $this->contactAddress   = Args_Parser::parse_args( $recipient_info, $this->get_contact_address_schema() );
+		$this->shipment       = Args_Parser::parse_args( $shipping_info, $this->get_shipment_info_schema() );
+		$this->shipper        = Args_Parser::parse_args( $shipping_info, $this->get_shipper_info_schema() );
+		$this->contactAddress = Args_Parser::parse_args( $recipient_info, $this->get_contact_address_schema() );
+		$this->services       = Args_Parser::parse_args( $shipping_info, $this->get_services_schema() );
+		$this->customs        = Args_Parser::parse_args( $shipping_info, $this->get_services_schema() );
 
 		$this->details = array();
 		foreach ( $items_info as $item_info ) {
@@ -386,6 +388,62 @@ class Item_Info {
 					return $self->string_length_sanitization( $description_export, 80 );
 				}
 			)
+		);
+	}
+
+	/**
+	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing shipment services.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return array
+	 */
+	protected function get_services_schema() {
+		$self = $this;
+
+		return array(
+			'preferred_neighbor'   => array(
+				'rename' => 'preferredNeighbour'
+			),
+			'preferred_location'   => array(
+				'rename' => 'preferredLocation'
+			),
+			'email_notification'   => array(
+				'rename' => 'shippingConfirmation'
+			),
+			'age_visual'           => array(
+				'rename' => 'visualCheckOfAge'
+			),
+			'personally'           => array(
+				'rename' => 'namedPersonOnly'
+			),
+			'identcheck'           => array(
+				'rename' => 'identCheck'
+			),
+			'preferred_day'        => array(
+				'rename' => 'preferredDay'
+			),
+			'no_neighbor'          => array(
+				'rename' => 'noNeighbourDelivery'
+			),
+			'additional_insurance' => array(
+				'rename' => 'additionalInsurance'
+			),
+			'bulky_goods'          => array(
+				'rename' => 'bulkyGoods'
+			),
+			'cdp_delivery'         => array(
+				'rename' => 'cashOnDelivery'
+			),
+			'premium'              => array(
+				'rename' => 'premium'
+			),
+			'routing'              => array(
+				'rename' => 'parcelOutletRouting'
+			),
+			'PDDP'                 => array(
+				'rename' => 'postalDeliveryDutyPaid'
+			),
 		);
 	}
 
