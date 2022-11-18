@@ -62,6 +62,7 @@ class Auth implements API_Auth_Interface {
 	 * @param string               $api_url       The REST API base URL.
 	 * @param string               $client_id     The client's ID.
 	 * @param string               $client_secret The authentication secret for the client.
+	 * @param string               $api_key       The API key provided by DHL.
 	 */
 	public function __construct( API_Driver_Interface $driver, $api_url, $client_id, $client_secret, $api_key ){
 		$this->driver           = $driver;
