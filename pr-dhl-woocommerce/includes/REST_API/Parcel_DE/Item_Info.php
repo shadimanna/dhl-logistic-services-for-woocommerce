@@ -39,13 +39,13 @@ class Item_Info {
 	public $contactAddress;
 
 	/**
-	 * Details for the shipment, such as dimensions, content
+	 * Shipment items.
      *
 	 * @since [*next-version*]
 	 *
 	 * @var array[]
 	 */
-	public $details;
+	public $items;
 
     /**
      * For international shipments, this array contains information necessary for customs about the exported goods.
@@ -68,7 +68,16 @@ class Item_Info {
 	 *
 	 * @var string
 	 */
-	protected $weightUom;
+	public $weightUom;
+
+	/**
+	 * Is the shipment cross-border or domestic
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @var boolean
+	 */
+	public $isCrossBorder;
 
 	/**
 	 * Constructor.
@@ -80,8 +89,9 @@ class Item_Info {
 	 *
 	 * @throws Exception If some data in $args did not pass validation.
 	 */
-	public function __construct( $args, $weightUom = 'g' ) {
+	public function __construct( $args, $isCrossBorder, $weightUom = 'g' ) {
 		$this->weightUom = $weightUom;
+		$this->isCrossBorder = $isCrossBorder;
 		$this->parse_args( $args );
 	}
 
@@ -106,9 +116,9 @@ class Item_Info {
 		$this->services       = Args_Parser::parse_args( $shipping_info, $this->get_services_schema() );
 		$this->customs        = Args_Parser::parse_args( $shipping_info, $this->get_services_schema() );
 
-		$this->details = array();
+		$this->items = array();
 		foreach ( $items_info as $item_info ) {
-			$this->details[] = Args_Parser::parse_args( $item_info, $this->get_content_item_info_schema() );
+			$this->items[] = Args_Parser::parse_args( $item_info, $this->get_content_item_info_schema() );
 		}
 	}
 
@@ -125,40 +135,79 @@ class Item_Info {
 		$self = $this;
 
 		return array(
-            'dhl_product'                   => array(
-                'rename' => 'product',
-                'error'  => __( 'DHL "Product" is empty!', 'dhl-for-woocommerce' ),
-                'sanitize' => function ( $product ) use ($self) {
+			'dhl_product'               => array(
+				'rename'   => 'product',
+				'error'    => __( 'DHL "Product" is empty!', 'dhl-for-woocommerce' ),
+				'sanitize' => function ( $product ) use ( $self ) {
 
-                    $product_info 	= explode( '-', $product );
-                    $product 		= $product_info[0];
+					$product_info = explode( '-', $product );
+					$product      = $product_info[0];
 
-                    return $product;
-                },
-            ),
-			'dhl_label_ref'                 => array(
-				'rename'    => 'refNo',
-				'sanitize'  => function( $label_ref ) use ($self) {
+					return $product;
+				},
+			),
+			'dhl_label_ref'             => array(
+				'rename'   => 'refNo',
+				'sanitize' => function ( $label_ref ) use ( $self ) {
 					return $self->string_length_sanitization( $label_ref, 50 );
 				}
 			),
-            'dhl_pickup_billing_number'     => array(
-                'rename' => 'billingNumber',
-                'sanitize' => function( $account ) use ($self) {
+			'dhl_pickup_billing_number' => array(
+				'rename'   => 'billingNumber',
+				'sanitize' => function ( $account ) use ( $self ) {
 
-                    if ( empty( $account ) ) {
-                        throw new Exception(
-                            __( 'Check your settings "Account Number" and "Participation Number".', 'dhl-for-woocommerce' )
-                        );
-                    }
+					if ( empty( $account ) ) {
+						throw new Exception(
+							__( 'Check your settings "Account Number" and "Participation Number".', 'dhl-for-woocommerce' )
+						);
+					}
 
-                    return $account;
-                }
-            ),
-            'dhl_cost_center'               => array(
-                'rename' => 'costCenter',
-                'default' => ''
-            )
+					return $account;
+				}
+			),
+			'dhl_cost_center'           => array(
+				'rename'  => 'costCenter',
+				'default' => ''
+			),
+			'weight'                    => array(
+				'error'    => __( 'Order "Weight" is empty!', 'dhl-for-woocommerce' ),
+				'validate' => function ( $weight ) {
+					if ( ! is_numeric( $weight ) ) {
+						throw new Exception( __( 'The order "Weight" must be a number', 'dhl-for-woocommerce' ) );
+					}
+				},
+				'sanitize' => function ( $weight ) use ( $self ) {
+
+					$weight = $self->maybe_convert_to_grams( $weight, $self->weightUom );
+
+					return $weight;
+				}
+			),
+			'currency'                  => array(
+				'error' => __( 'Shop "Currency" is empty!', 'dhl-for-woocommerce' ),
+			),
+			'total_value'               => array(
+				'rename'   => 'value',
+				'error'    => __( 'Shipment "Value" is empty!', 'dhl-for-woocommerce' ),
+				'validate' => function ( $value ) {
+					if ( ! is_numeric( $value ) ) {
+						throw new Exception( __( 'The order "value" must be a number', 'dhl-for-woocommerce' ) );
+					}
+				},
+				'sanitize' => function ( $value ) use ( $self ) {
+
+					return $self->float_round_sanitization( $value, 2 );
+				}
+			),
+			'cod_value'                 => array(
+				'default'  => '',
+				'sanitize' => function ( $value ) use ( $self ) {
+					return $self->float_round_sanitization( $value, 2 );
+				}
+			),
+			'routing_email'             => array(
+				'default' => ''
+			)
 		);
 	}
 
@@ -471,7 +520,7 @@ class Item_Info {
 				$weight = $weight / 35.274;
 				break;
 		}
-		
+
 		return round( $weight );
 	}
 
