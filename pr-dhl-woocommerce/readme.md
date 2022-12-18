@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL Paket Germany, WooCommerce, W
 Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 6.0
-Stable tag: 3.2.1
+Stable tag: 3.2.2
 WC requires at least: 3.0
 WC tested up to: 6.6
 License: GPLv2 or later

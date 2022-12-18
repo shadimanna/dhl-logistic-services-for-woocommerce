@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL Paket Germany, WooCommerce, W
 Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 6.0
-Stable tag: 3.2.1
+Stable tag: 3.2.2
 WC requires at least: 3.0
 WC tested up to: 6.6
 License: GPLv2 or later
@@ -75,6 +75,8 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
+= 3.2.2 =
+* DHL Paket:  Bug fix - If FPDF used in other plugins
 
 = 3.2.1 =
 * DHL Paket:  Fix location finder dropdown
