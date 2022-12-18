@@ -24,19 +24,21 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 		parent::init_hooks();
 
-		// add 'Label Created' orders page column header
+		// Add 'Label Created' orders page column header.
 		add_filter( 'manage_edit-shop_order_columns', array( $this, 'add_order_label_column_header' ), 30 );
 
-		// add 'Label Created' orders page column content
+		// Add 'Label Created' orders page column content.
 		add_action( 'manage_shop_order_posts_custom_column', array( $this, 'add_order_label_column_content' ) );
 
 		add_action( 'pr_shipping_dhl_label_created', array( $this, 'change_order_status' ), 10, 1 );
 		add_action( 'woocommerce_email_order_details', array( $this, 'add_tracking_info'), 10, 4 );
 		add_action( 'woocommerce_order_status_changed', array( $this, 'create_label_on_status_changed' ), 10, 4 );
 
-		// add 'DHL Request Pickup' to Order actions
+		// Add assets order list assets.
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_order_list_assets' ) );
+
+		// Add 'DHL Request Pickup' to Order actions.
 		add_action( 'handle_bulk_actions-edit-shop_order', array($this, 'process_bulk_actions_pickup_request'), 10, 3 );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_modal_window_assets'));
 		add_action( 'manage_posts_extra_tablenav', array( $this, 'bulk_actions_fields_pickup_request'));
 		add_action( 'admin_footer', array( $this, 'modal_content_fields_pickup_request'));
 
@@ -693,11 +695,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$args['api_pwd'] 	= $this->shipping_dhl_settings['dhl_api_pwd'];
 		$args['sandbox'] 	= $this->shipping_dhl_settings['dhl_sandbox'];
 
-		// If there are multiple tracking numbers, get the first one to search for the string in order notes
-		if (is_array( $args['tracking_number'] ) ) {
-			$args['tracking_number'] = $args['tracking_number'][0];
-		}
-
 		return $args;
 	}
 
@@ -809,8 +806,9 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$shop_manager_actions = array();
 
 		$shop_manager_actions = array(
-			'pr_dhl_create_labels'      => __( 'DHL Create Labels', 'dhl-for-woocommerce' ),
-			'pr_dhl_request_pickup'      => __( 'DHL Request Pickup', 'dhl-for-woocommerce' )
+			'pr_dhl_create_labels'  => __( 'DHL Create Labels', 'dhl-for-woocommerce' ),
+			'pr_dhl_delete_labels'  => __( 'DHL Delete Labels', 'dhl-for-woocommerce' ),
+			'pr_dhl_request_pickup' => __( 'DHL Request Pickup', 'dhl-for-woocommerce' )
 		);
 
 		return $shop_manager_actions;
@@ -1129,7 +1127,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		return $redirect_url;
 	}
 
-	public function enqueue_modal_window_assets() {
+	public function enqueue_order_list_assets() {
 		global $pagenow, $typenow;
 
 		if( 'shop_order' === $typenow && 'edit.php' === $pagenow ) {
@@ -1138,8 +1136,8 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			wp_enqueue_script('thickbox');
 
 			wp_enqueue_script(
-				'wc-shipment-dhl-paket-pickup-bulk-js',
-				PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-paket-pickup-bulk.js',
+				'wc-shipment-dhl-paket-order-bulk-js',
+				PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-paket-order-bulk.js',
 				array(),
 				PR_DHL_VERSION,
 				true

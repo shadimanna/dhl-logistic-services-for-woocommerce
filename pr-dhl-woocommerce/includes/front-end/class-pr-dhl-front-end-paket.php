@@ -744,24 +744,35 @@ class PR_DHL_Front_End_Paket {
 
 	public function add_postnum_field( $checkout_fields ) {
 
+		$types = array(
+			'normal' => __( 'Regular Address', 'dhl-for-woocommerce' ),
+		);
+
+		if ( $this->is_packstation_enabled() ) {
+			$types['dhl_packstation'] = __( 'DHL Packstation', 'dhl-for-woocommerce' );
+		}
+
+		if ( $this->is_post_office_enabled() ) {
+			$types['dhl_branch'] = __( 'DHL Branch', 'dhl-for-woocommerce' );
+		}
+
 		$shipping_dhl_address_type = array(
-					'label'        => __( 'Address Type', 'dhl-for-woocommerce' ),
-					'required'     => true,
-					'type'         => 'select',
-					'class'        => array( 'shipping-dhl-address-type' ),
-					'clear'        => true,
-					'default'      => 'normal',
-					'options'	   => array( 'normal' => __('Regular Address', 'dhl-for-woocommerce'), 'dhl_packstation' => __('DHL Packstation', 'dhl-for-woocommerce'), 'dhl_branch' => __('DHL Branch', 'dhl-for-woocommerce') )
-				);
+			'label'    => __( 'Address Type', 'dhl-for-woocommerce' ),
+			'required' => true,
+			'type'     => 'select',
+			'class'    => array( 'shipping-dhl-address-type' ),
+			'clear'    => true,
+			'default'  => 'normal',
+			'options'  => $types
+		);
 
 		$shipping_dhl_postnum_branch = array(
-					'label'        => __( 'Post Number', 'dhl-for-woocommerce' ),
-					'required'     => false,
-					'type'         => 'text',
-					'class'        => array( 'shipping-dhl-postnum' ),
-					'clear'        => true,
-				);
-
+			'label'    => __( 'Post Number', 'dhl-for-woocommerce' ),
+			'required' => false,
+			'type'     => 'text',
+			'class'    => array( 'shipping-dhl-postnum' ),
+			'clear'    => true,
+		);
 
 		if( $new_shipping_fields = $this->array_insert_before( 'shipping_first_name', $checkout_fields['shipping'], 'shipping_dhl_address_type', $shipping_dhl_address_type) ) {
 

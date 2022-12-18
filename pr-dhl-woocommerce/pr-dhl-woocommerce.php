@@ -7,7 +7,7 @@
  * Author URI: http://dhl.com/
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
- * Version: 3.1.0
+ * Version: 3.2.2
  * Tested up to: 6.0
  * WC requires at least: 3.0
  * WC tested up to: 6.6
@@ -36,7 +36,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "3.1.0";
+	private $version = "3.2.2";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -72,6 +72,13 @@ class PR_DHL_WC {
 	 * @var PR_DHL_WC_Notice
 	 */
 	protected $shipping_dhl_notice = null;
+
+	/**
+	 * DHL Shipping DHL Parcel (Legacy) notice
+	 *
+	 * @var PR_DHL_WC_Notice
+	 */
+	protected $shipping_dhl_legacy_parcel_notice = null;
 
 	/**
 	 * DHL Shipping Order for label and tracking.
@@ -198,14 +205,9 @@ class PR_DHL_WC {
 		if ( class_exists( 'WC_Shipping_Method' ) ) {
 			$this->base_country_code = $this->get_base_country();
 
-			// Load plugin except for DHL Parcel countries
-			$dhl_parcel_countries = array('NL', 'BE', 'LU');
-
-			if (!in_array($this->base_country_code, $dhl_parcel_countries) || apply_filters('pr_shipping_dhl_bypass_load_plugin', false)) {
-				$this->define_constants();
-				$this->includes();
-				$this->init_hooks();
-			}
+			$this->define_constants();
+			$this->includes();
+			$this->init_hooks();
 		} else {
 			// Throw an admin error informing the user this plugin needs WooCommerce to function
 			add_action( 'admin_notices', array( $this, 'notice_wc_required' ) );
@@ -256,6 +258,9 @@ class PR_DHL_WC {
 				} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
 				    $this->shipping_dhl_order = new PR_DHL_WC_Order_Deutsche_Post();
                 }
+
+				// Enable legacy Parcel notice
+				$this->shipping_dhl_legacy_parcel_notice = new PR_DHL_WC_Notice_Legacy_Parcel();
 
 				// Ensure DHL Labels folder exists
 				$this->dhl_label_folder_check();
@@ -900,6 +905,4 @@ if( ! function_exists('PR_DHL') ) {
 	}
 
 	$PR_DHL_WC = PR_DHL();
-
-	include( 'dhlpwoocommerce/dhlpwoocommerce.php' );
 }
