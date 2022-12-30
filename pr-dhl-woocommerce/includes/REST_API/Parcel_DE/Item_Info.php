@@ -148,11 +148,12 @@ class Item_Info {
 			),
 			'dhl_label_ref'             => array(
 				'rename'   => 'refNo',
+				'default'  => '',
 				'sanitize' => function ( $label_ref ) use ( $self ) {
 					return $self->string_length_sanitization( $label_ref, 50 );
 				}
 			),
-			'dhl_pickup_billing_number' => array(
+			'account_num' => array(
 				'rename'   => 'billingNumber',
 				'sanitize' => function ( $account ) use ( $self ) {
 
