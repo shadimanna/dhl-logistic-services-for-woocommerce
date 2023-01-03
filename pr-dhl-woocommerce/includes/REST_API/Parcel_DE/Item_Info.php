@@ -146,7 +146,7 @@ class Item_Info {
 					return $product;
 				},
 			),
-			'dhl_label_ref'             => array(
+			'order_id'             => array(
 				'rename'   => 'refNo',
 				'sanitize' => function ( $label_ref ) use ( $self ) {
 					return $self->string_length_sanitization( $label_ref, 50 );
