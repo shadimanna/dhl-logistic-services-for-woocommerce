@@ -25,19 +25,21 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 		parent::init_hooks();
 
-		// add 'Label Created' orders page column header
+		// Add 'Label Created' orders page column header.
 		add_filter( 'manage_edit-shop_order_columns', array( $this, 'add_order_label_column_header' ), 30 );
 
-		// add 'Label Created' orders page column content
+		// Add 'Label Created' orders page column content.
 		add_action( 'manage_shop_order_posts_custom_column', array( $this, 'add_order_label_column_content' ) );
 
 		add_action( 'pr_shipping_dhl_label_created', array( $this, 'change_order_status' ), 10, 1 );
 		add_action( 'woocommerce_email_order_details', array( $this, 'add_tracking_info'), 10, 4 );
 		add_action( 'woocommerce_order_status_changed', array( $this, 'create_label_on_status_changed' ), 10, 4 );
 
-		// add 'DHL Request Pickup' to Order actions
+		// Add assets order list assets.
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_order_list_assets' ) );
+
+		// Add 'DHL Request Pickup' to Order actions.
 		add_action( 'handle_bulk_actions-edit-shop_order', array($this, 'process_bulk_actions_pickup_request'), 10, 3 );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_modal_window_assets'));
 		add_action( 'manage_posts_extra_tablenav', array( $this, 'bulk_actions_fields_pickup_request'));
 		add_action( 'admin_footer', array( $this, 'modal_content_fields_pickup_request'));
 
@@ -167,7 +169,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 						'value'       		=> isset( $dhl_label_items['pr_dhl_return_email'] ) ? $dhl_label_items['pr_dhl_return_email'] : $this->shipping_dhl_settings['dhl_return_email'],
 						'custom_attributes'	=> array( $is_disabled => $is_disabled )
 					) );
-				
+
 				echo '</div>'; // END -- Return Address
 
 				echo '<hr/>';
@@ -227,7 +229,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				}
 
 			echo '</div>'; // END -- Delivery Options
-			
+
 			echo '<div class="shipment-dhl-row-container shipment-dhl-row-additional-services">';
 				echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon shipment-dhl-icon-additional-services"></span> ' . __( 'Additional Services', 'dhl-for-woocommerce' ) . '</div>';
 
@@ -362,6 +364,19 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 					echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon shipment-dhl-icon-crossborder-domestic"></span> ' . __( 'Crossborder', 'dhl-for-woocommerce' ) . '</div>';
 
 
+                    // PDDP
+                    if ( $this->is_UK_shipment( $order_id ) ) {
+	                    $PDDP_value = $dhl_label_items['pr_dhl_PDDP'] ?? '';
+	                    woocommerce_wp_checkbox( array(
+		                    'id'          		=> 'pr_dhl_PDDP',
+		                    'label'       		=> esc_html__( 'Postal Delivered Duty Paid::', 'dhl-for-woocommerce' ),
+		                    'placeholder' 		=> '',
+		                    'description'		=> '',
+		                    'value'       		=> esc_attr( $PDDP_value ),
+		                    'custom_attributes'	=> array( $is_disabled => $is_disabled )
+	                    ) );
+                    }
+
 					// Duties drop down
 					$duties_opt = $dhl_obj->get_dhl_duties();
 					woocommerce_wp_select( array(
@@ -398,6 +413,14 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	public function crossborder_and_domestic_fields( $dhl_label_items, $is_disabled ){
 
 		woocommerce_wp_hidden_input( array(
+			'id'          		=> 'pr_dhl_cdp_delivery',
+			'label'       		=> esc_html__( 'Closest drop-point delivery: ', 'dhl-for-woocommerce' ),
+			'placeholder' 		=> '',
+			'description'		=> '',
+			'value'       		=> $this->is_cdp_delivery( $dhl_label_items ) ? "yes" : "no"
+		) );
+
+		woocommerce_wp_hidden_input( array(
 			'id'          		=> 'pr_dhl_email_notification',
 			'label'       		=> __( 'Email Notification:', 'dhl-for-woocommerce' ),
 			'placeholder' 		=> '',
@@ -423,14 +446,30 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			'custom_attributes'	=> array( $is_disabled => $is_disabled )
 		) );
 
-		woocommerce_wp_checkbox( array(
-			'id'          		=> 'pr_dhl_bulky_goods',
-			'label'       		=> __( 'Bulky Goods: ', 'dhl-for-woocommerce' ),
-			'placeholder' 		=> '',
-			'description'		=> '',
-			'value'       		=> isset( $dhl_label_items['pr_dhl_bulky_goods'] ) ? $dhl_label_items['pr_dhl_bulky_goods'] : $this->shipping_dhl_settings['dhl_default_bulky_goods'],
-			'custom_attributes'	=> array( $is_disabled => $is_disabled )
-		) );
+        if ( ! $this->is_cdp_delivery( $dhl_label_items ) ) {
+
+	        $bulky_is_disabled = $is_disabled;
+	        woocommerce_wp_checkbox( array(
+		        'id'          		=> 'pr_dhl_bulky_goods',
+		        'label'       		=> __( 'Bulky Goods: ', 'dhl-for-woocommerce' ),
+		        'placeholder' 		=> '',
+		        'description'		=> '',
+		        'value'       		=> isset( $dhl_label_items['pr_dhl_bulky_goods'] ) ? $dhl_label_items['pr_dhl_bulky_goods'] : $this->shipping_dhl_settings['dhl_default_bulky_goods'],
+		        'custom_attributes'	=> array( $bulky_is_disabled => $bulky_is_disabled )
+	        ) );
+
+        } else {
+
+            woocommerce_wp_checkbox( array(
+                'id'          		=> 'pr_dhl_cdp_delivery_display',
+                'label'       		=> esc_html__( 'Closest drop-point delivery: ', 'dhl-for-woocommerce' ),
+                'placeholder' 		=> '',
+                'description'		=> '',
+                'value'       		=> "yes",
+                'custom_attributes'	=> array( 'disabled' => 'disabled' )
+            ) );
+
+        }
 	}
 
 	protected function add_package_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
@@ -514,7 +553,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	 * Function for saving tracking items
 	 */
 	public function get_additional_meta_ids( ) {
-		return array( 'pr_dhl_cod_value', 'pr_dhl_preferred_day', 'pr_dhl_preferred_location', 'pr_dhl_preferred_neighbor', 'pr_dhl_duties', 'pr_dhl_age_visual', 'pr_dhl_email_notification', 'pr_dhl_additional_insurance', 'pr_dhl_personally', 'pr_dhl_no_neighbor', 'pr_dhl_named_person', 'pr_dhl_premium', 'pr_dhl_bulky_goods', 'pr_dhl_is_codeable', 'pr_dhl_identcheck', 'pr_dhl_identcheck_dob', 'pr_dhl_identcheck_age', 'pr_dhl_return_address_enabled', 'pr_dhl_return_name', 'pr_dhl_return_company', 'pr_dhl_return_address','pr_dhl_return_address_no', 'pr_dhl_return_address_city', 'pr_dhl_return_address_state', 'pr_dhl_return_address_zip', 'pr_dhl_return_phone', 'pr_dhl_return_email', 'pr_dhl_routing', 'pr_dhl_routing_email', 'pr_dhl_total_packages', 'pr_dhl_multi_packages_enabled', 'pr_dhl_packages_number', 'pr_dhl_packages_weight', 'pr_dhl_packages_length', 'pr_dhl_packages_width', 'pr_dhl_packages_height', 'pr_dhl_invoice_num', 'pr_dhl_description' );
+  		return array( 'pr_dhl_PDDP', 'pr_dhl_cdp_delivery', 'pr_dhl_cod_value', 'pr_dhl_preferred_day', 'pr_dhl_preferred_location', 'pr_dhl_preferred_neighbor', 'pr_dhl_duties', 'pr_dhl_age_visual', 'pr_dhl_email_notification', 'pr_dhl_additional_insurance', 'pr_dhl_personally', 'pr_dhl_no_neighbor', 'pr_dhl_named_person', 'pr_dhl_premium', 'pr_dhl_bulky_goods', 'pr_dhl_is_codeable', 'pr_dhl_identcheck', 'pr_dhl_identcheck_dob', 'pr_dhl_identcheck_age', 'pr_dhl_return_address_enabled', 'pr_dhl_return_name', 'pr_dhl_return_company', 'pr_dhl_return_address','pr_dhl_return_address_no', 'pr_dhl_return_address_city', 'pr_dhl_return_address_state', 'pr_dhl_return_address_zip', 'pr_dhl_return_phone', 'pr_dhl_return_email', 'pr_dhl_routing', 'pr_dhl_routing_email', 'pr_dhl_total_packages', 'pr_dhl_multi_packages_enabled', 'pr_dhl_packages_number', 'pr_dhl_packages_weight', 'pr_dhl_packages_length', 'pr_dhl_packages_width', 'pr_dhl_packages_height', 'pr_dhl_invoice_num', 'pr_dhl_description' );
 	}
 
 	protected function get_tracking_url() {
@@ -539,6 +578,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		}
 
 		$parent_product_id = 0;
+		$parent_product = null;
 		if ( $product->get_type() === 'variation' ) {
 			 $parent_product_id = $product->get_parent_id();
 		}
@@ -573,7 +613,14 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 				}
 				break;
 			case 'product_name':
-				array_push( $desc_array, $product->get_title() );
+				if ( $product->is_type('variation') ) {
+					$parent_product = wc_get_product( $parent_product_id );
+					$variation_title = wc_get_formatted_variation( $product, true, false );
+					$product_name = $parent_product->get_title().' : '.$variation_title;
+				} else {
+					$product_name = $product->get_title();
+				}
+				array_push( $desc_array, $product_name);
 				break;
 
 		}
@@ -648,11 +695,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$args['api_user'] 	= $this->shipping_dhl_settings['dhl_api_user'];
 		$args['api_pwd'] 	= $this->shipping_dhl_settings['dhl_api_pwd'];
 		$args['sandbox'] 	= $this->shipping_dhl_settings['dhl_sandbox'];
-
-		// If there are multiple tracking numbers, get the first one to search for the string in order notes
-		if (is_array( $args['tracking_number'] ) ) {
-			$args['tracking_number'] = $args['tracking_number'][0];
-		}
 
 		return $args;
 	}
@@ -765,8 +807,9 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$shop_manager_actions = array();
 
 		$shop_manager_actions = array(
-			'pr_dhl_create_labels'      => __( 'DHL Create Labels', 'dhl-for-woocommerce' ),
-			'pr_dhl_request_pickup'      => __( 'DHL Request Pickup', 'dhl-for-woocommerce' )
+			'pr_dhl_create_labels'  => __( 'DHL Create Labels', 'dhl-for-woocommerce' ),
+			'pr_dhl_delete_labels'  => __( 'DHL Delete Labels', 'dhl-for-woocommerce' ),
+			'pr_dhl_request_pickup' => __( 'DHL Request Pickup', 'dhl-for-woocommerce' )
 		);
 
 		return $shop_manager_actions;
@@ -1088,7 +1131,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		return $redirect_url;
 	}
 
-	public function enqueue_modal_window_assets() {
+	public function enqueue_order_list_assets() {
 		global $pagenow, $typenow;
 
 		if( 'shop_order' === $typenow && 'edit.php' === $pagenow ) {
@@ -1097,8 +1140,8 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			wp_enqueue_script('thickbox');
 
 			wp_enqueue_script(
-				'wc-shipment-dhl-paket-pickup-bulk-js',
-				PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-paket-pickup-bulk.js',
+				'wc-shipment-dhl-paket-order-bulk-js',
+				PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-paket-order-bulk.js',
 				array(),
 				PR_DHL_VERSION,
 				true
@@ -1203,6 +1246,32 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		}
 	}
 
+	protected function is_UK_shipment( $order_id ) {
+		$order = wc_get_order( $order_id );
+
+		if ( ! is_a( $order, 'WC_Order' ) ) {
+			return false;
+		}
+
+		$shipping_address = $order->get_address( 'shipping' );
+		$shipping_country = $shipping_address['country'];
+
+		if( 'GB' === $shipping_country ) {
+			return true;
+		}
+        
+        return false;
+	}
+
+    public function is_cdp_delivery( $dhl_label_items ) {
+
+	    if ( isset( $dhl_label_items[ 'pr_dhl_cdp_delivery' ] ) && "yes" === $dhl_label_items[ 'pr_dhl_cdp_delivery' ] ) {
+            return true;
+	    }
+
+        return false;
+    }
+    
 }
 
 endif;

@@ -12,7 +12,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 	 */
 	//const PR_DHL_WSDL_LINK = 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/3.1/geschaeftskundenversand-api-3.1.wsdl';
 
-	const PR_DHL_WSDL_LINK = PR_DHL_PLUGIN_DIR_PATH . '/includes/pr-dhl-api/wsdl/3.2/geschaeftskundenversand-api-3.2.0.wsdl';
+	const PR_DHL_WSDL_LINK = PR_DHL_PLUGIN_DIR_PATH . '/includes/pr-dhl-api/wsdl/3.4.0/geschaeftskundenversand-api-3.4.0.wsdl';
 
 	const DHL_RETURN_PRODUCT = '07';
 
@@ -72,7 +72,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			// error_log(print_r($response_body,true));
 			// error_log(print_r( $soap_client->__getLastRequest(), true ));
 			PR_DHL()->log_msg( 'Response: Successful');
-			PR_DHL()->log_msg( 'createShipmentOrder response: '. print_r( $response_body, true ));
+			// PR_DHL()->log_msg( 'createShipmentOrder response: '. print_r( $response_body, true ));
 			return $this->process_label_response( $response_body, $args['order_details']['order_id'] );
 
 
@@ -464,37 +464,41 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
                     // Break address into pieces by '.'
                     $address_exploded = explode('.', $args['shipping_address']['address_1']);
 
-                    if( count($address_exploded) == 1 ) {
-                        throw new Exception(__('Shipping "Address 2" is empty!', 'dhl-for-woocommerce'));
+					// If no address number and in Germany, return error
+	                if ( 1 === count( $address_exploded ) && 'DE' === $args['shipping_address']['country'] ) {
+                        throw new Exception(__('Shipping street number is missing!', 'dhl-for-woocommerce'));
                     }
                 }
 
-				// Loop through address and set number value only...
-				// ...last found number will be 'address_2'
-				foreach ($address_exploded as $address_key => $address_value) {
-					if (is_numeric($address_value)) {
-						// Set last index as street number
+                // If greater than 1, means there are two parts to the address...otherwise Address 2 is empty which is possible in some countries outside of Germany
+				if ( count( $address_exploded ) > 1 ) {
+					// Loop through address and set number value only...
+					// ...last found number will be 'address_2'
+					foreach ( $address_exploded as $address_key => $address_value ) {
+						if ( is_numeric( $address_value ) ) {
+							// Set last index as street number
+							$set_key = $address_key;
+						}
+					}
+
+					// If no number was found, then take last part of address no matter what it is
+					if( false === $set_key ) {
 						$set_key = $address_key;
 					}
-				}
 
-				// If no number was found, then take last part of address no matter what it is
-				if( $set_key === false ) {
-					$set_key = $address_key;
+					// The number is the first part of address 1
+					if( 0 === $set_key ) {
+						// Set "address_2" first, as first part
+						$args['shipping_address']['address_2'] = implode( ' ', array_slice( $address_exploded, 0, 1 ) );
+						// Remove "address_2" from "address_1"
+						$args['shipping_address']['address_1'] = implode( ' ', array_slice( $address_exploded, 1 ) );
+					} else {
+						// Set "address_2" first
+						$args['shipping_address']['address_2'] = implode( ' ', array_slice( $address_exploded, $set_key ) );
+						// Remove "address_2" from "address_1"
+						$args['shipping_address']['address_1'] = implode( ' ', array_slice( $address_exploded, 0 , $set_key ) );
+					}
 				}
-
-				// The number is the first part of address 1
-                if( $set_key == 0 ) {
-                    // Set "address_2" first, as first part
-                    $args['shipping_address']['address_2'] = implode( ' ', array_slice( $address_exploded, 0, 1 ) );
-                    // Remove "address_2" from "address_1"
-                    $args['shipping_address']['address_1'] = implode( ' ', array_slice( $address_exploded, 1 ) );
-                } else {
-                    // Set "address_2" first
-                    $args['shipping_address']['address_2'] = implode( ' ', array_slice( $address_exploded, $set_key ) );
-                    // Remove "address_2" from "address_1"
-				    $args['shipping_address']['address_1'] = implode( ' ', array_slice( $address_exploded, 0 , $set_key ) );
-                }
 			}
 		}
 
@@ -557,30 +561,36 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 								'preferred_day' => array(
 													'name' => 'PreferredDay' ,
 													'type' => 'details'),
-								'personally' => array(
+								'personally'     => array(
 													'name' => 'Personally'
 													),
-								'no_neighbor' => array(
+								'no_neighbor'   => array(
 													'name' => 'NoNeighbourDelivery'
 													),
-								'named_person' => array(
+								'named_person'  => array(
 													'name' => 'NamedPersonOnly' ,
 													),
-								'premium' => array(
+								'premium'       => array(
 													'name' => 'Premium'
 													),
 								'additional_insurance' => array(
 													'name' => 'AdditionalInsurance'
 													),
-								'bulky_goods' => array(
+								'bulky_goods'   => array(
 													'name' => 'BulkyGoods'
 													),
-								'identcheck' => array(
+								'identcheck'    => array(
 													'name' => 'IdentCheck'
 													),
-                                'routing'   => array(
+                                'routing'       => array(
                                                     'name' => 'ParcelOutletRouting'
-                                )
+                                                    ),
+                                'PDDP'          => array(
+                                                    'name' => 'PDDP'
+                                                    ),
+                                'cdp_delivery'   => array(
+                                                    'name' => 'CDP'
+                                                    )
 								);
 
 			$services = array();
@@ -741,7 +751,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 										'ShipmentDetails' =>
 											array(
 												'product' => $this->args['order_details']['dhl_product'],
-												'accountNumber' => $account_number,
 												'accountNumber' => $account_number,
 												'shipmentDate' => $berlin_date->format('Y-m-d'),
 												'ShipmentItem' =>
@@ -920,7 +929,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			}
 
 			// Add customs info
-			if( PR_DHL()->is_crossborder_shipment( $this->args['shipping_address']['country'] ) ) {
+			if ( PR_DHL()->is_crossborder_shipment( $this->args['shipping_address'] ) ) {
 
 				$customsDetails = array();
 

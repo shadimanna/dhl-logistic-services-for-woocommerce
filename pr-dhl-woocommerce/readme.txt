@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL Paket Germany, WooCommerce, W
 Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 6.0
-Stable tag: 2.9.2
+Stable tag: 3.2.2
 WC requires at least: 3.0
 WC tested up to: 6.6
 License: GPLv2 or later
@@ -24,7 +24,7 @@ DHL’s official extension for WooCommerce on WordPress. Manage your national an
 
 The following DHL services are no longer supported by this plugin:
 
-* DHL eCommerce Asia (TH, MY): Please use instead the following plugin [here](https://github.com/shadimanna/dhl-for-woocommerece-ecs).
+* DHL eCommerce Asia (TH, MY): Please use instead the following plugin [here]( https://wordpress.org/plugins/dhl-ecommerce-asia-for-woocommerce/ ).
 * DHL Parcel for WooCommerce (for online stores that ship orders from the Benelux region): Please use instead the following plugin [here](https://wordpress.org/plugins/dhlpwc/).
 
 == Features ==
@@ -75,6 +75,38 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
+= 3.2.2 =
+* DHL Paket:  Bug fix - If FPDF used in other plugins
+
+= 3.2.1 =
+* DHL Paket:  Fix location finder dropdown
+
+= 3.2.0 =
+* DHL Paket: Add bulk delete labels on orders page
+* DHL Paket: Fix - Disable bulk button after pressed to avoid duplicate label creation.
+* DHL Paket: Fix - Additional setting weight after WC decimal modification 
+
+= 3.1.1 =
+* DHL Parcel: Removed DHL Parcel Benelux
+* DHL Parcel: Added a notification for DHL Parcel Benelux users
+
+= 3.1.0 =
+* DHL Paket: Added Closest drop-point delivery (CDP) service
+
+= 3.0.1 =
+* DHL Parcel: Updated label downloads to now serve from the temporary folder instead of the public folder for additional security and storage usage
+ 
+= 3.0.0 =
+* DHL Paket: Added Postal Delivered Duty Paid (PDDP) service
+* DHL Paket: Added support for EU exceptions that require customs e.g. Canary Islands
+* DHL Paket: Fix - allow empty street number outside of Germany
+* DHL Paket: Fix - round error message
+* DHL Paket: Fix - PHP 8.0 error for private function that should be public
+* DHL Paket: Fix - add back variant name in product description
+
+= 2.9.3 =
+* DHL Parcel: Added a new service option: Secure delivery by code
+* DHL Parcel: Added an option to show Same Day Delivery as a separate shipping method when delivery times are enabled
  
 = 2.9.2 =
 * DHL Parcel: Added a setting to automatically enable the service: send a message to recipient

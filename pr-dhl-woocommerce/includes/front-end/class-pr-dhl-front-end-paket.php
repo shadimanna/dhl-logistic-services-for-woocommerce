@@ -20,6 +20,8 @@ class PR_DHL_Front_End_Paket {
 
 	private $preferred_location_neighbor = array();
 
+	private $cdp_service = array();
+
 	/**
 	 * Init and hook in the integration.
 	 */
@@ -42,15 +44,23 @@ class PR_DHL_Front_End_Paket {
 								'preferred_neighbor' => __('Neighbor', 'dhl-for-woocommerce')
 								);
 
+		$this->cdp_service = array(
+								'pr_dhl_cdp_delivery' => __('Delivery option', 'dhl-for-woocommerce')
+		);
 	}
 
 	public function init_hooks() {
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_styles_scripts' ) );
 
-		if( $this->is_tracking_enabled() &&  ( $this->is_preferredservice_enabled() || $this->is_parcelfinder_enabled() ) ) {
+		if( $this->is_tracking_enabled() &&  ( $this->is_preferredservice_enabled() || $this->is_parcelfinder_enabled() || $this->is_cdp_enabled() ) ) {
 			// Add DHL meta tag
 			add_action( 'wp_head', array( $this, 'dhl_add_meta_tags') );
+		}
+
+		if( $this->is_cdp_enabled() ) {
+			add_action( 'woocommerce_review_order_after_shipping', array( $this, 'add_cdp_fields' ) );
+			add_action( 'woocommerce_checkout_order_processed', array( $this, 'process_cdp_fields' ), 10, 2 );
 		}
 
 		if( $this->is_preferredservice_enabled() ) {
@@ -100,6 +110,15 @@ class PR_DHL_Front_End_Paket {
 		} else {
 			return false;
 		}
+	}
+
+	protected function is_cdp_enabled() {
+
+		if( isset( $this->shipping_dhl_settings['dhl_closest_drop_point'] ) && ( 'yes' === $this->shipping_dhl_settings['dhl_closest_drop_point'] )  ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public function dhl_add_meta_tags() {
@@ -280,6 +299,36 @@ class PR_DHL_Front_End_Paket {
 		return $display_preferred;
 	}
 
+	protected function validate_cdp_available( ) {
+		$shipping_country = WC()->customer->get_shipping_country();
+		$valid_countries = array( 'SE', 'FI', 'BE', 'AT' );
+
+		if( in_array( $shipping_country, $valid_countries ) ) {
+			// Check if COD payment gateway selected
+			$wc_payment_dhl         = $this->shipping_dhl_settings[ 'dhl_payment_gateway' ];
+			$chosen_payment_method  = WC()->session->get( 'chosen_payment_method' );
+
+			if( isset( $chosen_payment_method ) && ! empty( $wc_payment_dhl ) ) {
+
+				if( is_array( $chosen_payment_method ) ) {
+
+					foreach ( $chosen_payment_method as $key => $value ) {
+						if ( in_array( $value, $wc_payment_dhl ) ) {
+							return false;
+						}
+					}
+
+				} elseif ( in_array( $chosen_payment_method, $wc_payment_dhl ) ) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
 	public function add_preferred_fields( ) {
 		try {
 
@@ -314,6 +363,12 @@ class PR_DHL_Front_End_Paket {
 			}
 		} catch (Exception $e) {
 			// do nothing
+		}
+	}
+
+	public function add_cdp_fields( ) {
+		if ( $this->validate_cdp_available() ) {
+			wc_get_template( 'checkout/dhl-closest-drop-point.php', [], '', PR_DHL_PLUGIN_DIR_PATH . '/templates/' );
 		}
 	}
 
@@ -392,6 +447,31 @@ class PR_DHL_Front_End_Paket {
 		$dhl_label_options = $this->verify_preferred_services_fields();
 
 		if( !empty($dhl_label_options)) {
+			PR_DHL()->get_pr_dhl_wc_order()->save_dhl_label_items( $order_id, $dhl_label_options );
+		}
+	}
+
+	public function prepare_cdp_fields() {
+		// save the posted preferences to the order so can be used when generating label
+		$dhl_label_options = array();
+		if ( ! isset( $_POST ) ) {
+			return $dhl_label_options;
+		}
+
+		foreach ( $this->cdp_service as $key => $value) {
+			if ( ! empty( $_POST[ $key ] ) ) {
+				$dhl_label_options[ $key ] = wc_clean( $_POST[ $key ] );
+			}
+		}
+
+		return $dhl_label_options;
+	}
+
+	public function process_cdp_fields( $order_id, $posted ) {
+		// save the posted preferences to the order so can be used when generating label
+		$dhl_label_options = $this->prepare_cdp_fields();
+
+		if ( ! empty( $dhl_label_options ) ) {
 			PR_DHL()->get_pr_dhl_wc_order()->save_dhl_label_items( $order_id, $dhl_label_options );
 		}
 	}
@@ -664,24 +744,35 @@ class PR_DHL_Front_End_Paket {
 
 	public function add_postnum_field( $checkout_fields ) {
 
+		$types = array(
+			'normal' => __( 'Regular Address', 'dhl-for-woocommerce' ),
+		);
+
+		if ( $this->is_packstation_enabled() ) {
+			$types['dhl_packstation'] = __( 'DHL Packstation', 'dhl-for-woocommerce' );
+		}
+
+		if ( $this->is_post_office_enabled() ) {
+			$types['dhl_branch'] = __( 'DHL Branch', 'dhl-for-woocommerce' );
+		}
+
 		$shipping_dhl_address_type = array(
-					'label'        => __( 'Address Type', 'dhl-for-woocommerce' ),
-					'required'     => true,
-					'type'         => 'select',
-					'class'        => array( 'shipping-dhl-address-type' ),
-					'clear'        => true,
-					'default'      => 'normal',
-					'options'	   => array( 'normal' => __('Regular Address', 'dhl-for-woocommerce'), 'dhl_packstation' => __('DHL Packstation', 'dhl-for-woocommerce'), 'dhl_branch' => __('DHL Branch', 'dhl-for-woocommerce') )
-				);
+			'label'    => __( 'Address Type', 'dhl-for-woocommerce' ),
+			'required' => true,
+			'type'     => 'select',
+			'class'    => array( 'shipping-dhl-address-type' ),
+			'clear'    => true,
+			'default'  => 'normal',
+			'options'  => $types
+		);
 
 		$shipping_dhl_postnum_branch = array(
-					'label'        => __( 'Post Number', 'dhl-for-woocommerce' ),
-					'required'     => false,
-					'type'         => 'text',
-					'class'        => array( 'shipping-dhl-postnum' ),
-					'clear'        => true,
-				);
-
+			'label'    => __( 'Post Number', 'dhl-for-woocommerce' ),
+			'required' => false,
+			'type'     => 'text',
+			'class'    => array( 'shipping-dhl-postnum' ),
+			'clear'    => true,
+		);
 
 		if( $new_shipping_fields = $this->array_insert_before( 'shipping_first_name', $checkout_fields['shipping'], 'shipping_dhl_address_type', $shipping_dhl_address_type) ) {
 
