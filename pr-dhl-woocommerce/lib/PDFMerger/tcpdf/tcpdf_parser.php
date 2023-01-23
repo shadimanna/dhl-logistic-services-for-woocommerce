@@ -40,6 +40,8 @@
  * @version 1.0.15
  */
 
+namespace PR_DHL\lib\PDFMerger\tcpdf;
+
 // include class for decoding filters
 require_once(dirname(__FILE__).'/include/tcpdf_filters.php');
 

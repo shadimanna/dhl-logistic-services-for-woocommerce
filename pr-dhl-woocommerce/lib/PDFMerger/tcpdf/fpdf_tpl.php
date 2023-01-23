@@ -17,6 +17,8 @@
 //  limitations under the License.
 //
 
+namespace PR_DHL\lib\PDFMerger\tcpdf;
+
 class FPDF_TPL extends FPDF {
     /**
      * Array of Tpl-Data
