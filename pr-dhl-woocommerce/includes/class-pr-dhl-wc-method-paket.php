@@ -331,6 +331,18 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'description'       => __( 'Please, tick here if you want the "Ident Check" option to be checked in the "Edit Order" before printing a label.', 'dhl-for-woocommerce' ),
 				'desc_tip'          => true,
 			),
+			'dhl_default_endorsement' => array(
+				'title'             => esc_html__( 'Endorsement type', 'dhl-for-woocommerce' ),
+				'type'              => 'select',
+				'default'           => '',
+				'options'           => array(
+					''            => esc_html__( 'none', 'dhl-for-woocommerce' ),
+					'IMMEDIATE'   => esc_html__( 'Sending back to sender', 'dhl-for-woocommerce' ),
+					'ABANDONMENT' => esc_html__( 'Abandonment of parcel', 'dhl-for-woocommerce' )
+				),
+				'description'       => esc_html__( 'Please, tick here if you want the "Endorsement value" to be selected in the "Edit Order" before printing a label.', 'dhl-for-woocommerce' ),
+				'desc_tip'          => true,
+			),
 			'dhl_default_is_codeable' => array(
 				'title'             => __( 'Print Only If Codeable default', 'dhl-for-woocommerce' ),
 				'type'              => 'checkbox',

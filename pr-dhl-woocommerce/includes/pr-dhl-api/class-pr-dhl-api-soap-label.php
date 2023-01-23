@@ -549,49 +549,57 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 
 			// SERVICES DATA
 			$services_map = array(
-								'age_visual' => array(
-													'name' => 'VisualCheckOfAge',
-													'type' => 'type'),
-								'preferred_location' => array(
-													'name' => 'PreferredLocation' ,
-													'type' => 'details'),
-								'preferred_neighbor' => array(
-													'name' => 'PreferredNeighbour' ,
-													'type' => 'details'),
-								'preferred_day' => array(
-													'name' => 'PreferredDay' ,
-													'type' => 'details'),
-								'personally'     => array(
-													'name' => 'Personally'
-													),
-								'no_neighbor'   => array(
-													'name' => 'NoNeighbourDelivery'
-													),
-								'named_person'  => array(
-													'name' => 'NamedPersonOnly' ,
-													),
-								'premium'       => array(
-													'name' => 'Premium'
-													),
-								'additional_insurance' => array(
-													'name' => 'AdditionalInsurance'
-													),
-								'bulky_goods'   => array(
-													'name' => 'BulkyGoods'
-													),
-								'identcheck'    => array(
-													'name' => 'IdentCheck'
-													),
-                                'routing'       => array(
-                                                    'name' => 'ParcelOutletRouting'
-                                                    ),
-                                'PDDP'          => array(
-                                                    'name' => 'PDDP'
-                                                    ),
-                                'cdp_delivery'   => array(
-                                                    'name' => 'CDP'
-                                                    )
-								);
+				'age_visual'           => array(
+					'name' => 'VisualCheckOfAge',
+					'type' => 'type'
+				),
+				'preferred_location'   => array(
+					'name' => 'PreferredLocation',
+					'type' => 'details'
+				),
+				'preferred_neighbor'   => array(
+					'name' => 'PreferredNeighbour',
+					'type' => 'details'
+				),
+				'preferred_day'        => array(
+					'name' => 'PreferredDay',
+					'type' => 'details'
+				),
+				'personally'           => array(
+					'name' => 'Personally'
+				),
+				'no_neighbor'          => array(
+					'name' => 'NoNeighbourDelivery'
+				),
+				'named_person'         => array(
+					'name' => 'NamedPersonOnly',
+				),
+				'premium'              => array(
+					'name' => 'Premium'
+				),
+				'additional_insurance' => array(
+					'name' => 'AdditionalInsurance'
+				),
+				'bulky_goods'          => array(
+					'name' => 'BulkyGoods'
+				),
+				'identcheck'           => array(
+					'name' => 'IdentCheck'
+				),
+				'routing'              => array(
+					'name' => 'ParcelOutletRouting'
+				),
+				'PDDP'                 => array(
+					'name' => 'PDDP'
+				),
+				'cdp_delivery'         => array(
+					'name' => 'CDP'
+				),
+				'endorsement'          => array(
+					'name' => 'Endorsement',
+					'type' => 'type'
+				),
+			);
 
 			$services = array();
 			foreach ($services_map as $key => $value) {
