@@ -261,7 +261,6 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API {
 	 * @since [*next-version*]
 	 */
 	public function get_dhl_label( $args ) {
-		//var_dump($args);
 		$order_id = isset( $args[ 'order_details' ][ 'order_id' ] )
 			? $args[ 'order_details' ][ 'order_id' ]
 			: null;
