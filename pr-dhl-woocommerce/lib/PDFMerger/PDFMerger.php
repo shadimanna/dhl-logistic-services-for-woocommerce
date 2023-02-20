@@ -32,10 +32,11 @@
  *  - essentially, it cannot import dynamic content such as form fields, links
  * or page annotations (anything not a part of the page content stream).
  */
+
 namespace PR_DHL\lib\PDFMerger;
 
 use Exception;
-use PR_DHL\lib\PDFMerger\tcpdi\TCPDI;
+use PR_DHL\lib\PDFMerger\tcpdf\TCPDI;
 
 class PDFMerger
 {
@@ -87,7 +88,7 @@ class PDFMerger
 	{
 		if(!isset($this->_files) || !is_array($this->_files)): throw new exception("No PDFs to merge."); endif;
 
-    $fpdi = new \TCPDI;
+    $fpdi = new TCPDI;
     $fpdi->SetPrintHeader(false);
     $fpdi->SetPrintFooter(false);
 

@@ -18,10 +18,13 @@
 //  limitations under the License.
 //
 
+namespace PR_DHL\lib\PDFMerger\tcpdf;
+use TCPDF;
+use tcpdi_parser;
+
 // Dummy shim to allow unmodified use of fpdf_tpl
-if ( ! class_exists( 'FPDF' ) ) {
-	class FPDF extends TCPDF {
-	}
+class FPDF extends TCPDF {
+
 }
 
 require_once('fpdf_tpl.php');
