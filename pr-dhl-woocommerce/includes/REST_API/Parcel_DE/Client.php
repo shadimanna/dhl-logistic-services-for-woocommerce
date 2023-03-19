@@ -86,23 +86,7 @@ class Client extends API_Client {
 		}
 
 		if ( $request_info->isCrossBorder ) {
-			// Items description
-			$item_description = '';
-			foreach ( $request_info->items as $item ) {
-				$item_description .= ! empty( $item_description ) ? ', ' : '';
-				$item_description .= $item['itemDescription'];
-			}
-
-			$shipment['customs'] = array(
-				'invoiceNo' => $request_info->args['order_details']['invoice_num'],
-				'exportType'        => apply_filters( 'pr_shipping_dhl_paket_label_shipment_export_type', 'COMMERCIAL_GOODS' ),
-				'exportDescription' => substr( $item_description, 0, 255 ),
-				'items'             => $this->prepare_items( $request_info ),
-				'postalCharges'     => array(
-					'currency' => $request_info->args['order_details']['currency'],
-					'value' => $request_info->args['order_details']['total_value'],
-				),
-			);
+			$shipment['customs'] = $this->get_customs( $request_info );
 		}
 
 		return array(
@@ -219,6 +203,33 @@ class Client extends API_Client {
 		}
 
 		return $items;
+	}
+
+	/**
+	 * For international shipments, Get necessary information for customs about the exported goods.
+	 *
+	 * @param  Item_Info  $request_info
+	 *
+	 * @return array
+	 */
+	protected function get_customs( Item_Info $request_info ) {
+		// Items description
+		$item_description = '';
+		foreach ( $request_info->items as $item ) {
+			$item_description .= ! empty( $item_description ) ? ', ' : '';
+			$item_description .= $item['itemDescription'];
+		}
+
+		return array(
+			'invoiceNo'         => $request_info->args['order_details']['invoice_num'],
+			'exportType'        => apply_filters( 'pr_shipping_dhl_paket_label_shipment_export_type', 'COMMERCIAL_GOODS' ),
+			'exportDescription' => substr( $item_description, 0, 255 ),
+			'items'             => $this->prepare_items( $request_info ),
+			'postalCharges'     => array(
+				'currency' => $request_info->args['order_details']['currency'],
+				'value'    => $request_info->args['order_details']['total_value'],
+			),
+		);
 	}
 
 	/**
