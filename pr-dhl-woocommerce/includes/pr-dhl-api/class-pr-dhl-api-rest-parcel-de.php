@@ -20,14 +20,14 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API {
 	 *
 	 * @since [*next-version*]
 	 */
-	const API_URL_PRODUCTION = 'https://api.dhl.com/parcel/de/';
+	const API_URL_PRODUCTION = 'https://api.dhl.com/parcel/de/shipping/';
 
 	/**
 	 * The URL to the sandbox API.
 	 *
 	 * @since [*next-version*]
 	 */
-	const API_URL_SANDBOX = 'https://api-sandbox.dhl.com/parcel/de/';
+	const API_URL_SANDBOX = 'https://api-sandbox.dhl.com/parcel/de/shipping/';
 
 	/**
 	 * The API driver instance.
@@ -126,14 +126,14 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API {
 	 */
 	protected function create_api_auth() {
 		// Get the saved DHL customer API credentials
-		list( $client_id, $client_secret, $api_key ) = $this->get_api_creds();
+		list( $username, $password, $api_key ) = $this->get_api_creds();
 
 		// Create the auth object using this instance's API driver and URL
 		return new Auth(
 			$this->api_driver,
 			$this->get_api_url(),
-			$client_id,
-			$client_secret,
+			$username,
+			$password,
 			$api_key
 		);
 	}
@@ -173,7 +173,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API {
 		return array(
 			'3333333333_01',
 			'pass',
-			'l7do9bl8gS6y9aHys0u3NR5uqAufPARS'
+			'AYjXP5URDZnGbNVtxQa8iHNvXlboQqtG'
 		);
 	}
 
@@ -261,25 +261,26 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API {
 	 * @since [*next-version*]
 	 */
 	public function get_dhl_label( $args ) {
-		$order_id = isset( $args[ 'order_details' ][ 'order_id' ] )
-			? $args[ 'order_details' ][ 'order_id' ]
-			: null;
-
+		$this->set_arguments( $args );
 		$uom = get_option( 'woocommerce_weight_unit' );
 		try {
 			$item_info = new Item_Info( $args, $uom );
-		} catch (Exception $e) {
+		} catch ( Exception $e ) {
 			throw $e;
 		}
 
 		// Create the item and get the barcode
 		$item_response = $this->api_client->create_item( $item_info );
 
-		//$label_pdf_data = $this->api_client->get_item_label( $item_barcode );
-		// Save the label to a file
-		//$this->save_dhl_label_file( 'item', $item_barcode, $label_pdf_data );
+		$file = $this->save_data_file( 'label', $args['order_details']['order_id'],
+			$item_response->items[0]->label->b64 );
 
-		return $item_response;
+		return array(
+			'label_path'      => $file['data_path'],
+			'item_barcode'    => $item_response->items[0]->shipmentNo,
+			'tracking_number' => $item_response->items[0]->shipmentNo,
+			'tracking_status' => '',
+		);
 	}
 
 	/**
@@ -303,358 +304,57 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API {
 		}
 	}
 
-	/**
-	 * Retrieves the filename for DHL item label files.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param string $barcode The DHL item barcode.
-	 * @param string $format The file format.
-	 *
-	 * @return string
-	 */
-	public function get_dhl_item_label_file_name( $barcode, $format = 'pdf' ) {
-		return sprintf('dhl-label-%s.%s', $barcode, $format);
-	}
+	protected function save_data_files( $order_id, $label_data, $export_data ) {
 
-	/**
-	 * Retrieves the filename for DHL AWB label files.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param string $awb The AWB.
-	 * @param string $format The file format.
-	 *
-	 * @return string
-	 */
-	public function get_dhl_awb_label_file_name( $awb, $format = 'pdf' ) {
-		return sprintf('dhl-label-awb-%s.%s', $awb, $format);
-	}
+		$label_info = $this->save_data_file( 'label', $order_id, $label_data );
 
-	/**
-	 * Retrieves the filename for DHL order label files (a.k.a. merged AWB label files).
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param string $order_id The DHL order ID.
-	 * @param string $format The file format.
-	 *
-	 * @return string
-	 */
-	public function get_dhl_order_label_file_name( $order_id, $format = 'pdf' ) {
-		return sprintf('dhl-waybill-order-%s.%s', $order_id, $format);
-	}
+		if ( ! empty( $export_data ) ) {
+			$export_info = $this->save_data_file( 'export', $order_id, $export_data );
 
-	/**
-	 * Retrieves the file info for a DHL item label file.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param string $barcode The DHL item barcode.
-	 * @param string $format The file format.
-	 *
-	 * @return object An object containing the file "path" and "url" strings.
-	 */
-	public function get_dhl_item_label_file_info( $barcode, $format = 'pdf' ) {
-		$file_name = $this->get_dhl_item_label_file_name($barcode, $format);
+			// Merge PDF files
+			$loader = PR_DHL_Libraryloader::instance();
+			$pdfMerger = $loader->get_pdf_merger();
 
-		return (object) array(
-			'path' => PR_DHL()->get_dhl_label_folder_dir() . $file_name,
-			'url' => PR_DHL()->get_dhl_label_folder_url() . $file_name,
-		);
-	}
+			if( $pdfMerger ){
 
-	/**
-	 * Retrieves the file info for DHL AWB label files.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param string $awb The AWB.
-	 * @param string $format The file format.
-	 *
-	 * @return object An object containing the file "path" and "url" strings.
-	 */
-	public function get_dhl_awb_label_file_info( $awb, $format = 'pdf' ) {
-		$file_name = $this->get_dhl_awb_label_file_name($awb, $format);
+				$pdfMerger->addPDF( $label_info['data_path'], 'all' );
+				$pdfMerger->addPDF( $export_info['data_path'], 'all' );
 
-		return (object) array(
-			'path' => PR_DHL()->get_dhl_label_folder_dir() . $file_name,
-			'url' => PR_DHL()->get_dhl_label_folder_url() . $file_name,
-		);
-	}
-
-	/**
-	 * Retrieves the file info for DHL order label files (a.k.a. merged AWB label files).
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param string $order_id The DHL order ID.
-	 * @param string $format The file format.
-	 *
-	 * @return object An object containing the file "path" and "url" strings.
-	 */
-	public function get_dhl_order_label_file_info( $order_id, $format = 'pdf') {
-		$file_name = $this->get_dhl_order_label_file_name( $order_id, $format);
-
-		return (object) array(
-			'path' => PR_DHL()->get_dhl_label_folder_dir() . $file_name,
-			'url' => PR_DHL()->get_dhl_label_folder_url() . $file_name,
-		);
-	}
-
-	/**
-	 * Retrieves the file info for any DHL label file, based on type.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param string $type The label type: "item", "awb" or "order".
-	 * @param string $key The key: barcode for type "item", AWB for type "awb" and order ID for type "order".
-	 *
-	 * @return object An object containing the file "path" and "url" strings.
-	 */
-	public function get_dhl_label_file_info( $type, $key ) {
-		// Return file info for "awb" type
-		if ( $type === 'awb') {
-			return $this->get_dhl_awb_label_file_info( $key );
-		}
-
-		// Return file info for "order" type
-		if ( $type === 'order' ) {
-			return $this->get_dhl_order_label_file_info( $key );
-		}
-
-		// Return info for "item" type
-		return $this->get_dhl_item_label_file_info( $key );
-	}
-
-	/**
-	 * Saves an item label file.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param string $type The label type: "item", "awb" or "order".
-	 * @param string $key The key: barcode for type "item", AWB for type "awb" and order ID for type "order".
-	 * @param string $data The label file data.
-	 *
-	 * @return object The info for the saved label file, containing the "path" and "url".
-	 *
-	 * @throws Exception If failed to save the label file.
-	 */
-	public function save_dhl_label_file( $type, $key, $data ) {
-		// Get the file info based on type
-		$file_info = $this->get_dhl_label_file_info( $type, $key );
-
-		// Validate the file path
-		if ( validate_file( $file_info->path ) > 0 && validate_file( $file_info->path ) !== 2 ) {
-			throw new Exception( __( 'Invalid file path!', 'dhl-for-woocommerce' ) );
-		}
-
-		$file_ret = file_put_contents( $file_info->path, $data );
-
-		if ( empty( $file_ret ) ) {
-			throw new Exception( __( 'DHL label file cannot be saved!', 'dhl-for-woocommerce' ) );
-		}
-
-		return $file_info;
-	}
-
-	/**
-	 * Deletes an AWB label file.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param string $type The label type: "item", "awb" or "order".
-	 * @param string $key The key: barcode for type "item", AWB for type "awb" and order ID for type "order".
-	 *
-	 * @throws Exception If the file could not be deleted.
-	 */
-	public function delete_dhl_label_file( $type, $key )
-	{
-		// Get the file info based on type
-		$file_info = $this->get_dhl_label_file_info( $type, $key );
-
-		// Do nothing if file does not exist
-		if ( ! file_exists( $file_info->path ) ) {
-			return;
-		}
-
-		// Attempt to delete the file
-		$res = unlink( $file_info->path );
-
-		// Throw error if the file could not be deleted
-		if (!$res) {
-			throw new Exception(__('DHL AWB Label could not be deleted!', 'dhl-for-woocommerce'));
-		}
-	}
-
-	/**
-	 * Checks if an AWB label file already exist, and if not fetches it from the API and saves it.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param string $awb The AWB.
-	 *
-	 * @return object An object containing the "path" and "url" to the label file.
-	 *
-	 * @throws Exception
-	 */
-	public function create_dhl_awb_label_file( $awb )
-	{
-		$file_info = $this->get_dhl_awb_label_file_info( $awb );
-
-		// Skip creating the file if it already exists
-		if ( file_exists( $file_info->path ) ) {
-			return $file_info;
-		}
-
-		// Get the label data from the API client
-		$label_data = $this->api_client->get_awb_label( $awb );
-		// Save the label file
-		$this->save_dhl_label_file( 'awb', $awb, $label_data );
-
-		return $file_info;
-	}
-
-	/**
-	 * Checks if an order label file already exist, and if not fetches it from the API and saves it.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param string $order_id The DHL order ID.
-	 *
-	 * @return object An object containing the "path" and "url" to the label file.
-	 *
-	 * @throws Exception
-	 */
-	public function create_dhl_order_label_file( $order_id )
-	{
-		$file_info = $this->get_dhl_order_label_file_info( $order_id );
-
-		// Skip creating the file if it already exists
-		if ( file_exists( $file_info->path ) ) {
-			return $file_info;
-		}
-
-		// Get the order with the given ID
-		$order = $this->api_client->get_order( $order_id );
-		if ($order === null) {
-			throw new Exception("DHL order {$order_id} does not exist.");
-		}
-
-		// For multiple shipments, maybe create each label file and then merge them
-		$loader = PR_DHL_Libraryloader::instance();
-		$pdfMerger = $loader->get_pdf_merger();
-
-		if( $pdfMerger === null ){
-
-			throw new Exception( __('Library conflict, could not merge PDF files. Please download PDF files individually.', 'dhl-for-woocommerce') );
-		}
-
-		foreach ( $order['shipments'] as $shipment ) {
-			// Create the single AWB label file
-			$awb_label_info = $this->create_dhl_awb_label_file( $shipment->awb );
-
-			// Ensure file exists
-			if ( ! file_exists( $awb_label_info->path ) ) {
-				continue;
+				$filename = 'dhl-label-export-' . $order_id . '.pdf';
+				$label_url = PR_DHL()->get_dhl_label_folder_url() . $filename;
+				$label_path = PR_DHL()->get_dhl_label_folder_dir() . $filename;
+				$pdfMerger->merge( 'file',  $label_path );
+			} else {
+				$label_url = $label_info['data_url'];
+				$label_path = $label_info['data_path'];
 			}
 
-			// Ensure it is a PDF file
-			$ext = pathinfo($awb_label_info->path, PATHINFO_EXTENSION);
-			if ( stripos($ext, 'pdf') === false) {
-				throw new Exception( __('Not all the file formats are the same.', 'dhl-for-woocommerce') );
-			}
-
-			// Add to merge queue
-			$pdfMerger->addPDF( $awb_label_info->path, 'all' );
+		} else {
+			$label_url = $label_info['data_url'];
+			$label_path = $label_info['data_path'];
 		}
 
-		// Merge all files in the queue
-		$pdfMerger->merge( 'file',  $file_info->path );
-
-		return $file_info;
+		return array( 'label_url' => $label_url, 'label_path' => $label_path);
 	}
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @since [*next-version*]
-	 */
-	public function dhl_validate_field( $key, $value ) {
-	}
+	protected function save_data_file( $prefix, $order_id, $label_data ) {
+		$data_name = 'dhl-' . $prefix . '-' . $order_id . '.pdf';
+		$data_path = PR_DHL()->get_dhl_label_folder_dir() . $data_name;
+		$data_url = PR_DHL()->get_dhl_label_folder_url() . $data_name;
 
-	/**
-	 * Finalizes and creates the current Deutsche Post order.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @return string The ID of the created DHL order.
-	 *
-	 * @throws Exception If an error occurred while and the API failed to create the order.
-	 */
-	public function create_order( $copy_count = 1 )
-	{
-		// Create the DHL order
-		$response = $this->api_client->create_order( $copy_count );
-
-		$this->get_settings();
-
-		// Get the current DHL order - the one that was just submitted
-		$order = $this->api_client->get_order($response->orderId);
-		$order_items = $order['items'];
-
-		// Get the tracking note type setting
-		// $tracking_note_type = $this->get_setting('dhl_tracking_note', 'customer');
-		// $tracking_note_type = ($tracking_note_type == 'yes') ? '' : 'customer';
-
-		// Go through the shipments retrieved from the API and save the AWB of the shipment to
-		// each DHL item's associated WooCommerce order in post meta. This will make sure that each
-		// WooCommerce order has a reference to the its DHL shipment AWB.
-		// At the same time, we will be collecting the AWBs to merge the label PDFs later on, as well
-		// as adding order notes for the AWB to each WC order.
-		$awbs = array();
-		foreach ($response->shipments as $shipment) {
-			foreach ($shipment->items as $item) {
-				if ( ! isset( $order_items[ $item->barcode ] ) ) {
-					continue;
-				}
-
-				// Get the WC order for this DHL item
-				$item_wc_order_id = $order_items[ $item->barcode ];
-				$item_wc_order = wc_get_order( $item_wc_order_id );
-
-				// Save the AWB to the WC order
-				update_post_meta( $item_wc_order_id, 'pr_dhl_dp_awb', $shipment->awb );
-
-				// An an order note for the AWB
-				$item_awb_note = __('Shipment AWB: ', 'dhl-for-woocommerce') . $shipment->awb;
-				// 'type' should alwasys be private for AWB
-				$item_wc_order->add_order_note( $item_awb_note, '', true );
-
-				// Save the AWB in the list.
-				$awbs[] = $shipment->awb;
-
-				// Save the DHL order ID in the WC order meta
-				update_post_meta( $item_wc_order_id, 'pr_dhl_dp_order', $response->orderId );
-			}
+		//windows path will not get exception
+		if( validate_file($data_path) > 0 && validate_file($data_path) !== 2 ) {
+			throw new Exception( __('Invalid file path!', 'dhl-for-woocommerce' ) );
 		}
 
-		// Generate the merged AWB label file
-		$this->create_dhl_order_label_file( $response->orderId );
+		$label_data_decoded = base64_decode($label_data);
+		$file_ret = file_put_contents( $data_path, $label_data_decoded );
 
-		return $response->orderId;
-	}
+		if( empty( $file_ret ) ) {
+			throw new Exception( __('File cannot be saved!', 'dhl-for-woocommerce' ) );
+		}
 
-	public function get_dhl_nature_type() {
-		return array(
-			'SALE_GOODS' => __( 'Sale Goods', 'dhl-for-woocommerce' ),
-			'RETURN_GOODS' => __( 'Return Goods', 'dhl-for-woocommerce' ),
-			'GIFT' => __( 'Gift', 'dhl-for-woocommerce' ),
-			'COMMERCIAL_SAMPLE' => __( 'Commercial Sample', 'dhl-for-woocommerce' ),
-			'DOCUMENTS' => __( 'Documents', 'dhl-for-woocommerce' ),
-			'MIXED_CONTENTS' => __( 'Mixed Contents', 'dhl-for-woocommerce' ),
-			'OTHERS' => __( 'Others', 'dhl-for-woocommerce' ),
-		);
+		return array( 'data_url' => $data_url, 'data_path' => $data_path);
 	}
 
 	protected function set_arguments( $args ) {
@@ -916,5 +616,49 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API {
 		}
 
 		$this->args = $args;
+	}
+
+	protected function validate_field( $key, $value ) {
+
+		try {
+
+			switch ( $key ) {
+				case 'weight':
+					$this->validate( wc_format_decimal( $value ) );
+					break;
+				case 'hs_code':
+					$this->validate( $value, 'string', 4, 11 );
+					break;
+				case 'pickup':
+					$this->validate( $value, 'string', 14, 14 );
+					break;
+				case 'distribution':
+					$this->validate( $value, 'string', 6, 6 );
+					break;
+			}
+
+		} catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	protected function validate( $value, $type = 'int', $min_len = 0, $max_len = 0 ) {
+
+		switch ( $type ) {
+			case 'string':
+				if( ( strlen($value) < $min_len ) || ( strlen($value) > $max_len ) ) {
+					if ( $min_len == $max_len ) {
+						throw new Exception( sprintf( __('The value must be %s characters.', 'dhl-for-woocommerce'), $min_len) );
+					} else {
+						throw new Exception( sprintf( __('The value must be between %s and %s characters.', 'dhl-for-woocommerce'), $min_len, $max_len ) );
+					}
+				}
+				break;
+			case 'int':
+				if( ! is_numeric( $value ) ) {
+					throw new Exception( __('The value must be a number') );
+				}
+				break;
+		}
 	}
 }

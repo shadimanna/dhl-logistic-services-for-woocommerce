@@ -39,8 +39,9 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 			$args['api_user'] = $sandbox_info['username'];
 			$args['api_pwd'] = $sandbox_info['pass'];
 			$args['account_num'] = $sandbox_info['account_no'];
+			$args['rest_api_account_no'] = $sandbox_info['rest_api_account_no'];
 		}
-		// error_log(print_r($args,true));
+		 //error_log(print_r($args,true));
 		return $args;
 	}
 
@@ -247,6 +248,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 			'username' 	=> '2222222222_01',
 			'pass' 		=> 'pass',
 			'account_no'=> '2222222222',
+			'rest_api_account_no'=> '3333333333',
 		);
 	}
 }

@@ -12,6 +12,11 @@ use PR\DHL\Utils\Args_Parser;
  */
 class Item_Info {
 	/**
+	 * @var array
+	 */
+	public $args;
+
+	/**
 	 * Shipment details.
 	 *
 	 * @since [*next-version*]
@@ -55,13 +60,6 @@ class Item_Info {
 	public $services;
 
 	/**
-	 * For international shipments, this array contains information necessary for customs about the exported goods.
-	 *
-	 * @var array
-	 */
-	public $customs;
-
-	/**
 	 * The units of measurement used for weights in the input args.
 	 *
 	 * @since [*next-version*]
@@ -80,6 +78,27 @@ class Item_Info {
 	public $isCrossBorder;
 
 	/**
+	 * is packstation
+	 *
+	 * @var boolean
+	 */
+	public $pos_ps = false;
+
+	/**
+	 * is parcelshop
+	 *
+	 * @var boolean
+	 */
+	public $pos_rs = false;
+
+	/**
+	 * is post office
+	 *
+	 * @var boolean
+	 */
+	public $pos_po = false;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param array $args The arguments to parse.
@@ -89,10 +108,17 @@ class Item_Info {
 	 * @since [*next-version*]
 	 *
 	 */
-	public function __construct( $args, $isCrossBorder, $weightUom = 'g' ) {
+	public function __construct( $args, $isCrossBorder, $weightUom = 'kg' ) {
 		$this->weightUom     = $weightUom;
 		$this->isCrossBorder = $isCrossBorder;
-		$this->parse_args( $args );
+		$this->args = $args;
+
+		$this->pos_ps = PR_DHL()->is_packstation( $args['shipping_address']['address_1'] );
+		$this->pos_rs = PR_DHL()->is_parcelshop( $args['shipping_address']['address_1'] );
+		$this->pos_po = PR_DHL()->is_post_office( $args['shipping_address']['address_1'] );
+
+		$this->set_address_2();
+		$this->parse_args();
 	}
 
 	/**
@@ -104,17 +130,16 @@ class Item_Info {
 	 * @since [*next-version*]
 	 *
 	 */
-	protected function parse_args( $args ) {
-		$settings       = $args['dhl_settings'];
-		$recipient_info = $args['shipping_address'] + $settings;
-		$shipping_info  = $args['order_details'] + $settings;
-		$items_info     = $args['items'];
+	protected function parse_args() {
+		$settings       = $this->args['dhl_settings'];
+		$recipient_info = $this->args['shipping_address'] + $settings;
+		$shipping_info  = $this->args['order_details'] + $settings;
+		$items_info     = $this->args['items'];
 
 		$this->shipment       = Args_Parser::parse_args( $shipping_info, $this->get_shipment_info_schema() );
 		$this->shipper        = Args_Parser::parse_args( $shipping_info, $this->get_shipper_info_schema() );
 		$this->contactAddress = Args_Parser::parse_args( $recipient_info, $this->get_contact_address_schema() );
 		$this->services       = Args_Parser::parse_args( $shipping_info, $this->get_services_schema() );
-		$this->customs        = Args_Parser::parse_args( $shipping_info, $this->get_services_schema() );
 
 		$this->items = array();
 		foreach ( $items_info as $item_info ) {
@@ -163,10 +188,23 @@ class Item_Info {
 						);
 					}
 
-					return $account;
+					// create account number
+					$product_number = preg_match('!\d+!', $self->args['order_details']['dhl_product'], $matches );
+
+					if( $product_number ) {
+						if ( isset($self->args['dhl_settings']['sandbox']) && ($self->args['dhl_settings']['sandbox'] == 'yes' ) ) {
+							$account_number_key = 'rest_api_account_no';
+						} else {
+							$account_number_key = 'account_num';
+						}
+
+						return $self->args['dhl_settings'][ $account_number_key ] . $matches[0] . $self->args['dhl_settings']['participation'];
+					} else {
+						throw new Exception( __('Could not create account number - no product number.', 'dhl-for-woocommerce') );
+					}
 				}
 			),
-			'dhl_cost_center'           => array(
+			'cost_center'           => array(
 				'rename'  => 'costCenter',
 				'default' => ''
 			),
@@ -178,10 +216,7 @@ class Item_Info {
 					}
 				},
 				'sanitize' => function ( $weight ) use ( $self ) {
-
-					$weight = $self->maybe_convert_to_grams( $weight, $self->weightUom );
-
-					return $weight;
+					return $self->maybe_convert_weight( $weight, $self->weightUom );
 				}
 			),
 			'currency'                  => array(
@@ -201,7 +236,6 @@ class Item_Info {
 				}
 			),
 			'cod_value'                 => array(
-				'default'  => '',
 				'sanitize' => function ( $value ) use ( $self ) {
 					return $self->float_round_sanitization( $value, 2 );
 				}
@@ -317,7 +351,7 @@ class Item_Info {
 			),
 			'address_2' => array(
 				'rename'  => 'addressHouse',
-				'default' => '',
+				'default' => ''
 			),
 			'postcode'  => array(
 				'rename' => 'postalCode',
@@ -405,40 +439,28 @@ class Item_Info {
 				'default' => 1,
 			),
 			'item_value'       => array(
-				'rename'   => 'value',
+				'rename'   => 'itemValue',
 				'default'  => [
 					'currency' => PR_DHL()->get_currency_symbol(),
 					'amount'   => 0,
 				],
 				'sanitize' => function ( $value, $args ) use ( $self ) {
-
 					$qty         = isset( $args['qty'] ) && is_numeric( $args['qty'] ) ? floatval( $args['qty'] ) : 1;
-					$total_value = floatval( $value['amount'] ) * $qty;
+					$total_value = floatval( $value ) * $qty;
 
 					return [
-						'currency' => $value['currency'],
+						'currency' => $self->args['order_details']['currency'],
 						'amount'   => (string) $self->float_round_sanitization( $total_value, 2 )
 					];
 				}
 			),
 			'item_weight'      => array(
 				'rename'   => 'itemWeight',
-				'default'  => [
-					'uom'   => $self->weightUom,
-					'value' => 1,
-				],
 				'sanitize' => function ( $weight ) use ( $self ) {
 					return [
 						'uom'   => $self->weightUom,
-						'value' => (string) $self->float_round_sanitization( $weight, 3 )
+						'value' => $self->float_round_sanitization( $self->float_round_sanitization( $weight, 3 ), 3 )
 					];
-				}
-			),
-			'item_export'      => array(
-				'rename'   => 'exportDescription',
-				'default'  => '',
-				'sanitize' => function ( $description_export ) use ( $self ) {
-					return $self->string_length_sanitization( $description_export, 80 );
 				}
 			)
 		);
@@ -456,46 +478,49 @@ class Item_Info {
 
 		return array(
 			'preferred_neighbor'   => array(
-				'rename' => 'preferredNeighbour'
+				'rename' => 'preferredNeighbour',
 			),
 			'preferred_location'   => array(
-				'rename' => 'preferredLocation'
+				'rename' => 'preferredLocation',
 			),
 			'email_notification'   => array(
-				'rename' => 'shippingConfirmation'
+				'rename' => 'shippingConfirmation',
 			),
 			'age_visual'           => array(
-				'rename' => 'visualCheckOfAge'
+				'rename' => 'visualCheckOfAge',
 			),
 			'personally'           => array(
-				'rename' => 'namedPersonOnly'
+				'rename' => 'namedPersonOnly',
 			),
 			'identcheck'           => array(
-				'rename' => 'identCheck'
+				'rename' => 'identCheck',
 			),
 			'preferred_day'        => array(
-				'rename' => 'preferredDay'
+				'rename' => 'preferredDay',
 			),
 			'no_neighbor'          => array(
-				'rename' => 'noNeighbourDelivery'
+				'rename' => 'noNeighbourDelivery',
 			),
 			'additional_insurance' => array(
-				'rename' => 'additionalInsurance'
+				'rename' => 'additionalInsurance',
 			),
 			'bulky_goods'          => array(
-				'rename' => 'bulkyGoods'
+				'rename' => 'bulkyGoods',
 			),
 			'cdp_delivery'         => array(
-				'rename' => 'cashOnDelivery'
+				'rename' => 'closestDropPoint',
 			),
 			'premium'              => array(
-				'rename' => 'premium'
+				'rename' => 'premium',
 			),
 			'routing'              => array(
-				'rename' => 'parcelOutletRouting'
+				'rename' => 'parcelOutletRouting',
 			),
 			'PDDP'                 => array(
-				'rename' => 'postalDeliveryDutyPaid'
+				'rename' => 'postalDeliveryDutyPaid',
+			),
+			'endorsement'          => array(
+				'rename' => 'endorsement',
 			),
 		);
 	}
@@ -510,12 +535,12 @@ class Item_Info {
 	 * @since [*next-version*]
 	 *
 	 */
-	protected function maybe_convert_to_grams( $weight, $uom ) {
-		$weight = floatval( $weight );
+	protected function maybe_convert_weight( $weight, $uom ) {
+		$weight = floatval( wc_format_decimal( $weight ) );
 
 		switch ( $uom ) {
-			case 'kg':
-				$weight = $weight * 1000;
+			case 'g':
+				$weight = $weight / 1000;
 				break;
 			case 'lb':
 				$weight = $weight / 2.2;
@@ -523,9 +548,10 @@ class Item_Info {
 			case 'oz':
 				$weight = $weight / 35.274;
 				break;
+			default:
+				break;
 		}
-
-		return round( $weight );
+		return round( $weight, 2 );
 	}
 
 	protected function float_round_sanitization( $float, $numcomma ) {
@@ -805,4 +831,56 @@ class Item_Info {
 		return $countries[ $countryCode ] ?? $countryCode;
 	}
 
+	protected function set_address_2() {
+		if ( $this->pos_ps || $this->pos_rs || $this->pos_po ) {
+			return;
+		}
+
+		if ( ! empty( $this->args['shipping_address']['address_2'] ) ) {
+			return;
+		}
+
+		$set_key = false;
+		// Break address into pieces by spaces
+		$address_exploded = explode( ' ', $this->args['shipping_address']['address_1'] );
+
+		// If no spaces found
+		if ( count( $address_exploded ) == 1 ) {
+			// Break address into pieces by '.'
+			$address_exploded = explode( '.', $this->args['shipping_address']['address_1'] );
+
+			// If no address number and in Germany, return error
+			if ( 1 === count( $address_exploded ) && 'DE' === $this->args['shipping_address']['country'] ) {
+				throw new Exception( __( 'Shipping street number is missing!', 'dhl-for-woocommerce' ) );
+			}
+		}
+
+		// If greater than 1, means there are two parts to the address...otherwise Address 2 is empty which is possible in some countries outside of Germany
+		if ( count( $address_exploded ) > 1 ) {
+			// Loop through address and set number value only...
+			// ...last found number will be 'address_2'
+			foreach ( $address_exploded as $address_key => $address_value ) {
+				if ( is_numeric( $address_value ) ) {
+					// Set last index as street number
+					$set_key = $address_key;
+				}
+			}
+
+			// If no number was found, then take last part of address no matter what it is
+			if ( false === $set_key ) {
+				$set_key = $address_key;
+			}
+
+			// The number is the first part of address 1
+			if ( 0 === $set_key ) {
+				$this->args['shipping_address']['address_1'] = implode( ' ', array_slice( $address_exploded, 1 ) );
+				$this->args['shipping_address']['address_2'] = implode( ' ', array_slice( $address_exploded, 0, 1 ) );
+			} else {
+				$this->args['shipping_address']['address_1'] = implode( ' ',
+					array_slice( $address_exploded, 0, $set_key ) );
+				$this->args['shipping_address']['address_2'] = implode( ' ',
+					array_slice( $address_exploded, $set_key ) );
+			}
+		}
+	}
 }
