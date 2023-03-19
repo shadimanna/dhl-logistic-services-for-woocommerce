@@ -3,9 +3,6 @@
 use PR\DHL\REST_API\Parcel_DE\Auth;
 use PR\DHL\REST_API\Parcel_DE\Client;
 use PR\DHL\REST_API\Parcel_DE\Item_Info;
-use PR\DHL\REST_API\Drivers\JSON_API_Driver;
-use PR\DHL\REST_API\Drivers\Logging_Driver;
-use PR\DHL\REST_API\Drivers\WP_API_Driver;
 use PR\DHL\REST_API\Interfaces\API_Auth_Interface;
 use PR\DHL\REST_API\Interfaces\API_Driver_Interface;
 
@@ -14,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) || class_exists( 'PR_DHL_API_Parcel_DE', false ) ) {
 	return;
 }
 
-class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API {
+class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	/**
 	 * The URL to the API.
 	 *
@@ -92,30 +89,6 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API {
 	}
 
 	/**
-	 * Initializes the API driver instance.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @return API_Driver_Interface
-	 *
-	 * @throws Exception If failed to create the API driver.
-	 */
-	protected function create_api_driver() {
-		// Use a standard WordPress-driven API driver to send requests using WordPress' functions
-		$driver = new WP_API_Driver();
-
-		// This will log requests given to the original driver and log responses returned from it
-		$driver = new Logging_Driver( PR_DHL(), $driver );
-
-		// This will prepare requests given to the previous driver for JSON content
-		// and parse responses returned from it as JSON.
-		$driver = new JSON_API_Driver( $driver );
-
-		//, decorated using the JSON driver decorator class
-		return $driver;
-	}
-
-	/**
 	 * Initializes the API auth instance.
 	 *
 	 * @since [*next-version*]
@@ -175,84 +148,6 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API {
 			'pass',
 			'AYjXP5URDZnGbNVtxQa8iHNvXlboQqtG'
 		);
-	}
-
-	/**
-	 * Retrieves a single setting.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param string $key     The key of the setting to retrieve.
-	 * @param string $default The value to return if the setting is not saved.
-	 *
-	 * @return mixed The setting value.
-	 */
-	public function get_setting( $key, $default = '' ) {
-		$settings = $this->get_settings();
-
-		return $settings[ $key ] ?? $default;
-	}
-
-	/**
-	 * Retrieves all of the Deutsche Post settings.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @return array An associative array of the settings keys mapping to their values.
-	 */
-	public function get_settings() {
-		return get_option( 'woocommerce_pr_dhl_dp_settings', array() );
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @since [*next-version*]
-	 */
-	public function dhl_test_connection( $client_id, $client_secret ) {
-		try {
-			// Test the given ID and secret
-			$token = $this->api_auth->test_connection( $client_id, $client_secret );
-			// Save the token if successful
-			$this->api_auth->save_token( $token );
-
-			return $token;
-		} catch ( Exception $e ) {
-			$this->api_auth->save_token( null );
-			throw $e;
-		}
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @since [*next-version*]
-	 */
-	public function dhl_reset_connection() {
-		return $this->api_auth->revoke();
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @since [*next-version*]
-	 */
-	public function get_dhl_products_international() {
-		return array(
-			'V55PAK' => __('DHL Paket Connect', 'dhl-for-woocommerce'),
-			'V54EPAK' => __('DHL Europaket (B2B)', 'dhl-for-woocommerce'),
-			'V53WPAK' => __('DHL Paket International', 'dhl-for-woocommerce'),
-			'V66WPI' => __('DHL Warenpost International', 'dhl-for-woocommerce'),
-		);
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @since [*next-version*]
-	 */
-	public function get_dhl_products_domestic() {
-		return $this->get_dhl_products_international();
 	}
 
 	/**
