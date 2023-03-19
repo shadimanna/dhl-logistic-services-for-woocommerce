@@ -113,6 +113,13 @@ class Client extends API_Client {
 		);
 	}
 
+	/**
+	 * Shipment selected services mapping.
+	 *
+	 * @param  Item_Info  $request_info
+	 *
+	 * @return array
+	 */
 	protected function services_mappimng( Item_Info $request_info ) {
 		$services = array();
 		foreach ( $request_info->services as $key => $service ) {
@@ -186,6 +193,13 @@ class Client extends API_Client {
 		return $services;
 	}
 
+	/**
+	 * Prepare shipment items.
+	 *
+	 * @param  Item_Info  $request_info
+	 *
+	 * @return array
+	 */
 	protected function prepare_items( Item_Info $request_info ) {
 		$items = array();
 		foreach ( $request_info->items as $item ) {
