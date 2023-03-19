@@ -235,12 +235,12 @@ class Client extends API_Client {
 
 		if ( $request_info->pos_ps ) {
 			return array(
-				'name'       => $request_info->lockerAddress['name'],
-				'postNumber' => $request_info->contactAddress['postNumber'],
-				'lockerID'   => $request_info->contactAddress['lockerID'],
-				'postalCode' => $request_info->contactAddress['postalCode'],
-				'city'       => $request_info->contactAddress['city'],
-				'country'    => $request_info->contactAddress['country'],
+				'name'       => $request_info->packStationAddress['name'],
+				'postNumber' => $request_info->packStationAddress['postNumber'],
+				'lockerID'   => $request_info->packStationAddress['lockerID'],
+				'postalCode' => $request_info->packStationAddress['postalCode'],
+				'city'       => $request_info->packStationAddress['city'],
+				'country'    => $request_info->packStationAddress['country'],
 			);
 		}
 

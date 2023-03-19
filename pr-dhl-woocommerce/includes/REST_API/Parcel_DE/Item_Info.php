@@ -44,13 +44,13 @@ class Item_Info {
 	public $contactAddress;
 
 	/**
-	 * Consignee Locker address information.
+	 * Consignee Pack Station / Locker address information.
 	 *
 	 * @since [*next-version*]
 	 *
 	 * @var array
 	 */
-	public $lockerAddress;
+	public $packStationAddress;
 
 	/**
 	 * Shipment items.
@@ -87,14 +87,14 @@ class Item_Info {
 	public $isCrossBorder;
 
 	/**
-	 * is packstation
+	 * is packstation ( Locker )
 	 *
 	 * @var boolean
 	 */
 	public $pos_ps = false;
 
 	/**
-	 * is parcelshop
+	 * is parcelshop ( PostOffice )
 	 *
 	 * @var boolean
 	 */
@@ -151,7 +151,7 @@ class Item_Info {
 		$this->services       = Args_Parser::parse_args( $shipping_info, $this->get_services_schema() );
 
 		if ( $this->pos_ps ) {
-			$this->lockerAddress = Args_Parser::parse_args( $recipient_info, $this->get_locker_address_schema() );
+			$this->packStationAddress = Args_Parser::parse_args( $recipient_info, $this->get_packstation_address_schema() );
 		}
 
 		$this->items = array();
@@ -406,7 +406,7 @@ class Item_Info {
 	 *
 	 * @return array
 	 */
-	protected function get_locker_address_schema() {
+	protected function get_packstation_address_schema() {
 		// Closures in PHP 5.3 do not inherit class context
 		// So we need to copy $this into a lexical variable and pass it to closures manually
 		$self = $this;
