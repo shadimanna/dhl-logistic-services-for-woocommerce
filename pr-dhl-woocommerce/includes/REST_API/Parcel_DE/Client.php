@@ -233,6 +233,18 @@ class Client extends API_Client {
 	 */
 	protected function get_consignee_address( Item_Info $request_info ) {
 
+		if ( $request_info->pos_rs || $request_info->pos_po ) {
+			return array(
+				'name'       => $request_info->postOfficeAddress['name'],
+				'postNumber' => $request_info->postOfficeAddress['postNumber'],
+				'retailID'   => $request_info->postOfficeAddress['retailID'],
+				'postalCode' => $request_info->postOfficeAddress['postalCode'],
+				'city'       => $request_info->postOfficeAddress['city'],
+				'country'    => $request_info->postOfficeAddress['country'],
+				'email'      => $request_info->postOfficeAddress['email'],
+			);
+		}
+
 		if ( $request_info->pos_ps ) {
 			return array(
 				'name'       => $request_info->packStationAddress['name'],

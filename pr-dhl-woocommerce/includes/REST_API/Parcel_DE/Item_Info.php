@@ -53,6 +53,16 @@ class Item_Info {
 	public $packStationAddress;
 
 	/**
+	 * Consignee PostOffice Locker address information.
+	 *
+	 * Only usable for German post offices or retail outlets (Paketshops), international postOffices or retail outlets cannot be addressed directly.
+	 * If your customer wishes for international delivery to a droppoint, please use DHL Parcel International (V53WPAK) with the delivery type "Closest Droppoint".
+	 *
+	 * @var array
+	 */
+	public $postOfficeAddress;
+
+	/**
 	 * Shipment items.
 	 *
 	 * @since [*next-version*]
@@ -152,6 +162,10 @@ class Item_Info {
 
 		if ( $this->pos_ps ) {
 			$this->packStationAddress = Args_Parser::parse_args( $recipient_info, $this->get_packstation_address_schema() );
+		}
+
+		if ( $this->pos_ps || $this->pos_rs ) {
+			$this->postOfficeAddress = Args_Parser::parse_args( $recipient_info, $this->get_post_office_address_schema() );
 		}
 
 		$this->items = array();
@@ -447,6 +461,53 @@ class Item_Info {
 		);
 	}
 
+	/**
+	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing consignee info.
+	 * for Post Office.
+	 *
+	 * @return array
+	 */
+	protected function get_post_office_address_schema() {
+		// Closures in PHP 5.3 do not inherit class context
+		// So we need to copy $this into a lexical variable and pass it to closures manually
+		$self = $this;
+
+		return array(
+			'name'        => array(
+				'rename'   => 'name',
+				'error'    => __( 'Name is empty!', 'dhl-for-woocommerce' ),
+				'sanitize' => function ( $name ) use ( $self ) {
+					return $self->string_length_sanitization( $name, 50 );
+				}
+			),
+			'dhl_postnum' => array(
+				'rename' => 'postNumber',
+			),
+			'address_1'   => array(
+				'rename'   => 'retailID',
+				'error'    => __( 'Locker ID is missing, it is mandatory for "Packstation" delivery.', 'dhl-for-woocommerce' ),
+				'sanitize' => function ( $name ) use ( $self ) {
+					return filter_var( $this->args['shipping_address']['address_1'], FILTER_SANITIZE_NUMBER_INT );
+				}
+			),
+			'postcode'    => array(
+				'rename' => 'postalCode',
+				'error'  => __( 'Shipping "Postcode" is empty!', 'dhl-for-woocommerce' ),
+			),
+			'city'        => array(
+				'error' => __( 'Shipping "City" is empty!', 'dhl-for-woocommerce' )
+			),
+			'country'     => array(
+				'error'    => __( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' ),
+				'sanitize' => function ( $countryCode ) use ( $self ) {
+					return $self->country_code_to_alpha3( $countryCode );
+				}
+			),
+			'email'     => array(
+				'default' => '',
+			)
+		);
+	}
 
 	/**
 	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing order content item info.
