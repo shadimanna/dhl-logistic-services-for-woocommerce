@@ -35,13 +35,22 @@ class Item_Info {
 	public $shipper;
 
 	/**
-	 * Consignee address information. Either a doorstep address (contact address) including contact information or a droppoint address.
+	 * Consignee address information.
 	 *
 	 * @since [*next-version*]
 	 *
 	 * @var array
 	 */
 	public $contactAddress;
+
+	/**
+	 * Consignee Locker address information.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @var array
+	 */
+	public $lockerAddress;
 
 	/**
 	 * Shipment items.
@@ -140,6 +149,10 @@ class Item_Info {
 		$this->shipper        = Args_Parser::parse_args( $shipping_info, $this->get_shipper_info_schema() );
 		$this->contactAddress = Args_Parser::parse_args( $recipient_info, $this->get_contact_address_schema() );
 		$this->services       = Args_Parser::parse_args( $shipping_info, $this->get_services_schema() );
+
+		if ( $this->pos_ps ) {
+			$this->lockerAddress = Args_Parser::parse_args( $recipient_info, $this->get_locker_address_schema() );
+		}
 
 		$this->items = array();
 		foreach ( $items_info as $item_info ) {
@@ -384,6 +397,53 @@ class Item_Info {
 			'email'     => array(
 				'default' => '',
 			)
+		);
+	}
+
+	/**
+	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing consignee info.
+	 * for Locker, known as Packstation.
+	 *
+	 * @return array
+	 */
+	protected function get_locker_address_schema() {
+		// Closures in PHP 5.3 do not inherit class context
+		// So we need to copy $this into a lexical variable and pass it to closures manually
+		$self = $this;
+
+		return array(
+			'name'        => array(
+				'rename'   => 'name',
+				'error'    => __( 'Packstation name is empty!', 'dhl-for-woocommerce' ),
+				'sanitize' => function ( $name ) use ( $self ) {
+					return $self->string_length_sanitization( $name, 50 );
+				}
+			),
+			'dhl_postnum' => array(
+				'rename' => 'postNumber',
+				'error'  => __( 'Post Number is missing, it is mandatory for "Packstation" delivery.',
+					'dhl-for-woocommerce' ),
+			),
+			'address_1'   => array(
+				'rename'   => 'lockerID',
+				'error'    => __( 'Locker ID is missing, it is mandatory for "Packstation" delivery.', 'dhl-for-woocommerce' ),
+				'sanitize' => function ( $name ) use ( $self ) {
+					return filter_var( $this->args['shipping_address']['address_1'], FILTER_SANITIZE_NUMBER_INT );
+				}
+			),
+			'postcode'    => array(
+				'rename' => 'postalCode',
+				'error'  => __( 'Shipping "Postcode" is empty!', 'dhl-for-woocommerce' ),
+			),
+			'city'        => array(
+				'error' => __( 'Shipping "City" is empty!', 'dhl-for-woocommerce' )
+			),
+			'country'     => array(
+				'error'    => __( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' ),
+				'sanitize' => function ( $countryCode ) use ( $self ) {
+					return $self->country_code_to_alpha3( $countryCode );
+				}
+			),
 		);
 	}
 

@@ -61,17 +61,7 @@ class Client extends API_Client {
 				'state'         => $request_info->shipper['state'],
 				'country'       => $request_info->shipper['country']
 			),
-			'consignee'     => array(
-				'name1'         => $request_info->contactAddress['name1'],
-				'addressStreet' => $request_info->contactAddress['addressStreet'],
-				'addressHouse'  => $request_info->contactAddress['addressHouse'],
-				'postalCode'    => $request_info->contactAddress['postalCode'],
-				'city'          => $request_info->contactAddress['city'],
-				'state'         => $request_info->contactAddress['state'],
-				'country'       => $request_info->contactAddress['country'],
-				'phone'         => $request_info->contactAddress['phone'],
-				'email'         => $request_info->contactAddress['email']
-			),
+			'consignee'     => $this->get_consignee_address( $request_info ),
 			'details'       => array(
 				'weight' => array(
 					'uom'   => $request_info->weightUom,
@@ -229,6 +219,41 @@ class Client extends API_Client {
 				'currency' => $request_info->args['order_details']['currency'],
 				'value'    => $request_info->args['order_details']['total_value'],
 			),
+		);
+	}
+
+	/**
+	 * Consignee address information.
+	 * Either a doorstep address (contact address) including contact information or a droppoint address.
+	 * One of packstation (parcel locker), or post office (postfiliale/retail shop).
+	 *
+	 * @param  Item_Info  $request_info
+	 *
+	 * @return array
+	 */
+	protected function get_consignee_address( Item_Info $request_info ) {
+
+		if ( $request_info->pos_ps ) {
+			return array(
+				'name'       => $request_info->lockerAddress['name'],
+				'postNumber' => $request_info->contactAddress['postNumber'],
+				'lockerID'   => $request_info->contactAddress['lockerID'],
+				'postalCode' => $request_info->contactAddress['postalCode'],
+				'city'       => $request_info->contactAddress['city'],
+				'country'    => $request_info->contactAddress['country'],
+			);
+		}
+
+		return array(
+			'name1'         => $request_info->contactAddress['name1'],
+			'addressStreet' => $request_info->contactAddress['addressStreet'],
+			'addressHouse'  => $request_info->contactAddress['addressHouse'],
+			'postalCode'    => $request_info->contactAddress['postalCode'],
+			'city'          => $request_info->contactAddress['city'],
+			'state'         => $request_info->contactAddress['state'],
+			'country'       => $request_info->contactAddress['country'],
+			'phone'         => $request_info->contactAddress['phone'],
+			'email'         => $request_info->contactAddress['email']
 		);
 	}
 
