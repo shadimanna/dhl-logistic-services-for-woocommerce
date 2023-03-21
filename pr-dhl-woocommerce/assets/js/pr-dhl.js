@@ -24,7 +24,8 @@ jQuery( function( $ ) {
 
 			$( '#woocommerce-shipment-dhl-label' )
 				.on( 'change', '#pr_dhl_product', this.validate_product_return )
-				.on( 'change', '#pr_dhl_product', this.enable_disable_PDDP );
+				.on( 'change', '#pr_dhl_product', this.enable_disable_paket_international_fields );
+			wc_shipment_dhl_label_items.enable_disable_paket_international_fields();
 
 			$( '#woocommerce-shipment-dhl-label' )
 				.on( 'change', 'select#pr_dhl_total_packages', this.process_package_action );
@@ -471,7 +472,7 @@ jQuery( function( $ ) {
 				    	});
 
 						//Check PDDP service
-						wc_shipment_dhl_label_items.enable_disable_PDDP();
+						wc_shipment_dhl_label_items.enable_disable_paket_international_fields();
 						wc_shipment_dhl_label_items.enable_disable_duties();
 					});
 
@@ -516,14 +517,18 @@ jQuery( function( $ ) {
 			return false;
 		},
 
-		enable_disable_PDDP: function () {
+		enable_disable_paket_international_fields: function () {
 			var selected_product = $( '#pr_dhl_product' ).val();
 
 			if( 'V53WPAK' === selected_product ) {
 				$('#pr_dhl_PDDP').removeAttr('disabled');
+				$('#pr_dhl_endorsement').removeAttr('disabled');
 			} else {
 				$('#pr_dhl_PDDP').prop('disabled', 'disabled');
-				$('#pr_dhl_PDDP').prop( "checked", false );
+				$('#pr_dhl_PDDP').prop( "checked", false ).change();
+
+				$('#pr_dhl_endorsement').prop('disabled', 'disabled').change();
+
 				$('#pr_dhl_duties').removeAttr('disabled');
 			}
 		},

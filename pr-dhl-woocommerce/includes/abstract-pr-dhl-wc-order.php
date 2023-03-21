@@ -225,6 +225,15 @@ abstract class PR_DHL_WC_Order {
 
 
 	public function save_meta_box( $post_id, $post = null ) {
+
+		// Do nothing if it's not an order.
+		$screen = get_current_screen();
+		if ( ! empty( $screen ) ) {
+			if ( 'shop_order' !== $screen->post_type ) {
+				return;
+			}
+		}
+
 		// loop through inputs within id 'shipment-dhl-label-form'
 		$meta_box_ids = array( 'pr_dhl_product', 'pr_dhl_weight');
 
