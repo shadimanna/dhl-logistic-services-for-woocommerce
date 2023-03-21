@@ -113,6 +113,7 @@ class PR_DHL_WC {
 		// add_action( 'init', array( $this, 'init' ) );
 		// add_action( 'plugins_loaded', array( $this, 'init' ) );
         add_action( 'init', array( $this, 'load_plugin' ), 0 );
+		add_action( 'before_woocommerce_init', array( $this, 'declare_wc_hpos_compatibility' ), 10 );
     }
 
 	/**
@@ -293,6 +294,15 @@ class PR_DHL_WC {
 		}
 
 		return $this->shipping_dhl_product;
+	}
+
+	/**
+	 * Declare WooCommerce HPOS feature compatibility.
+	 */
+	public function declare_wc_hpos_compatibility() {
+		if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', PR_DHL_PLUGIN_FILE, true );
+		}
 	}
 
 	/**
