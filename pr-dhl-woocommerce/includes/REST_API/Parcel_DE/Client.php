@@ -15,11 +15,11 @@ class Client extends API_Client {
 	/**
 	 * Creates an item on the remote API.
 	 *
-	 * @param  Item_Info  $item_info  The information of the item to be created.
+	 * @param  Item_Info  $request_info
 	 *
+	 * @return string
 	 * @throws Exception
 	 * @since [*next-version*]
-	 *
 	 */
 	public function create_item( Item_Info $request_info ) {
 		// Prepare the request route and data
@@ -46,8 +46,7 @@ class Client extends API_Client {
 	public function request_info_to_request_data( Item_Info $request_info ) {
 		$shipment = array(
 			'product'       => $request_info->shipment['product'],
-			'refNo'         => apply_filters( 'pr_shipping_dhl_paket_label_ref_no',
-				'order_' . $request_info->shipment['refNo'] ),
+			'refNo'         => apply_filters( 'pr_shipping_dhl_paket_label_ref_no_prefix', 'order_' ) . $request_info->shipment['refNo'],
 			'billingNumber' => $request_info->shipment['billingNumber'],
 			'costCenter'    => $request_info->shipment['costCenter'],
 			'shipper'       => $this->get_shipper_address( $request_info ),
