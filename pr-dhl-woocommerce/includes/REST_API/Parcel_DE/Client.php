@@ -17,7 +17,7 @@ class Client extends API_Client {
 	 *
 	 * @param  Item_Info  $request_info
 	 *
-	 * @return string
+	 * @return \stdClass|string
 	 * @throws Exception
 	 * @since [*next-version*]
 	 */
