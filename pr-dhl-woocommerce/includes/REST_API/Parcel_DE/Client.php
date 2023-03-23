@@ -50,17 +50,7 @@ class Client extends API_Client {
 				'order_' . $request_info->shipment['refNo'] ),
 			'billingNumber' => $request_info->shipment['billingNumber'],
 			'costCenter'    => $request_info->shipment['costCenter'],
-			'shipper'       => array(
-				'name1'         => $request_info->shipper['name1'],
-				'phone'         => $request_info->shipper['phone'],
-				'email'         => $request_info->shipper['email'],
-				'addressStreet' => $request_info->shipper['addressStreet'],
-				'addressHouse'  => $request_info->shipper['addressHouse'],
-				'postalCode'    => $request_info->shipper['postalCode'],
-				'city'          => $request_info->shipper['city'],
-				'state'         => $request_info->shipper['state'],
-				'country'       => $request_info->shipper['country']
-			),
+			'shipper'       => $this->get_shipper_address( $request_info ),
 			'consignee'     => $this->get_consignee_address( $request_info ),
 			'details'       => array(
 				'weight' => array(
@@ -82,7 +72,7 @@ class Client extends API_Client {
 		return array(
 			'profile'   => apply_filters( 'pr_shipping_dhl_paket_label_shipment_profile', 'STANDARD_GRUPPENPROFIL' ),
 			'shipments' => array(
-				$shipment
+				$this->unset_empty_values( $shipment )
 			)
 		);
 	}
@@ -232,41 +222,84 @@ class Client extends API_Client {
 	 * @return array
 	 */
 	protected function get_consignee_address( Item_Info $request_info ) {
-
 		if ( $request_info->pos_rs || $request_info->pos_po ) {
-			return array(
-				'name'       => $request_info->postOfficeAddress['name'],
-				'postNumber' => $request_info->postOfficeAddress['postNumber'],
-				'retailID'   => $request_info->postOfficeAddress['retailID'],
-				'postalCode' => $request_info->postOfficeAddress['postalCode'],
-				'city'       => $request_info->postOfficeAddress['city'],
-				'country'    => $request_info->postOfficeAddress['country'],
-				'email'      => $request_info->postOfficeAddress['email'],
-			);
+			$address_fields = array( 'name', 'postNumber', 'retailID', 'postalCode', 'city', 'country' );
+			return $this->get_address( $address_fields, $request_info->postOfficeAddress );
 		}
 
 		if ( $request_info->pos_ps ) {
-			return array(
-				'name'       => $request_info->packStationAddress['name'],
-				'postNumber' => $request_info->packStationAddress['postNumber'],
-				'lockerID'   => $request_info->packStationAddress['lockerID'],
-				'postalCode' => $request_info->packStationAddress['postalCode'],
-				'city'       => $request_info->packStationAddress['city'],
-				'country'    => $request_info->packStationAddress['country'],
-			);
+			$address_fields = array( 'name', 'postNumber', 'lockerID', 'postalCode', 'city', 'country' );
+			return $this->get_address( $address_fields, $request_info->packStationAddress );
 		}
 
-		return array(
-			'name1'         => $request_info->contactAddress['name1'],
-			'addressStreet' => $request_info->contactAddress['addressStreet'],
-			'addressHouse'  => $request_info->contactAddress['addressHouse'],
-			'postalCode'    => $request_info->contactAddress['postalCode'],
-			'city'          => $request_info->contactAddress['city'],
-			'state'         => $request_info->contactAddress['state'],
-			'country'       => $request_info->contactAddress['country'],
-			'phone'         => $request_info->contactAddress['phone'],
-			'email'         => $request_info->contactAddress['email']
+
+		// Normal shipping address.
+		$address_fields = array(
+			'name1',
+			'addressStreet',
+			'addressHouse',
+			'postalCode',
+			'city',
+			'state',
+			'country',
+			'phone',
+			'email'
 		);
+
+		return $this->get_address( $address_fields, $request_info->contactAddress );
+	}
+
+	/**
+	 * Shipper address information.
+	 *
+	 * @param  Item_Info  $request_info
+	 *
+	 * @return array
+	 */
+	protected function get_shipper_address(  Item_Info $request_info  ) {
+		$address_fields = array( 'name1', 'phone', 'email', 'addressStreet', 'addressHouse', 'postalCode', 'city', 'state', 'country' );
+		return $this->get_address( $address_fields, $request_info->postOfficeAddress );
+	}
+
+	/**
+	 * @param  array  $address_fields
+	 * @param  array  $address
+	 *
+	 * @return array
+	 */
+	protected function get_address( $address_fields, $address ) {
+		$consignee_address = array();
+
+		// Set only nonempty fields.
+		foreach ( $address_fields as $address_field ) {
+			if ( isset( $address[ $address_field ] ) && '' !== $address[ $address_field ] ) {
+				$consignee_address[ $address_field ] = $address[ $address_field ];
+			}
+		}
+
+		return $consignee_address;
+	}
+
+	/**
+	 * Unset/remove any items that are empty strings.
+	 *
+	 * @param  array  $array
+	 *
+	 * @return array
+	 */
+	protected function unset_empty_values( array $array ) {
+		foreach ( $array as $k => $v ) {
+			if ( is_array( $v ) ) {
+				$array[ $k ] = $this->unset_empty_values( $v );
+			}
+
+			if ( empty( $v ) ) {
+				unset( $array[ $k ] );
+			}
+
+		}
+
+		return $array;
 	}
 
 	/**

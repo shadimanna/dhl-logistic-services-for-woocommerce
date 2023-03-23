@@ -300,11 +300,9 @@ class Item_Info {
 			),
 			'shipper_phone'         => array(
 				'rename'  => 'phone',
-				'default' => '',
 			),
 			'shipper_email'         => array(
 				'rename'  => 'email',
-				'default' => '',
 			),
 			'shipper_address'       => array(
 				'rename'   => 'addressStreet',
@@ -322,7 +320,6 @@ class Item_Info {
 			),
 			'shipper_address_no'    => array(
 				'rename'  => 'addressHouse',
-				'default' => '',
 			),
 			'shipper_address_zip'   => array(
 				'rename' => 'postalCode',
@@ -334,7 +331,6 @@ class Item_Info {
 			),
 			'shipper_address_state' => array(
 				'rename'  => 'state',
-				'default' => '',
 			),
 			'shipper_country'       => array(
 				'rename'   => 'country',
@@ -378,7 +374,6 @@ class Item_Info {
 			),
 			'address_2' => array(
 				'rename'  => 'addressHouse',
-				'default' => ''
 			),
 			'postcode'  => array(
 				'rename' => 'postalCode',
@@ -387,9 +382,7 @@ class Item_Info {
 			'city'      => array(
 				'error' => __( 'Shipping "City" is empty!', 'dhl-for-woocommerce' )
 			),
-			'state'     => array(
-				'default' => '',
-			),
+			'state'     => array(),
 			'country'   => array(
 				'sanitize' => function ( $countryCode ) use ( $self ) {
 					if ( empty( $countryCode ) ) {
@@ -402,15 +395,12 @@ class Item_Info {
 				}
 			),
 			'phone'     => array(
-				'default'  => '',
 				'sanitize' => function ( $phone ) use ( $self ) {
 
 					return $self->string_length_sanitization( $phone, 20 );
 				}
 			),
-			'email'     => array(
-				'default' => '',
-			)
+			'email'     => array()
 		);
 	}
 
