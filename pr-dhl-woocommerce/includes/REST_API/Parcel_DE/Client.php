@@ -257,7 +257,7 @@ class Client extends API_Client {
 	 */
 	protected function get_shipper_address(  Item_Info $request_info  ) {
 		$address_fields = array( 'name1', 'phone', 'email', 'addressStreet', 'addressHouse', 'postalCode', 'city', 'state', 'country' );
-		return $this->get_address( $address_fields, $request_info->postOfficeAddress );
+		return $this->get_address( $address_fields, $request_info->shipper );
 	}
 
 	/**
@@ -267,16 +267,16 @@ class Client extends API_Client {
 	 * @return array
 	 */
 	protected function get_address( $address_fields, $address ) {
-		$consignee_address = array();
+		$modified_address = array();
 
 		// Set only nonempty fields.
 		foreach ( $address_fields as $address_field ) {
 			if ( isset( $address[ $address_field ] ) && '' !== $address[ $address_field ] ) {
-				$consignee_address[ $address_field ] = $address[ $address_field ];
+				$modified_address[ $address_field ] = $address[ $address_field ];
 			}
 		}
 
-		return $consignee_address;
+		return $modified_address;
 	}
 
 	/**
