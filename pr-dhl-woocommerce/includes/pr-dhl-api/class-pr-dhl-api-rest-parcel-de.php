@@ -232,7 +232,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		return array( 'label_url' => $label_url, 'label_path' => $label_path);
 	}
 
-	protected function save_data_file( $prefix, $order_id, $label_data ) {
+	public function save_data_file( $prefix, $order_id, $label_data ) {
 		$data_name = 'dhl-' . $prefix . '-' . $order_id . '.pdf';
 		$data_path = PR_DHL()->get_dhl_label_folder_dir() . $data_name;
 		$data_url = PR_DHL()->get_dhl_label_folder_url() . $data_name;
@@ -252,7 +252,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		return array( 'data_url' => $data_url, 'data_path' => $data_path);
 	}
 
-	protected function set_arguments( $args ) {
+	public function set_arguments( $args ) {
 		// Validate set args
 
 		if ( empty( $args['dhl_settings']['api_user'] ) ) {
