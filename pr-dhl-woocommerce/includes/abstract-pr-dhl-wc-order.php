@@ -56,7 +56,7 @@ abstract class PR_DHL_WC_Order {
 		}
 
 		// add bulk actions to the Orders screen table bulk action drop-downs
-		add_action( 'admin_footer-edit.php', array( $this, 'add_order_bulk_actions' ) );
+		add_action( 'admin_footer', array( $this, 'add_order_bulk_actions' ) );
 
 		// process orders bulk actions
 		add_action( 'load-edit.php', array( $this, 'process_orders_bulk_actions' ) );
@@ -949,26 +949,30 @@ abstract class PR_DHL_WC_Order {
 	 * Bulk functions
 	 */
 	public function add_order_bulk_actions() {
-		global $post_type, $post_status;
+		global $typenow, $pagenow, $current_screen;
 
-		if ( $post_type === 'shop_order' && $post_status !== 'trash' ) :
+		$is_orders_list = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+			? ( wc_get_page_screen_id( 'shop-order' ) === $current_screen->id && 'admin.php' === $pagenow )
+			: ( 'shop_order' === $typenow && 'edit.php' === $pagenow  );
 
-			?>
-			<script type="text/javascript">
-				jQuery( document ).ready( function ( $ ) {
-					$( 'select[name^=action]' ).append(
-						<?php $index = count( $actions = $this->get_bulk_actions() ); ?>
-						<?php foreach ( $actions as $action => $name ) : ?>
-							$( '<option>' ).val( '<?php echo esc_js( $action ); ?>' ).text( '<?php echo esc_js( $name ); ?>' )
-							<?php --$index; ?>
-							<?php if ( $index ) { echo ','; } ?>
-						<?php endforeach; ?>
-					);
-				} );
-			</script>
-			<?php
+		if ( ! $is_orders_list ) {
+			return;
+		}
 
-		endif;
+		?>
+		<script type="text/javascript">
+            jQuery( document ).ready( function ( $ ) {
+                $( 'select[name^=action]' ).append(
+					<?php $index = count( $actions = $this->get_bulk_actions() ); ?>
+					<?php foreach ( $actions as $action => $name ) : ?>
+                    $( '<option>' ).val( '<?php echo esc_js( $action ); ?>' ).text( '<?php echo esc_js( $name ); ?>' )
+					<?php --$index; ?>
+					<?php if ( $index ) { echo ','; } ?>
+					<?php endforeach; ?>
+                );
+            } );
+		</script>
+		<?php
 	}
 
 	public function process_orders_bulk_actions() {
