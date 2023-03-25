@@ -60,6 +60,8 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
 		// add AWB Copy Count
 		add_action('manage_posts_extra_tablenav', array( $this, 'add_shop_order_awb_copy' ), 1 );
+		add_action('woocommerce_order_list_table_extra_tablenav', array( $this, 'add_shop_order_awb_copy' ) );
+
 		//add_action('restrict_manage_posts', array( $this, 'add_shop_order_awb_copy' ), 1 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'order_list_awb_script' ), 10 );
 		// add 'Status' orders page column header
@@ -88,43 +90,54 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	}
 
 	public function add_shop_order_awb_copy( $which ){
-		global $pagenow, $typenow;
-	
-		if( 'shop_order' === $typenow && 'edit.php' === $pagenow ) {
-			// Get available countries codes with their states code/name pairs
-			$country_states = WC()->countries->get_allowed_country_states();
-	
-			// Initializing
-			$filter_id   = 'dhl_awb_copy_count';
-			$selected     = isset($_GET[$filter_id])? $_GET[$filter_id] : '';
-			
-			echo '<div class="alignleft actions dhl-awb-filter-container">';
-				echo '<select name="'. esc_attr( $filter_id ) .'" class="dhl-awb-copy-count">';
-					echo '<option value="">'. esc_html__( 'AWB Copy Count', 'pr-dhl-woocommerce' ) . '</option>';
-					// Loop through shipping zones locations array
-					for( $i=1; $i<51; $i++ ){
-						echo '<option value="'. esc_attr( $i ) .'" '. selected( $selected, $i, false ) .'>'. $i .'</option>';
-					}
+		global $typenow, $pagenow, $current_screen;
 
-				echo '</select>';
-				//echo '<input type="submit" name="awb_copy_submit" class="button" value="Submit" />';
-			echo '</div>';
+		$is_orders_list = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+			? ( wc_get_page_screen_id( 'shop-order' ) === $current_screen->id && 'admin.php' === $pagenow )
+			: ( 'shop_order' === $typenow && 'edit.php' === $pagenow  );
+
+		if ( ! $is_orders_list ) {
+			return;
 		}
+
+		// Get available countries codes with their states code/name pairs
+		$country_states = WC()->countries->get_allowed_country_states();
+
+		// Initializing
+		$filter_id   = 'dhl_awb_copy_count';
+		$selected     = isset($_GET[$filter_id])? $_GET[$filter_id] : '';
+
+		echo '<div class="alignleft actions dhl-awb-filter-container">';
+		echo '<select name="'. esc_attr( $filter_id ) .'" class="dhl-awb-copy-count">';
+		echo '<option value="">'. esc_html__( 'AWB Copy Count', 'pr-dhl-woocommerce' ) . '</option>';
+		// Loop through shipping zones locations array
+		for( $i=1; $i<51; $i++ ){
+			echo '<option value="'. esc_attr( $i ) .'" '. selected( $selected, $i, false ) .'>'. $i .'</option>';
+		}
+
+		echo '</select>';
+		//echo '<input type="submit" name="awb_copy_submit" class="button" value="Submit" />';
+		echo '</div>';
 	}
 
 	public function order_list_awb_script( $hook ) {
-		global $typenow, $pagenow;
+		global $typenow, $pagenow, $current_screen;
 
-		if ( 'edit.php' === $hook && 'shop_order' === $typenow ) {
-			
-			wp_enqueue_script(
-				'wc-shipment-dhl-dp-orderlist-js',
-				PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-dp-orderlist.js',
-				array(),
-				PR_DHL_VERSION,
-				true
-			);
+		$is_orders_list = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+			? ( wc_get_page_screen_id( 'shop-order' ) === $current_screen->id && 'admin.php' === $pagenow )
+			: ( 'shop_order' === $typenow && 'edit.php' === $pagenow  );
+
+		if ( ! $is_orders_list ) {
+			return;
 		}
+
+		wp_enqueue_script(
+			'wc-shipment-dhl-dp-orderlist-js',
+			PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-dp-orderlist.js',
+			array(),
+			PR_DHL_VERSION,
+			true
+		);
 	}
 
 	public function add_download_awb_label_endpoint() {
