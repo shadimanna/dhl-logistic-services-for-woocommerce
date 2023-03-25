@@ -1055,17 +1055,22 @@ abstract class PR_DHL_WC_Order {
 	/**
 	 * Display messages on order view screen
 	 */
-	public function render_messages( $current_screen = null ) {
-		if ( ! $current_screen instanceof WP_Screen ) {
-			$current_screen = get_current_screen();
+	public function render_messages( ) {
+		global $current_screen;
+
+		$screens = array( 'shop_order', 'edit-shop_order' );
+		try {
+			if ( wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled() ) {
+				$screens[] = wc_get_page_screen_id( 'shop-order' );
+			}
+		} catch ( Exception $e ) {
+
 		}
 
-		if ( isset( $current_screen->id ) && in_array( $current_screen->id, array( 'shop_order', 'edit-shop_order' ), true ) ) {
-
+		if ( isset( $current_screen->id ) && in_array( $current_screen->id, $screens ) ) {
 			$bulk_action_message_opt = get_option( '_pr_dhl_bulk_action_confirmation' );
 
 			if ( ( $bulk_action_message_opt ) && is_array( $bulk_action_message_opt ) ) {
-
 				// $user_id = key( $bulk_action_message_opt );
 				// remove first element from array and verify if it is the user id
 				$user_id = array_shift( $bulk_action_message_opt );
