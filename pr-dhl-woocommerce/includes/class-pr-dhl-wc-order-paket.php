@@ -27,9 +27,11 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 		// Add 'Label Created' orders page column header.
 		add_filter( 'manage_edit-shop_order_columns', array( $this, 'add_order_label_column_header' ), 30 );
+		add_filter( 'manage_woocommerce_page_wc-orders_columns', array( $this, 'add_order_label_column_header' ), 10 );
 
 		// Add 'Label Created' orders page column content.
 		add_action( 'manage_shop_order_posts_custom_column', array( $this, 'add_order_label_column_content' ) );
+		add_action( 'manage_woocommerce_page_wc-orders_custom_column', array( $this, 'add_order_label_column_content' ), 10, 2 );
 
 		add_action( 'pr_shipping_dhl_label_created', array( $this, 'change_order_status' ), 10, 1 );
 		add_action( 'woocommerce_email_order_details', array( $this, 'add_tracking_info'), 10, 4 );
@@ -943,12 +945,16 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		return $new_columns;
 	}
 
-	public function add_order_label_column_content( $column ) {
-		global $post, $theorder;
+	public function add_order_label_column_content( $column, $order = null ) {
+		global $post;
 
-		$order_id = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
-			? $theorder->get_id()
-			: $post->ID;
+		try {
+			$order_id = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+				? $order->get_id()
+				: $post->ID;
+		} catch ( Exception $e ) {
+			$order_id = $post->ID;
+		}
 
 		if ( $order_id ) {
 			if( 'dhl_label_created' === $column ) {

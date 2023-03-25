@@ -64,8 +64,10 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		add_action( 'admin_enqueue_scripts', array( $this, 'order_list_awb_script' ), 10 );
 		// add 'Status' orders page column header
 		add_filter( 'manage_edit-shop_order_columns', array( $this, 'add_order_status_column_header' ), 30 );
+		add_filter( 'manage_woocommerce_page_wc-orders_columns', array( $this, 'add_order_status_column_header' ), 30 );
 		// add 'Status Created' orders page column content
 		add_action( 'manage_shop_order_posts_custom_column', array( $this, 'add_order_status_column_content' ) );
+		add_action( 'manage_woocommerce_page_wc-orders_custom_column', array( $this, 'add_order_status_column_content' ), 10, 2 );
 
 		// Add the DHL order meta box
 		add_action( 'add_meta_boxes', array( $this, 'add_dhl_order_meta_box' ), 21 );
@@ -848,12 +850,16 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		return $new_columns;
 	}
 
-	public function add_order_status_column_content( $column ) {
-		global $post, $theorder;
+	public function add_order_status_column_content( $column, $order = null ) {
+		global $post;
 
-		$order_id = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
-			? $theorder->get_id()
-			: $post->ID;
+		try {
+			$order_id = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+				? $order->get_id()
+				: $post->ID;
+		} catch ( Exception $e ) {
+			$order_id = $post->ID;
+		}
 
 		if ( !$order_id ) {
 			return;
