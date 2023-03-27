@@ -4,6 +4,7 @@ namespace PR\DHL\REST_API\Parcel_DE;
 
 use Exception;
 use PR\DHL\REST_API\API_Client;
+use PR\DHL\REST_API\Response;
 
 /**
  * The API client for DHL Paket.
@@ -34,12 +35,10 @@ class Client extends API_Client {
 		}
 
 		// Otherwise throw an exception using the response's error messages
-		$message = ! empty( $response->body->items[0]->message )
-			? strval( $response->body->items[0]->message )
-			: ( ! empty( $response->body->status->detail ) ? strval( $response->body->status->detail ) : $response->body->status->detail );
+		$message = $this->get_response_error_message( $response );
 
 		throw new Exception(
-			sprintf( __( 'API error: %s', 'dhl-for-woocommerce' ), $message )
+			sprintf( __( 'API errors: %s', 'dhl-for-woocommerce' ), $message )
 		);
 	}
 
@@ -310,5 +309,25 @@ class Client extends API_Client {
 	 */
 	protected function request_order_route() {
 		return 'v2/orders';
+	}
+
+	/**
+	 * Get response error messages.
+	 *
+	 * @param  Response  $response.
+	 *
+	 * @return string.
+	 */
+	protected function get_response_error_message( Response $response ) {
+		if ( empty( $response->body->items[0]->validationMessages ) ) {
+			return $response->body->status->detail;
+		}
+
+		$error_message = '';
+		foreach (  $response->body->items[0]->validationMessages as $message ) {
+			$error_message .= '<br><br><strong>'. $message->validationState .'</strong>' . ': ' . $message->validationMessage;
+		}
+
+		return $error_message;
 	}
 }
