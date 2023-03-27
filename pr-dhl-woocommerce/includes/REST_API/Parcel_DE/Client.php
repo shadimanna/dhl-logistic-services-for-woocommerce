@@ -79,37 +79,41 @@ class Client extends API_Client {
 	 *
 	 * @return array.
 	 */
-	public function request_info_to_request_data( Item_Info $request_info ) {
-		$shipment = array(
-			'product'       => $request_info->shipment['product'],
-			'refNo'         => apply_filters( 'pr_shipping_dhl_paket_label_ref_no_prefix', 'order_' ) . $request_info->shipment['refNo'],
-			'billingNumber' => $request_info->shipment['billingNumber'],
-			'costCenter'    => $request_info->shipment['costCenter'],
-			'shipper'       => $this->get_shipper_address( $request_info ),
-			'consignee'     => $this->get_consignee_address( $request_info ),
-			'details'       => array(
-				'weight' => array(
-					'uom'   => $request_info->weightUom,
-					'value' => $request_info->shipment['weight'],
-				)
-			),
-		);
-
-		$services = $this->services_mappimng( $request_info );
-		if ( ! empty( $services ) ) {
-			$shipment['services'] = $services;
-		}
-
-		if ( $request_info->isCrossBorder ) {
-			$shipment['customs'] = $this->get_customs( $request_info );
-		}
-
-		return array(
+	public function request_info_to_request_data( array $items_info ) {
+		$data = array(
 			'profile'   => apply_filters( 'pr_shipping_dhl_paket_label_shipment_profile', 'STANDARD_GRUPPENPROFIL' ),
-			'shipments' => array(
-				$this->unset_empty_values( $shipment )
-			)
+			'shipments' => array()
 		);
+
+		foreach ( $items_info as $item_info ) {
+			$shipment = array(
+				'product'       => $item_info->shipment['product'],
+				'refNo'         => apply_filters( 'pr_shipping_dhl_paket_label_ref_no_prefix', 'order_' ) . $item_info->shipment['refNo'],
+				'billingNumber' => $item_info->shipment['billingNumber'],
+				'costCenter'    => $item_info->shipment['costCenter'],
+				'shipper'       => $this->get_shipper_address( $item_info ),
+				'consignee'     => $this->get_consignee_address( $item_info ),
+				'details'       => array(
+					'weight' => array(
+						'uom'   => $item_info->weightUom,
+						'value' => $item_info->shipment['weight'],
+					)
+				),
+			);
+
+			$services = $this->services_mappimng( $item_info );
+			if ( ! empty( $services ) ) {
+				$shipment['services'] = $services;
+			}
+
+			if ( $item_info->isCrossBorder ) {
+				$shipment['customs'] = $this->get_customs( $item_info );
+			}
+
+			$data['shipments'][] = $this->unset_empty_values( $shipment );
+		}
+
+		return $data;
 	}
 
 	/**
