@@ -63,9 +63,7 @@ class Client extends API_Client {
 		}
 
 		// Otherwise throw an exception using the response's error messages
-		$message = ! empty( $response->body->items[0]->message )
-			? strval( $response->body->items[0]->message )
-			: ( ! empty( $response->body->status->detail ) ? strval( $response->body->status->detail ) : $response->body->status->detail );
+		$message = $this->get_response_error_message( $response );
 
 		throw new Exception(
 			sprintf( __( 'API error: %s', 'dhl-for-woocommerce' ), $message )
