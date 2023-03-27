@@ -8,8 +8,6 @@ use PR\DHL\REST_API\Response;
 
 /**
  * The API client for DHL Paket.
- *
- * @since [*next-version*]
  */
 class Client extends API_Client {
 
@@ -73,7 +71,7 @@ class Client extends API_Client {
 	/**
 	 * Transforms an item info object into a request data array.
 	 *
-	 * @param  Item_Info  $request_info.
+	 * @param  array<Item_Info>  $items_info.
 	 *
 	 * @return array.
 	 */
