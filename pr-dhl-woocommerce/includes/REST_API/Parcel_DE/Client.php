@@ -42,36 +42,6 @@ class Client extends API_Client {
 	}
 
 	/**
-	 * Deletes an item from the remote API.
-	 *
-	 * @param int $shipment_number The Shipment number of the item to delete.
-	 *
-	 * @return \stdClass The response.
-	 *
-	 * @throws Exception
-	 */
-	public function delete_item( $shipment_number ) {
-		// Compute the route to the API endpoint
-		$route = $this->delete_shipment_route( $shipment_number );
-
-		// Send the DELETE request
-		$response = $this->delete( $route );
-
-		// Return the response body on success
-		if ( $response->status === 200 ) {
-			return $response->body;
-		}
-
-		// Otherwise throw an exception using the response's error messages
-		$message = $this->get_response_error_message( $response );
-
-		throw new Exception(
-			sprintf( __( 'API errors: %s', 'dhl-for-woocommerce' ), $message )
-		);
-	}
-
-
-	/**
 	 * Transforms an item info object into a request data array.
 	 *
 	 * @param  Item_Info  $request_info.
@@ -387,5 +357,34 @@ class Client extends API_Client {
 		}
 
 		return $error_message;
+	}
+
+	/**
+	 * Deletes an item from the remote API.
+	 *
+	 * @param int $shipment_number The Shipment number of the item to delete.
+	 *
+	 * @return \stdClass The response.
+	 *
+	 * @throws Exception
+	 */
+	public function delete_item( $shipment_number ) {
+		// Compute the route to the API endpoint
+		$route = $this->delete_shipment_route( $shipment_number );
+
+		// Send the DELETE request
+		$response = $this->delete( $route );
+
+		// Return the response body on success
+		if ( $response->status === 200 ) {
+			return $response->body;
+		}
+
+		// Otherwise throw an exception using the response's error messages
+		$message = $this->get_response_error_message( $response );
+
+		throw new Exception(
+			sprintf( __( 'API errors: %s', 'dhl-for-woocommerce' ), $message )
+		);
 	}
 }
