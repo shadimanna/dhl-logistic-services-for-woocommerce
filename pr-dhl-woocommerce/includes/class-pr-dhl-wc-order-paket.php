@@ -42,7 +42,11 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 		// Add 'DHL Request Pickup' to Order actions.
 		add_action( 'handle_bulk_actions-edit-shop_order', array($this, 'process_bulk_actions_pickup_request'), 10, 3 );
+		add_action( 'handle_bulk_actions-woocommerce_page_wc-orders', array($this, 'process_bulk_actions_pickup_request'), 10, 3 );
+
 		add_action( 'manage_posts_extra_tablenav', array( $this, 'bulk_actions_fields_pickup_request'));
+		add_action('woocommerce_order_list_table_extra_tablenav', array( $this, 'bulk_actions_fields_pickup_request' ) );
+
 		add_action( 'admin_footer', array( $this, 'modal_content_fields_pickup_request'));
 
 		// Add customs item description option
@@ -1171,42 +1175,50 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	}
 
 	public function bulk_actions_fields_pickup_request() {
-		global $pagenow, $typenow, $thepostid, $post;
+		global $typenow, $pagenow, $current_screen;
 
-		//Bugfix, warnings shown for Order table results with no Orders
-		if ( empty( $thepostid ) && empty( $post ) ) return;
+		$is_orders_list = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+			? ( wc_get_page_screen_id( 'shop-order' ) === $current_screen->id && 'admin.php' === $pagenow )
+			: ( 'shop_order' === $typenow && 'edit.php' === $pagenow  );
 
-		if( 'shop_order' === $typenow && 'edit.php' === $pagenow ) {
-
-			//Hidden inputs
-			woocommerce_wp_hidden_input( array(
-				'id'          		=> 'dhlpickup',
-				'name'          		=> 'dhlpickup',
-				'value'       		=> 'asap',
-			));
-			woocommerce_wp_hidden_input( array(
-				'id'          		=> 'dhlpickup_d',
-				'name'          		=> 'dhlpickup_d',
-				'value'       		=> date('Y-m-d', strtotime('+1 day')),
-			));
-			/*
-			//Disabled here, set later if bulky goods is yes on order product
-			woocommerce_wp_hidden_input( array(
-				'id'          		=> 'dhlpickup_t',
-				'name'          		=> 'dhlpickup_t',
-				'value'       		=> 'PAKET',
-			));
-			*/
+		if ( ! $is_orders_list ) {
+			return;
 		}
+
+		//Hidden inputs
+		woocommerce_wp_hidden_input( array(
+			'id'          		=> 'dhlpickup',
+			'name'          		=> 'dhlpickup',
+			'value'       		=> 'asap',
+		));
+		woocommerce_wp_hidden_input( array(
+			'id'          		=> 'dhlpickup_d',
+			'name'          		=> 'dhlpickup_d',
+			'value'       		=> date('Y-m-d', strtotime('+1 day')),
+		));
+		/*
+		//Disabled here, set later if bulky goods is yes on order product
+		woocommerce_wp_hidden_input( array(
+			'id'          		=> 'dhlpickup_t',
+			'name'          		=> 'dhlpickup_t',
+			'value'       		=> 'PAKET',
+		));
+		*/
 	}
 
 	public function modal_content_fields_pickup_request() {
-		global $pagenow, $typenow, $thepostid, $post;
+		global $typenow, $pagenow, $current_screen;
+
+		$is_orders_list = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+			? ( wc_get_page_screen_id( 'shop-order' ) === $current_screen->id && 'admin.php' === $pagenow )
+			: ( 'shop_order' === $typenow && 'edit.php' === $pagenow  );
+
+		if ( ! $is_orders_list ) {
+			return;
+		}
 
 		//Bugfix, warnings shown for Order table results with no Orders
-		if ( empty( $thepostid ) && empty( $post ) ) return;
-
-		if( 'shop_order' === $typenow && 'edit.php' === $pagenow ) {
+		/*if ( empty( $thepostid ) && empty( $post ) ) return;*/
 		?>
 		<div id="dhl-paket-pickup-modal" style="display:none;">
 
@@ -1264,7 +1276,6 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			?>
 		</div>
 		<?php
-		}
 	}
 
 	protected function is_UK_shipment( $order_id ) {

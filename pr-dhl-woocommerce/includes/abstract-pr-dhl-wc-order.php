@@ -59,7 +59,8 @@ abstract class PR_DHL_WC_Order {
 		add_action( 'admin_footer', array( $this, 'add_order_bulk_actions' ) );
 
 		// process orders bulk actions
-		add_action( 'load-edit.php', array( $this, 'process_orders_bulk_actions' ) );
+		add_action( 'handle_bulk_actions-edit-shop_order', array( $this, 'process_orders_bulk_actions' ) );
+		add_action( 'handle_bulk_actions-woocommerce_page_wc-orders', array( $this, 'process_orders_bulk_actions' ) );
 
 		// display admin notices for bulk actions
 		add_action( 'admin_notices', array( $this, 'render_messages' ) );
@@ -979,7 +980,7 @@ abstract class PR_DHL_WC_Order {
 		global $typenow;
 		$array_messages = array( 'msg_user_id' => get_current_user_id() );
 
-		if ( 'shop_order' === $typenow ) {
+		//if ( 'shop_order' === $typenow ) {
 
 			// Get the bulk action
 			$wp_list_table = _get_list_table( 'WP_Posts_List_Table' );
@@ -991,8 +992,8 @@ abstract class PR_DHL_WC_Order {
 			}
 
 			// Make sure order IDs are submitted
-			if ( isset( $_REQUEST['post'] ) ) {
-				$order_ids = array_map( 'absint', $_REQUEST['post'] );
+			if ( isset( $_REQUEST['post'] ) || isset( $_REQUEST['order'] ) ) {
+				$order_ids = array_map( 'absint', ( $_REQUEST['post'] ?? $_REQUEST['order'] ) );
 			}
 
 			$orders_count 	= count( $order_ids );
@@ -1018,7 +1019,7 @@ abstract class PR_DHL_WC_Order {
 			// update_option( '_pr_dhl_bulk_action_confirmation', array( get_current_user_id() => $message, 'is_error' => $is_error ) );
 			update_option( '_pr_dhl_bulk_action_confirmation', $array_messages );
 
- 		}
+ 		//}
 	}
 	/*
 	public function render_messages( $current_screen = null ) {
