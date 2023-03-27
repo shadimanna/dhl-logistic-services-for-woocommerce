@@ -351,9 +351,19 @@ class Client extends API_Client {
 			return $response->body->status->detail ?? $response->body->detail;
 		}
 
-		$error_message = '';
+		$errors_list = array();
 		foreach ( $response->body->items[0]->validationMessages as $message ) {
-			$error_message .= '<br><br><strong>' . $message->validationState . '</strong>' . ': ' . $message->validationMessage;
+			$errors_list[ $message->validationState ][] = $message->validationMessage;
+		}
+
+		$error_message = '<br>';
+		foreach ( $errors_list as $key => $errors ) {
+			$error_message .= '<strong class="wc_dhl_error">'. $key .' : </strong>';
+			$error_message .= '<ul class="wc_dhl_error">';
+			foreach($errors as $error){
+				$error_message .=  '<li>'.$error.'</li>';
+			}
+			$error_message .=  '</ul>';
 		}
 
 		return $error_message;
