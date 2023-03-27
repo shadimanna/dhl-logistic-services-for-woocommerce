@@ -4,6 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } // Exit if accessed directly
 
+use PR\DHL\REST_API\Parcel_DE\Item_Info;
 
 class PR_DHL_API_Paket extends PR_DHL_API {
 
@@ -52,6 +53,50 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 	public function get_dhl_label( $args ) {
 		$args['dhl_settings'] = $this->maybe_sandbox( $args['dhl_settings'] );
 		return parent::get_dhl_label( $args );
+	}
+
+	/**
+	 * Create multiple labels in 1 API call.
+	 *
+	 * @param array[] $multiple_orders_args Set of orders args.
+	 *
+	 * @return array
+	 * @throws Exception
+	 */
+	public function get_dhl_labels( $multiple_orders_args ) {
+		$items_info = array();
+		$labels     = array();
+		$uom        = get_option( 'woocommerce_weight_unit' );
+
+		foreach ( $multiple_orders_args as $args ) {
+			$args['dhl_settings'] = $this->maybe_sandbox( $args['dhl_settings'] );
+			try {
+				$this->dhl_label->set_arguments( $args );
+				$items_info[] = new Item_Info( $args, $uom );
+			} catch ( Exception $e ) {
+				$labels['errors'][] = array ( 'order_id' => $args['refNo'], 'message' => $e->getMessage() );
+			}
+		}
+
+		// Create the item and get the barcode
+		if ( ! empty( $items_info ) ) {
+			$items_response = $this->dhl_label->api_client->create_items( $items_info );
+			foreach ( $items_response->items as $item ) {
+				$order_id         = (int) str_replace( apply_filters( 'pr_shipping_dhl_paket_label_ref_no_prefix', 'order_' ), '', $item->shipmentRefNo );
+				if ( isset( $item->label->b64 ) ) {
+					$file             = $this->dhl_label->save_data_file( 'label', $order_id, $item->label->b64 );
+					$labels['labels'][] = array(
+						'order_id'        => $order_id,
+						'label_path'      => $file['data_path'],
+						'item_barcode'    => $item->shipmentNo,
+						'tracking_number' => $item->shipmentNo,
+						'tracking_status' => '',
+					);
+				}
+			}
+		}
+
+		return $labels;
 	}
 
 	public function delete_dhl_label( $args ) {
