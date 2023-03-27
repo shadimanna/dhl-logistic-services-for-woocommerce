@@ -179,11 +179,15 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * Delete label.
 	 *
-	 * @since [*next-version*]
+	 * @param $label_info.
+	 *
+	 * @throws Exception.
 	 */
 	public function delete_dhl_label( $label_info ) {
+		$this->api_client->delete_item( $label_info['tracking_number'] );
+
 		if ( ! isset( $label_info['label_path'] ) ) {
 			throw new Exception( __( 'DHL Label has no path!', 'dhl-for-woocommerce' ) );
 		}
