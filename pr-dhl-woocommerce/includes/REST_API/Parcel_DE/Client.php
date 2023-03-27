@@ -16,11 +16,10 @@ class Client extends API_Client {
 	/**
 	 * Creates an item on the remote API.
 	 *
-	 * @param  Item_Info  $request_info
+	 * @param  Item_Info  $request_info.
 	 *
-	 * @return \stdClass|string
-	 * @throws Exception
-	 * @since [*next-version*]
+	 * @return \stdClass.
+	 * @throws Exception.
 	 */
 	public function create_item( Item_Info $request_info ) {
 		// Prepare the request route and data
@@ -42,6 +41,13 @@ class Client extends API_Client {
 		);
 	}
 
+	/**
+	 * Transforms an item info object into a request data array.
+	 *
+	 * @param  Item_Info  $request_info.
+	 *
+	 * @return array.
+	 */
 	public function request_info_to_request_data( Item_Info $request_info ) {
 		$shipment = array(
 			'product'       => $request_info->shipment['product'],
@@ -78,9 +84,9 @@ class Client extends API_Client {
 	/**
 	 * Shipment selected services mapping.
 	 *
-	 * @param  Item_Info  $request_info
+	 * @param  Item_Info  $request_info  .
 	 *
-	 * @return array
+	 * @return array.
 	 */
 	protected function services_mappimng( Item_Info $request_info ) {
 		$services = array();
@@ -103,7 +109,7 @@ class Client extends API_Client {
 					);
 					break;
 				case 'identCheck':
-					$ident_check          = array(
+					$ident_check      = array(
 						'firstName'   => $request_info->args['shipping_address']['first_name'] ?? '',
 						'lastName'    => $request_info->args['shipping_address']['last_name'] ?? '',
 						'dateOfBirth' => $request_info->args['order_details']['identcheck_dob'] ?? '',
@@ -126,7 +132,7 @@ class Client extends API_Client {
 							'bank_holder' => 'accountHolder',
 							'bank_name'   => 'bankName',
 							'bank_iban'   => 'iban',
-							'bank_bic'    => 'bic'
+							'bank_bic'    => 'bic',
 						);
 
 						$bank_data = array();
@@ -158,9 +164,9 @@ class Client extends API_Client {
 	/**
 	 * Prepare shipment items.
 	 *
-	 * @param  Item_Info  $request_info
+	 * @param  Item_Info  $request_info.
 	 *
-	 * @return array
+	 * @return array.
 	 */
 	protected function prepare_items( Item_Info $request_info ) {
 		$items = array();
@@ -175,7 +181,7 @@ class Client extends API_Client {
 				),
 				'itemWeight'      => array(
 					'uom'   => $item['itemWeight']['uom'],
-					'value' => $item['itemWeight']['value']
+					'value' => $item['itemWeight']['value'],
 				)
 			);
 		}
@@ -186,9 +192,9 @@ class Client extends API_Client {
 	/**
 	 * For international shipments, Get necessary information for customs about the exported goods.
 	 *
-	 * @param  Item_Info  $request_info
+	 * @param  Item_Info  $request_info.
 	 *
-	 * @return array
+	 * @return array.
 	 */
 	protected function get_customs( Item_Info $request_info ) {
 		// Items description
@@ -215,18 +221,20 @@ class Client extends API_Client {
 	 * Either a doorstep address (contact address) including contact information or a droppoint address.
 	 * One of packstation (parcel locker), or post office (postfiliale/retail shop).
 	 *
-	 * @param  Item_Info  $request_info
+	 * @param  Item_Info  $request_info.
 	 *
-	 * @return array
+	 * @return array.
 	 */
 	protected function get_consignee_address( Item_Info $request_info ) {
 		if ( $request_info->pos_rs || $request_info->pos_po ) {
 			$address_fields = array( 'name', 'postNumber', 'retailID', 'postalCode', 'city', 'country' );
+
 			return $this->get_address( $address_fields, $request_info->postOfficeAddress );
 		}
 
 		if ( $request_info->pos_ps ) {
 			$address_fields = array( 'name', 'postNumber', 'lockerID', 'postalCode', 'city', 'country' );
+
 			return $this->get_address( $address_fields, $request_info->packStationAddress );
 		}
 
@@ -250,22 +258,35 @@ class Client extends API_Client {
 	/**
 	 * Shipper address information.
 	 *
-	 * @param  Item_Info  $request_info
+	 * @param  Item_Info  $request_info.
 	 *
-	 * @return array
+	 * @return array.
 	 */
-	protected function get_shipper_address(  Item_Info $request_info  ) {
-		$address_fields = array( 'name1', 'phone', 'email', 'addressStreet', 'addressHouse', 'postalCode', 'city', 'state', 'country' );
+	protected function get_shipper_address( Item_Info $request_info ) {
+		$address_fields = array(
+			'name1',
+			'phone',
+			'email',
+			'addressStreet',
+			'addressHouse',
+			'postalCode',
+			'city',
+			'state',
+			'country'
+		);
+
 		return $this->get_address( $address_fields, $request_info->shipper );
 	}
 
 	/**
+	 * Get required address.
+	 *
 	 * @param  array  $address_fields
 	 * @param  array  $address
 	 *
 	 * @return array
 	 */
-	protected function get_address( $address_fields, $address ) {
+	protected function get_address( array $address_fields, array $address ) {
 		$modified_address = array();
 
 		// Set only nonempty fields.
@@ -281,9 +302,9 @@ class Client extends API_Client {
 	/**
 	 * Unset/remove any items that are empty strings.
 	 *
-	 * @param  array  $array
+	 * @param  array  $array.
 	 *
-	 * @return array
+	 * @return array.
 	 */
 	protected function unset_empty_values( array $array ) {
 		foreach ( $array as $k => $v ) {
@@ -294,18 +315,15 @@ class Client extends API_Client {
 			if ( empty( $v ) ) {
 				unset( $array[ $k ] );
 			}
-
 		}
 
 		return $array;
 	}
 
 	/**
-	 * Prepares an API route.
+	 * Get order rout, used for label creation.
 	 *
-	 * @return string
-	 * @since [*next-version*]
-	 *
+	 * @return string.
 	 */
 	protected function request_order_route() {
 		return 'v2/orders';
@@ -324,8 +342,8 @@ class Client extends API_Client {
 		}
 
 		$error_message = '';
-		foreach (  $response->body->items[0]->validationMessages as $message ) {
-			$error_message .= '<br><br><strong>'. $message->validationState .'</strong>' . ': ' . $message->validationMessage;
+		foreach ( $response->body->items[0]->validationMessages as $message ) {
+			$error_message .= '<br><br><strong>' . $message->validationState . '</strong>' . ': ' . $message->validationMessage;
 		}
 
 		return $error_message;

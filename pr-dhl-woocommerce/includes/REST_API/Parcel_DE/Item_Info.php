@@ -12,43 +12,35 @@ use PR\DHL\Utils\Args_Parser;
  */
 class Item_Info {
 	/**
-	 * @var array
+	 * @var array.
 	 */
 	public $args;
 
 	/**
 	 * Shipment details.
 	 *
-	 * @since [*next-version*]
-	 *
-	 * @var array
+	 * @var array.
 	 */
 	public $shipment;
 
 	/**
 	 * Shipper information, including contact information, address. Alternatively, a predefined shipper reference can be used.
 	 *
-	 * @since [*next-version*]
-	 *
-	 * @var array
+	 * @var array.
 	 */
 	public $shipper;
 
 	/**
 	 * Consignee address information.
 	 *
-	 * @since [*next-version*]
-	 *
-	 * @var array
+	 * @var array.
 	 */
 	public $contactAddress;
 
 	/**
 	 * Consignee Pack Station / Locker address information.
 	 *
-	 * @since [*next-version*]
-	 *
-	 * @var array
+	 * @var array.
 	 */
 	public $packStationAddress;
 
@@ -58,62 +50,56 @@ class Item_Info {
 	 * Only usable for German post offices or retail outlets (Paketshops), international postOffices or retail outlets cannot be addressed directly.
 	 * If your customer wishes for international delivery to a droppoint, please use DHL Parcel International (V53WPAK) with the delivery type "Closest Droppoint".
 	 *
-	 * @var array
+	 * @var array.
 	 */
 	public $postOfficeAddress;
 
 	/**
 	 * Shipment items.
 	 *
-	 * @since [*next-version*]
-	 *
-	 * @var array[]
+	 * @var array[].
 	 */
 	public $items;
 
 	/**
 	 * For international shipments, this array contains information necessary for customs about the exported goods.
 	 *
-	 * @var array
+	 * @var array.
 	 */
 	public $services;
 
 	/**
 	 * The units of measurement used for weights in the input args.
 	 *
-	 * @since [*next-version*]
-	 *
-	 * @var string
+	 * @var string.
 	 */
 	public $weightUom;
 
 	/**
-	 * Is the shipment cross-border or domestic
+	 * Is the shipment cross-border or domestic.
 	 *
-	 * @since [*next-version*]
-	 *
-	 * @var boolean
+	 * @var boolean.
 	 */
 	public $isCrossBorder;
 
 	/**
-	 * is packstation ( Locker )
+	 * is packstation ( Locker ).
 	 *
-	 * @var boolean
+	 * @var boolean.
 	 */
 	public $pos_ps = false;
 
 	/**
-	 * is parcelshop ( PostOffice )
+	 * is parcelshop ( PostOffice ).
 	 *
-	 * @var boolean
+	 * @var boolean.
 	 */
 	public $pos_rs = false;
 
 	/**
-	 * is post office
+	 * is post office.
 	 *
-	 * @var boolean
+	 * @var boolean.
 	 */
 	public $pos_po = false;
 
@@ -124,13 +110,12 @@ class Item_Info {
 	 * @param string $weightUom The units of measurement used for weights in the input args.
 	 *
 	 * @throws Exception If some data in $args did not pass validation.
-	 * @since [*next-version*]
 	 *
 	 */
 	public function __construct( $args, $weightUom = 'kg' ) {
 		$this->weightUom     = $weightUom;
 		$this->isCrossBorder = PR_DHL()->is_crossborder_shipment( $args['shipping_address'] );
-		$this->args = $args;
+		$this->args          = $args;
 
 		$this->pos_ps = PR_DHL()->is_packstation( $args['shipping_address']['address_1'] );
 		$this->pos_rs = PR_DHL()->is_parcelshop( $args['shipping_address']['address_1'] );
@@ -143,10 +128,7 @@ class Item_Info {
 	/**
 	 * Parses the arguments and sets the instance's properties.
 	 *
-	 * @param array $args The arguments to parse.
-	 *
 	 * @throws Exception If some data in $args did not pass validation.
-	 * @since [*next-version*]
 	 *
 	 */
 	protected function parse_args() {
@@ -177,8 +159,7 @@ class Item_Info {
 	/**
 	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing shipment info.
 	 *
-	 * @return array
-	 * @since [*next-version*]
+	 * @return array.
 	 *
 	 */
 	protected function get_shipment_info_schema() {
@@ -187,7 +168,7 @@ class Item_Info {
 		$self = $this;
 
 		return array(
-			'dhl_product'               => array(
+			'dhl_product'   => array(
 				'rename'   => 'product',
 				'error'    => __( 'DHL "Product" is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $product ) use ( $self ) {
@@ -198,28 +179,29 @@ class Item_Info {
 					return $product;
 				},
 			),
-			'order_id'             => array(
+			'order_id'      => array(
 				'rename'   => 'refNo',
 				'default'  => '',
 				'sanitize' => function ( $label_ref ) use ( $self ) {
 					return $self->string_length_sanitization( $label_ref, 50 );
-				}
+				},
 			),
-			'account_num' => array(
+			'account_num'   => array(
 				'rename'   => 'billingNumber',
 				'sanitize' => function ( $account ) use ( $self ) {
 
 					if ( empty( $account ) ) {
 						throw new Exception(
-							__( 'Check your settings "Account Number" and "Participation Number".', 'dhl-for-woocommerce' )
+							__( 'Check your settings "Account Number" and "Participation Number".',
+								'dhl-for-woocommerce' )
 						);
 					}
 
 					// create account number
-					$product_number = preg_match('!\d+!', $self->args['order_details']['dhl_product'], $matches );
+					$product_number = preg_match( '!\d+!', $self->args['order_details']['dhl_product'], $matches );
 
-					if( $product_number ) {
-						if ( isset($self->args['dhl_settings']['sandbox']) && ($self->args['dhl_settings']['sandbox'] == 'yes' ) ) {
+					if ( $product_number ) {
+						if ( isset( $self->args['dhl_settings']['sandbox'] ) && ( $self->args['dhl_settings']['sandbox'] == 'yes' ) ) {
 							$account_number_key = 'rest_api_account_no';
 						} else {
 							$account_number_key = 'account_num';
@@ -227,15 +209,16 @@ class Item_Info {
 
 						return $self->args['dhl_settings'][ $account_number_key ] . $matches[0] . $self->args['dhl_settings']['participation'];
 					} else {
-						throw new Exception( __('Could not create account number - no product number.', 'dhl-for-woocommerce') );
+						throw new Exception( __( 'Could not create account number - no product number.',
+							'dhl-for-woocommerce' ) );
 					}
-				}
+				},
 			),
-			'cost_center'           => array(
+			'cost_center'   => array(
 				'rename'  => 'costCenter',
-				'default' => ''
+				'default' => '',
 			),
-			'weight'                    => array(
+			'weight'        => array(
 				'error'    => __( 'Order "Weight" is empty!', 'dhl-for-woocommerce' ),
 				'validate' => function ( $weight ) {
 					if ( ! is_numeric( $weight ) ) {
@@ -244,12 +227,12 @@ class Item_Info {
 				},
 				'sanitize' => function ( $weight ) use ( $self ) {
 					return $self->maybe_convert_weight( $weight, $self->weightUom );
-				}
+				},
 			),
-			'currency'                  => array(
+			'currency'      => array(
 				'error' => __( 'Shop "Currency" is empty!', 'dhl-for-woocommerce' ),
 			),
-			'total_value'               => array(
+			'total_value'   => array(
 				'rename'   => 'value',
 				'error'    => __( 'Shipment "Value" is empty!', 'dhl-for-woocommerce' ),
 				'validate' => function ( $value ) {
@@ -260,15 +243,15 @@ class Item_Info {
 				'sanitize' => function ( $value ) use ( $self ) {
 
 					return $self->float_round_sanitization( $value, 2 );
-				}
+				},
 			),
-			'cod_value'                 => array(
+			'cod_value'     => array(
 				'sanitize' => function ( $value ) use ( $self ) {
 					return $self->float_round_sanitization( $value, 2 );
-				}
+				},
 			),
-			'routing_email'             => array(
-				'default' => ''
+			'routing_email' => array(
+				'default' => '',
 			)
 		);
 	}
@@ -276,8 +259,7 @@ class Item_Info {
 	/**
 	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing shipper info.
 	 *
-	 * @return array
-	 * @since [*next-version*]
+	 * @return array.
 	 *
 	 */
 	protected function get_shipper_info_schema() {
@@ -296,13 +278,13 @@ class Item_Info {
 					}
 
 					return $self->string_length_sanitization( $name, 50 );
-				}
+				},
 			),
 			'shipper_phone'         => array(
-				'rename'  => 'phone',
+				'rename' => 'phone',
 			),
 			'shipper_email'         => array(
-				'rename'  => 'email',
+				'rename' => 'email',
 			),
 			'shipper_address'       => array(
 				'rename'   => 'addressStreet',
@@ -316,10 +298,10 @@ class Item_Info {
 					}
 
 					return $self->string_length_sanitization( $name, 50 );
-				}
+				},
 			),
 			'shipper_address_no'    => array(
-				'rename'  => 'addressHouse',
+				'rename' => 'addressHouse',
 			),
 			'shipper_address_zip'   => array(
 				'rename' => 'postalCode',
@@ -330,7 +312,7 @@ class Item_Info {
 				'error'  => __( 'Shipper "City" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'shipper_address_state' => array(
-				'rename'  => 'state',
+				'rename' => 'state',
 			),
 			'shipper_country'       => array(
 				'rename'   => 'country',
@@ -342,7 +324,7 @@ class Item_Info {
 					}
 
 					return $self->country_code_to_alpha3( $countryCode );
-				}
+				},
 			),
 		);
 	}
@@ -350,8 +332,7 @@ class Item_Info {
 	/**
 	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing consignee info.
 	 *
-	 * @return array
-	 * @since [*next-version*]
+	 * @return array.
 	 *
 	 */
 	protected function get_contact_address_schema() {
@@ -366,14 +347,14 @@ class Item_Info {
 				'sanitize' => function ( $name ) use ( $self ) {
 
 					return $self->string_length_sanitization( $name, 50 );
-				}
+				},
 			),
 			'address_1' => array(
 				'rename' => 'addressStreet',
 				'error'  => __( 'Shipping "Address 1" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'address_2' => array(
-				'rename'  => 'addressHouse',
+				'rename' => 'addressHouse',
 			),
 			'postcode'  => array(
 				'rename' => 'postalCode',
@@ -392,15 +373,15 @@ class Item_Info {
 					}
 
 					return $self->country_code_to_alpha3( $countryCode );
-				}
+				},
 			),
 			'phone'     => array(
 				'sanitize' => function ( $phone ) use ( $self ) {
 
 					return $self->string_length_sanitization( $phone, 20 );
-				}
+				},
 			),
-			'email'     => array()
+			'email'     => array(),
 		);
 	}
 
@@ -408,7 +389,7 @@ class Item_Info {
 	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing consignee info.
 	 * for Locker, known as Packstation.
 	 *
-	 * @return array
+	 * @return array.
 	 */
 	protected function get_packstation_address_schema() {
 		// Closures in PHP 5.3 do not inherit class context
@@ -421,19 +402,18 @@ class Item_Info {
 				'error'    => __( 'Packstation name is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $name ) use ( $self ) {
 					return $self->string_length_sanitization( $name, 50 );
-				}
+				},
 			),
 			'dhl_postnum' => array(
 				'rename' => 'postNumber',
-				'error'  => __( 'Post Number is missing, it is mandatory for "Packstation" delivery.',
-					'dhl-for-woocommerce' ),
+				'error'  => __( 'Post Number is missing, it is mandatory for "Packstation" delivery.', 'dhl-for-woocommerce' ),
 			),
 			'address_1'   => array(
 				'rename'   => 'lockerID',
 				'error'    => __( 'Locker ID is missing, it is mandatory for "Packstation" delivery.', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $name ) use ( $self ) {
 					return filter_var( $this->args['shipping_address']['address_1'], FILTER_SANITIZE_NUMBER_INT );
-				}
+				},
 			),
 			'postcode'    => array(
 				'rename' => 'postalCode',
@@ -446,7 +426,7 @@ class Item_Info {
 				'error'    => __( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $countryCode ) use ( $self ) {
 					return $self->country_code_to_alpha3( $countryCode );
-				}
+				},
 			),
 		);
 	}
@@ -455,7 +435,7 @@ class Item_Info {
 	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing consignee info.
 	 * for Post Office.
 	 *
-	 * @return array
+	 * @return array.
 	 */
 	protected function get_post_office_address_schema() {
 		// Closures in PHP 5.3 do not inherit class context
@@ -468,7 +448,7 @@ class Item_Info {
 				'error'    => __( 'Name is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $name ) use ( $self ) {
 					return $self->string_length_sanitization( $name, 50 );
-				}
+				},
 			),
 			'dhl_postnum' => array(
 				'rename' => 'postNumber',
@@ -478,32 +458,29 @@ class Item_Info {
 				'error'    => __( 'Locker ID is missing, it is mandatory for "Packstation" delivery.', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $name ) use ( $self ) {
 					return filter_var( $this->args['shipping_address']['address_1'], FILTER_SANITIZE_NUMBER_INT );
-				}
+				},
 			),
 			'postcode'    => array(
 				'rename' => 'postalCode',
 				'error'  => __( 'Shipping "Postcode" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'city'        => array(
-				'error' => __( 'Shipping "City" is empty!', 'dhl-for-woocommerce' )
+				'error' => __( 'Shipping "City" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'country'     => array(
 				'error'    => __( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $countryCode ) use ( $self ) {
 					return $self->country_code_to_alpha3( $countryCode );
-				}
+				},
 			),
-			'email'     => array(
-				'default' => '',
-			)
+			'email'       => array()
 		);
 	}
 
 	/**
 	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing order content item info.
 	 *
-	 * @return array
-	 * @since [*next-version*]
+	 * @return array.
 	 *
 	 */
 	protected function get_content_item_info_schema() {
@@ -518,7 +495,7 @@ class Item_Info {
 				'sanitize' => function ( $description ) use ( $self ) {
 
 					return $self->string_length_sanitization( $description, 33 );
-				}
+				},
 			),
 			'country_origin'   => array(
 				'rename'   => 'countryOfOrigin',
@@ -526,7 +503,7 @@ class Item_Info {
 				'sanitize' => function ( $countryCode ) use ( $self ) {
 
 					return $self->country_code_to_alpha3( $countryCode );
-				}
+				},
 			),
 			'hs_code'          => array(
 				'rename'   => 'hsCode',
@@ -551,28 +528,28 @@ class Item_Info {
 			),
 			'item_value'       => array(
 				'rename'   => 'itemValue',
-				'default'  => [
+				'default'  => array(
 					'currency' => PR_DHL()->get_currency_symbol(),
 					'amount'   => 0,
-				],
+				),
 				'sanitize' => function ( $value, $args ) use ( $self ) {
 					$qty         = isset( $args['qty'] ) && is_numeric( $args['qty'] ) ? floatval( $args['qty'] ) : 1;
 					$total_value = floatval( $value ) * $qty;
 
-					return [
+					return array(
 						'currency' => $self->args['order_details']['currency'],
-						'amount'   => (string) $self->float_round_sanitization( $total_value, 2 )
-					];
-				}
+						'amount'   => (string) $self->float_round_sanitization( $total_value, 2 ),
+					);
+				},
 			),
 			'item_weight'      => array(
 				'rename'   => 'itemWeight',
 				'sanitize' => function ( $weight ) use ( $self ) {
 					return [
 						'uom'   => $self->weightUom,
-						'value' => $self->float_round_sanitization( $self->float_round_sanitization( $weight, 3 ), 3 )
+						'value' => $self->float_round_sanitization( $self->float_round_sanitization( $weight, 3 ), 3 ),
 					];
-				}
+				},
 			)
 		);
 	}
@@ -580,8 +557,7 @@ class Item_Info {
 	/**
 	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing shipment services.
 	 *
-	 * @return array
-	 * @since [*next-version*]
+	 * @return array.
 	 *
 	 */
 	protected function get_services_schema() {
@@ -643,7 +619,6 @@ class Item_Info {
 	 * @param string $uom The unit of measurement of the $weight parameter..
 	 *
 	 * @return float The potentially converted weight.
-	 * @since [*next-version*]
 	 *
 	 */
 	protected function maybe_convert_weight( $weight, $uom ) {
@@ -662,28 +637,49 @@ class Item_Info {
 			default:
 				break;
 		}
+
 		return round( $weight, 2 );
 	}
 
+	/**
+	 * Round float number.
+	 *
+	 * @param $float.
+	 * @param $numcomma.
+	 *
+	 * @return string.
+	 */
 	protected function float_round_sanitization( $float, $numcomma ) {
-
 		$float = round( floatval( $float ), $numcomma );
 
 		return number_format( $float, 2, '.', '' );
 	}
 
+	/**
+	 * String length sanitization.
+	 *
+	 * @param $string.
+	 * @param $max.
+	 *
+	 * @return string.
+	 */
 	protected function string_length_sanitization( $string, $max ) {
-
 		$max = intval( $max );
 
 		if ( strlen( $string ) <= $max ) {
-
 			return $string;
 		}
 
 		return substr( $string, 0, ( $max - 1 ) );
 	}
 
+	/**
+	 * Convert country code to alpha3.
+	 *
+	 * @param $countryCode.
+	 *
+	 * @return string.
+	 */
 	protected function country_code_to_alpha3( $countryCode ) {
 		$countries = array(
 			'AF' => 'AFG', //Afghanistan
@@ -942,6 +938,12 @@ class Item_Info {
 		return $countries[ $countryCode ] ?? $countryCode;
 	}
 
+	/**
+	 * Set Address 2 ( HouseNumber ).
+	 *
+	 * @return void.
+	 * @throws Exception.
+	 */
 	protected function set_address_2() {
 		if ( $this->pos_ps || $this->pos_rs || $this->pos_po ) {
 			return;
