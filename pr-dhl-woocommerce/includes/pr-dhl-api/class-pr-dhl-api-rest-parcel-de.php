@@ -99,7 +99,6 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	 */
 	protected function create_api_auth() {
 		// Get the saved DHL customer API credentials
-		error_log(print_r($this->get_api_creds(), true));
 		list( $username, $password, $api_key ) = $this->get_api_creds();
 
 		// Create the auth object using this instance's API driver and URL
@@ -141,7 +140,6 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	public function get_api_creds() {
 		$customer_portal_login = $this->get_customer_portal_login();
 
-		error_log(print_r($customer_portal_login,true));
 		return array(
 			$customer_portal_login['username'],
 			$customer_portal_login['pass'],
