@@ -138,15 +138,12 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	 * @throws Exception If failed to retrieve the API credentials.
 	 */
 	public function get_api_creds() {
-		/*return array(
-			$this->get_setting( 'dhl_api_key' ),
-			$this->get_setting( 'dhl_api_secret' ),
-		);*/
+		$customer_portal_login = $this->get_customer_portal_login();
 
 		return array(
-			'3333333333_01',
-			'pass',
-			'AYjXP5URDZnGbNVtxQa8iHNvXlboQqtG'
+			$customer_portal_login['username'],
+			$customer_portal_login['pass'],
+			$customer_portal_login['api_key'],
 		);
 	}
 
@@ -559,5 +556,15 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 				}
 				break;
 		}
+	}
+
+	public function sandbox_info_customer_portal(){
+		//
+		return array(
+			'username' 	=> '3333333333_01',
+			'pass' 		=> 'pass',
+			'account_no'=> '3333333333',
+			'api_key'   => 'AYjXP5URDZnGbNVtxQa8iHNvXlboQqtG',
+		);
 	}
 }

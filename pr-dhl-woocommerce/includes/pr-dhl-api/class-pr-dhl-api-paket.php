@@ -15,8 +15,10 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 
 	public function __construct( $country_code ) {
 		$this->country_code = $country_code;
+		$settings = $this->get_settings();
+
 		try {
-			if ( 'REST-API' === apply_filters( 'pr_shipping_dhl_paket_api', 'REST-API' ) ) {
+			if ( isset( $settings['dhl_default_api'] ) && 'rest-api' === $settings['dhl_default_api'] ) {
 				$this->dhl_label = new PR_DHL_API_REST_Parcel_DE();
 			} else {
 				$this->dhl_label = new PR_DHL_API_SOAP_Label();

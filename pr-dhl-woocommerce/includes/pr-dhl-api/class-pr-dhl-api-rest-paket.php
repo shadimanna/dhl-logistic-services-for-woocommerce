@@ -214,6 +214,7 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 			return array(
 				'username' => $sandbox['username'],
 				'pass' => $sandbox['pass'],
+				'api_key' => $sandbox['api_key'],
 			);
 			// return array(
 			// 	'username' => $this->get_setting('dhl_api_sandbox_user'),
@@ -224,6 +225,7 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 			return array(
 				'username' => $this->get_setting( 'dhl_api_user' ),
 				'pass' => $this->get_setting( 'dhl_api_pwd' ),
+				'api_key' => $this->get_setting( 'dhl_rest_api_key' ),
 			);
 		}
 	}
