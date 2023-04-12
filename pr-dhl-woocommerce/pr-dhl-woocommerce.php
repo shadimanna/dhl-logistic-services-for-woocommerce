@@ -177,6 +177,7 @@ class PR_DHL_WC {
 		$this->define( 'PR_DHL_PAKET_BUSSINESS_PORTAL', 'https://www.dhl-geschaeftskundenportal.de' );
 		$this->define( 'PR_DHL_PAKET_DEVELOPER_PORTAL', 'https://entwickler.dhl.de/' );
 		$this->define( 'PR_DHL_PAKET_NOTIFICATION_EMAIL', 'https://www.dhl.de/de/geschaeftskunden/paket/versandsoftware/dhl-paketankuendigung/formular.html' );
+		$this->define( 'PR_DHL_PAKET_PARCEL_DE_SHIPPING_API_USER_GUIDE', 'https://developer.dhl.com/api-reference/parcel-de-shipping-post-parcel-germany-v2#get-started-section/user-guide' );
 
 		$this->define( 'PR_DHL_PACKSTATION', __('Packstation ', 'dhl-for-woocommerce') );
 		$this->define( 'PR_DHL_PARCELSHOP', __('Postfiliale ', 'dhl-for-woocommerce') );

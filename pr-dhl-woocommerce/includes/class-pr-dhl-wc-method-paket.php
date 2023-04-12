@@ -131,6 +131,15 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'type'            => 'title',
 				'description'     => __( 'Please configure your shipping parameters and your access towards the DHL Paket APIs by means of authentication.', 'dhl-for-woocommerce' ),
 			),
+			'dhl_default_api' => array(
+				'title'             => __( 'Used API', 'dhl-for-woocommerce' ),
+				'type'              => 'select',
+				'description'       => __( 'SOAP used by default.', 'dhl-for-woocommerce' ),
+				'desc_tip'          => true,
+				'options'           => array( 'soap' => 'SOAP', 'rest-api' => 'REST-API' ),
+				'class'          => 'wc-enhanced-select',
+				'default'           => 'soap'
+			),
 			'dhl_account_num' => array(
 				'title'             => __( 'Account Number (EKP)', 'dhl-for-woocommerce' ),
 				'type'              => 'text',
@@ -154,6 +163,13 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'desc_tip'          => false,
 				'default'           => ''
 			),
+			'dhl_rest_api_key'      => array(
+				'title'             => __( 'REST-API Key', 'dhl-for-woocommerce' ),
+				'type'              => 'text',
+				'description'       => sprintf( __( 'Please refer to the section on authentication at the %sUser Guide%s.', 'dhl-for-woocommerce' ), '<a href="' . PR_DHL_PAKET_PARCEL_DE_SHIPPING_API_USER_GUIDE . '" target = "_blank">', '</a>' ),
+				'desc_tip'          => false,
+				'default'           => ''
+			),
 			'dhl_sandbox' => array(
 				'title'             => __( 'Sandbox Mode', 'dhl-for-woocommerce' ),
 				'type'              => 'checkbox',
@@ -173,6 +189,13 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'title'             => __( 'Sandbox Password', 'dhl-for-woocommerce' ),
 				'type'              => 'password',
 				'description'       => sprintf( __( 'Your sandbox password is the same as for the DHL developer portal. You can create an account %shere%s.', 'dhl-for-woocommerce' ), '<a href="' . PR_DHL_PAKET_DEVELOPER_PORTAL . '" target = "_blank">', '</a>' ),
+				'desc_tip'          => false,
+				'default'           => ''
+			),
+			'dhl_sandbox_rest_api_key' => array(
+				'title'             => __( 'Sandbox REST-API Key', 'dhl-for-woocommerce' ),
+				'type'              => 'text',
+				'description'       => sprintf( __( 'Please refer to the section on authentication at the %sUser Guide%s.', 'dhl-for-woocommerce' ), '<a href="' . PR_DHL_PAKET_PARCEL_DE_SHIPPING_API_USER_GUIDE . '" target = "_blank">', '</a>' ),
 				'desc_tip'          => false,
 				'default'           => ''
 			),
