@@ -7,6 +7,12 @@ jQuery( document ).ready(function(){
 		DHLSandboxEnabled( jQuery( this ) );
 	});
 
+	var api_type = jQuery('#woocommerce_pr_dhl_paket_dhl_default_api');
+	DHLAPIType( api_type );
+	api_type.on('change', function(evt){
+		DHLAPIType( jQuery( this ) );
+	});
+
 	var logo_checkbox = jQuery('#woocommerce_pr_dhl_paket_dhl_add_logo');
 	DHLLogoEnabled( logo_checkbox );
 
@@ -145,4 +151,19 @@ function DHLPaketMenuBuilder(){
 	} );
 
 	jQuery(document.body).trigger('dhlpaket:init_settings_menu');
+}
+
+function DHLAPIType( api_type ){
+	var api_settings_api_key 	= jQuery('#woocommerce_pr_dhl_paket_dhl_rest_api_key');
+	var api_sandbox_api_key 	= jQuery('#woocommerce_pr_dhl_paket_dhl_sandbox_rest_api_key');
+
+	if( api_type.val() === 'rest-api' ){
+		api_settings_api_key.closest('tr').show();
+		if ( jQuery('#woocommerce_pr_dhl_paket_dhl_sandbox').prop('checked') == true ) {
+			api_sandbox_api_key.closest('tr').show();
+		}
+	}else{
+		api_settings_api_key.closest('tr').hide();
+		api_sandbox_api_key.closest('tr').hide();
+	}
 }
