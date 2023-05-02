@@ -164,11 +164,14 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		// Create the item and get the barcode
 		$item_response = $this->api_client->create_item( $item_info );
 
-		$file = $this->save_data_file( 'label', $args['order_details']['order_id'],
-			$item_response->items[0]->label->b64 );
+		if ( count( $item_response->items ) > 1 ) {
+			$file = $this->save_shipment_files( 'label', $args['order_details']['order_id'], $item_response->items );
+		} else {
+			$file = $this->save_data_file( 'label', $args['order_details']['order_id'], $item_response->items[0]->label->b64 );
+		}
 
 		return array(
-			'label_path'      => $file['data_path'],
+			'label_path'      => $file['label_path'],
 			'item_barcode'    => $item_response->items[0]->shipmentNo,
 			'tracking_number' => $item_response->items[0]->shipmentNo,
 			'tracking_status' => '',
@@ -200,39 +203,6 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		}
 	}
 
-	protected function save_data_files( $order_id, $label_data, $export_data ) {
-
-		$label_info = $this->save_data_file( 'label', $order_id, $label_data );
-
-		if ( ! empty( $export_data ) ) {
-			$export_info = $this->save_data_file( 'export', $order_id, $export_data );
-
-			// Merge PDF files
-			$loader = PR_DHL_Libraryloader::instance();
-			$pdfMerger = $loader->get_pdf_merger();
-
-			if( $pdfMerger ){
-
-				$pdfMerger->addPDF( $label_info['data_path'], 'all' );
-				$pdfMerger->addPDF( $export_info['data_path'], 'all' );
-
-				$filename = 'dhl-label-export-' . $order_id . '.pdf';
-				$label_url = PR_DHL()->get_dhl_label_folder_url() . $filename;
-				$label_path = PR_DHL()->get_dhl_label_folder_dir() . $filename;
-				$pdfMerger->merge( 'file',  $label_path );
-			} else {
-				$label_url = $label_info['data_url'];
-				$label_path = $label_info['data_path'];
-			}
-
-		} else {
-			$label_url = $label_info['data_url'];
-			$label_path = $label_info['data_path'];
-		}
-
-		return array( 'label_url' => $label_url, 'label_path' => $label_path);
-	}
-
 	public function save_data_file( $prefix, $order_id, $label_data ) {
 		$data_name = 'dhl-' . $prefix . '-' . $order_id . '.pdf';
 		$data_path = PR_DHL()->get_dhl_label_folder_dir() . $data_name;
@@ -250,7 +220,34 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 			throw new Exception( __('File cannot be saved!', 'dhl-for-woocommerce' ) );
 		}
 
-		return array( 'data_url' => $data_url, 'data_path' => $data_path);
+		return array( 'label_url' => $data_url, 'label_path' => $data_path);
+	}
+
+	/**
+	 * Merge returned labels.
+	 *
+	 * @throws exception
+	 */
+	public function save_shipment_files( $prefix, $order_id, $items ) {
+		// Merge PDF files
+		$loader    = PR_DHL_Libraryloader::instance();
+		$pdfMerger = $loader->get_pdf_merger();
+
+		if ( $pdfMerger ) {
+			foreach ( $items as $key => $item ) {
+				$file = $this->save_data_file( 'label-' . $key . '-' . count( $items ), $order_id, $item->label->b64 );
+				$pdfMerger->addPDF( $file['label_path'] );
+			}
+
+			$filename   = 'dhl-' . $prefix . '-' . $order_id . '-multiple' . '.pdf';
+			$label_url  = PR_DHL()->get_dhl_label_folder_url() . $filename;
+			$label_path = PR_DHL()->get_dhl_label_folder_dir() . $filename;
+			$pdfMerger->merge( 'file', $label_path );
+		} else {
+			throw new Exception( 'Failed to merge files.' );
+		}
+
+		return array( 'label_url' => $label_url, 'label_path' => $label_path );
 	}
 
 	public function set_arguments( $args ) {

@@ -27,7 +27,7 @@ class Client extends API_Client {
 		$response = $this->post( $route, $data );
 
 		// Return the response body on success
-		if ( 200 === $response->status ) {
+		if ( 200 === $response->status || 207 === $response->status) {
 			return $response->body;
 		}
 
