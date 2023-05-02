@@ -396,6 +396,13 @@ class Item_Info {
 			),
 			'address_2' => array(
 				'rename' => 'addressHouse',
+				'sanitize' => function ( $value ) use ( $self ) {
+					return strlen( $value ) <= 10 ? $value : '';
+				},
+			),
+			'address_additional' => array(
+				'rename'    => 'additionalAddressInformation1',
+				'default'   => '',
 			),
 			'postcode'  => array(
 				'rename' => 'postalCode',
@@ -991,6 +998,12 @@ class Item_Info {
 		}
 
 		if ( ! empty( $this->args['shipping_address']['address_2'] ) ) {
+
+			if ( strlen( $this->args['shipping_address']['address_2'] ) > 10 ) {
+				$this->args['shipping_address']['address_additional'] = $this->args['shipping_address']['address_2'];
+				$this->args['shipping_address']['address_2']          = '';
+			}
+
 			return;
 		}
 
