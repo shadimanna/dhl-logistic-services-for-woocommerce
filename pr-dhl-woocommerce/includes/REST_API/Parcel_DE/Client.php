@@ -244,6 +244,7 @@ class Client extends API_Client {
 			'name1',
 			'addressStreet',
 			'addressHouse',
+			'additionalAddressInformation1',
 			'postalCode',
 			'city',
 			'state',
