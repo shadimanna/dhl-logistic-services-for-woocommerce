@@ -89,12 +89,6 @@ class Client extends API_Client {
 				'costCenter'    => $item_info->shipment['costCenter'],
 				'shipper'       => $this->get_shipper_address( $item_info ),
 				'consignee'     => $this->get_consignee_address( $item_info ),
-				'details'       => array(
-					'weight' => array(
-						'uom'   => $item_info->weightUom,
-						'value' => $item_info->shipment['weight'],
-					)
-				),
 			);
 
 			$services = $this->services_mappimng( $item_info );
@@ -106,7 +100,36 @@ class Client extends API_Client {
 				$shipment['customs'] = $this->get_customs( $item_info );
 			}
 
-			$data['shipments'][] = $this->unset_empty_values( $shipment );
+			// Is Multiple package
+			if ( isset( $item_info->args['order_details']['multi_packages_enabled'] ) && ( $item_info->args['order_details']['multi_packages_enabled'] == 'yes' ) ) {
+
+				for ( $i = 0; $i < intval( $item_info->shipment['total_packages'] ); $i ++ ) {
+					$shipment['details'] = array(
+						'weight' => array(
+							'uom'   => $item_info->weightUom,
+							'value' => $item_info->args['order_details']['packages_weight'][ $i ],
+						),
+						'dim'    => array(
+							'uom'    => $item_info->args['order_details']['dimUom'],
+							'height' => $item_info->args['order_details']['packages_height'][ $i ],
+							'length' => $item_info->args['order_details']['packages_length'][ $i ],
+							'width'  => $item_info->args['order_details']['packages_width'][ $i ],
+						),
+					);
+
+					$data['shipments'][] = $this->unset_empty_values( $shipment );
+				}
+
+			} else {
+				$shipment['details'] = array(
+					'weight' => array(
+						'uom'   => $item_info->weightUom,
+						'value' => $item_info->shipment['weight'],
+					)
+				);
+
+				$data['shipments'][] = $this->unset_empty_values( $shipment );
+			}
 		}
 
 		return $data;

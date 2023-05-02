@@ -76,6 +76,13 @@ class Item_Info {
 	public $weightUom;
 
 	/**
+	 * The units of measurement used for weights in the input args.
+	 *
+	 * @var string.
+	 */
+	public $dimUom;
+
+	/**
 	 * Is the shipment cross-border or domestic.
 	 *
 	 * @var boolean.
@@ -252,7 +259,41 @@ class Item_Info {
 			),
 			'routing_email' => array(
 				'default' => '',
-			)
+			),
+			'multi_packages_enabled' => array(),
+			'total_packages'         => array(
+				'validate' => function ( $value ) use ( $self ) {
+					if ( isset( $self->args['order_details']['multi_packages_enabled'] ) && ( $self->args['order_details']['multi_packages_enabled'] == 'yes' ) ) {
+						for ( $i = 0; $i < intval( $value ); $i ++ ) {
+
+							if ( empty( $self->args['order_details']['packages_number'][ $i ] ) ) {
+								throw new Exception( __( 'A package number is empty. Ensure all package details are filled in.',
+									'dhl-for-woocommerce' ) );
+							}
+
+							if ( empty( $self->args['order_details']['packages_weight'][ $i ] ) ) {
+								throw new Exception( __( 'A package weight is empty. Ensure all package details are filled in.',
+									'dhl-for-woocommerce' ) );
+							}
+
+							if ( empty( $self->args['order_details']['packages_length'][ $i ] ) ) {
+								throw new Exception( __( 'A package length is empty. Ensure all package details are filled in.',
+									'dhl-for-woocommerce' ) );
+							}
+
+							if ( empty( $self->args['order_details']['packages_width'][ $i ] ) ) {
+								throw new Exception( __( 'A package width is empty. Ensure all package details are filled in.',
+									'dhl-for-woocommerce' ) );
+							}
+
+							if ( empty( $self->args['order_details']['packages_height'][ $i ] ) ) {
+								throw new Exception( __( 'A package height is empty. Ensure all package details are filled in.',
+									'dhl-for-woocommerce' ) );
+							}
+						}
+					}
+				},
+			),
 		);
 	}
 
