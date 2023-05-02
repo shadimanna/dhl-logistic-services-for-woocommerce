@@ -175,7 +175,7 @@ class Item_Info {
 		$self = $this;
 
 		return array(
-			'dhl_product'   => array(
+			'dhl_product'            => array(
 				'rename'   => 'product',
 				'error'    => __( 'DHL "Product" is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $product ) use ( $self ) {
@@ -186,14 +186,14 @@ class Item_Info {
 					return $product;
 				},
 			),
-			'order_id'      => array(
+			'order_id'               => array(
 				'rename'   => 'refNo',
 				'default'  => '',
 				'sanitize' => function ( $label_ref ) use ( $self ) {
 					return $self->string_length_sanitization( $label_ref, 50 );
 				},
 			),
-			'account_num'   => array(
+			'account_num'            => array(
 				'rename'   => 'billingNumber',
 				'sanitize' => function ( $account ) use ( $self ) {
 
@@ -221,11 +221,11 @@ class Item_Info {
 					}
 				},
 			),
-			'cost_center'   => array(
+			'cost_center'            => array(
 				'rename'  => 'costCenter',
 				'default' => '',
 			),
-			'weight'        => array(
+			'weight'                 => array(
 				'error'    => __( 'Order "Weight" is empty!', 'dhl-for-woocommerce' ),
 				'validate' => function ( $weight ) {
 					if ( ! is_numeric( $weight ) ) {
@@ -236,10 +236,10 @@ class Item_Info {
 					return $self->maybe_convert_weight( $weight, $self->weightUom );
 				},
 			),
-			'currency'      => array(
+			'currency'               => array(
 				'error' => __( 'Shop "Currency" is empty!', 'dhl-for-woocommerce' ),
 			),
-			'total_value'   => array(
+			'total_value'            => array(
 				'rename'   => 'value',
 				'error'    => __( 'Shipment "Value" is empty!', 'dhl-for-woocommerce' ),
 				'validate' => function ( $value ) {
@@ -252,12 +252,12 @@ class Item_Info {
 					return $self->float_round_sanitization( $value, 2 );
 				},
 			),
-			'cod_value'     => array(
+			'cod_value'              => array(
 				'sanitize' => function ( $value ) use ( $self ) {
 					return $self->float_round_sanitization( $value, 2 );
 				},
 			),
-			'routing_email' => array(
+			'routing_email'          => array(
 				'default' => '',
 			),
 			'multi_packages_enabled' => array(),
