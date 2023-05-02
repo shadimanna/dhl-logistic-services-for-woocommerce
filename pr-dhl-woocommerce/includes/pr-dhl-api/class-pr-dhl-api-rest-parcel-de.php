@@ -162,7 +162,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		}
 
 		// Create the item and get the barcode
-		$item_response = $this->api_client->create_item( $item_info );
+		$item_response = $this->api_client->create_items( array( $item_info ) );
 
 		if ( count( $item_response->items ) > 1 ) {
 			$file = $this->save_shipment_files( 'label', $args['order_details']['order_id'], $item_response->items );

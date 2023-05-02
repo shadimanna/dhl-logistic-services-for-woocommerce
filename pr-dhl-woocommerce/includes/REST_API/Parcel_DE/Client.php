@@ -12,34 +12,6 @@ use PR\DHL\REST_API\Response;
 class Client extends API_Client {
 
 	/**
-	 * Creates an item on the remote API.
-	 *
-	 * @param  Item_Info  $request_info.
-	 *
-	 * @return \stdClass.
-	 * @throws Exception.
-	 */
-	public function create_item( Item_Info $request_info ) {
-		// Prepare the request route and data
-		$route = $this->request_order_route();
-		$data  = $this->request_info_to_request_data( array( $request_info ) );
-
-		$response = $this->post( $route, $data );
-
-		// Return the response body on success
-		if ( 200 === $response->status || 207 === $response->status) {
-			return $response->body;
-		}
-
-		// Otherwise throw an exception using the response's error messages
-		$message = $this->get_response_error_message( $response );
-
-		throw new Exception(
-			sprintf( __( 'API errors: %s', 'dhl-for-woocommerce' ), $message )
-		);
-	}
-
-	/**
 	 * Creates multiple item on the remote API.
 	 *
 	 * @param  Item_Info[]  $items_info set of Items.
