@@ -27,8 +27,17 @@ class Client extends API_Client {
 
 		$response = $this->post( $route, $data );
 
+		$contains_errors = false;
+		if ( 207 === $response->status ) {
+			foreach ( $response->body->items as $item ) {
+				if ( 200 !== $item->sstatus->statusCode ) {
+					$contains_errors = true;
+				}
+			}
+		}
+
 		// Return the response body on success
-		if ( 200 === $response->status || 207 === $response->status ) {
+		if ( 200 === $response->status || ! $contains_errors ) {
 			return $response->body;
 		}
 
@@ -379,8 +388,10 @@ class Client extends API_Client {
 		}
 
 		$errors_list = array();
-		foreach ( $response->body->items[0]->validationMessages as $message ) {
-			$errors_list[ $message->validationState ][] = $message->validationMessage;
+		foreach ( $response->body->items as $item ) {
+			foreach ( $item->validationMessages as $message ) {
+				$errors_list[ $message->validationState ][] = $message->validationMessage;
+			}
 		}
 
 		$error_message = '<br>';
