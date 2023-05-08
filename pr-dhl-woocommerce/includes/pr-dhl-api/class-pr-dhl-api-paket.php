@@ -43,10 +43,16 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 
 		if ( isset($args['sandbox']) && ($args['sandbox'] == 'yes' ) ) {
 			$sandbox_info = $this->sandbox_info();
+			$settings     = $this->get_settings();
+
 			$args['api_user'] = $sandbox_info['username'];
 			$args['api_pwd'] = $sandbox_info['pass'];
-			$args['account_num'] = $sandbox_info['account_no'];
-			$args['rest_api_account_no'] = $sandbox_info['rest_api_account_no'];
+
+			if ( isset( $settings['dhl_default_api'] ) && 'rest-api' === $settings['dhl_default_api'] ) {
+				$args['account_num'] = $sandbox_info['rest_api_account_no'];
+			} else {
+				$args['account_num'] = $sandbox_info['account_no'];
+			}
 		}
 		 //error_log(print_r($args,true));
 		return $args;

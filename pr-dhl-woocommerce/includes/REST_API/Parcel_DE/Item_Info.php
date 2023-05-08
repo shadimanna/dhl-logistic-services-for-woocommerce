@@ -111,6 +111,13 @@ class Item_Info {
 	public $pos_po = false;
 
 	/**
+	 * is post office.
+	 *
+	 * @var boolean.
+	 */
+	public $dhl_return_product = '07';
+
+	/**
 	 * Constructor.
 	 *
 	 * @param array $args The arguments to parse.
@@ -208,13 +215,7 @@ class Item_Info {
 					$product_number = preg_match( '!\d+!', $self->args['order_details']['dhl_product'], $matches );
 
 					if ( $product_number ) {
-						if ( isset( $self->args['dhl_settings']['sandbox'] ) && ( $self->args['dhl_settings']['sandbox'] == 'yes' ) ) {
-							$account_number_key = 'rest_api_account_no';
-						} else {
-							$account_number_key = 'account_num';
-						}
-
-						return $self->args['dhl_settings'][ $account_number_key ] . $matches[0] . $self->args['dhl_settings']['participation'];
+						return $self->args['dhl_settings'][ 'account_num' ] . $matches[0] . $self->args['dhl_settings']['participation'];
 					} else {
 						throw new Exception( __( 'Could not create account number - no product number.',
 							'dhl-for-woocommerce' ) );
@@ -366,6 +367,36 @@ class Item_Info {
 
 					return $self->country_code_to_alpha3( $countryCode );
 				},
+			),
+			'return_name'           => array(
+				'rename'   => 'return_name1',
+				'sanitize' => function ( $name ) use ( $self ) {
+					return $self->string_length_sanitization( $name, 50 );
+				},
+			),
+			'return_phone'          => array(
+				'rename' => 'return_phone',
+			),
+			'return_email'          => array(
+				'rename' => 'return_email',
+			),
+			'return_address'        => array(
+				'rename'   => 'return_addressStreet',
+				'sanitize' => function ( $name ) use ( $self ) {
+					return $self->string_length_sanitization( $name, 50 );
+				},
+			),
+			'return_address_no'     => array(
+				'rename' => 'return_addressHouse',
+			),
+			'return_address_zip'    => array(
+				'rename' => 'return_postalCode',
+			),
+			'return_address_city'   => array(
+				'rename' => 'return_city',
+			),
+			'return_address_state'  => array(
+				'rename' => 'return_state',
 			),
 		);
 	}
@@ -656,6 +687,9 @@ class Item_Info {
 			),
 			'endorsement'          => array(
 				'rename' => 'endorsement',
+			),
+			'return_address_enabled'    => array(
+				'rename' => 'dhlRetoure',
 			),
 		);
 	}

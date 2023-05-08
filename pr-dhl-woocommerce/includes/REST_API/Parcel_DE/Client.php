@@ -27,17 +27,17 @@ class Client extends API_Client {
 
 		$response = $this->post( $route, $data );
 
-		$contains_errors = false;
 		if ( 207 === $response->status ) {
+			$success = true;
 			foreach ( $response->body->items as $item ) {
 				if ( 200 !== $item->sstatus->statusCode ) {
-					$contains_errors = true;
+					$success = false;
 				}
 			}
 		}
 
 		// Return the response body on success
-		if ( 200 === $response->status || ! $contains_errors ) {
+		if ( 200 === $response->status || ( $success ?? false ) ) {
 			return $response->body;
 		}
 
@@ -189,6 +189,14 @@ class Client extends API_Client {
 
 					}
 					break;
+
+				case 'dhlRetoure' :
+					$services[ $key ] = array(
+						'refNo'         => apply_filters( 'pr_shipping_dhl_paket_label_ref_no_prefix', 'order_' ) . $request_info->shipment['refNo'] ,
+						'billingNumber' => $request_info->args['dhl_settings']['account_num'] . $request_info->dhl_return_product . $request_info->args['dhl_settings']['participation_return'],
+						'returnAddress' => $this->get_shipper_address( $request_info ),
+					);
+					break;
 			}
 
 		}
@@ -315,6 +323,29 @@ class Client extends API_Client {
 	}
 
 	/**
+	 * Return address information.
+	 *
+	 * @param  Item_Info  $request_info.
+	 *
+	 * @return array.
+	 */
+	protected function get_return_address( Item_Info $request_info ) {
+		$address_fields = array(
+			'return_name1',
+			'return_phone',
+			'return_email',
+			'return_addressStreet',
+			'return_addressHouse',
+			'return_postalCode',
+			'return_city',
+			'return_state',
+			'country'
+		);
+
+		return $this->get_address( $address_fields, $request_info->shipper );
+	}
+
+	/**
 	 * Get required address.
 	 *
 	 * @param  array  $address_fields
@@ -392,6 +423,13 @@ class Client extends API_Client {
 			foreach ( $item->validationMessages as $message ) {
 				$errors_list[ $message->validationState ][] = $message->validationMessage;
 			}
+		}
+
+		if ( isset( $errors_list['Error'] ) ) {
+			$errors = $errors_list['Error'];
+			unset( $errors_list['Error'] );
+
+			$errors_list = array( 'Error' => $errors ) + $errors_list;
 		}
 
 		$error_message = '<br>';
