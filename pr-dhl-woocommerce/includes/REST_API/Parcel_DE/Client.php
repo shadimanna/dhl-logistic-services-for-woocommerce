@@ -317,7 +317,8 @@ class Client extends API_Client {
 			'postalCode',
 			'city',
 			'state',
-			'country'
+			'country',
+			'shipperRef'
 		);
 
 		return $this->get_address( $address_fields, $request_info->shipper );

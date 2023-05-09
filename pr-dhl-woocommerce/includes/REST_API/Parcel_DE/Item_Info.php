@@ -391,6 +391,9 @@ class Item_Info {
 					return $self->country_code_to_alpha3( $countryCode );
 				},
 			),
+			'shipper_reference'     => array(
+				'rename' => 'shipperRef',
+			),
 		);
 	}
 
