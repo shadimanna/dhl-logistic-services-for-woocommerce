@@ -194,7 +194,7 @@ class Client extends API_Client {
 					$services[ $key ] = array(
 						'refNo'         => apply_filters( 'pr_shipping_dhl_paket_label_ref_no_prefix', 'order_' ) . $request_info->shipment['refNo'] ,
 						'billingNumber' => $request_info->args['dhl_settings']['account_num'] . $request_info->dhl_return_product . $request_info->args['dhl_settings']['participation_return'],
-						'returnAddress' => $this->get_shipper_address( $request_info ),
+						'returnAddress' => $this->get_return_address( $request_info ),
 					);
 					break;
 			}
@@ -331,18 +331,18 @@ class Client extends API_Client {
 	 */
 	protected function get_return_address( Item_Info $request_info ) {
 		$address_fields = array(
-			'return_name1',
-			'return_phone',
-			'return_email',
-			'return_addressStreet',
-			'return_addressHouse',
-			'return_postalCode',
-			'return_city',
-			'return_state',
+			'name1',
+			'phone',
+			'email',
+			'addressStreet',
+			'addressHouse',
+			'postalCode',
+			'city',
+			'state',
 			'country'
 		);
 
-		return $this->get_address( $address_fields, $request_info->shipper );
+		return $this->get_address( $address_fields, $request_info->returnAddress );
 	}
 
 	/**

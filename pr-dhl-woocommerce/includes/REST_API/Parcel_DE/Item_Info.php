@@ -38,6 +38,13 @@ class Item_Info {
 	public $contactAddress;
 
 	/**
+	 * Consignee address information.
+	 *
+	 * @var array.
+	 */
+	public $returnAddress;
+
+	/**
 	 * Consignee Pack Station / Locker address information.
 	 *
 	 * @var array.
@@ -155,6 +162,7 @@ class Item_Info {
 		$this->shipper        = Args_Parser::parse_args( $shipping_info, $this->get_shipper_info_schema() );
 		$this->contactAddress = Args_Parser::parse_args( $recipient_info, $this->get_contact_address_schema() );
 		$this->services       = Args_Parser::parse_args( $shipping_info, $this->get_services_schema() );
+		$this->returnAddress  = Args_Parser::parse_args( $shipping_info, $this->get_return_address_schema() );
 
 		if ( $this->pos_ps ) {
 			$this->packStationAddress = Args_Parser::parse_args( $recipient_info, $this->get_packstation_address_schema() );
@@ -374,38 +382,59 @@ class Item_Info {
 					return $self->country_code_to_alpha3( $countryCode );
 				},
 			),
-			'return_name'           => array(
-				'rename'   => 'return_name1',
+		);
+	}
+
+	/**
+	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing shipper info.
+	 *
+	 * @return array.
+	 *
+	 */
+	protected function get_return_address_schema() {
+		// Closures in PHP 5.3 do not inherit class context
+		// So we need to copy $this into a lexical variable and pass it to closures manually
+		$self = $this;
+
+		return array(
+			'return_name'          => array(
+				'rename'   => 'name1',
 				'sanitize' => function ( $name ) use ( $self ) {
 					return $self->string_length_sanitization( $name, 50 );
 				},
 			),
-			'return_phone'          => array(
-				'rename' => 'return_phone',
+			'return_phone'         => array(
+				'rename' => 'phone',
 			),
-			'return_email'          => array(
-				'rename' => 'return_email',
+			'return_email'         => array(
+				'rename' => 'email',
 			),
-			'return_address'        => array(
-				'rename'   => 'return_addressStreet',
+			'return_address'       => array(
+				'rename'   => 'addressStreet',
 				'sanitize' => function ( $name ) use ( $self ) {
 					return $self->string_length_sanitization( $name, 50 );
 				},
 			),
-			'return_address_no'     => array(
-				'rename' => 'return_addressHouse',
+			'return_address_no'    => array(
+				'rename' => 'addressHouse',
 			),
-			'return_address_zip'    => array(
-				'rename' => 'return_postalCode',
+			'return_address_zip'   => array(
+				'rename' => 'postalCode',
 			),
-			'return_address_city'   => array(
-				'rename' => 'return_city',
+			'return_address_city'  => array(
+				'rename' => 'city',
 			),
-			'return_address_state'  => array(
-				'rename' => 'return_state',
+			'return_address_state' => array(
+				'rename'   => 'state',
 				'sanitize' => function ( $value ) use ( $self ) {
 					return $self->string_length_sanitization( $value, 20 );
 				}
+			),
+			'shipper_country'      => array(
+				'rename'   => 'country',
+				'sanitize' => function ( $countryCode ) use ( $self ) {
+					return $self->country_code_to_alpha3( $countryCode );
+				},
 			),
 		);
 	}
