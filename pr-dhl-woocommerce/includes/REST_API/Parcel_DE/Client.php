@@ -45,7 +45,7 @@ class Client extends API_Client {
 		$message = $this->get_response_error_message( $response );
 
 		throw new Exception(
-			sprintf( __( 'API error: %s', 'dhl-for-woocommerce' ), $message )
+			sprintf( __( 'Error creating label: %s', 'dhl-for-woocommerce' ), $message )
 		);
 	}
 
@@ -483,7 +483,7 @@ class Client extends API_Client {
 		$message = $this->get_response_error_message( $response );
 
 		throw new Exception(
-			sprintf( __( 'API errors: %s', 'dhl-for-woocommerce' ), $message )
+			sprintf( __( 'Error deleting label: %s', 'dhl-for-woocommerce' ), $message )
 		);
 	}
 }
