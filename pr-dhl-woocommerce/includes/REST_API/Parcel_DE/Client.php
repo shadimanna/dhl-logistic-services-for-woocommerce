@@ -414,32 +414,45 @@ class Client extends API_Client {
 	 * @return string.
 	 */
 	protected function get_response_error_message( Response $response ) {
-		if ( empty( $response->body->items[0]->validationMessages ) ) {
-			return $response->body->status->detail ?? $response->body->detail;
-		}
+		$multiple_errors_list = array();
+		$single_errors_list = array();
 
-		$errors_list = array();
 		foreach ( $response->body->items as $item ) {
+			if ( isset( $item->message ) ) {
+				$single_errors_list[] = $item->message;
+			}
+
 			foreach ( $item->validationMessages as $message ) {
-				$errors_list[ $message->validationState ][] = $message->validationMessage;
+				$multiple_errors_list[ $message->validationState ][] = $message->validationMessage;
 			}
 		}
 
-		if ( isset( $errors_list['Error'] ) ) {
-			$errors = $errors_list['Error'];
-			unset( $errors_list['Error'] );
+		if ( isset( $multiple_errors_list['Error'] ) ) {
+			$errors = $multiple_errors_list['Error'];
+			unset( $multiple_errors_list['Error'] );
 
-			$errors_list = array( 'Error' => $errors ) + $errors_list;
+			$multiple_errors_list = array( 'Error' => $errors ) + $multiple_errors_list;
 		}
 
 		$error_message = '<br>';
-		foreach ( $errors_list as $key => $errors ) {
-			$error_message .= '<strong class="wc_dhl_error">'. $key .' : </strong>';
-			$error_message .= '<ul class="wc_dhl_error">';
-			foreach($errors as $error){
-				$error_message .=  '<li>'.$error.'</li>';
+
+		if ( ! empty( $multiple_errors_list ) ) {
+			foreach ( $multiple_errors_list as $key => $errors ) {
+				$error_message .= '<strong class="wc_dhl_error">' . $key . ' : </strong>';
+				$error_message .= '<ul class="wc_dhl_error">';
+				foreach ( $errors as $error ) {
+					$error_message .= '<li>' . $error . '</li>';
+				}
+				$error_message .= '</ul>';
 			}
-			$error_message .=  '</ul>';
+		}
+
+		if ( ! empty( $single_errors_list ) ) {
+			$error_message = '<ul class="wc_dhl_error">';
+			foreach ( $single_errors_list as $error ) {
+				$error_message .= '<li>' . $error . '</li>';
+			}
+			$error_message .= '</ul>';
 		}
 
 		return $error_message;
