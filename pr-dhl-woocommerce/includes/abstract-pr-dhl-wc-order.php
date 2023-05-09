@@ -767,8 +767,8 @@ abstract class PR_DHL_WC_Order {
 			// unset( $shipping_address['last_name'] );
 		}
 
-		// If not USA or Australia, then change state from ISO code to name
-		if ( $shipping_address['country'] != 'US' && $shipping_address['country'] != 'AU' ) {
+		// If not USA, Australia or Germany, then change state from ISO code to name
+		if ( 'US' !== $shipping_address['country'] && 'AU' !== $shipping_address['country'] && 'DE' !== $shipping_address['country'] ) {
 			// Get all states for a country
 			$states = WC()->countries->get_states( $shipping_address['country'] );
 
@@ -783,6 +783,10 @@ abstract class PR_DHL_WC_Order {
 					$shipping_address['state'] = substr( $shipping_address['state'], 0, $ind );
 				}
 			}
+		}
+
+		if ( 'DE' === $shipping_address['country'] ) {
+			$shipping_address['state'] = trim( $shipping_address['state'], 'DE-' );
 		}
 
 		// Check if post number exists then send over
