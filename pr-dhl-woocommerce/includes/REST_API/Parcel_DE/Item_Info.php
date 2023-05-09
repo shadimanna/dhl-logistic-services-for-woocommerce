@@ -352,9 +352,15 @@ class Item_Info {
 			'shipper_address_city'  => array(
 				'rename' => 'city',
 				'error'  => __( 'Shipper "City" is empty!', 'dhl-for-woocommerce' ),
+				'sanitize' => function ( $value ) use ( $self ) {
+					return $self->string_length_sanitization( $value, 40 );
+				}
 			),
 			'shipper_address_state' => array(
 				'rename' => 'state',
+				'sanitize' => function ( $value ) use ( $self ) {
+					return $self->string_length_sanitization( $value, 20 );
+				}
 			),
 			'shipper_country'       => array(
 				'rename'   => 'country',
@@ -397,6 +403,9 @@ class Item_Info {
 			),
 			'return_address_state'  => array(
 				'rename' => 'return_state',
+				'sanitize' => function ( $value ) use ( $self ) {
+					return $self->string_length_sanitization( $value, 20 );
+				}
 			),
 		);
 	}
@@ -442,7 +451,11 @@ class Item_Info {
 			'city'      => array(
 				'error' => __( 'Shipping "City" is empty!', 'dhl-for-woocommerce' )
 			),
-			'state'     => array(),
+			'state'     => array(
+				'sanitize' => function ( $value ) use ( $self ) {
+					return $self->string_length_sanitization( $value, 20 );
+				}
+			),
 			'country'   => array(
 				'sanitize' => function ( $countryCode ) use ( $self ) {
 					if ( empty( $countryCode ) ) {
