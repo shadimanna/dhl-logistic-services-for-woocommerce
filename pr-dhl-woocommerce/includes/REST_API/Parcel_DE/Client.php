@@ -25,6 +25,7 @@ class Client extends API_Client {
 		$route = $this->request_order_route();
 		$data  = $this->request_info_to_request_data( $items_info );
 
+		$route    = $this->add_request_params( $route, $items_info[0] );
 		$response = $this->post( $route, $data );
 
 		if ( 207 === $response->status ) {
@@ -397,6 +398,21 @@ class Client extends API_Client {
 	}
 
 	/**
+	 * Add params to the API request.
+	 *
+	 * @return string.
+	 */
+	protected function add_request_params( $route, $item_info ) {
+		// Print only if codeable.
+		$route .= '?mustEncode=' . $item_info->shipment['mustEncode'];
+
+		// Print only if codeable.
+		$route .= '&printFormat=' . $item_info->shipment['printFormat'];
+
+		return $route;
+	}
+
+	/**
 	 * Get delete shipment rout, used for label deletion.
 	 *
 	 * @return string.
@@ -423,7 +439,7 @@ class Client extends API_Client {
 			}
 
 			foreach ( $item->validationMessages as $message ) {
-				$multiple_errors_list[ $message->validationState ][] = $message->validationMessage;
+				$multiple_errors_list[ $message->validationState ][] = '( ' . $message->property . ' ) : ' . $message->validationMessage;
 			}
 		}
 

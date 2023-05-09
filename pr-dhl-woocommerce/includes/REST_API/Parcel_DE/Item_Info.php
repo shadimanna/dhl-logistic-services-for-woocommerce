@@ -213,20 +213,16 @@ class Item_Info {
 				'sanitize' => function ( $account ) use ( $self ) {
 
 					if ( empty( $account ) ) {
-						throw new Exception(
-							__( 'Check your settings "Account Number" and "Participation Number".',
-								'dhl-for-woocommerce' )
-						);
+						throw new Exception( __( 'Check your settings "Account Number" and "Participation Number".', 'dhl-for-woocommerce' ) );
 					}
 
 					// create account number
 					$product_number = preg_match( '!\d+!', $self->args['order_details']['dhl_product'], $matches );
 
 					if ( $product_number ) {
-						return $self->args['dhl_settings'][ 'account_num' ] . $matches[0] . $self->args['dhl_settings']['participation'];
+						return $self->args['dhl_settings']['account_num'] . $matches[0] . $self->args['dhl_settings']['participation'];
 					} else {
-						throw new Exception( __( 'Could not create account number - no product number.',
-							'dhl-for-woocommerce' ) );
+						throw new Exception( __( 'Could not create account number - no product number.', 'dhl-for-woocommerce' ) );
 					}
 				},
 			),
@@ -302,6 +298,19 @@ class Item_Info {
 						}
 					}
 				},
+			),
+			'is_codeable'            => array(
+				'rename'   => 'mustEncode',
+				'sanitize' => function ( $value ) use ( $self ) {
+					if ( 'yes' === $value ) {
+						return 'true';
+					}
+
+					return 'false';
+				},
+			),
+			'label_format'           => array(
+				'rename'   => 'printFormat',
 			),
 		);
 	}
