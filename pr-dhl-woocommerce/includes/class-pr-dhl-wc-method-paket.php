@@ -136,7 +136,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'type'              => 'select',
 				'description'       => __( 'SOAP used by default.', 'dhl-for-woocommerce' ),
 				'desc_tip'          => true,
-				'options'           => array( 'soap' => 'SOAP', 'rest-api' => 'REST-API' ),
+				'options'           => array( 'soap' => 'SOAP', 'rest-api' => 'REST' ),
 				'class'          => 'wc-enhanced-select',
 				'default'           => 'soap'
 			),
