@@ -258,6 +258,7 @@ class Item_Info {
 				},
 			),
 			'cod_value'              => array(
+				'default' => '',
 				'sanitize' => function ( $value ) use ( $self ) {
 					return $self->float_round_sanitization( $value, 2 );
 				},
@@ -265,7 +266,9 @@ class Item_Info {
 			'routing_email'          => array(
 				'default' => '',
 			),
-			'multi_packages_enabled' => array(),
+			'multi_packages_enabled' => array(
+				'default' => '',
+			),
 			'total_packages'         => array(
 				'validate' => function ( $value ) use ( $self ) {
 					if ( isset( $self->args['order_details']['multi_packages_enabled'] ) && ( $self->args['order_details']['multi_packages_enabled'] == 'yes' ) ) {
