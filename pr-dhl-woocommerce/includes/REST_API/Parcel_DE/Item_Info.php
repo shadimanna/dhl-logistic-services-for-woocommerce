@@ -393,6 +393,13 @@ class Item_Info {
 			),
 			'shipper_reference'     => array(
 				'rename' => 'shipperRef',
+				'sanitize' => function ( $value ) use ( $self ) {
+					if( 'yes' === $self->args['dhl_settings']['add_logo'] ) {
+						return $value;
+					}
+
+					return '';
+				},
 			),
 		);
 	}
