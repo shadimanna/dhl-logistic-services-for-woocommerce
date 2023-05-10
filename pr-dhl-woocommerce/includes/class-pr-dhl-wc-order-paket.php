@@ -1,6 +1,7 @@
 <?php
 
 use PR\DHL\REST_API\Parcel_DE\Item_Info;
+use PR\DHL\Utils\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -1288,7 +1289,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	public function process_bulk_actions( $action, $order_ids, $orders_count, $dhl_force_product = false, $is_force_product_dom = false ) {
 		$array_messages = array();
 
-		if ( 'REST-API' === apply_filters( 'pr_shipping_dhl_paket_api', 'REST-API' ) ) {
+		if ( Utils::is_new_merchant() || Utils::is_rest_api_enabled() ) {
 			$label_count = 0;
 			$merge_files = array();
 
