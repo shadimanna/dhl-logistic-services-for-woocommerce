@@ -1,5 +1,7 @@
 <?php
 
+use PR\DHL\Utils\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -41,7 +43,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 		add_filter( 'woocommerce_settings_api_form_fields_' .$this->id, array( $this, 'after_init_set_field_options' ) );
 
-		if ( empty( get_option( 'woocommerce_pr_dhl_paket_settings', array() ) ) ) {
+		if ( Utils::is_new_merchant() ) {
 			new PR_DHL_WC_Wizard_Paket();
 		}
 	}
@@ -137,8 +139,8 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'description'       => __( 'SOAP used by default.', 'dhl-for-woocommerce' ),
 				'desc_tip'          => true,
 				'options'           => array( 'soap' => 'SOAP', 'rest-api' => 'REST' ),
-				'class'          => 'wc-enhanced-select',
-				'default'           => 'soap'
+				'class'             => 'wc-enhanced-select',
+				'default'           => Utils::is_new_merchant() ? 'rest-api' : 'soap',
 			),
 			'dhl_account_num' => array(
 				'title'             => __( 'Account Number (EKP)', 'dhl-for-woocommerce' ),

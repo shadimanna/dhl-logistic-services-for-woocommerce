@@ -5,6 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 } // Exit if accessed directly
 
 use PR\DHL\REST_API\Parcel_DE\Item_Info;
+use PR\DHL\Utils\Utils;
 
 class PR_DHL_API_Paket extends PR_DHL_API {
 
@@ -18,7 +19,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		$settings = $this->get_settings();
 
 		try {
-			if ( isset( $settings['dhl_default_api'] ) && 'rest-api' === $settings['dhl_default_api'] ) {
+			if ( Utils::is_new_merchant() || ( isset( $settings['dhl_default_api'] ) && 'rest-api' === $settings['dhl_default_api'] ) ) {
 				$this->dhl_label = new PR_DHL_API_REST_Parcel_DE();
 			} else {
 				$this->dhl_label = new PR_DHL_API_SOAP_Label();
@@ -48,7 +49,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 			$args['api_user'] = $sandbox_info['username'];
 			$args['api_pwd'] = $sandbox_info['pass'];
 
-			if ( isset( $settings['dhl_default_api'] ) && 'rest-api' === $settings['dhl_default_api'] ) {
+			if ( Utils::is_new_merchant() || ( isset( $settings['dhl_default_api'] ) && 'rest-api' === $settings['dhl_default_api'] ) ) {
 				$args['account_num'] = $sandbox_info['rest_api_account_no'];
 			} else {
 				$args['account_num'] = $sandbox_info['account_no'];
