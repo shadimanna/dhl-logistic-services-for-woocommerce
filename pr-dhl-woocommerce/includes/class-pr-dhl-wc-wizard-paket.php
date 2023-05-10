@@ -1,5 +1,7 @@
 <?php
 
+use PR\DHL\Utils\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -41,7 +43,7 @@ class PR_DHL_WC_Wizard_Paket {
 	}
 
 	public function display_wizard() {
-		if ( ! empty( get_option( 'woocommerce_pr_dhl_paket_settings', array() ) ) ) {
+		if ( ! Utils::is_new_merchant() ) {
 			return;
 		}
 
