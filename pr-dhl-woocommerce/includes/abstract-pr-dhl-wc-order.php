@@ -1,5 +1,7 @@
 <?php
 
+use PR\DHL\Utils\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -1091,8 +1093,11 @@ abstract class PR_DHL_WC_Order {
 		$label_count = 0;
 		$merge_files = array();
 		$array_messages = array();
+		$orders_args = array();
 
 		if ( 'pr_dhl_create_labels' === $action ) {
+
+			$dhl_obj = PR_DHL()->get_dhl_factory();
 
 			foreach ( $order_ids as $order_id ) {
 				$order = wc_get_order( $order_id );
@@ -1128,39 +1133,79 @@ abstract class PR_DHL_WC_Order {
 							// Allow third parties to modify the args to the DHL APIs
 							$args = apply_filters('pr_shipping_dhl_label_args', $args, $order_id );
 
-							$dhl_obj = PR_DHL()->get_dhl_factory();
+						if ( Utils::is_new_merchant() || Utils::is_rest_api_enabled() ) {
+							$orders_args[] = $args;
+						} else {
+							// SOAP API request.
 							$label_tracking_info = $dhl_obj->get_dhl_label( $args );
-
 							$this->save_dhl_label_tracking( $order_id, $label_tracking_info );
 							$tracking_note = $this->get_tracking_note( $order_id );
 
 							$tracking_note_type = $this->get_tracking_note_type();
 							$tracking_note_type = empty( $tracking_note_type ) ? 0 : 1;
-							// $label_url = $label_tracking_info['label_url'];
 
 							$order->add_order_note( $tracking_note, $tracking_note_type, true );
 
-							++$label_count;
+							++ $label_count;
 
-							array_push($array_messages, array(
-                                'message' => sprintf( __( 'Order #%s: DHL label Created', 'dhl-for-woocommerce'), $order->get_order_number() ),
-                                'type' => 'success',
-                            ));
+							$array_messages[] = array(
+								'message' => sprintf( __( 'Order #%s: DHL label Created', 'dhl-for-woocommerce' ),
+									$order->get_order_number() ),
+								'type'    => 'success',
+							);
 
-                            do_action( 'pr_shipping_dhl_label_created', $order_id );
+							if( ! empty( $label_tracking_info['label_path'] ) ) {
+								$merge_files[] = $label_tracking_info['label_path'];
+							}
 
-					}
-
-					if( ! empty( $label_tracking_info['label_path'] ) ) {
-						array_push($merge_files, $label_tracking_info['label_path']);
+							do_action( 'pr_shipping_dhl_label_created', $order_id );
+						}
 					}
 
 				} catch (Exception $e) {
-					array_push($array_messages, array(
-	                    'message' => sprintf( __( 'Order #%s: %s', 'dhl-for-woocommerce'), $order->get_order_number(), $e->getMessage() ),
-	                    'type' => 'error',
-	                ));
+					$array_messages[] = array(
+						'message' => sprintf( __( 'Order #%s: %s', 'dhl-for-woocommerce' ), $order->get_order_number(),
+							$e->getMessage() ),
+						'type'    => 'error',
+					);
 				}
+			}
+
+			if ( Utils::is_new_merchant() || Utils::is_rest_api_enabled() ) {
+				$labels_tracking_info = $dhl_obj->get_dhl_labels( $orders_args );
+
+				foreach ( $labels_tracking_info['labels'] as $label_tracking_info ) {
+					$this->save_dhl_label_tracking( $label_tracking_info['order_id'], $label_tracking_info );
+
+					if ( ! empty( $label_tracking_info['label_path'] ) ) {
+						$merge_files[] = $label_tracking_info['label_path'];
+					}
+
+					$tracking_note      = $this->get_tracking_note( $label_tracking_info['order_id'] );
+					$tracking_note_type = $this->get_tracking_note_type();
+					$tracking_note_type = empty( $tracking_note_type ) ? 0 : 1;
+
+					$order = wc_get_order( $label_tracking_info['order_id'] );
+					$order->add_order_note( $tracking_note, $tracking_note_type, true );
+
+					++ $label_count;
+
+					$array_messages[] = array(
+						'message' => sprintf( __( 'Order #%s: DHL label Created', 'dhl-for-woocommerce' ),
+							$order->get_order_number() ),
+						'type'    => 'success',
+					);
+
+					do_action( 'pr_shipping_dhl_label_created', $order->get_order_number() );
+				}
+			}
+
+			foreach ( $labels_tracking_info['errors'] as $label_tracking_info ) {
+				$array_messages[] = array(
+					'message' => sprintf( __( 'Order #%s: %s', 'dhl-for-woocommerce' ),
+						$label_tracking_info['order_id'], $label_tracking_info['message'] ),
+					'type'    => 'error',
+				);
 			}
 
 			try {
