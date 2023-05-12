@@ -16,7 +16,7 @@ class Client extends API_Client {
 	 *
 	 * @param  Item_Info[]  $items_info set of Items.
 	 *
-	 * @return \stdClass|string
+	 * @return array.
 	 * @throws Exception
 	 * @since [*next-version*]
 	 */
@@ -28,19 +28,29 @@ class Client extends API_Client {
 		$route    = $this->add_request_params( $route, $items_info[0] );
 		$response = $this->post( $route, $data );
 
-		if ( 207 === $response->status ) {
-			$success = true;
-			foreach ( $response->body->items as $item ) {
-				if ( 200 !== $item->sstatus->statusCode ) {
-					$success = false;
-				}
-			}
+		// Return the response body on success
+		if ( 200 === $response->status ) {
+			return array( 'items' => $response->body->items );
 		}
 
-		// Return the response body on success
-		if ( 200 === $response->status || ( $success ?? false ) ) {
-			return $response->body;
+		if ( 207 === $response->status ) {
+			$labels_data = array(
+				'items' => array()
+			);
+
+			foreach ( $response->body->items as $item ) {
+				if ( 200 === $item->sstatus->statusCode ) {
+					$labels_data['items'][] = $item;
+				} else {
+					$error_message = $this->generate_error_message( $this->get_item_error_message( $item ) );
+					$labels_data['errors'][] = array( 'order_id' => '' , 'message' => sprintf( __( 'Error creating label: %s', 'dhl-for-woocommerce' ), $error_message ) );
+				}
+			}
+
+			return $labels_data;
 		}
+
+
 
 		// Otherwise throw an exception using the response's error messages
 		$message = $this->get_response_error_message( $response );
@@ -432,19 +442,38 @@ class Client extends API_Client {
 	 */
 	protected function get_response_error_message( Response $response ) {
 		$multiple_errors_list = array();
-		$single_errors_list = array();
 
 		foreach ( $response->body->items as $item ) {
-			if ( isset( $item->message ) ) {
-				$single_errors_list[] = $item->message;
-			}
-
-			foreach ( $item->validationMessages as $message ) {
-				$property = isset( $message->property ) ? '( ' . $message->property . ' ) : ' : '';
-				$multiple_errors_list[ $message->validationState ][] = $property . $message->validationMessage;
-			}
+			$list = $this->get_item_error_message( $item );
+			$multiple_errors_list['Error'] .= $list['Error'];
+			$multiple_errors_list['Warning'] .= $list['Warning'];
 		}
 
+		return $this->generate_error_message( $multiple_errors_list );
+	}
+
+	/**
+	 * Get item erros.
+	 *
+	 * @param $item.
+	 *
+	 * @return array.
+	 */
+	protected function get_item_error_message ( $item ) {
+		if ( isset( $item->message ) ) {
+			return array( 'Error' => $item->message );
+		}
+
+		$multiple_errors_list = array();
+		foreach ( $item->validationMessages as $message ) {
+			$property = isset( $message->property ) ? '( ' . $message->property . ' ) : ' : '';
+			$multiple_errors_list[ $message->validationState ][] = $property . $message->validationMessage;
+		}
+
+		return $multiple_errors_list;
+	}
+
+	protected function generate_error_message( $multiple_errors_list ) {
 		if ( isset( $multiple_errors_list['Error'] ) ) {
 			$errors = $multiple_errors_list['Error'];
 			unset( $multiple_errors_list['Error'] );
@@ -465,13 +494,13 @@ class Client extends API_Client {
 			}
 		}
 
-		if ( ! empty( $single_errors_list ) ) {
+		/*if ( ! empty( $single_errors_list ) ) {
 			$error_message = '<ul class="wc_dhl_error">';
 			foreach ( $single_errors_list as $error ) {
 				$error_message .= '<li>' . $error . '</li>';
 			}
 			$error_message .= '</ul>';
-		}
+		}*/
 
 		return $error_message;
 	}

@@ -89,8 +89,8 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 
 		// Create the item and get the barcode
 		if ( ! empty( $items_info ) ) {
-			$items_response = $this->dhl_label->api_client->create_items( $items_info );
-			foreach ( $items_response->items as $item ) {
+			$items = $this->dhl_label->api_client->create_items( $items_info );
+			foreach ( $items['items'] as $item ) {
 				$order_id         = (int) str_replace( apply_filters( 'pr_shipping_dhl_paket_label_ref_no_prefix', 'order_' ), '', $item->shipmentRefNo );
 				if ( isset( $item->label->b64 ) ) {
 					$file             = $this->dhl_label->save_data_file( 'label', $order_id, $item->label->b64 );
@@ -102,6 +102,10 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 						'tracking_status' => '',
 					);
 				}
+			}
+
+			foreach ( $items['errors'] as $error ) {
+				$labels['errors'][] = array ( 'order_id' => $error['order_id'], 'message' => $error['message'] );
 			}
 		}
 

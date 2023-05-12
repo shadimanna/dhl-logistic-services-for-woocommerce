@@ -163,16 +163,25 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		// Create the item and get the barcode
 		$item_response = $this->api_client->create_items( array( $item_info ) );
 
-		if ( count( $item_response->items ) > 1 ) {
-			$file = $this->save_shipment_files( 'label', $args['order_details']['order_id'], $item_response->items );
+		if ( ! empty( $item_response['errors'] ) ) {
+			$message = '';
+			foreach ( $item_response['errors'] as $error ) {
+				$message .= '<br>' . $error['message'];
+			}
+
+			throw new Exception( $message );
+		}
+
+		if ( count( $item_response['items'] ) > 1 ) {
+			$file = $this->save_shipment_files( 'label', $args['order_details']['order_id'], $item_response['items'] );
 		} else {
-			$file = $this->save_data_file( 'label', $args['order_details']['order_id'], $item_response->items[0]->label->b64 );
+			$file = $this->save_data_file( 'label', $args['order_details']['order_id'], $item_response['items'][0]->label->b64 );
 		}
 
 		return array(
 			'label_path'      => $file['label_path'],
-			'item_barcode'    => $item_response->items[0]->shipmentNo,
-			'tracking_number' => $item_response->items[0]->shipmentNo,
+			'item_barcode'    => $item_response['items'][0]->shipmentNo,
+			'tracking_number' => $item_response['items'][0]->shipmentNo,
 			'tracking_status' => '',
 		);
 	}
