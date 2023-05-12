@@ -96,7 +96,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 					$file             = $this->dhl_label->save_data_file( 'label', $order_id, $item->label->b64 );
 					$labels['labels'][] = array(
 						'order_id'        => $order_id,
-						'label_path'      => $file['data_path'],
+						'label_path'      => $file['label_path'],
 						'item_barcode'    => $item->shipmentNo,
 						'tracking_number' => $item->shipmentNo,
 						'tracking_status' => '',
