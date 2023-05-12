@@ -1199,12 +1199,14 @@ abstract class PR_DHL_WC_Order {
 					do_action( 'pr_shipping_dhl_label_created', $order->get_order_number() );
 				}
 
-				foreach ( $labels_tracking_info['errors'] as $label_tracking_info ) {
-					$array_messages[] = array(
-						'message' => sprintf( __( 'Order #%s: %s', 'dhl-for-woocommerce' ),
-							$label_tracking_info['order_id'], $label_tracking_info['message'] ),
-						'type'    => 'error',
-					);
+				if ( isset( $labels_tracking_info['errors'] ) ) {
+					foreach ( $labels_tracking_info['errors'] as $label_tracking_info ) {
+						$array_messages[] = array(
+							'message' => sprintf( __( 'Order #%s: %s', 'dhl-for-woocommerce' ),
+								$label_tracking_info['order_id'], $label_tracking_info['message'] ),
+							'type'    => 'error',
+						);
+					}
 				}
 			}
 

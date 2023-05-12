@@ -440,7 +440,8 @@ class Client extends API_Client {
 			}
 
 			foreach ( $item->validationMessages as $message ) {
-				$multiple_errors_list[ $message->validationState ][] = '( ' . $message->property . ' ) : ' . $message->validationMessage;
+				$property = $message->property ? '( ' . $message->property . ' ) : ' : '';
+				$multiple_errors_list[ $message->validationState ][] = $property . $message->validationMessage;
 			}
 		}
 
