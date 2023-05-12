@@ -83,7 +83,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 				$this->dhl_label->set_arguments( $args );
 				$items_info[] = new Item_Info( $args, $uom );
 			} catch ( Exception $e ) {
-				$labels['errors'][] = array ( 'order_id' => $args['refNo'], 'message' => $e->getMessage() );
+				$labels['errors'][] = array ( 'order_id' => $args['order_details']['order_id'], 'message' => $e->getMessage() );
 			}
 		}
 
