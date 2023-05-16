@@ -445,4 +445,17 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 			'account_no'=> '22222222220801',
 		);
 	}
+
+	/**
+	 * Retrieves the API KEY.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return string
+	 *
+	 */
+	public function get_api_key() {
+		$api_key = defined( 'PR_DHL_GLOBAL_API' )? PR_DHL_GLOBAL_API : '';
+		return $api_key;
+	}
 }
