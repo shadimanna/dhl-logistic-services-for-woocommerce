@@ -1,5 +1,8 @@
 <?php
 
+use PR\DHL\REST_API\Parcel_DE\Item_Info;
+use PR\DHL\Utils\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -1282,7 +1285,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
         return false;
     }
-    
+
 }
 
 endif;

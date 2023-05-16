@@ -1,5 +1,7 @@
 <?php
 
+use PR\DHL\Utils\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -767,8 +769,8 @@ abstract class PR_DHL_WC_Order {
 			// unset( $shipping_address['last_name'] );
 		}
 
-		// If not USA or Australia, then change state from ISO code to name
-		if ( $shipping_address['country'] != 'US' && $shipping_address['country'] != 'AU' ) {
+		// If not USA, Australia or Germany, then change state from ISO code to name
+		if ( 'US' !== $shipping_address['country'] && 'AU' !== $shipping_address['country'] && 'DE' !== $shipping_address['country'] ) {
 			// Get all states for a country
 			$states = WC()->countries->get_states( $shipping_address['country'] );
 
@@ -783,6 +785,10 @@ abstract class PR_DHL_WC_Order {
 					$shipping_address['state'] = substr( $shipping_address['state'], 0, $ind );
 				}
 			}
+		}
+
+		if ( 'DE' === $shipping_address['country'] ) {
+			$shipping_address['state'] = trim( $shipping_address['state'], 'DE-' );
 		}
 
 		// Check if post number exists then send over
@@ -1084,78 +1090,123 @@ abstract class PR_DHL_WC_Order {
 	}
 
 	public function process_bulk_actions( $action, $order_ids, $orders_count, $dhl_force_product = false, $is_force_product_dom = false ) {
-		$label_count = 0;
-		$merge_files = array();
+		$label_count    = 0;
+		$merge_files    = array();
 		$array_messages = array();
+		$orders_args    = array();
 
 		if ( 'pr_dhl_create_labels' === $action ) {
+
+			$dhl_obj = PR_DHL()->get_dhl_factory();
 
 			foreach ( $order_ids as $order_id ) {
 				$order = wc_get_order( $order_id );
 
 				try {
 					// Create label if one has not been created before
-					if( empty( $label_tracking_info = $this->get_dhl_label_tracking( $order_id ) ) ) {
+					if ( empty( $label_tracking_info = $this->get_dhl_label_tracking( $order_id ) ) ) {
 
-							$this->save_default_dhl_label_items( $order_id );
+						$this->save_default_dhl_label_items( $order_id );
 
-							// $dhl_label_items = $this->get_dhl_label_items( $order_id );
+						// $dhl_label_items = $this->get_dhl_label_items( $order_id );
 
-							// Gather args for DHL API call
-							$args = $this->get_label_args( $order_id );
+						// Gather args for DHL API call
+						$args = $this->get_label_args( $order_id );
 
-							// Force the use of this DHL Product for all bulk label creation
-							if ( $dhl_force_product ) {
+						// Force the use of this DHL Product for all bulk label creation
+						if ( $dhl_force_product ) {
 
-								// If forced product is domestic AND order is domestic
-								if( $is_force_product_dom && $this->is_shipping_domestic( $order_id ) ) {
-									$args['order_details']['dhl_product'] = $dhl_force_product;
-								}
-
-								// If forced product is international AND order is international
-								if( ! $is_force_product_dom && ! $this->is_shipping_domestic( $order_id ) ) {
-									$args['order_details']['dhl_product'] = $dhl_force_product;
-								}
+							// If forced product is domestic AND order is domestic
+							if ( $is_force_product_dom && $this->is_shipping_domestic( $order_id ) ) {
+								$args['order_details']['dhl_product'] = $dhl_force_product;
 							}
 
-							// Allow settings to override saved order data, ONLY for bulk action
-							$args = $this->get_bulk_settings_override( $args );
+							// If forced product is international AND order is international
+							if ( ! $is_force_product_dom && ! $this->is_shipping_domestic( $order_id ) ) {
+								$args['order_details']['dhl_product'] = $dhl_force_product;
+							}
+						}
 
-							// Allow third parties to modify the args to the DHL APIs
-							$args = apply_filters('pr_shipping_dhl_label_args', $args, $order_id );
+						// Allow settings to override saved order data, ONLY for bulk action
+						$args = $this->get_bulk_settings_override( $args );
 
-							$dhl_obj = PR_DHL()->get_dhl_factory();
+						// Allow third parties to modify the args to the DHL APIs
+						$args = apply_filters( 'pr_shipping_dhl_label_args', $args, $order_id );
+
+						if ( Utils::is_new_merchant() || Utils::is_rest_api_enabled() ) {
+							$orders_args[] = $args;
+						} else {
+							// SOAP API request.
 							$label_tracking_info = $dhl_obj->get_dhl_label( $args );
-
 							$this->save_dhl_label_tracking( $order_id, $label_tracking_info );
 							$tracking_note = $this->get_tracking_note( $order_id );
 
 							$tracking_note_type = $this->get_tracking_note_type();
 							$tracking_note_type = empty( $tracking_note_type ) ? 0 : 1;
-							// $label_url = $label_tracking_info['label_url'];
 
 							$order->add_order_note( $tracking_note, $tracking_note_type, true );
 
-							++$label_count;
+							++ $label_count;
 
-							array_push($array_messages, array(
-                                'message' => sprintf( __( 'Order #%s: DHL label Created', 'dhl-for-woocommerce'), $order->get_order_number() ),
-                                'type' => 'success',
-                            ));
+							$array_messages[] = array(
+								'message' => sprintf( __( 'Order #%s: DHL label Created', 'dhl-for-woocommerce' ),
+									$order->get_order_number() ),
+								'type'    => 'success',
+							);
 
-                            do_action( 'pr_shipping_dhl_label_created', $order_id );
+							if ( ! empty( $label_tracking_info['label_path'] ) ) {
+								$merge_files[] = $label_tracking_info['label_path'];
+							}
 
+							do_action( 'pr_shipping_dhl_label_created', $order_id );
+						}
 					}
 
-					if( ! empty( $label_tracking_info['label_path'] ) ) {
-						array_push($merge_files, $label_tracking_info['label_path']);
+				} catch ( Exception $e ) {
+					$array_messages[] = array(
+						'message' => sprintf( __( 'Order #%s: %s', 'dhl-for-woocommerce' ), $order->get_order_number(),
+							$e->getMessage() ),
+						'type'    => 'error',
+					);
+				}
+			}
+
+			if ( Utils::is_new_merchant() || Utils::is_rest_api_enabled() ) {
+				$labels_tracking_info = $dhl_obj->get_dhl_labels( $orders_args );
+
+				foreach ( $labels_tracking_info['labels'] as $label_tracking_info ) {
+					$this->save_dhl_label_tracking( $label_tracking_info['order_id'], $label_tracking_info );
+
+					if ( ! empty( $label_tracking_info['label_path'] ) ) {
+						$merge_files[] = $label_tracking_info['label_path'];
 					}
 
-				} catch (Exception $e) {
-					array_push($array_messages, array(
-	                    'message' => sprintf( __( 'Order #%s: %s', 'dhl-for-woocommerce'), $order->get_order_number(), $e->getMessage() ),
-	                    'type' => 'error',
-	                ));
+					$tracking_note      = $this->get_tracking_note( $label_tracking_info['order_id'] );
+					$tracking_note_type = $this->get_tracking_note_type();
+					$tracking_note_type = empty( $tracking_note_type ) ? 0 : 1;
+
+					$order = wc_get_order( $label_tracking_info['order_id'] );
+					$order->add_order_note( $tracking_note, $tracking_note_type, true );
+
+					++ $label_count;
+
+					$array_messages[] = array(
+						'message' => sprintf( __( 'Order #%s: DHL label Created', 'dhl-for-woocommerce' ),
+							$order->get_order_number() ),
+						'type'    => 'success',
+					);
+
+					do_action( 'pr_shipping_dhl_label_created', $order->get_order_number() );
+				}
+
+				if ( isset( $labels_tracking_info['errors'] ) ) {
+					foreach ( $labels_tracking_info['errors'] as $label_tracking_info ) {
+						$array_messages[] = array(
+							'message' => sprintf( __( 'Order #%s: %s', 'dhl-for-woocommerce' ),
+								$label_tracking_info['order_id'], $label_tracking_info['message'] ),
+							'type'    => 'error',
+						);
+					}
 				}
 			}
 
@@ -1168,33 +1219,36 @@ abstract class PR_DHL_WC_Order {
 				if ( file_exists( $file_bulk['file_bulk_path'] ) ) {
 					// $message .= sprintf( __( ' - %sdownload labels file%s', 'dhl-for-woocommerce' ), '<a href="' . $file_bulk['file_bulk_url'] . '" target="_blank">', '</a>' );
 
-	                // We're saving the bulk file path temporarily and access it later during the download process.
-		    		// This information expires in 3 minutes (180 seconds), just enough for the user to see the
-		    		// displayed link and click it if he or she wishes to download the bulk labels
-					set_transient( '_dhl_bulk_download_labels_file_' . get_current_user_id(), $file_bulk['file_bulk_path'], 180);
+					// We're saving the bulk file path temporarily and access it later during the download process.
+					// This information expires in 3 minutes (180 seconds), just enough for the user to see the
+					// displayed link and click it if he or she wishes to download the bulk labels
+					set_transient( '_dhl_bulk_download_labels_file_' . get_current_user_id(),
+						$file_bulk['file_bulk_path'], 180 );
 
 					// Construct URL pointing to the download label endpoint (with bulk param):
 					$bulk_download_label_url = $this->generate_download_url( '/' . self::DHL_DOWNLOAD_ENDPOINT . '/bulk' );
 
-					array_push($array_messages, array(
-	                    'message' => sprintf( __( 'Bulk DHL labels file created - %sdownload file%s', 'dhl-for-woocommerce' ), '<a href="' . $bulk_download_label_url . '" download>', '</a>' ),
-	                    'type' => 'success',
-	                ));
+					array_push( $array_messages, array(
+						'message' => sprintf( __( 'Bulk DHL labels file created - %sdownload file%s',
+							'dhl-for-woocommerce' ), '<a href="' . $bulk_download_label_url . '" download>', '</a>' ),
+						'type'    => 'success',
+					) );
 
-		        } else {
+				} else {
 					// $message .= __( '. Could not create bulk DHL label file, download individually.', 'dhl-for-woocommerce' );
 
-					array_push($array_messages, array(
-	                    'message' => __( 'Could not create bulk DHL label file, download individually.', 'dhl-for-woocommerce' ),
-	                    'type' => 'error',
-	                ));
-		        }
+					array_push( $array_messages, array(
+						'message' => __( 'Could not create bulk DHL label file, download individually.',
+							'dhl-for-woocommerce' ),
+						'type'    => 'error',
+					) );
+				}
 
-			} catch (Exception $e) {
-				array_push($array_messages, array(
-                    'message' => $e->getMessage(),
-                    'type' => 'error',
-                ));
+			} catch ( Exception $e ) {
+				array_push( $array_messages, array(
+					'message' => $e->getMessage(),
+					'type'    => 'error',
+				) );
 			}
 		} elseif ( 'pr_dhl_delete_labels' === $action ) {
 			$array_messages = $this->delete_label_in_bulk( $order_ids );

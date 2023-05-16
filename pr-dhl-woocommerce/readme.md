@@ -4,10 +4,10 @@ Donate link:
 Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL Paket Germany, WooCommerce, Woocom, Woo Commerce, Shipping, shiping, label creation, label printing, DHL Paket
 Requires at least: 4.6
 Requires PHP: 5.6
-Tested up to: 6.0
-Stable tag: 3.3.0
+Tested up to: 6.2
+Stable tag: 3.4.0
 WC requires at least: 3.0
-WC tested up to: 7.3
+WC tested up to: 7.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -75,6 +75,8 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
+= 3.4.0 =
+* DHL Paket:  Support for Shipment REST API
 
 = 3.3.0 =
 * DHL Paket:  Add endorsement service
