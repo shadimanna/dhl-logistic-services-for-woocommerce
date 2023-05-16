@@ -436,7 +436,7 @@ class Client extends API_Client {
 	/**
 	 * Get response error messages.
 	 *
-	 * @param  Response  $response.
+	 * @param  Response  $response  .
 	 *
 	 * @return string.
 	 */
@@ -444,9 +444,18 @@ class Client extends API_Client {
 		$multiple_errors_list = array();
 
 		foreach ( $response->body->items as $item ) {
-			$list = $this->get_item_error_message( $item );
-			$multiple_errors_list['Error'] .= $list['Error'];
-			$multiple_errors_list['Warning'] .= $list['Warning'];
+			$errors_list = $this->get_item_error_message( $item );
+			foreach ( $errors_list as $key => $list ) {
+				if ( ! is_array( $multiple_errors_list[ $key ] ) ) {
+					$multiple_errors_list[ $key ] = array();
+				}
+
+				if ( is_array( $list ) ) {
+					$multiple_errors_list[ $key ] += $list;
+				} else {
+					$multiple_errors_list[ $key ][] = $list;
+				}
+			}
 		}
 
 		return $this->generate_error_message( $multiple_errors_list );
@@ -455,18 +464,23 @@ class Client extends API_Client {
 	/**
 	 * Get item erros.
 	 *
-	 * @param $item.
+	 * @param $item  .
 	 *
 	 * @return array.
 	 */
-	protected function get_item_error_message ( $item ) {
+	protected function get_item_error_message( $item ) {
 		if ( isset( $item->message ) ) {
 			return array( 'Error' => $item->message );
 		}
 
 		$multiple_errors_list = array();
 		foreach ( $item->validationMessages as $message ) {
-			$property = isset( $message->property ) ? '( ' . $message->property . ' ) : ' : '';
+
+			if ( ! is_array( $multiple_errors_list[ $message->validationState ] ) ) {
+				$multiple_errors_list[ $message->validationState ] = array();
+			}
+
+			$property                                            = isset( $message->property ) ? '( ' . $message->property . ' ) : ' : '';
 			$multiple_errors_list[ $message->validationState ][] = $property . $message->validationMessage;
 		}
 
