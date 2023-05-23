@@ -333,6 +333,14 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'description'       => __( 'Please, tick here if you want the "Ident Check" option to be checked in the "Edit Order" before printing a label.', 'dhl-for-woocommerce' ),
 				'desc_tip'          => true,
 			),
+			'dhl_default_signature_service' => array(
+					'title'             => __( 'Signed for by recipient default', 'dhl-for-woocommerce' ),
+					'type'              => 'checkbox',
+					'label'             => __( 'Checked', 'dhl-for-woocommerce' ),
+					'default'           => 'no',
+					'description'       => __( 'Please, tick here if you want the "Signed for by recipient" option to be checked in the "Edit Order" before printing a label.', 'dhl-for-woocommerce' ),
+					'desc_tip'          => true,
+			),
 			'dhl_default_identcheck_age' => array(
 				'title'             => __( 'Ident Check Age default', 'dhl-for-woocommerce' ),
 				'type'              => 'select',

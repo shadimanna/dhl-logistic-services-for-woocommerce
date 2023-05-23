@@ -307,7 +307,7 @@ class PR_DHL_WC {
 
 	public function dhl_enqueue_scripts() {
 		// Enqueue Styles
-		wp_enqueue_style( 'wc-shipment-dhl-label-css', PR_DHL_PLUGIN_DIR_URL . '/assets/css/pr-dhl-admin.css', array(), '1.1' );
+		wp_enqueue_style( 'wc-shipment-dhl-label-css', PR_DHL_PLUGIN_DIR_URL . '/assets/css/pr-dhl-admin.css', array(), PR_DHL_VERSION );
 
 		// Enqueue Scripts
         $screen    = get_current_screen();
@@ -367,7 +367,7 @@ class PR_DHL_WC {
 
 	/**
 	 * Add class in admin body tag.
-	 * 
+	 *
 	 * @param $classes string Registered classes.
 	 *
 	 * @return $classes
@@ -382,7 +382,7 @@ class PR_DHL_WC {
 				$classes .= ' pr_dhl_paket';
 			}
 		}
-		
+
 		return $classes;
 	}
 
