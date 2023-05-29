@@ -1,7 +1,7 @@
 <?php
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 
-use PR\DHL\Utils\Utils;
+use PR\DHL\Utils\API_Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -1157,7 +1157,7 @@ abstract class PR_DHL_WC_Order {
 						// Allow third parties to modify the args to the DHL APIs
 						$args = apply_filters( 'pr_shipping_dhl_label_args', $args, $order_id );
 
-						if ( Utils::is_new_merchant() || Utils::is_rest_api_enabled() ) {
+						if ( API_Utils::is_new_merchant() || API_Utils::is_rest_api_enabled() ) {
 							$orders_args[] = $args;
 						} else {
 							// SOAP API request.
@@ -1195,7 +1195,7 @@ abstract class PR_DHL_WC_Order {
 				}
 			}
 
-			if ( Utils::is_new_merchant() || Utils::is_rest_api_enabled() ) {
+			if ( API_Utils::is_new_merchant() || API_Utils::is_rest_api_enabled() ) {
 				$labels_tracking_info = $dhl_obj->get_dhl_labels( $orders_args );
 
 				foreach ( $labels_tracking_info['labels'] as $label_tracking_info ) {

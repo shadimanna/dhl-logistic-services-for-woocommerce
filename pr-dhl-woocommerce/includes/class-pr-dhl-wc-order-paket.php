@@ -2,7 +2,7 @@
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 
 use PR\DHL\REST_API\Parcel_DE\Item_Info;
-use PR\DHL\Utils\Utils;
+use PR\DHL\Utils\API_Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
