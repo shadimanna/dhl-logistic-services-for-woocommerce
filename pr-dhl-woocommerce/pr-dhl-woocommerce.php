@@ -7,10 +7,10 @@
  * Author URI: http://dhl.com/
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
- * Version: 3.3.0
- * Tested up to: 6.0
+ * Version: 3.4.1
+ * Tested up to: 6.2
  * WC requires at least: 3.0
- * WC tested up to: 7.3
+ * WC tested up to: 7.7
  * Requires at least: 4.6
  *
  * This program is free software: you can redistribute it and/or modify
@@ -28,6 +28,8 @@
  *
  */
 
+use PR\DHL\Utils\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -36,7 +38,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "3.3.0";
+	private $version = "3.4.1";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -178,6 +180,7 @@ class PR_DHL_WC {
 		$this->define( 'PR_DHL_PAKET_BUSSINESS_PORTAL', 'https://www.dhl-geschaeftskundenportal.de' );
 		$this->define( 'PR_DHL_PAKET_DEVELOPER_PORTAL', 'https://entwickler.dhl.de/' );
 		$this->define( 'PR_DHL_PAKET_NOTIFICATION_EMAIL', 'https://www.dhl.de/de/geschaeftskunden/paket/versandsoftware/dhl-paketankuendigung/formular.html' );
+		$this->define( 'PR_DHL_PAKET_PARCEL_DE_SHIPPING_API_USER_GUIDE', 'https://developer.dhl.com/api-reference/parcel-de-shipping-post-parcel-germany-v2#get-started-section/user-guide' );
 
 		$this->define( 'PR_DHL_PACKSTATION', __('Packstation ', 'dhl-for-woocommerce') );
 		$this->define( 'PR_DHL_PARCELSHOP', __('Postfiliale ', 'dhl-for-woocommerce') );
@@ -338,7 +341,7 @@ class PR_DHL_WC {
 				);
 				// wp_localize_script( 'wc-shipment-dhl-paket-settings-js', 'dhl_paket_settings_obj', PR_DHL_WC_Method_Paket::sandbox_info() );
 
-				if ( empty( get_option( 'woocommerce_pr_dhl_paket_settings', array() ) ) ) {
+				if ( Utils::is_new_merchant() ) {
 					$this->wizard_enqueue_scripts();
 				}
 			}
@@ -470,6 +473,10 @@ class PR_DHL_WC {
 		$country_code = wc_get_base_location();
 		return apply_filters( 'pr_shipping_dhl_base_country', $country_code['country'] );
 	}
+
+    public function get_currency_symbol() {
+        return apply_filters( 'pr_shipping_dhl_currency_symbol', get_woocommerce_currency_symbol() );
+    }
 
     public function get_base_postcode() {
         return apply_filters( 'pr_shipping_dhl_base_postcode', WC()->countries->get_base_postcode() );

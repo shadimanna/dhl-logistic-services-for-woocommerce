@@ -4,6 +4,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } // Exit if accessed directly
 
+use PR\DHL\REST_API\Parcel_DE\Item_Info;
+use PR\DHL\Utils\Utils;
 
 class PR_DHL_API_Paket extends PR_DHL_API {
 
@@ -14,8 +16,14 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 
 	public function __construct( $country_code ) {
 		$this->country_code = $country_code;
+		$settings = $this->get_settings();
+
 		try {
-			$this->dhl_label = new PR_DHL_API_SOAP_Label( );
+			if ( Utils::is_new_merchant() || Utils::is_rest_api_enabled() ) {
+				$this->dhl_label = new PR_DHL_API_REST_Parcel_DE();
+			} else {
+				$this->dhl_label = new PR_DHL_API_SOAP_Label();
+			}
 			//$this->dhl_finder = new PR_DHL_API_SOAP_Finder( );
 			$this->dhl_finder = new PR_DHL_API_REST_Finder( );
 		} catch (Exception $e) {
@@ -36,17 +44,72 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 
 		if ( isset($args['sandbox']) && ($args['sandbox'] == 'yes' ) ) {
 			$sandbox_info = $this->sandbox_info();
+			$settings     = $this->get_settings();
+
 			$args['api_user'] = $sandbox_info['username'];
 			$args['api_pwd'] = $sandbox_info['pass'];
-			$args['account_num'] = $sandbox_info['account_no'];
+
+			if ( Utils::is_new_merchant() || Utils::is_rest_api_enabled() ) {
+				$args['account_num'] = $sandbox_info['rest_api_account_no'];
+			} else {
+				$args['account_num'] = $sandbox_info['account_no'];
+			}
 		}
-		// error_log(print_r($args,true));
+		 //error_log(print_r($args,true));
 		return $args;
 	}
 
 	public function get_dhl_label( $args ) {
 		$args['dhl_settings'] = $this->maybe_sandbox( $args['dhl_settings'] );
 		return parent::get_dhl_label( $args );
+	}
+
+	/**
+	 * Create multiple labels in 1 API call.
+	 *
+	 * @param array[] $multiple_orders_args Set of orders args.
+	 *
+	 * @return array
+	 * @throws Exception
+	 */
+	public function get_dhl_labels( $multiple_orders_args ) {
+		$items_info = array();
+		$labels     = array();
+		$uom        = get_option( 'woocommerce_weight_unit' );
+
+		foreach ( $multiple_orders_args as $args ) {
+			$args['dhl_settings'] = $this->maybe_sandbox( $args['dhl_settings'] );
+			try {
+				$this->dhl_label->set_arguments( $args );
+				$items_info[] = new Item_Info( $args, $uom );
+			} catch ( Exception $e ) {
+				$labels['errors'][] = array ( 'order_id' => $args['order_details']['order_id'], 'message' => $e->getMessage() );
+			}
+		}
+
+		// Create the item and get the barcode
+		if ( ! empty( $items_info ) ) {
+			$items = $this->dhl_label->api_client->create_items( $items_info );
+			foreach ( $items['items'] as $item ) {
+				$order_id         = (int) str_replace( apply_filters( 'pr_shipping_dhl_paket_label_ref_no_prefix', 'order_' ), '', $item->shipmentRefNo );
+				if ( isset( $item->label->b64 ) ) {
+					$file             = $this->dhl_label->save_data_file( 'label', $order_id, $item->label->b64 );
+					$labels['labels'][] = array(
+						'order_id'        => $order_id,
+						'label_path'      => $file['label_path'],
+						'item_barcode'    => $item->shipmentNo,
+						'tracking_number' => $item->shipmentNo,
+						'tracking_status' => '',
+					);
+				}
+			}
+
+			foreach ( $items['errors'] as $error ) {
+				$labels['errors'][] = array ( 'order_id' => $error['order_id'], 'message' => $error['message'] );
+			}
+		}
+
+		return $labels;
 	}
 
 	public function delete_dhl_label( $args ) {
@@ -247,6 +310,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 			'username' 	=> '2222222222_01',
 			'pass' 		=> 'pass',
 			'account_no'=> '2222222222',
+			'rest_api_account_no'=> '3333333333',
 		);
 	}
 }

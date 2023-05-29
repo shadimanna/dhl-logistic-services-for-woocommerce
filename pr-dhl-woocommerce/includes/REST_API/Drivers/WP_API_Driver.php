@@ -33,7 +33,7 @@ class WP_API_Driver implements API_Driver_Interface {
 		$response = wp_remote_request(
 			$request->url,
 			array(
-				'method'  => ( $request->type === Request::TYPE_GET ) ? 'GET' : 'POST',
+				'method'  => $this->get_request_type( $request ),
 				'body'    => $request->body,
 				'headers' => $request->headers,
 				'cookies' => $request->cookies,
@@ -70,5 +70,24 @@ class WP_API_Driver implements API_Driver_Interface {
 			$headers,
 			wp_remote_retrieve_cookies( $response )
 		);
+	}
+
+	/**
+	 * Get Request type.
+	 *
+	 * @param  Request  $request.
+	 *
+	 * @return string.
+	 */
+	public function get_request_type( Request $request ) {
+		if ( $request->type === Request::TYPE_GET ) {
+			return 'GET';
+		}
+
+		if ( $request->type === Request::TYPE_DELETE ) {
+			return 'DELETE';
+		}
+
+		return 'POST';
 	}
 }

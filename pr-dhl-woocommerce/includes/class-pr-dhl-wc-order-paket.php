@@ -1,6 +1,9 @@
 <?php
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 
+use PR\DHL\REST_API\Parcel_DE\Item_Info;
+use PR\DHL\Utils\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -371,7 +374,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 
                     // PDDP
-                    if ( $this->is_UK_shipment( $order_id ) ) {
+                    if ( $this->is_PDDP_required( $order ) ) {
 	                    $PDDP_value = $dhl_label_items['pr_dhl_PDDP'] ?? '';
 	                    woocommerce_wp_checkbox( array(
 		                    'id'          		=> 'pr_dhl_PDDP',
@@ -1278,9 +1281,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		<?php
 	}
 
-	protected function is_UK_shipment( $order_id ) {
-		$order = wc_get_order( $order_id );
-
+	protected function is_PDDP_required( $order ) {
 		if ( ! is_a( $order, 'WC_Order' ) ) {
 			return false;
 		}
@@ -1288,7 +1289,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$shipping_address = $order->get_address( 'shipping' );
 		$shipping_country = $shipping_address['country'];
 
-		if( 'GB' === $shipping_country ) {
+		if( 'GB' === $shipping_country || 'NO' === $shipping_country ) {
 			return true;
 		}
         
@@ -1303,7 +1304,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
         return false;
     }
-    
+
 }
 
 endif;
