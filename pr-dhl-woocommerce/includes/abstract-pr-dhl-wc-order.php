@@ -1,4 +1,5 @@
 <?php
+use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 
 use PR\DHL\Utils\API_Utils;
 
@@ -57,10 +58,11 @@ abstract class PR_DHL_WC_Order {
 		}
 
 		// add bulk actions to the Orders screen table bulk action drop-downs
-		add_action( 'admin_footer-edit.php', array( $this, 'add_order_bulk_actions' ) );
+		add_action( 'admin_footer', array( $this, 'add_order_bulk_actions' ) );
 
 		// process orders bulk actions
-		add_action( 'load-edit.php', array( $this, 'process_orders_bulk_actions' ) );
+		add_action( 'handle_bulk_actions-edit-shop_order', array( $this, 'process_orders_bulk_actions' ) );
+		add_action( 'handle_bulk_actions-woocommerce_page_wc-orders', array( $this, 'process_orders_bulk_actions' ) );
 
 		// display admin notices for bulk actions
 		add_action( 'admin_notices', array( $this, 'render_messages' ) );
@@ -81,7 +83,10 @@ abstract class PR_DHL_WC_Order {
 	 * @access public
 	 */
 	public function add_meta_box() {
-		add_meta_box( 'woocommerce-shipment-dhl-label', sprintf( __( '%s Label & Tracking', 'dhl-for-woocommerce' ), $this->service), array( $this, 'meta_box' ), 'shop_order', 'side', 'high' );
+		$screen = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+			? wc_get_page_screen_id( 'shop-order' )
+			: 'shop_order';
+		add_meta_box( 'woocommerce-shipment-dhl-label', sprintf( __( '%s Label & Tracking', 'dhl-for-woocommerce' ), $this->service), array( $this, 'meta_box' ), $screen, 'side', 'high' );
 	}
 
 	/**
@@ -90,9 +95,11 @@ abstract class PR_DHL_WC_Order {
 	 * @access public
 	 */
 	public function meta_box() {
-		global $woocommerce, $post;
+		global $woocommerce, $post, $theorder;
 
-		$order_id = $post->ID;
+		$order_id = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+			? $theorder->get_id()
+			: $post->ID;
 		// Get saved label input fields or set default values
 		$dhl_label_items = $this->get_dhl_label_items( $order_id );
 
@@ -501,7 +508,9 @@ abstract class PR_DHL_WC_Order {
 			$tracking_items['label_path'] = wp_slash( $tracking_items['label_path'] );
 		}
 
-		update_post_meta( $order_id, '_pr_shipment_dhl_label_tracking', $tracking_items );
+		$order = wc_get_order( $order_id );
+		$order->update_meta_data( '_pr_shipment_dhl_label_tracking', $tracking_items );
+		$order->save();
 
 		$tracking_details = array(
 			'carrier' 			=> $this->carrier,
@@ -521,7 +530,8 @@ abstract class PR_DHL_WC_Order {
 	 * @return tracking items
 	 */
 	public function get_dhl_label_tracking( $order_id ) {
-		return get_post_meta( $order_id, '_pr_shipment_dhl_label_tracking', true );
+		$order = wc_get_order( $order_id );
+		return $order->get_meta('_pr_shipment_dhl_label_tracking' );
 	}
 
 	/**
@@ -532,8 +542,9 @@ abstract class PR_DHL_WC_Order {
 	 * @return void
 	 */
 	public function delete_dhl_label_tracking( $order_id ) {
-		delete_post_meta( $order_id, '_pr_shipment_dhl_label_tracking' );
-
+		$order = wc_get_order( $order_id );
+		$order->delete_meta_data( '_pr_shipment_dhl_label_tracking' );
+		$order->save();
 		do_action( 'pr_delete_dhl_label_tracking', $order_id );
 	}
 
@@ -546,7 +557,9 @@ abstract class PR_DHL_WC_Order {
 	 * @return void
 	 */
 	public function save_dhl_label_items( $order_id, $tracking_items ) {
-		$dhl_label_items = get_post_meta( $order_id, '_pr_shipment_dhl_label_items', true );
+		$order = wc_get_order( $order_id );
+
+		$dhl_label_items = $order->get_meta( '_pr_shipment_dhl_label_items' );
 
         if( is_array( $dhl_label_items ) ){
             $dhl_label_items = array_merge( $dhl_label_items, $tracking_items );
@@ -554,8 +567,9 @@ abstract class PR_DHL_WC_Order {
             $dhl_label_items = $tracking_items;
         }
 
-        update_post_meta( $order_id, '_pr_shipment_dhl_label_items', $dhl_label_items );
-    }
+		$order->update_meta_data( '_pr_shipment_dhl_label_items', $dhl_label_items );
+		$order->save();
+	}
 
 	/*
 	 * Gets all label items fron the post meta array for an order
@@ -565,7 +579,8 @@ abstract class PR_DHL_WC_Order {
 	 * @return label items
 	 */
 	public function get_dhl_label_items( $order_id ) {
-		return get_post_meta( $order_id, '_pr_shipment_dhl_label_items', true );
+		$order = wc_get_order( $order_id );
+		return $order->get_meta('_pr_shipment_dhl_label_items' );
 	}
 
 	/*
@@ -792,7 +807,7 @@ abstract class PR_DHL_WC_Order {
 		}
 
 		// Check if post number exists then send over
-		if( $shipping_dhl_postnum = get_post_meta( $order_id, '_shipping_dhl_postnum', true ) ) {
+		if( $shipping_dhl_postnum = $order->get_meta('_shipping_dhl_postnum' ) ) {
 			$shipping_address['dhl_postnum'] = $shipping_dhl_postnum;
 		}
 
@@ -941,33 +956,37 @@ abstract class PR_DHL_WC_Order {
 	 * Bulk functions
 	 */
 	public function add_order_bulk_actions() {
-		global $post_type, $post_status;
+		global $typenow, $pagenow, $current_screen;
 
-		if ( $post_type === 'shop_order' && $post_status !== 'trash' ) :
+		$is_orders_list = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+			? ( wc_get_page_screen_id( 'shop-order' ) === $current_screen->id && 'admin.php' === $pagenow )
+			: ( 'shop_order' === $typenow && 'edit.php' === $pagenow  );
 
-			?>
-			<script type="text/javascript">
-				jQuery( document ).ready( function ( $ ) {
-					$( 'select[name^=action]' ).append(
-						<?php $index = count( $actions = $this->get_bulk_actions() ); ?>
-						<?php foreach ( $actions as $action => $name ) : ?>
-							$( '<option>' ).val( '<?php echo esc_js( $action ); ?>' ).text( '<?php echo esc_js( $name ); ?>' )
-							<?php --$index; ?>
-							<?php if ( $index ) { echo ','; } ?>
-						<?php endforeach; ?>
-					);
-				} );
-			</script>
-			<?php
+		if ( ! $is_orders_list ) {
+			return;
+		}
 
-		endif;
+		?>
+		<script type="text/javascript">
+            jQuery( document ).ready( function ( $ ) {
+                $( 'select[name^=action]' ).append(
+					<?php $index = count( $actions = $this->get_bulk_actions() ); ?>
+					<?php foreach ( $actions as $action => $name ) : ?>
+                    $( '<option>' ).val( '<?php echo esc_js( $action ); ?>' ).text( '<?php echo esc_js( $name ); ?>' )
+					<?php --$index; ?>
+					<?php if ( $index ) { echo ','; } ?>
+					<?php endforeach; ?>
+                );
+            } );
+		</script>
+		<?php
 	}
 
 	public function process_orders_bulk_actions() {
 		global $typenow;
 		$array_messages = array( 'msg_user_id' => get_current_user_id() );
 
-		if ( 'shop_order' === $typenow ) {
+		//if ( 'shop_order' === $typenow ) {
 
 			// Get the bulk action
 			$wp_list_table = _get_list_table( 'WP_Posts_List_Table' );
@@ -979,8 +998,8 @@ abstract class PR_DHL_WC_Order {
 			}
 
 			// Make sure order IDs are submitted
-			if ( isset( $_REQUEST['post'] ) ) {
-				$order_ids = array_map( 'absint', $_REQUEST['post'] );
+			if ( isset( $_REQUEST['post'] ) || isset( $_REQUEST['order'] ) ) {
+				$order_ids = array_map( 'absint', ( $_REQUEST['post'] ?? $_REQUEST['order'] ) );
 			}
 
 			$orders_count 	= count( $order_ids );
@@ -1006,7 +1025,7 @@ abstract class PR_DHL_WC_Order {
 			// update_option( '_pr_dhl_bulk_action_confirmation', array( get_current_user_id() => $message, 'is_error' => $is_error ) );
 			update_option( '_pr_dhl_bulk_action_confirmation', $array_messages );
 
- 		}
+ 		//}
 	}
 	/*
 	public function render_messages( $current_screen = null ) {
@@ -1043,17 +1062,22 @@ abstract class PR_DHL_WC_Order {
 	/**
 	 * Display messages on order view screen
 	 */
-	public function render_messages( $current_screen = null ) {
-		if ( ! $current_screen instanceof WP_Screen ) {
-			$current_screen = get_current_screen();
+	public function render_messages( ) {
+		global $current_screen;
+
+		$screens = array( 'shop_order', 'edit-shop_order' );
+		try {
+			if ( wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled() ) {
+				$screens[] = wc_get_page_screen_id( 'shop-order' );
+			}
+		} catch ( Exception $e ) {
+
 		}
 
-		if ( isset( $current_screen->id ) && in_array( $current_screen->id, array( 'shop_order', 'edit-shop_order' ), true ) ) {
-
+		if ( isset( $current_screen->id ) && in_array( $current_screen->id, $screens ) ) {
 			$bulk_action_message_opt = get_option( '_pr_dhl_bulk_action_confirmation' );
 
 			if ( ( $bulk_action_message_opt ) && is_array( $bulk_action_message_opt ) ) {
-
 				// $user_id = key( $bulk_action_message_opt );
 				// remove first element from array and verify if it is the user id
 				$user_id = array_shift( $bulk_action_message_opt );
@@ -1259,7 +1283,7 @@ abstract class PR_DHL_WC_Order {
 
 	/**
 	 * Delete DHL in bulk.
-	 * 
+	 *
 	 * @param Array<Int> $order_ids List of Order IDs.
 	 *
 	 * @return Array.
@@ -1305,7 +1329,7 @@ abstract class PR_DHL_WC_Order {
 						if ( empty( $order_note->content ) ) {
 							return $order_note;
 						}
-						
+
 						if ( false !== strpos( $order_note->content, $tracking_number ) ) {
 							wc_delete_order_note( $order_note->id );
 						}
@@ -1322,7 +1346,7 @@ abstract class PR_DHL_WC_Order {
 					)
 				);
 			} catch ( Exception $e ) {
-				array_push( 
+				array_push(
 					$array_messages,
 					array(
 						'message' => sprintf( __( 'Order #%s: %s', 'dhl-for-woocommerce'), $order->get_order_number(), $e->getMessage() ),

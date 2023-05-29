@@ -318,7 +318,8 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 		$order_id = isset( $args[ 'order_details' ][ 'order_id' ] )
 			? $args[ 'order_details' ][ 'order_id' ]
 			: null;
-		$item_barcode = get_post_meta( $order_id, 'pr_dhl_dp_item_barcode', true );
+		$order = wc_get_order( $order_id );
+		$item_barcode = $order->get_meta('pr_dhl_dp_item_barcode' );
 
 		// If order has no saved barcode, create the DHL item and get the barcode
 		if ( empty( $item_barcode ) ) {
@@ -335,8 +336,10 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 			$item_id = $item_response->id;
 
 			// Save it in the order
-			update_post_meta( $order_id, 'pr_dhl_dp_item_barcode', $item_barcode );
-			update_post_meta( $order_id, 'pr_dhl_dp_item_id', $item_id );
+			$order->update_meta_data( 'pr_dhl_dp_item_barcode', $item_barcode );
+			$order->update_meta_data( 'pr_dhl_dp_item_id', $item_id );
+			$order->save();
+
 		}
 
 		// Get the label for the created item
@@ -694,7 +697,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 				$item_wc_order = wc_get_order( $item_wc_order_id );
 
 				// Save the AWB to the WC order
-				update_post_meta( $item_wc_order_id, 'pr_dhl_dp_awb', $shipment->awb );
+				$item_wc_order->update_meta_data( 'pr_dhl_dp_awb', $shipment->awb );
 
 				// An an order note for the AWB
 				$item_awb_note = __('Shipment AWB: ', 'dhl-for-woocommerce') . $shipment->awb;
@@ -705,7 +708,8 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 				$awbs[] = $shipment->awb;
 
 				// Save the DHL order ID in the WC order meta
-				update_post_meta( $item_wc_order_id, 'pr_dhl_dp_order', $response->orderId );
+				$item_wc_order->update_meta_data( 'pr_dhl_dp_order', $response->orderId );
+				$item_wc_order->save();
 			}
 		}
 

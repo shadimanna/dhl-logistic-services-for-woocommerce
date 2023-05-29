@@ -7,7 +7,7 @@
  * Author URI: http://dhl.com/
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
- * Version: 3.4.1
+ * Version: 3.4.2
  * Tested up to: 6.2
  * WC requires at least: 3.0
  * WC tested up to: 7.7
@@ -38,7 +38,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "3.4.1";
+	private $version = "3.4.2";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -115,6 +115,7 @@ class PR_DHL_WC {
 		// add_action( 'init', array( $this, 'init' ) );
 		// add_action( 'plugins_loaded', array( $this, 'init' ) );
         add_action( 'init', array( $this, 'load_plugin' ), 0 );
+		add_action( 'before_woocommerce_init', array( $this, 'declare_wc_hpos_compatibility' ), 10 );
     }
 
 	/**
@@ -296,6 +297,15 @@ class PR_DHL_WC {
 		}
 
 		return $this->shipping_dhl_product;
+	}
+
+	/**
+	 * Declare WooCommerce HPOS feature compatibility.
+	 */
+	public function declare_wc_hpos_compatibility() {
+		if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', PR_DHL_PLUGIN_FILE, true );
+		}
 	}
 
 	/**

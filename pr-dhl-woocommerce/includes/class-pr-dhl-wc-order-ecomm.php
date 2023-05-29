@@ -1,4 +1,5 @@
 <?php
+use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -297,9 +298,11 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 	}
 
 	public function add_order_label_column_content( $column ) {
-		global $post;
+		global $post, $theorder;
 
-		$order_id = $post->ID;
+		$order_id = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+			? $theorder->get_id()
+			: $post->ID;
 
 		if ( $order_id ) {
 			if( 'dhl_label_created' === $column ) {
@@ -328,7 +331,8 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 	}
 
 	private function get_hangover_status( $order_id ) {
-		$handover = get_post_meta( $order_id, '_pr_shipment_dhl_handover_note', true );
+		$order = wc_get_order( $order_id );
+		$handover = $order->get_meta('_pr_shipment_dhl_handover_note' );
 
 		if( empty( $handover ) ) {
 			return '<strong>&ndash;</strong>';
@@ -517,7 +521,9 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 				array_push( $dhl_products, $dhl_label_product );
 
 				// Add post meta to identify if added to handover or not
-				update_post_meta( $order_id, '_pr_shipment_dhl_handover_note', 1 );
+				$order = wc_get_order( $order_id );
+				$order->update_meta_data( '_pr_shipment_dhl_handover_note', 1 );
+				$order->save();
 			}
 			// There should a unique list of products listed not one for each order!
 			$dhl_products = array_unique($dhl_products);
