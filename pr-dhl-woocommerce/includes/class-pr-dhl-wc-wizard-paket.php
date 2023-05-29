@@ -1,6 +1,6 @@
 <?php
 
-use PR\DHL\Utils\Utils;
+use PR\DHL\Utils\API_Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -43,7 +43,7 @@ class PR_DHL_WC_Wizard_Paket {
 	}
 
 	public function display_wizard() {
-		if ( ! Utils::is_new_merchant() ) {
+		if ( ! API_Utils::is_new_merchant() ) {
 			return;
 		}
 

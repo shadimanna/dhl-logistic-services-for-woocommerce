@@ -28,7 +28,7 @@
  *
  */
 
-use PR\DHL\Utils\Utils;
+use PR\DHL\Utils\API_Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -331,7 +331,7 @@ class PR_DHL_WC {
 				);
 				// wp_localize_script( 'wc-shipment-dhl-paket-settings-js', 'dhl_paket_settings_obj', PR_DHL_WC_Method_Paket::sandbox_info() );
 
-				if ( Utils::is_new_merchant() ) {
+				if ( API_Utils::is_new_merchant() ) {
 					$this->wizard_enqueue_scripts();
 				}
 			}
