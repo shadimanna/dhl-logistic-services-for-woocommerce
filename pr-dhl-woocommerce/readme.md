@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL Paket Germany, WooCommerce, W
 Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 6.2
-Stable tag: 3.4.2
+Stable tag: 3.4.3
 WC requires at least: 3.0
 WC tested up to: 7.7
 License: GPLv2 or later
@@ -75,6 +75,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
+= 3.4.3 =
+* Fix white screen in CPT bulk action
+
 = 3.4.2 =
 * Support for upcoming HPOS changes in WooCommerce
 

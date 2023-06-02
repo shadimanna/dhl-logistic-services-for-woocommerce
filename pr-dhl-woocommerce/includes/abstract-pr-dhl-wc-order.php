@@ -61,7 +61,8 @@ abstract class PR_DHL_WC_Order {
 		add_action( 'admin_footer', array( $this, 'add_order_bulk_actions' ) );
 
 		// process orders bulk actions
-		add_action( 'handle_bulk_actions-edit-shop_order', array( $this, 'process_orders_bulk_actions' ) );
+		add_action( 'load-edit.php', array( $this, 'process_orders_bulk_actions' ) );
+		//add_action( 'handle_bulk_actions-edit-shop_order', array( $this, 'process_orders_bulk_actions' ) );
 		add_action( 'handle_bulk_actions-woocommerce_page_wc-orders', array( $this, 'process_orders_bulk_actions' ) );
 
 		// display admin notices for bulk actions
