@@ -1,4 +1,5 @@
 <?php
+use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 
 if ( ! defined( 'ABSPATH' ) || class_exists( 'PR_DHL_WC_Order_Ecomm', false ) ) {
 	exit;
@@ -59,12 +60,16 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
 		// add AWB Copy Count
 		add_action('manage_posts_extra_tablenav', array( $this, 'add_shop_order_awb_copy' ), 1 );
+		add_action('woocommerce_order_list_table_extra_tablenav', array( $this, 'add_shop_order_awb_copy' ) );
+
 		//add_action('restrict_manage_posts', array( $this, 'add_shop_order_awb_copy' ), 1 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'order_list_awb_script' ), 10 );
 		// add 'Status' orders page column header
 		add_filter( 'manage_edit-shop_order_columns', array( $this, 'add_order_status_column_header' ), 30 );
+		add_filter( 'manage_woocommerce_page_wc-orders_columns', array( $this, 'add_order_status_column_header' ), 30 );
 		// add 'Status Created' orders page column content
 		add_action( 'manage_shop_order_posts_custom_column', array( $this, 'add_order_status_column_content' ) );
+		add_action( 'manage_woocommerce_page_wc-orders_custom_column', array( $this, 'add_order_status_column_content' ), 10, 2 );
 
 		// Add the DHL order meta box
 		add_action( 'add_meta_boxes', array( $this, 'add_dhl_order_meta_box' ), 21 );
@@ -85,43 +90,54 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	}
 
 	public function add_shop_order_awb_copy( $which ){
-		global $pagenow, $typenow;
-	
-		if( 'shop_order' === $typenow && 'edit.php' === $pagenow ) {
-			// Get available countries codes with their states code/name pairs
-			$country_states = WC()->countries->get_allowed_country_states();
-	
-			// Initializing
-			$filter_id   = 'dhl_awb_copy_count';
-			$selected     = isset($_GET[$filter_id])? $_GET[$filter_id] : '';
-			
-			echo '<div class="alignleft actions dhl-awb-filter-container">';
-				echo '<select name="'. esc_attr( $filter_id ) .'" class="dhl-awb-copy-count">';
-					echo '<option value="">'. esc_html__( 'AWB Copy Count', 'pr-dhl-woocommerce' ) . '</option>';
-					// Loop through shipping zones locations array
-					for( $i=1; $i<51; $i++ ){
-						echo '<option value="'. esc_attr( $i ) .'" '. selected( $selected, $i, false ) .'>'. $i .'</option>';
-					}
+		global $typenow, $pagenow, $current_screen;
 
-				echo '</select>';
-				//echo '<input type="submit" name="awb_copy_submit" class="button" value="Submit" />';
-			echo '</div>';
+		$is_orders_list = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+			? ( wc_get_page_screen_id( 'shop-order' ) === $current_screen->id && 'admin.php' === $pagenow )
+			: ( 'shop_order' === $typenow && 'edit.php' === $pagenow  );
+
+		if ( ! $is_orders_list ) {
+			return;
 		}
+
+		// Get available countries codes with their states code/name pairs
+		$country_states = WC()->countries->get_allowed_country_states();
+
+		// Initializing
+		$filter_id   = 'dhl_awb_copy_count';
+		$selected     = isset($_GET[$filter_id])? $_GET[$filter_id] : '';
+
+		echo '<div class="alignleft actions dhl-awb-filter-container">';
+		echo '<select name="'. esc_attr( $filter_id ) .'" class="dhl-awb-copy-count">';
+		echo '<option value="">'. esc_html__( 'AWB Copy Count', 'pr-dhl-woocommerce' ) . '</option>';
+		// Loop through shipping zones locations array
+		for( $i=1; $i<51; $i++ ){
+			echo '<option value="'. esc_attr( $i ) .'" '. selected( $selected, $i, false ) .'>'. $i .'</option>';
+		}
+
+		echo '</select>';
+		//echo '<input type="submit" name="awb_copy_submit" class="button" value="Submit" />';
+		echo '</div>';
 	}
 
 	public function order_list_awb_script( $hook ) {
-		global $typenow, $pagenow;
+		global $typenow, $pagenow, $current_screen;
 
-		if ( 'edit.php' === $hook && 'shop_order' === $typenow ) {
-			
-			wp_enqueue_script(
-				'wc-shipment-dhl-dp-orderlist-js',
-				PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-dp-orderlist.js',
-				array(),
-				PR_DHL_VERSION,
-				true
-			);
+		$is_orders_list = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+			? ( wc_get_page_screen_id( 'shop-order' ) === $current_screen->id && 'admin.php' === $pagenow )
+			: ( 'shop_order' === $typenow && 'edit.php' === $pagenow  );
+
+		if ( ! $is_orders_list ) {
+			return;
 		}
+
+		wp_enqueue_script(
+			'wc-shipment-dhl-dp-orderlist-js',
+			PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-dp-orderlist.js',
+			array(),
+			PR_DHL_VERSION,
+			true
+		);
 	}
 
 	public function add_download_awb_label_endpoint() {
@@ -141,7 +157,8 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 */
 	protected function can_delete_label($order_id) {
 		$dhl_obj = PR_DHL()->get_dhl_factory();
-		$dhl_order_id = get_post_meta( $order_id, 'pr_dhl_dp_order', true );
+		$order = wc_get_order( $order_id );
+		$dhl_order_id = $order->get_meta('pr_dhl_dp_order');
 		$dhl_order = $dhl_obj->api_client->get_order($dhl_order_id);
 		$dhl_order_created = !empty($dhl_order['shipments']);
 
@@ -152,11 +169,14 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 * Adds the DHL order info meta box to the WooCommerce order page.
 	 */
 	public function add_dhl_order_meta_box() {
+		$screen = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+			? wc_get_page_screen_id( 'shop-order' )
+			: 'shop_order';
 		add_meta_box(
 			'woocommerce-dhl-dp-order',
             sprintf( __( '%s Waybill', 'dhl-for-woocommerce' ), $this->service),
 			array( $this, 'dhl_order_meta_box' ),
-			'shop_order',
+			$screen,
 			'side',
 			'high'
 		);
@@ -164,9 +184,9 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
 	public function change_meta_box_title( $text ){
 
-		global $pagenow;
-	
-		if (( $pagenow == 'post.php' ) && (get_post_type() == 'shop_order')) {
+		global $pagenow,$theorder;
+
+		if (( $pagenow == 'post.php' ) && (get_post_type() == 'shop_order') || ( $theorder instanceof WC_Order )) {
 			if( $text == '%s Label & Tracking' ){
 				$text = '%s Label';
 			}
@@ -323,8 +343,10 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			}
 			// Otherwise get the current post ID
 			else {
-				global $post;
-				$wc_order_id = $post->ID;
+				global $post,$theorder;
+				$wc_order_id = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+					? $theorder->get_id()
+					: $post->ID;
 			}
 		}
 
@@ -333,7 +355,9 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
 		// Get the DHL order that this WooCommerce order was submitted in
 		$dhl_obj = PR_DHL()->get_dhl_factory();
-		$dhl_order_id = get_post_meta( $wc_order_id, 'pr_dhl_dp_order', true );
+
+		$order = $theorder ?? wc_get_order( $wc_order_id );
+		$dhl_order_id = $order->get_meta(  'pr_dhl_dp_order' );
 		$dhl_order = $dhl_obj->api_client->get_order($dhl_order_id);
 
 		$dhl_items = $dhl_order['items'];
@@ -519,7 +543,8 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		check_ajax_referer( 'pr_dhl_order_ajax', 'pr_dhl_order_nonce' );
 		$order_id = wc_clean( $_POST[ 'order_id' ] );
 
-		$item_barcode = get_post_meta( $order_id, 'pr_dhl_dp_item_barcode', true );
+		$order = wc_get_order( $order_id );
+		$item_barcode = $order->get_meta('pr_dhl_dp_item_barcode' );
 
 		if ( ! empty( $item_barcode ) ) {
 			PR_DHL()->get_dhl_factory()->api_client->add_item_to_order( $item_barcode, $order_id );
@@ -665,8 +690,9 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		$api_client = PR_DHL()->get_dhl_factory()->api_client;
 
 		// If the order has an associated DHL item ...
-		$dhl_item_id = get_post_meta( $order_id, 'pr_dhl_dp_item_id', true);
-		$item_barcode = get_post_meta( $order_id, 'pr_dhl_dp_item_barcode', true);
+		$order = wc_get_order( $order_id );
+		$dhl_item_id = $order->get_meta('pr_dhl_dp_item_id' );
+		$item_barcode = $order->get_meta('pr_dhl_dp_item_barcode' );
 
 		if ( ! empty( $dhl_item_id ) ) {
 			// Delete it from the API
@@ -677,9 +703,9 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		}
 
 		$api_client->remove_item_from_order( $item_barcode );
-
-		delete_post_meta( $order_id, 'pr_dhl_dp_item_barcode' );
-		delete_post_meta( $order_id, 'pr_dhl_dp_item_id' );
+		$order->delete_meta_data( 'pr_dhl_dp_item_barcode' );
+		$order->delete_meta_data( 'pr_dhl_dp_item_id' );
+		$order->save();
 
 		// continue as usual
 		parent::delete_label_ajax();
@@ -721,7 +747,8 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	protected function get_tracking_link( $order_id )
 	{
 		// Get the item barcode
-		$barcode = get_post_meta( $order_id,'pr_dhl_dp_item_barcode', true );
+		$order = wc_get_order( $order_id );
+		$barcode = $order->get_meta('pr_dhl_dp_item_barcode' );
 		if ( empty( $barcode ) ) {
 			return '';
 		}
@@ -836,10 +863,16 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		return $new_columns;
 	}
 
-	public function add_order_status_column_content( $column ) {
+	public function add_order_status_column_content( $column, $order = null ) {
 		global $post;
 
-		$order_id = $post->ID;
+		try {
+			$order_id = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+				? $order->get_id()
+				: $post->ID;
+		} catch ( Exception $e ) {
+			$order_id = $post->ID;
+		}
 
 		if ( !$order_id ) {
 			return;
@@ -868,8 +901,9 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 * @throws Exception If failed to get the DHL object from the factory.
 	 */
 	private function get_order_status( $order_id ) {
-		$barcode = get_post_meta( $order_id, 'pr_dhl_dp_item_barcode', true );
-		$awb = get_post_meta( $order_id, 'pr_dhl_dp_awb', true );
+		$order = wc_get_order( $order_id );
+		$barcode = $order->get_meta('pr_dhl_dp_item_barcode' );
+		$awb = $order->get_meta('pr_dhl_dp_awb' );
 
 		if ( !empty( $awb ) ) {
 			return self::STATUS_IN_SHIPMENT;
@@ -944,7 +978,8 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			// Ensure the selected orders have a label created, otherwise don't add them to the order
 			
 			foreach ( $order_ids as $order_id ) {
-				$item_barcode = get_post_meta( $order_id, 'pr_dhl_dp_item_barcode', true );
+				$order = wc_get_order( $order_id );
+				$item_barcode = $order->get_meta('pr_dhl_dp_item_barcode' );
 				// If item has no barcode, return the error message
 				if ( empty( $item_barcode ) ) {
 					return __(
@@ -1018,7 +1053,8 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 				}
 
 				// Get the DHL item barcode for this WC order
-				$item_barcode = get_post_meta( $order_id, 'pr_dhl_dp_item_barcode', true );
+				$order = wc_get_order( $order_id );
+				$item_barcode = $order->get_meta('pr_dhl_dp_item_barcode' );
 				// Add the DHL item barcode to the current DHL order
 				$client->add_item_to_order($item_barcode, $order_id);
 			}

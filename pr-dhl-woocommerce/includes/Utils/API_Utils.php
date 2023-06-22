@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @package PR\DHL\Utils;
  */
-class Utils {
+class API_Utils {
 	/**
 	 * Check if its a new merchant.
 	 *

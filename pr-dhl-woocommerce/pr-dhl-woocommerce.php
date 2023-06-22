@@ -7,7 +7,7 @@
  * Author URI: http://dhl.com/
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
- * Version: 3.4.1
+ * Version: 3.4.3
  * Tested up to: 6.2
  * WC requires at least: 3.0
  * WC tested up to: 7.7
@@ -28,7 +28,7 @@
  *
  */
 
-use PR\DHL\Utils\Utils;
+use PR\DHL\Utils\API_Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -38,7 +38,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "3.4.1";
+	private $version = "3.4.3";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -115,6 +115,7 @@ class PR_DHL_WC {
 		// add_action( 'init', array( $this, 'init' ) );
 		// add_action( 'plugins_loaded', array( $this, 'init' ) );
         add_action( 'init', array( $this, 'load_plugin' ), 0 );
+		add_action( 'before_woocommerce_init', array( $this, 'declare_wc_hpos_compatibility' ), 10 );
     }
 
 	/**
@@ -299,6 +300,15 @@ class PR_DHL_WC {
 	}
 
 	/**
+	 * Declare WooCommerce HPOS feature compatibility.
+	 */
+	public function declare_wc_hpos_compatibility() {
+		if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', PR_DHL_PLUGIN_FILE, true );
+		}
+	}
+
+	/**
 	 * Localisation
 	 */
 	public function load_textdomain() {
@@ -331,7 +341,7 @@ class PR_DHL_WC {
 				);
 				// wp_localize_script( 'wc-shipment-dhl-paket-settings-js', 'dhl_paket_settings_obj', PR_DHL_WC_Method_Paket::sandbox_info() );
 
-				if ( Utils::is_new_merchant() ) {
+				if ( API_Utils::is_new_merchant() ) {
 					$this->wizard_enqueue_scripts();
 				}
 			}
