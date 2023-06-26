@@ -954,8 +954,8 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 									'countryCodeOrigin' => $item['country_origin'],
 									'customsTariffNumber' => $item['hs_code'],
 									'amount' => intval( $item['qty'] ),
-									'netWeightInKG' => round( floatval( $item['item_weight'] ), 2 ),
-									'customsValue' => round( floatval( $item['item_value'] ), 2 ),
+									'netWeightInKG' => round( floatval( $item['item_weight'] ), 4 ),
+									'customsValue' => round( floatval( $item['item_value'] ), 4 ),
 								);
 					// $customsDetails = $json_item;
 					array_push($customsDetails, $json_item);
