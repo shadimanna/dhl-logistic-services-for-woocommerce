@@ -1,11 +1,11 @@
 === DHL Shipping Germany for WooCommerce ===
 Contributors: DHL, shadim, utzfu
-Donate link: 
+Donate link:
 Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL Paket Germany, WooCommerce, Woocom, Woo Commerce, Shipping, shiping, label creation, label printing, DHL Paket
 Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 6.2
-Stable tag: 3.4.5
+Stable tag: 3.4.6
 WC requires at least: 3.0
 WC tested up to: 7.8
 License: GPLv2 or later
@@ -18,7 +18,7 @@ The official DHL for WooCommerce plugin allows you to automate your e-commerce o
 
 DHL’s official extension for WooCommerce on WordPress. Manage your national and international shipments easily. The “DHL for WooCommerce” – plugin is compatible with the following DHL service offerings depending on your origin country:
 
-* DHL Paket (Germany) 
+* DHL Paket (Germany)
 * Deutsche Post International (all European countries)
 
 
@@ -41,9 +41,9 @@ The following DHL services are no longer supported by this plugin:
 10. **Return Parcel Handling** allows you to print a return label with a “return address” so your customer can return the shipment easily.
 
 
-== Availability by countries and prerequisites == 
+== Availability by countries and prerequisites ==
 
-Based on your sender country and shipping preference, different access credentials for **DHL Paket, DHL Parcel NL and Deutsche Post International** are required for the configuration: 
+Based on your sender country and shipping preference, different access credentials for **DHL Paket, DHL Parcel NL and Deutsche Post International** are required for the configuration:
 
 **DHL Paket for Germany**: Log in with your business customer portal credentials. (not a customer yet? Click [here](https://www.dhl.de/dhl-kundewerden?source=woocommerce&cid=c_dhloka_de_woocommerce) for **DHL Paket**)
 
@@ -75,6 +75,11 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
+
+= 3.4.6 =
+* Fix fatal error in some environments
+* Update business center url
+
 = 3.4.5 =
 * Fix AWBS bulk labels creation
 
@@ -107,7 +112,7 @@ More detailed instructions on how to set up your store and configure it are cons
 = 3.2.0 =
 * DHL Paket: Add bulk delete labels on orders page
 * DHL Paket: Fix - Disable bulk button after pressed to avoid duplicate label creation.
-* DHL Paket: Fix - Additional setting weight after WC decimal modification 
+* DHL Paket: Fix - Additional setting weight after WC decimal modification
 
 = 3.1.1 =
 * DHL Parcel: Removed DHL Parcel Benelux
@@ -118,7 +123,7 @@ More detailed instructions on how to set up your store and configure it are cons
 
 = 3.0.1 =
 * DHL Parcel: Updated label downloads to now serve from the temporary folder instead of the public folder for additional security and storage usage
- 
+
 = 3.0.0 =
 * DHL Paket: Added Postal Delivered Duty Paid (PDDP) service
 * DHL Paket: Added support for EU exceptions that require customs e.g. Canary Islands
@@ -130,7 +135,7 @@ More detailed instructions on how to set up your store and configure it are cons
 = 2.9.3 =
 * DHL Parcel: Added a new service option: Secure delivery by code
 * DHL Parcel: Added an option to show Same Day Delivery as a separate shipping method when delivery times are enabled
- 
+
 = 2.9.2 =
 * DHL Parcel: Added a setting to automatically enable the service: send a message to recipient
 * DHL Parcel: Improved street and housenumber parsing
@@ -169,19 +174,19 @@ More detailed instructions on how to set up your store and configure it are cons
 = 2.8.12 =
 * DHL Paket: Fix Shipper Address, House Number not allowing a letter
 * DHL Paket: Fix Default Premium setting when creating international labels in bulk
- 
+
 = 2.8.11 =
 * DHL Parcel: Updated tracking url for Belgium
 * DHL Parcel: Updated product-based automatic mailbox selection to work with areas where mailbox delivery is not available when used with bulk actions
 * DHL Parcel: Fixed an issue where product-based automatic mailbox selection is being applied to sequential orders when used in a bulk action
- 
+
 = 2.8.10 =
 * DHL Parcel: Fixed a bug with pages not loading when DHL for WooCommerce and DHL Parcel for WooCommerce are both activated
- 
+
 = 2.8.9 =
 * DHL Parcel: Updated migration notice text
 * DHL Parcel: Migration notice made translatable
- 
+
 = 2.8.8 =
 * DHL Parcel: Added a migration notification for current users
 * DHL Parcel: Updated listing tags
@@ -207,7 +212,7 @@ More detailed instructions on how to set up your store and configure it are cons
 = 2.8.3 =
 * DHL Parcel: Fixed a deprecation warning on sorted package sized in the label creation screen for PHP 8 compatibility
 * DHL Parcel: Fixed a reference warning in the label creation screen for PHP 8 compatibility
- 
+
 = 2.8.2 =
 * DHL Paket: Fix drop-off points. Switched to Unified REST API for drop-off points.
 * DHL Paket: Remove PDFMerge unnecessary fonts
@@ -229,7 +234,7 @@ More detailed instructions on how to set up your store and configure it are cons
 * DHL Paket: Unify Pickup API call when selecting multiple orders to be picked up
 * DHL Paket: Add new label formats to settings
 * DHL Paket: Fix payment gateway conflict issue with frontend services
- 
+
 = 2.7.5 =
 * DHL Parcel: Small fix for ServicePoint locator in checkout
 = 2.7.4 =
@@ -245,14 +250,14 @@ More detailed instructions on how to set up your store and configure it are cons
 
 = 2.7.2 =
 * DHL Parcel: Fixed an issue with reference values not loading correctly
- 
+
 = 2.7.1 =
 * DHL Parcel: Changed evening delivery times text to 17.30 - 22:00
 * DHL Parcel: Add order number in REFERENCE2 and add a filter to change it programmatically
 
 = 2.7.0 =
 * DHL Paket: Add DHL Pickup request option in order bulk actions
- 
+
 = 2.6.2 =
 * DHL Parcel: Added ServicePoint information for order completion mail
 
@@ -281,10 +286,10 @@ More detailed instructions on how to set up your store and configure it are cons
 
 = 2.5.10 =
 * DHL Paket: Fix tracking link
- 
+
 = 2.5.9 =
 * DHL Parcel: Fixed an issue where decimals were not calculated correctly in conditional rules for delivery options
- 
+
 = 2.5.8 =
 * DHL Parcel: Added a new bulk setting to print all labels with Same Day Delivery
 * DHL Parcel: Added a product setting to automatically use the parcel type mailbox based on conditions
@@ -292,7 +297,7 @@ More detailed instructions on how to set up your store and configure it are cons
 * DHL Parcel: Added snippet information to the settings interface for custom order numbers
 * DHL Parcel: Updated translation
 * DHL Parcel: Fixed an issue where ServicePoint Locator isn’t loaded depending on shipping zones
- 
+
 = 2.5.7 =
 * DHL: Add compatibility with Microsoft Server for label creation
 * DHL Paket: Skip virtual variation products
@@ -306,7 +311,7 @@ More detailed instructions on how to set up your store and configure it are cons
 
 = 2.5.5 =
 * DHL Paket: Skip sending virtual ordered item (products) to DHL
- 
+
 = 2.5.4 =
 * DHL Paket: Change business portal sign up link
 
@@ -339,7 +344,7 @@ More detailed instructions on how to set up your store and configure it are cons
 * DHL Paket: Fix 'streetName' soap error for Packstation address
 
 = 2.4.1 =
-* DHL Paket: Fix array illegal offset issue i.e. 'tracking_number' 
+* DHL Paket: Fix array illegal offset issue i.e. 'tracking_number'
 
 = 2.4 =
 * DHL Paket: Add support for multiple packages per order
@@ -350,7 +355,7 @@ More detailed instructions on how to set up your store and configure it are cons
 * DHL Paket: Add validation on shipper reference field when logo setting is checked
 * DHL Paket: Flush rewrite rules to avoid manually doing it
 * Deutsche Post: Add Sender and Importer customs reference fields
-* Deutsche Post: Round grams to nearest integer 
+* Deutsche Post: Round grams to nearest integer
 
 = 2.3 =
 * Deutsche Post: Add "Paket Priority"
@@ -358,10 +363,10 @@ More detailed instructions on how to set up your store and configure it are cons
 * Deutsche Post: Add product options; country of origin, HS code and customs description
 * Deutsche Post: Fixed non-EU labels merging with EU labels
 * Deutsche Post: Fixed “contentpiecevalue” to include quantity
- 
+
 = 2.2.10 =
 * DHL Parcel: Fixed an issue where the DPI module was not loading on certain pages
- 
+
 = 2.2.9 =
 * DHL Parcel: Fixed an issue with certain settings not being able to save with certain themes
 
@@ -373,7 +378,7 @@ More detailed instructions on how to set up your store and configure it are cons
 * DHL Paket: Fix exclusion of transfer days issue in German language
 
 = 2.2.6 =
-* DHL Paket: Added {pr_dhl_tracking_note} replace placeholder for WC emails. This adds the tracking note within an email. 
+* DHL Paket: Added {pr_dhl_tracking_note} replace placeholder for WC emails. This adds the tracking note within an email.
 * DHL Paket: Added [pr_dhl_tracking_note order_id="12345"] shortcode to display tracking note info for a given order id.
 * DHL Paket: Added [pr_dhl_tracking_link order_id="12345"] shortcode to display tracking link for a given order id.
 * DHL Paket: Add spacing for tracking note display.
@@ -383,7 +388,7 @@ More detailed instructions on how to set up your store and configure it are cons
 
 = 2.2.5 =
 * DHL Parcel: Added a fallback notice for switching between DHL Parcel and Deutsche Post International
- 
+
 = 2.2.4 =
 * DHL Parcel: Improved mailpost bulk processing
 
@@ -783,7 +788,7 @@ More detailed instructions on how to set up your store and configure it are cons
 
 = 1.0.2 =
 * Bug fix - DHL Paket: Fix "streetNumber" SOAP error, by assuming that the last part of "Address 1" is the street number and sending separately
-* Bug fix - DHL Paket: Allow characters in "Street Address Number" in DHL Paket settings panel 
+* Bug fix - DHL Paket: Allow characters in "Street Address Number" in DHL Paket settings panel
 
 = 1.0.1 =
 * Bug fix - DHL Paket: Fix duplicate payment details in thank you page and email
