@@ -93,7 +93,7 @@ class PR_DHL_WC_Wizard_Paket {
 							<div class="wizard-step" data-title="Step 3">
 								<h4 class="wizard-title"><?php _e( 'API Settings', 'dhl-for-woocommerce' ); ?></h4>
 								<div class="wizard-description">
-									<?php echo sprintf( __( 'Please configure your access towards the DHL Paket APIs by means of authentication. Your username for the DHL business customer portal. Please note the lower case and test your access data in advance at <a href="%s">here</a>.', 'dhl-for-woocommerce' ), 'https://www.dhl-geschaeftskundenportal.de/' ); ?>
+									<?php echo sprintf( __( 'Please configure your access towards the DHL Paket APIs by means of authentication. Your username for the DHL business customer portal. Please note the lower case and test your access data in advance at <a href="%s">here</a>.', 'dhl-for-woocommerce' ), PR_DHL_PAKET_BUSSINESS_PORTAL ); ?>
 								</div>
 								<div class="form-group">
 									<input type="text" name="dhl_api_user" class="form-control required wizard-dhl-field" id="wizard_dhl_api_user" placeholder="<?php _e( 'Username', 'dhl-for-woocommerce' ); ?>">

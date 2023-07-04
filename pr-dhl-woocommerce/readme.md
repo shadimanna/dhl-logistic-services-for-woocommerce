@@ -5,9 +5,9 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL Paket Germany, WooCommerce, W
 Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 6.2
-Stable tag: 3.4.3
+Stable tag: 3.4.6
 WC requires at least: 3.0
-WC tested up to: 7.7
+WC tested up to: 7.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -75,6 +75,17 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
+
+= 3.4.6 =
+* Fix fatal error in some environments
+* Update business center url
+
+= 3.4.5 =
+* Fix AWBS bulk labels creation
+
+= 3.4.4 =
+* Round customs item weight to 4 digits
+
 = 3.4.3 =
 * Fix white screen in CPT bulk action
 

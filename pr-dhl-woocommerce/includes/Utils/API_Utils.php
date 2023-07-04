@@ -23,6 +23,13 @@ class API_Utils {
 	 * @return bool.
 	 */
 	public static function is_new_merchant() {
+		/*
+		 * Only for Packet
+		 */
+		if ( 'DE' !== PR_DHL()->get_base_country() ) {
+			return  false;
+		}
+
 		return empty( get_option( 'woocommerce_pr_dhl_paket_settings', array() ) );
 	}
 
