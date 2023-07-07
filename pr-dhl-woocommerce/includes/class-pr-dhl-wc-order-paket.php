@@ -1,6 +1,4 @@
 <?php
-use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
-
 use PR\DHL\REST_API\Parcel_DE\Item_Info;
 use PR\DHL\Utils\API_Utils;
 
@@ -956,9 +954,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		global $post;
 
 		try {
-			$order_id = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
-				? $order->get_id()
-				: $post->ID;
+			$order_id = API_Utils::is_HPOS() ? $order->get_id() : $post->ID;
 		} catch ( Exception $e ) {
 			$order_id = $post->ID;
 		}
@@ -1180,7 +1176,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	public function bulk_actions_fields_pickup_request() {
 		global $typenow, $pagenow, $current_screen;
 
-		$is_orders_list = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+		$is_orders_list = API_Utils::is_HPOS()
 			? ( wc_get_page_screen_id( 'shop-order' ) === $current_screen->id && 'admin.php' === $pagenow )
 			: ( 'shop_order' === $typenow && 'edit.php' === $pagenow  );
 
@@ -1212,7 +1208,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	public function modal_content_fields_pickup_request() {
 		global $typenow, $pagenow, $current_screen;
 
-		$is_orders_list = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+		$is_orders_list = API_Utils::is_HPOS()
 			? ( wc_get_page_screen_id( 'shop-order' ) === $current_screen->id && 'admin.php' === $pagenow )
 			: ( 'shop_order' === $typenow && 'edit.php' === $pagenow  );
 

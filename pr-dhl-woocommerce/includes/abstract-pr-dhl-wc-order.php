@@ -1,6 +1,4 @@
 <?php
-use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
-
 use PR\DHL\Utils\API_Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -84,9 +82,7 @@ abstract class PR_DHL_WC_Order {
 	 * @access public
 	 */
 	public function add_meta_box() {
-		$screen = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
-			? wc_get_page_screen_id( 'shop-order' )
-			: 'shop_order';
+		$screen = API_Utils::is_HPOS() ? wc_get_page_screen_id( 'shop-order' ) : 'shop_order';
 		add_meta_box( 'woocommerce-shipment-dhl-label', sprintf( __( '%s Label & Tracking', 'dhl-for-woocommerce' ), $this->service), array( $this, 'meta_box' ), $screen, 'side', 'high' );
 	}
 
@@ -98,9 +94,8 @@ abstract class PR_DHL_WC_Order {
 	public function meta_box() {
 		global $woocommerce, $post, $theorder;
 
-		$order_id = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
-			? $theorder->get_id()
-			: $post->ID;
+		$order_id = API_Utils::is_HPOS() ? $theorder->get_id() : $post->ID;
+
 		// Get saved label input fields or set default values
 		$dhl_label_items = $this->get_dhl_label_items( $order_id );
 
@@ -959,9 +954,9 @@ abstract class PR_DHL_WC_Order {
 	public function add_order_bulk_actions() {
 		global $typenow, $pagenow, $current_screen;
 
-		$is_orders_list = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
-			? ( wc_get_page_screen_id( 'shop-order' ) === $current_screen->id && 'admin.php' === $pagenow )
-			: ( 'shop_order' === $typenow && 'edit.php' === $pagenow  );
+		$is_orders_list = API_Utils::is_HPOS()
+				? ( wc_get_page_screen_id( 'shop-order' ) === $current_screen->id && 'admin.php' === $pagenow )
+				: ( 'shop_order' === $typenow && 'edit.php' === $pagenow );
 
 		if ( ! $is_orders_list ) {
 			return;
@@ -1068,7 +1063,7 @@ abstract class PR_DHL_WC_Order {
 
 		$screens = array( 'shop_order', 'edit-shop_order' );
 		try {
-			if ( wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled() ) {
+			if ( API_Utils::is_HPOS() ) {
 				$screens[] = wc_get_page_screen_id( 'shop-order' );
 			}
 		} catch ( Exception $e ) {

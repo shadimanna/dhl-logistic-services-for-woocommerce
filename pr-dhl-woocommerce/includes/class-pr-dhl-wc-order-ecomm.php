@@ -1,5 +1,5 @@
 <?php
-use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
+use PR\DHL\Utils\API_Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -300,9 +300,7 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 	public function add_order_label_column_content( $column ) {
 		global $post, $theorder;
 
-		$order_id = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
-			? $theorder->get_id()
-			: $post->ID;
+		$order_id = API_Utils::is_HPOS() ? $theorder->get_id() : $post->ID;
 
 		if ( $order_id ) {
 			if( 'dhl_label_created' === $column ) {
