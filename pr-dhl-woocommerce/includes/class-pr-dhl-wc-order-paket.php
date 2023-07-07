@@ -953,11 +953,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	public function add_order_label_column_content( $column, $order = null ) {
 		global $post;
 
-		try {
-			$order_id = API_Utils::is_HPOS() ? $order->get_id() : $post->ID;
-		} catch ( Exception $e ) {
-			$order_id = $post->ID;
-		}
+		$order_id = API_Utils::is_HPOS() ? $order->get_id() : $post->ID;
 
 		if ( $order_id ) {
 			if( 'dhl_label_created' === $column ) {

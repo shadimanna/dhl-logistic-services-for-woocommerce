@@ -1062,12 +1062,8 @@ abstract class PR_DHL_WC_Order {
 		global $current_screen;
 
 		$screens = array( 'shop_order', 'edit-shop_order' );
-		try {
-			if ( API_Utils::is_HPOS() ) {
-				$screens[] = wc_get_page_screen_id( 'shop-order' );
-			}
-		} catch ( Exception $e ) {
-
+		if ( API_Utils::is_HPOS() ) {
+			$screens[] = wc_get_page_screen_id( 'shop-order' );
 		}
 
 		if ( isset( $current_screen->id ) && in_array( $current_screen->id, $screens ) ) {
