@@ -24,8 +24,11 @@ jQuery( function( $ ) {
 
 			$( '#woocommerce-shipment-dhl-label' )
 				.on( 'change', '#pr_dhl_product', this.validate_product_return )
-				.on( 'change', '#pr_dhl_product', this.enable_disable_paket_international_fields );
+				.on( 'change', '#pr_dhl_product', this.enable_disable_paket_international_fields )
+				.on( 'change', '#pr_dhl_product', this.enable_disable_signature_service );
+
 			wc_shipment_dhl_label_items.enable_disable_paket_international_fields();
+			wc_shipment_dhl_label_items.enable_disable_signature_service();
 
 			$( '#woocommerce-shipment-dhl-label' )
 				.on( 'change', 'select#pr_dhl_total_packages', this.process_package_action );
@@ -546,7 +549,23 @@ jQuery( function( $ ) {
 			} else {
 				$('#pr_dhl_duties').removeAttr('disabled');
 			}
-		}
+		},
+
+		enable_disable_signature_service: function () {
+			// Only relevant for international so check if exists
+			if ( ! $( '#pr_dhl_signature_service' ).length ) {
+				return;
+			}
+
+			var selected_product = $( '#pr_dhl_product' ).val();
+
+			if ( 'V01PAK' !== selected_product ) {
+				$('#pr_dhl_signature_service').prop( 'checked', false ).change();
+				$('#pr_dhl_signature_service').prop('disabled', 'disabled');
+			} else {
+				$('#pr_dhl_signature_service').removeAttr('disabled');
+			}
+		},
 	};
 
 	wc_shipment_dhl_label_items.init();
