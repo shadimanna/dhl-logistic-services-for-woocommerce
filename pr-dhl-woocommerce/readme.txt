@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL Paket Germany, WooCommerce, W
 Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 6.2
-Stable tag: 3.4.6
+Stable tag: 3.5.0
 WC requires at least: 3.0
 WC tested up to: 7.8
 License: GPLv2 or later
@@ -24,7 +24,7 @@ DHL’s official extension for WooCommerce on WordPress. Manage your national an
 
 The following DHL services are no longer supported by this plugin:
 
-* DHL eCommerce Asia (TH, MY): Please use instead the following plugin [here]( https://wordpress.org/plugins/dhl-ecommerce-asia-for-woocommerce/ ).
+* DHL eCommerce Asia (TH, MY): Please use instead the following plugin [here]( https://wordpress.org/plugins/dhl-ecommerce-apac/ ).
 * DHL Parcel for WooCommerce (for online stores that ship orders from the Benelux region): Please use instead the following plugin [here](https://wordpress.org/plugins/dhlpwc/).
 
 == Features ==
@@ -75,6 +75,10 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
+
+= 3.5.0 =
+* Add Signature service
+* Fix PHP warnings
 
 = 3.4.6 =
 * Fix fatal error in some environments
