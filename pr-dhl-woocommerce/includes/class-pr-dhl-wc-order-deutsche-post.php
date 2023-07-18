@@ -859,18 +859,14 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		return $new_columns;
 	}
 
-	public function add_order_status_column_content( $column, $order = null ) {
-		global $post;
+	public function add_order_status_column_content( $column, $post_id_or_order ) {
+		$order = ( $post_id_or_order instanceof WC_Order ) ? $post_id_or_order : wc_get_order( $post_id_or_order );
 
-		try {
-			$order_id = API_Utils::is_HPOS() ? $order->get_id() : $post->ID;
-		} catch ( Exception $e ) {
-			$order_id = $post->ID;
-		}
-
-		if ( !$order_id ) {
+		if ( ! ( $order instanceof WC_Order ) ) {
 			return;
 		}
+
+		$order_id = $order->get_id();
 
 		if ( 'dhl_dp_status' === $column ) {
 			$status = $this->get_order_status( $order_id );
