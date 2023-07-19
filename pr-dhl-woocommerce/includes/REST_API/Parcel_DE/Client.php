@@ -50,8 +50,6 @@ class Client extends API_Client {
 			return $labels_data;
 		}
 
-
-
 		// Otherwise throw an exception using the response's error messages
 		$message = $this->get_response_error_message( $response );
 
@@ -442,6 +440,10 @@ class Client extends API_Client {
 	 */
 	protected function get_response_error_message( Response $response ) {
 		$multiple_errors_list = array();
+
+		if ( ! is_array( $response->body->items ) ) {
+			return  $response->body;
+		}
 
 		foreach ( $response->body->items as $item ) {
 			$errors_list = $this->get_item_error_message( $item );

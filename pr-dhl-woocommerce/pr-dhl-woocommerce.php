@@ -7,7 +7,7 @@
  * Author URI: http://dhl.com/
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
- * Version: 3.4.6
+ * Version: 3.5.0
  * Tested up to: 6.2
  * WC requires at least: 3.0
  * WC tested up to: 7.8
@@ -38,7 +38,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "3.4.6";
+	private $version = "3.5.0";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -317,7 +317,7 @@ class PR_DHL_WC {
 
 	public function dhl_enqueue_scripts() {
 		// Enqueue Styles
-		wp_enqueue_style( 'wc-shipment-dhl-label-css', PR_DHL_PLUGIN_DIR_URL . '/assets/css/pr-dhl-admin.css', array(), '1.1' );
+		wp_enqueue_style( 'wc-shipment-dhl-label-css', PR_DHL_PLUGIN_DIR_URL . '/assets/css/pr-dhl-admin.css', array(), PR_DHL_VERSION );
 
 		// Enqueue Scripts
         $screen    = get_current_screen();
@@ -377,7 +377,7 @@ class PR_DHL_WC {
 
 	/**
 	 * Add class in admin body tag.
-	 * 
+	 *
 	 * @param $classes string Registered classes.
 	 *
 	 * @return $classes
@@ -392,7 +392,7 @@ class PR_DHL_WC {
 				$classes .= ' pr_dhl_paket';
 			}
 		}
-		
+
 		return $classes;
 	}
 

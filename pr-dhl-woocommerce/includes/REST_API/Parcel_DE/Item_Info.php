@@ -755,6 +755,9 @@ class Item_Info {
 			'return_address_enabled'    => array(
 				'rename' => 'dhlRetoure',
 			),
+			'signature_service'    => array(
+				'rename' => 'signedForByRecipient',
+			),
 		);
 	}
 
