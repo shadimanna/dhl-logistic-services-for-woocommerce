@@ -1,6 +1,4 @@
 <?php
-use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
-
 use PR\DHL\REST_API\Parcel_DE\Item_Info;
 use PR\DHL\Utils\API_Utils;
 
@@ -33,7 +31,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		add_filter( 'manage_woocommerce_page_wc-orders_columns', array( $this, 'add_order_label_column_header' ), 10 );
 
 		// Add 'Label Created' orders page column content.
-		add_action( 'manage_shop_order_posts_custom_column', array( $this, 'add_order_label_column_content' ) );
+		add_action( 'manage_shop_order_posts_custom_column', array( $this, 'add_order_label_column_content' ), 10, 2 );
 		add_action( 'manage_woocommerce_page_wc-orders_custom_column', array( $this, 'add_order_label_column_content' ), 10, 2 );
 
 		add_action( 'pr_shipping_dhl_label_created', array( $this, 'change_order_status' ), 10, 1 );
@@ -962,27 +960,22 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		return $new_columns;
 	}
 
-	public function add_order_label_column_content( $column, $order = null ) {
-		global $post;
+	public function add_order_label_column_content( $column, $post_id_or_order ) {
+		$order = ( $post_id_or_order instanceof WC_Order ) ? $post_id_or_order : wc_get_order( $post_id_or_order );
 
-		try {
-			$order_id = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
-				? $order->get_id()
-				: $post->ID;
-		} catch ( Exception $e ) {
-			$order_id = $post->ID;
+		if ( ! ( $order instanceof WC_Order ) ) {
+			return;
 		}
 
-		if ( $order_id ) {
-			if( 'dhl_label_created' === $column ) {
-				echo $this->get_print_status( $order_id );
-			}
+		$order_id = $order->get_id();
 
-			if( 'dhl_tracking_number' === $column ) {
-				$tracking_link = $this->get_tracking_link( $order_id );
-				echo empty($tracking_link) ? '<strong>&ndash;</strong>' : $tracking_link;
-			}
+		if ( 'dhl_label_created' === $column ) {
+			echo $this->get_print_status( $order_id );
+		}
 
+		if ( 'dhl_tracking_number' === $column ) {
+			$tracking_link = $this->get_tracking_link( $order_id );
+			echo empty( $tracking_link ) ? '<strong>&ndash;</strong>' : $tracking_link;
 		}
 	}
 
@@ -1190,7 +1183,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	public function bulk_actions_fields_pickup_request() {
 		global $typenow, $pagenow, $current_screen;
 
-		$is_orders_list = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+		$is_orders_list = API_Utils::is_HPOS()
 			? ( wc_get_page_screen_id( 'shop-order' ) === $current_screen->id && 'admin.php' === $pagenow )
 			: ( 'shop_order' === $typenow && 'edit.php' === $pagenow  );
 
@@ -1222,7 +1215,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 	public function modal_content_fields_pickup_request() {
 		global $typenow, $pagenow, $current_screen;
 
-		$is_orders_list = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+		$is_orders_list = API_Utils::is_HPOS()
 			? ( wc_get_page_screen_id( 'shop-order' ) === $current_screen->id && 'admin.php' === $pagenow )
 			: ( 'shop_order' === $typenow && 'edit.php' === $pagenow  );
 
