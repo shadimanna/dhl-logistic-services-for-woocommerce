@@ -7,7 +7,7 @@
  * Author URI: http://dhl.com/
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
- * Version: 3.4.7
+ * Version: 3.4.6
  * Tested up to: 6.2
  * WC requires at least: 3.0
  * WC tested up to: 7.8
