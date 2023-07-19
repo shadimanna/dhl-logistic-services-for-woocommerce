@@ -52,6 +52,11 @@ class API_Utils {
 	 * @return bool.
 	 */
 	public static function is_HPOS() {
+		// if WC older than 4.4.0
+		if ( ! function_exists( 'wc_get_container' ) ) {
+			return false;
+		}
+
 		try {
 			$wc_container = wc_get_container()->get( CustomOrdersTableController::class );
 
