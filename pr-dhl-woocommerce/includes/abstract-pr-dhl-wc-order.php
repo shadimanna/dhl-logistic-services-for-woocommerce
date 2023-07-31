@@ -92,7 +92,8 @@ abstract class PR_DHL_WC_Order {
 	 * @access public
 	 */
 	public function meta_box( $post_or_order_object ) {
-		$order_id = ( $post_or_order_object instanceof WC_Order ) ? $post_or_order_object : wc_get_order( $post_or_order_object );
+		$order    = ( $post_or_order_object instanceof WC_Order ) ? $post_or_order_object : wc_get_order( $post_or_order_object );
+		$order_id = $order->get_id();
 
 		// Get saved label input fields or set default values
 		$dhl_label_items = $this->get_dhl_label_items( $order_id );
