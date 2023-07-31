@@ -211,17 +211,10 @@ class PR_DHL_WC {
 	* Determine which plugin to load.
 	*/
 	public function load_plugin() {
-		// Checks if WooCommerce is installed.
-		if ( class_exists( 'WC_Shipping_Method' ) ) {
-			$this->base_country_code = $this->get_base_country();
+		$this->base_country_code = $this->get_base_country();
 
-			$this->includes();
-			$this->init_hooks();
-		} else {
-			// Throw an admin error informing the user this plugin needs WooCommerce to function
-			add_action( 'admin_notices', array( $this, 'notice_wc_required' ) );
-		}
-
+		$this->includes();
+		$this->init_hooks();
 	}
 
     /**
