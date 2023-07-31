@@ -116,12 +116,12 @@ class PR_DHL_WC {
 		// add_action( 'plugins_loaded', array( $this, 'init' ) );
 		if ( class_exists( 'WC_Shipping_Method' ) ) {
 			$this->define_constants();
+			add_action( 'init', array( $this, 'load_plugin' ), 0 );
+			add_action( 'before_woocommerce_init', array( $this, 'declare_wc_hpos_compatibility' ), 10 );
 		} else {
 			// Throw an admin error informing the user this plugin needs WooCommerce to function
 			add_action( 'admin_notices', array( $this, 'notice_wc_required' ) );
 		}
-        add_action( 'init', array( $this, 'load_plugin' ), 0 );
-		add_action( 'before_woocommerce_init', array( $this, 'declare_wc_hpos_compatibility' ), 10 );
     }
 
 	/**
