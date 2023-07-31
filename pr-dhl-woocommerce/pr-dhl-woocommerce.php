@@ -114,11 +114,6 @@ class PR_DHL_WC {
 	public function __construct() {
 		// add_action( 'init', array( $this, 'init' ) );
 		// add_action( 'plugins_loaded', array( $this, 'init' ) );
-		if ( ! class_exists( 'WooCommerce' ) ) {
-			add_action( 'admin_notices', array( $this, 'notice_wc_required' ) );
-			return;
-		}
-
 		add_action( 'init', array( $this, 'load_plugin' ), 0 );
 		add_action( 'before_woocommerce_init', array( $this, 'declare_wc_hpos_compatibility' ), 10 );
 	}
@@ -210,6 +205,11 @@ class PR_DHL_WC {
 	* Determine which plugin to load.
 	*/
 	public function load_plugin() {
+		if ( ! class_exists( 'WooCommerce' ) ) {
+			add_action( 'admin_notices', array( $this, 'notice_wc_required' ) );
+			return;
+		}
+
 		$this->base_country_code = $this->get_base_country();
 
 		$this->define_constants();
