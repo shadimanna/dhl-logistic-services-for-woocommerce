@@ -7,7 +7,7 @@
  * Author URI: http://dhl.com/
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
- * Version: 3.5.3
+ * Version: 3.5.4
  * Tested up to: 6.2
  * WC requires at least: 3.0
  * WC tested up to: 7.9
@@ -38,7 +38,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "3.5.3";
+	private $version = "3.5.4";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -114,8 +114,14 @@ class PR_DHL_WC {
 	public function __construct() {
 		// add_action( 'init', array( $this, 'init' ) );
 		// add_action( 'plugins_loaded', array( $this, 'init' ) );
-        add_action( 'init', array( $this, 'load_plugin' ), 0 );
-		add_action( 'before_woocommerce_init', array( $this, 'declare_wc_hpos_compatibility' ), 10 );
+		if ( class_exists( 'WC_Shipping_Method' ) ) {
+			$this->define_constants();
+			add_action( 'init', array( $this, 'load_plugin' ), 0 );
+			add_action( 'before_woocommerce_init', array( $this, 'declare_wc_hpos_compatibility' ), 10 );
+		} else {
+			// Throw an admin error informing the user this plugin needs WooCommerce to function
+			add_action( 'admin_notices', array( $this, 'notice_wc_required' ) );
+		}
     }
 
 	/**
@@ -205,18 +211,10 @@ class PR_DHL_WC {
 	* Determine which plugin to load.
 	*/
 	public function load_plugin() {
-		// Checks if WooCommerce is installed.
-		if ( class_exists( 'WC_Shipping_Method' ) ) {
-			$this->base_country_code = $this->get_base_country();
+		$this->base_country_code = $this->get_base_country();
 
-			$this->define_constants();
-			$this->includes();
-			$this->init_hooks();
-		} else {
-			// Throw an admin error informing the user this plugin needs WooCommerce to function
-			add_action( 'admin_notices', array( $this, 'notice_wc_required' ) );
-		}
-
+		$this->includes();
+		$this->init_hooks();
 	}
 
     /**
