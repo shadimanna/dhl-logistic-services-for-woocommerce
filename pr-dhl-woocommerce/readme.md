@@ -63,7 +63,7 @@ Based on your sender country and shipping preference, different access credentia
 
 More detailed instructions on how to set up your store and configure it are consolidated on on the page [here](https://github.com/shadimanna/dhl-logistic-services-for-woocommerce/wiki/Documentation)
 
-== Additional Information ==  
+== Additional Information ==
 * A “Google Maps API Key” is required if you wish to display DHL locations on a map for your customers.
 
 == Screenshots ==
