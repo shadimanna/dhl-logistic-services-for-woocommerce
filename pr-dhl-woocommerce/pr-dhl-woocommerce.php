@@ -114,15 +114,9 @@ class PR_DHL_WC {
 	public function __construct() {
 		// add_action( 'init', array( $this, 'init' ) );
 		// add_action( 'plugins_loaded', array( $this, 'init' ) );
-		if ( class_exists( 'WC_Shipping_Method' ) ) {
-			$this->define_constants();
-			add_action( 'init', array( $this, 'load_plugin' ), 0 );
-			add_action( 'before_woocommerce_init', array( $this, 'declare_wc_hpos_compatibility' ), 10 );
-		} else {
-			// Throw an admin error informing the user this plugin needs WooCommerce to function
-			add_action( 'admin_notices', array( $this, 'notice_wc_required' ) );
-		}
-    }
+		add_action( 'init', array( $this, 'load_plugin' ), 0 );
+		add_action( 'before_woocommerce_init', array( $this, 'declare_wc_hpos_compatibility' ), 10 );
+	}
 
 	/**
 	 * Main WooCommerce Shipping DHL Instance.
@@ -211,8 +205,14 @@ class PR_DHL_WC {
 	* Determine which plugin to load.
 	*/
 	public function load_plugin() {
+		if ( ! class_exists( 'WooCommerce' ) ) {
+			add_action( 'admin_notices', array( $this, 'notice_wc_required' ) );
+			return;
+		}
+
 		$this->base_country_code = $this->get_base_country();
 
+		$this->define_constants();
 		$this->includes();
 		$this->init_hooks();
 	}
@@ -302,7 +302,7 @@ class PR_DHL_WC {
 	 */
 	public function declare_wc_hpos_compatibility() {
 		if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
-			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', PR_DHL_PLUGIN_FILE, true );
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
 		}
 	}
 
