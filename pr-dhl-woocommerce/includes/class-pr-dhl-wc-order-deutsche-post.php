@@ -1,5 +1,5 @@
 <?php
-use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
+use PR\DHL\Utils\API_Utils;
 
 if ( ! defined( 'ABSPATH' ) || class_exists( 'PR_DHL_WC_Order_Ecomm', false ) ) {
 	exit;
@@ -68,7 +68,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		add_filter( 'manage_edit-shop_order_columns', array( $this, 'add_order_status_column_header' ), 30 );
 		add_filter( 'manage_woocommerce_page_wc-orders_columns', array( $this, 'add_order_status_column_header' ), 30 );
 		// add 'Status Created' orders page column content
-		add_action( 'manage_shop_order_posts_custom_column', array( $this, 'add_order_status_column_content' ) );
+		add_action( 'manage_shop_order_posts_custom_column', array( $this, 'add_order_status_column_content' ), 10, 2 );
 		add_action( 'manage_woocommerce_page_wc-orders_custom_column', array( $this, 'add_order_status_column_content' ), 10, 2 );
 
 		// Add the DHL order meta box
@@ -92,7 +92,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	public function add_shop_order_awb_copy( $which ){
 		global $typenow, $pagenow, $current_screen;
 
-		$is_orders_list = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+		$is_orders_list = API_Utils::is_HPOS()
 			? ( wc_get_page_screen_id( 'shop-order' ) === $current_screen->id && 'admin.php' === $pagenow )
 			: ( 'shop_order' === $typenow && 'edit.php' === $pagenow  );
 
@@ -123,7 +123,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	public function order_list_awb_script( $hook ) {
 		global $typenow, $pagenow, $current_screen;
 
-		$is_orders_list = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+		$is_orders_list = API_Utils::is_HPOS()
 			? ( wc_get_page_screen_id( 'shop-order' ) === $current_screen->id && 'admin.php' === $pagenow )
 			: ( 'shop_order' === $typenow && 'edit.php' === $pagenow  );
 
@@ -169,9 +169,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 * Adds the DHL order info meta box to the WooCommerce order page.
 	 */
 	public function add_dhl_order_meta_box() {
-		$screen = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
-			? wc_get_page_screen_id( 'shop-order' )
-			: 'shop_order';
+		$screen = API_Utils::is_HPOS() ? wc_get_page_screen_id( 'shop-order' ) : 'shop_order';
 		add_meta_box(
 			'woocommerce-dhl-dp-order',
             sprintf( __( '%s Waybill', 'dhl-for-woocommerce' ), $this->service),
@@ -344,9 +342,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			// Otherwise get the current post ID
 			else {
 				global $post,$theorder;
-				$wc_order_id = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
-					? $theorder->get_id()
-					: $post->ID;
+				$wc_order_id = API_Utils::is_HPOS() ? $theorder->get_id() : $post->ID;
 			}
 		}
 
@@ -863,20 +859,14 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		return $new_columns;
 	}
 
-	public function add_order_status_column_content( $column, $order = null ) {
-		global $post;
+	public function add_order_status_column_content( $column, $post_id_or_order ) {
+		$order = ( $post_id_or_order instanceof WC_Order ) ? $post_id_or_order : wc_get_order( $post_id_or_order );
 
-		try {
-			$order_id = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
-				? $order->get_id()
-				: $post->ID;
-		} catch ( Exception $e ) {
-			$order_id = $post->ID;
-		}
-
-		if ( !$order_id ) {
+		if ( ! ( $order instanceof WC_Order ) ) {
 			return;
 		}
+
+		$order_id = $order->get_id();
 
 		if ( 'dhl_dp_status' === $column ) {
 			$status = $this->get_order_status( $order_id );

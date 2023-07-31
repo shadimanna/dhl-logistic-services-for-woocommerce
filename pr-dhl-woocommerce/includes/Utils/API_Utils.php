@@ -7,6 +7,8 @@
 
 namespace PR\DHL\Utils;
 
+use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -42,5 +44,30 @@ class API_Utils {
 		$settings = get_option( 'woocommerce_pr_dhl_paket_settings', array() );
 
 		return isset( $settings['dhl_default_api'] ) && 'rest-api' === $settings['dhl_default_api'];
+	}
+
+	/**
+	 * Check if HPOS mode is enabled.
+	 *
+	 * @return bool.
+	 */
+	public static function is_HPOS() {
+		// if WC older than 4.4.0
+		if ( ! function_exists( 'wc_get_container' ) ) {
+			return false;
+		}
+
+		try {
+			$wc_container = wc_get_container()->get( CustomOrdersTableController::class );
+
+			// old WC versions compatibility
+			if ( ! is_null( $wc_container ) ) {
+				return $wc_container->custom_orders_table_usage_is_enabled();
+			}
+		} catch ( \Exception $e ) {
+			return false;
+		}
+
+		return false;
 	}
 }
