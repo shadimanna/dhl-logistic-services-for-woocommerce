@@ -14,38 +14,30 @@ if ( ! defined( 'ABSPATH' ) || class_exists( 'PR_DHL_API_Parcel_DE', false ) ) {
 class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	/**
 	 * The URL to the API.
-	 *
-	 * @since [*next-version*]
 	 */
-	const API_URL_PRODUCTION = 'https://api.dhl.com/parcel/de/shipping/';
+	const API_URL_PRODUCTION = 'https://api-eu.dhl.com/parcel/de/shipping/';
 
 	/**
 	 * The URL to the sandbox API.
-	 *
-	 * @since [*next-version*]
 	 */
 	const API_URL_SANDBOX = 'https://api-sandbox.dhl.com/parcel/de/shipping/';
 
 	/**
 	 * The API driver instance.
 	 *
-	 * @since [*next-version*]
-	 *
 	 * @var API_Driver_Interface
 	 */
 	public $api_driver;
+
 	/**
 	 * The API authorization instance.
-	 *
-	 * @since [*next-version*]
 	 *
 	 * @var Auth
 	 */
 	public $api_auth;
+
 	/**
 	 * The API client instance.
-	 *
-	 * @since [*next-version*]
 	 *
 	 * @var Client
 	 */
@@ -53,10 +45,6 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 
 	/**
 	 * Constructor.
-	 *
-	 * @since [*next-version*]
-	 *
-	 * @param string $country_code The country code.
 	 *
 	 * @throws Exception If an error occurred while creating the API driver, auth or client.
 	 */
@@ -73,8 +61,6 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	/**
 	 * Initializes the API client instance.
 	 *
-	 * @since [*next-version*]
-	 *
 	 * @return Client
 	 *
 	 * @throws Exception If failed to create the API client.
@@ -90,8 +76,6 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 
 	/**
 	 * Initializes the API auth instance.
-	 *
-	 * @since [*next-version*]
 	 *
 	 * @return API_Auth_Interface
 	 *
@@ -114,8 +98,6 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	/**
 	 * Retrieves the API URL.
 	 *
-	 * @since [*next-version*]
-	 *
 	 * @return string
 	 *
 	 * @throws Exception If failed to determine if using the sandbox API or not.
@@ -131,8 +113,6 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	/**
 	 * Retrieves the API credentials.
 	 *
-	 * @since [*next-version*]
-	 *
 	 * @return array The client ID and client secret.
 	 *
 	 * @throws Exception If failed to retrieve the API credentials.
@@ -147,9 +127,12 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * Get label.
 	 *
-	 * @since [*next-version*]
+	 * @param $args
+	 *
+	 * @return array
+	 * @throws Exception
 	 */
 	public function get_dhl_label( $args ) {
 		$this->set_arguments( $args );
@@ -211,6 +194,16 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		}
 	}
 
+	/**
+	 * Save label file.
+	 *
+	 * @param $prefix
+	 * @param $order_id
+	 * @param $label_data
+	 *
+	 * @return array
+	 * @throws Exception
+	 */
 	public function save_data_file( $prefix, $order_id, $label_data ) {
 		$data_name = 'dhl-' . $prefix . '-' . $order_id . '.pdf';
 		$data_path = PR_DHL()->get_dhl_label_folder_dir() . $data_name;
@@ -258,6 +251,14 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		return array( 'label_url' => $label_url, 'label_path' => $label_path );
 	}
 
+	/**
+	 * Set request args.
+	 *
+	 * @param $args
+	 *
+	 * @return void
+	 * @throws Exception
+	 */
 	public function set_arguments( $args ) {
 		// Validate set args
 
@@ -519,6 +520,15 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		$this->args = $args;
 	}
 
+	/**
+	 * Validate field.
+	 *
+	 * @param $key
+	 * @param $value
+	 *
+	 * @return void
+	 * @throws Exception
+	 */
 	protected function validate_field( $key, $value ) {
 
 		try {
@@ -543,6 +553,17 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		}
 	}
 
+	/**
+	 * Validate value.
+	 *
+	 * @param $value
+	 * @param $type
+	 * @param $min_len
+	 * @param $max_len
+	 *
+	 * @return void
+	 * @throws Exception
+	 */
 	protected function validate( $value, $type = 'int', $min_len = 0, $max_len = 0 ) {
 
 		switch ( $type ) {
@@ -563,8 +584,12 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		}
 	}
 
+	/**
+	 * API sandbox creds.
+	 *
+	 * @return array
+	 */
 	public function sandbox_info_customer_portal(){
-		//
 		return array(
 			'username' 	=> '3333333333_01',
 			'pass' 		=> 'pass',
