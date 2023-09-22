@@ -17,14 +17,14 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	 *
 	 * @since [*next-version*]
 	 */
-	const API_URL_PRODUCTION = 'https://api-eu.dhl.com/parcel/de/shipping/v2/';
+	const API_URL_PRODUCTION = 'https://api-eu.dhl.com/parcel/de/shipping/';
 
 	/**
 	 * The URL to the sandbox API.
 	 *
 	 * @since [*next-version*]
 	 */
-	const API_URL_SANDBOX = 'https://api-sandbox.dhl.com/parcel/de/shipping/v2/';
+	const API_URL_SANDBOX = 'https://api-sandbox.dhl.com/parcel/de/shipping/';
 
 	/**
 	 * The API driver instance.
