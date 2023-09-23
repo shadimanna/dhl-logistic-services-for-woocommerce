@@ -208,22 +208,20 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 	 */
 	public function get_customer_portal_login() {
 		$is_sandbox = $this->get_setting( 'dhl_sandbox' );
-		$is_sandbox = filter_var($is_sandbox, FILTER_VALIDATE_BOOLEAN);
+		$is_sandbox = filter_var( $is_sandbox, FILTER_VALIDATE_BOOLEAN );
 		if ( $is_sandbox ) {
-			$sandbox = $this->sandbox_info_customer_portal();
-			return array(
-				'username' => $sandbox['username'],
-				'pass' => $sandbox['pass'],
-			);
-			// return array(
-			// 	'username' => $this->get_setting('dhl_api_sandbox_user'),
-			// 	'pass' => $this->get_setting('dhl_api_sandbox_pwd'),
-			// );
+			$sandbox               = $this->sandbox_info_customer_portal();
+			$has_developer_account = $this->get_setting( 'dhl_developer_account', 'no' );
+			$has_developer_account = filter_var( $has_developer_account, FILTER_VALIDATE_BOOLEAN );
 
+			return array(
+				'username' => $has_developer_account ? $this->get_setting( 'dhl_api_sandbox_user' ) : $sandbox['username'],
+				'pass'     => $has_developer_account ? $this->get_setting( 'dhl_api_sandbox_pwd' ) : $sandbox['pass'],
+			);
 		} else {
 			return array(
 				'username' => $this->get_setting( 'dhl_api_user' ),
-				'pass' => $this->get_setting( 'dhl_api_pwd' ),
+				'pass'     => $this->get_setting( 'dhl_api_pwd' ),
 			);
 		}
 	}
