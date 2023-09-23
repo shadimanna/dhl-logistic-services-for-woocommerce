@@ -441,6 +441,11 @@ class Client extends API_Client {
 	protected function get_response_error_message( Response $response ) {
 		$multiple_errors_list = array();
 
+		// Handle sandbox error
+		if ( isset( $response->body->detail ) ) {
+			return $response->body->detail;
+		}
+
 		if ( ! is_array( $response->body->items ) ) {
 			return  $response->body;
 		}
