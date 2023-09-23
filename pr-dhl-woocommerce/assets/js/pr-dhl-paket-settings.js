@@ -7,6 +7,21 @@ jQuery( document ).ready(function(){
 		DHLSandboxEnabled( jQuery( this ) );
 	});
 
+	const api_mode = jQuery('#woocommerce_pr_dhl_paket_dhl_default_api');
+	const developer_account = jQuery('#woocommerce_pr_dhl_paket_dhl_developer_account');
+	DHLAPIModeChanged(api_mode);
+
+	function setupEventListeners() {
+		api_mode.on('change', () => {
+			DHLAPIModeChanged(api_mode);
+		});
+
+		developer_account.on('change', () => {
+			DHLAPIModeChanged(api_mode);
+		});
+	}
+	setupEventListeners();
+
 	var logo_checkbox = jQuery('#woocommerce_pr_dhl_paket_dhl_add_logo');
 	DHLLogoEnabled( logo_checkbox );
 
@@ -41,6 +56,9 @@ function DHLSandboxEnabled( sandbox_checkbox ){
 	var api_sandbox_password 	= jQuery('#woocommerce_pr_dhl_paket_dhl_api_sandbox_pwd');
 	var tr_sandbox_username 	= api_sandbox_username.closest('tr');
 	var tr_sandbox_password 	= api_sandbox_password.closest('tr');
+	var api_mode 				= jQuery('#woocommerce_pr_dhl_paket_dhl_default_api');
+	var developer_account 		= jQuery('#woocommerce_pr_dhl_paket_dhl_developer_account');
+
 
 	if( sandbox_checkbox.prop('checked') == true ){
 
@@ -52,15 +70,61 @@ function DHLSandboxEnabled( sandbox_checkbox ){
 		api_settings_password.prop('readonly', true );
 		account_number.prop('readonly', true );
 
+		if ( 'rest-api' === api_mode.val() ) {
+			developer_account.closest('tr').show();
+
+			if ( true !== developer_account.prop('checked') ) {
+				return;
+			}
+		}
+
 		tr_sandbox_username.show();
 		tr_sandbox_password.show();
+
 	}else{
+		if ( 'rest-api' === api_mode.val() ) {
+			developer_account.closest('tr').hide();
+		}
+
 		api_settings_username.prop('readonly', false );
 		api_settings_password.prop('readonly', false );
 		account_number.prop('readonly', false );
 
 		tr_sandbox_username.hide();
 		tr_sandbox_password.hide();
+	}
+}
+
+function DHLAPIModeChanged(api_mode) {
+	const developer_account = jQuery('#woocommerce_pr_dhl_paket_dhl_developer_account');
+	const sandbox_checkbox = jQuery('#woocommerce_pr_dhl_paket_dhl_sandbox');
+
+	const tr_sandbox_username = jQuery('#woocommerce_pr_dhl_paket_dhl_api_sandbox_user').closest('tr');
+	const tr_sandbox_password = jQuery('#woocommerce_pr_dhl_paket_dhl_api_sandbox_pwd').closest('tr');
+
+	function toggleElement(element, condition) {
+		element.closest('tr').toggle(condition);
+	}
+
+	const isRestApiMode = 'rest-api' === api_mode.val();
+	const isSandboxChecked = sandbox_checkbox.prop('checked');
+	const isDeveloperAccountChecked = developer_account.prop('checked');
+
+	// Hide or show developer_account based on conditions
+	toggleElement(developer_account, isRestApiMode && isSandboxChecked);
+
+	if (isRestApiMode && isSandboxChecked) {
+		// If developer_account checkbox is checked, show username and password fields
+		toggleElement(tr_sandbox_username, isDeveloperAccountChecked);
+		toggleElement(tr_sandbox_password, isDeveloperAccountChecked);
+	} else if (!isRestApiMode && isSandboxChecked) {
+		// Always show username and password fields if not in rest-api mode but sandbox is checked
+		toggleElement(tr_sandbox_username, true);
+		toggleElement(tr_sandbox_password, true);
+	} else {
+		// Hide username and password fields otherwise
+		toggleElement(tr_sandbox_username, false);
+		toggleElement(tr_sandbox_password, false);
 	}
 }
 

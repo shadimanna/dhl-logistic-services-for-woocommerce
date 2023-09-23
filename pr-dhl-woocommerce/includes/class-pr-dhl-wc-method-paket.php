@@ -173,6 +173,14 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'description'       => __( 'Please, tick here if you want to test the plug-in installation against the DHL Sandbox Environment. Labels generated via Sandbox cannot be used for shipping and you need to enter your client ID and client secret for the Sandbox environment instead of the ones for production!', 'dhl-for-woocommerce' ),
 				'desc_tip'          => true,
 			),
+			'dhl_developer_account' => array(
+				'title'             => __( 'DHL developer account', 'dhl-for-woocommerce' ),
+				'type'              => 'checkbox',
+				'label'             => __( 'I have developer account', 'dhl-for-woocommerce' ),
+				'default'           => 'no',
+				'description'       => __( 'If you don\'t have DHL developer account and you want to create labels in the sandbox, we will use DHL testsuite credentials.', 'dhl-for-woocommerce' ),
+				'desc_tip'          => true,
+			),
 			'dhl_api_sandbox_user' => array(
 				'title'             => __( 'Sandbox Username', 'dhl-for-woocommerce' ),
 				'type'              => 'text',
