@@ -1,10 +1,15 @@
 jQuery( document ).ready(function(){
 
 	var sandbox_checkbox = jQuery('#woocommerce_pr_dhl_paket_dhl_sandbox');
+	var api_mode = jQuery('#woocommerce_pr_dhl_paket_dhl_default_api');
 	DHLSandboxEnabled( sandbox_checkbox );
 
 	sandbox_checkbox.on('click', function(evt){
 		DHLSandboxEnabled( jQuery( this ) );
+	});
+
+	api_mode.on('change', () => {
+		DHLSandboxEnabled( sandbox_checkbox );
 	});
 
 	var logo_checkbox = jQuery('#woocommerce_pr_dhl_paket_dhl_add_logo');
@@ -36,13 +41,14 @@ function DHLSandboxEnabled( sandbox_checkbox ){
 	var api_settings_username 	= jQuery('#woocommerce_pr_dhl_paket_dhl_api_user');
 	var api_settings_password 	= jQuery('#woocommerce_pr_dhl_paket_dhl_api_pwd');
 	var account_number 			= jQuery('#woocommerce_pr_dhl_paket_dhl_account_num');
+	var api_mode 				= jQuery('#woocommerce_pr_dhl_paket_dhl_default_api');
 
 	var api_sandbox_username 	= jQuery('#woocommerce_pr_dhl_paket_dhl_api_sandbox_user');
 	var api_sandbox_password 	= jQuery('#woocommerce_pr_dhl_paket_dhl_api_sandbox_pwd');
 	var tr_sandbox_username 	= api_sandbox_username.closest('tr');
 	var tr_sandbox_password 	= api_sandbox_password.closest('tr');
 
-	if( sandbox_checkbox.prop('checked') == true ){
+	if( sandbox_checkbox.prop('checked') === true && 'soap' === api_mode.val() ){
 
 		// api_settings_username.val( dhl_paket_settings_obj.username );
 		// api_settings_password.val( dhl_paket_settings_obj.pass );
