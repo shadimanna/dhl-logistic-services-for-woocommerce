@@ -591,7 +591,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	 */
 	public function sandbox_info_customer_portal(){
 		return array(
-			'username' 	=> '3333333333_01',
+			'username' 	=> 'sandy_sandbox',
 			'pass' 		=> 'pass',
 			'account_no'=> '3333333333',
 		);
