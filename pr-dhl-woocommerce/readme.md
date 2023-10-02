@@ -80,7 +80,7 @@ More detailed instructions on how to set up your store and configure it are cons
 * DHL Paket: Use DHL sandbox credentials for Rest-API.
 
 = 3.5.5 =
-* Fix Parcel-DE Rest-API production link.
+* DHL Paket: Fix Parcel-DE Rest-API production link.
 
 = 3.5.4 =
 * Fix Multisite compatibility.
