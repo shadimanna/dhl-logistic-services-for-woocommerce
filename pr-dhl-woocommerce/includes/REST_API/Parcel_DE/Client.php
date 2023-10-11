@@ -96,7 +96,7 @@ class Client extends API_Client {
 				for ( $i = 0; $i < intval( $item_info->shipment['total_packages'] ); $i ++ ) {
 					$shipment['details'] = array(
 						'weight' => array(
-							'uom'   => $item_info->weightUom,
+							'uom'   => 'kg' === $item_info->weightUom ? 'kg' : 'g', //its converted to grams in item_info.
 							'value' => $item_info->args['order_details']['packages_weight'][ $i ],
 						),
 						'dim'    => array(
@@ -113,7 +113,7 @@ class Client extends API_Client {
 			} else {
 				$shipment['details'] = array(
 					'weight' => array(
-						'uom'   => $item_info->weightUom,
+						'uom'   => 'kg' === $item_info->weightUom ? 'kg' : 'g', //its converted to grams in item_info.
 						'value' => $item_info->shipment['weight'],
 					)
 				);
@@ -232,7 +232,7 @@ class Client extends API_Client {
 					'value'    => $item['itemValue']['amount']
 				),
 				'itemWeight'      => array(
-					'uom'   => $item['itemWeight']['uom'],
+					'uom'   => 'kg' === $item['itemWeight']['uom'] ? 'kg' : 'g', //its converted to grams in item_info.
 					'value' => $item['itemWeight']['value'],
 				)
 			);

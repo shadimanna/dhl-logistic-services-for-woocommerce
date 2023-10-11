@@ -690,7 +690,7 @@ class Item_Info {
 				'sanitize' => function ( $weight ) use ( $self ) {
 					return [
 						'uom'   => $self->weightUom,
-						'value' => $self->float_round_sanitization( $self->float_round_sanitization( $weight, 3 ), 3 ),
+						'value' => $self->maybe_convert_weight( $weight, $self->weightUom ),
 					];
 				},
 			)
@@ -772,22 +772,23 @@ class Item_Info {
 	 */
 	protected function maybe_convert_weight( $weight, $uom ) {
 		$weight = floatval( wc_format_decimal( $weight ) );
+		if ( 'kg' === $uom || 'g' === $uom ) {
+			return $weight;
+		}
 
 		switch ( $uom ) {
-			case 'g':
-				$weight = $weight / 1000;
-				break;
+			case 'lbs':
 			case 'lb':
-				$weight = $weight / 2.2;
+				$weight = $weight * 453.592;
 				break;
 			case 'oz':
-				$weight = $weight / 35.274;
+				$weight = $weight * 28.3495;
 				break;
 			default:
 				break;
 		}
 
-		return round( $weight, 2 );
+		return intval( $weight );
 	}
 
 	/**
