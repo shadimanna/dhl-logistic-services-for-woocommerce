@@ -772,16 +772,16 @@ class Item_Info {
 	 */
 	protected function maybe_convert_weight( $weight, $uom ) {
 		$weight = floatval( wc_format_decimal( $weight ) );
+		if ( 'kg' === $uom || 'g' === $uom ) {
+			return $weight;
+		}
 
 		switch ( $uom ) {
-			case 'g':
-				$weight = $weight / 1000;
-				break;
 			case 'lb':
-				$weight = $weight / 2.2;
+				$weight = $weight * 453.592;
 				break;
 			case 'oz':
-				$weight = $weight / 35.274;
+				$weight = $weight * 28.3495;
 				break;
 			default:
 				break;
