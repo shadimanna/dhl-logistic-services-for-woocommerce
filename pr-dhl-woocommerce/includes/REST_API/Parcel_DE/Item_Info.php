@@ -690,7 +690,7 @@ class Item_Info {
 				'sanitize' => function ( $weight ) use ( $self ) {
 					return [
 						'uom'   => $self->weightUom,
-						'value' => $self->float_round_sanitization( $self->float_round_sanitization( $weight, 3 ), 3 ),
+						'value' => $self->maybe_convert_weight( $weight, $self->weightUom ),
 					];
 				},
 			)
@@ -777,6 +777,7 @@ class Item_Info {
 		}
 
 		switch ( $uom ) {
+			case 'lbs':
 			case 'lb':
 				$weight = $weight * 453.592;
 				break;
@@ -787,7 +788,7 @@ class Item_Info {
 				break;
 		}
 
-		return round( $weight, 2 );
+		return intval( $weight );
 	}
 
 	/**
