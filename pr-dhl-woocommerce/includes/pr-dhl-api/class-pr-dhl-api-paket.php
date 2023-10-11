@@ -75,13 +75,12 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 	public function get_dhl_labels( $multiple_orders_args ) {
 		$items_info = array();
 		$labels     = array();
-		$uom        = get_option( 'woocommerce_weight_unit' );
 
 		foreach ( $multiple_orders_args as $args ) {
 			$args['dhl_settings'] = $this->maybe_sandbox( $args['dhl_settings'] );
 			try {
 				$this->dhl_label->set_arguments( $args );
-				$items_info[] = new Item_Info( $args, $uom );
+				$items_info[] = new Item_Info( $args );
 			} catch ( Exception $e ) {
 				$labels['errors'][] = array ( 'order_id' => $args['order_details']['order_id'], 'message' => $e->getMessage() );
 			}

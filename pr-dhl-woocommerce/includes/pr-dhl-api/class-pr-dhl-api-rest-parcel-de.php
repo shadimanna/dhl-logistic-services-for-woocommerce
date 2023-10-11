@@ -136,9 +136,9 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	 */
 	public function get_dhl_label( $args ) {
 		$this->set_arguments( $args );
-		$uom = get_option( 'woocommerce_weight_unit' );
+
 		try {
-			$item_info = new Item_Info( $args, $uom );
+			$item_info = new Item_Info( $args );
 		} catch ( Exception $e ) {
 			throw $e;
 		}

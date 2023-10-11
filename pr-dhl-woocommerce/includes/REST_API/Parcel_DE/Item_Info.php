@@ -133,8 +133,8 @@ class Item_Info {
 	 * @throws Exception If some data in $args did not pass validation.
 	 *
 	 */
-	public function __construct( $args, $weightUom = 'kg' ) {
-		$this->weightUom     = $weightUom;
+	public function __construct( $args ) {
+		$this->weightUom     = $args['order_details']['weightUom'];
 		$this->isCrossBorder = PR_DHL()->is_crossborder_shipment( $args['shipping_address'] );
 		$this->args          = $args;
 
@@ -236,9 +236,6 @@ class Item_Info {
 					if ( ! is_numeric( $weight ) ) {
 						throw new Exception( __( 'The order "Weight" must be a number', 'dhl-for-woocommerce' ) );
 					}
-				},
-				'sanitize' => function ( $weight ) use ( $self ) {
-					return $self->maybe_convert_weight( $weight, $self->weightUom );
 				},
 			),
 			'currency'               => array(
@@ -759,35 +756,6 @@ class Item_Info {
 				'rename' => 'signedForByRecipient',
 			),
 		);
-	}
-
-	/**
-	 * Converts a given weight into grams, if necessary.
-	 *
-	 * @param float $weight The weight amount.
-	 * @param string $uom The unit of measurement of the $weight parameter..
-	 *
-	 * @return float The potentially converted weight.
-	 *
-	 */
-	protected function maybe_convert_weight( $weight, $uom ) {
-		$weight = floatval( wc_format_decimal( $weight ) );
-
-		switch ( $uom ) {
-			case 'g':
-				$weight = $weight / 1000;
-				break;
-			case 'lb':
-				$weight = $weight / 2.2;
-				break;
-			case 'oz':
-				$weight = $weight / 35.274;
-				break;
-			default:
-				break;
-		}
-
-		return round( $weight, 2 );
 	}
 
 	/**
