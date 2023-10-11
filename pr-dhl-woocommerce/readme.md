@@ -76,6 +76,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 3.5.7 =
+* DHL Paket: Fix shipment weight for Rest-API.
+
 = 3.5.6 =
 * DHL Paket: Use DHL sandbox credentials for Rest-API.
 
