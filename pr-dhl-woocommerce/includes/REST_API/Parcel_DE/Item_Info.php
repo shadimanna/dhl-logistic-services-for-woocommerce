@@ -136,7 +136,7 @@ class Item_Info {
 	public function __construct( $args, $weightUom = 'kg' ) {
 		$this->weightUom     = $weightUom;
 		$this->isCrossBorder = PR_DHL()->is_crossborder_shipment( $args['shipping_address'] );
-		// error_log(print_r($args, true));
+
 		$this->args          = $args;
 
 		$this->pos_ps = PR_DHL()->is_packstation( $args['shipping_address']['address_1'] );
