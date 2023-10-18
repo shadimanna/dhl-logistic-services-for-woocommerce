@@ -144,6 +144,7 @@ class Item_Info {
 
 		$this->set_address_2();
 		$this->parse_args();
+		$this->merge_company_with_name();
 	}
 
 	/**
@@ -1089,6 +1090,23 @@ class Item_Info {
 	}
 
 	/**
+	 * Merge Company with name.
+	 *
+	 * @return void.
+	 * 
+	 */
+	protected function merge_company_with_name (){
+		if ( $this->pos_ps || $this->pos_rs || $this->pos_po ) {
+			return;
+		}
+
+		if ( ! empty( $this->args['shipping_address']['company'] ) ){
+			$this->args['shipping_address']['name'] .= $this->args['shipping_address']['company'];
+			return;
+		}
+	}
+
+	/**
 	 * Set Address 2 ( HouseNumber ).
 	 *
 	 * @return void.
@@ -1102,8 +1120,7 @@ class Item_Info {
 		if ( ! empty( $this->args['shipping_address']['address_2'] ) ) {
 
 			if ( strlen( $this->args['shipping_address']['address_2'] ) > 10 ) {
-				$this->args['shipping_address']['address_additional'] = $this->args['shipping_address']['address_2'];
-				$this->args['shipping_address']['address_2']          = '';
+				$this->args['shipping_address']['address_1'] .= $this->args['shipping_address']['address_2'];
 			}
 
 			return;
