@@ -136,6 +136,7 @@ class Item_Info {
 	public function __construct( $args, $weightUom = 'kg' ) {
 		$this->weightUom     = $weightUom;
 		$this->isCrossBorder = PR_DHL()->is_crossborder_shipment( $args['shipping_address'] );
+		// error_log(print_r($args, true));
 		$this->args          = $args;
 
 		$this->pos_ps = PR_DHL()->is_packstation( $args['shipping_address']['address_1'] );
@@ -144,7 +145,7 @@ class Item_Info {
 
 		$this->set_address_2();
 		$this->parse_args();
-		$this->merge_company_with_name();
+		
 	}
 
 	/**
@@ -481,6 +482,9 @@ class Item_Info {
 
 					return $self->string_length_sanitization( $name, 50 );
 				},
+			),
+			'company'      => array(
+				'rename'   => 'name2',
 			),
 			'address_1' => array(
 				'rename' => 'addressStreet',
@@ -1090,23 +1094,6 @@ class Item_Info {
 	}
 
 	/**
-	 * Merge Company with name.
-	 *
-	 * @return void.
-	 * 
-	 */
-	protected function merge_company_with_name (){
-		if ( $this->pos_ps || $this->pos_rs || $this->pos_po ) {
-			return;
-		}
-
-		if ( ! empty( $this->args['shipping_address']['company'] ) ){
-			$this->args['shipping_address']['name'] .= $this->args['shipping_address']['company'];
-			return;
-		}
-	}
-
-	/**
 	 * Set Address 2 ( HouseNumber ).
 	 *
 	 * @return void.
@@ -1119,8 +1106,11 @@ class Item_Info {
 
 		if ( ! empty( $this->args['shipping_address']['address_2'] ) ) {
 
-			if ( strlen( $this->args['shipping_address']['address_2'] ) > 10 ) {
-				$this->args['shipping_address']['address_1'] .= $this->args['shipping_address']['address_2'];
+			// If address_2 greated than 10 chars, try to merge with address_1 if less than 60 total
+			if ( ( strlen( $this->args['shipping_address']['address_2'] ) > 10 ) && ( strlen( $this->args['shipping_address']['address_2'] ) + strlen( $this->args['shipping_address']['address_1'] ) <= 60 ) ) {
+				
+				$this->args['shipping_address']['address_1'] .= ', ' . $this->args['shipping_address']['address_2'];
+				$this->args['shipping_address']['address_2']          = '';
 			}
 
 			return;

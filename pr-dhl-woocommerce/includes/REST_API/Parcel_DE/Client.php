@@ -294,9 +294,9 @@ class Client extends API_Client {
 		// Normal shipping address.
 		$address_fields = array(
 			'name1',
+			'name2',
 			'addressStreet',
 			'addressHouse',
-			'additionalAddressInformation1',
 			'postalCode',
 			'city',
 			'state',
