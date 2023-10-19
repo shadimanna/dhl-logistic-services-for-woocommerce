@@ -1106,10 +1106,9 @@ class Item_Info {
 
 		if ( ! empty( $this->args['shipping_address']['address_2'] ) ) {
 
-			// If address_2 greated than 10 chars, try to merge with address_1 if less than 60 total
-			if ( ( strlen( $this->args['shipping_address']['address_2'] ) > 10 ) && ( strlen( $this->args['shipping_address']['address_2'] ) + strlen( $this->args['shipping_address']['address_1'] ) <= 60 ) ) {
-				
-				$this->args['shipping_address']['address_1'] .= ', ' . $this->args['shipping_address']['address_2'];
+			// If address_2 greated than 10 chars, try to pass with additional address (does not show for DE)
+			if ( strlen( $this->args['shipping_address']['address_2'] ) > 10 ) {
+				$this->args['shipping_address']['address_additional'] = $this->args['shipping_address']['address_2'];
 				$this->args['shipping_address']['address_2']          = '';
 			}
 
