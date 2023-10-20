@@ -1169,9 +1169,9 @@ abstract class PR_DHL_WC_Order {
 								'type'    => 'success',
 							);
 
-							if ( ! empty( $label_tracking_info['label_path'] ) ) {
-								$merge_files[] = $label_tracking_info['label_path'];
-							}
+							// if ( ! empty( $label_tracking_info['label_path'] ) ) {
+							// 	$merge_files[] = $label_tracking_info['label_path'];
+							// }
 
 							do_action( 'pr_shipping_dhl_label_created', $order_id );
 						}
