@@ -1177,6 +1177,10 @@ abstract class PR_DHL_WC_Order {
 						}
 					}
 
+					if( ! empty( $label_tracking_info['label_path'] ) ) {
+						array_push($merge_files, $label_tracking_info['label_path']);
+					}
+					
 				} catch ( Exception $e ) {
 					$array_messages[] = array(
 						'message' => sprintf( __( 'Order #%s: %s', 'dhl-for-woocommerce' ), $order->get_order_number(),
