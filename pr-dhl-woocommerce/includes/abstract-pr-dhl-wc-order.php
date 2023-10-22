@@ -1148,9 +1148,7 @@ abstract class PR_DHL_WC_Order {
 						// Allow third parties to modify the args to the DHL APIs
 						$args = apply_filters( 'pr_shipping_dhl_label_args', $args, $order_id );
 
-						if ( API_Utils::is_new_merchant() || API_Utils::is_rest_api_enabled() ) {
-							$orders_args[] = $args;
-						} else {
+						
 							// SOAP API request.
 							$label_tracking_info = $dhl_obj->get_dhl_label( $args );
 							$this->save_dhl_label_tracking( $order_id, $label_tracking_info );
@@ -1174,13 +1172,13 @@ abstract class PR_DHL_WC_Order {
 							// }
 
 							do_action( 'pr_shipping_dhl_label_created', $order_id );
-						}
+						
 					}
 
 					if( ! empty( $label_tracking_info['label_path'] ) ) {
 						array_push($merge_files, $label_tracking_info['label_path']);
 					}
-					
+
 				} catch ( Exception $e ) {
 					$array_messages[] = array(
 						'message' => sprintf( __( 'Order #%s: %s', 'dhl-for-woocommerce' ), $order->get_order_number(),
@@ -1189,7 +1187,7 @@ abstract class PR_DHL_WC_Order {
 					);
 				}
 			}
-
+/*
 			if ( API_Utils::is_new_merchant() || API_Utils::is_rest_api_enabled() ) {
 				$labels_tracking_info = $dhl_obj->get_dhl_labels( $orders_args );
 
@@ -1228,7 +1226,7 @@ abstract class PR_DHL_WC_Order {
 					}
 				}
 			}
-
+*/
 			try {
 
 				$file_bulk = $this->merge_label_files( $merge_files );
