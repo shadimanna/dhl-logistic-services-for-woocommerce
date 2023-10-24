@@ -28,7 +28,7 @@ class Client extends API_Client {
 	 */
 	public function get_user() {
 		// Prepare the request route and data
-		$route = $this->myaccount_route( 'items' );
+		$route = $this->myaccount_route();
 		$lang = 'en';
 		$params = array('lang' => $lang );
 
@@ -59,7 +59,7 @@ class Client extends API_Client {
 	 *
 	 * @return string
 	 */
-	protected function myaccount_route( $route ) {
-		return sprintf( 'myaccount/v1/user?lang=%s', 'en');
+	protected function myaccount_route() {
+		return 'myaccount/v1/user';
 	}
 }

@@ -152,6 +152,7 @@ class PR_DHL_WC {
 
 		// DHL specific URLs
 		$this->define( 'PR_DHL_BUTTON_TEST_CONNECTION', __( 'Test Connection', 'dhl-for-woocommerce' ) );
+		$this->define( 'PR_DHL_BUTTON_MY_ACCOUNT', __( 'Get Account Settings', 'dhl-for-woocommerce' ) );
 
 		// DHL eCommerce
 		$this->define( 'PR_DHL_REST_AUTH_URL', 'https://api.dhlecommerce.com' );
@@ -237,6 +238,7 @@ class PR_DHL_WC {
         add_filter( 'woocommerce_shipping_methods', array( $this, 'add_shipping_method' ) );
         // Test connection
         add_action( 'wp_ajax_test_dhl_connection', array( $this, 'test_dhl_connection_callback' ) );
+        add_action( 'wp_ajax_dhl_get_myaccount', array( $this, 'dhl_get_myaccount_callback' ) );
         // Add state field for 'VN'
         add_filter( 'woocommerce_states', array( $this, 'add_vn_states' ) );
 
@@ -342,6 +344,8 @@ class PR_DHL_WC {
 				if ( API_Utils::is_new_merchant() ) {
 					$this->wizard_enqueue_scripts();
 				}
+
+				$this->myaccount_enqueue_scripts();
 			}
 
             wp_enqueue_script(
@@ -371,6 +375,23 @@ class PR_DHL_WC {
 			PR_DHL_VERSION,
 			true
 		);
+	}
+
+	public function myaccount_enqueue_scripts() {
+		$myaccount_data = array(
+		    'ajax_url'       => admin_url( 'admin-ajax.php' ),
+		    'loader_image'   => admin_url( 'images/loading.gif' ),
+		    'myaccount_nonce' => wp_create_nonce( 'pr-dhl-myaccount' ),
+		);
+
+		wp_enqueue_script(
+			'wc-shipment-dhl-myaccount-js',
+			PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-my-account.js',
+			array('jquery'),
+			PR_DHL_VERSION,
+		);
+
+		wp_localize_script( 'wc-shipment-dhl-myaccount-js', 'dhl_myaccount_obj', $myaccount_data );
 	}
 
 	/**
@@ -615,6 +636,38 @@ class PR_DHL_WC {
 			wp_send_json( array(
 				'connection_error' => sprintf( __('Connection Failed: %s Make sure to save the settings before testing the connection. ', 'dhl-for-woocommerce'), $e->getMessage() ),
 				'button_txt'			=> PR_DHL_BUTTON_TEST_CONNECTION
+				 ) );
+		}
+
+		wp_die();
+	}
+
+	public function dhl_get_myaccount_callback() {
+		// error_log('dhl_get_myaccount_callback');
+		check_ajax_referer( 'pr-dhl-myaccount', 'myaccount_nonce' );
+		// error_log('ajax nonce check');
+		try {
+
+			$dhl_obj = $this->get_dhl_factory();
+
+			$account_details = $dhl_obj->get_my_account();
+
+			$this->set_account_details( $account_details );
+
+			$connection_msg = __('Account Connected', 'dhl-for-woocommerce');
+			$this->log_msg( $connection_msg );
+
+			wp_send_json( array(
+				'connection_success' 	=> $connection_msg,
+				'button_txt'			=> PR_DHL_BUTTON_MY_ACCOUNT
+				) );
+
+		} catch (Exception $e) {
+			$this->log_msg($e->getMessage());
+
+			wp_send_json( array(
+				'connection_error' => sprintf( __('Account Connection Failed: %s . Make sure to save the settings before testing the connection. ', 'dhl-for-woocommerce'), $e->getMessage() ),
+				'button_txt'			=> PR_DHL_BUTTON_MY_ACCOUNT
 				 ) );
 		}
 
@@ -895,6 +948,32 @@ class PR_DHL_WC {
 			// add_action( 'admin_notices', array( $this, 'environment_check' ) );
 		}
         return $states;
+    }
+
+    public function set_account_details( $account_details ) {
+    	// error_log('set_account_details');
+    	$dhl_settings = $this->get_shipping_dhl_settings();
+    	// error_log(print_r($dhl_settings,true));
+
+    	if ( isset( $account_details->user->passwordValidUntil ) ) {
+    		$dhl_settings['dhl_pwd_valid_until'] = $account_details->user->passwordValidUntil;
+    	}
+
+    	if ( isset( $account_details->shippingRights->details ) ) {
+    		foreach( $account_details->shippingRights->details as $product_details ) {
+    			error_log(print_r($product_details, true));
+
+    			if( ! empty( $product_details->billingNumber ) ) {
+    				$ekp = substr($product_details->billingNumber, 0, 10);
+    				$product = substr($product_details->billingNumber, 10, 2);
+    				$participation = substr($product_details->billingNumber, 12, 2);
+
+    				error_log($ekp);
+    				error_log($product);
+    				error_log($participation);
+    			}	
+    		}
+    	}
     }
 }
 

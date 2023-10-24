@@ -130,18 +130,19 @@ class Auth implements API_Auth_Interface {
 	 */
 	public function authorize( Request $request ) {
 		// Check if we have a token - a token is ALWAYS needed
-		if ( empty( $this->token ) ) {
+		// if ( empty( $this->token ) ) {
 			// If not, request one from the REST API
 			$token = $this->request_token();
+			// error_log(print_r($token, true));
 			// Cache it for subsequent requests
-			$this->save_token( $token );
-		}
+			// $this->save_token( $token );
+		// }
 
-		$type = $this->token->token_type;
-		$code = $this->token->access_token;
+		// $type = $this->token->token_type;
+		// $code = $this->token->access_token;
 
-		$request->headers[ static::H_AUTH_TOKEN ] = $type . ' ' . $code;
-		$request->headers[ static::H_3PV_ID ] = static::V_3PV_ID;
+		$request->headers[ static::H_AUTH_TOKEN ] = $token->token_type . ' ' . $token->access_token;
+		// $request->headers[ static::H_3PV_ID ] = static::V_3PV_ID;
 
 		return $request;
 	}
@@ -170,7 +171,7 @@ class Auth implements API_Auth_Interface {
 						'password' => $this->password,
 						'grant_type' => 'password',
 					);
-		error_log(print_r($body, true));
+		// error_log(print_r($body, true));
 
 		$args = array( 'headers' => $headers, 'body' => $body );
 
@@ -178,21 +179,24 @@ class Auth implements API_Auth_Interface {
 		// error_log($body);
 		// Prepare the full request URL
 		$full_url = URL_Utils::merge_url_and_route( $this->api_url, static::AUTH_ROUTE );
-		error_log($this->api_url);
-		error_log($full_url);
+		// error_log($this->api_url);
+		// error_log($full_url);
 
 		// Send the authorization request to obtain the access token
 		// $request = new Request( Request::TYPE_POST, $full_url, array(), $body, $headers );
 		// $response = $this->driver->send( $request );
 		$response = wp_remote_post( $full_url, $args );
-		error_log(print_r($response, true));
+
+		$response_code = wp_remote_retrieve_response_code( $response );
+		$response_body = json_decode( wp_remote_retrieve_body( $response ) );
+		// error_log(print_r($response, true));
 
 		// If the status code is not 200, throw an error with the raw response body
-		if ( $response->status !== 200 ) {
+		if ( $response_code !== 200 ) {
 			throw new RuntimeException( $response->body->error_description );
 		}
 
-		return $response->body;
+		return $response_body;
 	}
 
 	/**

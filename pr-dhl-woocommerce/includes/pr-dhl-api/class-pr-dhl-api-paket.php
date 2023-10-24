@@ -318,6 +318,6 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 	}
 
 	public function get_my_account() {
-		 $this->dhl_my_account->get_dhl_my_account();
+		 return $this->dhl_my_account->get_dhl_my_account();
 	}
 }

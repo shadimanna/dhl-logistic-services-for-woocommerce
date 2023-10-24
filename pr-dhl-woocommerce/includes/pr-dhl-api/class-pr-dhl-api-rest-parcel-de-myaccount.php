@@ -164,7 +164,9 @@ class PR_DHL_API_REST_Parcel_DE_MyAccount extends PR_DHL_API_REST_Parcel_DE {
 	 */
 	public function get_dhl_my_account() {
 		
-		$this->api_client->get_user();
+		return $this->api_client->get_user();
+
+		// error_log(print_r($user_details, true));
 		
 	}
 	
