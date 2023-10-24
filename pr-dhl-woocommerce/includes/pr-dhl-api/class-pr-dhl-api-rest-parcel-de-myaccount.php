@@ -1,8 +1,8 @@
 <?php
 
-use PR\DHL\REST_API\Parcel_DE\Auth;
-use PR\DHL\REST_API\Parcel_DE\Client;
-use PR\DHL\REST_API\Parcel_DE\Item_Info;
+use PR\DHL\REST_API\Parcel_DE_MyAccount\Auth;
+use PR\DHL\REST_API\Parcel_DE_MyAccount\Client;
+use PR\DHL\REST_API\Parcel_DE_MyAccount\Item_Info;
 use PR\DHL\REST_API\Interfaces\API_Auth_Interface;
 use PR\DHL\REST_API\Interfaces\API_Driver_Interface;
 
@@ -89,9 +89,10 @@ class PR_DHL_API_REST_Parcel_DE_MyAccount extends PR_DHL_API_REST_Parcel_DE {
 		return new Auth(
 			$this->api_driver,
 			$this->get_api_url(),
+			$this->get_api_key(),
+			$this->get_api_secret(),
 			$username,
 			$password,
-			$this->get_api_key(),
 		);
 	}
 
@@ -133,9 +134,38 @@ class PR_DHL_API_REST_Parcel_DE_MyAccount extends PR_DHL_API_REST_Parcel_DE {
 	 */
 	public function sandbox_info_customer_portal(){
 		return array(
-			'username' 	=> 'sandy_sandbox',
-			'pass' 		=> 'pass',
-			'account_no'=> '3333333333',
+			'username' 	=> 'user-valid',
+			'pass' 		=> 'SandboxPasswort2023!',
+			// 'account_no'=> '3333333333',
 		);
 	}
+
+	/**
+	 * Retrieves the API KEY.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return string
+	 *
+	 */
+	public function get_api_secret() {
+		$api_key = defined( 'PR_DHL_GLOBAL_SECRET' )? PR_DHL_GLOBAL_SECRET : '';
+		return $api_key;
+	}
+
+
+	/**
+	 * Get user.
+	 *
+	 * @param $args
+	 *
+	 * @return array
+	 * @throws Exception
+	 */
+	public function get_dhl_my_account() {
+		
+		$this->api_client->get_user();
+		
+	}
+	
 }

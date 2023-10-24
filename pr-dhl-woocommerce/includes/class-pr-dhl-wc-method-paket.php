@@ -133,24 +133,6 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'type'            => 'title',
 				'description'     => __( 'Please configure your shipping parameters and your access towards the DHL Paket APIs by means of authentication.', 'dhl-for-woocommerce' ),
 			),
-			'dhl_default_api' => array(
-				'title'             => __( 'Used API', 'dhl-for-woocommerce' ),
-				'type'              => 'select',
-				'description'       => __( 'SOAP used by default.', 'dhl-for-woocommerce' ),
-				'desc_tip'          => true,
-				'options'           => array( 'soap' => 'SOAP', 'rest-api' => 'REST' ),
-				'class'             => 'wc-enhanced-select',
-				'default'           => API_Utils::is_new_merchant() ? 'rest-api' : 'soap',
-			),
-			'dhl_account_num' => array(
-				'title'             => __( 'Account Number (EKP)', 'dhl-for-woocommerce' ),
-				'type'              => 'text',
-				'description'       => __( 'Your DHL account number (10 digits - numerical), also called "EKP“. This will be provided by your local DHL sales organization.', 'dhl-for-woocommerce' ),
-				'desc_tip'          => true,
-				'default'           => '',
-				'placeholder'		=> '1234567890',
-				'custom_attributes'	=> array( 'maxlength' => '10' )
-			),
 			'dhl_api_user' => array(
 				'title'             => __( 'Username', 'dhl-for-woocommerce' ),
 				'type'              => 'text',
@@ -164,6 +146,33 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'description'       => sprintf( __( 'Your password for the DHL business customer portal. Please note the new assignment of the password to 3 (Standard User) or 12 (System User) months and test your access data in advance at %shere%s', 'dhl-for-woocommerce' ), '<a href="' . PR_DHL_PAKET_BUSSINESS_PORTAL . '" target = "_blank">', '</a>' ),
 				'desc_tip'          => false,
 				'default'           => ''
+			),
+			'dhl_my_account_button' => array(
+				'title'             => PR_DHL_BUTTON_MY_ACCOUNT,
+				'type'              => 'button',
+				'custom_attributes' => array(
+					'onclick' => "dhlMyAccount('#woocommerce_pr_dhl_paket_dhl_my_account_button');",
+				),
+				'description'       => __( 'Press the button to read your DHL Business Account settings into the DHL for WooCommerce plugin.', 'dhl-for-woocommerce' ),
+				'desc_tip'          => true,
+			),
+			'dhl_account_num' => array(
+				'title'             => __( 'Account Number (EKP)', 'dhl-for-woocommerce' ),
+				'type'              => 'text',
+				'description'       => __( 'Your DHL account number (10 digits - numerical), also called "EKP“. This will be provided by your local DHL sales organization.', 'dhl-for-woocommerce' ),
+				'desc_tip'          => true,
+				'default'           => '',
+				'placeholder'		=> '1234567890',
+				'custom_attributes'	=> array( 'maxlength' => '10' )
+			),
+			'dhl_default_api' => array(
+				'title'             => __( 'API Protocol', 'dhl-for-woocommerce' ),
+				'type'              => 'select',
+				'description'       => __( 'Select the API protocol to use for creating shipping labels.', 'dhl-for-woocommerce' ),
+				'desc_tip'          => true,
+				'options'           => array( 'soap' => 'SOAP', 'rest-api' => 'REST' ),
+				'class'             => 'wc-enhanced-select',
+				'default'           => API_Utils::is_new_merchant() ? 'rest-api' : 'soap',
 			),
 			'dhl_sandbox' => array(
 				'title'             => __( 'Sandbox Mode', 'dhl-for-woocommerce' ),

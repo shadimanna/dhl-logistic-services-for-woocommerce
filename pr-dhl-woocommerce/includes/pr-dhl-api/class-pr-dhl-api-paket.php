@@ -12,6 +12,8 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 	const DHL_PAKET_DISPLAY_DAYS = 5;
 	const DHL_PAKET_REMOVE_DAYS = 2;
 
+	protected $dhl_my_account = null;
+
 	private $de_national_holidays = array('2020-11-22','2020-11-29','2020-12-06','2020-12-13','2020-12-20','2020-12-25','2020-12-26','2020-12-27','2021-01-01','2021-04-02','2021-04-04','2021-04-05','2021-05-01','2021-05-13','2021-05-23','2021-05-24','2021-10-03','2021-12-25','2021-12-26','2022-01-01','2022-04-15','2022-04-17','2022-04-18','2022-05-01','2022-05-26','2022-06-05','2022-06-06','2022-10-03','2022-12-25','2022-12-26','2023-01-01','2023-04-07','2023-04-09','2023-04-10','2023-05-01','2023-05-18','2023-05-28','2023-05-29','2023-10-03','2023-12-25','2023-12-26','2024-01-01','2024-03-29','2024-03-31','2024-04-01','2024-05-01','2024-05-09','2024-05-19','2024-05-20','2024-10-03','2024-12-25','2024-12-26');
 
 	public function __construct( $country_code ) {
@@ -26,6 +28,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 			}
 			//$this->dhl_finder = new PR_DHL_API_SOAP_Finder( );
 			$this->dhl_finder = new PR_DHL_API_REST_Finder( );
+			$this->dhl_my_account = new PR_DHL_API_REST_Parcel_DE_MyAccount( );
 		} catch (Exception $e) {
 			throw $e;
 		}
@@ -312,5 +315,9 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 			'account_no'=> '2222222222',
 			'rest_api_account_no'=> '3333333333',
 		);
+	}
+
+	public function get_my_account() {
+		 $this->dhl_my_account->get_dhl_my_account();
 	}
 }
