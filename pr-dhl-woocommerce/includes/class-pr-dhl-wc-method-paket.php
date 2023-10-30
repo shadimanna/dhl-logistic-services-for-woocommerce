@@ -126,7 +126,12 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		}
 
 		$weight_units = get_option( 'woocommerce_weight_unit' );
-
+		$password_expiration = get_option('password_expiration_notice');
+		if( $password_expiration == '7days') {
+			$password_expiration_message = 'Your password will expire in 7 days, Please re-authorize' ;
+		} else {
+			$password_expiration_message = 'Your password will expire in 30 days, Please re-authorize';
+		}
 		$this->form_fields = array(
 			'dhl_pickup_api_dist'     => array(
 				'title'           => __( 'Account and API Settings', 'dhl-for-woocommerce' ),
@@ -153,7 +158,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'custom_attributes' => array(
 					'onclick' => "dhlMyAccount('#woocommerce_pr_dhl_paket_dhl_my_account_button');",
 				),
-				'description'       => __( 'Press the button to read your DHL Business Account settings into the DHL for WooCommerce plugin.', 'dhl-for-woocommerce' ),
+				'description'       => __( 'Press the button to read your DHL Business Account settings into the DHL for WooCommerce plugin.', 'dhl-for-woocommerce' ) . $password_expiration_message,
 				'desc_tip'          => true,
 			),
 			'dhl_account_num' => array(

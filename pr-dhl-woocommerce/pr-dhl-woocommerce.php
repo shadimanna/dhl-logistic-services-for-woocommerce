@@ -116,6 +116,9 @@ class PR_DHL_WC {
 		// add_action( 'plugins_loaded', array( $this, 'init' ) );
 		add_action( 'init', array( $this, 'load_plugin' ), 0 );
 		add_action( 'before_woocommerce_init', array( $this, 'declare_wc_hpos_compatibility' ), 10 );
+
+		//
+		add_action( 'admin_notices', array( $this, 'password_expiration_7days' ) );
 	}
 
 	/**
@@ -243,6 +246,10 @@ class PR_DHL_WC {
         add_filter( 'woocommerce_states', array( $this, 'add_vn_states' ) );
 
 		add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ) );
+
+		//password expiration cronjob
+		add_action('wp', array($this, 'schedule_password_check_event'));
+		add_action('check_password_expiration_event', array($this, 'check_password_expiration'));
     }
 
 	public function get_pr_dhl_wc_order() {
@@ -984,6 +991,39 @@ class PR_DHL_WC {
     	
 		update_option('booking_text_option', serialize($booking_text_array));
     }
+
+	public function check_password_expiration() {
+		$dhl_settings = get_shipping_dhl_settings(); // Assuming you have a function to get DHL settings.
+		
+		if (isset($dhl_settings['dhl_pwd_valid_until'])) {
+			$expiration_date = $dhl_settings['dhl_pwd_valid_until'];
+			$current_date = current_time('mysql');
+			
+			$expiration_timestamp = strtotime($expiration_date);
+			$current_timestamp = strtotime($current_date);
+			
+			$days_until_expiration = floor(($expiration_timestamp - $current_timestamp) / (60 * 60 * 24));
+			
+			if ($days_until_expiration <= 30) {
+				update_option ('password_expiration_notice', '30days');
+			}
+			if ($days_until_expiration <= 7) {
+				update_option ('password_expiration_notice', '7days');
+			}
+		}
+	}
+
+	public function password_expiration_7days(){
+		if(get_option( 'password_expiration_notice', true )){
+			printf( '<div class="notice notice-warning is-dismissible"><p>Warning: Your DHL Password will expire in 7 days, Please re-authorize your account in the DHL Paket settings page</p></div>' );
+		}
+	}
+
+	public function schedule_password_check_event() {
+		if (!wp_next_scheduled('check_password_expiration_event')) {
+			wp_schedule_event(time(), 'daily', 'check_password_expiration_event');
+		}
+	}
 }
 
 endif;
