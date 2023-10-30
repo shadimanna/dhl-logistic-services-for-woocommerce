@@ -967,13 +967,21 @@ class PR_DHL_WC {
     				$ekp = substr($product_details->billingNumber, 0, 10);
     				$product = substr($product_details->billingNumber, 10, 2);
     				$participation = substr($product_details->billingNumber, 12, 2);
+					$product_key = $product_details->product->key;
+					$booking_text = $product_details->bookingText;
+					
+					$booking_text_array[$product] = $booking_text;
 
+					$dhl_settings['dhl_account_num'] = $ekp;
+					$dhl_settings['dhl_participation_' . $product_key] = $participation;
+					
     				error_log($ekp);
     				error_log($product);
     				error_log($participation);
     			}	
     		}
     	}
+		update_option('booking_text_option', serialize($booking_text_array));
     }
 }
 

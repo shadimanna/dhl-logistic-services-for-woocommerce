@@ -222,14 +222,23 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			);
 		}
 
-		foreach ($select_dhl_product_int as $key => $value) {
+		$booking_text_array = unserialize(get_option('booking_text_option'));
 
+		foreach ($select_dhl_product_int as $key => $value) {
+			$description = '';
+		
+			// Check if the product key exists in the booking_text array
+			if (isset($booking_text_array[$key])) {
+				$description = $booking_text_array[$key];
+			}
+			
 			$this->form_fields += array(
 				'dhl_participation_' . $key => array(
 					'title'             => $value,
 					'type'              => 'text',
-					'placeholder'		=> '',
-					'custom_attributes'	=> array( 'maxlength' => '2' )
+					'placeholder'       => '',
+					'custom_attributes' => array('maxlength' => '2'),
+					'description'       => $description, // Set the description
 				)
 			);
 		}
