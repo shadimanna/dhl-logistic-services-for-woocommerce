@@ -951,9 +951,9 @@ class PR_DHL_WC {
     }
 
     public function set_account_details( $account_details ) {
-    	// error_log('set_account_details');
+    	error_log('set_account_details');
     	$dhl_settings = $this->get_shipping_dhl_settings();
-    	// error_log(print_r($dhl_settings,true));
+    	error_log(print_r($dhl_settings,true));
 
     	if ( isset( $account_details->user->passwordValidUntil ) ) {
     		$dhl_settings['dhl_pwd_valid_until'] = $account_details->user->passwordValidUntil;
@@ -970,7 +970,7 @@ class PR_DHL_WC {
 					$product_key = $product_details->product->key;
 					$booking_text = $product_details->bookingText;
 					
-					$booking_text_array[$product] = $booking_text;
+					$booking_text_array[ $product_key ] = $booking_text;
 
 					$dhl_settings['dhl_account_num'] = $ekp;
 					$dhl_settings['dhl_participation_' . $product_key] = $participation;
@@ -981,6 +981,7 @@ class PR_DHL_WC {
     			}	
     		}
     	}
+    	
 		update_option('booking_text_option', serialize($booking_text_array));
     }
 }
