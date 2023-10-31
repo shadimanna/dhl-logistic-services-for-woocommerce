@@ -117,8 +117,6 @@ class PR_DHL_WC {
 		add_action( 'init', array( $this, 'load_plugin' ), 0 );
 		add_action( 'before_woocommerce_init', array( $this, 'declare_wc_hpos_compatibility' ), 10 );
 
-		//
-		add_action( 'admin_notices', array( $this, 'password_expiration_7days' ) );
 	}
 
 	/**
@@ -247,9 +245,9 @@ class PR_DHL_WC {
 
 		add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ) );
 
-		//password expiration cronjob
-		add_action('wp', array($this, 'schedule_password_check_event'));
-		add_action('check_password_expiration_event', array($this, 'check_password_expiration'));
+		add_action( 'my_custom_notice_event_month', array( $this, 'password_expiration_month' ));
+		add_action( 'my_custom_notice_event_week', array( $this, 'password_expiration_week' ) );
+		add_action( 'admin_notices', array( $this, 'password_expiration_callback' ));
     }
 
 	public function get_pr_dhl_wc_order() {
@@ -962,9 +960,25 @@ class PR_DHL_WC {
     	$dhl_settings = $this->get_shipping_dhl_settings();
     	error_log(print_r($dhl_settings,true));
 
-    	if ( isset( $account_details->user->passwordValidUntil ) ) {
-    		$dhl_settings['dhl_pwd_valid_until'] = $account_details->user->passwordValidUntil;
-    	}
+    	if (isset($account_details->user->passwordValidUntil)) {
+			$dhl_settings['dhl_pwd_valid_until'] = $account_details->user->passwordValidUntil;
+			$timestamp_month = strtotime($dhl_settings['dhl_pwd_valid_until']) - 30 * 24 * 60 * 60;
+			$timestamp_week = strtotime($dhl_settings['dhl_pwd_valid_until']) - 7 * 24 * 60 * 60;
+		
+			// Check if the scheduled timestamps are greater than the original date
+			$current_timestamp = current_time('timestamp');
+			
+			if ($timestamp_month > $current_timestamp && !wp_next_scheduled('my_custom_notice_event_month')) {
+				wp_schedule_single_event($timestamp_month, 'my_custom_notice_event_month');
+				update_option('password_expiration_notice', '30days');
+			}else if ($timestamp_week > $current_timestamp && !wp_next_scheduled('my_custom_notice_event_week')) {
+				wp_schedule_single_event($timestamp_week, 'my_custom_notice_event_week');
+				update_option('password_expiration_notice', '7days');
+			} else {
+				update_option('password_expiration_notice', '');
+			}
+		}
+		
 
     	if ( isset( $account_details->shippingRights->details ) ) {
     		foreach( $account_details->shippingRights->details as $product_details ) {
@@ -992,38 +1006,20 @@ class PR_DHL_WC {
 		update_option('booking_text_option', serialize($booking_text_array));
     }
 
-	public function check_password_expiration() {
-		$dhl_settings = get_shipping_dhl_settings(); // Assuming you have a function to get DHL settings.
-		
-		if (isset($dhl_settings['dhl_pwd_valid_until'])) {
-			$expiration_date = $dhl_settings['dhl_pwd_valid_until'];
-			$current_date = current_time('mysql');
-			
-			$expiration_timestamp = strtotime($expiration_date);
-			$current_timestamp = strtotime($current_date);
-			
-			$days_until_expiration = floor(($expiration_timestamp - $current_timestamp) / (60 * 60 * 24));
-			
-			if ($days_until_expiration <= 30) {
-				update_option ('password_expiration_notice', '30days');
-			}
-			if ($days_until_expiration <= 7) {
-				update_option ('password_expiration_notice', '7days');
-			}
+	public function password_expiration_callback() {
+		$notice_message = '';
+	
+		if (get_option('password_expiration_notice') == '30days') {
+			$notice_message = 'Your DHL account password will expire in less than 30 days, please head to DHL Paket Settings and re-authorize your account';
+		} elseif (get_option('password_expiration_notice') == '7days') {
+			$notice_message = 'Your DHL account password will expire in less than 7 days, please head to DHL Paket Settings and re-authorize your account';
+		}
+	
+		if (!empty($notice_message)) {
+			echo '<div class="notice notice-warning is-dismissible"><p>' . esc_html($notice_message) . '</p></div>';
 		}
 	}
-
-	public function password_expiration_7days(){
-		if(get_option( 'password_expiration_notice', true )){
-			printf( '<div class="notice notice-warning is-dismissible"><p>Warning: Your DHL Password will expire in 7 days, Please re-authorize your account in the DHL Paket settings page</p></div>' );
-		}
-	}
-
-	public function schedule_password_check_event() {
-		if (!wp_next_scheduled('check_password_expiration_event')) {
-			wp_schedule_event(time(), 'daily', 'check_password_expiration_event');
-		}
-	}
+	
 }
 
 endif;
