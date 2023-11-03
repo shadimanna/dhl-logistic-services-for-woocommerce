@@ -223,9 +223,8 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			$description = '';
 
 			// Check if the product key exists in the booking_text array
-			if (isset($booking_text_array[$key])) {
-				$description = $booking_text_array[$key];
-				error_log($description);
+			if (isset($booking_text_array[ $key ])) {
+				$description = $booking_text_array[ $key ];
 			}
 
 			$this->form_fields += array(
@@ -239,15 +238,12 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			);
 		}
 
-		
-		error_log(print_r($booking_text_array, true));
 		foreach ($select_dhl_product_int as $key => $value) {
 			$description = '';
 		
 			// Check if the product key exists in the booking_text array
-			if (isset($booking_text_array[$key])) {
-				$description = $booking_text_array[$key];
-				error_log($description);
+			if (isset($booking_text_array[ $key ])) {
+				$description = $booking_text_array[ $key ];
 			}
 			
 			$this->form_fields += array(

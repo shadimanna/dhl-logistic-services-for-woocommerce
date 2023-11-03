@@ -648,9 +648,8 @@ class PR_DHL_WC {
 	}
 
 	public function dhl_get_myaccount_callback() {
-		// error_log('dhl_get_myaccount_callback');
 		check_ajax_referer( 'pr-dhl-myaccount', 'myaccount_nonce' );
-		// error_log('ajax nonce check');
+
 		try {
 
 			$dhl_obj = $this->get_dhl_factory();
@@ -956,9 +955,7 @@ class PR_DHL_WC {
     }
 
     public function set_account_details( $account_details ) {
-    	error_log('set_account_details');
     	$dhl_settings = $this->get_shipping_dhl_settings();
-    	error_log(print_r($dhl_settings,true));
 
     	if (isset($account_details->user->passwordValidUntil)) {
 			$dhl_settings['dhl_pwd_valid_until'] = $account_details->user->passwordValidUntil;
@@ -982,7 +979,6 @@ class PR_DHL_WC {
 
     	if ( isset( $account_details->shippingRights->details ) ) {
     		foreach( $account_details->shippingRights->details as $product_details ) {
-    			error_log(print_r($product_details, true));
 
     			if( ! empty( $product_details->billingNumber ) ) {
     				$ekp = substr($product_details->billingNumber, 0, 10);
@@ -995,14 +991,10 @@ class PR_DHL_WC {
 
 					$dhl_settings['dhl_account_num'] = $ekp;
 					$dhl_settings['dhl_participation_' . $product_key] = $participation;
-					
-    				error_log($ekp);
-    				error_log($product);
-    				error_log($participation);
     			}	
     		}
     	}
-    	
+
 		update_option('booking_text_option', serialize($booking_text_array));
     }
 

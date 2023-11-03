@@ -39,11 +39,6 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 	}
 
 	protected function maybe_sandbox( $args ) {
-		// error_log('maybe_sandbox');
-		// error_log(print_r($args,true));
-		// $dhl_sandbox = $this->get_settings('dhl_sandbox');
-		// error_log(print_r($dhl_sandbox,true));
-		// $dhl_sandbox = isset( $dhl_sandbox ) ? $dhl_sandbox : '';
 
 		if ( isset($args['sandbox']) && ($args['sandbox'] == 'yes' ) ) {
 			$sandbox_info = $this->sandbox_info();
@@ -58,7 +53,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 				$args['account_num'] = $sandbox_info['account_no'];
 			}
 		}
-		 //error_log(print_r($args,true));
+		
 		return $args;
 	}
 
@@ -233,7 +228,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		$args['postcode'] = $postcode;
 		$args['start_date'] = $week_date;
 		$settings = $this->get_settings();
-		// error_log(print_r($settings,true));
+
 		if ( isset($settings['dhl_sandbox']) && ($settings['dhl_sandbox'] == 'yes' ) ) {
 			$sandbox_info = $this->sandbox_info();
 			$args['account_num'] = $sandbox_info['account_no'];
@@ -242,7 +237,6 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		}
 
 		$dhl_parcel_services = new PR_DHL_API_REST_Parcel();
-		// error_log(print_r($args,true));
 		$preferred_services = $dhl_parcel_services->get_dhl_parcel_services($args);
 
 		$preferred_day_time = array();
