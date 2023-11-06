@@ -315,11 +315,18 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		 return $this->dhl_my_account->get_dhl_my_account();
 	}
 
+	public function set_dhl_myaccount_info($value) {
+        update_option('woocommerce_pr_dhl_paket_settings', $value);
+    }
+
 	public function get_dhl_myaccount_pwd_expiration() {
         return get_option('dhl_myaccount_pwd_expiration', '');
     }
 
     public function set_dhl_myaccount_pwd_expiration($value) {
         update_option('dhl_myaccount_pwd_expiration', $value);
+    }
+	public function set_dhl_booking_text($value) {
+        update_option('dhl_booking_text', $value);
     }
 }
