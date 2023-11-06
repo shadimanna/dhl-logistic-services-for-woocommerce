@@ -215,9 +215,19 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'type'            => 'title',
 				'description'     => __( 'For each DHL product that you would like to use, please enter your participation number here. The participation number consists of the last two characters of the respective accounting number, which you will find in your DHL contract data (for example, 01).', 'dhl-for-woocommerce' ),
 			),
+			'dhl_my_account_button_prod' => array(
+				'title'             => PR_DHL_BUTTON_MY_ACCOUNT,
+				'type'              => 'button',
+				'custom_attributes' => array(
+					'onclick' => "dhlMyAccount('#woocommerce_pr_dhl_paket_dhl_my_account_button_prod');",
+				),
+				'description'       => __( 'Press the button to read your DHL Business Account settings into the DHL for WooCommerce plugin.', 'dhl-for-woocommerce' ) . $password_expiration_message,
+				'desc_tip'          => false,
+			),
 		);
 
-		$booking_text_array = unserialize(get_option('booking_text_option'));
+		// $booking_text_array = unserialize(get_option('booking_text_option'));
+		$booking_text_array = $dhl_obj->get_dhl_booking_text();
 
 		foreach ($select_dhl_product_dom as $key => $value) {
 			$description = '';

@@ -663,7 +663,7 @@ class PR_DHL_WC {
 
 			$account_details = $dhl_obj->get_my_account();
 
-			$this->set_account_details( $account_details );
+			$this->set_account_details( $account_details, $dhl_obj );
 
 			$connection_msg = __('Account Connected', 'dhl-for-woocommerce');
 			$this->log_msg( $connection_msg );
@@ -961,7 +961,7 @@ class PR_DHL_WC {
         return $states;
     }
 
-    public function set_account_details( $account_details ) {
+    public function set_account_details( $account_details, $dhl_obj ) {
     	$dhl_settings = $this->get_shipping_dhl_settings();
 		
 
@@ -976,12 +976,12 @@ class PR_DHL_WC {
 					
 			if ($timestamp_month > $current_timestamp) {
 			    wp_schedule_single_event($timestamp_month, 'dhl_myaccount_pwd_expiration_month');
-				$this->set_get->set_dhl_myaccount_pwd_expiration('30days');
+				// $this->set_get->set_dhl_myaccount_pwd_expiration('30days');
 			} else if ($timestamp_week > $current_timestamp) {
 			    wp_schedule_single_event($timestamp_week, 'dhl_myaccount_pwd_expiration_week');
-			    $this->set_get->set_dhl_myaccount_pwd_expiration('7days');
+			    // $this->set_get->set_dhl_myaccount_pwd_expiration('7days');
 			} else {
-			    $this->set_get->set_dhl_myaccount_pwd_expiration('');
+			    // $this->set_get->set_dhl_myaccount_pwd_expiration('');
 			}
 		}
 		
@@ -1001,10 +1001,10 @@ class PR_DHL_WC {
 					$dhl_settings['dhl_participation_' . $product_key] = $participation;
     			}
     		}
-    	}
 
-		$this->set_get->set_dhl_booking_text(serialize($booking_text_array));
-		$this->set_get->set_dhl_myaccount_info($dhl_settings);
+    		$dhl_obj->set_dhl_booking_text($booking_text_array);
+			$dhl_obj->set_dhl_myaccount_info($dhl_settings);
+    	}
     }
 
 	// public function password_expiration_notice_callback() {

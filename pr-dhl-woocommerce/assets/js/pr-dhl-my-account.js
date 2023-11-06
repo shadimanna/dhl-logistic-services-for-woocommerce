@@ -25,7 +25,6 @@ function dhlMyAccount(btn_id) {
     'myaccount_nonce': dhl_myaccount_obj.myaccount_nonce
   };
   
-  console.log(dhl_myaccount_obj);
   // We can also pass the url value separately from ajaxurl for front end AJAX implementations
   $.post(dhl_myaccount_obj.ajax_url, data, function(response) {
     btn.attr('disabled', false);
@@ -41,5 +40,10 @@ function dhlMyAccount(btn_id) {
     }).insertAfter(btn);
 
     loaderContainer.append(test_connection_text);
+
+    if ( success ) {
+      location.reload();
+    }
+
   });
 }
