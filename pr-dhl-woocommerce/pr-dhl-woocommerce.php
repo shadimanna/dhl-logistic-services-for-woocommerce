@@ -94,6 +94,13 @@ class PR_DHL_WC {
 	// 'LI', 'CH', 'NO'
 	protected $eu_iso2 = array( 'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SI', 'SK', 'ES', 'SE');
 
+	/**
+     * PR DHL API for handling some operations.
+     *
+     * @var PR_DHL_API_Paket
+     */
+    protected $set_get;
+
     // Exceptions for EU that STILL require customs
     protected $eu_exceptions = array(
             'DK' => [ '100-999', '39' ],
@@ -245,9 +252,7 @@ class PR_DHL_WC {
 
 		add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ) );
 
-		add_action( 'my_custom_notice_event_month', array( $this, 'password_expiration_month' ));
-		add_action( 'my_custom_notice_event_week', array( $this, 'password_expiration_week' ) );
-		add_action( 'admin_notices', array( $this, 'password_expiration_callback' ));
+		add_action( 'admin_notices', array( $this, 'password_expiration_notice_callback' ));
     }
 
 	public function get_pr_dhl_wc_order() {
@@ -956,27 +961,29 @@ class PR_DHL_WC {
 
     public function set_account_details( $account_details ) {
     	$dhl_settings = $this->get_shipping_dhl_settings();
+		
 
     	if (isset($account_details->user->passwordValidUntil)) {
 			$dhl_settings['dhl_pwd_valid_until'] = $account_details->user->passwordValidUntil;
 			$timestamp_month = strtotime($dhl_settings['dhl_pwd_valid_until']) - 30 * 24 * 60 * 60;
 			$timestamp_week = strtotime($dhl_settings['dhl_pwd_valid_until']) - 7 * 24 * 60 * 60;
-		
-			// Check if the scheduled timestamps are greater than the original date
 			$current_timestamp = current_time('timestamp');
-			
-			if ($timestamp_month > $current_timestamp && !wp_next_scheduled('my_custom_notice_event_month')) {
-				wp_schedule_single_event($timestamp_month, 'my_custom_notice_event_month');
-				update_option('password_expiration_notice', '30days');
-			}else if ($timestamp_week > $current_timestamp && !wp_next_scheduled('my_custom_notice_event_week')) {
-				wp_schedule_single_event($timestamp_week, 'my_custom_notice_event_week');
-				update_option('password_expiration_notice', '7days');
+
+			wp_clear_scheduled_hook('dhl_myaccount_pwd_expiration_month');
+			wp_clear_scheduled_hook('dhl_myaccount_pwd_expiration_week');
+					
+			if ($timestamp_month > $current_timestamp) {
+			    wp_schedule_single_event($timestamp_month, 'dhl_myaccount_pwd_expiration_month');
+				$this->set_get->set_dhl_myaccount_pwd_expiration('30days');
+			} else if ($timestamp_week > $current_timestamp) {
+			    wp_schedule_single_event($timestamp_week, 'dhl_myaccount_pwd_expiration_week');
+			    $this->set_get->set_dhl_myaccount_pwd_expiration('7days');
 			} else {
-				update_option('password_expiration_notice', '');
+			    $this->set_get->set_dhl_myaccount_pwd_expiration('');
 			}
+
 		}
 		
-
     	if ( isset( $account_details->shippingRights->details ) ) {
     		foreach( $account_details->shippingRights->details as $product_details ) {
 
@@ -991,19 +998,19 @@ class PR_DHL_WC {
 
 					$dhl_settings['dhl_account_num'] = $ekp;
 					$dhl_settings['dhl_participation_' . $product_key] = $participation;
-    			}	
+    			}
     		}
     	}
 
-		update_option('booking_text_option', serialize($booking_text_array));
+		update_option('dhl_booking_text', serialize($booking_text_array));
     }
 
-	public function password_expiration_callback() {
+	public function password_expiration_notice_callback() {
 		$notice_message = '';
 	
-		if (get_option('password_expiration_notice') == '30days') {
+		if ($this->set_get->get_dhl_myaccount_pwd_expiration() == '30days') {
 			$notice_message = 'Your DHL account password will expire in less than 30 days, please head to DHL Paket Settings and re-authorize your account';
-		} elseif (get_option('password_expiration_notice') == '7days') {
+		} elseif ($this->set_get->get_dhl_myaccount_pwd_expiration() == '7days') {
 			$notice_message = 'Your DHL account password will expire in less than 7 days, please head to DHL Paket Settings and re-authorize your account';
 		}
 	

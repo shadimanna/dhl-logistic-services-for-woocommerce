@@ -314,4 +314,12 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 	public function get_my_account() {
 		 return $this->dhl_my_account->get_dhl_my_account();
 	}
+
+	public function get_dhl_myaccount_pwd_expiration() {
+        return get_option('dhl_myaccount_pwd_expiration', '');
+    }
+
+    public function set_dhl_myaccount_pwd_expiration($value) {
+        update_option('dhl_myaccount_pwd_expiration', $value);
+    }
 }
