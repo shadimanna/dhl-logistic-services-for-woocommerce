@@ -117,19 +117,19 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		try {
 
 			$dhl_obj = PR_DHL()->get_dhl_factory();
-			$select_dhl_product_int = $dhl_obj->get_dhl_products_international();
-			$select_dhl_product_dom = $dhl_obj->get_dhl_products_domestic();
-			$select_dhl_visual_age 	= $dhl_obj->get_dhl_visual_age();
+			$select_dhl_product_int   = $dhl_obj->get_dhl_products_international();
+			$select_dhl_product_dom   = $dhl_obj->get_dhl_products_domestic();
+			$select_dhl_visual_age 	  = $dhl_obj->get_dhl_visual_age();
+			$myaccount_pwd_expiration = $dhl_obj->get_dhl_myaccount_pwd_expiration();
 
 		} catch (Exception $e) {
 			PR_DHL()->log_msg( __('DHL Products not displaying - ', 'dhl-for-woocommerce') . $e->getMessage() );
 		}
 
 		$weight_units = get_option( 'woocommerce_weight_unit' );
-		$password_expiration = get_option('password_expiration_notice');
-		if( $password_expiration == '7days') {
+		if( $myaccount_pwd_expiration == '7days') {
 			$password_expiration_message = 'Your password will expire in 7 days, Please re-authorize' ;
-		} elseif ($password_expiration == '30days') {
+		} elseif ($myaccount_pwd_expiration == '30days') {
 			$password_expiration_message = 'Your password will expire in 30 days, Please re-authorize';
 		} else {
 			$password_expiration_message = '';

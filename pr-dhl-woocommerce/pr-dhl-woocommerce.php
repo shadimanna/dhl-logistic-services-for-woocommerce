@@ -252,9 +252,10 @@ class PR_DHL_WC {
 
 		add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ) );
 
-		add_action('dhl_myaccount_pwd_expiration_month', array($this, 'dhl_myaccount_pwd_expiration_month_callback'));
-		add_action('dhl_myaccount_pwd_expiration_week', array($this, 'dhl_myaccount_pwd_expiration_week_callback'));
-		// add_action( 'admin_notices', array( $this, 'password_expiration_notice_callback' ));
+		// MyAccount password validation hooks
+		add_action( 'dhl_myaccount_pwd_expiration_month', array( $this, 'dhl_myaccount_pwd_expiration_month_callback' ) );
+		add_action( 'dhl_myaccount_pwd_expiration_week', array( $this, 'dhl_myaccount_pwd_expiration_week_callback' ) );
+		add_action( 'admin_notices', array( $this, 'password_expiration_notice_callback' ));
     }
 
 	public function get_pr_dhl_wc_order() {
@@ -963,29 +964,35 @@ class PR_DHL_WC {
 
     public function set_account_details( $account_details, $dhl_obj ) {
     	$dhl_settings = $this->get_shipping_dhl_settings();
-		
+
+		// testing the cron
+		// if (isset($account_details->user->passwordValidUntil)) {
+		// 	$timestamp_one_week = current_time('timestamp') + 7 * 24 * 60 * 60;
+		// 	$dhl_settings['dhl_pwd_valid_until'] = $timestamp_one_week;
+		// 	$current_timestamp = current_time('timestamp');
+
+		// 	error_log('time fetched from the API: ' . $dhl_settings['dhl_pwd_valid_until']);
+		// 	error_log('current time: ' . $current_timestamp);
+			
+		// 	if ($timestamp_one_week - $current_timestamp <= 7 * 24 * 60 * 60) {
+		// 		error_log('the condition is true, there is 1 week left until the assigned timespan');
+		// 		wp_schedule_single_event($current_timestamp +601, 'dhl_myaccount_pwd_expiration_week');
+		// 	} else {
+		// 		error_log('the condition is false, review your time');
+		// 	}
+		// }
 
     	if (isset($account_details->user->passwordValidUntil)) {
-			$dhl_settings['dhl_pwd_valid_until'] = $account_details->user->passwordValidUntil;
+			$dhl_settings['dhl_pwd_valid_until'] = strtotime($account_details->user->passwordValidUntil);
 
-			// testing the cron
-			// $timestamp_one_week = current_time('timestamp') + 7 * 24 * 60 * 60;
-			// $dhl_settings['dhl_pwd_valid_until'] = date('Y-m-d\TH:i:s\Z', $timestamp_one_week);
-			// error_log('Timestamp One Week: ' . $timestamp_one_week);
-
-			
-			$timestamp_month = strtotime($dhl_settings['dhl_pwd_valid_until']) - 30 * 24 * 60 * 60;
-			$timestamp_week = strtotime($dhl_settings['dhl_pwd_valid_until']) - 7 * 24 * 60 * 60;
+			$timestamp_month = $dhl_settings['dhl_pwd_valid_until'] - 30 * 24 * 60 * 60;
+			$timestamp_week = $dhl_settings['dhl_pwd_valid_until'] - 7 * 24 * 60 * 60;
 			$current_timestamp = current_time('timestamp');
-
-			error_log('Timestap feteched by API: ', strtotime($dhl_settings['dhl_pwd_valid_until']));
-        	error_log('Timestamp Month: ' . $timestamp_month);
-        	error_log('Timestamp Week: ' . $timestamp_week);
-        	error_log('Current Timestamp: ' . $current_timestamp);
 
 			wp_clear_scheduled_hook('dhl_myaccount_pwd_expiration_month');
 			wp_clear_scheduled_hook('dhl_myaccount_pwd_expiration_week');
-					
+			$dhl_obj->set_dhl_myaccount_pwd_expiration('');
+	
 			if ($timestamp_month > $current_timestamp) {
 			    wp_schedule_single_event($timestamp_month, 'dhl_myaccount_pwd_expiration_month');
 			} else if ($timestamp_week > $current_timestamp) {
@@ -1015,28 +1022,36 @@ class PR_DHL_WC {
     	}
     }
 
-	public function dhl_myaccount_pwd_expiration_month_callback($dhl_obj) {
+	public function dhl_myaccount_pwd_expiration_month_callback() {
+		$dhl_obj = $this->get_dhl_factory();
+
 		$dhl_obj->set_dhl_myaccount_pwd_expiration('30days');
+		error_log('30 days cron action successful');
 	}
 	
-	public function dhl_myaccount_pwd_expiration_week_callback($dhl_obj) {
+	public function dhl_myaccount_pwd_expiration_week_callback() {
+		$dhl_obj = $this->get_dhl_factory();
+		
 		$dhl_obj->set_dhl_myaccount_pwd_expiration('7days');
+		error_log('7 days cron action successful');
 	}
 
-	// public function password_expiration_notice_callback() {
-	// 	$notice_message = '';
+	public function password_expiration_notice_callback() {
+		$notice_message = '';
+		$dhl_obj = $this->get_dhl_factory();
+
+		$pwd_expiration = $dhl_obj->get_dhl_myaccount_pwd_expiration();
 	
-	// 	if ($this->set_get->get_dhl_myaccount_pwd_expiration() == '30days') {
-	// 		$notice_message = 'Your DHL account password will expire in less than 30 days, please head to DHL Paket Settings and re-authorize your account';
-	// 	} elseif ($this->set_get->get_dhl_myaccount_pwd_expiration() == '7days') {
-	// 		$notice_message = 'Your DHL account password will expire in less than 7 days, please head to DHL Paket Settings and re-authorize your account';
-	// 	}
-	
-	// 	if (!empty($notice_message)) {
-	// 		echo '<div class="notice notice-warning is-dismissible"><p>' . esc_html($notice_message) . '</p></div>';
-	// 	}
-	// }
-	
+		if ($pwd_expiration == '30days') {
+			$notice_message = 'Your DHL account password will expire in less than 30 days, please head to DHL Paket Settings and re-authorize your account';
+		} else if ($pwd_expiration == '7days') {
+			$notice_message = 'Your DHL account password will expire in less than 7 days, please head to DHL Paket Settings and re-authorize your account';
+		}
+		if (!empty($notice_message)) {
+			echo '<div class="notice notice-warning is-dismissible"><p>' . esc_html($notice_message) . '</p></div>';
+		}
+		
+	}
 }
 
 endif;
