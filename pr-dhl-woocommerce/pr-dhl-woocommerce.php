@@ -252,8 +252,8 @@ class PR_DHL_WC {
 
 		add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ) );
 
-		add_action( 'my_custom_notice_event_month', array( $this, 'password_expiration_month' ));
-		add_action( 'my_custom_notice_event_week', array( $this, 'password_expiration_week' ) );
+		add_action('dhl_myaccount_pwd_expiration_month', array($this, 'dhl_myaccount_pwd_expiration_month_callback'));
+		add_action('dhl_myaccount_pwd_expiration_week', array($this, 'dhl_myaccount_pwd_expiration_week_callback'));
 		// add_action( 'admin_notices', array( $this, 'password_expiration_notice_callback' ));
     }
 
@@ -967,21 +967,29 @@ class PR_DHL_WC {
 
     	if (isset($account_details->user->passwordValidUntil)) {
 			$dhl_settings['dhl_pwd_valid_until'] = $account_details->user->passwordValidUntil;
+
+			// testing the cron
+			// $timestamp_one_week = current_time('timestamp') + 7 * 24 * 60 * 60;
+			// $dhl_settings['dhl_pwd_valid_until'] = date('Y-m-d\TH:i:s\Z', $timestamp_one_week);
+			// error_log('Timestamp One Week: ' . $timestamp_one_week);
+
+			
 			$timestamp_month = strtotime($dhl_settings['dhl_pwd_valid_until']) - 30 * 24 * 60 * 60;
 			$timestamp_week = strtotime($dhl_settings['dhl_pwd_valid_until']) - 7 * 24 * 60 * 60;
 			$current_timestamp = current_time('timestamp');
+
+			error_log('Timestap feteched by API: ', strtotime($dhl_settings['dhl_pwd_valid_until']));
+        	error_log('Timestamp Month: ' . $timestamp_month);
+        	error_log('Timestamp Week: ' . $timestamp_week);
+        	error_log('Current Timestamp: ' . $current_timestamp);
 
 			wp_clear_scheduled_hook('dhl_myaccount_pwd_expiration_month');
 			wp_clear_scheduled_hook('dhl_myaccount_pwd_expiration_week');
 					
 			if ($timestamp_month > $current_timestamp) {
 			    wp_schedule_single_event($timestamp_month, 'dhl_myaccount_pwd_expiration_month');
-				// $this->set_get->set_dhl_myaccount_pwd_expiration('30days');
 			} else if ($timestamp_week > $current_timestamp) {
 			    wp_schedule_single_event($timestamp_week, 'dhl_myaccount_pwd_expiration_week');
-			    // $this->set_get->set_dhl_myaccount_pwd_expiration('7days');
-			} else {
-			    // $this->set_get->set_dhl_myaccount_pwd_expiration('');
 			}
 		}
 		
@@ -1006,6 +1014,14 @@ class PR_DHL_WC {
 			$dhl_obj->set_dhl_myaccount_info($dhl_settings);
     	}
     }
+
+	public function dhl_myaccount_pwd_expiration_month_callback($dhl_obj) {
+		$dhl_obj->set_dhl_myaccount_pwd_expiration('30days');
+	}
+	
+	public function dhl_myaccount_pwd_expiration_week_callback($dhl_obj) {
+		$dhl_obj->set_dhl_myaccount_pwd_expiration('7days');
+	}
 
 	// public function password_expiration_notice_callback() {
 	// 	$notice_message = '';
