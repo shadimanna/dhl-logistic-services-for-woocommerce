@@ -252,9 +252,8 @@ class PR_DHL_WC {
 
 		add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ) );
 
-		// MyAccount password validation hooks
-		add_action( 'dhl_myaccount_pwd_expiration_month', array( $this, 'dhl_myaccount_pwd_expiration_month_callback' ) );
-		add_action( 'dhl_myaccount_pwd_expiration_week', array( $this, 'dhl_myaccount_pwd_expiration_week_callback' ) );
+		add_action('dhl_myaccount_pwd_expiration_month', array($this, 'dhl_myaccount_pwd_expiration_month_callback'));
+		add_action('dhl_myaccount_pwd_expiration_week', array($this, 'dhl_myaccount_pwd_expiration_week_callback'));
 		add_action( 'admin_notices', array( $this, 'password_expiration_notice_callback' ));
     }
 
