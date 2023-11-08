@@ -1042,9 +1042,9 @@ class PR_DHL_WC {
 		$pwd_expiration = $dhl_obj->get_dhl_myaccount_pwd_expiration();
 	
 		if ($pwd_expiration == '30days') {
-			$notice_message = 'Your DHL account password will expire in less than 30 days, please head to DHL Paket Settings and re-authorize your account';
+			$notice_message = 'Your DHL account password will expire in less than 30 days, please head to DHL business portal and reset your password. More info in DHL Paket settings';
 		} else if ($pwd_expiration == '7days') {
-			$notice_message = 'Your DHL account password will expire in less than 7 days, please head to DHL Paket Settings and re-authorize your account';
+			$notice_message = 'Your DHL account password will expire in less than 7 days, please head to DHL business portal and reset your password. More info in DHL Paket settings.';
 		}
 	
 		if (!empty($notice_message)) {

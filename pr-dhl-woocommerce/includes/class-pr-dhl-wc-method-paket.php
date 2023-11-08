@@ -128,9 +128,9 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 		$weight_units = get_option( 'woocommerce_weight_unit' );
 		if ($myaccount_pwd_expiration == '7days') {
-			$password_expiration_message = __( 'Your password will expire in 7 days, Please re-authorize', 'dhl-for-woocommerce' );
+			$password_expiration_message =  'Your password will expire in less than 7 days';
 		} elseif ($myaccount_pwd_expiration == '30days') {
-			$password_expiration_message = __( 'Your password will expire in 30 days, Please re-authorize', 'dhl-for-woocommerce' );
+			$password_expiration_message = 'Your password will expire in less than 30 days';
 		} else {
 			$password_expiration_message = '';
 		}
@@ -151,7 +151,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			'dhl_api_pwd' => array(
 				'title'             => __( 'Password', 'dhl-for-woocommerce' ),
 				'type'              => 'password',
-				'description'       => sprintf( __( 'Your password for the DHL business customer portal. Please note the new assignment of the password to 3 (Standard User) or 12 (System User) months and test your access data in advance at %shere%s', 'dhl-for-woocommerce' ), '<a href="' . PR_DHL_PAKET_BUSSINESS_PORTAL . '" target = "_blank">', '</a>' ) . '<p style="color:red">' . $password_expiration_message . '</p>',
+				'description'       => sprintf( __( 'Your password for the DHL business customer portal. Please note the new assignment of the password to 3 (Standard User) or 12 (System User) months and test your access data in advance at %shere%s', 'dhl-for-woocommerce' ), '<a href="' . PR_DHL_PAKET_BUSSINESS_PORTAL . '" target = "_blank">', '</a>' ) . sprintf( __('<p style="color: red;">%s, please go to your <a href="%s">business portal</a> and reset your password then click the "Get Account Settings" button below.</p>', 'dhl-for-woocommerce'), $password_expiration_message, 'https://geschaeftskunden.dhl.de/'),
 				'desc_tip'          => false,
 				'default'           => ''
 			),
