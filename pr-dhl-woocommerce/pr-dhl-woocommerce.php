@@ -1038,7 +1038,7 @@ class PR_DHL_WC {
 	public function password_expiration_notice_callback() {
 		$notice_message = '';
 		$dhl_obj = $this->get_dhl_factory();
-
+	
 		$pwd_expiration = $dhl_obj->get_dhl_myaccount_pwd_expiration();
 	
 		if ($pwd_expiration == '30days') {
@@ -1046,11 +1046,12 @@ class PR_DHL_WC {
 		} else if ($pwd_expiration == '7days') {
 			$notice_message = 'Your DHL account password will expire in less than 7 days, please head to DHL Paket Settings and re-authorize your account';
 		}
+	
 		if (!empty($notice_message)) {
-			echo '<div class="notice notice-warning is-dismissible"><p>' . esc_html($notice_message) . '</p></div>';
+			echo '<div class="notice notice-warning is-dismissible"><p>' . sprintf(__('%s', 'dhl-for-woocommerce'), $notice_message) . '</p></div>';
 		}
-		
 	}
+	
 }
 
 endif;

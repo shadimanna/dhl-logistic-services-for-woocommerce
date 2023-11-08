@@ -127,13 +127,14 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		}
 
 		$weight_units = get_option( 'woocommerce_weight_unit' );
-		if( $myaccount_pwd_expiration == '7days') {
-			$password_expiration_message = 'Your password will expire in 7 days, Please re-authorize' ;
+		if ($myaccount_pwd_expiration == '7days') {
+			$password_expiration_message = __( 'Your password will expire in 7 days, Please re-authorize', 'dhl-for-woocommerce' );
 		} elseif ($myaccount_pwd_expiration == '30days') {
-			$password_expiration_message = 'Your password will expire in 30 days, Please re-authorize';
+			$password_expiration_message = __( 'Your password will expire in 30 days, Please re-authorize', 'dhl-for-woocommerce' );
 		} else {
 			$password_expiration_message = '';
 		}
+		
 		$this->form_fields = array(
 			'dhl_pickup_api_dist'     => array(
 				'title'           => __( 'Account and API Settings', 'dhl-for-woocommerce' ),
@@ -150,7 +151,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			'dhl_api_pwd' => array(
 				'title'             => __( 'Password', 'dhl-for-woocommerce' ),
 				'type'              => 'password',
-				'description'       => sprintf( __( 'Your password for the DHL business customer portal. Please note the new assignment of the password to 3 (Standard User) or 12 (System User) months and test your access data in advance at %shere%s', 'dhl-for-woocommerce' ), '<a href="' . PR_DHL_PAKET_BUSSINESS_PORTAL . '" target = "_blank">', '</a>' ),
+				'description'       => sprintf( __( 'Your password for the DHL business customer portal. Please note the new assignment of the password to 3 (Standard User) or 12 (System User) months and test your access data in advance at %shere%s', 'dhl-for-woocommerce' ), '<a href="' . PR_DHL_PAKET_BUSSINESS_PORTAL . '" target = "_blank">', '</a>' ) . '<p style="color:red">' . $password_expiration_message . '</p>',
 				'desc_tip'          => false,
 				'default'           => ''
 			),
@@ -160,7 +161,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'custom_attributes' => array(
 					'onclick' => "dhlMyAccount('#woocommerce_pr_dhl_paket_dhl_my_account_button');",
 				),
-				'description'       => __( 'Press the button to read your DHL Business Account settings into the DHL for WooCommerce plugin.', 'dhl-for-woocommerce' ) . $password_expiration_message,
+				'description'       => __( 'Press the button to read your DHL Business Account settings into the DHL for WooCommerce plugin.', 'dhl-for-woocommerce' ),
 				'desc_tip'          => false,
 			),
 			'dhl_account_num' => array(
