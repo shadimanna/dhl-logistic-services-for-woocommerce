@@ -1292,7 +1292,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$shipping_address = $order->get_address( 'shipping' );
 		$shipping_country = $shipping_address['country'];
 
-		if( 'GB' === $shipping_country || 'NO' === $shipping_country ) {
+		if( 'GB' === $shipping_country || 'NO' === $shipping_country || 'CH' === $shipping_country ) {
 			return true;
 		}
         
