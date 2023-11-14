@@ -228,7 +228,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'custom_attributes' => array(
 					'onclick' => "dhlMyAccount('#woocommerce_pr_dhl_paket_dhl_my_account_button_prod');",
 				),
-				'description'       => __( 'Press the button to read your DHL Business Account settings into the DHL for WooCommerce plugin.', 'dhl-for-woocommerce' ) . $password_expiration_message,
+				'description'       => __( 'Press the button to read your DHL Business Account settings into the DHL for WooCommerce plugin.', 'dhl-for-woocommerce' ),
 				'desc_tip'          => false,
 			),
 		);

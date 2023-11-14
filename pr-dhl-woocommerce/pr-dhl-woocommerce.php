@@ -7,7 +7,7 @@
  * Author URI: http://dhl.com/
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
- * Version: 3.5.8
+ * Version: 3.6.0
  * Tested up to: 6.3
  * WC requires at least: 3.0
  * WC tested up to: 8.2
@@ -38,7 +38,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "3.5.8";
+	private $version = "3.6.0";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -997,13 +997,18 @@ class PR_DHL_WC {
     				$ekp = substr($product_details->billingNumber, 0, 10);
     				$product = substr($product_details->billingNumber, 10, 2);
     				$participation = substr($product_details->billingNumber, 12, 2);
-					$product_key = $product_details->product->key;
-					$booking_text = $product_details->bookingText;
-					
-					$booking_text_array[ $product_key ] = $booking_text;
 
-					$dhl_settings['dhl_account_num'] = $ekp;
-					$dhl_settings['dhl_participation_' . $product_key] = $participation;
+    				$dhl_settings['dhl_account_num'] = $ekp;
+
+					$product_key = $product_details->product->key;
+					if ($product_key == 'dhlRetoure') {
+						$dhl_settings['dhl_participation_return'] = $participation;
+					} else {
+						$dhl_settings['dhl_participation_' . $product_key] = $participation;
+					}
+
+					$booking_text = $product_details->bookingText;
+					$booking_text_array[ $product_key ] = $booking_text;
     			}
     		}
 
