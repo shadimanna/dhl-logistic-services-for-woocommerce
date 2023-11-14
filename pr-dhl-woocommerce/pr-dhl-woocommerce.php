@@ -187,6 +187,7 @@ class PR_DHL_WC {
 		$this->define( 'PR_DHL_PAKET_TRACKING_URL', 'https://www.dhl.de/de/privatkunden/dhl-sendungsverfolgung.html?piececode=' );
 		$this->define( 'PR_DHL_PAKET_TRACKING_URL_EN', 'https://www.dhl.de/en/privatkunden/dhl-sendungsverfolgung.html?piececode=' );
 		$this->define( 'PR_DHL_PAKET_BUSSINESS_PORTAL', 'https://geschaeftskunden.dhl.de' );
+		$this->define( 'PR_DHL_PAKET_BUSSINESS_PORTAL_LOGIN', 'https://sso.geschaeftskunden.dhl.de/auth/realms/GkpExternal/protocol/openid-connect/auth?client_id=gui&redirect_uri=https%3A%2F%2Fgeschaeftskunden.dhl.de%2F&state=97ef9c27-1357-4a2c-a51f-31d1bf3e5c1e&response_mode=fragment&response_type=code&scope=openid&nonce=a7c6f3df-93d9-43a7-8872-7382734c852c&ui_locales=de-DE&code_challenge=FVs5Fp-_nBdTIe_XXAW8J3Tb8iaQyZeTaJvAx02EX78&code_challenge_method=S256' );
 		$this->define( 'PR_DHL_PAKET_DEVELOPER_PORTAL', 'https://entwickler.dhl.de/' );
 		$this->define( 'PR_DHL_PAKET_NOTIFICATION_EMAIL', 'https://www.dhl.de/de/geschaeftskunden/paket/versandsoftware/dhl-paketankuendigung/formular.html' );
 		$this->define( 'PR_DHL_PAKET_PARCEL_DE_SHIPPING_API_USER_GUIDE', 'https://developer.dhl.com/api-reference/parcel-de-shipping-post-parcel-germany-v2#get-started-section/user-guide' );
@@ -964,23 +965,6 @@ class PR_DHL_WC {
     public function set_account_details( $account_details, $dhl_obj ) {
     	$dhl_settings = $this->get_shipping_dhl_settings();
 
-		// testing the cron
-		// if (isset($account_details->user->passwordValidUntil)) {
-		// 	$timestamp_one_week = current_time('timestamp') + 7 * 24 * 60 * 60;
-		// 	$dhl_settings['dhl_pwd_valid_until'] = $timestamp_one_week;
-		// 	$current_timestamp = current_time('timestamp');
-
-		// 	error_log('time fetched from the API: ' . $dhl_settings['dhl_pwd_valid_until']);
-		// 	error_log('current time: ' . $current_timestamp);
-			
-		// 	if ($timestamp_one_week - $current_timestamp <= 7 * 24 * 60 * 60) {
-		// 		error_log('the condition is true, there is 1 week left until the assigned timespan');
-		// 		wp_schedule_single_event($current_timestamp +601, 'dhl_myaccount_pwd_expiration_week');
-		// 	} else {
-		// 		error_log('the condition is false, review your time');
-		// 	}
-		// }
-
     	if (isset($account_details->user->passwordValidUntil)) {
 			$dhl_settings['dhl_pwd_valid_until'] = strtotime($account_details->user->passwordValidUntil);
 
@@ -990,12 +974,19 @@ class PR_DHL_WC {
 
 			wp_clear_scheduled_hook('dhl_myaccount_pwd_expiration_month');
 			wp_clear_scheduled_hook('dhl_myaccount_pwd_expiration_week');
+			
 			$dhl_obj->set_dhl_myaccount_pwd_expiration('');
 	
+			// If greater than a 30 days
 			if ($timestamp_month > $current_timestamp) {
 			    wp_schedule_single_event($timestamp_month, 'dhl_myaccount_pwd_expiration_month');
+			// Less than or equal to 30 days and greater than 7 days
 			} else if ($timestamp_week > $current_timestamp) {
+			    $this->dhl_myaccount_pwd_expiration_month_callback();
 			    wp_schedule_single_event($timestamp_week, 'dhl_myaccount_pwd_expiration_week');
+			// Less than 7 days	
+			} else {
+				$this->dhl_myaccount_pwd_expiration_week_callback();
 			}
 		}
 		
@@ -1023,16 +1014,12 @@ class PR_DHL_WC {
 
 	public function dhl_myaccount_pwd_expiration_month_callback() {
 		$dhl_obj = $this->get_dhl_factory();
-
 		$dhl_obj->set_dhl_myaccount_pwd_expiration('30days');
-		error_log('30 days cron action successful');
 	}
 	
 	public function dhl_myaccount_pwd_expiration_week_callback() {
 		$dhl_obj = $this->get_dhl_factory();
-		
 		$dhl_obj->set_dhl_myaccount_pwd_expiration('7days');
-		error_log('7 days cron action successful');
 	}
 
 	public function password_expiration_notice_callback() {

@@ -129,13 +129,13 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		$weight_units = get_option( 'woocommerce_weight_unit' );
 		if ($myaccount_pwd_expiration == '7days') {
 			$password_expiration_message = sprintf(
-				__('<p style="color: red;">Your password will expire in less than 7 days, please go to your <a href="%s">business portal</a> and reset your password then click the "Get Account Settings" button below.</p>', 'dhl-for-woocommerce'),
-				'https://geschaeftskunden.dhl.de/'
+				__('<p style="color: red;">Your password will expire in less than 7 days, please go to your <a href="%s" target = "_blank">business portal</a> and reset your password then click the "Get Account Settings" button below.</p>', 'dhl-for-woocommerce'),
+				PR_DHL_PAKET_BUSSINESS_PORTAL_LOGIN
 			);
 		} elseif ($myaccount_pwd_expiration == '30days') {
 			$password_expiration_message = sprintf(
-				__('<p style="color: red;">Your password will expire in less than 30 days, please go to your <a href="%s">business portal</a> and reset your password then click the "Get Account Settings" button below.</p>', 'dhl-for-woocommerce'),
-				'https://geschaeftskunden.dhl.de/'
+				__('<p style="color: red;">Your password will expire in less than 30 days, please go to your <a href="%s" target = "_blank">business portal</a> and reset your password then click the "Get Account Settings" button below.</p>', 'dhl-for-woocommerce'),
+				PR_DHL_PAKET_BUSSINESS_PORTAL_LOGIN
 			);
 		} else {
 			$password_expiration_message = '';
