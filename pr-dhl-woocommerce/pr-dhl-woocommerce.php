@@ -94,13 +94,6 @@ class PR_DHL_WC {
 	// 'LI', 'CH', 'NO'
 	protected $eu_iso2 = array( 'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SI', 'SK', 'ES', 'SE');
 
-	/**
-     * PR DHL API for handling some operations.
-     *
-     * @var PR_DHL_API_Paket
-     */
-    protected $set_get = null;
-
     // Exceptions for EU that STILL require customs
     protected $eu_exceptions = array(
             'DK' => [ '100-999', '39' ],
@@ -1034,9 +1027,9 @@ class PR_DHL_WC {
 		$pwd_expiration = $dhl_obj->get_dhl_myaccount_pwd_expiration();
 	
 		if ($pwd_expiration == '30days') {
-			$notice_message = 'Your DHL account password will expire in less than 30 days, please head to DHL business portal and reset your password. More info in DHL Paket settings';
+			$notice_message = __('Your DHL account password will expire in less than 30 days, please head to DHL business portal and reset your password.', 'dhl-for-woocommerce');
 		} else if ($pwd_expiration == '7days') {
-			$notice_message = 'Your DHL account password will expire in less than 7 days, please head to DHL business portal and reset your password. More info in DHL Paket settings.';
+			$notice_message = __('Your DHL account password will expire in less than 7 days, please head to DHL business portal and reset your password.', 'dhl-for-woocommerce');
 		}
 	
 		if (!empty($notice_message)) {
