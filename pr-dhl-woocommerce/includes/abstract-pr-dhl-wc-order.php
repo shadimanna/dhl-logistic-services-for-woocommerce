@@ -49,7 +49,7 @@ abstract class PR_DHL_WC_Order {
 		$subs_version = class_exists( 'WC_Subscriptions' ) && ! empty( WC_Subscriptions::$version ) ? WC_Subscriptions::$version : null;
 
 		// Prevent data being copied to subscriptions
-		if ( null !== $subs_version && version_compare( $subs_version, '2.0.0', '>=' ) ) {
+		if ( null !== $subs_version && version_compare( $subs_version, '2.5.0', '>=' ) ) {
 			add_filter( 'wcs_renewal_order_meta_query', array( $this, 'woocommerce_subscriptions_renewal_order_meta_query' ), 10 );
 		} else {
 			add_filter( 'woocommerce_subscriptions_renewal_order_meta_query', array( $this, 'woocommerce_subscriptions_renewal_order_meta_query' ), 10 );

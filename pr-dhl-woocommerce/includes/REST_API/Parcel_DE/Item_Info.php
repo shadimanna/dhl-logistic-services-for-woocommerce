@@ -272,6 +272,7 @@ class Item_Info {
 				'default' => '',
 			),
 			'total_packages'         => array(
+				'default' => 'no',
 				'validate' => function ( $value ) use ( $self ) {
 					if ( isset( $self->args['order_details']['multi_packages_enabled'] ) && ( $self->args['order_details']['multi_packages_enabled'] == 'yes' ) ) {
 						for ( $i = 0; $i < intval( $value ); $i ++ ) {
@@ -713,54 +714,71 @@ class Item_Info {
 
 		return array(
 			'preferred_neighbor'   => array(
+				'default' => '',
 				'rename' => 'preferredNeighbour',
 			),
 			'preferred_location'   => array(
+				'default' => '',
 				'rename' => 'preferredLocation',
 			),
 			'email_notification'   => array(
+				'default' => '',
 				'rename' => 'shippingConfirmation',
 			),
 			'age_visual'           => array(
+				'default' => '',
 				'rename' => 'visualCheckOfAge',
 			),
 			'personally'           => array(
+				'default' => '',
 				'rename' => 'namedPersonOnly',
 			),
 			'identcheck'           => array(
+				'default' => '',
 				'rename' => 'identCheck',
 			),
 			'preferred_day'        => array(
+				'default' => '',
 				'rename' => 'preferredDay',
 			),
 			'no_neighbor'          => array(
+				'default' => '',
 				'rename' => 'noNeighbourDelivery',
 			),
 			'additional_insurance' => array(
+				'default' => '',
 				'rename' => 'additionalInsurance',
 			),
 			'bulky_goods'          => array(
+				'default' => '',
 				'rename' => 'bulkyGoods',
 			),
 			'cdp_delivery'         => array(
+				'default' => '',
 				'rename' => 'closestDropPoint',
 			),
 			'premium'              => array(
+				'default' => '',
 				'rename' => 'premium',
 			),
 			'routing'              => array(
+				'default' => '',
 				'rename' => 'parcelOutletRouting',
 			),
 			'PDDP'                 => array(
+				'default' => '',
 				'rename' => 'postalDeliveryDutyPaid',
 			),
 			'endorsement'          => array(
+				'default' => '',
 				'rename' => 'endorsement',
 			),
 			'return_address_enabled'    => array(
+				'default' => '',
 				'rename' => 'dhlRetoure',
 			),
 			'signature_service'    => array(
+				'default' => '',
 				'rename' => 'signedForByRecipient',
 			),
 		);

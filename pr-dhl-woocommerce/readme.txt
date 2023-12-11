@@ -80,6 +80,10 @@ More detailed instructions on how to set up your store and configure it are cons
 * DHL Paket: Implement MyAccount API to fetch EKP, participation settings and password expiration.
 * DHL Paket: Add PDDP for Switzerland
 
+= 3.5.9 =
+* DHL Paket: Fix bulk label creation "total_package" error in REST API
+* DHL Paket: Fix warning for "woocommerce_subscriptions_renewal_order_meta_query"
+
 = 3.5.8 =
 * DHL Paket: Add Company Name is destination address label
 * DHL Paket: Fix bulk merge issue when label previously exists
