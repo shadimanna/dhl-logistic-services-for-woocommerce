@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use PR\DHL\REST_API\Parcel_DE\Item_Info;
 use PR\DHL\Utils\API_Utils;
+use PR\DHL\REST_API\Parcel_DE_MyAccount;
 
 class PR_DHL_API_Paket extends PR_DHL_API {
 

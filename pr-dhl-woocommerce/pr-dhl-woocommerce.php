@@ -1024,6 +1024,10 @@ class PR_DHL_WC {
 		$notice_message = '';
 		$dhl_obj = $this->get_dhl_factory();
 	
+		if( ! $dhl_obj->is_dhl_paket() ) {
+			return;
+		}
+
 		$pwd_expiration = $dhl_obj->get_dhl_myaccount_pwd_expiration();
 	
 		if ($pwd_expiration == '30days') {
