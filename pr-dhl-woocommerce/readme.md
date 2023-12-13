@@ -5,9 +5,9 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL Paket Germany, WooCommerce, W
 Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 6.3
-Stable tag: 3.5.7
+Stable tag: 3.6.2
 WC requires at least: 3.0
-WC tested up to: 8.2
+WC tested up to: 8.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -75,6 +75,24 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
+
+= 3.6.2 =
+* DHL Paket: Settings is empty on WooCommerce version 8.4.0
+
+= 3.6.1 =
+* DHL Paket: Fix MyAccount files crash due to namespacing
+
+= 3.6.0 =
+* DHL Paket: Implement MyAccount API to fetch EKP, participation settings and password expiration.
+* DHL Paket: Add PDDP for Switzerland
+
+= 3.5.9 =
+* DHL Paket: Fix bulk label creation "total_package" error in REST API
+* DHL Paket: Fix warning for "woocommerce_subscriptions_renewal_order_meta_query"
+
+= 3.5.8 =
+* DHL Paket: Add Company Name is destination address label
+* DHL Paket: Fix bulk merge issue when label previously exists
 
 = 3.5.7 =
 * DHL Paket: Fix shipment weight for Rest-API.
