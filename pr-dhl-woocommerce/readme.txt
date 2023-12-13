@@ -5,9 +5,9 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL Paket Germany, WooCommerce, W
 Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 6.3
-Stable tag: 3.6.1
+Stable tag: 3.6.2
 WC requires at least: 3.0
-WC tested up to: 8.2
+WC tested up to: 8.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -75,6 +75,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
+
+= 3.6.2 =
+* DHL Paket: Settings is empty on WooCommerce version 8.4.0
 
 = 3.6.1 =
 * DHL Paket: Fix MyAccount files crash due to namespacing
