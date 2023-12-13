@@ -359,7 +359,7 @@ p.dhl-total-packages > label {
 	padding:0px 40px;
 }
 
-#dhlpaket_shipping_method_settings .dhlpaket_tab_content > * {
+#dhlpaket_shipping_method_settings .dhlpaket_tab_content .wc-shipping-zone-method-fields > * {
 	display:none;
 }
 
