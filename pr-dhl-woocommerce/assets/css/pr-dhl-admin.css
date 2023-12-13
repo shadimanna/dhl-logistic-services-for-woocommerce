@@ -359,6 +359,14 @@ p.dhl-total-packages > label {
 	padding:0px 40px;
 }
 
+#dhlpaket_shipping_method_settings .dhlpaket_tab_content > * {
+	display:none;
+}
+
+#dhlpaket_shipping_method_settings .dhlpaket_tab_content .wc-shipping-zone-method-fields {
+	display:block;
+}
+
 #dhlpaket_shipping_method_settings .dhlpaket_tab_content .wc-shipping-zone-method-fields > * {
 	display:none;
 }
@@ -434,4 +442,12 @@ h3#woocommerce_pr_dhl_paket_dhl_business_hours:before {
 
 body.woocommerce_page_wc-settings.pr_dhl_paket p.submit button.woocommerce-save-button {
 	margin-left:290px;
+}
+
+body.woocommerce_page_wc-settings.pr_dhl_paket #dhlpaket_shipping_method_settings .dhlpaket_tab_content .wc-shipping-zone-method-fields p.submit {
+	display:block;
+}
+
+body.woocommerce_page_wc-settings.pr_dhl_paket .wc-shipping-zone-method-fields p.submit button.woocommerce-save-button {
+	margin-left:0px;
 }
