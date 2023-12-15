@@ -421,17 +421,17 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		}
 
 
-		$this->pos_ps = PR_DHL()->is_packstation( $args['shipping_address']['address_1'] );
-		$this->pos_rs = PR_DHL()->is_parcelshop( $args['shipping_address']['address_1'] );
-		$this->pos_po = PR_DHL()->is_post_office( $args['shipping_address']['address_1'] );
+		$pos_ps = PR_DHL()->is_packstation( $args['shipping_address']['address_1'] );
+		$pos_rs = PR_DHL()->is_parcelshop( $args['shipping_address']['address_1'] );
+		$pos_po = PR_DHL()->is_post_office( $args['shipping_address']['address_1'] );
 
 		// If Packstation, post number is mandatory
-		if ( $this->pos_ps && empty( $args['shipping_address']['dhl_postnum'] ) ) {
+		if ( $pos_ps && empty( $args['shipping_address']['dhl_postnum'] ) ) {
 			throw new Exception( __('Post Number is missing, it is mandatory for "Packstation" delivery.', 'dhl-for-woocommerce') );
 		}
 
 		// Check address 2 if no parcel shop is being selected
-		if ( ! $this->pos_ps && ! $this->pos_rs && ! $this->pos_po ) {
+		if ( ! $pos_ps && ! $pos_rs && ! $pos_po ) {
 			// If address 2 missing, set last piece of an address to be address 2
 			if ( empty( $args['shipping_address']['address_2'] )) {
 				$set_key = false;
@@ -516,8 +516,6 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 
 			$args['items'][$key] = wp_parse_args( $item, $default_args_item );
 		}
-
-		$this->args = $args;
 	}
 
 	/**

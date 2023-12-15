@@ -21,6 +21,8 @@ class PR_DHL_Front_End_Paket {
 	private $preferred_location_neighbor = array();
 
 	private $cdp_service = array();
+	
+	private $shipping_dhl_settings = array();
 
 	/**
 	 * Init and hook in the integration.
