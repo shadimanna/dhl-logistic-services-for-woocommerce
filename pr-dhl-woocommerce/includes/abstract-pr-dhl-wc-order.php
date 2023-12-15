@@ -59,9 +59,10 @@ abstract class PR_DHL_WC_Order {
 		add_action( 'admin_footer', array( $this, 'add_order_bulk_actions' ) );
 
 		// process orders bulk actions
-		add_action( 'load-edit.php', array( $this, 'process_orders_bulk_actions' ) );
+		// add_action( 'load-edit.php', array( $this, 'process_orders_bulk_actions' ) );
 		//add_action( 'handle_bulk_actions-edit-shop_order', array( $this, 'process_orders_bulk_actions' ) );
-		add_action( 'handle_bulk_actions-woocommerce_page_wc-orders', array( $this, 'process_orders_bulk_actions' ) );
+		// add_action( 'handle_bulk_actions-woocommerce_page_wc-orders', array( $this, 'process_orders_bulk_actions' ) );
+		add_filter( 'handle_bulk_actions-edit-shop_order', array( $this, 'process_orders_bulk_actions' ), 10, 3 );
 
 		// display admin notices for bulk actions
 		add_action( 'admin_notices', array( $this, 'render_messages' ) );
@@ -977,50 +978,36 @@ abstract class PR_DHL_WC_Order {
 		<?php
 	}
 
-	public function process_orders_bulk_actions() {
-		global $typenow;
+	public function process_orders_bulk_actions( $redirect, $doaction, $object_ids ) {
+
+		if( ! array_key_exists( $doaction, $this->get_bulk_actions() ) ) {
+			return $redirect;
+		}
+
 		$array_messages = array( 'msg_user_id' => get_current_user_id() );
 
-		//if ( 'shop_order' === $typenow ) {
+		$message = $this->validate_bulk_actions( $doaction, $object_ids );
 
-			// Get the bulk action
-			$wp_list_table = _get_list_table( 'WP_Posts_List_Table' );
-			$action        = $wp_list_table->current_action();
-			$order_ids     = array();
-
-			if ( ! $action || ! array_key_exists( $action, $this->get_bulk_actions() ) ) {
-				return;
-			}
-
-			// Make sure order IDs are submitted
-			if ( isset( $_REQUEST['post'] ) || isset( $_REQUEST['order'] ) ) {
-				$order_ids = array_map( 'absint', ( $_REQUEST['post'] ?? $_REQUEST['order'] ) );
-			}
-
-			$orders_count 	= count( $order_ids );
-
-			$message = $this->validate_bulk_actions( $action, $order_ids );
-			if ( ! empty( $message ) ) {
+		if ( ! empty( $message ) ) {
+			array_push($array_messages, array(
+				'message' => $message,
+				'type' => 'error',
+			));
+		} else {
+			try {
+				$array_messages += $this->process_bulk_actions( $doaction, $object_ids );
+			} catch (Exception $e) {
 				array_push($array_messages, array(
-					'message' => $message,
+					'message' => $e->getMessage(),
 					'type' => 'error',
 				));
-			} else {
-				try {
-					$array_messages += $this->process_bulk_actions( $action, $order_ids, $orders_count );
-				} catch (Exception $e) {
-					array_push($array_messages, array(
-						'message' => $e->getMessage(),
-						'type' => 'error',
-					));
-				}
 			}
+		}
 
-			/* @see render_messages() */
-			// update_option( '_pr_dhl_bulk_action_confirmation', array( get_current_user_id() => $message, 'is_error' => $is_error ) );
-			update_option( '_pr_dhl_bulk_action_confirmation', $array_messages );
+		/* @see render_messages() */
+		// update_option( '_pr_dhl_bulk_action_confirmation', array( get_current_user_id() => $message, 'is_error' => $is_error ) );
+		update_option( '_pr_dhl_bulk_action_confirmation', $array_messages );
 
- 		//}
 	}
 	/*
 	public function render_messages( $current_screen = null ) {
@@ -1104,7 +1091,7 @@ abstract class PR_DHL_WC_Order {
 		return '';
 	}
 
-	public function process_bulk_actions( $action, $order_ids, $orders_count, $dhl_force_product = false, $is_force_product_dom = false ) {
+	public function process_bulk_actions( $action, $order_ids, $dhl_force_product = false, $is_force_product_dom = false ) {
 		$label_count    = 0;
 		$merge_files    = array();
 		$array_messages = array();
