@@ -641,7 +641,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 		return '';
 	}
 
-	public function process_bulk_actions( $action, $order_ids, $orders_count, $dhl_force_product = false, $is_force_product_dom = false ) {
+	public function process_bulk_actions( $action, $order_ids, $dhl_force_product = false, $is_force_product_dom = false ) {
 
 		$array_messages = array();
 
@@ -660,7 +660,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 			}
 		}
 
-		$array_messages += parent::process_bulk_actions( $action, $order_ids, $orders_count, $dhl_force_product, $is_force_product_dom );
+		$array_messages += parent::process_bulk_actions( $action, $order_ids, $dhl_force_product, $is_force_product_dom );
 
 		if( 'pr_dhl_closeout_all' === $action ){
 

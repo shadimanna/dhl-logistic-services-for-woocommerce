@@ -1000,7 +1000,6 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	public function process_bulk_actions(
 		$action,
 		$order_ids,
-		$orders_count,
 		$dhl_force_product = false,
 		$is_force_product_dom = false
 	) {
@@ -1025,7 +1024,6 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		$array_messages += parent::process_bulk_actions(
 			$action,
 			$order_ids,
-			$orders_count,
 			$dhl_force_product,
 			$is_force_product_dom
 		);
