@@ -61,7 +61,7 @@ abstract class PR_DHL_WC_Order {
 		// process orders bulk actions
 		// add_action( 'load-edit.php', array( $this, 'process_orders_bulk_actions' ) );
 		//add_action( 'handle_bulk_actions-edit-shop_order', array( $this, 'process_orders_bulk_actions' ) );
-		add_action( 'handle_bulk_actions-woocommerce_page_wc-orders', array( $this, 'process_orders_bulk_actions' ), 10, 3 );
+		add_filter( 'handle_bulk_actions-woocommerce_page_wc-orders', array( $this, 'process_orders_bulk_actions' ), 10, 3 );
 		add_filter( 'handle_bulk_actions-edit-shop_order', array( $this, 'process_orders_bulk_actions' ), 10, 3 );
 
 		// display admin notices for bulk actions
@@ -1007,6 +1007,8 @@ abstract class PR_DHL_WC_Order {
 		/* @see render_messages() */
 		// update_option( '_pr_dhl_bulk_action_confirmation', array( get_current_user_id() => $message, 'is_error' => $is_error ) );
 		update_option( '_pr_dhl_bulk_action_confirmation', $array_messages );
+
+		return $redirect;
 
 	}
 	/*
