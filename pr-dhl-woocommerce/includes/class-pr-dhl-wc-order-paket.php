@@ -428,9 +428,8 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 					'description'       => '',
 					'value'             => $dhl_label_items['pr_dhl_endorsement'] ?? $this->shipping_dhl_settings['dhl_default_endorsement'],
 					'options'           => array(
-						''            => esc_html__( 'none', 'dhl-for-woocommerce' ),
-						'IMMEDIATE'   => esc_html__( 'Sending back to sender', 'dhl-for-woocommerce' ),
-						'ABANDONMENT' => esc_html__( 'Abandonment of parcel', 'dhl-for-woocommerce' )
+						'RETURN'   	   => esc_html__( 'Sending back to sender', 'dhl-for-woocommerce' ),
+						'ABANDON'  	   => esc_html__( 'Abandonment of parcel', 'dhl-for-woocommerce' )
 					),
 					'custom_attributes' => array( $is_disabled => $is_disabled )
 				) );
