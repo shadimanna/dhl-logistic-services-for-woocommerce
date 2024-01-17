@@ -771,7 +771,21 @@ class Item_Info {
 			),
 			'endorsement'          => array(
 				'default' => '',
-				'rename' => 'endorsement',
+				'sanitize' => function ( $value, $args ) use ( $self ) {
+					switch ( $value ) {
+						case 'IMMEDIATE':
+							$value = 'RETURN';
+							break;
+						case 'ABANDONMENT':
+							$value = 'ABANDON';
+							break;
+						default:
+							$value = 'RETURN';
+							break;
+					}
+
+					return $value;
+				},
 			),
 			'return_address_enabled'    => array(
 				'default' => '',

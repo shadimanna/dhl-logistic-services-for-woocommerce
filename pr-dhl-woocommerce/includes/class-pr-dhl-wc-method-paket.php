@@ -404,8 +404,8 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'type'              => 'select',
 				'default'           => '',
 				'options'           => array(
-					'RETURN'   	   => esc_html__( 'Sending back to sender', 'dhl-for-woocommerce' ),
-					'ABANDON' 	   => esc_html__( 'Abandonment of parcel', 'dhl-for-woocommerce' )
+					'IMMEDIATE'   	   => esc_html__( 'Sending back to sender', 'dhl-for-woocommerce' ),
+					'ABANDONMENT' 	   => esc_html__( 'Abandonment of parcel', 'dhl-for-woocommerce' )
 				),
 				'description'       => esc_html__( 'Please, tick here if you want the "Endorsement value" to be selected in the "Edit Order" before printing a label.', 'dhl-for-woocommerce' ),
 				'desc_tip'          => true,
