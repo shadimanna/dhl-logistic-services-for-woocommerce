@@ -237,7 +237,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 			if ( $pdfMerger ) {
 				$pdfMerger->addPDF( $file['label_path'] );
 
-				$file = $this->save_data_file( $prefix, $order_id, $item->customsDoc->b64 );
+				$file = $this->save_data_file( $prefix . '-customs', $order_id, $item->customsDoc->b64 );
 				$pdfMerger->addPDF( $file['label_path'] );
 
 				$filename   = 'dhl-' . $prefix . '-' . $order_id . '-export' . '.pdf';
