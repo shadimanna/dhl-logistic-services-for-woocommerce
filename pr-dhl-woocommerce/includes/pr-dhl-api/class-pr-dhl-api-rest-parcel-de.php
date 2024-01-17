@@ -284,8 +284,8 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 
 				$pdfMerger->addPDF( $file['label_path'] );
 
-				$shipmentNos += $file['tracking_number'];
-				$return_nums += $file['return_label_number'];
+				array_push( $shipmentNos, $file['tracking_number'] );
+				array_push( $return_nums, $file['return_label_number'] );
 			}
 
 			$filename   = 'dhl-' . $prefix . '-' . $order_id . '-multiple' . '.pdf';
