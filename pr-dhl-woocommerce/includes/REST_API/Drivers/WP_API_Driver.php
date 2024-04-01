@@ -33,11 +33,12 @@ class WP_API_Driver implements API_Driver_Interface {
 		$response = wp_remote_request(
 			$request->url,
 			array(
-				'method'  => $this->get_request_type( $request ),
-				'body'    => $request->body,
-				'headers' => $request->headers,
-				'cookies' => $request->cookies,
-                'timeout' => self::WP_REQUEST_TIMEOUT,
+				'method'     => $this->get_request_type( $request ),
+				'body'       => $request->body,
+				'headers'    => $request->headers,
+				'cookies'    => $request->cookies,
+				'timeout'    => self::WP_REQUEST_TIMEOUT,
+				'user-agent' => 'Progressus/DHL Plugin',
 			)
 		);
 
