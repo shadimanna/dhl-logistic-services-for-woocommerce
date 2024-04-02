@@ -38,7 +38,7 @@ class WP_API_Driver implements API_Driver_Interface {
 				'headers'    => $request->headers,
 				'cookies'    => $request->cookies,
 				'timeout'    => self::WP_REQUEST_TIMEOUT,
-				'user-agent' => 'Progressus/DHL Plugin',
+				'user-agent' => 'WooCommerce/'. WC_VERSION . ' (WordPress/'. get_bloginfo('version') . ') DHL-plug-in/' . PR_DHL_VERSION,
 			)
 		);
 
