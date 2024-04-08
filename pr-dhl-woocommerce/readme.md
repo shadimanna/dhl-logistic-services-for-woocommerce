@@ -12,7 +12,7 @@ WC tested up to: 8.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Automate e-commerce orders with Official DHL for WooCommerce. Covers DHL Paket (Germany/Austria) and DHL Parcel (Benelux).
+Automate e-commerce orders with Official DHL for WooCommerce. Covers DHL Paket and Deutsche Post International.
 
 == Description ==
 
