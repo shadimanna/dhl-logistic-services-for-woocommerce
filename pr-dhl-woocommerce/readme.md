@@ -5,7 +5,7 @@ Tags: DPDHL, original DHL, DHL, DHL eCommerce, DHL Paket Germany, WooCommerce, W
 Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 6.5
-Stable tag: 3.6.5
+Stable tag: 3.6.6
 Requires Plugins: woocommerce
 WC requires at least: 3.0
 WC tested up to: 8.7
@@ -76,6 +76,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
+= 3.6.5 =
+* DHL Paket: Fix CN23 document includes refunded order items.
+
 = 3.6.5 =
 * WordPress 6.5 compatibility.
 * DHL Paket: Fix Get Account Settings - Error 403
