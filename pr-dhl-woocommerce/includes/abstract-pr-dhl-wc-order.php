@@ -810,7 +810,7 @@ abstract class PR_DHL_WC_Order {
 		$args['shipping_address'] = $shipping_address;
 
 		// Get order item specific data
-		$ordered_items = $order->get_items( );
+		$ordered_items = $order->get_items();
 		$args['items'] = array();
 		// Sum value of ordered items
 		$args['order_details']['items_value'] = 0;
@@ -818,7 +818,16 @@ abstract class PR_DHL_WC_Order {
             // Reset array
             $new_item = array();
 
-			$new_item['qty'] = $item['qty'];
+			$refunded_qty    = $order->get_qty_refunded_for_item( $key );
+
+            // Deduct refunded items
+			$new_item['qty'] = intval( $item['qty'] ) - abs( $refunded_qty );
+
+            // If its fully refunded item, skip it.
+			if ( 0 === $new_item['qty'] ) {
+				continue;
+			}
+
 			// Get 1 item value not total items, based on ordered items in case currency is different that set product price
 			$new_item['item_value'] = ( $item['line_total'] / $item['qty'] );
 			// Sum 'line_total' to get items total value w/ discounts!
