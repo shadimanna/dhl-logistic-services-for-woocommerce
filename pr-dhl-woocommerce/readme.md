@@ -75,7 +75,10 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
-= 3.6.5 =
+= 3.6.7 =
+* DHL Paket: Fix order weight decimal point / Rest-API.
+
+= 3.6.6 =
 * DHL Paket: Fix CN23 document includes refunded order items.
 
 = 3.6.5 =
