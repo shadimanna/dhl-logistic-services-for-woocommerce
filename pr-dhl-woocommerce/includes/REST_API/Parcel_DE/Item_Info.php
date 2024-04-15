@@ -234,11 +234,6 @@ class Item_Info {
 			),
 			'weight'                 => array(
 				'error'    => __( 'Order "Weight" is empty!', 'dhl-for-woocommerce' ),
-				'validate' => function ( $weight ) {
-					if ( ! is_numeric( $weight ) ) {
-						throw new Exception( __( 'The order "Weight" must be a number', 'dhl-for-woocommerce' ) );
-					}
-				},
 				'sanitize' => function ( $weight ) use ( $self ) {
 					return $self->maybe_convert_weight( $weight, $self->weightUom );
 				},
