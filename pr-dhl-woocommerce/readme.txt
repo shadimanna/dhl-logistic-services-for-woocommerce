@@ -75,6 +75,10 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
+= 3.6.8 =
+* DHL Paket: Fix Named Person Service / Rest-API.
+* Fix fatal error when the store base is not supported.
+
 = 3.6.7 =
 * DHL Paket: Fix order weight decimal point / Rest-API.
 
