@@ -708,69 +708,66 @@ class Item_Info {
 		$self = $this;
 
 		return array(
-			'preferred_neighbor'   => array(
+			'preferred_neighbor'     => array(
 				'default' => '',
-				'rename' => 'preferredNeighbour',
+				'rename'  => 'preferredNeighbour',
 			),
-			'preferred_location'   => array(
+			'preferred_location'     => array(
 				'default' => '',
-				'rename' => 'preferredLocation',
+				'rename'  => 'preferredLocation',
 			),
-			'email_notification'   => array(
+			'email_notification'     => array(
 				'default' => '',
-				'rename' => 'shippingConfirmation',
+				'rename'  => 'shippingConfirmation',
 			),
-			'age_visual'           => array(
+			'age_visual'             => array(
 				'default' => '',
-				'rename' => 'visualCheckOfAge',
+				'rename'  => 'visualCheckOfAge',
 			),
-			'personally'           => array(
+			'named_person'           => array(
 				'default' => '',
-				'rename' => 'namedPersonOnly',
+				'rename'  => 'namedPersonOnly',
 			),
-			'identcheck'           => array(
+			'identcheck'             => array(
 				'default' => '',
-				'rename' => 'identCheck',
+				'rename'  => 'identCheck',
 			),
-			'preferred_day'        => array(
+			'preferred_day'          => array(
 				'default' => '',
-				'rename' => 'preferredDay',
+				'rename'  => 'preferredDay',
 			),
-			'no_neighbor'          => array(
+			'no_neighbor'            => array(
 				'default' => '',
-				'rename' => 'noNeighbourDelivery',
+				'rename'  => 'noNeighbourDelivery',
 			),
-			'additional_insurance' => array(
+			'additional_insurance'   => array(
 				'default' => '',
-				'rename' => 'additionalInsurance',
+				'rename'  => 'additionalInsurance',
 			),
-			'bulky_goods'          => array(
+			'bulky_goods'            => array(
 				'default' => '',
-				'rename' => 'bulkyGoods',
+				'rename'  => 'bulkyGoods',
 			),
-			'cdp_delivery'         => array(
+			'cdp_delivery'           => array(
 				'default' => '',
-				'rename' => 'closestDropPoint',
+				'rename'  => 'closestDropPoint',
 			),
-			'premium'              => array(
+			'premium'                => array(
 				'default' => '',
-				'rename' => 'premium',
+				'rename'  => 'premium',
 			),
-			'routing'              => array(
+			'routing'                => array(
 				'default' => '',
-				'rename' => 'parcelOutletRouting',
+				'rename'  => 'parcelOutletRouting',
 			),
-			'PDDP'                 => array(
+			'PDDP'                   => array(
 				'default' => '',
-				'rename' => 'postalDeliveryDutyPaid',
+				'rename'  => 'postalDeliveryDutyPaid',
 			),
-			'endorsement'          => array(
-				'default' => '',
+			'endorsement'            => array(
+				'default'  => '',
 				'sanitize' => function ( $value, $args ) use ( $self ) {
 					switch ( $value ) {
-						case 'IMMEDIATE':
-							$value = 'RETURN';
-							break;
 						case 'ABANDONMENT':
 							$value = 'ABANDON';
 							break;
@@ -782,13 +779,13 @@ class Item_Info {
 					return $value;
 				},
 			),
-			'return_address_enabled'    => array(
+			'return_address_enabled' => array(
 				'default' => '',
-				'rename' => 'dhlRetoure',
+				'rename'  => 'dhlRetoure',
 			),
-			'signature_service'    => array(
+			'signature_service'      => array(
 				'default' => '',
-				'rename' => 'signedForByRecipient',
+				'rename'  => 'signedForByRecipient',
 			),
 		);
 	}
