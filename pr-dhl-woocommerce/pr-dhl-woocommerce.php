@@ -7,11 +7,11 @@
  * Author URI: http://dhl.com/
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
- * Version: 3.6.7
+ * Version: 3.6.8
  * Tested up to: 6.5
  * Requires Plugins: woocommerce
  * WC requires at least: 3.0
- * WC tested up to: 8.7
+ * WC tested up to: 8.8
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 class PR_DHL_WC {
 
-	private $version = "3.6.7";
+	private $version = "3.6.8";
 
 	/**
 	 * Instance to call certain functions globally within the plugin
@@ -224,7 +224,7 @@ class PR_DHL_WC {
      * Initialize the plugin.
      */
     public function init() {
-        add_action( 'admin_notices', array( $this, 'environment_check' ) );
+        add_action( 'admin_notices', array( $this, 'environment_check' ),1 );
 
         $this->get_pr_dhl_wc_product();
         $this->get_pr_dhl_wc_order();
@@ -1011,31 +1011,46 @@ class PR_DHL_WC {
     }
 
 	public function dhl_myaccount_pwd_expiration_month_callback() {
-		$dhl_obj = $this->get_dhl_factory();
-		$dhl_obj->set_dhl_myaccount_pwd_expiration('30days');
+		try {
+			$dhl_obj = $this->get_dhl_factory();
+		} catch ( Exception $e ) {
+			return;
+		}
+
+		$dhl_obj->set_dhl_myaccount_pwd_expiration( '30days' );
 	}
-	
+
 	public function dhl_myaccount_pwd_expiration_week_callback() {
-		$dhl_obj = $this->get_dhl_factory();
-		$dhl_obj->set_dhl_myaccount_pwd_expiration('7days');
+		try {
+			$dhl_obj = $this->get_dhl_factory();
+		} catch ( Exception $e ) {
+			return;
+		}
+
+		$dhl_obj->set_dhl_myaccount_pwd_expiration( '7days' );
 	}
 
 	public function password_expiration_notice_callback() {
+		try {
+			$dhl_obj = $this->get_dhl_factory();
+		} catch ( Exception $e ) {
+			return;
+		}
+
 		$notice_message = '';
-		$dhl_obj = $this->get_dhl_factory();
-	
+
 		if( ! $dhl_obj->is_dhl_paket() ) {
 			return;
 		}
 
 		$pwd_expiration = $dhl_obj->get_dhl_myaccount_pwd_expiration();
-	
+
 		if ($pwd_expiration == '30days') {
 			$notice_message = __('Your DHL account password will expire in less than 30 days, please head to DHL business portal and reset your password.', 'dhl-for-woocommerce');
 		} else if ($pwd_expiration == '7days') {
 			$notice_message = __('Your DHL account password will expire in less than 7 days, please head to DHL business portal and reset your password.', 'dhl-for-woocommerce');
 		}
-	
+
 		if (!empty($notice_message)) {
 			echo '<div class="notice notice-warning is-dismissible"><p>' . sprintf(__('%s', 'dhl-for-woocommerce'), $notice_message) . '</p></div>';
 		}
