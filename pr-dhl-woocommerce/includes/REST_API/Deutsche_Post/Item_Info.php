@@ -135,12 +135,11 @@ class Item_Info {
 			'weight'            => array(
 				'error'    => __( 'Order "Weight" is empty!', 'dhl-for-woocommerce' ),
 				'validate' => function( $weight ) {
-					if ( ! is_numeric( $weight ) ) {
+					if ( ! is_numeric( wc_format_decimal( $weight ) ) ) {
 						throw new Exception( __( 'The order "Weight" must be a number', 'dhl-for-woocommerce' ) );
 					}
 				},
 				'sanitize' => function ( $weight ) use ($self) {
-
 					$weight = $self->maybe_convert_to_grams( $weight, $self->weightUom );
 
 					return $weight;
@@ -357,7 +356,7 @@ class Item_Info {
 	 * @return float The potentially converted weight.
 	 */
 	protected function maybe_convert_to_grams( $weight, $uom ) {
-		$weight = floatval( $weight );
+		$weight = floatval( wc_format_decimal( $weight ) );
 
 		switch ( $uom ) {
 			case 'kg':
