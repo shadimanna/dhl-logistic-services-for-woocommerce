@@ -5,7 +5,7 @@ Tags: DPDHL, DHL, DHL eCommerce, DHL Paket Germany, Shipping
 Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 6.5
-Stable tag: 3.6.8
+Stable tag: 3.6.9
 Requires Plugins: woocommerce
 WC requires at least: 3.0
 WC tested up to: 8.8
@@ -75,6 +75,10 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
+
+= 3.6.9 =
+* Deutsche Post: Fix error validation error when using comma as a decimal separator.
+
 = 3.6.8 =
 * DHL Paket: Fix Named Person Service / Rest-API.
 * Fix fatal error when the store base is not supported.

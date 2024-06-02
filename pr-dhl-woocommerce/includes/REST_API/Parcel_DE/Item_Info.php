@@ -234,6 +234,11 @@ class Item_Info {
 			),
 			'weight'                 => array(
 				'error'    => __( 'Order "Weight" is empty!', 'dhl-for-woocommerce' ),
+				'validate' => function ( $weight ) {
+					if ( ! is_numeric( wc_format_decimal( $weight ) ) ) {
+						throw new Exception( __( 'The order "Weight" must be a number', 'dhl-for-woocommerce' ) );
+					}
+				},
 				'sanitize' => function ( $weight ) use ( $self ) {
 					return $self->maybe_convert_weight( $weight, $self->weightUom );
 				},
@@ -298,6 +303,13 @@ class Item_Info {
 							}
 						}
 					}
+				},
+				'sanitize' => function ( $value ) use ( $self ) {
+					for ( $i = 0; $i < intval( $value ); $i ++ ) {
+						$self->args['order_details']['packages_weight'][ $i ] = $self->maybe_convert_weight( $self->args['order_details']['packages_weight'][ $i ], $self->weightUom );
+					}
+
+					return $value;
 				},
 			),
 			'is_codeable'            => array(
@@ -689,10 +701,10 @@ class Item_Info {
 			'item_weight'      => array(
 				'rename'   => 'itemWeight',
 				'sanitize' => function ( $weight ) use ( $self ) {
-					return [
+					return array(
 						'uom'   => $self->weightUom,
 						'value' => $self->maybe_convert_weight( $weight, $self->weightUom ),
-					];
+					);
 				},
 			)
 		);
@@ -801,8 +813,9 @@ class Item_Info {
 	 */
 	protected function maybe_convert_weight( $weight, $uom ) {
 		$weight = floatval( wc_format_decimal( $weight ) );
+
 		if ( 'kg' === $uom || 'g' === $uom ) {
-			return $weight;
+			return round( $weight, 2 );
 		}
 
 		switch ( $uom ) {
