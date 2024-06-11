@@ -5,10 +5,10 @@ Tags: DPDHL, DHL, DHL eCommerce, DHL Paket Germany, Shipping
 Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 6.5
-Stable tag: 3.6.9
+Stable tag: 3.7.0
 Requires Plugins: woocommerce
 WC requires at least: 3.0
-WC tested up to: 8.8
+WC tested up to: 8.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -76,8 +76,11 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 3.7.0 =
+* Deutsche Post: Fix an error while bulk create labels.
+
 = 3.6.9 =
-* Deutsche Post: Fix error validation error when using comma as a decimal separator.
+* Deutsche Post: Fix validation error when using comma as a decimal separator.
 
 = 3.6.8 =
 * DHL Paket: Fix Named Person Service / Rest-API.
