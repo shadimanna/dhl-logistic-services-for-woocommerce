@@ -35,7 +35,7 @@ class Client extends API_Client {
 
 		if ( 207 === $response->status ) {
 			$labels_data = array(
-				'items' => array()
+				'items' => array(),
 			);
 
 			foreach ( $response->body->items as $item ) {
@@ -443,7 +443,7 @@ class Client extends API_Client {
 		$multiple_errors_list = array();
 
 		if ( ! is_array( $response->body->items ) ) {
-			return  $response->body;
+			return $response->body->detail;
 		}
 
 		foreach ( $response->body->items as $item ) {
