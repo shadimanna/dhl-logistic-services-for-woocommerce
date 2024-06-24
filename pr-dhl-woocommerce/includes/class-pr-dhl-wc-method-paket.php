@@ -869,6 +869,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			),
 			'dhl_bank_bic' => array(
 				'title'             => __( 'BIC', 'dhl-for-woocommerce' ),
+				'type'              => 'text',
 				'default'           => ''
 			),
 			'dhl_bank_ref' => array(
