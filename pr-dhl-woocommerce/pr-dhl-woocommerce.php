@@ -116,6 +116,8 @@ class PR_DHL_WC {
 		// add_action( 'plugins_loaded', array( $this, 'init' ) );
 		add_action( 'init', array( $this, 'load_plugin' ), 0 );
 		add_action( 'before_woocommerce_init', array( $this, 'declare_wc_hpos_compatibility' ), 10 );
+		add_filter( 'gettext', array( $this,'change_ship_to_different_address_text'), 20, 3 );
+		add_action( 'woocommerce_before_checkout_shipping_form', array( $this,'add_registration_text_above_shipping_fields') );
 
 	}
 
@@ -312,6 +314,19 @@ class PR_DHL_WC {
 		if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
 			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
 		}
+	}
+
+	public function change_ship_to_different_address_text( $translated_text, $text, $domain ) {
+		if ( $text === 'Ship to a different address?' ) {
+			$translated_text = 'Ship to same address or Packstation / Branch?'; // Replace this with your desired text.
+		}
+		return $translated_text;
+	}
+
+	public function add_registration_text_above_shipping_fields() {
+		echo '<div class="dummy-text">';
+		echo '<p>Here is some dummy text with a <a href="#">dummy link</a>.</p>';
+		echo '</div>';
 	}
 
 	/**
