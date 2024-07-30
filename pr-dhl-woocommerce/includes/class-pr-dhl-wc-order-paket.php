@@ -323,7 +323,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 					'label'       		=> __( 'Ident-Check - Date of Birth: ', 'dhl-for-woocommerce' ),
 					'placeholder' 		=> '',
 					'description'		=> '',
-					'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_dob'] ) ? $dhl_label_items['pr_dhl_identcheck_dob'] : $this->shipping_dhl_settings['dhl_default_identcheck_age'],
+					'value'       		=> $dhl_label_items['pr_dhl_identcheck_dob'] ?? '',
 					'custom_attributes'	=> array( $is_disabled => $is_disabled ),
 					'class'				=> 'short date-picker'
 				) );
