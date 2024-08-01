@@ -760,9 +760,6 @@ class PR_DHL_Front_End_Paket {
 
 		$points =  array(
 			''          => __('Select a drop-off point', 'dhl-for-woocommerce'),
-			'point_1'   => __('Drop-off Point 1', 'dhl-for-woocommerce'),
-			'point_2'   => __('Drop-off Point 2', 'dhl-for-woocommerce'),
-			'point_3'   => __('Drop-off Point 3', 'dhl-for-woocommerce'),
 		);
 
 		$shipping_dhl_address_type = array(
