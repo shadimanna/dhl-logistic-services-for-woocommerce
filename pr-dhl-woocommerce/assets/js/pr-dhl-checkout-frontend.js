@@ -236,7 +236,7 @@ jQuery(document).ready(function($) {
         parcelfinder_country:     $('#billing_country').val(),
         parcelfinder_postcode:    pf_post_code,
         parcelfinder_city:        $('#billing_city').val(),
-        parcelfinder_address:     $('#dhl_parcelfinder_address').val(),
+        parcelfinder_address:     $('#billing_address_1').val(),
         packstation_filter:       $('#dhl_packstation_filter').is(":checked"),
         branch_filter:            $('#dhl_branch_filter').is(":checked"),
         security:                 $( 'form#checkout_dhl_parcel_finder' ).find( 'input[name="dhl_parcelfinder_nonce"]' ).val()
