@@ -301,7 +301,7 @@ class Client extends API_Client {
 	 * @return string
 	 */
 	protected function request_pickup_route() {
-		return 'pickup360/order';
+		return '/orders';
 	}
 
 	/**
@@ -312,7 +312,7 @@ class Client extends API_Client {
 	 * @return string
 	 */
 	protected function get_pickup_location_route() {
-		return 'pickup360/pickuplocation';
+		return '/locations';
 	}
 
 
