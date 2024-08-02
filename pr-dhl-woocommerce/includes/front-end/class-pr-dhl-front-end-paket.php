@@ -93,6 +93,8 @@ class PR_DHL_Front_End_Paket {
 			add_filter( 'woocommerce_admin_shipping_fields', array( $this, 'admin_order_add_postnum_field' ), 10 );
 		}
 
+		add_action( 'woocommerce_before_checkout_shipping_form', array( $this, 'add_dummy_text_above_shipping_fields' ) );
+
 		if( $this->is_email_notification_enabled() ){
 			$pos = apply_filters('pr_shipping_dhl_email_notification_position', 'woocommerce_review_order_before_submit' );
 			add_action( $pos, array( $this, 'add_email_notification_checkbox' ), 10 );
@@ -100,7 +102,11 @@ class PR_DHL_Front_End_Paket {
 		}
 
 	}
-
+	public function add_dummy_text_above_shipping_fields() {
+		echo '<div class="dummy-text">';
+		echo '<p>Here is some dummy text with a <a href="#">dummy link</a>.</p>';
+		echo '</div>';
+	}
 	protected function is_tracking_enabled() {
 		return false;
 	}
