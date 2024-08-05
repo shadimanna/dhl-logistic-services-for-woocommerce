@@ -95,6 +95,10 @@ class PR_DHL_Front_End_Paket {
 
 		add_action( 'woocommerce_before_checkout_shipping_form', array( $this, 'add_dummy_text_above_shipping_fields' ) );
 
+		if( $this->is_packstation_enabled() ) {
+			add_filter( 'gettext', array( $this, 'change_ship_to_different_address_text'), 20, 3 );
+		}
+
 		if( $this->is_email_notification_enabled() ){
 			$pos = apply_filters('pr_shipping_dhl_email_notification_position', 'woocommerce_review_order_before_submit' );
 			add_action( $pos, array( $this, 'add_email_notification_checkbox' ), 10 );
@@ -102,8 +106,16 @@ class PR_DHL_Front_End_Paket {
 		}
 
 	}
+
+	public function change_ship_to_different_address_text( $translated_text, $text, $domain ) {
+		if ( $text === 'Ship to a different address?' ) {
+			$translated_text = 'Ship to same address or Packstation / Branch?'; // Replace this with your desired text.
+		}
+		return $translated_text;
+	}
+
 	public function add_dummy_text_above_shipping_fields() {
-		echo '<div class="dummy-text">';
+		echo '<div class="registration_info" style="font-size:.95rem">';
 		echo '<p>Here is some dummy text with a <a href="#">dummy link</a>.</p>';
 		echo '</div>';
 	}
