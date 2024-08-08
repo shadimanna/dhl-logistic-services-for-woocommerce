@@ -139,7 +139,8 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 			$this->api_driver,
 			$this->get_api_url(),
 			$client_id,
-			$client_secret
+			$client_secret,
+			$this->get_api_key(),
 		);
 	}
 

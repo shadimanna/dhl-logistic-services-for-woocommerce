@@ -70,11 +70,11 @@ class Auth implements API_Auth_Interface {
 
 	 */
 	public function __construct( API_Driver_Interface $driver, $api_url, $client_id, $client_secret, $api_key) {
-		$this->driver = $driver;
-		$this->api_url = $api_url;
-		$this->client_id = $client_id;
+		$this->driver 		 = $driver;
+		$this->api_url  	 = $api_url;
+		$this->client_id 	 = $client_id;
 		$this->client_secret = $client_secret;
-		$this->api_key          = $api_key;
+		$this->api_key       = $api_key;
 	}
 
 	/**
@@ -83,7 +83,7 @@ class Auth implements API_Auth_Interface {
 	 * @since [*next-version*]
 	 */
 	public function authorize( Request $request ) {
-		$request->headers[ 'Authorization' ] = 'Basic '.base64_encode( $this->client_id . ':' . $this->client_secret );
+		$request->headers[ 'Authorization' ] 	= 'Basic '.base64_encode( $this->client_id . ':' . $this->client_secret );
 		$request->headers[ 'dhl-api-key' ]      = $this->api_key;
 		return $request;
 	}

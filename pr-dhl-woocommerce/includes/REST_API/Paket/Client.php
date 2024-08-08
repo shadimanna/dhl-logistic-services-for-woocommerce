@@ -68,7 +68,8 @@ class Client extends API_Client {
 
 		//Customer business portal user auth
 		$headers = array(
-			'DPDHL-User-Authentication-Token' => base64_encode( $this->customer_portal_user . ':' . $this->customer_portal_password )
+			'DPDHL-User-Authentication-Token' => base64_encode( $this->customer_portal_user . ':' . $this->customer_portal_password ),
+			'dhl-api-key'      				  => defined( 'PR_DHL_GLOBAL_API' )? PR_DHL_GLOBAL_API : '',
 		);
 
 		$data = $this->request_pickup_info_to_request_data( $pickup_request_info, $blnIncludeBillingNumber );
