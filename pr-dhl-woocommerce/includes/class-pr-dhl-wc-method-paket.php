@@ -691,7 +691,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'type'              => 'select',
 					'description'       => __( 'Select the map type to show parcels shops.', 'dhl-for-woocommerce' ),
 					'desc_tip'          => true,
-					'options'           => array( 'gmaps' => 'Google Maps', 'osm' => 'OSM' ),
+					'options'           => array( 'gmaps' => 'Google Maps', 'osm' => 'Open Street Map' ),
 					'class'             => 'wc-enhanced-select',
 					'default'           => 'osm',
 				),
