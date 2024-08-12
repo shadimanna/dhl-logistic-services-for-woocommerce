@@ -680,11 +680,20 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'desc_tip'          => true,
 				),
 				'dhl_display_google_maps' => array(
-					'title'             => __( 'Google Maps', 'dhl-for-woocommerce' ),
+					'title'             => __( 'Map', 'dhl-for-woocommerce' ),
 					'type'              => 'checkbox',
-					'label'             => __( 'Enable Google Maps', 'dhl-for-woocommerce' ),
-					'description'       => __( 'Enabling this will display Google Maps on the front-end.', 'dhl-for-woocommerce' ),
+					'label'             => __( 'Enable Map', 'dhl-for-woocommerce' ),
+					'description'       => __( 'Enabling this will display the Map on the front-end.', 'dhl-for-woocommerce' ),
 					'desc_tip'          => true,
+				),
+				'dhl_map_type' => array(
+					'title'             => __( 'Map type', 'dhl-for-woocommerce' ),
+					'type'              => 'select',
+					'description'       => __( 'Select the map type to show parcels shops.', 'dhl-for-woocommerce' ),
+					'desc_tip'          => true,
+					'options'           => array( 'gmaps' => 'Google Maps', 'osm' => 'OSM' ),
+					'class'             => 'wc-enhanced-select',
+					'default'           => 'osm',
 				),
 				'dhl_parcel_limit' => array(
 					'title'             => __( 'Limit Results', 'dhl-for-woocommerce' ),
