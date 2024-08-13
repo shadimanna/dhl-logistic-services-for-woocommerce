@@ -108,8 +108,8 @@ class PR_DHL_Front_End_Paket {
 	}
 
 	public function change_ship_to_different_address_text( $translated_text, $text, $domain ) {
-		if ( $text === 'Ship to a different address?' ) {
-			$translated_text = 'Ship to same address or Packstation / Branch?'; // Replace this with your desired text.
+		if ( $text === __( 'Ship to a different address?', 'dhl-for-woocommerce' ) ) {
+			$translated_text = __( 'Ship to same address or Packstation / Branch?', 'dhl-for-woocommerce' ); // Replace this with your desired translated text.
 		}
 		return $translated_text;
 	}
