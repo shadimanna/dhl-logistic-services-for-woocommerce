@@ -536,3 +536,10 @@ jQuery(document).ready(function($) {
   wc_checkout_dhl_parcelfinder.init();
 
 });
+
+// add style to custom select fields
+jQuery(document).ready(function($) {
+  $('select#shipping_dhl_address_type, select#shipping_dhl_drop_off').select2({
+    width: '100%', 
+  });
+});
