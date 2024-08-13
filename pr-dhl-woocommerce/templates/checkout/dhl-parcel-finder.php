@@ -44,7 +44,7 @@ try {
 		<?php endif; ?>
 		
 		<p id="dhl_seach_button" class="form-row form-field small">
-			<input type="submit" class="button" name="apply_parcel_finder" value="<?php esc_attr_e( 'Search', 'dhl-for-woocommerce' ); ?>" />
+			<input type="submit" class="button alt wp-element-button" name="apply_parcel_finder" value="<?php esc_attr_e( 'Search', 'dhl-for-woocommerce' ); ?>" />
 		</p>
 		
 		<input type="hidden" name="dhl_parcelfinder_country" id="dhl_parcelfinder_country" />
