@@ -539,7 +539,7 @@ jQuery(document).ready(function($) {
 
 // add style to custom select fields
 jQuery(document).ready(function($) {
-  $('select#shipping_dhl_address_type, select#shipping_dhl_drop_off').select2({
+  $('select#shipping_dhl_address_type, select#shipping_dhl_drop_off').selectWoo({
     width: '100%', 
   });
 });
