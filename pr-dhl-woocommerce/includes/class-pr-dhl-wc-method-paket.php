@@ -693,7 +693,14 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'desc_tip'          => true,
 					'options'           => array( 'gmaps' => 'Google Maps', 'osm' => 'Open Street Map' ),
 					'class'             => 'wc-enhanced-select',
-					'default'           => 'osm',
+					'default'           => 'gmaps',
+				),
+				'dhl_google_maps_api_key' => array(
+					'title'             => __( 'API Key', 'dhl-for-woocommerce' ),
+					'type'              => 'text',
+					'description'       => sprintf( __( 'The Google Maps API Key is necassary to display the DHL Locations on a google map.<br/>Get a free Google Maps API key %shere%s.', 'dhl-for-woocommerce' ), '<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target = "_blank">', '</a>' ),
+					'desc_tip'          => false,
+					'class'				=> ''
 				),
 				'dhl_parcel_limit' => array(
 					'title'             => __( 'Limit Results', 'dhl-for-woocommerce' ),
@@ -704,13 +711,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'default'           => '20',
 					'custom_attributes'	=> array( 'min' => '1', 'max' => '50' )
 				),
-				'dhl_google_maps_api_key' => array(
-					'title'             => __( 'API Key', 'dhl-for-woocommerce' ),
-					'type'              => 'text',
-					'description'       => sprintf( __( 'The Google Maps API Key is necassary to display the DHL Locations on a google map.<br/>Get a free Google Maps API key %shere%s.', 'dhl-for-woocommerce' ), '<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target = "_blank">', '</a>' ),
-					'desc_tip'          => false,
-					'class'				=> ''
-				),
+				
 			);
 		}
 
