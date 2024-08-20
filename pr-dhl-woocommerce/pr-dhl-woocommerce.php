@@ -48,6 +48,13 @@ class PR_DHL_WC {
 	protected static $_instance = null;
 
 	/**
+	 * Product Editor.
+	 *
+	 * @var PR_DHL_WC_Product_Editor
+	 */
+	public $product_editor = null;
+	
+	/**
 	 * DHL Shipping Order for label and tracking.
 	 *
 	 * @var PR_DHL_WC_Order
@@ -116,6 +123,7 @@ class PR_DHL_WC {
 		// add_action( 'plugins_loaded', array( $this, 'init' ) );
 		add_action( 'init', array( $this, 'load_plugin' ), 0 );
 		add_action( 'before_woocommerce_init', array( $this, 'declare_wc_hpos_compatibility' ), 10 );
+		add_action( 'before_woocommerce_init', array( $this, 'declare_product_editor_compatibility' ), 10 );
 
 	}
 
@@ -228,6 +236,7 @@ class PR_DHL_WC {
 
         $this->get_pr_dhl_wc_product();
         $this->get_pr_dhl_wc_order();
+		$this->get_product_editor();
     }
 
     public function init_hooks() {
@@ -303,6 +312,28 @@ class PR_DHL_WC {
 		}
 
 		return $this->shipping_dhl_product;
+	}
+
+	/**
+	 * Get product editor class.
+	 *
+	 * @return PR_DHL_WC_Product_Editor
+	 */
+	public function get_product_editor() {
+		if ( empty( $this->product_editor ) ) {
+			$this->product_editor = new PR_DHL_WC_Product_Editor();
+		}
+
+		return $this->product_editor;
+	}
+
+	/**
+	 * Declare Product Editor compatibility.
+	 */
+	public function declare_product_editor_compatibility() {
+		if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'product_block_editor', __FILE__, true );
+		}
 	}
 
 	/**
