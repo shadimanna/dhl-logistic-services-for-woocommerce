@@ -68,8 +68,8 @@ class Client extends API_Client {
 
 		//Customer business portal user auth
 		$headers = array(
-			'DPDHL-User-Authentication-Token' => base64_encode( $this->customer_portal_user . ':' . $this->customer_portal_password ),
-			'dhl-api-key'      				  => defined( 'PR_DHL_GLOBAL_API' )? PR_DHL_GLOBAL_API : '',
+			'Authorization'  	=>  'Basic '.base64_encode( $this->customer_portal_user . ':' . $this->customer_portal_password ),
+			'dhl-api-key'      	=> defined( 'PR_DHL_GLOBAL_API' )? PR_DHL_GLOBAL_API : '',
 		);
 
 		$data = $this->request_pickup_info_to_request_data( $pickup_request_info, $blnIncludeBillingNumber );
@@ -79,11 +79,11 @@ class Client extends API_Client {
 
 		if ( $response->status === 200 ) {
 
-			if ( isset( $response->body->orderNumber) ) {
+			if ( isset( $response->body->confirmation->value->orderID ) ) {
 
 				return $response->body;
 
-			} elseif ( isset( $response->body[0]->code) ) {
+			} elseif ( isset( $response->body ) ) {
 
 				throw new Exception(
 					sprintf(
@@ -110,7 +110,7 @@ class Client extends API_Client {
 			throw new Exception(
 				sprintf(
 					__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
-					$this->generate_error_details( $error_msg . $response->body )
+					$this->generate_error_details( $error_msg . print_r( $response->body, true ) )
 				)
 			);
 		}
@@ -118,7 +118,7 @@ class Client extends API_Client {
 		throw new Exception(
 			sprintf(
 				__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
-				$this->generate_error_details( $response->body )
+				$this->generate_error_details( print_r( $response->body, true ) )
 			)
 		);
 	}
@@ -136,7 +136,7 @@ class Client extends API_Client {
 
 		//Customer business portal user auth
 		$headers = array(
-			'DPDHL-User-Authentication-Token' => base64_encode( $this->customer_portal_user . ':' . $this->customer_portal_password )
+			//'DPDHL-User-Authentication-Token' => base64_encode( $this->customer_portal_user . ':' . $this->customer_portal_password )
 		);
 
 		$data = [];
@@ -254,21 +254,23 @@ class Client extends API_Client {
 
 		//Pickup location & business hours
 		$pickup_location_array = array(
+			"type" => "Address",
 			'pickupAddress' 	=> array(
 				'name1' 		=> $request_pickup_info->pickup_contact['name'],
-				'nativeAddress' 	=> $request_pickup_info->pickup_address
+				'name2'			=> '',
+				'addressStreet' => $request_pickup_info->pickup_address['addressStreet'],
+				'addressHouse'  => $request_pickup_info->pickup_address['addressHouse'],
+				'city'			=> $request_pickup_info->pickup_address['city'],
+				'postalCode' 	=> $request_pickup_info->pickup_address['postalCode'],
+				'state' 		=> $request_pickup_info->pickup_address['state'],
+				'country'		=> $request_pickup_info->pickup_address['country']
 			)
 		);
-		$business_hours = null;
-		if ( $request_pickup_info->business_hours ) {
-			$pickup_location_array['businessHours']	= $request_pickup_info->business_hours;
-		}
 
 		$request_data = array(
 			'pickupLocation' 	=> $pickup_location_array,
 			'pickupDetails'	  => array(
 				'pickupDate' 	=> $pickup_info_array,
-				'emailNotification'	=> '',
 				'totalWeight'		=> $request_pickup_info->pickup_details['weight'],
 				'comment'			=> '',
 			),
@@ -276,9 +278,15 @@ class Client extends API_Client {
 				'shipments' 	=> $request_pickup_info->shipments
 			),
 			'contactPerson'	  => array(
-				'name' 	=> $request_pickup_info->pickup_contact['name'],
-				'phone' 	=> $request_pickup_info->pickup_contact['phone'],
-				'email' 	=> $request_pickup_info->pickup_contact['email'],
+				array(
+					'name' 			   => $request_pickup_info->pickup_contact['name'],
+					'phone' 		   => $request_pickup_info->pickup_contact['phone'],
+					'email' 		   => $request_pickup_info->pickup_contact['email'],
+					"emailNotification"=> array(
+						"sendPickupConfirmationEmail" => "true",
+						"sendPickupTimeWindowEmail"	  => "true"
+					),
+				)
 			)
 		);
 
