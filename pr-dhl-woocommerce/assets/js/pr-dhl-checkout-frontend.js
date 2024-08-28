@@ -488,15 +488,18 @@ jQuery(document).ready(function($) {
       if( ! wc_checkout_dhl_parcelfinder.parcelShops ) {
         return;
       }
-
+      // Remove existing map instance if it exists
+      if (wc_checkout_dhl_parcelfinder.osmMap) {
+        wc_checkout_dhl_parcelfinder.osmMap.remove(); // Remove the map
+      }
       // OSM Map
       var uluru = [wc_checkout_dhl_parcelfinder.parcelShops[0].place.geo.latitude, wc_checkout_dhl_parcelfinder.parcelShops[0].place.geo.longitude];
-      var map = L.map('dhl_google_map').setView(uluru, 13);
+      wc_checkout_dhl_parcelfinder.osmMap = L.map('dhl_google_map').setView(uluru, 13);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(map);
+      }).addTo(wc_checkout_dhl_parcelfinder.osmMap);
 
       var infoWinArray = [];
 
@@ -616,7 +619,7 @@ jQuery(document).ready(function($) {
             iconUrl: gmap_marker_icon,
           }),
           title: shop_label,
-        }).addTo(map);
+        }).addTo(wc_checkout_dhl_parcelfinder.osmMap);
 
         // Create a popup
         marker.bindPopup(contentString, { maxWidth: 300 });
