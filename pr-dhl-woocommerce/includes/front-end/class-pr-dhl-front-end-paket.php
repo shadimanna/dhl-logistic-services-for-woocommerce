@@ -95,7 +95,7 @@ class PR_DHL_Front_End_Paket {
 
 		add_action( 'woocommerce_before_checkout_shipping_form', array( $this, 'add_dummy_text_above_shipping_fields' ) );
 
-		if( $this->is_packstation_enabled() ) {
+		if( $this->is_parcelfinder_enabled() ) {
 			add_filter( 'gettext', array( $this, 'change_ship_to_different_address_text'), 20, 3 );
 		}
 
