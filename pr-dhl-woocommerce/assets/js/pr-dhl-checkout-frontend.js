@@ -77,6 +77,29 @@ jQuery(function($) {
   });
 });
 
+jQuery(function($) {
+  function toggleDhlParcelFinder() {
+    var selectedCountry = $('#shipping_country').val();
+
+    if (selectedCountry !== 'DE') {
+        $('#dhl_parcel_finder').hide();
+        $('#shipping_dhl_drop_off_field').hide();
+    } else {
+        $('#dhl_parcel_finder').show();
+        $('#shipping_dhl_drop_off_field').show();
+    }
+  }
+
+  // Run on page load
+  toggleDhlParcelFinder();
+
+  // Run when the shipping country changes
+  $('#shipping_country').change(function() {
+      toggleDhlParcelFinder();
+  });
+});
+
+
 function gm_authFailure() {
   // alert('gm_authFailure');
   jQuery('.woocommerce-checkout #dhl_parcel_finder_form #dhl_google_map').before( pr_dhl_checkout_frontend.no_api_key );
