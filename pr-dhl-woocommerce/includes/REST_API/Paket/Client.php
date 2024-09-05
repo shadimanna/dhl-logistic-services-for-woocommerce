@@ -167,7 +167,7 @@ class Client extends API_Client {
 			throw new Exception(
 				sprintf(
 					__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
-					$this->generate_error_details( $error_msg . $response->body )
+					$this->generate_error_details( $error_msg . print_r( $response->body ) )
 				)
 			);
 		}
