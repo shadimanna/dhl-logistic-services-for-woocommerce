@@ -82,11 +82,13 @@ jQuery(function($) {
     var selectedCountry = $('#shipping_country').val();
 
     if (selectedCountry !== 'DE') {
-        $('#dhl_parcel_finder').hide();
-        $('#shipping_dhl_drop_off_field').hide();
+      $('#dhl_parcel_finder').hide();
+      $('#shipping_dhl_drop_off_field').hide();
+      $('#shipping_dhl_address_type_field').hide();
     } else {
         $('#dhl_parcel_finder').show();
         $('#shipping_dhl_drop_off_field').show();
+        $('#shipping_dhl_address_type_field').show();
     }
   }
 
