@@ -86,7 +86,7 @@ jQuery(function($) {
         $('#dhl_parcel_finder').hide();
         $('#shipping_dhl_drop_off_field').hide();
         $('#shipping_dhl_address_type_field').hide();
-
+        $('#ship-to-different-address span').text('Ship to a different address?');
         $('.registration_info a').attr('href', english_registration);
     } else {
         $('#dhl_parcel_finder').show();
