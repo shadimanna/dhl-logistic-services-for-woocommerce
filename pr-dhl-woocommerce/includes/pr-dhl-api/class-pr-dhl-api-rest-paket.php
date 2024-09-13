@@ -441,8 +441,8 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 	public function sandbox_info_customer_portal(){
 		//
 		return array(
-			'username' 	=> '2222222222_abr_0801',
-			'pass' 		=> 'S8PjmLB!s2vrzWV3o',
+			'username' 	=> 'user-valid',
+			'pass' 		=> 'SandboxPasswort2023!',
 			'account_no'=> '22222222220801',
 		);
 	}
