@@ -93,7 +93,7 @@ class PR_DHL_Front_End_Paket {
 			add_filter( 'woocommerce_admin_shipping_fields', array( $this, 'admin_order_add_postnum_field' ), 10 );
 		}
 
-		add_action( 'woocommerce_before_checkout_shipping_form', array( $this, 'add_dummy_text_above_shipping_fields' ) );
+		add_action( 'woocommerce_before_checkout_shipping_form', array( $this, 'add_registration_text_above_shipping_fields' ) );
 
 		if( $this->is_parcelfinder_enabled() ) {
 			add_filter( 'gettext', array( $this, 'change_ship_to_different_address_text'), 20, 3 );
@@ -114,11 +114,14 @@ class PR_DHL_Front_End_Paket {
 		return $translated_text;
 	}
 
-	public function add_dummy_text_above_shipping_fields() {
+	public function add_registration_text_above_shipping_fields() {
 		echo '<div class="registration_info" style="font-size:.95rem">';
-		echo '<p>Here is some dummy text with a <a href="#">dummy link</a>.</p>';
+		echo '<input type="hidden" class="english_registration" value="'.DHL_ENGLISH_REGISTRATION_LINK.'">';
+		echo '<input type="hidden" class="german_registration" value="'.DHL_GERMAN_REGISTRATION_LINK.'">';
+		echo sprintf( __('<a href="%s">DHL Regisration link</a>', 'dhl-for-woocommerce'), DHL_GERMAN_REGISTRATION_LINK );
 		echo '</div>';
 	}
+
 	protected function is_tracking_enabled() {
 		return false;
 	}
