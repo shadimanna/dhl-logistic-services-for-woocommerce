@@ -80,19 +80,17 @@ jQuery(function($) {
 jQuery(function($) {
   function toggleDhlParcelFinder() {
     var selectedCountry      = $('#shipping_country').val();
-    var english_registration = $('.english_registration').val();
-    var german_registration  = $('.german_registration').val();
-    if (selectedCountry !== 'DE') {
-        $('#dhl_parcel_finder').hide();
-        $('#shipping_dhl_drop_off_field').hide();
-        $('#shipping_dhl_address_type_field').hide();
-        $('#ship-to-different-address span').text('Ship to a different address?');
-        $('.registration_info a').attr('href', english_registration);
+    if ( 'DE' !== selectedCountry ) {
+      $('#dhl_parcel_finder').hide();
+      $('#shipping_dhl_drop_off_field').hide();
+      $('#shipping_dhl_address_type_field').hide();
+      $('#ship-to-different-address span').text('Ship to a different address?');
+      $('.registration_info').hide();
     } else {
-        $('#dhl_parcel_finder').show();
-        $('#shipping_dhl_drop_off_field').show();
-        $('#shipping_dhl_address_type_field').show();
-        $('.registration_info a').attr('href', german_registration);
+      $('#dhl_parcel_finder').show();
+      $('#shipping_dhl_drop_off_field').show();
+      $('#shipping_dhl_address_type_field').show();
+      $('.registration_info').show();
     }
   }
 

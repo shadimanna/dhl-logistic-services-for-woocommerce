@@ -116,9 +116,12 @@ class PR_DHL_Front_End_Paket {
 
 	public function add_registration_text_above_shipping_fields() {
 		echo '<div class="registration_info" style="font-size:.95rem">';
-		echo '<input type="hidden" class="english_registration" value="'.DHL_ENGLISH_REGISTRATION_LINK.'">';
-		echo '<input type="hidden" class="german_registration" value="'.DHL_GERMAN_REGISTRATION_LINK.'">';
-		echo sprintf( __('<a href="%s">DHL Regisration link</a>', 'dhl-for-woocommerce'), DHL_GERMAN_REGISTRATION_LINK );
+		if ( get_locale() == 'en_US' ) {
+			$link = DHL_ENGLISH_REGISTRATION_LINK;
+		} else {
+			$link = DHL_GERMAN_REGISTRATION_LINK;
+		}
+		echo sprintf( __('For deliveries to DHL Parcel Lockers you have to <a href="%s">create a DHL account</a> and get a Post Number', 'dhl-for-woocommerce'), $link  );
 		echo '</div>';
 	}
 
