@@ -72,6 +72,8 @@ class PR_DHL_Front_End_Paket {
 			add_action( 'woocommerce_checkout_order_processed', array( $this, 'process_dhl_preferred_fields' ), 10, 2 );
 			add_filter( 'woocommerce_get_order_item_totals', array( $this, 'display_dhl_preferred_free_services_values' ), 10, 2 );
 		}
+		
+		add_action( 'woocommerce_before_checkout_shipping_form', array( $this, 'add_registration_text_above_shipping_fields' ) );
 
 		// Parcel finder hooks
 		if( $this->is_parcelfinder_enabled() ) {
@@ -92,8 +94,6 @@ class PR_DHL_Front_End_Paket {
 
 			add_filter( 'woocommerce_admin_shipping_fields', array( $this, 'admin_order_add_postnum_field' ), 10 );
 		}
-
-		add_action( 'woocommerce_before_checkout_shipping_form', array( $this, 'add_registration_text_above_shipping_fields' ) );
 
 		if( $this->is_parcelfinder_enabled() ) {
 			add_filter( 'gettext', array( $this, 'change_ship_to_different_address_text'), 20, 3 );
