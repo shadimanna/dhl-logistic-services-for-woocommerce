@@ -247,6 +247,7 @@ jQuery(document).ready(function($) {
               // JSON parse returned results
               wc_checkout_dhl_parcelfinder.parcelShops = parcelShopsRes.parcel_res;
               wc_checkout_dhl_parcelfinder.populateMap();
+              wc_checkout_dhl_parcelfinder.populateDropdown();
             }
             // $( document.body ).trigger( 'update_checkout', { update_shipping_method: false } );
           }
