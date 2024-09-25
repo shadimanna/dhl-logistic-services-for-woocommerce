@@ -64,27 +64,15 @@ class Client extends API_Client {
 	 */
 	public function create_pickup_request ( Pickup_Request_Info $pickup_request_info, $blnIncludeBillingNumber = false ){
 
-		$route 	= $this->request_pickup_route();
+		$route 		= $this->request_pickup_route();
+		$data 		= $this->request_pickup_info_to_request_data( $pickup_request_info, $blnIncludeBillingNumber );
+		$response	= $this->post( $route, $data );
 
-		//Customer business portal user auth
-		$headers = array(
-			'Authorization'  	=>  'Basic '.base64_encode( $this->customer_portal_user . ':' . $this->customer_portal_password ),
-			'dhl-api-key'      	=> defined( 'PR_DHL_GLOBAL_API' )? PR_DHL_GLOBAL_API : '',
-		);
-
-		$data = $this->request_pickup_info_to_request_data( $pickup_request_info, $blnIncludeBillingNumber );
-
-		$response = $this->post($route, $data, $headers);
-		$response_body = $response->body;
-
-		if ( $response->status === 200 ) {
+		if ( 200 === $response->status ) {
 
 			if ( isset( $response->body->confirmation->value->orderID ) ) {
-
 				return $response->body;
-
 			} elseif ( isset( $response->body ) ) {
-
 				throw new Exception(
 					sprintf(
 						__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
@@ -92,7 +80,7 @@ class Client extends API_Client {
 					)
 				);
 			}
-
+			
 		} elseif ( $response->status >= 400 && $response->status <= 499  ) {
 
 			$error_msg = 'HTTP status: '. $response->status;
