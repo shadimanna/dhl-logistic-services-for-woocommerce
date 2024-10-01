@@ -323,7 +323,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 					'label'       		=> __( 'Ident-Check - Date of Birth: ', 'dhl-for-woocommerce' ),
 					'placeholder' 		=> '',
 					'description'		=> '',
-					'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_dob'] ) ? $dhl_label_items['pr_dhl_identcheck_dob'] : '',
+					'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_dob'] ) ? $dhl_label_items['pr_dhl_identcheck_dob'] : $this->shipping_dhl_settings['dhl_default_identcheck_age'],
 					'custom_attributes'	=> array( $is_disabled => $is_disabled ),
 					'class'				=> 'short date-picker'
 				) );
@@ -333,7 +333,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 					'id'          		=> 'pr_dhl_identcheck_age',
 					'label'       		=> __( 'Ident-Check - Minimum Age: ', 'dhl-for-woocommerce' ),
 					'description'		=> '',
-					'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_age'] ) ? $dhl_label_items['pr_dhl_identcheck_age'] : $this->shipping_dhl_settings['dhl_default_identcheck_age'],
+					'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_age'] ) ? $dhl_label_items['pr_dhl_identcheck_age'] : '',
 					'options'			=> $visual_age,
 					'custom_attributes'	=> array( $is_disabled => $is_disabled )
 				) );
