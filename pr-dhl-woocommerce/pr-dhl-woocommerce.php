@@ -8,10 +8,10 @@
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
  * Version: 3.7.2
- * Tested up to: 6.5
+ * Tested up to: 6.6
  * Requires Plugins: woocommerce
  * WC requires at least: 3.0
- * WC tested up to: 9.0
+ * WC tested up to: 9.3
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
