@@ -263,26 +263,26 @@ class Client extends API_Client {
 		);
 
 		$request_data = array(
-			'pickupLocation' 	=> $pickup_location_array,
-			'pickupDetails'	  => array(
-				'pickupDate' 	=> $pickup_info_array,
-				'totalWeight'		=> $request_pickup_info->pickup_details['weight'],
-				'comment'			=> '',
+			'pickupLocation'  => $pickup_location_array,
+			'pickupDetails'   => array(
+				'pickupDate'  => $pickup_info_array,
+				'totalWeight' => $request_pickup_info->pickup_details['weight'],
+				'comment'     => '',
 			),
-			'shipmentDetails'	  => array(
-				'shipments' 	=> $request_pickup_info->shipments
+			'shipmentDetails' => array(
+				'shipments' => $request_pickup_info->shipments,
 			),
-			'contactPerson'	  => array(
+			'contactPerson'   => array(
 				array(
-					'name' 			   => $request_pickup_info->pickup_contact['name'],
-					'phone' 		   => $request_pickup_info->pickup_contact['phone'],
-					'email' 		   => $request_pickup_info->pickup_contact['email'],
-					"emailNotification"=> array(
-						"sendPickupConfirmationEmail" => 'true',
-						"sendPickupTimeWindowEmail"	  => 'true'
+					'name'              => $request_pickup_info->pickup_contact['name'],
+					'phone'             => $request_pickup_info->pickup_contact['phone'],
+					'email'             => $request_pickup_info->pickup_contact['email'],
+					'emailNotification' => array(
+						'sendPickupConfirmationEmail' => 'true',
+						'sendPickupTimeWindowEmail'   => 'true',
 					),
-				)
-			)
+				),
+			),
 		);
 
 		// Include customer details billing number (if excluded, we're forcing DHL to look for existing Pickup address in customers portal)
