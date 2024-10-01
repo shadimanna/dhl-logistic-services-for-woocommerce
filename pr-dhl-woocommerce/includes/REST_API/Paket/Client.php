@@ -88,7 +88,7 @@ class Client extends API_Client {
 				throw new Exception(
 					sprintf(
 						__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
-						$this->generate_error_details( $response->body )
+						$this->generate_error_details( $response->body[0]->title )
 					)
 				);
 			}
@@ -110,7 +110,7 @@ class Client extends API_Client {
 			throw new Exception(
 				sprintf(
 					__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
-					$this->generate_error_details( $error_msg . print_r( $response->body, true ) )
+					$this->generate_error_details( $error_msg . '' . $response->body[0]->title )
 				)
 			);
 		}
@@ -118,7 +118,7 @@ class Client extends API_Client {
 		throw new Exception(
 			sprintf(
 				__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
-				$this->generate_error_details( print_r( $response->body, true ) )
+				$this->generate_error_details( $response->body[0]->title )
 			)
 		);
 	}
@@ -134,15 +134,10 @@ class Client extends API_Client {
 
 		$route 	= $this->get_pickup_location_route();
 
-		//Customer business portal user auth
-		$headers = array(
-			//'DPDHL-User-Authentication-Token' => base64_encode( $this->customer_portal_user . ':' . $this->customer_portal_password )
-		);
-
 		$data = [];
 		$data = ['zipCode' => $zipCode];
 
-		$response = $this->get($route, $data, $headers);
+		$response = $this->get( $route, $data );
 
 		$response_body = $response->body;
 
@@ -167,7 +162,7 @@ class Client extends API_Client {
 			throw new Exception(
 				sprintf(
 					__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
-					$this->generate_error_details( $error_msg . print_r( $response->body ) )
+					$this->generate_error_details( $error_msg . '' . $response->body[0]->title )
 				)
 			);
 		}
@@ -175,7 +170,7 @@ class Client extends API_Client {
 		throw new Exception(
 			sprintf(
 				__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
-				$this->generate_error_details( $response->body )
+				$this->generate_error_details( $response->body[0]->title )
 			)
 		);
 	}
@@ -283,8 +278,8 @@ class Client extends API_Client {
 					'phone' 		   => $request_pickup_info->pickup_contact['phone'],
 					'email' 		   => $request_pickup_info->pickup_contact['email'],
 					"emailNotification"=> array(
-						"sendPickupConfirmationEmail" => "true",
-						"sendPickupTimeWindowEmail"	  => "true"
+						"sendPickupConfirmationEmail" => 'true',
+						"sendPickupTimeWindowEmail"	  => 'true'
 					),
 				)
 			)
@@ -323,6 +318,5 @@ class Client extends API_Client {
 	protected function get_pickup_location_route() {
 		return '/locations';
 	}
-
 
 }
