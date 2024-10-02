@@ -48,14 +48,8 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	 *
 	 * @throws Exception If an error occurred while creating the API driver, auth or client.
 	 */
-	public function __construct( ) {
-		try {
-			$this->api_driver = $this->create_api_driver();
-			$this->api_auth = $this->create_api_auth();
-			$this->api_client = $this->create_api_client();
-		} catch ( Exception $e ) {
-			throw $e;
-		}
+	public function __construct( $country_code ) {
+		parent::__construct( $country_code );
 	}
 
 	/**
@@ -71,58 +65,6 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 			$this->get_api_url(),
 			$this->api_driver,
 			$this->api_auth
-		);
-	}
-
-	/**
-	 * Initializes the API auth instance.
-	 *
-	 * @return API_Auth_Interface
-	 *
-	 * @throws Exception If failed to create the API auth.
-	 */
-	protected function create_api_auth() {
-		// Get the saved DHL customer API credentials
-		list( $username, $password ) = $this->get_api_creds();
-
-		// Create the auth object using this instance's API driver and URL
-		return new Auth(
-			$this->api_driver,
-			$this->get_api_url(),
-			$username,
-			$password,
-			$this->get_api_key(),
-		);
-	}
-
-	/**
-	 * Retrieves the API URL.
-	 *
-	 * @return string
-	 *
-	 * @throws Exception If failed to determine if using the sandbox API or not.
-	 */
-	public function get_api_url() {
-		$is_sandbox = $this->get_setting( 'dhl_sandbox' );
-		$is_sandbox = filter_var($is_sandbox, FILTER_VALIDATE_BOOLEAN);
-		$api_url = ( $is_sandbox ) ? static::API_URL_SANDBOX : static::API_URL_PRODUCTION;
-
-		return $api_url;
-	}
-
-	/**
-	 * Retrieves the API credentials.
-	 *
-	 * @return array The client ID and client secret.
-	 *
-	 * @throws Exception If failed to retrieve the API credentials.
-	 */
-	public function get_api_creds() {
-		$customer_portal_login = $this->get_customer_portal_login();
-
-		return array(
-			$customer_portal_login['username'],
-			$customer_portal_login['pass'],
 		);
 	}
 
@@ -632,19 +574,5 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 				}
 				break;
 		}
-	}
-
-	/**
-	 * API sandbox creds.
-	 *
-	 * @return array
-	 */
-	public function sandbox_info_customer_portal(){
-		//
-		return array(
-			'username' 	=> 'user-valid',
-			'pass' 		=> 'SandboxPasswort2023!',
-			'account_no'=> '22222222220801',
-		);
 	}
 }

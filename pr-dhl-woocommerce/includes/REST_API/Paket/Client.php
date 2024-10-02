@@ -6,8 +6,6 @@ use Exception;
 use PR\DHL\REST_API\API_Client;
 use PR\DHL\REST_API\Interfaces\API_Auth_Interface;
 use PR\DHL\REST_API\Interfaces\API_Driver_Interface;
-use PR\DHL\Utils\Args_Parser;
-use stdClass;
 
 /**
  * The API client for DHL Paket.
@@ -75,12 +73,9 @@ class Client extends API_Client {
 		$data = $this->request_pickup_info_to_request_data( $pickup_request_info, $blnIncludeBillingNumber );
 
 		$response = $this->post($route, $data, $headers);
-		$response_body = $response->body;
 
 		if ( $response->status === 200 ) {
-
 			if ( isset( $response->body->confirmation->value->orderID ) ) {
-
 				return $response->body;
 
 			} elseif ( isset( $response->body ) ) {
@@ -88,37 +83,17 @@ class Client extends API_Client {
 				throw new Exception(
 					sprintf(
 						__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
-						$this->generate_error_details( $response->body[0]->title )
+						$this->generate_error_details( $response->body )
 					)
 				);
 			}
 
-		} elseif ( $response->status >= 400 && $response->status <= 499  ) {
-
-			$error_msg = 'HTTP status: '. $response->status;
-
-			if ( $response->status == 400 ) {
-				$error_msg .= ' Bad Request. ';
-			} elseif ( $response->status == 401 ) {
-				$error_msg .= ' Authentication failed. Wrong credentials. ';
-			} elseif ( $response->status == 402 ) {
-				$error_msg .= ' Payment failed. ';
-			} elseif ( $response->status == 403 ) {
-				$error_msg .= ' Authentication failed. Insufficient priviledges. ';
-			}
-
-			throw new Exception(
-				sprintf(
-					__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
-					$this->generate_error_details( $error_msg . '' .  $response->body->title )
-				)
-			);
 		}
 
 		throw new Exception(
 			sprintf(
 				__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
-				$this->generate_error_details( $response->body->title )
+				$this->generate_error_details( $response->body )
 			)
 		);
 	}
@@ -130,73 +105,40 @@ class Client extends API_Client {
 	 *
 	 *
 	 */
-	public function get_pickup_location( $zipCode = '' ){
+	public function get_pickup_location( $postalCode = '' ){
 
-		$route 	= $this->get_pickup_location_route();
-
-		$data = [];
-		$data = ['zipCode' => $zipCode];
-
+		$route    = $this->get_pickup_location_route();
+		$data     = array( 'postalCode' => $postalCode );
 		$response = $this->get( $route, $data );
 
-		$response_body = $response->body;
-
 		if ( $response->status === 200 ) {
-
 			return $response->body;
-
-		} elseif ( $response->status >= 400 && $response->status <= 499  ) {
-
-			$error_msg = 'HTTP status: '. $response->status;
-
-			if ( $response->status == 400 ) {
-				$error_msg .= ' Bad Request. ';
-			} elseif ( $response->status == 401 ) {
-				$error_msg .= ' Authentication failed. Wrong credentials. ';
-			} elseif ( $response->status == 402 ) {
-				$error_msg .= ' Payment failed. ';
-			} elseif ( $response->status == 403 ) {
-				$error_msg .= ' Authentication failed. Insufficient priviledges. ';
-			}
-
-			throw new Exception(
-				sprintf(
-					__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
-					$this->generate_error_details( $error_msg . '' . $response->body[0]->title )
-				)
-			);
 		}
 
 		throw new Exception(
 			sprintf(
 				__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
-				$this->generate_error_details( $response->body[0]->title )
+				$this->generate_error_details( $response->body )
 			)
 		);
 	}
 
-	public function generate_error_details( $body ){
+	public function generate_error_details( $body ) {
+		$error_details = '';
 
-		$error_details 	= '';
-
-		if ( is_string( $body) ) {
+		if ( isset( $body->title ) ) {
+			$error_details = $body->title;
+		} else if ( is_string( $body ) ) {
 			$error_details = $body;
-		} elseif (is_array($body) ) {
-			$error_details = print_r($body, true);
-		} elseif ( is_object($body) ) {
-			$error_details = print_r($body, true);
+		} elseif ( is_array( $body ) ) {
+			$error_details = '<br><ol>';
+			foreach ( $body as $error ) {
+				$error_details .= '<li>' . $error->title . '</li>';
+			}
+			$error_details .= '</ol>';
 		}
 
-
-		if( !empty( $error_details ) ){
-
-			$error_exception .= '<ul class = "wc_dhl_error">' . $error_details . '</ul>';
-
-		} else {
-			$error_exception .= __( 'Error message detail is not exist!', 'dhl-for-woocommerce' );
-		}
-
-		return $error_exception;
+		return $error_details;
 	}
 
 	/**
