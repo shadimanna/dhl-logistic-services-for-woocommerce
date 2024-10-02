@@ -113,13 +113,6 @@ class Client extends API_Client {
 
 		if ( $response->status === 200 ) {
 			return $response->body;
-		} elseif ( $response->status >= 400 && $response->status <= 499 ) {
-			throw new Exception(
-				sprintf(
-					__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
-					$this->generate_error_details( $response->body )
-				)
-			);
 		}
 
 		throw new Exception(
