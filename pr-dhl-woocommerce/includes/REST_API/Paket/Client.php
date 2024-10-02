@@ -2,13 +2,10 @@
 
 namespace PR\DHL\REST_API\Paket;
 
-use Automattic\WooCommerce\Admin\Composer\Package;
 use Exception;
 use PR\DHL\REST_API\API_Client;
 use PR\DHL\REST_API\Interfaces\API_Auth_Interface;
 use PR\DHL\REST_API\Interfaces\API_Driver_Interface;
-use PR\DHL\Utils\Args_Parser;
-use stdClass;
 
 /**
  * The API client for DHL Paket.
