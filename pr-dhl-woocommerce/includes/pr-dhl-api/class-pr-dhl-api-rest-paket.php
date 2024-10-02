@@ -130,16 +130,14 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 	 */
 	protected function create_api_auth() {
 		// Get the saved DHL customer API credentials
-		$api_cred = $this->get_api_creds();
-		$client_id = $api_cred['user'];
-		$client_secret = $api_cred['password'];
+		list( $username, $password ) = $this->get_api_creds();
 
 		// Create the auth object using this instance's API driver and URL
 		return new Auth(
 			$this->api_driver,
 			$this->get_api_url(),
-			$client_id,
-			$client_secret,
+			$username,
+			$password,
 			$this->get_api_key(),
 		);
 	}
@@ -163,8 +161,11 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 	 * @throws Exception If failed to determine if using the sandbox API or not.
 	 */
 	public function get_api_url() {
-		$api_cred = $this->get_api_creds();
-		return $api_cred['auth_url'];
+		$is_sandbox = $this->get_setting( 'dhl_sandbox' );
+		$is_sandbox = filter_var($is_sandbox, FILTER_VALIDATE_BOOLEAN);
+		$api_url = ( $is_sandbox ) ? static::API_URL_SANDBOX : static::API_URL_PRODUCTION;
+
+		return $api_url;
 	}
 
 	/**
@@ -177,26 +178,12 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 	 * @throws Exception If failed to retrieve the API credentials.
 	 */
 	public function get_api_creds() {
-		$dhl_sandbox = $this->get_setting( 'dhl_sandbox' ) ? $this->get_setting( 'dhl_sandbox' ) : '';
-		if ( $dhl_sandbox == 'yes' || ( defined( 'PR_DHL_SANDBOX' ) && PR_DHL_SANDBOX ) ) {
+		$customer_portal_login = $this->get_customer_portal_login();
 
-			$user = defined( 'PR_DHL_CIG_USR_QA' )? PR_DHL_CIG_USR_QA : '';
-			$user = ( !$user )? $this->get_setting('dhl_api_sandbox_user') : $user;
-
-			$pass = defined( 'PR_DHL_CIG_PWD_QA' )? PR_DHL_CIG_PWD_QA : '';
-			$pass = ( !$pass )? $this->get_setting('dhl_api_sandbox_pwd') : $pass;
-
-			$api_cred['user'] = $user;
-			$api_cred['password'] = $pass;
-			//$api_cred['auth_url'] = trailingslashit(str_ireplace('/soap', '/rest', PR_DHL_CIG_AUTH_QA));
-			$api_cred['auth_url'] = self::API_URL_SANDBOX;
-		} else {
-			$api_cred['user'] = PR_DHL_CIG_USR;
-			$api_cred['password'] = PR_DHL_CIG_PWD;
-			//$api_cred['auth_url'] = trailingslashit(str_ireplace('/soap', '/rest', PR_DHL_CIG_AUTH));
-			$api_cred['auth_url'] = self::API_URL_PRODUCTION;
-		}
-		return $api_cred;
+		return array(
+			$customer_portal_login['username'],
+			$customer_portal_login['pass'],
+		);
 	}
 
 	/**
