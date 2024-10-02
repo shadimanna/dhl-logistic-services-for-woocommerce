@@ -77,7 +77,7 @@ More detailed instructions on how to set up your store and configure it are cons
 == Changelog ==
 
 = 3.7.3 =
-* DHL Paket: Fix ( pickup request ) locations API & error masseges.
+* DHL Paket: Fix Pickup locations.
 
 = 3.7.2 =
 * DHL Paket: Fix Identity check DOB default value.
