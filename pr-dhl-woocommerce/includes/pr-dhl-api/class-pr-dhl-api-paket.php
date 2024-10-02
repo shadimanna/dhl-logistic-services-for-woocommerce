@@ -23,7 +23,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 
 		try {
 			if ( API_Utils::is_new_merchant() || API_Utils::is_rest_api_enabled() ) {
-				$this->dhl_label = new PR_DHL_API_REST_Parcel_DE();
+				$this->dhl_label = new PR_DHL_API_REST_Parcel_DE( $country_code );
 			} else {
 				$this->dhl_label = new PR_DHL_API_SOAP_Label();
 			}
