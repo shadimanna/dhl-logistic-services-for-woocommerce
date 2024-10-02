@@ -1052,7 +1052,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$args = apply_filters('pr_shipping_dhl_paket_pickup_args', $args, $order_ids );
 
 		// For our bulk api call, forcing DHL to match existing pickup address ( to avoid attempting to charge a Billing number )
-		$forcePortalPickupAddressMatch = true;
+		$forcePortalPickupAddressMatch = false;
 
 		try {
 
