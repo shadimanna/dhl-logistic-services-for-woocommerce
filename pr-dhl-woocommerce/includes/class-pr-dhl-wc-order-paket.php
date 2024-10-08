@@ -53,6 +53,20 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		// Add customs item description option
 		add_filter('pr_shipping_dhl_label_args', array($this, 'override_item_desc_pr_shipping_dhl_label_args'), 20, 2);
 
+		$extend_store=new PR_DHL_Extend_Store_Endpoint();
+		$extend_core = new PR_DHL_Extend_Block_core();
+
+		// Initialize endpoints and core functionality.
+		$extend_store->init();
+		$extend_core->init();
+
+		// Register the blocks integration with WooCommerce blocks.
+		add_action( 'woocommerce_blocks_checkout_block_registration', function( $integration_registry ) {
+			if ( class_exists( 'PR_DHL_Blocks_Integration' ) ) {
+				$integration_registry->register( new PR_DHL_Blocks_Integration() );
+			}
+		});
+
 	}
 
 	public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj ) {
