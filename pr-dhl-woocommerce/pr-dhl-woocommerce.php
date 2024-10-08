@@ -249,6 +249,9 @@ class PR_DHL_WC {
 		add_action('dhl_myaccount_pwd_expiration_month', array($this, 'dhl_myaccount_pwd_expiration_month_callback'));
 		add_action('dhl_myaccount_pwd_expiration_week', array($this, 'dhl_myaccount_pwd_expiration_week_callback'));
 		add_action( 'admin_notices', array( $this, 'password_expiration_notice_callback' ));
+
+	    add_action( 'block_categories_all',array($this, 'register_pr_dhl_block_category'), 10, 2 );
+
     }
 
 	public function get_pr_dhl_wc_order() {
@@ -1054,6 +1057,18 @@ class PR_DHL_WC {
 		if (!empty($notice_message)) {
 			echo '<div class="notice notice-warning is-dismissible"><p>' . sprintf(__('%s', 'dhl-for-woocommerce'), $notice_message) . '</p></div>';
 		}
+	}
+
+	public function register_pr_dhl_block_category( $categories ) {
+		return array_merge(
+			$categories,
+			[
+				[
+					'slug'  => 'pr-dhl',
+					'title' => __( 'DHL checkout Blocks', 'dhl-for-woocommerce' ),
+				],
+			]
+		);
 	}
 	
 }
