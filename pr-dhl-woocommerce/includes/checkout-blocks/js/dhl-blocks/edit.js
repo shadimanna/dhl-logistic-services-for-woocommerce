@@ -65,15 +65,7 @@ export const Edit = ({attributes, setAttributes}) => {
                 <Disabled>
                     <SelectControl
                         label={deliveryDayLabel}
-                        options={[
-                            {label: 'None', value: 'none'},
-                            {label: '28 Sat', value: '28-Sat'},
-                            {label: '29 Sun', value: '29-Sun'},
-                            {label: '30 Mon', value: '30-Mon'},
-                            {label: '1 Tue', value: '1-Tue'},
-                            {label: '2 Wed', value: '2-Wed'},
-                            {label: '3 Thu', value: '3-Thu'},
-                        ]}
+                        options={[]}
                     />
                 </Disabled>
                 <RichText

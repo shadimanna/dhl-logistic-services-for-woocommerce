@@ -1,13 +1,13 @@
 import {useEffect, useState, useCallback} from '@wordpress/element';
-import {TextControl, SelectControl, RadioControl} from '@wordpress/components';
+import { TextControl, RadioControl } from '@wordpress/components';
 import {__} from '@wordpress/i18n';
-import {debounce} from 'lodash';
+import { debounce } from 'lodash';
 
 export const Block = ({checkoutExtensionData}) => {
     const {setExtensionData} = checkoutExtensionData;
 
     // Access the localized data from prDhlGlobals
-    const imgUrl = prDhlGlobals.logoUrl;
+    const imgUrl = prDhlGlobals.pluginUrl+"/assets/img/dhl-official.png";
     const dhlSettings = prDhlGlobals.dhlSettings;
     const preferredDays = prDhlGlobals.preferredDays;
 
@@ -65,16 +65,23 @@ export const Block = ({checkoutExtensionData}) => {
     const showDropOffLocation = (showRadioControl && preferredLocationNeighbor === 'location') || (!showRadioControl && locationAvailable);
     const showNeighborFields = (showRadioControl && preferredLocationNeighbor === 'neighbor') || (!showRadioControl && neighborAvailable);
 
-    // Convert preferredDays object to an array of options for SelectControl
-    const preferredDayOptions = Object.keys(preferredDays).map((key) => {
+    // Update the mapping of preferredDayOptions
+    const preferredDayOptions = Object.entries(preferredDays).map(([key, dayName]) => {
+        let weekDayNum = '';
         if (key === '0' || key === 'none') {
-            return {
-                label: preferredDays[key], value: key,
-            };
+            weekDayNum = '-';
+        } else {
+            const date = new Date(key);
+            if (isNaN(date.getTime())) {
+                weekDayNum = '-';
+            } else {
+                weekDayNum = date.getDate().toString();
+            }
         }
-
         return {
-            label: `${new Date(key).getDate()} ${preferredDays[key]}`, value: key,
+            weekDayNum,
+            dayName,
+            key,
         };
     });
 
@@ -110,8 +117,8 @@ export const Block = ({checkoutExtensionData}) => {
                         className="dhl-tooltip"
                         title={__('Choose one of the displayed days as your preferred day for your parcel delivery. Other days are not possible due to delivery processes.', 'dhl-for-woocommerce')}
                     >
-                                ?
-                            </span>
+                ?
+            </span>
                 </th>
             </tr>
             <tr className="dhl-co-tr">
@@ -121,11 +128,31 @@ export const Block = ({checkoutExtensionData}) => {
             </tr>
             <tr className="dhl-co-tr">
                 <td colSpan="2">
-                    <SelectControl
-                        value={preferredDay}
-                        options={preferredDayOptions}
-                        onChange={(value) => setPreferredDay(value)}
-                    />
+                    {preferredDayOptions.length > 0 ? (
+                        <ul className="dhl-co-times">
+                            {preferredDayOptions.map((option, index) => (
+                                <li key={index}>
+                                    <input
+                                        type="radio"
+                                        name="pr_dhl_preferred_day"
+                                        className="pr_dhl_preferred_day"
+                                        data-index="0"
+                                        id={`pr_dhl_preferred_day_${option.key}`}
+                                        value={option.key}
+                                        checked={preferredDay === option.key}
+                                        onChange={(e) => setPreferredDay(e.target.value)}
+                                    />
+                                    <label htmlFor={`pr_dhl_preferred_day_${option.key}`}>
+                                        {option.weekDayNum}<br />{option.dayName}
+                                    </label>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <i>
+                            {__('Unfortunately, for the selected delivery address the service Delivery Day is not available', 'dhl-for-woocommerce')}
+                        </i>
+                    )}
                 </td>
             </tr>
         </>)}
