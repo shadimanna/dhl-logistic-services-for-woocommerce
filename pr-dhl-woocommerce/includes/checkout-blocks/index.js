@@ -4,7 +4,8 @@
 import { registerPlugin } from '@wordpress/plugins';
 
 // Import block definitions
-import './dhl-blocks';
+import './dhl-preferred-services';
+import './dhl-parcel-finder';
 
 const render = () => {};
 

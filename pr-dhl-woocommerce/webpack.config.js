@@ -11,22 +11,33 @@ const defaultRules = defaultConfig.module.rules.filter((rule) => {
 module.exports = {
 	...defaultConfig,
 	entry: {
-		index: path.resolve(process.cwd(), 'includes', 'checkout-blocks', 'js', 'index.js'),
-		// Existing blocks
-		'pr-dhl-blocks': path.resolve(
+		index: path.resolve(process.cwd(), 'includes', 'checkout-blocks', 'index.js'),
+		'pr-dhl-preferred-services': path.resolve(
 			process.cwd(),
 			'includes',
 			'checkout-blocks',
-			'js',
-			'dhl-blocks',
+			'dhl-preferred-services',
 			'index.js'
 		),
-		'pr-dhl-blocks-frontend': path.resolve(
+		'pr-dhl-preferred-services-frontend': path.resolve(
 			process.cwd(),
 			'includes',
 			'checkout-blocks',
-			'js',
-			'dhl-blocks',
+			'dhl-preferred-services',
+			'frontend.js'
+		),
+		'pr-dhl-parcel-finder': path.resolve(
+			process.cwd(),
+			'includes',
+			'checkout-blocks',
+			'dhl-parcel-finder',
+			'index.js'
+		),
+		'pr-dhl-parcel-finder-frontend': path.resolve(
+			process.cwd(),
+			'includes',
+			'checkout-blocks',
+			'dhl-parcel-finder',
 			'frontend.js'
 		)
 	},
@@ -39,7 +50,7 @@ module.exports = {
 				exclude: /node_modules/,
 				use: [
 					MiniCssExtractPlugin.loader,
-					{ loader: 'css-loader', options: { importLoaders: 1 } },
+					{loader: 'css-loader', options: {importLoaders: 1}},
 					{
 						loader: 'sass-loader',
 						options: {

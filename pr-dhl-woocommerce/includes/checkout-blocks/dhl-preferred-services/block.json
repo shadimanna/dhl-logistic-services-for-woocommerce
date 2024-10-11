@@ -1,6 +1,6 @@
 {
   "apiVersion": 3,
-  "name": "pr-dhl/dhl-blocks",
+  "name": "pr-dhl/dhl-preferred-services",
   "version": "1.0.0",
   "title": "DHL Order Block",
   "category": "woocommerce",
@@ -68,5 +68,5 @@
     }
   },
   "textdomain": "dhl-for-woocommerce",
-  "editorStyle": "file:../../../build/style-dhl-blocks.css"
+  "editorStyle": "file:../../../build/style-dhl-preferred-services.css"
 }
