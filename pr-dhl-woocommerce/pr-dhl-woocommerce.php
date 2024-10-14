@@ -116,7 +116,6 @@ class PR_DHL_WC {
 		// add_action( 'plugins_loaded', array( $this, 'init' ) );
 		add_action( 'init', array( $this, 'load_plugin' ), 0 );
 		add_action( 'before_woocommerce_init', array( $this, 'declare_wc_hpos_compatibility' ), 10 );
-
 	}
 
 	/**
@@ -188,6 +187,9 @@ class PR_DHL_WC {
 		$this->define( 'PR_DHL_PACKSTATION', __('Packstation ', 'dhl-for-woocommerce') );
 		$this->define( 'PR_DHL_PARCELSHOP', __('Postfiliale ', 'dhl-for-woocommerce') );
 		$this->define( 'PR_DHL_POST_OFFICE', __('Postfiliale ', 'dhl-for-woocommerce') );
+
+		$this->define( 'DHL_ENGLISH_REGISTRATION_LINK', "https://www.dhl.de/en/privatkunden/kundenkonto/registrierung.html");
+		$this->define( 'DHL_GERMAN_REGISTRATION_LINK', "https://www.dhl.de/de/privatkunden/kundenkonto/registrierung.html" );
 	}
 
 	/**
