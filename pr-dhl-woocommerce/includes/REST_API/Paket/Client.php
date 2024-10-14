@@ -6,8 +6,6 @@ use Exception;
 use PR\DHL\REST_API\API_Client;
 use PR\DHL\REST_API\Interfaces\API_Auth_Interface;
 use PR\DHL\REST_API\Interfaces\API_Driver_Interface;
-use PR\DHL\Utils\Args_Parser;
-use stdClass;
 
 /**
  * The API client for DHL Paket.
@@ -68,21 +66,19 @@ class Client extends API_Client {
 
 		//Customer business portal user auth
 		$headers = array(
-			'DPDHL-User-Authentication-Token' => base64_encode( $this->customer_portal_user . ':' . $this->customer_portal_password )
+			'Authorization'  	=>  'Basic '.base64_encode( $this->customer_portal_user . ':' . $this->customer_portal_password ),
+			'dhl-api-key'      	=> defined( 'PR_DHL_GLOBAL_API' )? PR_DHL_GLOBAL_API : '',
 		);
 
 		$data = $this->request_pickup_info_to_request_data( $pickup_request_info, $blnIncludeBillingNumber );
 
 		$response = $this->post($route, $data, $headers);
-		$response_body = $response->body;
 
 		if ( $response->status === 200 ) {
-
-			if ( isset( $response->body->orderNumber) ) {
-
+			if ( isset( $response->body->confirmation->value->orderID ) ) {
 				return $response->body;
 
-			} elseif ( isset( $response->body[0]->code) ) {
+			} elseif ( isset( $response->body ) ) {
 
 				throw new Exception(
 					sprintf(
@@ -92,26 +88,6 @@ class Client extends API_Client {
 				);
 			}
 
-		} elseif ( $response->status >= 400 && $response->status <= 499  ) {
-
-			$error_msg = 'HTTP status: '. $response->status;
-
-			if ( $response->status == 400 ) {
-				$error_msg .= ' Bad Request. ';
-			} elseif ( $response->status == 401 ) {
-				$error_msg .= ' Authentication failed. Wrong credentials. ';
-			} elseif ( $response->status == 402 ) {
-				$error_msg .= ' Payment failed. ';
-			} elseif ( $response->status == 403 ) {
-				$error_msg .= ' Authentication failed. Insufficient priviledges. ';
-			}
-
-			throw new Exception(
-				sprintf(
-					__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
-					$this->generate_error_details( $error_msg . $response->body )
-				)
-			);
 		}
 
 		throw new Exception(
@@ -129,46 +105,14 @@ class Client extends API_Client {
 	 *
 	 *
 	 */
-	public function get_pickup_location( $zipCode = '' ){
+	public function get_pickup_location( $postalCode = '' ){
 
-		$route 	= $this->get_pickup_location_route();
-
-		//Customer business portal user auth
-		$headers = array(
-			'DPDHL-User-Authentication-Token' => base64_encode( $this->customer_portal_user . ':' . $this->customer_portal_password )
-		);
-
-		$data = [];
-		$data = ['zipCode' => $zipCode];
-
-		$response = $this->get($route, $data, $headers);
-
-		$response_body = $response->body;
+		$route    = $this->get_pickup_location_route();
+		$data     = array( 'postalCode' => $postalCode );
+		$response = $this->get( $route, $data );
 
 		if ( $response->status === 200 ) {
-
 			return $response->body;
-
-		} elseif ( $response->status >= 400 && $response->status <= 499  ) {
-
-			$error_msg = 'HTTP status: '. $response->status;
-
-			if ( $response->status == 400 ) {
-				$error_msg .= ' Bad Request. ';
-			} elseif ( $response->status == 401 ) {
-				$error_msg .= ' Authentication failed. Wrong credentials. ';
-			} elseif ( $response->status == 402 ) {
-				$error_msg .= ' Payment failed. ';
-			} elseif ( $response->status == 403 ) {
-				$error_msg .= ' Authentication failed. Insufficient priviledges. ';
-			}
-
-			throw new Exception(
-				sprintf(
-					__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
-					$this->generate_error_details( $error_msg . $response->body )
-				)
-			);
 		}
 
 		throw new Exception(
@@ -179,28 +123,22 @@ class Client extends API_Client {
 		);
 	}
 
-	public function generate_error_details( $body ){
+	public function generate_error_details( $body ) {
+		$error_details = '';
 
-		$error_details 	= '';
-
-		if ( is_string( $body) ) {
+		if ( isset( $body->title ) ) {
+			$error_details = $body->title;
+		} else if ( is_string( $body ) ) {
 			$error_details = $body;
-		} elseif (is_array($body) ) {
-			$error_details = print_r($body, true);
-		} elseif ( is_object($body) ) {
-			$error_details = print_r($body, true);
+		} elseif ( is_array( $body ) ) {
+			$error_details = '<br><ol>';
+			foreach ( $body as $error ) {
+				$error_details .= '<li>' . $error->title . '</li>';
+			}
+			$error_details .= '</ol>';
 		}
 
-
-		if( !empty( $error_details ) ){
-
-			$error_exception .= '<ul class = "wc_dhl_error">' . $error_details . '</ul>';
-
-		} else {
-			$error_exception .= __( 'Error message detail is not exist!', 'dhl-for-woocommerce' );
-		}
-
-		return $error_exception;
+		return $error_details;
 	}
 
 	/**
@@ -253,32 +191,40 @@ class Client extends API_Client {
 
 		//Pickup location & business hours
 		$pickup_location_array = array(
+			"type" => "Address",
 			'pickupAddress' 	=> array(
 				'name1' 		=> $request_pickup_info->pickup_contact['name'],
-				'nativeAddress' 	=> $request_pickup_info->pickup_address
+				'name2'			=> '',
+				'addressStreet' => $request_pickup_info->pickup_address['addressStreet'],
+				'addressHouse'  => $request_pickup_info->pickup_address['addressHouse'],
+				'city'			=> $request_pickup_info->pickup_address['city'],
+				'postalCode' 	=> $request_pickup_info->pickup_address['postalCode'],
+				'state' 		=> $request_pickup_info->pickup_address['state'],
+				'country'		=> $request_pickup_info->pickup_address['country']
 			)
 		);
-		$business_hours = null;
-		if ( $request_pickup_info->business_hours ) {
-			$pickup_location_array['businessHours']	= $request_pickup_info->business_hours;
-		}
 
 		$request_data = array(
-			'pickupLocation' 	=> $pickup_location_array,
-			'pickupDetails'	  => array(
-				'pickupDate' 	=> $pickup_info_array,
-				'emailNotification'	=> '',
-				'totalWeight'		=> $request_pickup_info->pickup_details['weight'],
-				'comment'			=> '',
+			'pickupLocation'  => $pickup_location_array,
+			'pickupDetails'   => array(
+				'pickupDate'  => $pickup_info_array,
+				'totalWeight' => $request_pickup_info->pickup_details['weight'],
+				'comment'     => '',
 			),
-			'shipmentDetails'	  => array(
-				'shipments' 	=> $request_pickup_info->shipments
+			'shipmentDetails' => array(
+				'shipments' => $request_pickup_info->shipments,
 			),
-			'contactPerson'	  => array(
-				'name' 	=> $request_pickup_info->pickup_contact['name'],
-				'phone' 	=> $request_pickup_info->pickup_contact['phone'],
-				'email' 	=> $request_pickup_info->pickup_contact['email'],
-			)
+			'contactPerson'   => array(
+				array(
+					'name'              => $request_pickup_info->pickup_contact['name'],
+					'phone'             => $request_pickup_info->pickup_contact['phone'],
+					'email'             => $request_pickup_info->pickup_contact['email'],
+					'emailNotification' => array(
+						'sendPickupConfirmationEmail' => 'true',
+						'sendPickupTimeWindowEmail'   => 'true',
+					),
+				),
+			),
 		);
 
 		// Include customer details billing number (if excluded, we're forcing DHL to look for existing Pickup address in customers portal)
@@ -301,7 +247,7 @@ class Client extends API_Client {
 	 * @return string
 	 */
 	protected function request_pickup_route() {
-		return 'pickup360/order';
+		return '/orders';
 	}
 
 	/**
@@ -312,8 +258,7 @@ class Client extends API_Client {
 	 * @return string
 	 */
 	protected function get_pickup_location_route() {
-		return 'pickup360/pickuplocation';
+		return '/locations';
 	}
-
 
 }

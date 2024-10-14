@@ -277,7 +277,7 @@ class Pickup_Request_Info {
 
 		return array(
 			'shipper_address' => array(
-				'rename' => 'streetName',
+				'rename' => 'addressStreet',
 				'error' => __( 'Shipper "Address 1" is empty!', 'dhl-for-woocommerce' ),
                 'sanitize' => function( $name ) use ($self) {
 
@@ -291,7 +291,7 @@ class Pickup_Request_Info {
                 }
 			),
 			'shipper_address_no' => array(
-				'rename' => 'houseNumber',
+				'rename' => 'addressHouse',
 				'default' => '',
 			),
 			'shipper_address_city'      => array(
@@ -299,7 +299,7 @@ class Pickup_Request_Info {
 				'error' => __( 'Shipper "City" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'shipper_address_zip'  => array(
-				'rename' => 'zip',
+				'rename' => 'postalCode',
 				'error' => __( 'Shipper "Postcode" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'shipper_address_state'     => array(
@@ -307,7 +307,7 @@ class Pickup_Request_Info {
 				'default' => '',
 			),
 			'shipper_country'   => array(
-				'rename' => 'countryIso2Code',
+				'rename' => 'country',
 				'error' => __( 'Shipper "Country" is empty!', 'dhl-for-woocommerce' ),
 			),
 		);
@@ -332,7 +332,7 @@ class Pickup_Request_Info {
 				'default' => 'PAKET',
 			),
 			'tracking_number'	=> array(
-				'rename' => 'shipmentNumber',
+				'rename' => 'shipmentNo',
 				'default' => '',
 			)
  		);
