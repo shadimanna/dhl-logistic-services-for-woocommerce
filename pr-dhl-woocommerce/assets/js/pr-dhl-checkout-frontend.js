@@ -1,29 +1,28 @@
-jQuery(function($) {
-
-  var $doc = $(document);
+jQuery( function($) {
+  var $doc  = $(document);
   var $body = $(document.body);
-  $doc.on('updated_checkout', function() {
+  $doc.on( 'updated_checkout', function() {
 
-    $('.pr_dhl_preferred_day').on('change', function() {
-      $body.trigger('update_checkout');
+    $( '.pr_dhl_preferred_day' ).on( 'change', function() {
+      $body.trigger( 'update_checkout' );
     });
 
-    $('.pr_dhl_preferred_time').on('change', function() {
-      $body.trigger('update_checkout');
+    $( '.pr_dhl_preferred_time' ).on( 'change', function() {
+      $body.trigger( 'update_checkout' );
     });
 
     if( pr_dhl_checkout_frontend.cod_enabled ) {
-      jQuery('.woocommerce').on('change', '.payment_methods .input-radio', function() {
-        $body.trigger('update_checkout');
+      jQuery( '.woocommerce' ).on( 'change', '.payment_methods .input-radio', function() {
+        $body.trigger( 'update_checkout' );
       });
     }
 
-    if ( $('.dhl-tooltip').length > 0 ) {
+    if ( $( '.dhl-tooltip' ).length > 0 ) {
       // reveal tooltips on hover
-      $('.dhl-tooltip').tooltip();
+      $( '.dhl-tooltip' ).tooltip();
       // no blacklist strings in DHL inputs
-      var blacklist = ['Paketbox', 'Packstation', 'Postfach', 'Postfiliale', 'Filiale', 'Postfiliale Direkt', 'Filiale Direkt', 'Paketkasten', 'DHL', 'P-A-C-K-S-T-A-T-I-O-N', 'Paketstation', 'Pack Station', 'P.A.C.K.S.T.A.T.I.O.N.', 'Pakcstation', 'Paackstation', 'Pakstation', 'Backstation', 'Bakstation', 'P A C K S T A T I O N', 'Wunschfiliale', 'Deutsche Post', '<', '>', '\\n', '\\r', /\\/, '\'', '"', ';', /\+/];
-      var textInputs = $('#pr_dhl_preferred_neighbour_name, #pr_dhl_preferred_neighbour_address, #pr_dhl_preferred_location');
+      var blacklist = [ 'Paketbox', 'Packstation', 'Postfach', 'Postfiliale', 'Filiale', 'Postfiliale Direkt', 'Filiale Direkt', 'Paketkasten', 'DHL', 'P-A-C-K-S-T-A-T-I-O-N', 'Paketstation', 'Pack Station', 'P.A.C.K.S.T.A.T.I.O.N.', 'Pakcstation', 'Paackstation', 'Pakstation', 'Backstation', 'Bakstation', 'P A C K S T A T I O N', 'Wunschfiliale', 'Deutsche Post', '<', '>', '\\n', '\\r', /\\/, '\'', '"', ';', /\+/ ];
+      var textInputs = $( '#pr_dhl_preferred_neighbour_name, #pr_dhl_preferred_neighbour_address, #pr_dhl_preferred_location' );
       textInputs.keyup(function(e) {
         var val = e.target.value;
         for (var i = 0, len = blacklist.length; i < len; i++) {
@@ -77,20 +76,20 @@ jQuery(function($) {
   });
 });
 
-jQuery(function($) {
+jQuery( function($) {
   function toggleDhlParcelFinder() {
-    var selectedCountry      = $('#shipping_country').val();
+    var selectedCountry = $( '#shipping_country' ).val();
     if ( 'DE' !== selectedCountry ) {
-      $('#dhl_parcel_finder').hide();
-      $('#shipping_dhl_drop_off_field').hide();
-      $('#shipping_dhl_address_type_field').hide();
-      $('#ship-to-different-address span').text('Ship to a different address?');
-      $('.registration_info').hide();
+      $( '#dhl_parcel_finder' ).hide();
+      $( '#shipping_dhl_drop_off_field' ).hide();
+      $( '#shipping_dhl_address_type_field' ).hide();
+      $( '#ship-to-different-address span' ).text( pr_dhl_checkout_frontend.shipToDifferentAddressText );
+      $( '.registration_info' ).hide();
     } else {
-      $('#dhl_parcel_finder').show();
-      $('#shipping_dhl_drop_off_field').show();
-      $('#shipping_dhl_address_type_field').show();
-      $('.registration_info').show();
+      $( '#dhl_parcel_finder' ).show();
+      $( '#shipping_dhl_drop_off_field' ).show();
+      $( '#shipping_dhl_address_type_field' ).show();
+      $( '.registration_info' ).show();
     }
   }
 
@@ -98,7 +97,7 @@ jQuery(function($) {
   toggleDhlParcelFinder();
 
   // Run when the shipping country changes
-  $('#shipping_country').change(function() {
+  $( '#shipping_country' ).change( function() {
       toggleDhlParcelFinder();
   });
 });
@@ -248,7 +247,7 @@ jQuery(document).ready(function($) {
               if( 'osm' === pr_dhl_checkout_frontend.map_type ){
                 wc_checkout_dhl_parcelfinder.populateOsmMap();
               } else {
-                wc_checkout_dhl_parcelfinder.populateMap();
+                wc_checkout_dhl_parcelfinder.populateGoogleMap();
               }
               wc_checkout_dhl_parcelfinder.populateDropdown();
             }
@@ -355,328 +354,42 @@ jQuery(document).ready(function($) {
         }
       });
     },
-    populateMap: function() {
-      if( ! wc_checkout_dhl_parcelfinder.parcelShops ) {
-        return;
-      }
 
-      var uluru = {lat: wc_checkout_dhl_parcelfinder.parcelShops[0].place.geo.latitude, lng: wc_checkout_dhl_parcelfinder.parcelShops[0].place.geo.longitude };
-      var map = new google.maps.Map(document.getElementById('dhl_google_map'), {
-        zoom: 13,
-        center: uluru
-      });
+    populateGoogleMap: function() {
+        if ( ! this.parcelShops ) return;
 
-      var infoWinArray = [];
-      $.each(wc_checkout_dhl_parcelfinder.parcelShops, function(key,value) {
-        var uluru = {lat: value.place.geo.latitude, lng: value.place.geo.longitude};
-
-        // Get opening times
-        var openingTimes = '<h5 class="parcel_subtitle">' + pr_dhl_checkout_frontend.opening_times + '</h5>';
-        var prev_day = 0;
-        var day_of_week;
-        $.each(value.openingHours, function(key_times,value_times) {
-
-            switch (value_times.dayOfWeek) {
-              case "http://schema.org/Monday":
-                day_of_week = pr_dhl_checkout_frontend.monday;
-                break;
-              case "http://schema.org/Tuesday":
-                day_of_week = pr_dhl_checkout_frontend.tueday;
-                break;
-              case "http://schema.org/Wednesday":
-                day_of_week = pr_dhl_checkout_frontend.wednesday;
-                break;
-              case "http://schema.org/Thursday":
-                day_of_week = pr_dhl_checkout_frontend.thrusday;
-                break;
-              case "http://schema.org/Friday":
-                day_of_week = pr_dhl_checkout_frontend.friday;
-                break;
-              case "http://schema.org/Saturday":
-                day_of_week = pr_dhl_checkout_frontend.satuday;
-                break;
-              case "http://schema.org/Sunday":
-                day_of_week = pr_dhl_checkout_frontend.sunday;
-                break;
-
-            }
-
-            if( prev_day ) {
-              if( prev_day == value_times.dayOfWeek ) {
-                openingTimes += ', ';
-              } else {
-                openingTimes += '<br/>' + day_of_week + ': ';
-              }
-            } else {
-              openingTimes += day_of_week + ': ';
-            }
-
-            prev_day = value_times.dayOfWeek;
-
-            openingTimes += value_times.opens + ' - ' + value_times.closes;
-
+        var uluru = { lat: this.parcelShops[0].place.geo.latitude, lng: this.parcelShops[0].place.geo.longitude };
+        var map = new google.maps.Map(document.getElementById( 'dhl_google_map' ), {
+            zoom: 13,
+            center: uluru
         });
 
-        // Get services
-        var shopServices = '<h5 class="parcel_subtitle">' + pr_dhl_checkout_frontend.services + '</h5>';
-        var shopServicesParking = ': ' + pr_dhl_checkout_frontend.no;
-        var shopServicesHandicap = ': ' + pr_dhl_checkout_frontend.no;
-        $.each(value.serviceTypes, function(key_services,value_services) {
-          switch (value_services) {
-            case 'parking':
-              shopServicesParking = ': ' + pr_dhl_checkout_frontend.yes;
-              break;
-            case 'handicapped-access':
-              shopServicesHandicap = ': ' + pr_dhl_checkout_frontend.yes;
-              break;
-          }
-
-        });
-
-        shopServices += pr_dhl_checkout_frontend.parking + shopServicesParking + '<br/>';
-        shopServices += pr_dhl_checkout_frontend.handicap + shopServicesHandicap + '<br/>';
-
-
-        switch (value.location.type) {
-          case 'locker':
-            var gmap_marker_icon = pr_dhl_checkout_frontend.packstation_icon;
-            var shop_name = pr_dhl_checkout_frontend.packstation;
-            var shop_label = pr_dhl_checkout_frontend.packstation;
-            break;
-          case 'servicepoint':
-            var gmap_marker_icon = pr_dhl_checkout_frontend.parcelshop_icon;
-            var shop_name = pr_dhl_checkout_frontend.parcelShop;
-            var shop_label = pr_dhl_checkout_frontend.branch;
-            break;
-          case 'postoffice':
-            var gmap_marker_icon = pr_dhl_checkout_frontend.post_office_icon;
-            var shop_name = pr_dhl_checkout_frontend.postoffice;
-            var shop_label = pr_dhl_checkout_frontend.branch;
-            break;
-          case 'postbank':
-            var gmap_marker_icon = pr_dhl_checkout_frontend.post_office_icon;
-            var shop_name = pr_dhl_checkout_frontend.postoffice;
-            var shop_label = pr_dhl_checkout_frontend.branch;
-            break;
-          default:
-            var gmap_marker_icon = pr_dhl_checkout_frontend.packstation_icon;
-            var shop_name = pr_dhl_checkout_frontend.packstation;
-            var shop_label = pr_dhl_checkout_frontend.packstation;
-            break;
-        }
-
-        shop_name += ' ' + value.location.keywordId;
-
-        var contentString = '<div id="parcel-content">'+
-                '<div id="site-notice">'+
-                '</div>'+
-                '<h4 class="parcel-title">' + shop_name + '</h4>'+
-                '<div id="bodyContent">'+
-                '<div>' + value.place.address.streetAddress + '</br>' + value.place.address.addressLocality + ' ' + value.place.address.postalCode + '</div>'+
-                openingTimes +
-                shopServices +
-                '<button type="button" class="parcelshop-select-btn" id="' + value.location.ids[0].locationId + '">' + pr_dhl_checkout_frontend.select + '</button>'+
-                '</div>'+
-                '</div>';
-
-        var infowindow = new google.maps.InfoWindow({
-              content: contentString,
-              maxWidth: 300
-            });
-
-        infoWinArray.push(infowindow);
-
-
-        var marker = new google.maps.Marker({
-          position: uluru,
-          map: map,
-          title: shop_label,
-          animation: google.maps.Animation.DROP,
-          icon: gmap_marker_icon
-        });
-
-        marker.addListener('click', function() {
-          clearOverlays();
-          infowindow.open(map, marker);
-        });
-
-      });
-
-      // Clear all info windows
-      function clearOverlays() {
-        for (var i = 0; i < infoWinArray.length; i++ ) {
-          infoWinArray[i].close();
-        }
-        // infoWinArray.length = 0;
-      }
-
-      // marker.addListener('click', toggleBounce);
+        this.createMarkers( map );
     },
+
     populateOsmMap: function() {
-      if( ! wc_checkout_dhl_parcelfinder.parcelShops ) {
-        return;
+      if ( ! this.parcelShops ) return;
+
+      if ( this.osmMap ) {
+          this.osmMap.remove();
       }
-      // Remove existing map instance if it exists
-      if (wc_checkout_dhl_parcelfinder.osmMap) {
-        wc_checkout_dhl_parcelfinder.osmMap.remove(); // Remove the map
-      }
-      // OSM Map
-      var uluru = [wc_checkout_dhl_parcelfinder.parcelShops[0].place.geo.latitude, wc_checkout_dhl_parcelfinder.parcelShops[0].place.geo.longitude];
-      wc_checkout_dhl_parcelfinder.osmMap = L.map('dhl_google_map').setView(uluru, 13);
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(wc_checkout_dhl_parcelfinder.osmMap);
+      var uluru = [ this.parcelShops[0].place.geo.latitude, this.parcelShops[0].place.geo.longitude ];
+      this.osmMap = L.map( 'dhl_google_map' ).setView( uluru, 13 );
 
-      var infoWinArray = [];
+      L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      } ).addTo( this.osmMap );
 
-      // Loop through each parcel shop
-      $.each(wc_checkout_dhl_parcelfinder.parcelShops, function(key, value) {
-        var uluru = [value.place.geo.latitude, value.place.geo.longitude]; // Leaflet uses [lat, lng]
-
-        // Get opening times
-        var openingTimes = '<h5 class="parcel_subtitle">' + pr_dhl_checkout_frontend.opening_times + '</h5>';
-        var prev_day = 0;
-        var day_of_week;
-        $.each(value.openingHours, function(key_times, value_times) {
-          switch (value_times.dayOfWeek) {
-            case "http://schema.org/Monday":
-              day_of_week = pr_dhl_checkout_frontend.monday;
-              break;
-            case "http://schema.org/Tuesday":
-              day_of_week = pr_dhl_checkout_frontend.tueday;
-              break;
-            case "http://schema.org/Wednesday":
-              day_of_week = pr_dhl_checkout_frontend.wednesday;
-              break;
-            case "http://schema.org/Thursday":
-              day_of_week = pr_dhl_checkout_frontend.thrusday;
-              break;
-            case "http://schema.org/Friday":
-              day_of_week = pr_dhl_checkout_frontend.friday;
-              break;
-            case "http://schema.org/Saturday":
-              day_of_week = pr_dhl_checkout_frontend.satuday;
-              break;
-            case "http://schema.org/Sunday":
-              day_of_week = pr_dhl_checkout_frontend.sunday;
-              break;
-          }
-
-          if (prev_day) {
-            if (prev_day == value_times.dayOfWeek) {
-              openingTimes += ', ';
-            } else {
-              openingTimes += '<br/>' + day_of_week + ': ';
-            }
-          } else {
-            openingTimes += day_of_week + ': ';
-          }
-
-          prev_day = value_times.dayOfWeek;
-
-          openingTimes += value_times.opens + ' - ' + value_times.closes;
-        });
-
-        // Get services
-        var shopServices = '<h5 class="parcel_subtitle">' + pr_dhl_checkout_frontend.services + '</h5>';
-        var shopServicesParking = ': ' + pr_dhl_checkout_frontend.no;
-        var shopServicesHandicap = ': ' + pr_dhl_checkout_frontend.no;
-        $.each(value.serviceTypes, function(key_services, value_services) {
-          switch (value_services) {
-            case 'parking':
-              shopServicesParking = ': ' + pr_dhl_checkout_frontend.yes;
-              break;
-            case 'handicapped-access':
-              shopServicesHandicap = ': ' + pr_dhl_checkout_frontend.yes;
-              break;
-          }
-        });
-
-        shopServices += pr_dhl_checkout_frontend.parking + shopServicesParking + '<br/>';
-        shopServices += pr_dhl_checkout_frontend.handicap + shopServicesHandicap + '<br/>';
-
-        // Determine shop type and icons
-        var gmap_marker_icon, shop_name, shop_label;
-        switch (value.location.type) {
-          case 'locker':
-            gmap_marker_icon = pr_dhl_checkout_frontend.packstation_icon;
-            shop_name = pr_dhl_checkout_frontend.packstation;
-            shop_label = pr_dhl_checkout_frontend.packstation;
-            break;
-          case 'servicepoint':
-            gmap_marker_icon = pr_dhl_checkout_frontend.parcelshop_icon;
-            shop_name = pr_dhl_checkout_frontend.parcelShop;
-            shop_label = pr_dhl_checkout_frontend.branch;
-            break;
-          case 'postoffice':
-            gmap_marker_icon = pr_dhl_checkout_frontend.post_office_icon;
-            shop_name = pr_dhl_checkout_frontend.postoffice;
-            shop_label = pr_dhl_checkout_frontend.branch;
-            break;
-          case 'postbank':
-            gmap_marker_icon = pr_dhl_checkout_frontend.post_office_icon;
-            shop_name = pr_dhl_checkout_frontend.postoffice;
-            shop_label = pr_dhl_checkout_frontend.branch;
-            break;
-          default:
-            gmap_marker_icon = pr_dhl_checkout_frontend.packstation_icon;
-            shop_name = pr_dhl_checkout_frontend.packstation;
-            shop_label = pr_dhl_checkout_frontend.packstation;
-            break;
-        }
-
-        shop_name += ' ' + value.location.keywordId;
-
-        var contentString = '<div id="parcel-content">'+
-                            '<div id="site-notice">'+
-                            '</div>'+
-                            '<h4 class="parcel-title">' + shop_name + '</h4>'+
-                            '<div id="bodyContent">'+
-                            '<div>' + value.place.address.streetAddress + '</br>' + value.place.address.addressLocality + ' ' + value.place.address.postalCode + '</div>'+
-                            openingTimes +
-                            shopServices +
-                            '<button type="button" class="parcelshop-select-btn" id="' + value.location.ids[0].locationId + '">' + pr_dhl_checkout_frontend.select + '</button>'+
-                            '</div>'+
-                            '</div>';
-
-        // Create a Leaflet marker
-        var marker = L.marker(uluru, {
-          icon: L.icon({
-            iconUrl: gmap_marker_icon,
-          }),
-          title: shop_label,
-        }).addTo(wc_checkout_dhl_parcelfinder.osmMap);
-
-        // Create a popup
-        marker.bindPopup(contentString, { maxWidth: 300 });
-
-        // Add click event listener
-        marker.on('click', function() {
-          clearOverlays();
-          marker.openPopup();
-        });
-
-        // Add to the info window array
-        infoWinArray.push(marker);
-
-       
-      });
-
-      // Clear all popups
-      function clearOverlays() {
-        for (var i = 0; i < infoWinArray.length; i++) {
-          infoWinArray[i].closePopup();
-        }
-      }
-     
+      this.createMarkers( this.osmMap, true );
     },
+
     selectedShop: function() {
 
-      var parcelShopId = $(this).attr('id');
+      var parcelShopId = $(this).attr( 'id' );
 
-      $.each(wc_checkout_dhl_parcelfinder.parcelShops, function(key,value) {
+      $.each( wc_checkout_dhl_parcelfinder.parcelShops, function( key,value ) {
 
         if( value.location.ids[0].locationId == parcelShopId ) {
           switch (value.location.type) {
@@ -714,12 +427,123 @@ jQuery(document).ready(function($) {
           $.fancybox.close();
         }
       });
+    },
+
+    createMarkers: function(map, isOsm = false) {
+      var self = this;
+      var infoWinArray = [];
+
+      this.parcelShops.forEach( function( shop ) {
+          var position = isOsm ? [shop.place.geo.latitude, shop.place.geo.longitude] : { lat: shop.place.geo.latitude, lng: shop.place.geo.longitude };
+          var marker = isOsm ? L.marker( position, { icon: L.icon( { iconUrl: self.getMarkerIcon(shop) } ) } ).addTo( map ) : new google.maps.Marker( {
+              position: position,
+              map: map,
+              title: self.getShopLabel( shop ),
+              icon: self.getMarkerIcon( shop )
+          });
+
+          if ( ! isOsm ) {
+            var infowindow =  new google.maps.InfoWindow( { content: self.getInfoContent(shop), maxWidth: 300 } );
+            infoWinArray.push( infowindow );
+
+          }
+          marker.bindPopup ? marker.bindPopup( self.getInfoContent( shop ), { maxWidth: 300 } ) : marker.addListener( 'click', function() {
+              self.clearOverlays( infoWinArray );
+              infowindow.open( map, marker );
+          });
+
+          
+      });
+
+      if ( isOsm ) {
+          infoWinArray.push( marker );
+          this.osmMap.on( 'click', function() {
+              self.clearOverlays( infoWinArray );
+          });
+      }
+    },
+
+    getMarkerIcon: function( shop ) {
+      switch ( shop.location.type ) {
+          case 'locker'       : return pr_dhl_checkout_frontend.packstation_icon;
+          case 'servicepoint' : return pr_dhl_checkout_frontend.parcelshop_icon;
+          case 'postoffice'   : return pr_dhl_checkout_frontend.post_office_icon;
+          default             : return pr_dhl_checkout_frontend.packstation_icon;
+      }
+    },
+
+    getShopLabel: function( shop  ) {
+        switch (  shop.location.type  ) {
+            case 'locker'       : return pr_dhl_checkout_frontend.packstation;
+            case 'servicepoint' : return pr_dhl_checkout_frontend.parcelShop;
+            case 'postoffice'   : return pr_dhl_checkout_frontend.postoffice;
+            default             : return pr_dhl_checkout_frontend.packstation;
+        }
+    },
+
+    getInfoContent: function( shop ) {
+      var openingTimes  = this.getOpeningTimes( shop.openingHours );
+      var services      = this.getShopServices( shop.serviceTypes );
+      var shopName      = this.getShopLabel( shop ) + ' ' + shop.location.keywordId;
+
+      return '<div id="parcel-content">' +
+          '<h4 class="parcel-title">' + shopName + '</h4>' +
+          '<div>' + shop.place.address.streetAddress + '<br>' + shop.place.address.addressLocality + ' ' + shop.place.address.postalCode + '</div>' +
+          openingTimes + services +
+          '<button type="button" class="parcelshop-select-btn" id="' + shop.location.ids[0].locationId + '">' + pr_dhl_checkout_frontend.select + '</button>' +
+          '</div>';
+    },
+
+    getOpeningTimes: function( hours ) {
+      var openingTimes = '<h5 class="parcel_subtitle">' + pr_dhl_checkout_frontend.opening_times + '</h5>';
+      var prevDay = null;
+
+      hours.forEach( function( hour ) {
+          var dayLabel = pr_dhl_checkout_frontend[ hour.dayOfWeek.split('/').pop().toLowerCase() ];
+
+          if ( prevDay && prevDay === hour.dayOfWeek ) {
+              openingTimes += ', ';
+          } else {
+              openingTimes += (prevDay ? '<br>' : '') + dayLabel + ': ';
+          }
+
+          prevDay = hour.dayOfWeek;
+          openingTimes += hour.opens + ' - ' + hour.closes;
+      });
+      return openingTimes;
+    },
+
+    getShopServices: function( services ) {
+        var parking   = pr_dhl_checkout_frontend.no;
+        var handicap  = pr_dhl_checkout_frontend.no;
+
+        services.forEach( function( service ) {
+            if ( service === 'parking' ) parking = pr_dhl_checkout_frontend.yes;
+            if ( service === 'handicapped-access' ) handicap = pr_dhl_checkout_frontend.yes;
+        });
+
+        return '<h5 class="parcel_subtitle">' + pr_dhl_checkout_frontend.services + '</h5>' +
+            pr_dhl_checkout_frontend.parking + ': ' + parking + '<br>' +
+            pr_dhl_checkout_frontend.handicap + ': ' + handicap + '<br>';
+    },
+
+    clearOverlays: function( overlays ) {
+      overlays.forEach(function( overlay ) {
+          if ( overlay.closePopup ) {
+              // This is for OpenStreetMap
+              overlay.closePopup();
+          } else {
+              // This is for Google Maps
+             overlay.close();
+          }
+      });
     }
+
   };
 
-  if ( jQuery("[data-fancybox]").length > 0 ) {
+  if ( jQuery( "[data-fancybox]" ).length > 0 ) {
 
-    jQuery("[data-fancybox]").fancybox({
+    jQuery( "[data-fancybox]" ).fancybox({
       modal: true
     });
 
@@ -730,8 +554,8 @@ jQuery(document).ready(function($) {
 });
 
 // add style to custom select fields
-jQuery(document).ready(function($) {
-  $('select#shipping_dhl_address_type, select#shipping_dhl_drop_off').selectWoo({
+jQuery( document ).ready( function( $ ) {
+  $( 'select#shipping_dhl_address_type, select#shipping_dhl_drop_off' ).selectWoo({
     width: '100%', 
   });
 });

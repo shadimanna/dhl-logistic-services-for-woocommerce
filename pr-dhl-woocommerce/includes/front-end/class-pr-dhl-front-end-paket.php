@@ -96,26 +96,26 @@ class PR_DHL_Front_End_Paket {
 		}
 
 		if( $this->is_parcelfinder_enabled() ) {
-			add_filter( 'gettext', array( $this, 'change_ship_to_different_address_text'), 20, 3 );
+			add_filter( 'gettext', array( $this, 'change_ship_to_different_address_text' ), 20, 3 );
 		}
 
 		if( $this->is_email_notification_enabled() ){
-			$pos = apply_filters('pr_shipping_dhl_email_notification_position', 'woocommerce_review_order_before_submit' );
+			$pos = apply_filters( 'pr_shipping_dhl_email_notification_position', 'woocommerce_review_order_before_submit' );
 			add_action( $pos, array( $this, 'add_email_notification_checkbox' ), 10 );
-			add_action('woocommerce_checkout_order_processed', array( $this, 'process_email_notification_fields'), 30, 2 );
+			add_action( 'woocommerce_checkout_order_processed', array( $this, 'process_email_notification_fields'), 30, 2 );
 		}
 
 	}
 
 	public function change_ship_to_different_address_text( $translated_text, $text, $domain ) {
 		if ( 'Ship to a different address?' === $text ) {
-			$translated_text = __( 'Ship to same address or Packstation / Branch?', 'dhl-for-woocommerce' ); // Replace this with your desired translated text.
+			$translated_text = __( 'Ship to same address or Packstation / Branch?', 'dhl-for-woocommerce' );
 		}
 		return $translated_text;
 	}
 
 	public function add_registration_text_above_shipping_fields() {
-		echo '<div class="registration_info" style="font-size:.95rem">';
+		echo '<div class="registration_info" >';
 		if ( get_locale() == 'en_US' ) {
 			$link = DHL_ENGLISH_REGISTRATION_LINK;
 		} else {
@@ -188,7 +188,7 @@ class PR_DHL_Front_End_Paket {
 			'select'			=> __('Select ', 'dhl-for-woocommerce'),
 			'post_number'		=> __('Post Number ', 'dhl-for-woocommerce'),
 			'post_number_tip'	=> __('<span class="dhl-tooltip" title="Indicate a preferred time, which suits you best for your parcel delivery by choosing one of the displayed time windows.">?</span>', 'dhl-for-woocommerce'),
-			'no_api_key'	=> sprintf( __('%sPlease insert an API Key to enable the display of locations in the frontend on a map.%s', 'dhl-for-woocommerce'), '<div class="woocommerce-error">', '<div>'),
+			'no_api_key'		=> sprintf( __('%sPlease insert an API Key to enable the display of locations in the frontend on a map.%s', 'dhl-for-woocommerce'), '<div class="woocommerce-error">', '<div>'),
 			'post_code_error'	=> __('Please enter a postcode to search locations.', 'dhl-for-woocommerce'),
 		);
 
@@ -201,6 +201,7 @@ class PR_DHL_Front_End_Paket {
 		if( $this->is_preferredservice_enabled() || $this->is_parcelfinder_enabled() ) {
 			// Register and load our styles and scripts
 			$frontend_data['map_type'] = $this->get_map_type();
+			$frontend_data['shipToDifferentAddressText'] = __( 'Ship to a different address?', 'dhl-for-woocommerce' );
 			
 			wp_register_script( 'pr-dhl-checkout-frontend', PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-checkout-frontend.js', array( 'jquery', 'wc-checkout' ), PR_DHL_VERSION, true );
 			
@@ -231,7 +232,6 @@ class PR_DHL_Front_End_Paket {
 				wp_enqueue_script( 'leaflet_js','https://unpkg.com/leaflet/dist/leaflet.js', PR_DHL_VERSION);
 			} else {
 			// Enqueue Google Maps
-			// wp_enqueue_script( 'pr-dhl-google-maps', 'http://maps.googleapis.com/maps/api/js?libraries=places,geometry&callback=initParcelFinderMap&key=' . $this->shipping_dhl_settings['dhl_google_maps_api_key'] );
 				wp_enqueue_script( 'pr-dhl-google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . $this->shipping_dhl_settings['dhl_google_maps_api_key'] );
 			}
 		}
