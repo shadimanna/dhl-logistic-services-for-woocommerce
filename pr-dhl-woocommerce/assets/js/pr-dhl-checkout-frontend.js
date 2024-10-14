@@ -487,11 +487,11 @@ jQuery(document).ready(function($) {
       var shopName      = this.getShopLabel( shop ) + ' ' + shop.location.keywordId;
 
       return '<div id="parcel-content">' +
-          '<h4 class="parcel-title">' + shopName + '</h4>' +
+          '<h4 class="parcel-title">' + shopName + '</h4>' + '<div id="bodyContent">' +
           '<div>' + shop.place.address.streetAddress + '<br>' + shop.place.address.addressLocality + ' ' + shop.place.address.postalCode + '</div>' +
           openingTimes + services +
           '<button type="button" class="parcelshop-select-btn" id="' + shop.location.ids[0].locationId + '">' + pr_dhl_checkout_frontend.select + '</button>' +
-          '</div>';
+          '</div></div>';
     },
 
     getOpeningTimes: function( hours ) {
