@@ -323,7 +323,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 					'label'       		=> __( 'Ident-Check - Date of Birth: ', 'dhl-for-woocommerce' ),
 					'placeholder' 		=> '',
 					'description'		=> '',
-					'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_dob'] ) ? $dhl_label_items['pr_dhl_identcheck_dob'] : $this->shipping_dhl_settings['dhl_default_identcheck_age'],
+					'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_dob'] ) ? $dhl_label_items['pr_dhl_identcheck_dob'] : '',
 					'custom_attributes'	=> array( $is_disabled => $is_disabled ),
 					'class'				=> 'short date-picker'
 				) );
@@ -333,7 +333,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 					'id'          		=> 'pr_dhl_identcheck_age',
 					'label'       		=> __( 'Ident-Check - Minimum Age: ', 'dhl-for-woocommerce' ),
 					'description'		=> '',
-					'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_age'] ) ? $dhl_label_items['pr_dhl_identcheck_age'] : '',
+					'value'       		=> isset( $dhl_label_items['pr_dhl_identcheck_age'] ) ? $dhl_label_items['pr_dhl_identcheck_age'] : $this->shipping_dhl_settings['dhl_default_identcheck_age'],
 					'options'			=> $visual_age,
 					'custom_attributes'	=> array( $is_disabled => $is_disabled )
 				) );
@@ -1061,12 +1061,12 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			$pickup_response = $pickup_rest->request_dhl_pickup( $args, $forcePortalPickupAddressMatch );
 
 			//Error?
-			if ( isset($pickup_response->orderNumber) ) {
+			if ( isset($pickup_response->confirmation->value->orderID) ) {
 
-				$response_pickup_order_number = isset($pickup_response->orderNumber) ? $pickup_response->orderNumber : '';
-				$response_pickup_date = isset($pickup_response->pickupDate) ? $pickup_response->pickupDate : '';
+				$response_pickup_order_number = isset($pickup_response->confirmation->value->orderID) ? $pickup_response->confirmation->value->orderID : '';
+				$response_pickup_date = isset($pickup_response->confirmation->value->confirmedShipments) ? $pickup_response->confirmation->value->confirmedShipments[0]->orderDate : '';
 				$response_pickup_free_of_charge = isset($pickup_response->freeOfCharge) ? $pickup_response->freeOfCharge : '';
-				$response_pickup_type = isset($pickup_response->pickupType) ? $pickup_response->pickupType : '';
+				$response_pickup_type = isset($pickup_response->confirmation->type) ? $pickup_response->confirmation->type : '';
 
 			    // add the message and flag to each order
 				$order_numbers = [];
