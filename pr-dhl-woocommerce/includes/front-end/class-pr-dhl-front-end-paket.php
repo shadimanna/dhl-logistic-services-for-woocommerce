@@ -795,7 +795,7 @@ class PR_DHL_Front_End_Paket {
 					'label'        => __( 'Post Number', 'dhl-for-woocommerce' ),
 					'required'     => false,
 					'type'         => 'text',
-					'class'        => array( 'shipping-dhl-postnum' ),
+					'class'        => 'short',
 					'clear'        => true,
 					'show'		   => false,
 				);
