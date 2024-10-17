@@ -121,7 +121,7 @@ class PR_DHL_Front_End_Paket {
 		} else {
 			$link = DHL_GERMAN_REGISTRATION_LINK;
 		}
-		echo sprintf( __('For deliveries to DHL Parcel Lockers you have to <a href="%s">create a DHL account</a> and get a Post Number', 'dhl-for-woocommerce'), $link  );
+		echo sprintf( __('For deliveries to DHL Parcel Lockers you have to <a href="%s" target="_blank">create a DHL account</a> and get a Post Number', 'dhl-for-woocommerce'), $link  );
 		echo '</div>';
 	}
 
