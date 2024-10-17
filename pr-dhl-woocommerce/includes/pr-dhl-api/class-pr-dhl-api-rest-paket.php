@@ -303,10 +303,11 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
  		$country_code = $this->country_code;
 
  		$germany_dom = array(
- 								'V01PAK' => __('DHL Paket', 'dhl-for-woocommerce'),
- 								'V01PRIO' => __('DHL Paket PRIO', 'dhl-for-woocommerce'),
- 								'V62WP' => __('DHL Warenpost National', 'dhl-for-woocommerce'),
- 								);
+							'V62KP'   => __( 'DHL Kleinpaket', 'dhl-for-woocommerce' ),
+							'V01PAK'  => __( 'DHL Paket', 'dhl-for-woocommerce' ),
+							'V01PRIO' => __( 'DHL Paket PRIO', 'dhl-for-woocommerce' ),
+							'V62WP'   => __( 'DHL Warenpost National', 'dhl-for-woocommerce' ),
+						);
 
  		$dhl_prod_dom = array();
 
