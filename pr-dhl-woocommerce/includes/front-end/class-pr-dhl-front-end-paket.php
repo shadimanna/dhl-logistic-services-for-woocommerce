@@ -72,6 +72,8 @@ class PR_DHL_Front_End_Paket {
 			add_action( 'woocommerce_checkout_order_processed', array( $this, 'process_dhl_preferred_fields' ), 10, 2 );
 			add_filter( 'woocommerce_get_order_item_totals', array( $this, 'display_dhl_preferred_free_services_values' ), 10, 2 );
 		}
+		
+		add_action( 'woocommerce_before_checkout_shipping_form', array( $this, 'add_registration_text_above_shipping_fields' ) );
 
 		// Parcel finder hooks
 		if( $this->is_parcelfinder_enabled() ) {
@@ -93,12 +95,34 @@ class PR_DHL_Front_End_Paket {
 			add_filter( 'woocommerce_admin_shipping_fields', array( $this, 'admin_order_add_postnum_field' ), 10 );
 		}
 
-		if( $this->is_email_notification_enabled() ){
-			$pos = apply_filters('pr_shipping_dhl_email_notification_position', 'woocommerce_review_order_before_submit' );
-			add_action( $pos, array( $this, 'add_email_notification_checkbox' ), 10 );
-			add_action('woocommerce_checkout_order_processed', array( $this, 'process_email_notification_fields'), 30, 2 );
+		if( $this->is_parcelfinder_enabled() ) {
+			add_filter( 'gettext', array( $this, 'change_ship_to_different_address_text' ), 20, 3 );
 		}
 
+		if( $this->is_email_notification_enabled() ){
+			$pos = apply_filters( 'pr_shipping_dhl_email_notification_position', 'woocommerce_review_order_before_submit' );
+			add_action( $pos, array( $this, 'add_email_notification_checkbox' ), 10 );
+			add_action( 'woocommerce_checkout_order_processed', array( $this, 'process_email_notification_fields'), 30, 2 );
+		}
+
+	}
+
+	public function change_ship_to_different_address_text( $translated_text, $text, $domain ) {
+		if ( 'Ship to a different address?' === $text ) {
+			$translated_text = __( 'Ship to same address or Packstation / Branch?', 'dhl-for-woocommerce' );
+		}
+		return $translated_text;
+	}
+
+	public function add_registration_text_above_shipping_fields() {
+		echo '<div class="registration_info" >';
+		if ( get_locale() == 'en_US' ) {
+			$link = DHL_ENGLISH_REGISTRATION_LINK;
+		} else {
+			$link = DHL_GERMAN_REGISTRATION_LINK;
+		}
+		echo sprintf( __('For deliveries to DHL Parcel Lockers you have to <a href="%s" target="_blank">create a DHL account</a> and get a Post Number', 'dhl-for-woocommerce'), $link  );
+		echo '</div>';
 	}
 
 	protected function is_tracking_enabled() {
@@ -164,7 +188,7 @@ class PR_DHL_Front_End_Paket {
 			'select'			=> __('Select ', 'dhl-for-woocommerce'),
 			'post_number'		=> __('Post Number ', 'dhl-for-woocommerce'),
 			'post_number_tip'	=> __('<span class="dhl-tooltip" title="Indicate a preferred time, which suits you best for your parcel delivery by choosing one of the displayed time windows.">?</span>', 'dhl-for-woocommerce'),
-			'no_api_key'	=> sprintf( __('%sPlease insert an API Key to enable the display of locations in the frontend on a map.%s', 'dhl-for-woocommerce'), '<div class="woocommerce-error">', '<div>'),
+			'no_api_key'		=> sprintf( __('%sPlease insert an API Key to enable the display of locations in the frontend on a map.%s', 'dhl-for-woocommerce'), '<div class="woocommerce-error">', '<div>'),
 			'post_code_error'	=> __('Please enter a postcode to search locations.', 'dhl-for-woocommerce'),
 		);
 
@@ -174,11 +198,15 @@ class PR_DHL_Front_End_Paket {
 			$frontend_data['cod_enabled'] = false;
 		}
 
-
 		if( $this->is_preferredservice_enabled() || $this->is_parcelfinder_enabled() ) {
 			// Register and load our styles and scripts
+			$frontend_data['map_type'] = $this->get_map_type();
+			$frontend_data['shipToDifferentAddressText'] = __( 'Ship to a different address?', 'dhl-for-woocommerce' );
+			
 			wp_register_script( 'pr-dhl-checkout-frontend', PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-checkout-frontend.js', array( 'jquery', 'wc-checkout' ), PR_DHL_VERSION, true );
+			
 			wp_localize_script( 'pr-dhl-checkout-frontend', 'pr_dhl_checkout_frontend', $frontend_data);
+
 			wp_enqueue_script( 'pr-dhl-checkout-frontend' );
 
 			wp_enqueue_style( 'pr-dhl-checkout-frontend', PR_DHL_PLUGIN_DIR_URL . '/assets/css/pr-dhl-frontend.css', array(), PR_DHL_VERSION );
@@ -198,10 +226,14 @@ class PR_DHL_Front_End_Paket {
 			// wp_enqueue_style( 'pr-dhl-fancybox-css', PR_DHL_PLUGIN_DIR_URL . '/assets/css/jquery.fancybox-1.3.4.css', array(), PR_DHL_VERSION );
 			wp_enqueue_style( 'pr-dhl-fancybox-css', 'https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.css', PR_DHL_VERSION );
 
-
+			if( 'osm' === $this->get_map_type() ){
+				// Enqueue Leaflet
+				wp_enqueue_style('leaflet_css', 'https://unpkg.com/leaflet/dist/leaflet.css' , PR_DHL_VERSION);
+				wp_enqueue_script( 'leaflet_js','https://unpkg.com/leaflet/dist/leaflet.js', PR_DHL_VERSION);
+			} else {
 			// Enqueue Google Maps
-			// wp_enqueue_script( 'pr-dhl-google-maps', 'http://maps.googleapis.com/maps/api/js?libraries=places,geometry&callback=initParcelFinderMap&key=' . $this->shipping_dhl_settings['dhl_google_maps_api_key'] );
-			wp_enqueue_script( 'pr-dhl-google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . $this->shipping_dhl_settings['dhl_google_maps_api_key'] );
+				wp_enqueue_script( 'pr-dhl-google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . $this->shipping_dhl_settings['dhl_google_maps_api_key'] );
+			}
 		}
 	}
 
@@ -550,7 +582,7 @@ class PR_DHL_Front_End_Paket {
 	public function add_parcel_finder_btn() {
 		// echo '<a id="dhl_parcel_finder" class="button" href="#dhl_parcel_finder_form">' . __('Parcel Finder', 'dhl-for-woocommerce') . '</a>';
 
-		if( !$this->is_google_maps_enabled() ){
+		if( !$this->is_map_enabled() ){
 			return ;
 		}
 
@@ -694,13 +726,23 @@ class PR_DHL_Front_End_Paket {
 		}
 	}
 
-	protected function is_google_maps_enabled() {
+	protected function is_map_enabled() {
 
 		if( ( isset( $this->shipping_dhl_settings['dhl_display_google_maps'] ) &&
 			( $this->shipping_dhl_settings['dhl_display_google_maps'] == 'yes' ) ) ) {
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	protected function get_map_type() {
+
+		if( ( isset( $this->shipping_dhl_settings['dhl_map_type'] ) &&
+			( 'osm' === $this->shipping_dhl_settings['dhl_map_type'] ) ) ) {
+			return 'osm';
+		} else {
+			return 'gmaps';
 		}
 	}
 
@@ -758,9 +800,13 @@ class PR_DHL_Front_End_Paket {
 			$types['dhl_branch'] = __( 'DHL Branch', 'dhl-for-woocommerce' );
 		}
 
+		$points =  array(
+			''          => __('Select a drop-off point', 'dhl-for-woocommerce'),
+		);
+
 		$shipping_dhl_address_type = array(
 			'label'    => __( 'Address Type', 'dhl-for-woocommerce' ),
-			'required' => true,
+			'required' => false,
 			'type'     => 'select',
 			'class'    => array( 'shipping-dhl-address-type' ),
 			'clear'    => true,
@@ -776,15 +822,52 @@ class PR_DHL_Front_End_Paket {
 			'clear'    => true,
 		);
 
-		if( $new_shipping_fields = $this->array_insert_before( 'shipping_first_name', $checkout_fields['shipping'], 'shipping_dhl_address_type', $shipping_dhl_address_type) ) {
+		$shipping_dhl_drop_off = array(
+			'label'    => __( 'Drop off points', 'dhl-for-woocommerce' ),
+			'required' => true,
+			'type'     => 'select',
+			'class'    => array( 'shipping-dhl-drop-off-points' ),
+			'clear'    => true,
+			'default'  => 'normal',
+			'options'  => $points
+		);
 
-			$checkout_fields['shipping'] = $new_shipping_fields;
+		$new_shipping_fields = array();
+
+		foreach ($checkout_fields['shipping'] as $key => $field) {
+			if ($key === 'shipping_first_name') {
+				$new_shipping_fields['shipping_dhl_address_type'] = $shipping_dhl_address_type;
+				$new_shipping_fields['shipping_dhl_drop_off'] = $shipping_dhl_drop_off;
+			}
+			if($key === 'shipping_address_1'){
+				$new_shipping_fields['shipping_dhl_postnum'] = $shipping_dhl_postnum_branch;
+			}
+			$new_shipping_fields[$key] = $field;
+
 		}
+	
+		// If 'shipping_first_name' does not exist, just append new fields at the end
+		if (empty($new_shipping_fields)) {
+			$new_shipping_fields['shipping_dhl_address_type'] = $shipping_dhl_address_type;
+			$new_shipping_fields['shipping_dhl_drop_off'] = $shipping_dhl_drop_off;
+			$new_shipping_fields['shipping_dhl_postnum'] = $shipping_dhl_postnum_branch;
 
-		if( $new_shipping_fields = $this->array_insert_before( 'shipping_address_1', $checkout_fields['shipping'], 'shipping_dhl_postnum', $shipping_dhl_postnum_branch) ) {
-
-			$checkout_fields['shipping'] = $new_shipping_fields;
+			$new_shipping_fields = array_merge($new_shipping_fields, $checkout_fields['shipping']);
 		}
+	
+		// Update the checkout fields array
+		$checkout_fields['shipping'] = $new_shipping_fields;
+
+
+		// if( $new_shipping_fields = $this->array_insert_before( 'shipping_first_name', $checkout_fields['shipping'], 'shipping_dhl_address_type', $shipping_dhl_address_type) ) {
+
+		// 	$checkout_fields['shipping'] = $new_shipping_fields;
+		// }
+
+		// if( $new_shipping_fields = $this->array_insert_before( 'shipping_address_1', $checkout_fields['shipping'], 'shipping_dhl_postnum', $shipping_dhl_postnum_branch) ) {
+
+		// 	$checkout_fields['shipping'] = $new_shipping_fields;
+		// }
 
 		return $checkout_fields;
 	}

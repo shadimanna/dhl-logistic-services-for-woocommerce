@@ -485,6 +485,14 @@ msgstr ""
 msgid "Search"
 msgstr "Suche"
 
+#: includes/front-end/class-pr-dhl-front-end-paket.php:112
+msgid "Ship to same address or Packstation / Branch?"
+msgstr ""
+
+#: includes/front-end/class-pr-dhl-front-end-paket.php:121
+msgid "For deliveries to DHL Parcel Lockers you have to <a href=\"%s\">create a DHL account</a> and get a Post Number."
+msgstr "Für die Lieferung an eine DHL Packstation müssen Sie sich einmalig <a href=\"%s\">bei DHL registrieren</a> um eine Postnummer zu erhalten."
+
 #: dhlpwoocommerce/includes/model/service/class-dhlpwc-model-service-parcelshop.php:153
 #: dhlpwoocommerce/includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:730
 #: includes/class-pr-dhl-wc-method-paket.php:513

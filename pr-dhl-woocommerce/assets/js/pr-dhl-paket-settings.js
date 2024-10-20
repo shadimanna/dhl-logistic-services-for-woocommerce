@@ -1,4 +1,38 @@
 jQuery( document ).ready(function(){
+	
+	var dhl_settings = {
+		// init Class
+		init: function() {
+            jQuery( '#woocommerce_pr_dhl_paket_dhl_map_type' ) .on( 'change', this.display_api_key_field );
+            this.display_api_key_field();
+
+			jQuery( '#woocommerce_pr_dhl_paket_dhl_display_google_maps' ) .on( 'change', this.display_map_fields );
+            this.display_map_fields();
+		},
+
+
+		display_api_key_field: function() {
+			var value = jQuery( '#woocommerce_pr_dhl_paket_dhl_map_type' ).val();
+			if ( 'osm' === value ) {
+				jQuery('#woocommerce_pr_dhl_paket_dhl_google_maps_api_key').closest('tr').hide();
+			} else {
+				jQuery('#woocommerce_pr_dhl_paket_dhl_google_maps_api_key').closest('tr').show();
+			}
+		},
+
+		display_map_fields: function() {
+			if( jQuery( '#woocommerce_pr_dhl_paket_dhl_display_google_maps' ).is(":checked") ) {
+                jQuery('#woocommerce_pr_dhl_paket_dhl_map_type').closest('tr').show();
+				if ( 'gmaps' === jQuery( '#woocommerce_pr_dhl_paket_dhl_map_type' ).val() ) {
+					jQuery('#woocommerce_pr_dhl_paket_dhl_google_maps_api_key').closest('tr').show();
+				} 
+            } else {
+                jQuery('#woocommerce_pr_dhl_paket_dhl_map_type').closest('tr').hide();
+				jQuery('#woocommerce_pr_dhl_paket_dhl_google_maps_api_key').closest('tr').hide();
+            }
+		},
+	}
+	dhl_settings.init();
 
 	var sandbox_checkbox = jQuery('#woocommerce_pr_dhl_paket_dhl_sandbox');
 	var api_mode = jQuery('#woocommerce_pr_dhl_paket_dhl_default_api');
