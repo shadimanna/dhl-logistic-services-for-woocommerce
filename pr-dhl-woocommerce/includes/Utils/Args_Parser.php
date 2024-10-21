@@ -54,10 +54,8 @@ class Args_Parser {
 				// If no default value is given, throw
 				if ( ! isset( $s_scheme['default'] ) ) {
 					// If no default value is specified, throw an exception
-					$message = ! isset( $s_scheme['error'] )
-						? sprintf( __( 'Please specify a "%s" argument', 'dhl-for-woocommerce' ), $key )
-						: $s_scheme['error'];
-
+					/* translators: %s is the name of the required argument */
+					$message = ! isset( $s_scheme['error'] ) ? sprintf( esc_html__( 'Please specify a "%s" argument', 'dhl-for-woocommerce' ), $key ) : $s_scheme['error'];
 					throw new Exception( $message );
 				}
 				// If a default value is specified, use that as the value

@@ -194,23 +194,23 @@ abstract class PR_DHL_API_REST {
 					$error_message .= ' ' . $response_body->backendError->message;
 				}
 
-				throw new Exception( __('400 - ', 'dhl-for-woocommerce') . $error_message );
+				throw new Exception( esc_html__( '400 - ', 'dhl-for-woocommerce' ) . $error_message );
 				break;
 			case '401':
-				throw new Exception( __('401 - Unauthorized Access - Invalid token or Authentication Header parameter', 'dhl-for-woocommerce') );
+				throw new Exception( esc_html__( '401 - Unauthorized Access - Invalid token or Authentication Header parameter', 'dhl-for-woocommerce' ) );
 				break;
 			case '408':
-				throw new Exception( __('408 - Request Timeout', 'dhl-for-woocommerce') );
+				throw new Exception( esc_html__( '408 - Request Timeout', 'dhl-for-woocommerce' ) );
 				break;
 			case '429':
-				throw new Exception( __('429 - Too many requests in given amount of time', 'dhl-for-woocommerce') );
+				throw new Exception( esc_html__( '429 - Too many requests in given amount of time', 'dhl-for-woocommerce' ) );
 				break;
 			case '503':
-				throw new Exception( __('503 - Service Unavailable', 'dhl-for-woocommerce') );
+				throw new Exception( esc_html__( '503 - Service Unavailable', 'dhl-for-woocommerce' ) );
 				break;
 			default:
 				if ( empty($response_body->message) ) {
-					$error_message = __('POST error or timeout occured. Please try again later.', 'dhl-for-woocommerce');
+					$error_message = esc_html__( 'POST error or timeout occured. Please try again later.', 'dhl-for-woocommerce' );
 				} else {
 					$error_message = str_replace('/', ' / ', $response_body->message);
 				}
@@ -259,24 +259,24 @@ abstract class PR_DHL_API_REST {
 			case '201':
 				break;
 			case '400':
-				$error_message = ! empty( $response_body->message ) ? str_replace( '/', ' / ', $response_body->message ) : __( 'Unknown Error!', 'dhl-for-woocommerce' );
-				throw new Exception( __( '400 - ', 'dhl-for-woocommerce' ) . $error_message );
+				$error_message = ! empty( $response_body->message ) ? str_replace( '/', ' / ', $response_body->message ) : esc_html__( 'Unknown Error!', 'dhl-for-woocommerce' );
+				throw new Exception( esc_html__( '400 - ', 'dhl-for-woocommerce' ) . $error_message );
 				break;
 			case '401':
-				throw new Exception( __('401 - Unauthorized Access - Invalid token or Authentication Header parameter', 'dhl-for-woocommerce') );
+				throw new Exception( esc_html__( '401 - Unauthorized Access - Invalid token or Authentication Header parameter', 'dhl-for-woocommerce' ) );
 				break;
 			case '408':
-				throw new Exception( __('408 - Request Timeout', 'dhl-for-woocommerce') );
+				throw new Exception( esc_html__( '408 - Request Timeout', 'dhl-for-woocommerce' ) );
 				break;
 			case '429':
-				throw new Exception( __('429 - Too many requests in given amount of time', 'dhl-for-woocommerce') );
+				throw new Exception( esc_html__( '429 - Too many requests in given amount of time', 'dhl-for-woocommerce' ) );
 				break;
 			case '503':
-				throw new Exception( __('503 - Service Unavailable', 'dhl-for-woocommerce') );
+				throw new Exception( esc_html__( '503 - Service Unavailable', 'dhl-for-woocommerce' ) );
 				break;
 			default:
 				if ( empty($response_body->message) ) {
-					$error_message = __('GET error or timeout occured. Please try again later.', 'dhl-for-woocommerce');
+					$error_message = esc_html__( 'GET error or timeout occured. Please try again later.', 'dhl-for-woocommerce' );
 				} else {
 					$error_message = str_replace('/', ' / ', $response_body->message);
 				}
@@ -347,15 +347,17 @@ abstract class PR_DHL_API_REST {
 			case 'string':
 				if( ( strlen($value) < $min_len ) || ( strlen($value) > $max_len ) ) {
 					if ( $min_len == $max_len ) {
-						throw new Exception( sprintf( __('The value must be %s characters.', 'dhl-for-woocommerce'), $min_len) );
+						/* translators: %s is the required number of characters */
+						throw new Exception( sprintf( esc_html__( 'The value must be %s characters.', 'dhl-for-woocommerce' ), $min_len ) );
 					} else {
-						throw new Exception( sprintf( __('The value must be between %s and %s characters.', 'dhl-for-woocommerce'), $min_len, $max_len ) );
+						/* translators: %1$s is the minimum number of characters, %2$s is the maximum number of characters */
+						throw new Exception( sprintf( esc_html__( 'The value must be between %1$s and %2$s characters.', 'dhl-for-woocommerce' ), $min_len, $max_len ) );
 					}
 				}
 				break;
 			case 'int':
 				if( ! is_numeric( $value ) ) {
-					throw new Exception( __('The value must be a number') );
+					throw new Exception( esc_html__( 'The value must be a number', 'dhl-for-woocommerce' ) );
 				}
 				break;
 		}

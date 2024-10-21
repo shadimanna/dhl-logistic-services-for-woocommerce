@@ -84,7 +84,15 @@ abstract class PR_DHL_WC_Order {
 	 */
 	public function add_meta_box() {
 		$screen = API_Utils::is_HPOS() ? wc_get_page_screen_id( 'shop-order' ) : 'shop_order';
-		add_meta_box( 'woocommerce-shipment-dhl-label', sprintf( __( '%s Label & Tracking', 'dhl-for-woocommerce' ), $this->service), array( $this, 'meta_box' ), $screen, 'side', 'high' );
+		add_meta_box( 
+			'woocommerce-shipment-dhl-label', 
+			/* translators: %s is the name of the service (e.g., DHL) */
+			sprintf( esc_html__( '%s Label & Tracking', 'dhl-for-woocommerce' ), $this->service ), 
+			array( $this, 'meta_box' ), 
+			$screen, 
+			'side', 
+			'high'
+		);	
 	}
 
 	/**
@@ -130,10 +138,10 @@ abstract class PR_DHL_WC_Order {
 
 		$delete_label = '';
 		if ($this->can_delete_label($order_id)) {
-			$delete_label = '<span class="wc_dhl_delete"><a href="#" id="dhl_delete_label">' . __('Delete Label', 'dhl-for-woocommerce') . '</a></span>';
+			$delete_label = '<span class="wc_dhl_delete"><a href="#" id="dhl_delete_label">' . esc_html__('Delete Label', 'dhl-for-woocommerce') . '</a></span>';
 		}
 
-		$main_button = '<button id="dhl-label-button" class="button button-primary button-save-form">' . __( 'Generate Label', 'dhl-for-woocommerce' ) . '</button>';
+		$main_button = '<button id="dhl-label-button" class="button button-primary button-save-form">' . esc_html__( 'Generate Label', 'dhl-for-woocommerce' ) . '</button>';
 
 		// Get tracking info if it exists
 		$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
@@ -141,12 +149,12 @@ abstract class PR_DHL_WC_Order {
 		if( empty( $label_tracking_info ) ) {
 			$is_disabled = '';
 
-			$print_button = '<a href="#" id="dhl-label-print" class="button button-primary" download target="_blank">' . __( 'Download Label', 'dhl-for-woocommerce' ) . '</a>';
+			$print_button = '<a href="#" id="dhl-label-print" class="button button-primary" download target="_blank">' . esc_html__( 'Download Label', 'dhl-for-woocommerce' ) . '</a>';
 
 		} else {
 			$is_disabled = 'disabled';
 
-			$print_button = '<a href="'. $this->get_download_label_url( $order_id ) .'" id="dhl-label-print" class="button button-primary" download target="_blank">' .__( 'Download Label', 'dhl-for-woocommerce' ) . '</a>';
+			$print_button = '<a href="'. $this->get_download_label_url( $order_id ) .'" id="dhl-label-print" class="button button-primary" download target="_blank">' .esc_html__( 'Download Label', 'dhl-for-woocommerce' ) . '</a>';
 		}
 
 		$dhl_label_data = array(
@@ -169,7 +177,7 @@ abstract class PR_DHL_WC_Order {
 				echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon shipment-dhl-icon-service"></span> ' . __( 'Service', 'dhl-for-woocommerce' ) . '</div>';
 				woocommerce_wp_select ( array(
 					'id'          		=> 'pr_dhl_product',
-					'label'       		=> __( 'Service selected:', 'dhl-for-woocommerce' ),
+					'label'       		=> esc_html__( 'Service selected:', 'dhl-for-woocommerce' ),
 					'description'		=> '',
 					'value'       		=> $selected_dhl_product,
 					'options'			=> $dhl_product_list,
@@ -182,10 +190,12 @@ abstract class PR_DHL_WC_Order {
 				$weight_units = get_option( 'woocommerce_weight_unit' );
 
 				// Get weight UoM and add in label
-				echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon shipment-dhl-icon-weight"></span> ' . __( 'Weight', 'dhl-for-woocommerce' ) . '</div>';			
+				echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon shipment-dhl-icon-weight"></span> ' . esc_html__( 'Weight', 'dhl-for-woocommerce' ) . '</div>';			
+				
 				woocommerce_wp_text_input( array(
 					'id'          		=> 'pr_dhl_weight',
-					'label'       		=> sprintf( __( 'Estimated shipment weight (%s) based on items ordered: ', 'dhl-for-woocommerce' ), $weight_units),
+					/* translators: %s is the weight unit (e.g., kg or lbs) */
+					'label'       		=> sprintf( esc_html__( 'Estimated shipment weight (%s) based on items ordered: ', 'dhl-for-woocommerce' ), $weight_units),
 					'placeholder' 		=> '',
 					'description'		=> '',
 					'value'       		=> $selected_weight_val,
@@ -209,7 +219,7 @@ abstract class PR_DHL_WC_Order {
 			wp_localize_script( 'wc-shipment-dhl-label-js', 'dhl_label_data', $dhl_label_data );
 
 		} else {
-			echo '<p class="wc_dhl_error">' . __('There are no DHL services available for the destination country!', 'dhl-for-woocommerce') . '</p>';
+			echo '<p class="wc_dhl_error">' . esc_html__('There are no DHL services available for the destination country!', 'dhl-for-woocommerce') . '</p>';
 		}
 
 		echo '</div>';
@@ -320,8 +330,8 @@ abstract class PR_DHL_WC_Order {
 			do_action( 'pr_shipping_dhl_label_created', $order_id );
 
 			wp_send_json( array(
-				'download_msg' => __('Your DHL label is ready to download, click the "Download Label" button above"', 'dhl-for-woocommerce'),
-				'button_txt' => __( 'Download Label', 'dhl-for-woocommerce' ),
+				'download_msg' => esc_html__('Your DHL label is ready to download, click the "Download Label" button above"', 'dhl-for-woocommerce'),
+				'button_txt' => esc_html__( 'Download Label', 'dhl-for-woocommerce' ),
 				'label_url' => $label_url,
 				'tracking_note'	  => $tracking_note,
 				'tracking_note_type' => $tracking_note_type,
@@ -348,8 +358,8 @@ abstract class PR_DHL_WC_Order {
 			}
 
 			wp_send_json( array(
-				'download_msg' => __('Your DHL label is ready to download, click the "Download Label" button above"', 'dhl-for-woocommerce'),
-				'button_txt' => __( 'Generate Label', 'dhl-for-woocommerce' ),
+				'download_msg' => esc_html__('Your DHL label is ready to download, click the "Download Label" button above"', 'dhl-for-woocommerce'),
+				'button_txt' => esc_html__( 'Generate Label', 'dhl-for-woocommerce' ),
 				'dhl_tracking_num'	  => $tracking_num
 				) );
 
@@ -386,7 +396,8 @@ abstract class PR_DHL_WC_Order {
 		if( ! empty( $this->shipping_dhl_settings['dhl_tracking_note_txt'] ) ) {
 			$tracking_note = $this->shipping_dhl_settings['dhl_tracking_note_txt'];
 		} else {
-			$tracking_note = sprintf( __( '%s Tracking Number: {tracking-link}', 'dhl-for-woocommerce' ), $this->service);
+			/* translators: %s is the tracking link */
+			$tracking_note = sprintf( esc_html__( '%s Tracking Number: {tracking-link}', 'dhl-for-woocommerce' ), $this->service );
 		}
 
 		$tracking_link = $this->get_tracking_link( $order_id );
@@ -395,7 +406,7 @@ abstract class PR_DHL_WC_Order {
 		    return '';
         }
 
-		$tracking_note_new = str_replace('{tracking-link}', $tracking_link, $tracking_note, $count);
+		$tracking_note_new = str_replace( '{tracking-link}', $tracking_link, $tracking_note, $count );
 
 		if( $count == 0 ) {
 			$tracking_note_new = $tracking_note . ' ' . $tracking_link;
@@ -403,10 +414,12 @@ abstract class PR_DHL_WC_Order {
 
 		$return_label_number = $this->get_return_label_number( $order_id );
 		if ( $return_label_number ) {
-			if ( is_array($return_label_number) ) {
-				$return_label_number = implode(', ', $return_label_number);
+			if ( is_array( $return_label_number ) ) {
+				$return_label_number = implode( ', ', $return_label_number );
 			}
-			$tracking_note_return_label = sprintf( __( "\n Return Label Number: %s", 'dhl-for-woocommerce' ), $return_label_number);
+
+			/* translators: %s is the return label number */
+			$tracking_note_return_label = sprintf( esc_html__( "\n Return Label Number: %s", 'dhl-for-woocommerce' ), $return_label_number);
 			$tracking_note_new  = $tracking_note_new . $tracking_note_return_label;
 		}
 
@@ -420,8 +433,14 @@ abstract class PR_DHL_WC_Order {
 			return '';
 		}
 
-		return sprintf( __( '<a href="%s%s" target="_blank">%s</a>', 'dhl-for-woocommerce' ), $this->get_tracking_url(), $label_tracking_info['tracking_number'], $label_tracking_info['tracking_number']);
-	}
+		return sprintf( 
+			/* translators: %1$s is the base tracking URL, %2$s is the tracking number, %3$s is the tracking number displayed as link text */
+			__( '<a href="%1$s%2$s" target="_blank">%3$s</a>', 'dhl-for-woocommerce' ), 
+			$this->get_tracking_url(), 
+			$label_tracking_info['tracking_number'], 
+			$label_tracking_info['tracking_number'] 
+			);
+		}
 
 	protected function get_return_label_number( $order_id ) {
 
@@ -1160,8 +1179,8 @@ abstract class PR_DHL_WC_Order {
 							++ $label_count;
 
 							$array_messages[] = array(
-								'message' => sprintf( __( 'Order #%s: DHL label Created', 'dhl-for-woocommerce' ),
-									$order->get_order_number() ),
+								/* translators: %s is the order number */
+								'message' => sprintf( esc_html__( 'Order #%s: DHL label created', 'dhl-for-woocommerce' ), $order->get_order_number() ),
 								'type'    => 'success',
 							);
 
@@ -1179,8 +1198,8 @@ abstract class PR_DHL_WC_Order {
 
 				} catch ( Exception $e ) {
 					$array_messages[] = array(
-						'message' => sprintf( __( 'Order #%s: %s', 'dhl-for-woocommerce' ), $order->get_order_number(),
-							$e->getMessage() ),
+						/* translators: %1$s is the order number, %2$s is the error message */
+						'message' => sprintf( esc_html__( 'Order #%1$s: %2$s', 'dhl-for-woocommerce' ), $order->get_order_number(), $e->getMessage() ),
 						'type'    => 'error',
 					);
 				}
@@ -1243,20 +1262,25 @@ abstract class PR_DHL_WC_Order {
 					// Construct URL pointing to the download label endpoint (with bulk param):
 					$bulk_download_label_url = $this->generate_download_url( '/' . self::DHL_DOWNLOAD_ENDPOINT . '/bulk' );
 
-					array_push( $array_messages, array(
-						'message' => sprintf( __( 'Bulk DHL labels file created - %sdownload file%s',
-							'dhl-for-woocommerce' ), '<a href="' . $bulk_download_label_url . '" download>', '</a>' ),
-						'type'    => 'success',
-					) );
+					array_push( 
+						$array_messages, 
+						array(
+							/* translators: %1$s and %2$s are HTML tags for the download link */
+							'message' => sprintf( esc_html__( 'Bulk DHL labels file created - %1$sdownload file%2$s', 'dhl-for-woocommerce' ), '<a href="' . $bulk_download_label_url . '" download>', '</a>' ),
+							'type'    => 'success',
+						) 
+					);
 
 				} else {
 					// $message .= __( '. Could not create bulk DHL label file, download individually.', 'dhl-for-woocommerce' );
 
-					array_push( $array_messages, array(
-						'message' => __( 'Could not create bulk DHL label file, download individually.',
-							'dhl-for-woocommerce' ),
-						'type'    => 'error',
-					) );
+					array_push( 
+						$array_messages, 
+						array(
+							'message' => esc_html__( 'Could not create bulk DHL label file, download individually.', 'dhl-for-woocommerce' ),
+							'type'    => 'error',
+						) 
+					);
 				}
 
 			} catch ( Exception $e ) {
@@ -1332,16 +1356,19 @@ abstract class PR_DHL_WC_Order {
 				array_push(
 					$array_messages,
 					array(
+						/* translators: %s is the order number */
 						'message' => sprintf( esc_html__( 'Order #%s: DHL Label Deleted', 'dhl-for-woocommerce' ), $order->get_order_number() ),
 						'type'    => 'success',
 					)
 				);
+
 			} catch ( Exception $e ) {
 				array_push(
 					$array_messages,
 					array(
-						'message' => sprintf( __( 'Order #%s: %s', 'dhl-for-woocommerce'), $order->get_order_number(), $e->getMessage() ),
-						'type' => 'error',
+						/* translators: %1$s is the order number, %2$s is the error message */
+						'message' => sprintf( esc_html__( 'Order #%1$s: %2$s', 'dhl-for-woocommerce' ), $order->get_order_number(), $e->getMessage() ),
+						'type'    => 'error',
 					)
 				);
 			}
@@ -1383,26 +1410,26 @@ abstract class PR_DHL_WC_Order {
 	protected function merge_label_files( $files ) {
 
 		if( empty( $files ) ) {
-			throw new Exception( __('There are no files to merge.', 'dhl-for-woocommerce') );
+			throw new Exception( esc_html__( 'There are no files to merge.', 'dhl-for-woocommerce' ) );
 		}
 
 		if( ! empty( $files[0] ) ) {
 			$base_ext = pathinfo($files[0], PATHINFO_EXTENSION);
 		} else {
-			throw new Exception( __('The first file is empty.', 'dhl-for-woocommerce') );
+			throw new Exception( esc_html__( 'The first file is empty.', 'dhl-for-woocommerce' ) );
 		}
 
 		if ( method_exists( $this, 'merge_label_files_' . $base_ext ) ) {
 			return call_user_func( array( $this, 'merge_label_files_' . $base_ext ), $files );
 		} else {
-			throw new Exception( __('File format not supported.', 'dhl-for-woocommerce') );
+			throw new Exception( esc_html__( 'File format not supported.', 'dhl-for-woocommerce' ) );
 		}
 	}
 
 	protected function merge_label_files_pdf( $files ) {
 
 		if( empty( $files ) ) {
-			throw new Exception( __('There are no files to merge.', 'dhl-for-woocommerce') );
+			throw new Exception( esc_html__( 'There are no files to merge.', 'dhl-for-woocommerce' ) );
 		}
 
 		$loader = PR_DHL_Libraryloader::instance();
@@ -1410,7 +1437,7 @@ abstract class PR_DHL_WC_Order {
 
 		if( $pdfMerger === null ){
 
-			throw new Exception( __('Library conflict, could not merge PDF files. Please download PDF files individually.', 'dhl-for-woocommerce') );
+			throw new Exception( esc_html__( 'Library conflict, could not merge PDF files. Please download PDF files individually.', 'dhl-for-woocommerce' ) );
 		}
 
 		foreach ($files as $key => $value) {
@@ -1423,7 +1450,7 @@ abstract class PR_DHL_WC_Order {
 			$ext = pathinfo($value, PATHINFO_EXTENSION);
 			// if ( strncasecmp('pdf', $ext, strlen($ext) ) == 0 ) {
 			if ( stripos($ext, 'pdf') === false) {
-				throw new Exception( __('Not all the file formats are the same.', 'dhl-for-woocommerce') );
+				throw new Exception( esc_html__( 'Not all the file formats are the same.', 'dhl-for-woocommerce' ) );
 			}
 
 			$pdfMerger->addPDF( $value, 'all' );
@@ -1483,10 +1510,13 @@ abstract class PR_DHL_WC_Order {
 	    	$bulk_file_path = get_transient( '_dhl_bulk_download_labels_file_' . get_current_user_id() );
 
 	    	if ( false == $this->download_label( $bulk_file_path ) ) {
-	    		array_push($array_messages, array(
-                    'message' => __( 'There are currently no bulk DHL label file to download or the download link for the bulk DHL label file has already expired. Please try again.', 'dhl-for-woocommerce' ),
-                    'type' => 'error'
-                ));
+	    		array_push(
+					$array_messages, 
+					array(
+						'message' => esc_html__( 'There are currently no bulk DHL label file to download or the download link for the bulk DHL label file has already expired. Please try again.', 'dhl-for-woocommerce' ),
+						'type' 	  => 'error'
+                	)
+				);
 			}
 
 			$redirect_url  = admin_url( 'edit.php?post_type=shop_order' );
@@ -1503,10 +1533,13 @@ abstract class PR_DHL_WC_Order {
 			$label_path = $label_tracking_info['label_path'];
 
 			if ( false == $this->download_label( $label_path ) ) {
-	    		array_push($array_messages, array(
-                    'message' => __( 'Unable to download file. Label appears to be invalid or is missing. Please try again.', 'dhl-for-woocommerce' ),
-                    'type' => 'error'
-                ));
+	    		array_push(
+					$array_messages, 
+					array(
+						'message' => esc_html__( 'Unable to download file. Label appears to be invalid or is missing. Please try again.', 'dhl-for-woocommerce' ),
+						'type' 	  => 'error'
+                	)
+				);
 			}
 
 			$redirect_url  = admin_url( 'post.php?post=' . $order_id . '&action=edit' );

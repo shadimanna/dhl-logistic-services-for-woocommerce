@@ -65,16 +65,19 @@ class PR_DHL_WC_Notice_Legacy_Parcel {
                 </div>
                 <div style="position:relative; left: 105px; margin: 0 105px 0 0; padding: 0 0 20px 20px;">
                     <span>
-                            <h2><?php _e('DHL Parcel for WooCommerce notice', 'dhlpwc') ?></h2>
-                            <?php echo sprintf(
-                                __('DHL Parcel services are no longer available in this plugin. To continue using Parcel services, please install the new plugin %shere%s.', 'dhl-for-woocommerce'),
+                            <h2><?php _e( 'DHL Parcel for WooCommerce notice', 'dhl-for-woocommerce' ) ?></h2>
+                            <?php 
+                            echo sprintf(
+                                /* translators: %1$s is the link to install the new plugin, %2$s is the closing HTML tag for the link */
+                                esc_html__( 'DHL Parcel services are no longer available in this plugin. To continue using Parcel services, please install the new plugin %1$shere%2$s.', 'dhl-for-woocommerce' ),
                                 '<a href="' . esc_url( admin_url( 'plugin-install.php?s=DHL Parcel for WooCommerce dhlpwc&tab=search&type=term' ) ) . '">',
                                 '</a>'
                             ) ?>
+
                             <br/><br/>
 
                             <a href="#" id="dhl-legacy-parcel-dismiss-migrate-notice-forever">
-                                <b><?php _e('Click here to never show this again', 'dhl-for-woocommerce') ?></b>
+                                <b><?php _e( 'Click here to never show this again', 'dhl-for-woocommerce' ) ?></b>
                             </a>
                         <div class="clear"></div>
                     </span>
@@ -103,12 +106,15 @@ class PR_DHL_WC_Notice_Legacy_Parcel {
     public function dismiss_notice_forever() {
         check_ajax_referer( 'pr-dhl-legacy-parcel-dismiss-notice', 'security' );
 
-        update_option(self::NOTICE_TAG_MIGRATE_FOREVER, true);
-        wp_send_json(array(
-            'status' => 'success',
-            'data' => array(),
-            'message' => null
-        ), 200);
+        update_option( self::NOTICE_TAG_MIGRATE_FOREVER, true );
+        wp_send_json(
+            array(
+                'status' => 'success',
+                'data' => array(),
+                'message' => null
+            ), 
+            200 
+        );
     }
 
     protected function check_was_enabled_config() {
