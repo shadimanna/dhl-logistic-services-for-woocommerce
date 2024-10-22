@@ -477,7 +477,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		public function notice_wc_required() {
 		?>
 			<div class="error">
-				<p><?php _e( 'WooCommerce DHL Integration requires WooCommerce to be installed and activated!', 'dhl-for-woocommerce' ); ?></p>
+				<p><?php echo esc_html__( 'WooCommerce DHL Integration requires WooCommerce to be installed and activated!', 'dhl-for-woocommerce' ); ?></p>
 			</div>
 		<?php
 		}
@@ -490,7 +490,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			try {
 				$this->get_dhl_factory();
 			} catch (Exception $e) {
-				echo '<div class="error"><p>' . $e->getMessage() . '</p></div>';
+				echo '<div class="error"><p>' . esc_html( $e->getMessage() ) . '</p></div>';
 			}
 		}
 
@@ -726,7 +726,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			}
 
 			ob_start();
-			echo '<img src="'.plugin_dir_url(__FILE__).'lib/barcode.php?text='.$text.'&size='.$size.'" alt="barcode"/>';
+			echo '<img src="' . esc_url( plugin_dir_url(__FILE__) . 'lib/barcode.php?text=' . urlencode($text) . '&size=' . urlencode($size) ) . '" alt="' . esc_attr( 'barcode' ) . '"/>';
 			$view = ob_get_clean();
 			return $view;
 		}
@@ -1059,7 +1059,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 			if ( !empty( $notice_message ) ) {
 				/* translators: %s is the warning message */
-				echo '<div class="notice notice-warning is-dismissible"><p>' . sprintf( esc_html__( 'Warning: %s', 'dhl-for-woocommerce' ), $notice_message ) . '</p></div>';
+				echo '<div class="notice notice-warning is-dismissible"><p>' . sprintf( esc_html__( 'Warning: %s', 'dhl-for-woocommerce' ), esc_html( $notice_message ) ) . '</p></div>';
 			}
 		}
 		

@@ -347,21 +347,23 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 			'pr_dhl_create_labels'      => __( 'DHL Create Labels', 'dhl-for-woocommerce' )
 		);
 
-		if ( isset( $this->shipping_dhl_settings['dhl_bulk_product_int']) && ($bulk_product_int = $this->shipping_dhl_settings['dhl_bulk_product_int'] ) ) {
-			foreach ($bulk_product_int as $key => $value) {
+		if ( isset( $this->shipping_dhl_settings['dhl_bulk_product_int'] ) && ( $bulk_product_int = $this->shipping_dhl_settings['dhl_bulk_product_int'] ) ) {
+			foreach ( $bulk_product_int as $key => $value ) {
 				$shop_manager_actions += array(
-					"pr_dhl_create_labels:int:$value"      => __( "DHL Create Labels - $value", 'dhl-for-woocommerce' )
-					);
+					/* translators: %s is the DHL product integer value */
+					"pr_dhl_create_labels:int:$value" => sprintf( esc_html__( 'DHL Create Labels - %s', 'dhl-for-woocommerce' ), esc_html( $value ) )
+				);
 			}
 		}
-
-		if ( isset($this->shipping_dhl_settings['dhl_bulk_product_dom']) && ($bulk_product_dom = $this->shipping_dhl_settings['dhl_bulk_product_dom'] ) ) {
-			foreach ($bulk_product_dom as $key => $value) {
+		
+		if ( isset( $this->shipping_dhl_settings['dhl_bulk_product_dom'] ) && ( $bulk_product_dom = $this->shipping_dhl_settings['dhl_bulk_product_dom'] ) ) {
+			foreach ( $bulk_product_dom as $key => $value ) {
 				$shop_manager_actions += array(
-					"pr_dhl_create_labels:dom:$value"      => __( "DHL Create Labels - $value", 'dhl-for-woocommerce' )
-					);
+					/* translators: %s is the DHL domestic product identifier */
+					"pr_dhl_create_labels:dom:$value" => sprintf( esc_html__( 'DHL Create Labels - %s', 'dhl-for-woocommerce' ), esc_html( $value ) )
+				);
 			}
-		}
+		}		
 
 		$shop_manager_actions += array(
 			'pr_dhl_handover'      => __( 'DHL Print Handover', 'dhl-for-woocommerce' )
@@ -446,12 +448,13 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 
 			$print_link = '<a href="' . $action_url .'" target="_blank">' . __( 'Print DHL handover.', 'dhl-for-woocommerce' ) . '</a>';
 
+			/* translators: 1: number of orders, 2: print link */
 			$message = sprintf( __( 'DHL handover for %1$s order(s) created. %2$s', 'dhl-for-woocommerce' ), $orders_count, $print_link );
 
-			array_push($array_messages, array(
+			array_push( $array_messages, array(
                 'message' => $message,
                 'type' => 'success',
-            ));
+            ) );
 		}
 
 		return $array_messages;
@@ -501,6 +504,7 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 				$dhl_obj = PR_DHL()->get_dhl_factory();
 				$dhl_product_list = $dhl_obj->get_dhl_products_domestic() + $dhl_obj->get_dhl_products_international();
 			} catch (Exception $e) {
+				/* translators: %s: error message */
 				die( sprintf( __( 'Cannot generate handover %s', 'dhl-for-woocommerce' ), $e->getMessage() ) );
 			}
 
@@ -544,7 +548,7 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 	public function print_document( $template_args ) {
 
 		if ( empty( $template_args ) ) {
-			die( __( 'The DHL handover cannot be generated, arguments missing.', 'woocommerce-pip' ) );
+			die( __( 'The DHL handover cannot be generated, arguments missing.', 'dhl-for-woocommerce' ) );
 		}
 
 		remove_action( 'wp_footer', 'wp_admin_bar_render', 1000 );

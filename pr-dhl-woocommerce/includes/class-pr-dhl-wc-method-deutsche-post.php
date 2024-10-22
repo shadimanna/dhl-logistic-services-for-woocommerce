@@ -15,16 +15,10 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
         $this->method_title = esc_html__( 'Deutsche Post International', 'dhl-for-woocommerce' );
 
         /* translators: %1$s is the link to the Deutsche Post contact page, %2$s is the closing HTML tag for the link */
-        $this->method_description = sprintf(
-            esc_html__(
-                'To start creating Deutsche Post shipping labels and return back a tracking number to your customers, please fill in your user credentials as provided by Deutsche Post. Not yet a customer? Please get a quote %1$shere%2$s.', 
-                'dhl-for-woocommerce'
-            ),
+        $this->method_description = sprintf( esc_html__( 'To start creating Deutsche Post shipping labels and return back a tracking number to your customers, please fill in your user credentials as provided by Deutsche Post. Not yet a customer? Please get a quote %1$shere%2$s.', 'dhl-for-woocommerce' ),
             '<a href="https://www.deutschepost.com/en/business-customers/contact.html" target="_blank">',
             '</a>'
         );
-
-
         $this->init();
     }
 
@@ -161,11 +155,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
                 'label'       => esc_html__( 'Enable logging', 'dhl-for-woocommerce' ),
                 'default'     => 'yes',
                 /* translators: %1$s is the link to the log file, %2$s is the closing HTML tag for the link */
-                'description' => sprintf(
-                    esc_html__(
-                        'A log file containing the communication to the Deutsche Post server will be maintained if this option is checked. This can be used in case of technical issues and can be found %1$shere%2$s.', 
-                        'dhl-for-woocommerce'
-                    ),
+                'description' => sprintf( esc_html__( 'A log file containing the communication to the Deutsche Post server will be maintained if this option is checked. This can be used in case of technical issues and can be found %1$shere%2$s.', 'dhl-for-woocommerce' ),
                     '<a href="' . esc_url( $log_path ) . '" target="_blank">',
                     '</a>'
                 ),
@@ -203,8 +193,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
             ),
             'dhl_add_weight' => array(
                 /* translators: %s is the unit of weight (e.g., kg, lbs) */
-                'title' => sprintf(
-                    esc_html__( 'Additional Weight (%s or %%)', 'dhl-for-woocommerce' ), 
+                'title' => sprintf( esc_html__( 'Additional Weight (%s or %%)', 'dhl-for-woocommerce' ), 
                     $weight_units 
                 ),
                 'type'        => 'text',
@@ -255,18 +244,17 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
         );
 
 	    $this->form_fields += array(
-		    'dhl_label_section'   => array(
-			    'title'           => esc_html__( 'Label options', 'dhl-for-woocommerce' ),
-			    'type'            => 'title',
-			    'description'     => esc_html__( 'Options for configuring your label preferences', 'dhl-for-woocommerce' ),
-		    ),
-	        'dhl_label_ref' => array(
+            'dhl_label_section'   => array(
+                'title'           => esc_html__( 'Label options', 'dhl-for-woocommerce' ),
+                'type'            => 'title',
+                'description'     => esc_html__( 'Options for configuring your label preferences', 'dhl-for-woocommerce' ),
+            ),
+            'dhl_label_ref' => array(
                 'title' => esc_html__( 'Label Reference', 'dhl-for-woocommerce' ),
                 'type' => 'text',
                 'custom_attributes' => array( 'maxlength' => '35' ),
                 /* translators: %s is the placeholder for the order ID and customer email */
-                'description' => sprintf(
-                    esc_html__( 'Use "%s" to send the order id as a reference and "%s" to send the customer email. This text is limited to 35 characters.', 'dhl-for-woocommerce' ), 
+                'description' => sprintf( esc_html__( 'Use "%1$s" to send the order id as a reference and "%2$s" to send the customer email. This text is limited to 35 characters.', 'dhl-for-woocommerce' ), 
                     '{order_id}', 
                     '{email}' 
                 ),
@@ -278,8 +266,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
                 'type' => 'text',
                 'custom_attributes' => array( 'maxlength' => '35' ),
                 /* translators: %s is the placeholder for the order ID and customer email */
-                'description' => sprintf(
-                    esc_html__( 'Use "%s" to send the order id as a reference and "%s" to send the customer email. This text is limited to 35 characters.', 'dhl-for-woocommerce' ), 
+                'description' => sprintf( esc_html__( 'Use "%1$s" to send the order id as a reference and "%2$s" to send the customer email. This text is limited to 35 characters.', 'dhl-for-woocommerce' ), 
                     '{order_id}', 
                     '{email}' 
                 ),
