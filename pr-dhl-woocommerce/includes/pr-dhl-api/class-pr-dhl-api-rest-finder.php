@@ -43,11 +43,11 @@ class PR_DHL_API_REST_Finder extends PR_DHL_API_REST {
 		// Validate set args
 
 		if ( empty( $args['shipping_address']['city'] ) && empty( $args['shipping_address']['postcode'] ) ) {
-			throw new Exception( __('Shipping "City" and "Postcode" are empty!', 'dhl-for-woocommerce') );
+			throw new Exception( esc_html__( 'Shipping "City" and "Postcode" are empty!', 'dhl-for-woocommerce' ) );
 		}
 
 		if ( empty( $args['shipping_address']['country'] )) {
-			throw new Exception( __('Shipping "Country" is empty!', 'dhl-for-woocommerce') );
+			throw new Exception( esc_html__( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' ) );
 		}
 
 		$this->args = $args;
@@ -80,7 +80,7 @@ class PR_DHL_API_REST_Finder extends PR_DHL_API_REST {
 			$finder_query_string['serviceType'] = 'parcel:pick-up';
 		}
 
-		$this->query_string = http_build_query($finder_query_string);
+		$this->query_string = http_build_query( $finder_query_string );
 	}
 
 	protected function set_header( $authorization = '' ) {
@@ -98,7 +98,7 @@ class PR_DHL_API_REST_Finder extends PR_DHL_API_REST {
 
 		$rest_auth = '';
 		$api_url = $this->get_api_url();
-		$api_url = trailingslashit($api_url);
+		$api_url = trailingslashit( $api_url );
 
 		$this->set_header();
 
@@ -128,30 +128,30 @@ class PR_DHL_API_REST_Finder extends PR_DHL_API_REST {
 				break;
 			case '400':
 				$error_message = ($response_body->detail) ? $response_body->detail : '';
-				throw new Exception( __('400 - ', 'dhl-for-woocommerce') . $error_message );
+				throw new Exception( esc_html__( '400 - ', 'dhl-for-woocommerce' ) . esc_html( $error_message ) );
 				break;
 			case '401':
-				throw new Exception( __('401 - Unauthorized Access - Invalid token or Authentication Header parameter', 'dhl-for-woocommerce') );
+				throw new Exception( esc_html__( '401 - Unauthorized Access - Invalid token or Authentication Header parameter', 'dhl-for-woocommerce' ) );
 				break;
 			case '408':
-				throw new Exception( __('408 - Request Timeout', 'dhl-for-woocommerce') );
+				throw new Exception( esc_html__( '408 - Request Timeout', 'dhl-for-woocommerce' ) );
 				break;
 			case '429':
-				throw new Exception( __('429 - Too many requests in given amount of time', 'dhl-for-woocommerce') );
+				throw new Exception( esc_html__( '429 - Too many requests in given amount of time', 'dhl-for-woocommerce' ) );
 				break;
 			case '503':
-				throw new Exception( __('503 - Service Unavailable', 'dhl-for-woocommerce') );
+				throw new Exception( esc_html__( '503 - Service Unavailable', 'dhl-for-woocommerce' ) );
 				break;
 			default:
-				if ( empty($response_body->detail) ) {
-					$error_message = __('GET error or timeout occured. Please try again later.', 'dhl-for-woocommerce');
+				if ( empty( $response_body->detail ) ) {
+					$error_message = esc_html__( 'GET error or timeout occured. Please try again later.', 'dhl-for-woocommerce' );
 				} else {
 					$error_message = str_replace('/', ' / ', $response_body->detail);
 				}
 
 				PR_DHL()->log_msg( 'GET Error: ' . $response_code . ' - ' . $error_message );
 
-				throw new Exception( $response_code .' - ' . $error_message );
+				throw new Exception( esc_html( $response_code ) .' - ' . esc_html( $error_message ) );
 				break;
 		}
 

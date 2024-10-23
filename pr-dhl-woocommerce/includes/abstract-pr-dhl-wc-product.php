@@ -25,18 +25,18 @@ abstract class PR_DHL_WC_Product {
 	 */
 	public function __construct( ) {
 
-		$this->manufacture_country_label = __('Country of Manufacture (DHL)', 'dhl-for-woocommerce');
-		$this->hs_code_label = __('Harmonized Tariff Schedule (DHL)', 'dhl-for-woocommerce');
-		$this->hs_code_description = __('Harmonized Tariff Schedule is a number assigned to every possible commodity that can be imported or exported from any country.', 'dhl-for-woocommerce');
+		$this->manufacture_country_label = esc_html__( 'Country of Manufacture (DHL)', 'dhl-for-woocommerce' );
+		$this->hs_code_label = esc_html__( 'Harmonized Tariff Schedule (DHL)', 'dhl-for-woocommerce' );
+		$this->hs_code_description = esc_html__( 'Harmonized Tariff Schedule is a number assigned to every possible commodity that can be imported or exported from any country.', 'dhl-for-woocommerce' );
 
 		// priority is '8' because WC Subscriptions hides fields in the shipping tabs which hide the DHL fields here
-		add_action( 'woocommerce_product_options_shipping', array($this,'additional_product_shipping_options'), 8 );
+		add_action( 'woocommerce_product_options_shipping', array( $this,'additional_product_shipping_options' ), 8 );
 		add_action( 'woocommerce_process_product_meta', array( $this, 'save_additional_product_shipping_options' ) );
 		add_action( 'woocommerce_product_bulk_edit_end', array( $this, 'product_shipping_bulk_edit_input' ) );
 		add_action( 'woocommerce_product_bulk_edit_save', array( $this, 'save_product_shipping_bulk_edit' ) );
 		add_action( 'woocommerce_product_quick_edit_end', array( $this, 'product_shipping_bulk_edit_input' ) );
 		add_action( 'woocommerce_product_quick_edit_save', array( $this, 'save_product_shipping_bulk_edit' ) );
-		add_action( 'manage_product_posts_custom_column', array( $this, 'product_shipping_hidden_input_value'), 20, 2 );
+		add_action( 'manage_product_posts_custom_column', array( $this, 'product_shipping_hidden_input_value' ), 20, 2 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'product_enqueue_scripts' ), 20, 1 );
 	}
 
@@ -67,11 +67,11 @@ abstract class PR_DHL_WC_Product {
 		$thepostid = empty( $thepostid ) ? $post->ID : $thepostid;
 	
 	    // $countries_obj   = new WC_Countries();
-	    // $countries   = $countries_obj->__get('countries');
+	    // $countries   = $countries_obj->esc_html__get('countries');
 	    $countries = WC()->countries->get_countries();
 
 	    $manufacture_tip = $this->get_manufacture_tooltip();
-	    $countries = array_merge( array('0' => __( '- select country -', 'dhl-for-woocommerce' )  ), $countries );
+	    $countries = array_merge( array( '0' => esc_html__( '- select country -', 'dhl-for-woocommerce' )  ), $countries );
 
 	    woocommerce_wp_select(
 	    	array(
@@ -101,15 +101,15 @@ abstract class PR_DHL_WC_Product {
 	public function product_shipping_bulk_edit_input() {
 
 		$countries = WC()->countries->get_countries();
-	    $countries = array_merge( array('0' => __( '- No change -', 'dhl-for-woocommerce' )  ), $countries );
+	    $countries = array_merge( array( '0' => esc_html__( '- No change -', 'dhl-for-woocommerce' )  ), $countries );
 		?>
 		<div class="inline-edit-group dhl_manufacture_country_inline">
 			<label class="alignleft">
-				<span class="title"><?php _e('Country of Manufacture (DHL)', 'dhl-for-woocommerce'); ?></span>
+				<span class="title"><?php echo esc_html__( 'Country of Manufacture (DHL)', 'dhl-for-woocommerce'); ?></span>
 				<span class="input-text-wrap">
 					<select class="change_dhl_manufacture_country change_to" name="change_dhl_manufacture_country">
 					<?php foreach( $countries as $value => $text ){ ?>
-						<option value="<?php echo esc_attr( $value ); ?>"><?php echo $text; ?></option>
+						<option value="<?php echo esc_attr( $value ); ?>"><?php echo esc_attr( $text ); ?></option>
 					<?php } ?>
 					</select>
 				</span>
@@ -118,7 +118,7 @@ abstract class PR_DHL_WC_Product {
 
 		<div class="inline-edit-group dhl_hs_code_inline">
 			<label class="alignleft">
-				<span class="title"><?php _e('Harmonized Tariff Schedule (DHL)', 'dhl-for-woocommerce'); ?></span>
+				<span class="title"><?php echo esc_html__( 'Harmonized Tariff Schedule (DHL)', 'dhl-for-woocommerce' ); ?></span>
 				<span class="input-text-wrap">
 					<input type="text" name="change_dhl_hs_code" class="change_dhl_hs_code text" value="" />
 				</span>
@@ -161,11 +161,11 @@ abstract class PR_DHL_WC_Product {
 			case 'name' :
 		
 				?>
-				<div class="hidden dhl_hs_code_inline" id="dhl_hs_code_inline_<?php echo $post_id; ?>">
-					<div id="dhl_hs_code"><?php echo get_post_meta($post_id,'_dhl_hs_code',true); ?></div>
+				<div class="hidden dhl_hs_code_inline" id="dhl_hs_code_inline_<?php echo esc_attr( $post_id ); ?>">
+					<div id="dhl_hs_code"><?php echo esc_html( get_post_meta( $post_id,'_dhl_hs_code',true ) ); ?></div>
 				</div>
-				<div class="hidden dhl_manufacture_country_inline" id="dhl_manufacture_country_inline_<?php echo $post_id; ?>">
-					<div id="dhl_manufacture_country"><?php echo get_post_meta($post_id,'_dhl_manufacture_country',true); ?></div>
+				<div class="hidden dhl_manufacture_country_inline" id="dhl_manufacture_country_inline_<?php echo esc_attr( $post_id ); ?>">
+					<div id="dhl_manufacture_country"><?php echo esc_html( get_post_meta( $post_id,'_dhl_manufacture_country',true ) ); ?></div>
 				</div>
 				<?php
 		

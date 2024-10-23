@@ -133,7 +133,7 @@ abstract class PR_DHL_WC_Order {
 
 		} catch (Exception $e) {
 
-			echo '<p class="wc_dhl_error">' . $e->getMessage() . '</p>';
+			echo '<p class="wc_dhl_error">' . esc_html( $e->getMessage() ) . '</p>';
 		}
 
 		$delete_label = '';
@@ -158,9 +158,9 @@ abstract class PR_DHL_WC_Order {
 		}
 
 		$dhl_label_data = array(
-			'main_button' => $main_button,
-			'delete_label' => $delete_label,
-			'print_button' => $print_button
+			'main_button'  => wp_kses_post( $main_button ),
+			'delete_label' => wp_kses_post( $delete_label ),
+			'print_button' => wp_kses_post( $print_button )
 		);
 
 
@@ -174,7 +174,7 @@ abstract class PR_DHL_WC_Order {
 			) );
 			
 			echo '<div class="shipment-dhl-row-container shipment-dhl-row-service">';
-				echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon shipment-dhl-icon-service"></span> ' . __( 'Service', 'dhl-for-woocommerce' ) . '</div>';
+				echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon shipment-dhl-icon-service"></span> ' . esc_html__( 'Service', 'dhl-for-woocommerce' ) . '</div>';
 				woocommerce_wp_select ( array(
 					'id'          		=> 'pr_dhl_product',
 					'label'       		=> esc_html__( 'Service selected:', 'dhl-for-woocommerce' ),
@@ -209,17 +209,17 @@ abstract class PR_DHL_WC_Order {
 
 			// A label has been generated already, allow to delete
 			if( empty( $label_tracking_info ) ) {
-				echo $main_button;
+				echo wp_kses_post( $main_button );
 			} else {
-				echo $print_button;
-				echo $delete_label;
+				echo wp_kses_post( $print_button );
+				echo wp_kses_post( $delete_label );
 			}
 
-			wp_enqueue_script( 'wc-shipment-dhl-label-js', PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl.js', array('jquery'), PR_DHL_VERSION );
+			wp_enqueue_script( 'wc-shipment-dhl-label-js', PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl.js', array( 'jquery' ), PR_DHL_VERSION );
 			wp_localize_script( 'wc-shipment-dhl-label-js', 'dhl_label_data', $dhl_label_data );
 
 		} else {
-			echo '<p class="wc_dhl_error">' . esc_html__('There are no DHL services available for the destination country!', 'dhl-for-woocommerce') . '</p>';
+			echo '<p class="wc_dhl_error">' . esc_html__( 'There are no DHL services available for the destination country!', 'dhl-for-woocommerce' ) . '</p>';
 		}
 
 		echo '</div>';
@@ -435,10 +435,10 @@ abstract class PR_DHL_WC_Order {
 
 		return sprintf( 
 			/* translators: %1$s is the base tracking URL, %2$s is the tracking number, %3$s is the tracking number displayed as link text */
-			__( '<a href="%1$s%2$s" target="_blank">%3$s</a>', 'dhl-for-woocommerce' ), 
-			$this->get_tracking_url(), 
-			$label_tracking_info['tracking_number'], 
-			$label_tracking_info['tracking_number'] 
+			esc_html__( '<a href="%1$s%2$s" target="_blank">%3$s</a>', 'dhl-for-woocommerce' ), 
+			esc_url( $this->get_tracking_url() ), 
+			esc_html( $label_tracking_info['tracking_number'] ), 
+			esc_html( $label_tracking_info['tracking_number'] ) 
 			);
 		}
 
@@ -1099,13 +1099,13 @@ abstract class PR_DHL_WC_Order {
 
 					switch ($type) {
                         case 'error':
-                            echo '<div class="notice notice-error"><ul><li>' . $message . '</li></ul></div>';
+                            echo '<div class="notice notice-error"><ul><li>' . wp_kses_post( $message ) . '</li></ul></div>';
                             break;
                         case 'success':
-                            echo '<div class="notice notice-success"><ul><li><strong>' . $message . '</strong></li></ul></div>';
+                            echo '<div class="notice notice-success"><ul><li><strong>' . wp_kses_post( $message ). '</strong></li></ul></div>';
                             break;
                         default:
-                            echo '<div class="notice notice-warning"><ul><li><strong>' . $message . '</strong></li></ul></div>';
+                            echo '<div class="notice notice-warning"><ul><li><strong>' . wp_kses_post( $message ) . '</strong></li></ul></div>';
                     }
 				}
 
@@ -1199,7 +1199,7 @@ abstract class PR_DHL_WC_Order {
 				} catch ( Exception $e ) {
 					$array_messages[] = array(
 						/* translators: %1$s is the order number, %2$s is the error message */
-						'message' => sprintf( esc_html__( 'Order #%1$s: %2$s', 'dhl-for-woocommerce' ), $order->get_order_number(), $e->getMessage() ),
+						'message' => sprintf( esc_html__( 'Order #%1$s: %2$s', 'dhl-for-woocommerce' ), esc_html( $order->get_order_number() ), esc_html( $e->getMessage() ) ),
 						'type'    => 'error',
 					);
 				}
@@ -1266,7 +1266,7 @@ abstract class PR_DHL_WC_Order {
 						$array_messages, 
 						array(
 							/* translators: %1$s and %2$s are HTML tags for the download link */
-							'message' => sprintf( esc_html__( 'Bulk DHL labels file created - %1$sdownload file%2$s', 'dhl-for-woocommerce' ), '<a href="' . $bulk_download_label_url . '" download>', '</a>' ),
+							'message' => sprintf( esc_html__( 'Bulk DHL labels file created - %1$sdownload file%2$s', 'dhl-for-woocommerce' ), '<a href="' . esc_url( $bulk_download_label_url ) . '" download>', '</a>' ),
 							'type'    => 'success',
 						) 
 					);
@@ -1285,7 +1285,7 @@ abstract class PR_DHL_WC_Order {
 
 			} catch ( Exception $e ) {
 				array_push( $array_messages, array(
-					'message' => $e->getMessage(),
+					'message' => esc_html( $e->getMessage() ),
 					'type'    => 'error',
 				) );
 			}
@@ -1357,7 +1357,7 @@ abstract class PR_DHL_WC_Order {
 					$array_messages,
 					array(
 						/* translators: %s is the order number */
-						'message' => sprintf( esc_html__( 'Order #%s: DHL Label Deleted', 'dhl-for-woocommerce' ), $order->get_order_number() ),
+						'message' => sprintf( esc_html__( 'Order #%s: DHL Label Deleted', 'dhl-for-woocommerce' ), esc_html( $order->get_order_number() ) ),
 						'type'    => 'success',
 					)
 				);
@@ -1367,7 +1367,7 @@ abstract class PR_DHL_WC_Order {
 					$array_messages,
 					array(
 						/* translators: %1$s is the order number, %2$s is the error message */
-						'message' => sprintf( esc_html__( 'Order #%1$s: %2$s', 'dhl-for-woocommerce' ), $order->get_order_number(), $e->getMessage() ),
+						'message' => sprintf( esc_html__( 'Order #%1$s: %2$s', 'dhl-for-woocommerce' ), esc_html( $order->get_order_number() ), esc_html( $e->getMessage() ) ),
 						'type'    => 'error',
 					)
 				);

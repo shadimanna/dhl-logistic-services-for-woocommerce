@@ -88,7 +88,8 @@ class Client extends API_Client {
 			: strval( $response->body );
 
 		throw new Exception(
-			sprintf( __( 'API error: %s', 'dhl-for-woocommerce' ), $message )
+			// Translators: %s is the error message from the API.
+			sprintf( esc_html__( 'API error: %s', 'dhl-for-woocommerce' ), esc_html( $message ) )
 		);
 	}
 
@@ -121,7 +122,8 @@ class Client extends API_Client {
 			: strval( $response->body );
 
 		throw new Exception(
-			sprintf( __( 'API error: %s', 'dhl-for-woocommerce' ), $message )
+			// Translators: %s is the error message from the API.
+			sprintf( esc_html__( 'API error: %s', 'dhl-for-woocommerce' ), esc_html( $message ) )
 		);
 	}
 
@@ -155,7 +157,8 @@ class Client extends API_Client {
 			: strval( $response->body );
 
 		throw new Exception(
-			sprintf( __( 'API error: %s', 'dhl-for-woocommerce' ), $message )
+			// Translators: %s is the error message from the API.
+			sprintf( esc_html__( 'API error: %s', 'dhl-for-woocommerce' ), esc_html( $message ) )
 		);
 	}
 
@@ -177,9 +180,11 @@ class Client extends API_Client {
 
 		throw new Exception(
 			sprintf(
-				__( 'Failed to get items from the API: %s', 'dhl-for-woocommerce' ),
-				implode( ', ', $response->body->messages )
+				// Translators: %s is the error message from the API.
+				esc_html__( 'Failed to get items from the API: %s', 'dhl-for-woocommerce' ),
+				esc_html( implode( ', ', $response->body->messages ) )
 			)
+
 		);
 	}
 
@@ -281,9 +286,10 @@ class Client extends API_Client {
 		}
 
 		throw new Exception(
-			sprintf(
-				__( 'Failed to create order: %s', 'dhl-for-woocommerce' ),
-				implode( ', ', $response->body->messages )
+			sprintf( 
+				// Translators: %s is the error message from the API.
+				esc_html__( 'Failed to create order: %s', 'dhl-for-woocommerce' ),
+				esc_html( implode( ', ', $response->body->messages ) )
 			)
 		);
 	}
@@ -342,7 +348,8 @@ class Client extends API_Client {
 			: strval($response->body);
 
 		throw new Exception(
-			sprintf(__('API error: %s', 'dhl-for-woocommerce'), $message)
+			// Translators: %s is the error message from the API.
+			sprintf( esc_html__( 'API error: %s', 'dhl-for-woocommerce' ), esc_html( $message ) )
 		);
 	}
 
@@ -370,7 +377,8 @@ class Client extends API_Client {
 			: strval( $response->body );
 
 		throw new Exception(
-			sprintf( __( 'API error: %s', 'dhl-for-woocommerce' ), $message )
+			// Translators: %s is the error message from the API.
+			sprintf( esc_html__( 'API error: %s', 'dhl-for-woocommerce' ), esc_html( $message ) )
 		);
 	}
 
@@ -391,13 +399,13 @@ class Client extends API_Client {
 			}
 
 			$data = array(
-				'contentPieceAmount' => $content_info[ 'qty' ],
+				'contentPieceAmount' 	  => $content_info[ 'qty' ],
 				'contentPieceDescription' => $item_desc,
 				'contentPieceIndexNumber' => $content_info[ 'product_id' ],
-				'contentPieceNetweight' => $content_info[ 'weight' ],
-				'contentPieceOrigin' => $content_info[ 'origin' ],
-				'contentPieceValue' => $content_info[ 'value' ],
-				'contentPieceHsCode' => trim( $content_info[ 'hs_code' ] )
+				'contentPieceNetweight'   => $content_info[ 'weight' ],
+				'contentPieceOrigin' 	  => $content_info[ 'origin' ],
+				'contentPieceValue' 	  => $content_info[ 'value' ],
+				'contentPieceHsCode' 	  => trim( $content_info[ 'hs_code' ] )
 			);
 			// Only include HS code if it's not empty
 			if ( empty( $data[ 'contentPieceHsCode' ] ) ) {

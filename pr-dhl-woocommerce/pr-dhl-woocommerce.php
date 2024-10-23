@@ -5,6 +5,8 @@
  * Description: WooCommerce integration for DHL Paket and Deutsche Post International
  * Author: DHL
  * Author URI: http://dhl.com/
+ * License: GPLv2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
  * Version: 3.7.3
@@ -118,7 +120,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			add_action( 'before_woocommerce_init', array( $this, 'declare_wc_hpos_compatibility' ), 10 );
 
 		}
-
+		
 		/**
 		 * Main WooCommerce Shipping DHL Instance.
 		 *
@@ -908,18 +910,22 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 				)
 			);
 
+			require_once( ABSPATH . 'wp-admin/includes/file.php' );
+			WP_Filesystem();
+
+			global $wp_filesystem;
+
 			foreach ( $files as $file ) {
-
-				if ( wp_mkdir_p( $file['base'] ) && ! file_exists( trailingslashit( $file['base'] ) . $file['file'] ) ) {
-
-					if ( $file_handle = @fopen( trailingslashit( $file['base'] ) . $file['file'], 'w' ) ) {
-						fwrite( $file_handle, $file['content'] );
-						fclose( $file_handle );
-					}
-
+				// Check if directory exists or can be created.
+				if ( $wp_filesystem->mkdir( $file['base'], FS_CHMOD_DIR ) && 
+					 ! $wp_filesystem->exists( trailingslashit( $file['base'] ) . $file['file'] ) ) {
+					
+					// Create the file with content using WP_Filesystem.
+					$file_path = trailingslashit( $file['base'] ) . $file['file'];
+					$wp_filesystem->put_contents( $file_path, $file['content'], FS_CHMOD_FILE );
 				}
-
 			}
+
 		}
 
 		public function dhl_label_folder_check() {

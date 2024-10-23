@@ -44,12 +44,12 @@ class WP_API_Driver implements API_Driver_Interface {
 
 		// Check if an error occurred
 		if ( is_wp_error( $response ) ) {
-			throw new RuntimeException( __( $response->get_error_message() ) );
+			throw new RuntimeException( esc_html__( $response->get_error_message(), 'dhl-for-woocommerce' ) );
 		}
 
 		// Retrieve the headers from the response
 		$raw_headers = wp_remote_retrieve_headers( $response );
-		$headers = array();
+		$headers 	 = array();
 
 		// Ensures that the headers use the correct casing
 		foreach ( $raw_headers as $header => $value ) {
