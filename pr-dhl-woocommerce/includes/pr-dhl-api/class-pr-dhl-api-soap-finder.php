@@ -49,19 +49,19 @@ class PR_DHL_API_SOAP_Finder extends PR_DHL_API_SOAP {
 		// Validate set args
 		
 		if ( empty( $args['dhl_settings']['api_user'] ) ) {
-			throw new Exception( __('Please, provide the username in the DHL shipping settings', 'dhl-for-woocommerce' ) );
+			throw new Exception( esc_html__( 'Please, provide the username in the DHL shipping settings', 'dhl-for-woocommerce' ) );
 		}
 
-		if ( empty( $args['dhl_settings']['api_pwd'] )) {
-			throw new Exception( __('Please, provide the password for the username in the DHL shipping settings', 'dhl-for-woocommerce') );
+		if ( empty( $args['dhl_settings']['api_pwd'] ) ) {
+			throw new Exception( esc_html__( 'Please, provide the password for the username in the DHL shipping settings', 'dhl-for-woocommerce' ) );
 		}
 
 		if ( empty( $args['shipping_address']['city'] ) && empty( $args['shipping_address']['postcode'] ) ) {
-			throw new Exception( __('Shipping "City" and "Postcode" are empty!', 'dhl-for-woocommerce') );
+			throw new Exception( esc_html__( 'Shipping "City" and "Postcode" are empty!', 'dhl-for-woocommerce' ) );
 		}
 
-		if ( empty( $args['shipping_address']['country'] )) {
-			throw new Exception( __('Shipping "Country" is empty!', 'dhl-for-woocommerce') );
+		if ( empty( $args['shipping_address']['country'] ) ) {
+			throw new Exception( esc_html__( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' ) );
 		}
 
 		$this->args = $args;

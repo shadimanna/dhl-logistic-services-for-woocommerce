@@ -194,7 +194,7 @@ abstract class PR_DHL_API_REST {
 					$error_message .= ' ' . $response_body->backendError->message;
 				}
 
-				throw new Exception( esc_html__( '400 - ', 'dhl-for-woocommerce' ) . $error_message );
+				throw new Exception( esc_html__( '400 - ', 'dhl-for-woocommerce' ) . esc_html( $error_message ) );
 				break;
 			case '401':
 				throw new Exception( esc_html__( '401 - Unauthorized Access - Invalid token or Authentication Header parameter', 'dhl-for-woocommerce' ) );
@@ -217,7 +217,7 @@ abstract class PR_DHL_API_REST {
 				
 				PR_DHL()->log_msg( 'POST Error: ' . $response_code . ' - ' . $error_message );
 
-				throw new Exception( $response_code .' - ' . $error_message );
+				throw new Exception( esc_html( $response_code ) .' - ' . esc_html( $error_message ) );
 				break;
 		}
 
@@ -260,7 +260,7 @@ abstract class PR_DHL_API_REST {
 				break;
 			case '400':
 				$error_message = ! empty( $response_body->message ) ? str_replace( '/', ' / ', $response_body->message ) : esc_html__( 'Unknown Error!', 'dhl-for-woocommerce' );
-				throw new Exception( esc_html__( '400 - ', 'dhl-for-woocommerce' ) . $error_message );
+				throw new Exception( esc_html__( '400 - ', 'dhl-for-woocommerce' ) . esc_html( $error_message ) );
 				break;
 			case '401':
 				throw new Exception( esc_html__( '401 - Unauthorized Access - Invalid token or Authentication Header parameter', 'dhl-for-woocommerce' ) );
@@ -283,7 +283,7 @@ abstract class PR_DHL_API_REST {
 				
 				PR_DHL()->log_msg( 'GET Error: ' . $response_code . ' - ' . $error_message );
 
-				throw new Exception( $response_code .' - ' . $error_message );
+				throw new Exception( esc_html( $response_code ) .' - ' . esc_html( $error_message ) );
 				break;
 		}
 
@@ -348,10 +348,10 @@ abstract class PR_DHL_API_REST {
 				if( ( strlen($value) < $min_len ) || ( strlen($value) > $max_len ) ) {
 					if ( $min_len == $max_len ) {
 						/* translators: %s is the required number of characters */
-						throw new Exception( sprintf( esc_html__( 'The value must be %s characters.', 'dhl-for-woocommerce' ), $min_len ) );
+						throw new Exception( sprintf( esc_html__( 'The value must be %s characters.', 'dhl-for-woocommerce' ), esc_attr( $min_len ) ) );
 					} else {
 						/* translators: %1$s is the minimum number of characters, %2$s is the maximum number of characters */
-						throw new Exception( sprintf( esc_html__( 'The value must be between %1$s and %2$s characters.', 'dhl-for-woocommerce' ), $min_len, $max_len ) );
+						throw new Exception( sprintf( esc_html__( 'The value must be between %1$s and %2$s characters.', 'dhl-for-woocommerce' ), esc_attr( $min_len ), esc_attr( $max_len ) ) );
 					}
 				}
 				break;

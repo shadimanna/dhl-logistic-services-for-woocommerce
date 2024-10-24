@@ -125,19 +125,19 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			$myaccount_pwd_expiration = $dhl_obj->get_dhl_myaccount_pwd_expiration();
 
 		} catch (Exception $e) {
-			PR_DHL()->log_msg( esc_html__('DHL Products not displaying - ', 'dhl-for-woocommerce') . $e->getMessage() );
+			PR_DHL()->log_msg( esc_html__( 'DHL Products not displaying - ', 'dhl-for-woocommerce' ) . esc_html( $e->getMessage() ) );
 		}
 
 		$weight_units = get_option( 'woocommerce_weight_unit' );
-		if ($myaccount_pwd_expiration == '7days') {
+		if ( $myaccount_pwd_expiration == '7days' ) {
 			/* Translators: %s is the URL for the business portal login. */
-			$password_expiration_message = sprintf( __('<p style="color: red;">Your password will expire in less than 7 days, please go to your <a href="%s" target="_blank">business portal</a> and reset your password then click the "Get Account Settings" button below.</p>', 'dhl-for-woocommerce'),
-				esc_url(PR_DHL_PAKET_BUSSINESS_PORTAL_LOGIN) 
+			$password_expiration_message = sprintf( esc_html__( '<p style="color: red;">Your password will expire in less than 7 days, please go to your <a href="%s" target="_blank">business portal</a> and reset your password then click the "Get Account Settings" button below.</p>', 'dhl-for-woocommerce' ),
+				esc_url( PR_DHL_PAKET_BUSSINESS_PORTAL_LOGIN ) 
 			);
-		} elseif ($myaccount_pwd_expiration == '30days') {
+		} elseif ( $myaccount_pwd_expiration == '30days' ) {
 			/* Translators: %s is the URL for the business portal login. */
-			$password_expiration_message = sprintf( __('<p style="color: red;">Your password will expire in less than 30 days, please go to your <a href="%s" target="_blank">business portal</a> and reset your password then click the "Get Account Settings" button below.</p>', 'dhl-for-woocommerce'),
-				esc_url(PR_DHL_PAKET_BUSSINESS_PORTAL_LOGIN) 
+			$password_expiration_message = sprintf( esc_html__( '<p style="color: red;">Your password will expire in less than 30 days, please go to your <a href="%s" target="_blank">business portal</a> and reset your password then click the "Get Account Settings" button below.</p>', 'dhl-for-woocommerce' ),
+				esc_url( PR_DHL_PAKET_BUSSINESS_PORTAL_LOGIN ) 
 			);
 		}
 		 else {
@@ -156,7 +156,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'description' => sprintf(
 					/* Translators: %s is the URL for the DHL business customer portal. */
 					esc_html__( 'Your username for the DHL business customer portal. Please note the lower case and test your access data in advance at %1$shere%2$s.', 'dhl-for-woocommerce' ),
-					'<a href="' . esc_url(PR_DHL_PAKET_BUSSINESS_PORTAL) . '" target="_blank">',
+					'<a href="' . esc_url( PR_DHL_PAKET_BUSSINESS_PORTAL ) . '" target="_blank">',
 					'</a>'
 				),
 				'desc_tip'          => false,
@@ -168,7 +168,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'description' => sprintf(
 					/* Translators: %s is the URL for the DHL business customer portal. */
 					esc_html__( 'Your password for the DHL business customer portal. Please note the new assignment of the password to 3 (Standard User) or 12 (System User) months and test your access data in advance at %1$shere%2$s.', 'dhl-for-woocommerce' ),
-					'<a href="' . esc_url(PR_DHL_PAKET_BUSSINESS_PORTAL) . '" target="_blank">', // Use esc_url() for security
+					'<a href="' . esc_url( PR_DHL_PAKET_BUSSINESS_PORTAL ) . '" target="_blank">', // Use esc_url() for security
 					'</a>'
 				) . $password_expiration_message,
 				'desc_tip'          => false,
@@ -314,7 +314,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'title'           => esc_html__( 'Shipping Label Settings', 'dhl-for-woocommerce' ),
 				'type'            => 'title',
 				/* translators: %1$s: link to upload logo; %2$s: closing tag for link */
-				'description'     => sprintf( esc_html__( 'Would you like to customize the DHL shipment notification? You can now add your online shop’s name and logo and we will display it in the DHL shipment notification. To upload your logo please use the following %1$slink%2$s.', 'dhl-for-woocommerce' ), '<a href="' . PR_DHL_PAKET_NOTIFICATION_EMAIL . '" target = "_blank">', '</a>' ),
+				'description'     => sprintf( esc_html__( 'Would you like to customize the DHL shipment notification? You can now add your online shop’s name and logo and we will display it in the DHL shipment notification. To upload your logo please use the following %1$slink%2$s.', 'dhl-for-woocommerce' ), '<a href="' . esc_attr( PR_DHL_PAKET_NOTIFICATION_EMAIL ) . '" target = "_blank">', '</a>' ),
 			),
 			'dhl_default_product_dom' => array(
 				'title'             => esc_html__( 'Domestic Default Service', 'dhl-for-woocommerce' ),
@@ -337,9 +337,9 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'type'              => 'select',
 				'description'             => esc_html__( 'Please select whether to send the customer\'s email to DHL or not. "Customer Confirmation" displays a confirmation on the checkout page and "Confirmed via terms & condition" assumes confirmation via the website terms & conditions.', 'dhl-for-woocommerce' ),
 				'options'           => array(
-					'no' 		=> esc_html__( 'Do not send', 'dhl-for-woocommerce'),
-					'yes' 		=> esc_html__( 'Customer confirmation', 'dhl-for-woocommerce'),
-					'sendviatc' => esc_html__( 'Confirmed via terms & condition', 'dhl-for-woocommerce'),
+					'no' 		=> esc_html__( 'Do not send', 'dhl-for-woocommerce' ),
+					'yes' 		=> esc_html__( 'Customer confirmation', 'dhl-for-woocommerce' ),
+					'sendviatc' => esc_html__( 'Confirmed via terms & condition', 'dhl-for-woocommerce' ),
 				),
 				'default'           => 'sendviatc',
 				'desc_tip'          => true,
@@ -349,8 +349,8 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'type'              => 'select',
 				'description'       => esc_html__( 'Please select whether to send the customer\'s phone to DHL or not. "Confirmed via terms & condition" assumes confirmation via the website terms & conditions.', 'dhl-for-woocommerce' ),
 				'options'           => array(
-					'no' 		=> esc_html__( 'Do not send', 'dhl-for-woocommerce'),
-					'sendviatc' => esc_html__( 'Confirmed via terms & condition', 'dhl-for-woocommerce'),
+					'no' 		=> esc_html__( 'Do not send', 'dhl-for-woocommerce' ),
+					'sendviatc' => esc_html__( 'Confirmed via terms & condition', 'dhl-for-woocommerce' ),
 				),
 				'default'           => 'sendviatc',
 				'desc_tip'          => true,
@@ -429,14 +429,14 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'desc_tip'          => true,
 			),
 			'dhl_default_endorsement' => array(
-				'title'             => esc_htmlesc_html__( 'Endorsement type', 'dhl-for-woocommerce' ),
+				'title'             => esc_html__( 'Endorsement type', 'dhl-for-woocommerce' ),
 				'type'              => 'select',
 				'default'           => '',
 				'options'           => array(
-					'IMMEDIATE'   	   => esc_htmlesc_html__( 'Sending back to sender', 'dhl-for-woocommerce' ),
-					'ABANDONMENT' 	   => esc_htmlesc_html__( 'Abandonment of parcel', 'dhl-for-woocommerce' )
+					'IMMEDIATE'   	   => esc_html__( 'Sending back to sender', 'dhl-for-woocommerce' ),
+					'ABANDONMENT' 	   => esc_html__( 'Abandonment of parcel', 'dhl-for-woocommerce' )
 				),
-				'description'       => esc_htmlesc_html__( 'Please, tick here if you want the "Endorsement value" to be selected in the "Edit Order" before printing a label.', 'dhl-for-woocommerce' ),
+				'description'       => esc_html__( 'Please, tick here if you want the "Endorsement value" to be selected in the "Edit Order" before printing a label.', 'dhl-for-woocommerce' ),
 				'desc_tip'          => true,
 			),
 			'dhl_default_is_codeable' => array(
@@ -460,7 +460,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'type'              => 'select',
 				'description'       => esc_html__( 'Select whether to add an absolute weight amount or percentage amount to the total product weight.', 'dhl-for-woocommerce' ),
 				'desc_tip'          => true,
-				'options'           => array( 'absolute' => 'Absolute', 'percentage' => 'Percentage'),
+				'options'           => array( 'absolute' => 'Absolute', 'percentage' => 'Percentage' ),
 				'class'				=> 'wc-enhanced-select'
 			),
 			'dhl_add_weight' => array(
@@ -514,7 +514,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'desc_tip'          => true,
 			),
 			'dhl_shipper_reference' => array(
-				'title'             => sprintf( esc_html__( 'Shipper Reference', 'dhl-for-woocommerce' ), $weight_units),
+				'title'             => sprintf( esc_html__( 'Shipper Reference', 'dhl-for-woocommerce' ), esc_html( $weight_units ) ),
 				'type'              => 'text',
 				'description'       => esc_html__( 'Add shipper reference.', 'dhl-for-woocommerce' ),
 				'desc_tip'          => false,
@@ -534,12 +534,12 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				'type'              => 'textarea',
 				'description'       => esc_html__( 'Set the custom text when adding the tracking number to the order notes or completed email. {tracking-link} is where the tracking number will be set.', 'dhl-for-woocommerce' ),
 				'desc_tip'          => false,
-				'default'           => esc_html__( 'DHL Tracking Number: {tracking-link}', 'dhl-for-woocommerce')
+				'default'           => esc_html__( 'DHL Tracking Number: {tracking-link}', 'dhl-for-woocommerce' )
 			),
 			'dhl_add_tracking_info_completed' => array(
 				'title'             => esc_html__( 'Tracking Email', 'dhl-for-woocommerce' ),
 				'type'              => 'checkbox',
-				'label' 			=> esc_html__( 'Add tracking text in completed email', 'dhl-for-woocommerce'),
+				'label' 			=> esc_html__( 'Add tracking text in completed email', 'dhl-for-woocommerce' ),
 				'description'       => esc_html__( 'Please, tick here to add tracking text when completed email is sent.', 'dhl-for-woocommerce' ),
 				'desc_tip'          => true,
 				'default'           => 'no',
@@ -561,7 +561,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			'dhl_create_label_on_status' => array(
 				'title'             => esc_html__( 'Create Label on Status', 'dhl-for-woocommerce' ),
 				'type'              => 'select',
-				'label' 			=> esc_html__( 'Create label on specific status.', 'dhl-for-woocommerce'),
+				'label' 			=> esc_html__( 'Create label on specific status.', 'dhl-for-woocommerce' ),
 				'description'       => esc_html__( 'Select the order status.', 'dhl-for-woocommerce' ),
 				'desc_tip'          => true,
 				'options'           => $order_status_options,
@@ -571,7 +571,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 			'dhl_change_order_status_completed' => array(
 				'title'             => esc_html__( 'Order Status', 'dhl-for-woocommerce' ),
 				'type'              => 'checkbox',
-				'label' 			=> esc_html__( 'Change to Completed', 'dhl-for-woocommerce'),
+				'label' 			=> esc_html__( 'Change to Completed', 'dhl-for-woocommerce' ),
 				'description'       => esc_html__( 'Please, tick here to change the order status when label is generated.', 'dhl-for-woocommerce' ),
 				'desc_tip'          => true,
 				'default'           => 'no',
@@ -1057,7 +1057,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 		} catch (Exception $e) {
 
-			echo $this->get_message( esc_html__('Pickup Account Number: ', 'dhl-for-woocommerce') . $e->getMessage() );
+			echo $this->get_message( esc_html__( 'Pickup Account Number: ', 'dhl-for-woocommerce' ) . esc_html( $e->getMessage() ) );
 			throw $e;
 
 		}
@@ -1079,7 +1079,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 		} catch (Exception $e) {
 
-			echo $this->get_message( esc_html__('Distribution Center: ', 'dhl-for-woocommerce') . $e->getMessage() );
+			echo $this->get_message( esc_html__( 'Distribution Center: ', 'dhl-for-woocommerce' ) . esc_html( $e->getMessage() ) );
 			throw $e;
 		}
 
@@ -1100,7 +1100,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				 isset( $_POST[ $this->plugin_id . $this->id . '_dhl_display_parcelshop' ] ) ||
 				 isset( $_POST[ $this->plugin_id . $this->id . '_dhl_display_post_office' ] ) ) {
 
-					$error_message = esc_html__('In order to show the dhl locations on a map, you need to insert a Google API Key. Otherwise, please deactivate the locations.', 'dhl-for-woocommerce');
+					$error_message = esc_html__( 'In order to show the dhl locations on a map, you need to insert a Google API Key. Otherwise, please deactivate the locations.', 'dhl-for-woocommerce' );
 					echo $this->get_message( $error_message );
 					throw new Exception( $error_message );
 
@@ -1157,7 +1157,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 		if ( empty( $shipper_reference ) ) {
 
-			$error_message = esc_html__('In order to use logo, you need to set a shipper reference first.', 'dhl-for-woocommerce');
+			$error_message = esc_html__( 'In order to use logo, you need to set a shipper reference first.', 'dhl-for-woocommerce' );
 
 			echo $this->get_message( $error_message );
 
@@ -1185,10 +1185,10 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 			if( $key == 'dhl_display_google_maps' ){
 				/* translators: %s: type of location (e.g., DHL locations) */
-				$error_message = sprintf( esc_html__('In order to show %s, you need to set a Google API Key first.', 'dhl-for-woocommerce'), $location_type );
+				$error_message = sprintf( esc_html__( 'In order to show %s, you need to set a Google API Key first.', 'dhl-for-woocommerce' ), $location_type );
 			}else{
 				/* translators: %s: type of location (e.g., DHL locations on a map) */
-				$error_message = sprintf( esc_html__('In order to show %s on a map, you need to set a Google API Key first.', 'dhl-for-woocommerce'), $location_type );
+				$error_message = sprintf( esc_html__( 'In order to show %s on a map, you need to set a Google API Key first.', 'dhl-for-woocommerce' ), $location_type );
 			}
 
 			echo $this->get_message( $error_message );

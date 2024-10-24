@@ -94,7 +94,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 				$message .= '<br>' . $error['message'];
 			}
 
-			throw new Exception( $message );
+			throw new Exception( esc_html( $message ) );
 		}
 
 		if ( count( $item_response['items'] ) > 1 ) {
@@ -123,7 +123,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		$label_path = $label_info['label_path'];
 
 		if ( file_exists( $label_path ) ) {
-			$res = unlink( $label_path );
+			$res = wp_delete_file( $label_path );
 
 			if ( ! $res ) {
 				throw new Exception( esc_html__( 'DHL Label could not be deleted!', 'dhl-for-woocommerce' ) );
@@ -352,7 +352,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		try {
 			$this->validate_field( 'weight', $args['order_details']['weight'] );
 		} catch (Exception $e) {
-			throw new Exception( 'Weight - ' . $e->getMessage() );
+			throw new Exception( 'Weight - ' . esc_html( $e->getMessage() ) );
 		}
 
 		if ( isset( $args['order_details']['multi_packages_enabled'] ) && ( $args['order_details']['multi_packages_enabled'] == 'yes' ) ) {
@@ -501,7 +501,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 				try {
 					$this->validate_field( 'hs_code', $item['hs_code'] );
 				} catch (Exception $e) {
-					throw new Exception( 'HS Code - ' . $e->getMessage() );
+					throw new Exception( 'HS Code - ' . esc_html( $e->getMessage() ) );
 				}
 			}
 
@@ -557,13 +557,13 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 
 		switch ( $type ) {
 			case 'string':
-				if( ( strlen($value) < $min_len ) || ( strlen($value) > $max_len ) ) {
+				if( ( strlen( $value ) < $min_len ) || ( strlen( $value ) > $max_len ) ) {
 					if ( $min_len == $max_len ) {
 						/* translators: %s is the required number of characters */
-						throw new Exception( sprintf( esc_html__( 'The value must be %s characters.', 'dhl-for-woocommerce' ), $min_len ) );
+						throw new Exception( sprintf( esc_html__( 'The value must be %s characters.', 'dhl-for-woocommerce' ), esc_attr( $min_len ) ) );
 					} else {
 						/* translators: %1$s is the minimum number of characters, %2$s is the maximum number of characters */
-						throw new Exception( sprintf( esc_html__( 'The value must be between %1$s and %2$s characters.', 'dhl-for-woocommerce' ), $min_len, $max_len ) );
+						throw new Exception( sprintf( esc_html__( 'The value must be between %1$s and %2$s characters.', 'dhl-for-woocommerce' ), esc_attr( $min_len ), esc_attr( $max_len ) ) );
 					}					
 				}
 				break;

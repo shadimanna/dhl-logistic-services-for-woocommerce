@@ -303,9 +303,9 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
  		$country_code = $this->country_code;
 
  		$germany_dom = array(
- 								'V01PAK' => __('DHL Paket', 'dhl-for-woocommerce'),
- 								'V01PRIO' => __('DHL Paket PRIO', 'dhl-for-woocommerce'),
- 								'V62WP' => __('DHL Warenpost National', 'dhl-for-woocommerce'),
+ 								'V01PAK' => esc_html__( 'DHL Paket', 'dhl-for-woocommerce' ),
+ 								'V01PRIO' => esc_html__( 'DHL Paket PRIO', 'dhl-for-woocommerce' ),
+ 								'V62WP' => esc_html__( 'DHL Warenpost National', 'dhl-for-woocommerce' ),
  								);
 
  		$dhl_prod_dom = array();
@@ -325,10 +325,10 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 		$country_code = $this->country_code;
 
 		$germany_int =  array(
-								'V55PAK' => __('DHL Paket Connect', 'dhl-for-woocommerce'),
-								'V54EPAK' => __('DHL Europaket (B2B)', 'dhl-for-woocommerce'),
-								'V53WPAK' => __('DHL Paket International', 'dhl-for-woocommerce'),
-								'V66WPI' => __('DHL Warenpost International', 'dhl-for-woocommerce'),
+								'V55PAK' => esc_html__( 'DHL Paket Connect', 'dhl-for-woocommerce' ),
+								'V54EPAK' => esc_html__( 'DHL Europaket (B2B)', 'dhl-for-woocommerce' ),
+								'V53WPAK' => esc_html__( 'DHL Paket International', 'dhl-for-woocommerce' ),
+								'V66WPI' => esc_html__( 'DHL Warenpost International', 'dhl-for-woocommerce' ),
 								);
 
 		$dhl_prod_int = array();
@@ -391,7 +391,7 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 
 				if ( ! $foundPickupLocMatch ) {
 					throw new Exception(
-						__('Your Shipper Address must match a Pickup address on your DHL Portal.', 'dhl-for-woocommerce')
+						esc_html__( 'Your Shipper Address must match a Pickup address on your DHL Portal.', 'dhl-for-woocommerce' )
 					);
 				}
 

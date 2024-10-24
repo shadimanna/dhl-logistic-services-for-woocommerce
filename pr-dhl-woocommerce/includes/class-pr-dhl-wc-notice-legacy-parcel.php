@@ -61,7 +61,7 @@ class PR_DHL_WC_Notice_Legacy_Parcel {
 
             <div class="notice notice-warning is-dismissible dhl-legacy-parcel-dismiss-migrate-notice">
                 <div style="position: absolute;">
-                    <img src="https://ps.w.org/dhlpwc/assets/icon.svg?rev=2688756" class="plugin-icon" style="width: 85px; height: 85px; padding-right: 20px;" alt="">
+                    <img src="<?php echo PR_DHL_PLUGIN_DIR_URL . '/assets/img/icon.svg' ; ?>" class="plugin-icon" style="width: 85px; height: 85px; padding-right: 20px;" alt="">
                 </div>
                 <div style="position:relative; left: 105px; margin: 0 105px 0 0; padding: 0 0 20px 20px;">
                     <span>

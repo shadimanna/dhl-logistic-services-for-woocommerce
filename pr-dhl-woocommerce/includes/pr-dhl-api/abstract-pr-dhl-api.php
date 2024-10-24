@@ -45,7 +45,7 @@ abstract class PR_DHL_API {
 		if ( $this->dhl_finder ) {
 			return $this->dhl_finder->get_parcel_location( $args );
 		} else {
-			throw new Exception( __('Parcel Finder not available', 'dhl-for-woocommerce') );
+			throw new Exception( esc_html__('Parcel Finder not available', 'dhl-for-woocommerce') );
 		}
 	}
 
@@ -75,8 +75,8 @@ abstract class PR_DHL_API {
 
 	public function get_dhl_duties() {
 		$duties = array(
-					'DDU' => __('Delivery Duty Unpaid', 'dhl-for-woocommerce'),
-					'DDP' => __('Delivery Duty Paid', 'dhl-for-woocommerce')
+					'DDU' => esc_html__('Delivery Duty Unpaid', 'dhl-for-woocommerce'),
+					'DDP' => esc_html__('Delivery Duty Paid', 'dhl-for-woocommerce')
 					);
 		return $duties;
 	}

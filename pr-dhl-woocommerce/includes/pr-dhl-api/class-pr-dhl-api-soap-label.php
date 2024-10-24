@@ -96,7 +96,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
             }
 
 			/* translators: %s is the status message describing the error */
-		    throw new Exception( sprintf( esc_html__( 'Could not create label - %s', 'dhl-for-woocommerce' ), $status_message ) );
+		    throw new Exception( sprintf( esc_html__( 'Could not create label - %s', 'dhl-for-woocommerce' ), esc_html( $status_message ) ) );
 		} else {
 			// Give the server 1 second to create the PDF before downloading it
 			sleep(1);
@@ -175,7 +175,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		if( $response_body->Status->statusCode != 0 ) {
 			
 			/* translators: %s is the status message describing the error */
-			throw new Exception( sprintf( esc_html__( 'Could not delete label - %s', 'dhl-for-woocommerce' ), $response_body->Status->statusMessage ) );
+			throw new Exception( sprintf( esc_html__( 'Could not delete label - %s', 'dhl-for-woocommerce' ), esc_html( $response_body->Status->statusMessage ) ) );
 		}
 	}
 
@@ -385,7 +385,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 		try {
 			$this->validate_field( 'weight', $args['order_details']['weight'] );
 		} catch (Exception $e) {
-			throw new Exception( 'Weight - ' . $e->getMessage() );
+			throw new Exception( 'Weight - ' . esc_html( $e->getMessage() ) );
 		}
 
 		if ( isset( $args['order_details']['multi_packages_enabled'] ) && ( $args['order_details']['multi_packages_enabled'] == 'yes' ) ) {
@@ -534,7 +534,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				try {
 					$this->validate_field( 'hs_code', $item['hs_code'] );
 				} catch (Exception $e) {
-					throw new Exception( 'HS Code - ' . $e->getMessage() );
+					throw new Exception( 'HS Code - ' . esc_html( $e->getMessage() ) );
 				}
 			}
 

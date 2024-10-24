@@ -154,10 +154,10 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		$country_code = $this->country_code;
 
 		$germany_int =  array(
-								'V55PAK' => __('DHL Paket Connect', 'dhl-for-woocommerce'),
-								'V54EPAK' => __('DHL Europaket (B2B)', 'dhl-for-woocommerce'),
-								'V53WPAK' => __('DHL Paket International', 'dhl-for-woocommerce'),
-								'V66WPI' => __('DHL Warenpost International', 'dhl-for-woocommerce'),
+								'V55PAK' => esc_html__( 'DHL Paket Connect', 'dhl-for-woocommerce' ),
+								'V54EPAK' => esc_html__( 'DHL Europaket (B2B)', 'dhl-for-woocommerce' ),
+								'V53WPAK' => esc_html__( 'DHL Paket International', 'dhl-for-woocommerce' ),
+								'V66WPI' => esc_html__( 'DHL Warenpost International', 'dhl-for-woocommerce' ),
 								);
 
 		$dhl_prod_int = array();
@@ -177,9 +177,9 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		$country_code = $this->country_code;
 
 		$germany_dom = array(
-								'V01PAK' => __('DHL Paket', 'dhl-for-woocommerce'),
-								'V01PRIO' => __('DHL Paket PRIO', 'dhl-for-woocommerce'),
-								'V62WP' => __('DHL Warenpost National', 'dhl-for-woocommerce'),
+								'V01PAK' => esc_html__( 'DHL Paket', 'dhl-for-woocommerce' ),
+								'V01PRIO' => esc_html__( 'DHL Paket PRIO', 'dhl-for-woocommerce' ),
+								'V62WP' => esc_html__( 'DHL Warenpost National', 'dhl-for-woocommerce' ),
 								);
 
 		$dhl_prod_dom = array();
@@ -197,7 +197,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 
 	public function get_dhl_preferred_day_time( $postcode, $account_num, $cutoff_time = '12:00', $exclude_working_days = array() ) {
 		// Always exclude Sunday
-		$exclude_sun = array( 'Sun' => __('sun', 'dhl-for-woocommerce') );
+		$exclude_sun = array( 'Sun' => esc_html__( 'sun', 'dhl-for-woocommerce' ) );
 		$exclude_working_days += $exclude_sun;
 		$day_counter = 0;
 
@@ -272,13 +272,13 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 
 	protected function get_dhl_preferred_day( $preferred_services ) {
 		$day_of_week_arr = array(
-		            '1' => __('Mon', 'dhl-for-woocommerce'),
-		            '2' => __('Tue', 'dhl-for-woocommerce'),
-		            '3' => __('Wed', 'dhl-for-woocommerce'),
-		            '4' => __('Thu', 'dhl-for-woocommerce'),
-		            '5' => __('Fri', 'dhl-for-woocommerce'),
-		            '6' => __('Sat', 'dhl-for-woocommerce'),
-		            '7' => __('Sun', 'dhl-for-woocommerce')
+		            '1' => esc_html__( 'Mon', 'dhl-for-woocommerce' ),
+		            '2' => esc_html__( 'Tue', 'dhl-for-woocommerce' ),
+		            '3' => esc_html__( 'Wed', 'dhl-for-woocommerce' ),
+		            '4' => esc_html__( 'Thu', 'dhl-for-woocommerce' ),
+		            '5' => esc_html__( 'Fri', 'dhl-for-woocommerce' ),
+		            '6' => esc_html__( 'Sat', 'dhl-for-woocommerce' ),
+		            '7' => esc_html__( 'Sun', 'dhl-for-woocommerce' )
 		        );
 
 		$preferred_days = array();
@@ -294,7 +294,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 			}
 
 			// Add none option
-			array_unshift( $preferred_days, __('none', 'dhl-for-woocommerce') );
+			array_unshift( $preferred_days, esc_html__( 'none', 'dhl-for-woocommerce' ) );
 		}
 
 
@@ -305,8 +305,8 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		$duties = parent::get_dhl_duties();
 
 		$duties_paket = array(
-					'DXV' => __('Delivery Duty Paid (excl. VAT )', 'dhl-for-woocommerce'),
-					'DDX' => __('Delivery Duty Paid (excl. Duties, taxes and VAT)', 'dhl-for-woocommerce')
+					'DXV' => esc_html__( 'Delivery Duty Paid (excl. VAT )', 'dhl-for-woocommerce' ),
+					'DDX' => esc_html__( 'Delivery Duty Paid (excl. Duties, taxes and VAT)', 'dhl-for-woocommerce' )
 					);
 		$duties += $duties_paket;
 
@@ -316,8 +316,8 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 	public function get_dhl_visual_age() {
 		$visual_age = array(
 					'0' => _x('none', 'age context', 'dhl-for-woocommerce'),
-					'A16' => __('Minimum age of 16', 'dhl-for-woocommerce'),
-					'A18' => __('Minimum age of 18', 'dhl-for-woocommerce')
+					'A16' => esc_html__( 'Minimum age of 16', 'dhl-for-woocommerce' ),
+					'A18' => esc_html__( 'Minimum age of 18', 'dhl-for-woocommerce' )
 					);
 		return $visual_age;
 	}
