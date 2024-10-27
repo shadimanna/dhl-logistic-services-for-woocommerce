@@ -1,17 +1,3 @@
-<<<<<<< HEAD
-import {useEffect, useState, useCallback} from '@wordpress/element';
-import { TextControl, RadioControl } from '@wordpress/components';
-import {__} from '@wordpress/i18n';
-import { debounce } from 'lodash';
-
-export const Block = ({checkoutExtensionData}) => {
-    const {setExtensionData} = checkoutExtensionData;
-
-    // Access the localized data from prDhlGlobals
-    const imgUrl = prDhlGlobals.pluginUrl+"/assets/img/dhl-official.png";
-    const dhlSettings = prDhlGlobals.dhlSettings;
-    const preferredDays = prDhlGlobals.preferredDays;
-=======
 import { useEffect, useState, useCallback } from '@wordpress/element';
 import { TextControl, RadioControl, Spinner, Notice } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -29,16 +15,11 @@ export const Block = ({ checkoutExtensionData }) => {
     const [displayPreferred, setDisplayPreferred] = useState(prDhlGlobals.displayPreferred);
 
     const { updateCustomerData } = useDispatch(CART_STORE_KEY);
->>>>>>> 043b43a (Applying fee)
 
     // Debounce for reducing the number of updates to the extension data
     const debouncedSetExtensionData = useCallback(debounce((namespace, key, value) => {
         setExtensionData(namespace, key, value);
-<<<<<<< HEAD
-    }, 1000), [setExtensionData]);
-=======
     }, 500), [setExtensionData]);
->>>>>>> 043b43a (Applying fee)
 
     // Determine availability of location and neighbor options
     const locationAvailable = dhlSettings?.dhl_preferred_location === 'yes';
@@ -50,19 +31,14 @@ export const Block = ({ checkoutExtensionData }) => {
 
     // State hooks for the block fields
     const [preferredDay, setPreferredDay] = useState('');
-<<<<<<< HEAD
-=======
     const [preferredDays, setPreferredDays] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
->>>>>>> 043b43a (Applying fee)
     const [preferredLocationNeighbor, setPreferredLocationNeighbor] = useState(initialPreferredLocationNeighbor);
     const [preferredLocation, setPreferredLocation] = useState('');
     const [preferredNeighborName, setPreferredNeighborName] = useState('');
     const [preferredNeighborAddress, setPreferredNeighborAddress] = useState('');
 
-<<<<<<< HEAD
-=======
     // Retrieve customer data
     const customerData = useSelect((select) => select(CART_STORE_KEY).getCustomerData(), []);
     const shippingAddress = customerData ? customerData.shippingAddress : null;
@@ -162,14 +138,10 @@ export const Block = ({ checkoutExtensionData }) => {
             });
     };
 
->>>>>>> 043b43a (Applying fee)
     // useEffect for preferredDay
     useEffect(() => {
         setExtensionData('pr-dhl', 'preferredDay', preferredDay);
         debouncedSetExtensionData('pr-dhl', 'preferredDay', preferredDay);
-<<<<<<< HEAD
-    }, [setExtensionData, preferredDay, debouncedSetExtensionData]);
-=======
 
         // Update customer data to refresh the checkout
         updateCustomerData();
@@ -211,73 +183,36 @@ export const Block = ({ checkoutExtensionData }) => {
             }
         }
     }, [preferredDay]);
->>>>>>> 043b43a (Applying fee)
 
     // useEffect for preferredLocationNeighbor
     useEffect(() => {
         setExtensionData('pr-dhl', 'preferredLocationNeighbor', preferredLocationNeighbor);
         debouncedSetExtensionData('pr-dhl', 'preferredLocationNeighbor', preferredLocationNeighbor);
-<<<<<<< HEAD
-    }, [setExtensionData, preferredLocationNeighbor, debouncedSetExtensionData]);
-=======
     }, [preferredLocationNeighbor]);
->>>>>>> 043b43a (Applying fee)
 
     // useEffect for preferredLocation
     useEffect(() => {
         setExtensionData('pr-dhl', 'preferredLocation', preferredLocation);
         debouncedSetExtensionData('pr-dhl', 'preferredLocation', preferredLocation);
-<<<<<<< HEAD
-    }, [setExtensionData, preferredLocation, debouncedSetExtensionData]);
-=======
     }, [preferredLocation]);
->>>>>>> 043b43a (Applying fee)
 
     // useEffect for preferredNeighborName
     useEffect(() => {
         setExtensionData('pr-dhl', 'preferredNeighborName', preferredNeighborName);
         debouncedSetExtensionData('pr-dhl', 'preferredNeighborName', preferredNeighborName);
-<<<<<<< HEAD
-    }, [setExtensionData, preferredNeighborName, debouncedSetExtensionData]);
-=======
     }, [preferredNeighborName]);
->>>>>>> 043b43a (Applying fee)
 
     // useEffect for preferredNeighborAddress
     useEffect(() => {
         setExtensionData('pr-dhl', 'preferredNeighborAddress', preferredNeighborAddress);
         debouncedSetExtensionData('pr-dhl', 'preferredNeighborAddress', preferredNeighborAddress);
-<<<<<<< HEAD
-    }, [setExtensionData, preferredNeighborAddress, debouncedSetExtensionData]);
-=======
     }, [preferredNeighborAddress]);
->>>>>>> 043b43a (Applying fee)
 
     // Handle visibility of drop-off location and neighbor fields based on settings and selection
     const showDropOffLocation = (showRadioControl && preferredLocationNeighbor === 'location') || (!showRadioControl && locationAvailable);
     const showNeighborFields = (showRadioControl && preferredLocationNeighbor === 'neighbor') || (!showRadioControl && neighborAvailable);
 
     // Update the mapping of preferredDayOptions
-<<<<<<< HEAD
-    const preferredDayOptions = Object.entries(preferredDays).map(([key, dayName]) => {
-        let weekDayNum = '';
-        if (key === '0' || key === 'none') {
-            weekDayNum = '-';
-        } else {
-            const date = new Date(key);
-            if (isNaN(date.getTime())) {
-                weekDayNum = '-';
-            } else {
-                weekDayNum = date.getDate().toString();
-            }
-        }
-        return {
-            weekDayNum,
-            dayName,
-            key,
-        };
-    });
-=======
     let preferredDayOptions = [];
     if (preferredDays && Object.keys(preferredDays).length > 0) {
         preferredDayOptions = Object.entries(preferredDays).map(([key, dayName]) => {
@@ -315,18 +250,13 @@ export const Block = ({ checkoutExtensionData }) => {
             </Notice>
         );
     }
->>>>>>> 043b43a (Applying fee)
 
     // Render DHL logo dynamically from the localized data
     return (<table className="dhl-co-table">
         {/* DHL logo */}
         <tr className="dhl-co-tr dhl-co-tr-first">
             <td colSpan="2">
-<<<<<<< HEAD
-                <img src={imgUrl} alt="DHL logo" className="dhl-co-logo"/>
-=======
                 <img src={imgUrl} alt="DHL logo" className="dhl-co-logo" />
->>>>>>> 043b43a (Applying fee)
             </td>
         </tr>
 
@@ -334,11 +264,7 @@ export const Block = ({ checkoutExtensionData }) => {
         <tr className="dhl-co-tr">
             <th colSpan="2">
                 {__('DHL Preferred Delivery. Delivered just as you wish.', 'dhl-for-woocommerce')}
-<<<<<<< HEAD
-                <hr/>
-=======
                 <hr />
->>>>>>> 043b43a (Applying fee)
             </th>
         </tr>
 
@@ -347,10 +273,6 @@ export const Block = ({ checkoutExtensionData }) => {
                 {__('Thanks to the flexible recipient services of DHL Preferred Delivery, you decide when and where you want to receive your parcels. Please choose your preferred delivery option.', 'dhl-for-woocommerce')}
             </td>
         </tr>
-<<<<<<< HEAD
-
-=======
->>>>>>> 043b43a (Applying fee)
         {/* Preferred Delivery Day */}
         {dhlSettings?.dhl_preferred_day === 'yes' && (<>
             <tr className="dhl-co-tr">
@@ -360,20 +282,12 @@ export const Block = ({ checkoutExtensionData }) => {
                         className="dhl-tooltip"
                         title={__('Choose one of the displayed days as your preferred day for your parcel delivery. Other days are not possible due to delivery processes.', 'dhl-for-woocommerce')}
                     >
-<<<<<<< HEAD
-                ?
-            </span>
-=======
                         ?
                     </span>
->>>>>>> 043b43a (Applying fee)
                 </th>
             </tr>
             <tr className="dhl-co-tr">
                 <td colSpan="2">
-<<<<<<< HEAD
-                    {__('There is a surcharge for this service.', 'dhl-for-woocommerce')}
-=======
                     {dhlSettings?.dhl_preferred_day_cost && parseFloat(dhlSettings.dhl_preferred_day_cost) > 0 ? (
                         <>
                             {sprintf(
@@ -384,7 +298,6 @@ export const Block = ({ checkoutExtensionData }) => {
                     ) : (
                         __('There is a surcharge for this service.', 'dhl-for-woocommerce')
                     )}
->>>>>>> 043b43a (Applying fee)
                 </td>
             </tr>
             <tr className="dhl-co-tr">
@@ -427,18 +340,11 @@ export const Block = ({ checkoutExtensionData }) => {
                 <td className="dhl-pt">
                     <RadioControl
                         selected={preferredLocationNeighbor}
-<<<<<<< HEAD
-                        options={[{label: 'None', value: 'none'}, {
-                            label: 'Location',
-                            value: 'location'
-                        }, {label: 'Neighbor', value: 'neighbor'},]}
-=======
                         options={[
                             { label: __('None', 'dhl-for-woocommerce'), value: 'none' },
                             { label: __('Location', 'dhl-for-woocommerce'), value: 'location' },
                             { label: __('Neighbor', 'dhl-for-woocommerce'), value: 'neighbor' },
                         ]}
->>>>>>> 043b43a (Applying fee)
                         onChange={(value) => setPreferredLocationNeighbor(value)}
                     />
                 </td>
@@ -498,8 +404,6 @@ export const Block = ({ checkoutExtensionData }) => {
         </>)}
     </table>);
 };
-<<<<<<< HEAD
-=======
 
 // Helper function to format price
 function wcPrice(amount) {
@@ -522,4 +426,3 @@ function wcPrice(amount) {
         return formattedAmount + currencySymbol;
     }
 }
->>>>>>> 043b43a (Applying fee)

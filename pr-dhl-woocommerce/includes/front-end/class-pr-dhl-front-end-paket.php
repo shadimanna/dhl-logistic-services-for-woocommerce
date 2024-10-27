@@ -21,7 +21,7 @@ class PR_DHL_Front_End_Paket {
 	private $preferred_location_neighbor = array();
 
 	private $cdp_service = array();
-	
+
 	private $shipping_dhl_settings = array();
 
 	/**
@@ -223,14 +223,9 @@ class PR_DHL_Front_End_Paket {
 		}
 	}
 
-<<<<<<< HEAD
-	public function validate_extra_services_available( $check_day_transfer = false ) {
-		// woocommerce_form_field('pr_dhl_paket_preferred_location');
-=======
 
 	public function validate_extra_services_available( $check_day_transfer = false, $customer_country = '' ) {
 		$display_preferred = false;
->>>>>>> 043b43a (Applying fee)
 		$chosen_shipping_methods = WC()->session->get( 'chosen_shipping_methods' );
 		$chosen_payment_method = WC()->session->get( 'chosen_payment_method' );
 
