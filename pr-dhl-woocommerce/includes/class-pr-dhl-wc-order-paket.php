@@ -54,11 +54,10 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		add_filter('pr_shipping_dhl_label_args', array($this, 'override_item_desc_pr_shipping_dhl_label_args'), 20, 2);
 
 		$extend_store=new PR_DHL_Extend_Store_Endpoint();
-		$extend_core = new PR_DHL_Extend_Block_core();
+        new PR_DHL_Extend_Block_core();
 
 		// Initialize endpoints and core functionality.
 		$extend_store->init();
-		$extend_core->init();
 
 		// Register the blocks integration with WooCommerce blocks.
 		add_action( 'woocommerce_blocks_checkout_block_registration', function( $integration_registry ) {

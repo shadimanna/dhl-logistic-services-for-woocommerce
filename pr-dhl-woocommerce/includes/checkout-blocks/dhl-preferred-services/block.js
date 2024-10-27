@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {useEffect, useState, useCallback} from '@wordpress/element';
 import { TextControl, RadioControl } from '@wordpress/components';
 import {__} from '@wordpress/i18n';
@@ -10,11 +11,34 @@ export const Block = ({checkoutExtensionData}) => {
     const imgUrl = prDhlGlobals.pluginUrl+"/assets/img/dhl-official.png";
     const dhlSettings = prDhlGlobals.dhlSettings;
     const preferredDays = prDhlGlobals.preferredDays;
+=======
+import { useEffect, useState, useCallback } from '@wordpress/element';
+import { TextControl, RadioControl, Spinner, Notice } from '@wordpress/components';
+import { useSelect, useDispatch } from '@wordpress/data';
+import { CART_STORE_KEY } from '@woocommerce/block-data';
+import { __ } from '@wordpress/i18n';
+import { debounce } from 'lodash';
+import axios from 'axios';
+
+export const Block = ({ checkoutExtensionData }) => {
+    const { setExtensionData } = checkoutExtensionData;
+
+    // Access the localized data from prDhlGlobals
+    const imgUrl = prDhlGlobals.pluginUrl + "/assets/img/dhl-official.png";
+    const dhlSettings = prDhlGlobals.dhlSettings;
+    const [displayPreferred, setDisplayPreferred] = useState(prDhlGlobals.displayPreferred);
+
+    const { updateCustomerData } = useDispatch(CART_STORE_KEY);
+>>>>>>> 043b43a (Applying fee)
 
     // Debounce for reducing the number of updates to the extension data
     const debouncedSetExtensionData = useCallback(debounce((namespace, key, value) => {
         setExtensionData(namespace, key, value);
+<<<<<<< HEAD
     }, 1000), [setExtensionData]);
+=======
+    }, 500), [setExtensionData]);
+>>>>>>> 043b43a (Applying fee)
 
     // Determine availability of location and neighbor options
     const locationAvailable = dhlSettings?.dhl_preferred_location === 'yes';
@@ -26,46 +50,215 @@ export const Block = ({checkoutExtensionData}) => {
 
     // State hooks for the block fields
     const [preferredDay, setPreferredDay] = useState('');
+<<<<<<< HEAD
+=======
+    const [preferredDays, setPreferredDays] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+>>>>>>> 043b43a (Applying fee)
     const [preferredLocationNeighbor, setPreferredLocationNeighbor] = useState(initialPreferredLocationNeighbor);
     const [preferredLocation, setPreferredLocation] = useState('');
     const [preferredNeighborName, setPreferredNeighborName] = useState('');
     const [preferredNeighborAddress, setPreferredNeighborAddress] = useState('');
 
+<<<<<<< HEAD
+=======
+    // Retrieve customer data
+    const customerData = useSelect((select) => select(CART_STORE_KEY).getCustomerData(), []);
+    const shippingAddress = customerData ? customerData.shippingAddress : null;
+
+    // Retrieve selected shipping methods and payment method
+    const cartData = useSelect((select) => select(CART_STORE_KEY).getCartData(), []);
+    const selectedShippingMethods = cartData ? cartData.selectedShippingMethods : [];
+    const selectedPaymentMethod = cartData ? cartData.selectedPaymentMethod : '';
+
+    // State to keep track of whether the preferred day fee has been applied
+    const [preferredDayFeeApplied, setPreferredDayFeeApplied] = useState(false);
+
+    useEffect(() => {
+        if (shippingAddress) {
+            const data = {
+                shipping_country: shippingAddress.country || '',
+                shipping_postcode: shippingAddress.postcode || '',
+                shipping_address_1: shippingAddress.address_1 || '',
+                shipping_address_2: shippingAddress.address_2 || '',
+                shipping_city: shippingAddress.city || '',
+                shipping_state: shippingAddress.state || '',
+                shipping_email: shippingAddress.email || '',
+                shipping_phone: shippingAddress.phone || '',
+                shipping_company: shippingAddress.company || '',
+                shipping_methods: selectedShippingMethods,
+                payment_method: selectedPaymentMethod,
+            };
+
+            const formData = new URLSearchParams();
+            formData.append('action', 'pr_dhl_set_checkout_post_data');
+            formData.append('nonce', prDhlGlobals.nonce);
+
+            // Append each data field
+            Object.keys(data).forEach((key) => {
+                if (Array.isArray(data[key])) {
+                    data[key].forEach((item, index) => {
+                        formData.append(`data[${key}][${index}]`, item);
+                    });
+                } else {
+                    formData.append(`data[${key}]`, data[key]);
+                }
+            });
+
+            // Send the data via AJAX
+            axios.post(prDhlGlobals.ajax_url, formData, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            })
+                .then(response => {
+                    if (response.data.success) {
+                        // Fetch the preferredDays
+                        fetchPreferredDays();
+                    } else {
+                        setDisplayPreferred(false);
+                        setLoading(false);
+                    }
+                })
+                .catch(error => {
+                    setDisplayPreferred(false);
+                    setLoading(false);
+                });
+        } else {
+            // No shipping address, cannot display preferred services
+            setDisplayPreferred(false);
+            setLoading(false);
+        }
+    }, [shippingAddress, selectedShippingMethods, selectedPaymentMethod]);
+
+    const fetchPreferredDays = () => {
+        setLoading(true);
+        setError('');
+
+        const formData = new URLSearchParams();
+        formData.append('action', 'pr_dhl_get_preferred_days');
+        formData.append('nonce', prDhlGlobals.nonce);
+
+        axios.post(prDhlGlobals.ajax_url, formData, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+        })
+            .then(response => {
+                if (response.data.success) {
+                    setPreferredDays(response.data.data.preferredDays);
+                    setDisplayPreferred(true);
+                    setLoading(false);
+                } else {
+                    setDisplayPreferred(false);
+                    setLoading(false);
+                }
+            })
+            .catch(error => {
+                setDisplayPreferred(false);
+                setError('Error fetching preferred days.');
+                setLoading(false);
+            });
+    };
+
+>>>>>>> 043b43a (Applying fee)
     // useEffect for preferredDay
     useEffect(() => {
         setExtensionData('pr-dhl', 'preferredDay', preferredDay);
         debouncedSetExtensionData('pr-dhl', 'preferredDay', preferredDay);
+<<<<<<< HEAD
     }, [setExtensionData, preferredDay, debouncedSetExtensionData]);
+=======
+
+        // Update customer data to refresh the checkout
+        updateCustomerData();
+
+        // Handle adding/removing the preferred day fee
+        const preferredDayCost = parseFloat(dhlSettings?.dhl_preferred_day_cost || 0);
+
+        // Function to update the cart fee via Store API
+        const updateCartFee = async (feeAmount, feeLabel) => {
+            try {
+                const { extensionCartUpdate } = window.wc.blocksCheckout || {};
+
+                if (typeof extensionCartUpdate === 'function') {
+                    await extensionCartUpdate({
+                        namespace: 'pr-dhl',
+                        data: {
+                            action: 'update_preferred_day_fee',
+                            price: feeAmount,
+                            label: feeLabel,
+                        },
+                    });
+                }
+            } catch (error) {
+                console.error('Error updating cart fee:', error);
+            }
+        };
+
+        if (preferredDay && preferredDay !== '0' && preferredDayCost > 0) {
+            if (!preferredDayFeeApplied) {
+                // Add the fee
+                updateCartFee(preferredDayCost, __('DHL Delivery Day', 'dhl-for-woocommerce'));
+                setPreferredDayFeeApplied(true);
+            }
+        } else {
+            if (preferredDayFeeApplied) {
+                // Remove the fee
+                updateCartFee(0, '');
+                setPreferredDayFeeApplied(false);
+            }
+        }
+    }, [preferredDay]);
+>>>>>>> 043b43a (Applying fee)
 
     // useEffect for preferredLocationNeighbor
     useEffect(() => {
         setExtensionData('pr-dhl', 'preferredLocationNeighbor', preferredLocationNeighbor);
         debouncedSetExtensionData('pr-dhl', 'preferredLocationNeighbor', preferredLocationNeighbor);
+<<<<<<< HEAD
     }, [setExtensionData, preferredLocationNeighbor, debouncedSetExtensionData]);
+=======
+    }, [preferredLocationNeighbor]);
+>>>>>>> 043b43a (Applying fee)
 
     // useEffect for preferredLocation
     useEffect(() => {
         setExtensionData('pr-dhl', 'preferredLocation', preferredLocation);
         debouncedSetExtensionData('pr-dhl', 'preferredLocation', preferredLocation);
+<<<<<<< HEAD
     }, [setExtensionData, preferredLocation, debouncedSetExtensionData]);
+=======
+    }, [preferredLocation]);
+>>>>>>> 043b43a (Applying fee)
 
     // useEffect for preferredNeighborName
     useEffect(() => {
         setExtensionData('pr-dhl', 'preferredNeighborName', preferredNeighborName);
         debouncedSetExtensionData('pr-dhl', 'preferredNeighborName', preferredNeighborName);
+<<<<<<< HEAD
     }, [setExtensionData, preferredNeighborName, debouncedSetExtensionData]);
+=======
+    }, [preferredNeighborName]);
+>>>>>>> 043b43a (Applying fee)
 
     // useEffect for preferredNeighborAddress
     useEffect(() => {
         setExtensionData('pr-dhl', 'preferredNeighborAddress', preferredNeighborAddress);
         debouncedSetExtensionData('pr-dhl', 'preferredNeighborAddress', preferredNeighborAddress);
+<<<<<<< HEAD
     }, [setExtensionData, preferredNeighborAddress, debouncedSetExtensionData]);
+=======
+    }, [preferredNeighborAddress]);
+>>>>>>> 043b43a (Applying fee)
 
     // Handle visibility of drop-off location and neighbor fields based on settings and selection
     const showDropOffLocation = (showRadioControl && preferredLocationNeighbor === 'location') || (!showRadioControl && locationAvailable);
     const showNeighborFields = (showRadioControl && preferredLocationNeighbor === 'neighbor') || (!showRadioControl && neighborAvailable);
 
     // Update the mapping of preferredDayOptions
+<<<<<<< HEAD
     const preferredDayOptions = Object.entries(preferredDays).map(([key, dayName]) => {
         let weekDayNum = '';
         if (key === '0' || key === 'none') {
@@ -84,13 +277,56 @@ export const Block = ({checkoutExtensionData}) => {
             key,
         };
     });
+=======
+    let preferredDayOptions = [];
+    if (preferredDays && Object.keys(preferredDays).length > 0) {
+        preferredDayOptions = Object.entries(preferredDays).map(([key, dayName]) => {
+            let weekDayNum = '';
+            if (key === '0' || key === 'none') {
+                weekDayNum = '-';
+            } else {
+                const date = new Date(key);
+                if (isNaN(date.getTime())) {
+                    weekDayNum = '-';
+                } else {
+                    weekDayNum = date.getDate().toString();
+                }
+            }
+            return {
+                weekDayNum,
+                dayName,
+                key,
+            };
+        });
+    }
+
+    if (loading) {
+        return <Spinner />;
+    }
+
+    if (!displayPreferred) {
+        return null; // Or display a message indicating that preferred services are not available
+    }
+
+    if (error) {
+        return (
+            <Notice status="error" isDismissible={false}>
+                {__(error, 'dhl-for-woocommerce')}
+            </Notice>
+        );
+    }
+>>>>>>> 043b43a (Applying fee)
 
     // Render DHL logo dynamically from the localized data
     return (<table className="dhl-co-table">
         {/* DHL logo */}
         <tr className="dhl-co-tr dhl-co-tr-first">
             <td colSpan="2">
+<<<<<<< HEAD
                 <img src={imgUrl} alt="DHL logo" className="dhl-co-logo"/>
+=======
+                <img src={imgUrl} alt="DHL logo" className="dhl-co-logo" />
+>>>>>>> 043b43a (Applying fee)
             </td>
         </tr>
 
@@ -98,7 +334,11 @@ export const Block = ({checkoutExtensionData}) => {
         <tr className="dhl-co-tr">
             <th colSpan="2">
                 {__('DHL Preferred Delivery. Delivered just as you wish.', 'dhl-for-woocommerce')}
+<<<<<<< HEAD
                 <hr/>
+=======
+                <hr />
+>>>>>>> 043b43a (Applying fee)
             </th>
         </tr>
 
@@ -107,7 +347,10 @@ export const Block = ({checkoutExtensionData}) => {
                 {__('Thanks to the flexible recipient services of DHL Preferred Delivery, you decide when and where you want to receive your parcels. Please choose your preferred delivery option.', 'dhl-for-woocommerce')}
             </td>
         </tr>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 043b43a (Applying fee)
         {/* Preferred Delivery Day */}
         {dhlSettings?.dhl_preferred_day === 'yes' && (<>
             <tr className="dhl-co-tr">
@@ -117,13 +360,31 @@ export const Block = ({checkoutExtensionData}) => {
                         className="dhl-tooltip"
                         title={__('Choose one of the displayed days as your preferred day for your parcel delivery. Other days are not possible due to delivery processes.', 'dhl-for-woocommerce')}
                     >
+<<<<<<< HEAD
                 ?
             </span>
+=======
+                        ?
+                    </span>
+>>>>>>> 043b43a (Applying fee)
                 </th>
             </tr>
             <tr className="dhl-co-tr">
                 <td colSpan="2">
+<<<<<<< HEAD
                     {__('There is a surcharge for this service.', 'dhl-for-woocommerce')}
+=======
+                    {dhlSettings?.dhl_preferred_day_cost && parseFloat(dhlSettings.dhl_preferred_day_cost) > 0 ? (
+                        <>
+                            {sprintf(
+                                __('There is a surcharge of %s incl. VAT for this service.*', 'dhl-for-woocommerce'),
+                                wcPrice(parseFloat(dhlSettings.dhl_preferred_day_cost))
+                            )}
+                        </>
+                    ) : (
+                        __('There is a surcharge for this service.', 'dhl-for-woocommerce')
+                    )}
+>>>>>>> 043b43a (Applying fee)
                 </td>
             </tr>
             <tr className="dhl-co-tr">
@@ -166,10 +427,18 @@ export const Block = ({checkoutExtensionData}) => {
                 <td className="dhl-pt">
                     <RadioControl
                         selected={preferredLocationNeighbor}
+<<<<<<< HEAD
                         options={[{label: 'None', value: 'none'}, {
                             label: 'Location',
                             value: 'location'
                         }, {label: 'Neighbor', value: 'neighbor'},]}
+=======
+                        options={[
+                            { label: __('None', 'dhl-for-woocommerce'), value: 'none' },
+                            { label: __('Location', 'dhl-for-woocommerce'), value: 'location' },
+                            { label: __('Neighbor', 'dhl-for-woocommerce'), value: 'neighbor' },
+                        ]}
+>>>>>>> 043b43a (Applying fee)
                         onChange={(value) => setPreferredLocationNeighbor(value)}
                     />
                 </td>
@@ -229,3 +498,28 @@ export const Block = ({checkoutExtensionData}) => {
         </>)}
     </table>);
 };
+<<<<<<< HEAD
+=======
+
+// Helper function to format price
+function wcPrice(amount) {
+    // Assuming you have access to WooCommerce currency settings
+    const currencySymbol = prDhlGlobals.currencySymbol || '€';
+    const currencyPosition = prDhlGlobals.currencyPosition || 'left';
+    const decimals = prDhlGlobals.currencyDecimals || 2;
+    const decimalSeparator = prDhlGlobals.currencyDecimalSeparator || '.';
+    const thousandSeparator = prDhlGlobals.currencyThousandSeparator || ',';
+
+    amount = parseFloat(amount).toFixed(decimals);
+
+    const parts = amount.toString().split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousandSeparator);
+    const formattedAmount = parts.join(decimalSeparator);
+
+    if (currencyPosition === 'left') {
+        return currencySymbol + formattedAmount;
+    } else {
+        return formattedAmount + currencySymbol;
+    }
+}
+>>>>>>> 043b43a (Applying fee)

@@ -205,17 +205,16 @@ class PR_DHL_Front_End_Paket {
 		}
 	}
 
-	protected function validate_is_german_customer() {
-		// WC 3.0 comaptibilty
-		if ( defined( 'WOOCOMMERCE_VERSION' ) && version_compare( WOOCOMMERCE_VERSION, '3.0', '>=' ) ) {
-			$customer_country = WC()->customer->get_billing_country();
-		} else {
-			$customer_country = WC()->customer->get_country();
-		}
-
+	protected function validate_is_german_customer( $customer_country ) {
 		$base_country_code = PR_DHL()->get_base_country();
-
-		$display_preferred = false;
+		if(empty($customer_country)){
+			// WC 3.0 comaptibilty
+			if ( defined( 'WOOCOMMERCE_VERSION' ) && version_compare( WOOCOMMERCE_VERSION, '3.0', '>=' ) ) {
+				$customer_country = WC()->customer->get_billing_country();
+			} else {
+				$customer_country = WC()->customer->get_country();
+			}
+		}
 		// Preferred options are only for Germany customers
 		if( $base_country_code == 'DE' && $customer_country == 'DE' ) {
 			return true;
@@ -224,14 +223,20 @@ class PR_DHL_Front_End_Paket {
 		}
 	}
 
+<<<<<<< HEAD
 	public function validate_extra_services_available( $check_day_transfer = false ) {
 		// woocommerce_form_field('pr_dhl_paket_preferred_location');
+=======
+
+	public function validate_extra_services_available( $check_day_transfer = false, $customer_country = '' ) {
+		$display_preferred = false;
+>>>>>>> 043b43a (Applying fee)
 		$chosen_shipping_methods = WC()->session->get( 'chosen_shipping_methods' );
 		$chosen_payment_method = WC()->session->get( 'chosen_payment_method' );
 
-		$display_preferred = false;
+
 		// Preferred options are only for Germany customers
-		if( $this->validate_is_german_customer() ) {
+		if( $this->validate_is_german_customer( $customer_country ) ) {
 
 			if ($check_day_transfer) {
 				foreach ( WC()->cart->get_cart() as $cart_item_key => $values ) {
@@ -244,22 +249,20 @@ class PR_DHL_Front_End_Paket {
 				}
 			}
 
-
 			if( ! isset( $this->shipping_dhl_settings ) || empty( $this->shipping_dhl_settings['dhl_shipping_methods'] ) ) {
 				throw new Exception( __( 'No shipping method enabled.', 'dhl-for-woocommerce' ));
 			}
 
 			$wc_methods_dhl = $this->shipping_dhl_settings['dhl_shipping_methods'];
-			if( isset( $chosen_shipping_methods ) ) {
+
+			if( isset( $chosen_shipping_methods ) && ! empty( $chosen_shipping_methods ) ) {
 
 				if( is_array( $chosen_shipping_methods ) ) {
-
 					foreach ($chosen_shipping_methods as $key => $value) {
 
 						$ship_method_slug = $this->get_shipping_method_slug( $value );
 
 						if ( in_array( $ship_method_slug, $wc_methods_dhl ) ) {
-
 							$display_preferred = true;
 							break;
 						}
@@ -274,18 +277,14 @@ class PR_DHL_Front_End_Paket {
 			}
 
 			$wc_payment_dhl = $this->shipping_dhl_settings['dhl_payment_gateway'];
-			if( isset( $chosen_payment_method ) && ! empty( $wc_payment_dhl) ) {
+			if( isset( $chosen_payment_method ) && ! empty( $wc_payment_dhl ) ) {
 				if( is_array( $chosen_payment_method ) ) {
-
 					foreach ($chosen_payment_method as $key => $value) {
-						// $ship_method_slug = $this->get_shipping_method_slug( $value );
-
 						if ( in_array( $value, $wc_payment_dhl ) ) {
 							throw new Exception( __( 'Payment gateway excluded.', 'dhl-for-woocommerce' ));
 						}
 					}
 				} else {
-					// $ship_method_slug = $this->get_shipping_method_slug( $chosen_payment_method );
 					if ( in_array( $chosen_payment_method, $wc_payment_dhl ) ) {
 						throw new Exception( __( 'Payment gateway excluded.', 'dhl-for-woocommerce' ));
 					}
@@ -810,7 +809,7 @@ class PR_DHL_Front_End_Paket {
 
 	public function add_email_notification_checkbox(){
 
-		if( $this->validate_is_german_customer() ) {
+		if( $this->validate_is_german_customer('') ) {
 			woocommerce_form_field('pr_dhl_email_notification', array(
 				'type' => 'checkbox',
 				'class' => array( 'pr-dhl-email-notification form-row-wide' ),

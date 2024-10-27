@@ -21,11 +21,18 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 		/**
 		 * Bootstraps the class and hooks required data.
 		 */
-		public function init() {
+		public function __construct() {
 			add_action( 'woocommerce_store_api_checkout_update_order_from_request', [
 				$this,
 				'save_dhl_checkout_fields'
 			], 10, 2 );
+
+
+			// Register the update callback when WooCommerce Blocks is loaded
+			add_action( 'init', [ $this, 'register_store_api_callback' ] );
+
+			// Register fee calculation
+			add_action( 'woocommerce_cart_calculate_fees', [ $this, 'add_preferred_day_fee' ] );
 
 		}
 
@@ -69,6 +76,64 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 			}
 		}
 
+		/**
+		 * Register the update callback with WooCommerce Store API
+		 */
+		public function register_store_api_callback() {
+			if ( function_exists( 'woocommerce_store_api_register_update_callback' ) ) {
+				woocommerce_store_api_register_update_callback(
+					array(
+						'namespace' => $this->name,
+						'callback'  => [ $this, 'store_api_callback' ],
+					)
+				);
+			}
+		}
+
+		/**
+		 * Callback function for the Store API update
+		 *
+		 * @param array $data Data sent from the client.
+		 */
+		public function store_api_callback( $data ) {
+			if ( isset( $data['action'] ) && 'update_preferred_day_fee' === $data['action'] ) {
+				$price = isset( $data['price'] ) ? floatval( $data['price'] ) : 0;
+				$label = isset( $data['label'] ) ? sanitize_text_field( $data['label'] ) : '';
+
+				// Store the fee amount and label in session
+				WC()->session->set( 'pr_dhl_preferred_day_fee', $price );
+				WC()->session->set( 'pr_dhl_preferred_day_label', $label );
+			}
+		}
+
+		/**
+		 * Adds the preferred day fee to the WooCommerce cart.
+		 *
+		 * @param \WC_Cart $cart The WooCommerce cart object.
+		 */
+		public function add_preferred_day_fee( $cart ) {
+			if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
+				return;
+			}
+
+			// Get the fee amount and label from session
+			$fee_amount = WC()->session->get( 'pr_dhl_preferred_day_fee', 0 );
+			$fee_label  = WC()->session->get( 'pr_dhl_preferred_day_label', '' );
+
+			// Remove existing DHL fees if they exist
+			$new_fees = array();
+			foreach ( $cart->get_fees() as $fee ) {
+				if ( strpos( $fee->name, 'DHL' ) === false ) {
+					$new_fees[] = $fee;
+				}
+			}
+			$cart->fees_api()->set_fees( $new_fees );
+
+			if ( $fee_amount > 0 && ! empty( $fee_label ) ) {
+				// Add the fee to the cart
+				$cart->add_fee( $fee_label, $fee_amount, true, '' );
+			}
+		}
 
 	}
 
