@@ -47,7 +47,7 @@ class Client extends API_Client {
 
 		throw new Exception(
 			// Translators: %s is replaced with the error message returned from the API.
-			sprintf( esc_html__( 'API error: %s', 'dhl-for-woocommerce' ), $message )
+			sprintf( esc_html__( 'API error: %s', 'dhl-for-woocommerce' ), esc_html( $message ) )
 		);
 	}
 

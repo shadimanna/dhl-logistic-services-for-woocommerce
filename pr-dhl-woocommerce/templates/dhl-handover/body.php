@@ -19,32 +19,32 @@ $date = $t["mday"] . "-" . $t["month"] . "-" . $t["year"] . " " . $t["hours"] . 
   <a class="print-button" href="#" onclick="window.print()"><?php echo esc_html__( 'Print', 'dhl-for-woocommerce' ); ?></a>
 
   <header class="main-header">
-    <img src="<?php echo $logo_url; ?>" alt="DHL logo" class="logo">
+    <img src="<?php echo esc_url( $logo_url ); ?>" alt="DHL logo" class="logo">
     <div class="document-title">
       <h1><?php echo esc_html__("Handover Note", 'dhl-for-woocommerce'); ?></h1>
     </div>
     <div class="header-barcode">
-      <p><?php echo $handover_id; ?></p>
-      <?php echo PR_DHL()->generate_barcode( $handover_id ); ?>
+      <p><?php echo esc_attr( $handover_id ); ?></p>
+      <?php echo esc_html( PR_DHL()->generate_barcode( $handover_id ) ); ?>
     </div>
   </header>
 
   <section>
     <div class="section-header">
-      <span class="num">1</span> <?php echo esc_html__("Pick-up Account Details", 'dhl-for-woocommerce'); ?>
+      <span class="num">1</span> <?php echo esc_html__( "Pick-up Account Details", 'dhl-for-woocommerce' ); ?>
     </div>
     <div class="section-body section-1">
 
       <div class="sub-section">
-        <div class="name"><?php echo esc_html__("Pick-up Name", 'dhl-for-woocommerce'); ?></div>
-        <div class="box"><?php echo $shipping_dhl_settings['dhl_pickup_name']; ?></div>
+        <div class="name"><?php echo esc_html__( "Pick-up Name", 'dhl-for-woocommerce' ); ?></div>
+        <div class="box"><?php echo esc_html( $shipping_dhl_settings['dhl_pickup_name'] ); ?></div>
       </div>
 
       <div class="sub-section">
-        <div class="name"><?php echo esc_html__("Account No", 'dhl-for-woocommerce'); ?></div>
+        <div class="name"><?php echo esc_html__( "Account No", 'dhl-for-woocommerce' ); ?></div>
         <div>
-          <p><?php echo $shipping_dhl_settings['dhl_pickup']; ?></p>
-           <?php echo PR_DHL()->generate_barcode( $shipping_dhl_settings['dhl_pickup'] ); ?>
+          <p><?php echo esc_html( $shipping_dhl_settings['dhl_pickup'] ); ?></p>
+           <?php echo esc_html( PR_DHL()->generate_barcode( $shipping_dhl_settings['dhl_pickup'] ) ); ?>
         </div>
       </div>
 
@@ -57,7 +57,7 @@ $date = $t["mday"] . "-" . $t["month"] . "-" . $t["year"] . " " . $t["hours"] . 
     </div>
     <div class="section-body section-2">
       <div class="name"><?php echo esc_html__( 'Shipping Service(s)', 'dhl-for-woocommerce' ); ?></div>
-      <div class="box"><?php echo $shipping_services; ?></div>
+      <div class="box"><?php echo esc_html( $shipping_services ); ?></div>
     </div>
   </section>
 
@@ -71,7 +71,7 @@ $date = $t["mday"] . "-" . $t["month"] . "-" . $t["year"] . " " . $t["hours"] . 
         <div class="row-title"><?php echo esc_html__( 'Total', 'dhl-for-woocommerce' ); ?></div>
         <div class="item">
           <p><?php echo esc_html__( 'No. of items', 'dhl-for-woocommerce' ); ?></p>
-          <div class="box"><?php echo $items_qty; ?></div>
+          <div class="box"><?php echo esc_attr( $items_qty ); ?></div>
         </div>
         <div class="item">
           <p>
@@ -80,7 +80,7 @@ $date = $t["mday"] . "-" . $t["month"] . "-" . $t["year"] . " " . $t["hours"] . 
             echo sprintf( esc_html__( 'Weight (%s)', 'dhl-for-woocommerce' ), esc_attr( $weight_units ) ); 
             ?>
           </p>
-          <div class="box"><?php echo $total_weight; ?></div>
+          <div class="box"><?php echo esc_attr( $total_weight ); ?></div>
         </div>
         <div class="item">
           <p><?php echo esc_html__( 'No. of Receptacles', 'dhl-for-woocommerce' ); ?></p>
@@ -100,7 +100,7 @@ $date = $t["mday"] . "-" . $t["month"] . "-" . $t["year"] . " " . $t["hours"] . 
         </div>
         <div class="dist-item">
           <p><?php echo esc_html__( 'DHL Distribution centre', 'dhl-for-woocommerce' ); ?></p>
-          <div class="box"><?php echo $shipping_dhl_settings['dhl_distribution']; ?></div>
+          <div class="box"><?php echo esc_html( $shipping_dhl_settings['dhl_distribution'] ); ?></div>
         </div>
       </div>
 
@@ -121,7 +121,7 @@ $date = $t["mday"] . "-" . $t["month"] . "-" . $t["year"] . " " . $t["hours"] . 
       <div class="sub-section">
         <div><?php echo esc_html__( 'Signature', 'dhl-for-woocommerce' ); ?></div>
         <div><?php //echo esc_html__("UBI Logistics (China)", 'dhl-for-woocommerce'); ?></div>
-        <div><?php echo esc_html__( 'Date', 'dhl-for-woocommerce' ); ?> <?php echo $date; ?></div>
+        <div><?php echo esc_html__( 'Date', 'dhl-for-woocommerce' ); ?> <?php echo esc_html( $date ); ?></div>
       </div>
     </div>
   </section>

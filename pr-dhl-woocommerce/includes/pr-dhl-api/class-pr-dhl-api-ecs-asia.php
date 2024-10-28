@@ -490,7 +490,7 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		$label_path = $label_info['label_path'];
 
 		if ( file_exists( $label_path ) ) {
-			$res = unlink( $label_path );
+			$res = wp_delete_file( $label_path );
 
 			if ( ! $res ) {
 				throw new Exception( esc_html__( 'DHL Label could not be deleted!', 'dhl-for-woocommerce' ) );
@@ -641,11 +641,29 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 			throw new Exception( esc_html__( 'Invalid file path!', 'dhl-for-woocommerce' ) );
 		}
 
-		$file_ret = file_put_contents( $file_info->path, $data );
+		// $file_ret = file_put_contents( $file_info->path, $data );
+
+		global $wp_filesystem;
+
+		// Initialize WP_Filesystem
+		if ( ! function_exists( 'WP_Filesystem' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+
+		WP_Filesystem();
+
+		// Check if WP_Filesystem object is properly initialized
+		if ( empty( $wp_filesystem ) ) {
+			throw new Exception( esc_html__( 'DHL label file cannot be saved due to WP Filesystem initialization failure!', 'dhl-for-woocommerce' ) );
+		}
+
+		// Write the data to the file using WP_Filesystem
+		$file_ret = $wp_filesystem->put_contents( $file_info->path, $data, FS_CHMOD_FILE );
 
 		if ( empty( $file_ret ) ) {
 			throw new Exception( esc_html__( 'DHL label file cannot be saved!', 'dhl-for-woocommerce' ) );
 		}
+
 
 		return $file_info;
 	}
@@ -671,7 +689,7 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 		}
 
 		// Attempt to delete the file
-		$res = unlink( $file_info->path );
+		$res = wp_delete_file( $file_info->path );
 
 		// Throw error if the file could not be deleted
 		if (!$res) {

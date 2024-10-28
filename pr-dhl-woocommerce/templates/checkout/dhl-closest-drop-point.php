@@ -4,7 +4,7 @@ defined( 'ABSPATH' ) or exit;
 $logo_url = PR_DHL_PLUGIN_DIR_URL . '/assets/img/dhl-official.png';
 ?>
 <tr class="dhl-co-tr dhl-co-tr-fist">
-    <td colspan="2"><img src="<?php echo $logo_url; ?>" alt="DHL logo" class="dhl-co-logo"></td>
+    <td colspan="2"><img src="<?php echo esc_url( $logo_url ); ?>" alt="DHL logo" class="dhl-co-logo"></td>
 </tr>
 
 <tr class="dhl-co-tr">

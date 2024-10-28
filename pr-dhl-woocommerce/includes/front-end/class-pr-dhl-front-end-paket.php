@@ -558,7 +558,7 @@ class PR_DHL_Front_End_Paket {
 		$button_text = $this->get_branch_location_text();
 
 		$dhl_logo = PR_DHL_PLUGIN_DIR_URL . '/assets/img/dhl-official.png';
-		echo '<a data-fancybox id="dhl_parcel_finder" class="button" data-src="#dhl_parcel_finder_form" href="javascript:;">' . $button_text . '<img src="' . $dhl_logo .'" class="dhl-co-logo"></a>';
+		echo '<a data-fancybox id="dhl_parcel_finder" class="button" data-src="#dhl_parcel_finder_form" href="javascript:;">' . esc_attr( $button_text ) . '<img src="' . esc_url( $dhl_logo ) .'" class="dhl-co-logo"></a>';
 
 		// echo '<a id="dhl_parcel_finder_test" class="button" href="#dhl_parcel_finder_form_test">' . esc_html__('Parcel Finder TEST', 'dhl-for-woocommerce') . '</a>';
 		// echo '<div id="dhl_parcel_finder_form_test">TEST TEST</div>';

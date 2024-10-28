@@ -530,7 +530,7 @@ abstract class PR_DHL_WC_Order {
 		$tracking_details = array(
 			'carrier' 			=> $this->carrier,
 			'tracking_number' 	=> $tracking_items['tracking_number'],
-			'ship_date' 		=> date( "Y-m-d", time() )
+			'ship_date' 		=> gmdate( "Y-m-d", time() )
 		);
 
 		// Primarily added for "Advanced Tracking" plugin integration
@@ -1391,7 +1391,7 @@ abstract class PR_DHL_WC_Order {
 
 			// You can use home_url() here as well, it really doesn't matter
 			// as we're only after for the "scheme" and "host" info.
-			$result = parse_url( site_url() );
+			$result = wp_parse_url( site_url() );
 
 			if ( !empty( $result['scheme'] ) && !empty( $result['host'] ) ) {
 				return $result['scheme'] . '://' . $result['host'] . $endpoint_path;
@@ -1581,28 +1581,44 @@ abstract class PR_DHL_WC_Order {
 	 * @return boolean|void
 	 */
 	protected function download_label( $file_path ) {
-		if ( !empty( $file_path ) && is_string( $file_path ) && file_exists( $file_path ) ) {
+		global $wp_filesystem;
+	
+		// Initialize WP_Filesystem
+		if ( ! function_exists( 'WP_Filesystem' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+	
+		WP_Filesystem();
+	
+		// Check if the WP_Filesystem object is properly initialized
+		if ( empty( $wp_filesystem ) ) {
+			return false;
+		}
+	
+		if ( ! empty( $file_path ) && is_string( $file_path ) && $wp_filesystem->exists( $file_path ) ) {
 			// Check if buffer exists, then flush any buffered output to prevent it from being included in the file's content
 			if ( ob_get_contents() ) {
 				ob_clean();
 			}
-
+	
 			$filename = basename( $file_path );
-
-		    header( 'Content-Description: File Transfer' );
-		    header( 'Content-Type: application/octet-stream' );
-		    header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
-		    header( 'Expires: 0' );
-		    header( 'Cache-Control: must-revalidate' );
-		    header( 'Pragma: public' );
-		    header( 'Content-Length: ' . filesize( $file_path ) );
-
-		    readfile( $file_path );
-		    exit;
+	
+			header( 'Content-Description: File Transfer' );
+			header( 'Content-Type: application/octet-stream' );
+			header( 'Content-Disposition: attachment; filename="' . esc_attr( $filename ) . '"' );
+			header( 'Expires: 0' );
+			header( 'Cache-Control: must-revalidate' );
+			header( 'Pragma: public' );
+			header( 'Content-Length: ' . $wp_filesystem->size( $file_path ) );
+	
+			// Read the file content using WP_Filesystem
+			echo $wp_filesystem->get_contents( $file_path );
+			exit;
 		} else {
 			return false;
 		}
 	}
+	
 }
 
 endif;

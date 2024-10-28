@@ -122,7 +122,7 @@ class Client extends API_Client {
 				// Translators: %s is replaced with the error details returned from the API.
 				esc_html__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
 				esc_html( $this->generate_error_details( $response->body ) )
-			);
+			)
 		);
 	}
 
