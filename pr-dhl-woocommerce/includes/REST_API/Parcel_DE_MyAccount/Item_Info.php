@@ -114,7 +114,7 @@ class Item_Info {
 			),
             'dhl_product'       => array(
 				'rename' => 'product',
-				'error'  => __( 'DHL "Product" is empty!', 'dhl-for-woocommerce' ),
+				'error'  => esc_html__( 'DHL "Product" is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $product ) use ($self) {
 
 					$product_info 	= explode( '-', $product );
@@ -128,15 +128,15 @@ class Item_Info {
 				'default'  => 'PRIORITY',
 				'validate' => function( $level ) {
 					if ( $level !== 'STANDARD' && $level !== 'PRIORITY' && $level !== 'REGISTERED' ) {
-						throw new Exception( __( 'Order "Service Level" is invalid', 'dhl-for-woocommerce' ) );
+						throw new Exception( esc_html__( 'Order "Service Level" is invalid', 'dhl-for-woocommerce' ) );
 					}
 				},
 			),
 			'weight'            => array(
-				'error'    => __( 'Order "Weight" is empty!', 'dhl-for-woocommerce' ),
+				'error'    => esc_html__( 'Order "Weight" is empty!', 'dhl-for-woocommerce' ),
 				'validate' => function( $weight ) {
 					if ( ! is_numeric( $weight ) ) {
-						throw new Exception( __( 'The order "Weight" must be a number', 'dhl-for-woocommerce' ) );
+						throw new Exception( esc_html__( 'The order "Weight" must be a number', 'dhl-for-woocommerce' ) );
 					}
 				},
 				'sanitize' => function ( $weight ) use ($self) {
@@ -147,14 +147,14 @@ class Item_Info {
 				}
 			),
 			'currency'          => array(
-				'error' => __( 'Shop "Currency" is empty!', 'dhl-for-woocommerce' ),
+				'error' => esc_html__( 'Shop "Currency" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'total_value'       => array(
 				'rename' => 'value',
-				'error'  => __( 'Shipment "Value" is empty!', 'dhl-for-woocommerce' ),
+				'error'  => esc_html__( 'Shipment "Value" is empty!', 'dhl-for-woocommerce' ),
 				'validate' => function( $value ) {
 					if ( ! is_numeric( $value ) ) {
-						throw new Exception( __( 'The order "value" must be a number', 'dhl-for-woocommerce' ) );
+						throw new Exception( esc_html__( 'The order "value" must be a number', 'dhl-for-woocommerce' ) );
 					}
 				},
 				'sanitize' => function( $value ) use ($self) {
@@ -180,11 +180,11 @@ class Item_Info {
 					if( !empty( $value ) ){
 						
 						if( !ctype_alnum( $value ) ){
-							throw new Exception( __( 'The importer customs reference "value" must be an alphanumeric', 'dhl-for-woocommerce' ) );
+							throw new Exception( esc_html__( 'The importer customs reference "value" must be an alphanumeric', 'dhl-for-woocommerce' ) );
 						}
 
 						if( strlen( $value ) > 35 ){
-							throw new Exception( __( 'The importer customs reference "value" must be between 1 and 35 characters long', 'dhl-for-woocommerce' ) );
+							throw new Exception( esc_html__( 'The importer customs reference "value" must be between 1 and 35 characters long', 'dhl-for-woocommerce' ) );
 						}
 						
 					}
@@ -197,11 +197,11 @@ class Item_Info {
 					if( !empty( $value ) ){
 
 						if( !ctype_alnum( $value ) ){
-							throw new Exception( __( 'The sender customs reference "value" must be an alphanumeric', 'dhl-for-woocommerce' ) );
+							throw new Exception( esc_html__( 'The sender customs reference "value" must be an alphanumeric', 'dhl-for-woocommerce' ) );
 						}
 	
 						if( strlen( $value ) > 35 ){
-							throw new Exception( __( 'The sender customs reference "value" must be between 1 and 35 characters long', 'dhl-for-woocommerce' ) );
+							throw new Exception( esc_html__( 'The sender customs reference "value" must be between 1 and 35 characters long', 'dhl-for-woocommerce' ) );
 						}
 
 					}
@@ -226,7 +226,7 @@ class Item_Info {
 		return array(
 			'name'      => array(
 				'default' => '',
-				'error'  => __( 'Recipient is empty!', 'dhl-for-woocommerce' ),
+				'error'  => esc_html__( 'Recipient is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function( $name ) use ($self) {
 
 					return $self->string_length_sanitization( $name, 30 );
@@ -243,13 +243,13 @@ class Item_Info {
 				'default' => '',
 			),
 			'address_1' => array(
-				'error' => __( 'Shipping "Address 1" is empty!', 'dhl-for-woocommerce' ),
+				'error' => esc_html__( 'Shipping "Address 1" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'address_2' => array(
 				'default' => '',
 			),
 			'city'      => array(
-				'error' => __( 'Shipping "City" is empty!', 'dhl-for-woocommerce' ),
+				'error' => esc_html__( 'Shipping "City" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'postcode'  => array(
 				'default' => '',
@@ -258,7 +258,7 @@ class Item_Info {
 				'default' => '',
 			),
 			'country'   => array(
-				'error' => __( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' ),
+				'error' => esc_html__( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' ),
 			),
 		);
 	}
@@ -288,7 +288,7 @@ class Item_Info {
 
 					if ( $length < 4 || $length > 20 ) {
 						throw new Exception(
-							__( 'Item HS Code must be between 4 and 20 characters long', 'dhl-for-woocommerce' )
+							esc_html__( 'Item HS Code must be between 4 and 20 characters long', 'dhl-for-woocommerce' )
 						);
 					}
 				},
@@ -296,7 +296,7 @@ class Item_Info {
 			'item_description' => array(
 				'rename' => 'description',
 				'default' => '',
-				'sanitize' => function( $description ) use ($self) {
+				'sanitize' => function( $description ) use ( $self ) {
 
 					return $self->string_length_sanitization( $description, 33 );
 				}
@@ -304,7 +304,7 @@ class Item_Info {
 			'item_export' => array(
 				'rename' => 'description_export',
 				'default' => '',
-				'sanitize' => function( $description_export ) use ($self) {
+				'sanitize' => function( $description_export ) use ( $self ) {
 
 					return $self->string_length_sanitization( $description_export, 33 );
 				}
@@ -318,7 +318,7 @@ class Item_Info {
 			'item_value'       => array(
 				'rename' => 'value',
 				'default' => 0,
-				'sanitize' => function( $value, $args ) use ($self) {
+				'sanitize' => function( $value, $args ) use ( $self ) {
 					
 					$qty 			= isset( $args['qty'] ) && is_numeric( $args['qty'] )? floatval( $args['qty'] ) : 1;
 					$total_value 	= floatval( $value ) * $qty;
@@ -336,7 +336,7 @@ class Item_Info {
 			'item_weight'      => array(
 				'rename' => 'weight',
 				'default' => 1,
-				'sanitize' => function ( $weight ) use ($self) {
+				'sanitize' => function ( $weight ) use ( $self ) {
 
 					$weight = $self->maybe_convert_to_grams( $weight, $self->weightUom );
 
@@ -376,7 +376,7 @@ class Item_Info {
 
 	protected function float_round_sanitization( $float, $numcomma ) {
 
-		$float = round( floatval( $float ), $numcomma);
+		$float = round( floatval( $float ), $numcomma );
 
         return number_format($float, 2, '.', '');
 	}
@@ -390,7 +390,7 @@ class Item_Info {
 			return $string;
 		}
 
-		return substr( $string, 0, ( $max-1 ));
+		return substr( $string, 0, ( $max-1 ) );
 	}
 
 }

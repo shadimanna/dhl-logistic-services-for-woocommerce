@@ -8,15 +8,15 @@ $logo_url = PR_DHL_PLUGIN_DIR_URL . '/assets/img/dhl-official.png';
 </tr>
 
 <tr class="dhl-co-tr">
-    <th colspan="2"><?php _e('Closest drop-off point', 'dhl-for-woocommerce'); ?><hr></th>
+    <th colspan="2"><?php esc_html_e( 'Closest drop-off point', 'dhl-for-woocommerce' ); ?><hr></th>
 </tr>
 
 <tr class="dhl-co-tr">
-    <td colspan="2"><?php _e('Preferred delivery to a parcel shop/parcel locker close to the specified home address', 'dhl-for-woocommerce'); ?></td>
+    <td colspan="2"><?php esc_html_e( 'Preferred delivery to a parcel shop/parcel locker close to the specified home address', 'dhl-for-woocommerce' ); ?></td>
 </tr>
 
 <tr class="dhl-co-tr">
-    <th class="dhl-cdp"><?php _e('Delivery option', 'dhl-for-woocommerce'); ?></th>
+    <th class="dhl-cdp"><?php esc_html_e( 'Delivery option', 'dhl-for-woocommerce' ); ?></th>
     <td class="dhl-cdp">
         <ul class="dhl-preferred-location">
             <li>
@@ -27,7 +27,7 @@ $logo_url = PR_DHL_PLUGIN_DIR_URL . '/assets/img/dhl-official.png';
                         data-index="0" id="dhl_home_deliver_option"
                         value="no"
                         class="" >
-                <label for="dhl_home_deliver_option"><?php _e('Home delivery', 'dhl-for-woocommerce'); ?></label>
+                <label for="dhl_home_deliver_option"><?php esc_html_e( 'Home delivery', 'dhl-for-woocommerce' ); ?></label>
             </li>
             <li>
                 <input
@@ -36,7 +36,7 @@ $logo_url = PR_DHL_PLUGIN_DIR_URL . '/assets/img/dhl-official.png';
                         data-index="0" id="dhl_cdp_option"
                         value="yes"
                         class="" >
-                <label for="dhl_cdp_option"><?php _e('Closest Drop Point', 'dhl-for-woocommerce'); ?></label>
+                <label for="dhl_cdp_option"><?php esc_html_e( 'Closest Drop Point', 'dhl-for-woocommerce' ); ?></label>
             </li>
         </ul>
     </td>

@@ -44,8 +44,8 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
 
         ob_start();
         ?>
-        <div class="<?php echo $type ?>">
-            <p><?php echo $message ?></p>
+        <div class="<?php echo esc_html( $type ) ?>">
+            <p><?php echo esc_html( $message ) ?></p>
         </div>
         <?php
 
@@ -309,7 +309,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
         <tr valign="top">
             <th scope="row" class="titledesc">
                 <label for="<?php echo esc_attr( $field ); ?>"><?php echo wp_kses_post( $data['title'] ); ?></label>
-                <?php echo $this->get_tooltip_html( $data ); ?>
+                <?php echo wp_kses_post( $this->get_tooltip_html( $data ) ); ?>
             </th>
             <td class="forminp">
                 <fieldset>
@@ -319,10 +319,10 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
                             name="<?php echo esc_attr( $field ); ?>" id="<?php echo esc_attr( $field ); ?>"
                             style="<?php echo esc_attr(
                                 $data['css']
-                            ); ?>" <?php echo $this->get_custom_attribute_html( $data ); ?>><?php echo wp_kses_post(
+                            ); ?>" <?php echo wp_kses_post( $this->get_custom_attribute_html( $data ) ); ?>><?php echo wp_kses_post(
                             $data['title']
                         ); ?></button>
-                    <?php echo $this->get_description_html( $data ); ?>
+                    <?php echo wp_kses_post( $this->get_description_html( $data ) ); ?>
                 </fieldset>
             </td>
         </tr>
@@ -348,8 +348,8 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
 				if( empty( $value ) ){
 
 					$msg = esc_html__( 'Contact Phone Number required, please add in settings.', 'dhl-for-woocommerce' );
-					echo $this->get_message( $msg );
-					throw new Exception( $msg );
+					echo esc_html( $this->get_message( $msg ) );
+					throw new Exception( esc_html( $msg ) );
 					break;
 				}
 			}
@@ -370,7 +370,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
 			$dhl_obj->dhl_reset_connection();
         } catch ( Exception $e ) {
 
-            echo $this->get_message( esc_html__( 'Could not reset connection: ', 'dhl-for-woocommerce' ) . $e->getMessage() );
+            echo esc_html( $this->get_message( esc_html__( 'Could not reset connection: ', 'dhl-for-woocommerce' ) . esc_html( $e->getMessage() ) ) );
             // throw $e;
         }
 		

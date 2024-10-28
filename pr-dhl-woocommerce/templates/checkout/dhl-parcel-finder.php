@@ -44,10 +44,10 @@ try {
 				<label for="dhl_branch_filter"><?php esc_attr_e( 'Branch', 'dhl-for-woocommerce' ); ?></label>
                 <span class="parcel-wrap">
                     <?php if( $parcelshop_enabled ) : ?>
-                        <span class="icon" style="background-image: url('<?php echo $parcelshop_img; ?>');"></span>
+                        <span class="icon" style="background-image: url( '<?php echo $parcelshop_img; ?>' );"></span>
                     <?php endif; ?>
                     <?php if( $post_office_enabled ) : ?>
-                        <span class="icon" style="background-image: url('<?php echo $post_office_img; ?>');"></span>
+                        <span class="icon" style="background-image: url( '<?php echo $post_office_img; ?>' );"></span>
                     <?php endif; ?>
                 </span>
 			</p>
@@ -60,7 +60,7 @@ try {
 		
 		<input type="hidden" name="dhl_parcelfinder_country" id="dhl_parcelfinder_country" />
 
-		<input type="hidden" name="dhl_parcelfinder_nonce" value="<?php echo wp_create_nonce('dhl_parcelfinder') ?>" />
+		<input type="hidden" name="dhl_parcelfinder_nonce" value="<?php echo wp_create_nonce( 'dhl_parcelfinder' ) ?>" />
 
 		<div class="clear"></div>
 

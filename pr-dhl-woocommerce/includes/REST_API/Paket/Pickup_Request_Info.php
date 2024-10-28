@@ -112,10 +112,10 @@ class Pickup_Request_Info {
 			'dhl_pickup_date' => $args['dhl_pickup_date']
 		);
 
-		$this->customer_details 			= Args_Parser::parse_args( $args, $this->get_customer_details_schema() );
-		$this->pickup_contact 			= Args_Parser::parse_args( $settings, $this->get_pickup_contact_schema() );
-		$this->pickup_address 			= Args_Parser::parse_args( $settings, $this->get_pickup_address_schema() );
-		$this->pickup_details 		= Args_Parser::parse_args( $pickup_info, $this->get_pickup_info_schema() );
+		$this->customer_details = Args_Parser::parse_args( $args, $this->get_customer_details_schema() );
+		$this->pickup_contact 	= Args_Parser::parse_args( $settings, $this->get_pickup_contact_schema() );
+		$this->pickup_address 	= Args_Parser::parse_args( $settings, $this->get_pickup_address_schema() );
+		$this->pickup_details 	= Args_Parser::parse_args( $pickup_info, $this->get_pickup_info_schema() );
 
 		$this->shipments 		= array();
 		foreach ( $args['dhl_pickup_shipments'] as $shipment_info ) {
@@ -129,12 +129,12 @@ class Pickup_Request_Info {
 			$this->shipments[] = $pickup_shipment;
 		}
 
-		$this->business_hours 		= array();
+		$this->business_hours 	= array();
 		if ( isset($args['dhl_pickup_business_hours']) && $args['dhl_pickup_business_hours']) {
 			foreach ( $args['dhl_pickup_business_hours'] as $time_slot ) {
 				if ( isset($time_slot['start']) && $time_slot['start'] && isset($time_slot['end']) && $time_slot['end'] ) {
 					$time_slot = array(
-						'timeFrom' => $time_slot['start'],
+						'timeFrom'  => $time_slot['start'],
 						'timeUntil' => $time_slot['end'],
 					);
 					$this->business_hours[] = Args_Parser::parse_args( $time_slot, $this->get_pickup_business_hours_schema() );
@@ -159,13 +159,13 @@ class Pickup_Request_Info {
 
 		return array(
 			'dhl_pickup_billing_number'      => array(
-				'rename' => 'billingNumber',
-				//'error'  => __( '"Account Number" in settings is empty.', 'dhl-for-woocommerce' ),
+				'rename'   => 'billingNumber',
+				//'error'  => esc_html__( '"Account Number" in settings is empty.', 'dhl-for-woocommerce' ),
 				'sanitize' => function( $account ) use ($self) {
 
                     if (empty($account)) {
                         throw new Exception(
-                            __( 'Check your settings "Account Number" and "Participation Number".', 'dhl-for-woocommerce' )
+                            esc_html__( 'Check your settings "Account Number" and "Participation Number".', 'dhl-for-woocommerce' )
                         );
                     }
 
@@ -196,10 +196,10 @@ class Pickup_Request_Info {
 				'default' => 'asap'
 			),
 			// 'weight'     => array(
-            //     'error'    => __( 'Order "Weight" is empty!', 'dhl-for-woocommerce' ),
+            //     'error'    => esc_html__( 'Order "Weight" is empty!', 'dhl-for-woocommerce' ),
             //     'validate' => function( $weight ) use ($self) {
             //         if ( ! is_numeric( $weight ) || $weight <= 0 ) {
-            //             throw new Exception( __( 'The order "Weight" must be a positive number', 'dhl-for-woocommerce' ) );
+            //             throw new Exception( esc_html__( 'The order "Weight" must be a positive number', 'dhl-for-woocommerce' ) );
             //         }
             //     },
             //     'sanitize' => function ( $weight ) use ($self) {
@@ -238,13 +238,13 @@ class Pickup_Request_Info {
 
 		return array(
 			'shipper_name'      => array(
-				'rename' => 'name',
-				//'error'  => __( '"Account Name" in settings is empty.', 'dhl-for-woocommerce' ),
-				'sanitize' => function( $name ) use ($self) {
+				'rename'   => 'name',
+				//'error'  => esc_html__( '"Account Name" in settings is empty.', 'dhl-for-woocommerce' ),
+				'sanitize' => function( $name ) use ( $self ) {
 
                     // if (empty($name)) {
                     //     throw new Exception(
-                    //         __( '"Account Name" in settings is empty.', 'dhl-for-woocommerce' )
+                    //         esc_html__( '"Account Name" in settings is empty.', 'dhl-for-woocommerce' )
                     //     );
                     // }
 
@@ -252,11 +252,11 @@ class Pickup_Request_Info {
 				}
 			),
 			'shipper_phone'     => array(
-				'rename' => 'phone',
+				'rename'  => 'phone',
 				'default' => '',
 			),
 			'shipper_email'     => array(
-				'rename' => 'email',
+				'rename'  => 'email',
 				'default' => '',
 			),
 		);
@@ -277,13 +277,13 @@ class Pickup_Request_Info {
 
 		return array(
 			'shipper_address' => array(
-				'rename' => 'addressStreet',
-				'error' => __( 'Shipper "Address 1" is empty!', 'dhl-for-woocommerce' ),
-                'sanitize' => function( $name ) use ($self) {
+				'rename'   => 'addressStreet',
+				'error'    => esc_html__( 'Shipper "Address 1" is empty!', 'dhl-for-woocommerce' ),
+                'sanitize' => function( $name ) use ( $self ) {
 
-                    if (empty($name)) {
+                    if ( empty( $name ) ) {
                         throw new Exception(
-                            __( 'Shipper "Address 1" is empty!', 'dhl-for-woocommerce' )
+                            esc_html__( 'Shipper "Address 1" is empty!', 'dhl-for-woocommerce' )
                         );
                     }
 
@@ -291,24 +291,24 @@ class Pickup_Request_Info {
                 }
 			),
 			'shipper_address_no' => array(
-				'rename' => 'addressHouse',
+				'rename'  => 'addressHouse',
 				'default' => '',
 			),
 			'shipper_address_city'      => array(
 				'rename' => 'city',
-				'error' => __( 'Shipper "City" is empty!', 'dhl-for-woocommerce' ),
+				'error'  => esc_html__( 'Shipper "City" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'shipper_address_zip'  => array(
 				'rename' => 'postalCode',
-				'error' => __( 'Shipper "Postcode" is empty!', 'dhl-for-woocommerce' ),
+				'error'  => esc_html__( 'Shipper "Postcode" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'shipper_address_state'     => array(
-				'rename' => 'state',
+				'rename'  => 'state',
 				'default' => '',
 			),
 			'shipper_country'   => array(
 				'rename' => 'country',
-				'error' => __( 'Shipper "Country" is empty!', 'dhl-for-woocommerce' ),
+				'error'  => esc_html__( 'Shipper "Country" is empty!', 'dhl-for-woocommerce' ),
 			),
 		);
 	}
@@ -328,11 +328,11 @@ class Pickup_Request_Info {
 
  		return array(
 			'transportation_type'     => array(
-				'rename' => 'transportationType',
+				'rename'  => 'transportationType',
 				'default' => 'PAKET',
 			),
 			'tracking_number'	=> array(
-				'rename' => 'shipmentNo',
+				'rename'  => 'shipmentNo',
 				'default' => '',
 			)
  		);
@@ -395,7 +395,7 @@ class Pickup_Request_Info {
 
 		$float = floatval( $float );
 
-		return round( $float, $numcomma);
+		return round( $float, $numcomma );
 	}
 
 	protected function string_length_sanitization( $string, $max ) {
@@ -407,7 +407,7 @@ class Pickup_Request_Info {
 			return $string;
 		}
 
-		return substr( $string, 0, ( $max-1 ));
+		return substr( $string, 0, ( $max-1 ) );
 	}
 
 }

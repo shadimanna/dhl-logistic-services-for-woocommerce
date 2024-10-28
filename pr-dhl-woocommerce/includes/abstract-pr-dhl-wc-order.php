@@ -138,7 +138,7 @@ abstract class PR_DHL_WC_Order {
 
 		$delete_label = '';
 		if ($this->can_delete_label($order_id)) {
-			$delete_label = '<span class="wc_dhl_delete"><a href="#" id="dhl_delete_label">' . esc_html__('Delete Label', 'dhl-for-woocommerce') . '</a></span>';
+			$delete_label = '<span class="wc_dhl_delete"><a href="#" id="dhl_delete_label">' . esc_html__( 'Delete Label', 'dhl-for-woocommerce' ) . '</a></span>';
 		}
 
 		$main_button = '<button id="dhl-label-button" class="button button-primary button-save-form">' . esc_html__( 'Generate Label', 'dhl-for-woocommerce' ) . '</button>';
@@ -330,7 +330,7 @@ abstract class PR_DHL_WC_Order {
 			do_action( 'pr_shipping_dhl_label_created', $order_id );
 
 			wp_send_json( array(
-				'download_msg' => esc_html__('Your DHL label is ready to download, click the "Download Label" button above"', 'dhl-for-woocommerce'),
+				'download_msg' => esc_html__( 'Your DHL label is ready to download, click the "Download Label" button above"', 'dhl-for-woocommerce' ),
 				'button_txt' => esc_html__( 'Download Label', 'dhl-for-woocommerce' ),
 				'label_url' => $label_url,
 				'tracking_note'	  => $tracking_note,
@@ -358,7 +358,7 @@ abstract class PR_DHL_WC_Order {
 			}
 
 			wp_send_json( array(
-				'download_msg' => esc_html__('Your DHL label is ready to download, click the "Download Label" button above"', 'dhl-for-woocommerce'),
+				'download_msg' => esc_html__( 'Your DHL label is ready to download, click the "Download Label" button above"', 'dhl-for-woocommerce' ),
 				'button_txt' => esc_html__( 'Generate Label', 'dhl-for-woocommerce' ),
 				'dhl_tracking_num'	  => $tracking_num
 				) );

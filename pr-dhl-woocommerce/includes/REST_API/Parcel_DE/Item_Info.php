@@ -194,7 +194,7 @@ class Item_Info {
 		return array(
 			'dhl_product'            => array(
 				'rename'   => 'product',
-				'error'    => __( 'DHL "Product" is empty!', 'dhl-for-woocommerce' ),
+				'error'    => esc_html__( 'DHL "Product" is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $product ) use ( $self ) {
 
 					$product_info = explode( '-', $product );
@@ -215,7 +215,7 @@ class Item_Info {
 				'sanitize' => function ( $account ) use ( $self ) {
 
 					if ( empty( $account ) ) {
-						throw new Exception( __( 'Check your settings "Account Number" and "Participation Number".', 'dhl-for-woocommerce' ) );
+						throw new Exception( esc_html__( 'Check your settings "Account Number" and "Participation Number".', 'dhl-for-woocommerce' ) );
 					}
 
 					// create account number
@@ -224,7 +224,7 @@ class Item_Info {
 					if ( $product_number ) {
 						return $self->args['dhl_settings']['account_num'] . $matches[0] . $self->args['dhl_settings']['participation'];
 					} else {
-						throw new Exception( __( 'Could not create account number - no product number.', 'dhl-for-woocommerce' ) );
+						throw new Exception( esc_html__( 'Could not create account number - no product number.', 'dhl-for-woocommerce' ) );
 					}
 				},
 			),
@@ -233,10 +233,10 @@ class Item_Info {
 				'default' => '',
 			),
 			'weight'                 => array(
-				'error'    => __( 'Order "Weight" is empty!', 'dhl-for-woocommerce' ),
+				'error'    => esc_html__( 'Order "Weight" is empty!', 'dhl-for-woocommerce' ),
 				'validate' => function ( $weight ) {
 					if ( ! is_numeric( wc_format_decimal( $weight ) ) ) {
-						throw new Exception( __( 'The order "Weight" must be a number', 'dhl-for-woocommerce' ) );
+						throw new Exception( esc_html__( 'The order "Weight" must be a number', 'dhl-for-woocommerce' ) );
 					}
 				},
 				'sanitize' => function ( $weight ) use ( $self ) {
@@ -244,14 +244,14 @@ class Item_Info {
 				},
 			),
 			'currency'               => array(
-				'error' => __( 'Shop "Currency" is empty!', 'dhl-for-woocommerce' ),
+				'error' => esc_html__( 'Shop "Currency" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'total_value'            => array(
 				'rename'   => 'value',
-				'error'    => __( 'Shipment "Value" is empty!', 'dhl-for-woocommerce' ),
+				'error'    => esc_html__( 'Shipment "Value" is empty!', 'dhl-for-woocommerce' ),
 				'validate' => function ( $value ) {
 					if ( ! is_numeric( $value ) ) {
-						throw new Exception( __( 'The order "value" must be a number', 'dhl-for-woocommerce' ) );
+						throw new Exception( esc_html__( 'The order "value" must be a number', 'dhl-for-woocommerce' ) );
 					}
 				},
 				'sanitize' => function ( $value ) use ( $self ) {
@@ -278,27 +278,27 @@ class Item_Info {
 						for ( $i = 0; $i < intval( $value ); $i ++ ) {
 
 							if ( empty( $self->args['order_details']['packages_number'][ $i ] ) ) {
-								throw new Exception( __( 'A package number is empty. Ensure all package details are filled in.',
+								throw new Exception( esc_html__( 'A package number is empty. Ensure all package details are filled in.',
 									'dhl-for-woocommerce' ) );
 							}
 
 							if ( empty( $self->args['order_details']['packages_weight'][ $i ] ) ) {
-								throw new Exception( __( 'A package weight is empty. Ensure all package details are filled in.',
+								throw new Exception( esc_html__( 'A package weight is empty. Ensure all package details are filled in.',
 									'dhl-for-woocommerce' ) );
 							}
 
 							if ( empty( $self->args['order_details']['packages_length'][ $i ] ) ) {
-								throw new Exception( __( 'A package length is empty. Ensure all package details are filled in.',
+								throw new Exception( esc_html__( 'A package length is empty. Ensure all package details are filled in.',
 									'dhl-for-woocommerce' ) );
 							}
 
 							if ( empty( $self->args['order_details']['packages_width'][ $i ] ) ) {
-								throw new Exception( __( 'A package width is empty. Ensure all package details are filled in.',
+								throw new Exception( esc_html__( 'A package width is empty. Ensure all package details are filled in.',
 									'dhl-for-woocommerce' ) );
 							}
 
 							if ( empty( $self->args['order_details']['packages_height'][ $i ] ) ) {
-								throw new Exception( __( 'A package height is empty. Ensure all package details are filled in.',
+								throw new Exception( esc_html__( 'A package height is empty. Ensure all package details are filled in.',
 									'dhl-for-woocommerce' ) );
 							}
 						}
@@ -345,7 +345,7 @@ class Item_Info {
 				'sanitize' => function ( $name ) use ( $self ) {
 					if ( empty( $name ) ) {
 						throw new Exception(
-							__( '"Account Name" in settings is empty.', 'dhl-for-woocommerce' )
+							esc_html__( '"Account Name" in settings is empty.', 'dhl-for-woocommerce' )
 						);
 					}
 
@@ -360,12 +360,12 @@ class Item_Info {
 			),
 			'shipper_address'       => array(
 				'rename'   => 'addressStreet',
-				'error'    => __( 'Shipper "Address 1" is empty!', 'dhl-for-woocommerce' ),
+				'error'    => esc_html__( 'Shipper "Address 1" is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $name ) use ( $self ) {
 
 					if ( empty( $name ) ) {
 						throw new Exception(
-							__( 'Shipper "Address 1" is empty!', 'dhl-for-woocommerce' )
+							esc_html__( 'Shipper "Address 1" is empty!', 'dhl-for-woocommerce' )
 						);
 					}
 
@@ -377,11 +377,11 @@ class Item_Info {
 			),
 			'shipper_address_zip'   => array(
 				'rename' => 'postalCode',
-				'error'  => __( 'Shipper "Postcode" is empty!', 'dhl-for-woocommerce' ),
+				'error'  => esc_html__( 'Shipper "Postcode" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'shipper_address_city'  => array(
 				'rename' => 'city',
-				'error'  => __( 'Shipper "City" is empty!', 'dhl-for-woocommerce' ),
+				'error'  => esc_html__( 'Shipper "City" is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $value ) use ( $self ) {
 					return $self->string_length_sanitization( $value, 40 );
 				}
@@ -397,7 +397,7 @@ class Item_Info {
 				'sanitize' => function ( $countryCode ) use ( $self ) {
 					if ( empty( $countryCode ) ) {
 						throw new Exception(
-							__( 'Shipper "Country" is empty!', 'dhl-for-woocommerce' )
+							esc_html__( 'Shipper "Country" is empty!', 'dhl-for-woocommerce' )
 						);
 					}
 
@@ -485,7 +485,7 @@ class Item_Info {
 		return array(
 			'name'      => array(
 				'rename'   => 'name1',
-				'error'    => __( 'Recipient name is empty!', 'dhl-for-woocommerce' ),
+				'error'    => esc_html__( 'Recipient name is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $name ) use ( $self ) {
 
 					return $self->string_length_sanitization( $name, 50 );
@@ -496,7 +496,7 @@ class Item_Info {
 			),
 			'address_1' => array(
 				'rename' => 'addressStreet',
-				'error'  => __( 'Shipping "Address 1" is empty!', 'dhl-for-woocommerce' ),
+				'error'  => esc_html__( 'Shipping "Address 1" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'address_2' => array(
 				'rename' => 'addressHouse',
@@ -510,10 +510,10 @@ class Item_Info {
 			),
 			'postcode'  => array(
 				'rename' => 'postalCode',
-				'error'  => __( 'Shipping "Postcode" is empty!', 'dhl-for-woocommerce' ),
+				'error'  => esc_html__( 'Shipping "Postcode" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'city'      => array(
-				'error' => __( 'Shipping "City" is empty!', 'dhl-for-woocommerce' )
+				'error' => esc_html__( 'Shipping "City" is empty!', 'dhl-for-woocommerce' )
 			),
 			'state'     => array(
 				'sanitize' => function ( $value ) use ( $self ) {
@@ -524,7 +524,7 @@ class Item_Info {
 				'sanitize' => function ( $countryCode ) use ( $self ) {
 					if ( empty( $countryCode ) ) {
 						throw new Exception(
-							__( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' )
+							esc_html__( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' )
 						);
 					}
 
@@ -555,31 +555,31 @@ class Item_Info {
 		return array(
 			'name'        => array(
 				'rename'   => 'name',
-				'error'    => __( 'Packstation name is empty!', 'dhl-for-woocommerce' ),
+				'error'    => esc_html__( 'Packstation name is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $name ) use ( $self ) {
 					return $self->string_length_sanitization( $name, 50 );
 				},
 			),
 			'dhl_postnum' => array(
 				'rename' => 'postNumber',
-				'error'  => __( 'Post Number is missing, it is mandatory for "Packstation" delivery.', 'dhl-for-woocommerce' ),
+				'error'  => esc_html__( 'Post Number is missing, it is mandatory for "Packstation" delivery.', 'dhl-for-woocommerce' ),
 			),
 			'address_1'   => array(
 				'rename'   => 'lockerID',
-				'error'    => __( 'Locker ID is missing, it is mandatory for "Packstation" delivery.', 'dhl-for-woocommerce' ),
+				'error'    => esc_html__( 'Locker ID is missing, it is mandatory for "Packstation" delivery.', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $name ) use ( $self ) {
 					return filter_var( $this->args['shipping_address']['address_1'], FILTER_SANITIZE_NUMBER_INT );
 				},
 			),
 			'postcode'    => array(
 				'rename' => 'postalCode',
-				'error'  => __( 'Shipping "Postcode" is empty!', 'dhl-for-woocommerce' ),
+				'error'  => esc_html__( 'Shipping "Postcode" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'city'        => array(
-				'error' => __( 'Shipping "City" is empty!', 'dhl-for-woocommerce' )
+				'error' => esc_html__( 'Shipping "City" is empty!', 'dhl-for-woocommerce' )
 			),
 			'country'     => array(
-				'error'    => __( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' ),
+				'error'    => esc_html__( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $countryCode ) use ( $self ) {
 					return $self->country_code_to_alpha3( $countryCode );
 				},
@@ -601,7 +601,7 @@ class Item_Info {
 		return array(
 			'name'        => array(
 				'rename'   => 'name',
-				'error'    => __( 'Name is empty!', 'dhl-for-woocommerce' ),
+				'error'    => esc_html__( 'Name is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $name ) use ( $self ) {
 					return $self->string_length_sanitization( $name, 50 );
 				},
@@ -611,20 +611,20 @@ class Item_Info {
 			),
 			'address_1'   => array(
 				'rename'   => 'retailID',
-				'error'    => __( 'Locker ID is missing, it is mandatory for "Packstation" delivery.', 'dhl-for-woocommerce' ),
+				'error'    => esc_html__( 'Locker ID is missing, it is mandatory for "Packstation" delivery.', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $name ) use ( $self ) {
 					return filter_var( $this->args['shipping_address']['address_1'], FILTER_SANITIZE_NUMBER_INT );
 				},
 			),
 			'postcode'    => array(
 				'rename' => 'postalCode',
-				'error'  => __( 'Shipping "Postcode" is empty!', 'dhl-for-woocommerce' ),
+				'error'  => esc_html__( 'Shipping "Postcode" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'city'        => array(
-				'error' => __( 'Shipping "City" is empty!', 'dhl-for-woocommerce' ),
+				'error' => esc_html__( 'Shipping "City" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'country'     => array(
-				'error'    => __( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' ),
+				'error'    => esc_html__( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $countryCode ) use ( $self ) {
 					return $self->country_code_to_alpha3( $countryCode );
 				},
@@ -673,7 +673,7 @@ class Item_Info {
 
 					if ( $length < 4 || $length > 11 ) {
 						throw new Exception(
-							__( 'Item HS Code must be between 4 and 11 characters long', 'dhl-for-woocommerce' )
+							esc_html__( 'Item HS Code must be between 4 and 11 characters long', 'dhl-for-woocommerce' )
 						);
 					}
 				},
@@ -1163,7 +1163,7 @@ class Item_Info {
 
 			// If no address number and in Germany, return error
 			if ( 1 === count( $address_exploded ) && 'DE' === $this->args['shipping_address']['country'] ) {
-				throw new Exception( __( 'Shipping street number is missing!', 'dhl-for-woocommerce' ) );
+				throw new Exception( esc_html__( 'Shipping street number is missing!', 'dhl-for-woocommerce' ) );
 			}
 		}
 

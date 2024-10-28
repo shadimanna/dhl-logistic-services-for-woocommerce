@@ -165,12 +165,13 @@ class Auth implements API_Auth_Interface {
 		// $auth_str_64 = base64_encode( $this->client_id . ':' . $this->client_secret );
 		// $headers = array( static::H_AUTH_CREDENTIALS => 'Basic ' . $auth_str_64 );
 		$headers = array( 'Content-Type' => 'application/x-www-form-urlencoded' );
-		$body = array( 	'client_id' => $this->client_id, 
-						'client_secret' => $this->client_secret,
-						'username' => $this->username,
-						'password' => $this->password,
-						'grant_type' => 'password',
-					);
+		$body = array( 	
+					'client_id' 	=> $this->client_id, 
+					'client_secret' => $this->client_secret,
+					'username' 		=> $this->username,
+					'password' 		=> $this->password,
+					'grant_type' 	=> 'password',
+				);
 		// error_log(print_r($body, true));
 
 		$args = array( 'headers' => $headers, 'body' => $body );

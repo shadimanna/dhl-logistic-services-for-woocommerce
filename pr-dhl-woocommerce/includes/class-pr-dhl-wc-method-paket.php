@@ -58,8 +58,8 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 		ob_start();
 		?>
-		<div class="<?php echo $type ?>">
-			<p><?php echo $message ?></p>
+		<div class="<?php echo esc_html( $type ) ?>" >
+			<p><?php echo esc_html( $message ) ?></p>
 		</div>
 		<?php
 		return ob_get_clean();
@@ -1017,13 +1017,13 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 		<tr valign="top">
 			<th scope="row" class="titledesc">
 				<label for="<?php echo esc_attr( $field ); ?>"><?php echo wp_kses_post( $data['title'] ); ?></label>
-				<?php echo $this->get_tooltip_html( $data ); ?>
+				<?php echo wp_kses_post( $this->get_tooltip_html( $data ) ); ?>
 			</th>
 			<td class="forminp">
 				<fieldset>
 					<legend class="screen-reader-text"><span><?php echo wp_kses_post( $data['title'] ); ?></span></legend>
-					<button class="<?php echo esc_attr( $data['class'] ); ?>" type="button" name="<?php echo esc_attr( $field ); ?>" id="<?php echo esc_attr( $field ); ?>" style="<?php echo esc_attr( $data['css'] ); ?>" <?php echo $this->get_custom_attribute_html( $data ); ?>><?php echo wp_kses_post( $data['title'] ); ?></button>
-					<?php echo $this->get_description_html( $data ); ?>
+					<button class="<?php echo esc_attr( $data['class'] ); ?>" type="button" name="<?php echo esc_attr( $field ); ?>" id="<?php echo esc_attr( $field ); ?>" style="<?php echo esc_attr( $data['css'] ); ?>" <?php echo wp_kses_post( $this->get_custom_attribute_html( $data ) ); ?>><?php echo wp_kses_post( $data['title'] ); ?></button>
+					<?php echo wp_kses_post( $this->get_description_html( $data ) ); ?>
 				</fieldset>
 			</td>
 		</tr>
@@ -1057,7 +1057,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 		} catch (Exception $e) {
 
-			echo $this->get_message( esc_html__( 'Pickup Account Number: ', 'dhl-for-woocommerce' ) . esc_html( $e->getMessage() ) );
+			echo wp_kses_post( $this->get_message( esc_html__( 'Pickup Account Number: ', 'dhl-for-woocommerce' ) . esc_html( $e->getMessage() ) ) );
 			throw $e;
 
 		}
@@ -1079,7 +1079,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 		} catch (Exception $e) {
 
-			echo $this->get_message( esc_html__( 'Distribution Center: ', 'dhl-for-woocommerce' ) . esc_html( $e->getMessage() ) );
+			echo wp_kses_post( $this->get_message( esc_html__( 'Distribution Center: ', 'dhl-for-woocommerce' ) . esc_html( $e->getMessage() ) ) );
 			throw $e;
 		}
 
@@ -1159,7 +1159,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 			$error_message = esc_html__( 'In order to use logo, you need to set a shipper reference first.', 'dhl-for-woocommerce' );
 
-			echo $this->get_message( $error_message );
+			echo wp_kses_post( $this->get_message( $error_message ) );
 
 			return 'no';
 		}
@@ -1191,7 +1191,7 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 				$error_message = sprintf( esc_html__( 'In order to show %s on a map, you need to set a Google API Key first.', 'dhl-for-woocommerce' ), $location_type );
 			}
 
-			echo $this->get_message( $error_message );
+			echo wp_kses_post( $this->get_message( $error_message ) );
 
 			return 'no';
 		}

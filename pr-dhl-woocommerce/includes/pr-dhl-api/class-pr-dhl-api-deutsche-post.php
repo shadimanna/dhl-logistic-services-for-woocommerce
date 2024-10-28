@@ -171,7 +171,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	public function get_api_url() {
 		$is_sandbox = $this->get_setting( 'dhl_sandbox' );
 		$is_sandbox = filter_var($is_sandbox, FILTER_VALIDATE_BOOLEAN);
-		$api_url = ( $is_sandbox ) ? static::API_URL_SANDBOX : static::API_URL_PRODUCTION;
+		$api_url 	= ( $is_sandbox ) ? static::API_URL_SANDBOX : static::API_URL_PRODUCTION;
 
 		return $api_url;
 	}
@@ -294,9 +294,9 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	public function get_dhl_products_international() {
 		return array(
 			'GMP-STANDARD' => esc_html__( 'Packet Standard', 'dhl-for-woocommerce' ),
-			'GMP' => esc_html__( 'Packet Priority', 'dhl-for-woocommerce' ),
-			'GPP' => esc_html__( 'Packet Plus', 'dhl-for-woocommerce' ),
-			'GPT' => esc_html__( 'Packet Tracked', 'dhl-for-woocommerce' ),
+			'GMP' 		   => esc_html__( 'Packet Priority', 'dhl-for-woocommerce' ),
+			'GPP' 		   => esc_html__( 'Packet Plus', 'dhl-for-woocommerce' ),
+			'GPT' 		   => esc_html__( 'Packet Tracked', 'dhl-for-woocommerce' ),
 		);
 	}
 
@@ -332,8 +332,8 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 
 			// Create the item and get the barcode
 			$item_response = $this->api_client->create_item( $item_info );
-			$item_barcode = $item_response->barcode;
-			$item_id = $item_response->id;
+			$item_barcode  = $item_response->barcode;
+			$item_id 	   = $item_response->id;
 
 			// Save it in the order
 			$order->update_meta_data( 'pr_dhl_dp_item_barcode', $item_barcode );
@@ -348,8 +348,8 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 		$this->save_dhl_label_file( 'item', $item_barcode, $label_pdf_data );
 
 		return array(
-			'label_path' => $this->get_dhl_item_label_file_info( $item_barcode )->path,
-			'item_barcode' => $item_barcode,
+			'label_path' 	  => $this->get_dhl_item_label_file_info( $item_barcode )->path,
+			'item_barcode' 	  => $item_barcode,
 			'tracking_number' => $item_barcode,
 			'tracking_status' => '',
 		);
@@ -387,7 +387,8 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 * @return string
 	 */
 	public function get_dhl_item_label_file_name( $barcode, $format = 'pdf' ) {
-		return sprintf('dhl-label-%s.%s', $barcode, $format);
+		// Translators: %1$s is the barcode number, and %2$s is the file format (e.g., pdf, jpg).
+		return sprintf( 'dhl-label-%1$s.%2$s', $barcode, $format );
 	}
 
 	/**
@@ -401,7 +402,8 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 * @return string
 	 */
 	public function get_dhl_awb_label_file_name( $awb, $format = 'pdf' ) {
-		return sprintf('dhl-label-awb-%s.%s', $awb, $format);
+		// Translators: %1$s is the Air Waybill (AWB) number and %2$s is the file format (e.g., pdf, jpg).
+		return sprintf( 'dhl-label-awb-%1$s.%2$s', $awb, $format );
 	}
 
 	/**
@@ -415,7 +417,8 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 * @return string
 	 */
 	public function get_dhl_order_label_file_name( $order_id, $format = 'pdf' ) {
-		return sprintf('dhl-waybill-order-%s.%s', $order_id, $format);
+		// Translators: %1$s is the order ID and %2$s is the file format (e.g., pdf, jpg).
+		return sprintf( 'dhl-waybill-order-%1$s.%2$s', $order_id, $format );
 	}
 
 	/**
@@ -433,7 +436,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 
 		return (object) array(
 			'path' => PR_DHL()->get_dhl_label_folder_dir() . $file_name,
-			'url' => PR_DHL()->get_dhl_label_folder_url() . $file_name,
+			'url'  => PR_DHL()->get_dhl_label_folder_url() . $file_name,
 		);
 	}
 
@@ -452,7 +455,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 
 		return (object) array(
 			'path' => PR_DHL()->get_dhl_label_folder_dir() . $file_name,
-			'url' => PR_DHL()->get_dhl_label_folder_url() . $file_name,
+			'url'  => PR_DHL()->get_dhl_label_folder_url() . $file_name,
 		);
 	}
 
@@ -471,7 +474,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 
 		return (object) array(
 			'path' => PR_DHL()->get_dhl_label_folder_dir() . $file_name,
-			'url' => PR_DHL()->get_dhl_label_folder_url() . $file_name,
+			'url'  => PR_DHL()->get_dhl_label_folder_url() . $file_name,
 		);
 	}
 
@@ -555,8 +558,8 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 		$res = unlink( $file_info->path );
 
 		// Throw error if the file could not be deleted
-		if (!$res) {
-			throw new Exception(esc_html__( 'DHL AWB Label could not be deleted!', 'dhl-for-woocommerce' ) );
+		if ( !$res ) {
+			throw new Exception( esc_html__( 'DHL AWB Label could not be deleted!', 'dhl-for-woocommerce' ) );
 		}
 	}
 
@@ -611,7 +614,8 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 		// Get the order with the given ID
 		$order = $this->api_client->get_order( $order_id );
 		if ($order === null) {
-			throw new Exception("DHL order {$order_id} does not exist.");
+			// Translators: %s is replaced with the order ID.
+			throw new Exception( esc_html( sprintf( 'DHL order %s does not exist.', $order_id ) ) );
 		}
 
 		// For multiple shipments, maybe create each label file and then merge them
@@ -721,13 +725,13 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 
     public function get_dhl_nature_type() {
         return array(
-            'SALE_GOODS' => esc_html__( 'Sale Goods', 'dhl-for-woocommerce' ),
-            'RETURN_GOODS' => esc_html__( 'Return Goods', 'dhl-for-woocommerce' ),
-            'GIFT' => esc_html__( 'Gift', 'dhl-for-woocommerce' ),
+            'SALE_GOODS' 		=> esc_html__( 'Sale Goods', 'dhl-for-woocommerce' ),
+            'RETURN_GOODS'  	=> esc_html__( 'Return Goods', 'dhl-for-woocommerce' ),
+            'GIFT' 				=> esc_html__( 'Gift', 'dhl-for-woocommerce' ),
             'COMMERCIAL_SAMPLE' => esc_html__( 'Commercial Sample', 'dhl-for-woocommerce' ),
-            'DOCUMENTS' => esc_html__( 'Documents', 'dhl-for-woocommerce' ),
-            'MIXED_CONTENTS' => esc_html__( 'Mixed Contents', 'dhl-for-woocommerce' ),
-            'OTHERS' => esc_html__( 'Others', 'dhl-for-woocommerce' ),
+            'DOCUMENTS' 		=> esc_html__( 'Documents', 'dhl-for-woocommerce' ),
+            'MIXED_CONTENTS' 	=> esc_html__( 'Mixed Contents', 'dhl-for-woocommerce' ),
+            'OTHERS' 			=> esc_html__( 'Others', 'dhl-for-woocommerce' ),
         );
     }
 }

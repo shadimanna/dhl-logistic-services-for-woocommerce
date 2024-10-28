@@ -154,11 +154,11 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		$country_code = $this->country_code;
 
 		$germany_int =  array(
-								'V55PAK' => esc_html__( 'DHL Paket Connect', 'dhl-for-woocommerce' ),
+								'V55PAK'  => esc_html__( 'DHL Paket Connect', 'dhl-for-woocommerce' ),
 								'V54EPAK' => esc_html__( 'DHL Europaket (B2B)', 'dhl-for-woocommerce' ),
 								'V53WPAK' => esc_html__( 'DHL Paket International', 'dhl-for-woocommerce' ),
-								'V66WPI' => esc_html__( 'DHL Warenpost International', 'dhl-for-woocommerce' ),
-								);
+								'V66WPI'  => esc_html__( 'DHL Warenpost International', 'dhl-for-woocommerce' ),
+							);
 
 		$dhl_prod_int = array();
 
@@ -177,10 +177,10 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		$country_code = $this->country_code;
 
 		$germany_dom = array(
-								'V01PAK' => esc_html__( 'DHL Paket', 'dhl-for-woocommerce' ),
+								'V01PAK'  => esc_html__( 'DHL Paket', 'dhl-for-woocommerce' ),
 								'V01PRIO' => esc_html__( 'DHL Paket PRIO', 'dhl-for-woocommerce' ),
-								'V62WP' => esc_html__( 'DHL Warenpost National', 'dhl-for-woocommerce' ),
-								);
+								'V62WP'   => esc_html__( 'DHL Warenpost National', 'dhl-for-woocommerce' ),
+							);
 
 		$dhl_prod_dom = array();
 
@@ -214,10 +214,10 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		// setlocale(LC_TIME, 'de_DE', 'deu_deu', 'de_DE.utf8', 'German', 'deu/ger', 'de_DE@euro', 'de', 'ge');
 
 		$tz_obj = new DateTimeZone( 'Europe/Berlin' );
-		$today = new DateTime("now", $tz_obj);	// Should the order date be passed as a variable?
+		$today  = new DateTime("now", $tz_obj);	// Should the order date be passed as a variable?
 		$today_de_timestamp = $today->getTimestamp();
 
-		$week_day = $today->format('D');
+		$week_day  = $today->format('D');
 		$week_date = $today->format('Y-m-d');
 		$week_time = $today->format('H:i');
 
@@ -228,7 +228,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 			if( $today_de_timestamp >= strtotime( $cutoff_time ) ) {
 				// If the cut off time has been passed, then add a day
 				$today->add( new DateInterval('P1D') ); // Add 1 day
-				$week_day = $today->format('D');
+				$week_day  = $today->format('D');
 				$week_date = $today->format('Y-m-d');
 
 				$day_counter++;
@@ -239,13 +239,13 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		// Make sure the next transfer days are working days
 		while ( array_key_exists($week_day, $exclude_working_days) || in_array($week_date, $this->de_national_holidays) ) {
 			$today->add( new DateInterval('P1D') ); // Add 1 day
-			$week_day = $today->format('D');
+			$week_day  = $today->format('D');
 			$week_date = $today->format('Y-m-d');
 
 			$day_counter++;
 		}
 
-		$args['postcode'] = $postcode;
+		$args['postcode']   = $postcode;
 		$args['start_date'] = $week_date;
 		$settings = $this->get_settings();
 
@@ -257,9 +257,9 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		}
 
 		$dhl_parcel_services = new PR_DHL_API_REST_Parcel();
-		$preferred_services = $dhl_parcel_services->get_dhl_parcel_services($args);
+		$preferred_services  = $dhl_parcel_services->get_dhl_parcel_services($args);
 
-		$preferred_day_time = array();
+		$preferred_day_time  = array();
 		$preferred_day_time['preferred_day'] = $this->get_dhl_preferred_day( $preferred_services );
 
 		// Reset time locael
@@ -315,7 +315,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 
 	public function get_dhl_visual_age() {
 		$visual_age = array(
-					'0' => _x('none', 'age context', 'dhl-for-woocommerce'),
+					'0'   => _x('none', 'age context', 'dhl-for-woocommerce'),
 					'A16' => esc_html__( 'Minimum age of 16', 'dhl-for-woocommerce' ),
 					'A18' => esc_html__( 'Minimum age of 18', 'dhl-for-woocommerce' )
 					);
@@ -324,9 +324,9 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 
 	public function sandbox_info(){
 		return array(
-			'username' 	=> '2222222222_01',
-			'pass' 		=> 'pass',
-			'account_no'=> '2222222222',
+			'username' 			 => '2222222222_01',
+			'pass' 				 => 'pass',
+			'account_no'		 => '2222222222',
 			'rest_api_account_no'=> '3333333333',
 		);
 	}

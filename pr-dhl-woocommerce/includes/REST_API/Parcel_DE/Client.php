@@ -43,7 +43,14 @@ class Client extends API_Client {
 					$labels_data['items'][] = $item;
 				} else {
 					$error_message = $this->generate_error_message( $this->get_item_error_message( $item ) );
-					$labels_data['errors'][] = array( 'order_id' => '' , 'message' => sprintf( __( 'Error creating label: %s', 'dhl-for-woocommerce' ), $error_message ) );
+					$labels_data['errors'][] = array( 
+						'order_id' => '', 
+						// Translators: %s is replaced with the error message returned from the API.
+						'message' => sprintf(
+							esc_html__( 'Error creating label: %s', 'dhl-for-woocommerce' ),
+							esc_html( $error_message )
+						)
+					);
 				}
 			}
 
@@ -54,7 +61,11 @@ class Client extends API_Client {
 		$message = $this->get_response_error_message( $response );
 
 		throw new Exception(
-			sprintf( __( 'Error creating label: %s', 'dhl-for-woocommerce' ), $message )
+			sprintf(
+				// Translators: %s is replaced with the error message returned from the API.
+				esc_html__( 'Error creating label: %s', 'dhl-for-woocommerce' ),
+				esc_html( $message )
+			)
 		);
 	}
 
@@ -547,7 +558,11 @@ class Client extends API_Client {
 		$message = $this->get_response_error_message( $response );
 
 		throw new Exception(
-			sprintf( __( 'Error deleting label: %s', 'dhl-for-woocommerce' ), $message )
+			sprintf(
+				// Translators: %s is replaced with the error message returned from the API.
+				esc_html__( 'Error deleting label: %s', 'dhl-for-woocommerce' ),
+				esc_html( $message )
+			)
 		);
 	}
 }

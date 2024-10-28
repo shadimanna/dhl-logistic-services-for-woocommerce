@@ -123,9 +123,9 @@ class PR_DHL_API_Ecomm extends PR_DHL_API {
 								// '383' => esc_html__( 'SM Marketing Parcel Ground', 'dhl-for-woocommerce' ),
 								);
 
-		$asia_dom = array( 'PDO' => esc_html__( 'DHL Parcel Domestic', 'dhl-for-woocommerce' ) );
+		$asia_dom 	  = array( 'PDO' => esc_html__( 'DHL Parcel Domestic', 'dhl-for-woocommerce' ) );
 
-		$vietnam_dom = array( 'PDE' => esc_html__( 'DHL Parcel Domestic Expedited', 'dhl-for-woocommerce' ) );
+		$vietnam_dom  = array( 'PDE' => esc_html__( 'DHL Parcel Domestic Expedited', 'dhl-for-woocommerce' ) );
 
 		$dhl_prod_dom = array();
 

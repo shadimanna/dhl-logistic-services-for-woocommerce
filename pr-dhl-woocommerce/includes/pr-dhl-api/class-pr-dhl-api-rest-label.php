@@ -238,11 +238,13 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 
 	protected function set_query_string() {
 		$dhl_label_query_string = 
-			array( 'format' => $this->dhl_label_format,
-					'labelSize' => $this->dhl_label_size,
-					'pageSize' => $this->dhl_label_page,
-					'layout' => $this->dhl_label_layout,
-					'autoClose' => self::PR_DHL_AUTO_CLOSE );
+			array( 
+				'format' 	=> $this->dhl_label_format,
+				'labelSize' => $this->dhl_label_size,
+				'pageSize'  => $this->dhl_label_page,
+				'layout' 	=> $this->dhl_label_layout,
+				'autoClose' => self::PR_DHL_AUTO_CLOSE 
+			);
 		
 		$this->query_string = http_build_query($dhl_label_query_string);
 	}

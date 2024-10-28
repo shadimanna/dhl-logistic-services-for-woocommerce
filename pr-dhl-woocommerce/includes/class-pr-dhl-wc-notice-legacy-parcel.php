@@ -61,11 +61,11 @@ class PR_DHL_WC_Notice_Legacy_Parcel {
 
             <div class="notice notice-warning is-dismissible dhl-legacy-parcel-dismiss-migrate-notice">
                 <div style="position: absolute;">
-                    <img src="<?php echo PR_DHL_PLUGIN_DIR_URL . '/assets/img/icon.svg' ; ?>" class="plugin-icon" style="width: 85px; height: 85px; padding-right: 20px;" alt="">
+                    <img src="<?php echo esc_url( PR_DHL_PLUGIN_DIR_URL ) . '/assets/img/icon.svg' ; ?>" class="plugin-icon" style="width: 85px; height: 85px; padding-right: 20px;" alt="">
                 </div>
                 <div style="position:relative; left: 105px; margin: 0 105px 0 0; padding: 0 0 20px 20px;">
                     <span>
-                            <h2><?php _e( 'DHL Parcel for WooCommerce notice', 'dhl-for-woocommerce' ) ?></h2>
+                            <h2><?php esc_html_e( 'DHL Parcel for WooCommerce notice', 'dhl-for-woocommerce' ) ?></h2>
                             <?php 
                             echo sprintf(
                                 /* translators: %1$s is the link to install the new plugin, %2$s is the closing HTML tag for the link */
@@ -77,7 +77,7 @@ class PR_DHL_WC_Notice_Legacy_Parcel {
                             <br/><br/>
 
                             <a href="#" id="dhl-legacy-parcel-dismiss-migrate-notice-forever">
-                                <b><?php _e( 'Click here to never show this again', 'dhl-for-woocommerce' ) ?></b>
+                                <b><?php esc_html_e( 'Click here to never show this again', 'dhl-for-woocommerce' ) ?></b>
                             </a>
                         <div class="clear"></div>
                     </span>

@@ -539,16 +539,16 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 
 		if ( $order_id ) {
 			if( 'dhl_label_created' === $column ) {
-				echo $this->get_print_status( $order_id );
+				echo esc_html( $this->get_print_status( $order_id ) );
 			}
 
 			if( 'dhl_tracking_number' === $column ) {
 				$tracking_link = $this->get_tracking_link( $order_id );
-				echo empty($tracking_link) ? '<strong>&ndash;</strong>' : $tracking_link;
+				echo empty( $tracking_link ) ? '<strong>&ndash;</strong>' : esc_html( $tracking_link );
 			}
 
 			if( 'dhl_handover_note' === $column ) {
-				echo $this->get_hangover_status( $order_id );
+				echo esc_html( $this->get_hangover_status( $order_id ) );
 			}
 		}
 	}
@@ -739,11 +739,11 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 					$manifest_text 	= sprintf(
 						'<a href="%1$s" target="_blank">%2$s</a>',
 						$label_url,
-						esc_html__('Download Closeout File', 'dhl-for-woocommerce') . ' ' . $closeout['handover_id']
+						esc_html__( 'Download Closeout File', 'dhl-for-woocommerce' ) . ' ' . $closeout['handover_id']
 					);
 
 				}else{
-					$manifest_text = esc_html__('Handover ID : ', 'dhl-for-woocommerce' ) . $closeout['handover_id'];
+					$manifest_text = esc_html__( 'Handover ID : ', 'dhl-for-woocommerce' ) . $closeout['handover_id'];
 				}
 
 				$message = sprintf(
@@ -884,7 +884,7 @@ class PR_DHL_WC_Order_eCS_Asia extends PR_DHL_WC_Order {
 				$dhl_product_list = $dhl_obj->get_dhl_products_domestic() + $dhl_obj->get_dhl_products_international();
 			} catch (Exception $e) {
 				/* translators: %s: error message from exception */
-				die( sprintf( esc_html__( 'Cannot generate handover %s', 'dhl-for-woocommerce' ), $e->getMessage() ) );
+				die( sprintf( esc_html__( 'Cannot generate handover %s', 'dhl-for-woocommerce' ), esc_html( $e->getMessage() ) ) );
 			}
 
 			foreach ($order_ids as $order_id) {
