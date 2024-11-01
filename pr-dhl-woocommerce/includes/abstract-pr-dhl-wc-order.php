@@ -133,7 +133,7 @@ abstract class PR_DHL_WC_Order {
 
 		} catch (Exception $e) {
 
-			echo '<p class="wc_dhl_error">' . esc_html( $e->getMessage() ) . '</p>';
+			echo '<p class="wc_dhl_error">' . wp_kses_post( $e->getMessage() ) . '</p>';
 		}
 
 		$delete_label = '';
