@@ -1028,7 +1028,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 			//Get label (s)
 			$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
-			$tracking_number = ( isset($label_tracking_info['tracking_number']) ) ? $label_tracking_info['tracking_number'] : '';
+			$tracking_number 	 = ( isset($label_tracking_info['tracking_number']) ) ? $label_tracking_info['tracking_number'] : '';
 
 			//Bulk status
 			$order_has_bulky_goods = (isset($order_args['order_details']['bulky_goods']) && $order_args['order_details']['bulky_goods'] == 'yes') ? true : false;
@@ -1037,14 +1037,14 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 			if ( is_array( $tracking_number ) ) {
 				foreach ($tracking_number as $key => $value) {
 					$pickup_shipments[] = array(
-						'order_id' => $order_id,
+						'order_id' 			  => $order_id,
 						'transportation_type' => ($order_has_bulky_goods) ? 'SPERRGUT' : 'PAKET',
 						//'tracking_number' => $value, // Disabled, dont send shipmentNumber for a pickup Request
 					);
 				}
 			} else {
 				$pickup_shipments[] = array(
-					'order_id' => $order_id,
+					'order_id' 			  => $order_id,
 					'transportation_type' => ($order_has_bulky_goods) ? 'SPERRGUT' : 'PAKET',
 					//'tracking_number' => $tracking_number,  // Disabled, dont send shipmentNumber for a pickup Request
 				);
@@ -1052,11 +1052,11 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 		}
 
-		$args['dhl_pickup_shipments'] = $pickup_shipments;
-		$args['dhl_pickup_billing_number'] = $args['dhl_settings']['account_num'].self::DHL_PICKUP_PRODUCT.$args['dhl_settings']['participation'];
+		$args['dhl_pickup_shipments'] 		= $pickup_shipments;
+		$args['dhl_pickup_billing_number']  = $args['dhl_settings']['account_num'].self::DHL_PICKUP_PRODUCT.$args['dhl_settings']['participation'];
 
 		// Allow third parties to modify the args to the DHL APIs
-		$args = apply_filters('pr_shipping_dhl_paket_pickup_args', $args, $order_ids );
+		$args = apply_filters( 'pr_shipping_dhl_paket_pickup_args', $args, $order_ids );
 
 		// For our bulk api call, forcing DHL to match existing pickup address ( to avoid attempting to charge a Billing number )
 		$forcePortalPickupAddressMatch = true;
@@ -1064,16 +1064,17 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		try {
 
 			$base_country_code 	= PR_DHL()->get_base_country();
-			$pickup_rest = new PR_DHL_API_REST_Paket( $base_country_code );
-			$pickup_response = $pickup_rest->request_dhl_pickup( $args, $forcePortalPickupAddressMatch );
+			$pickup_rest 		= new PR_DHL_API_REST_Paket( $base_country_code );
+			$pickup_response 	= $pickup_rest->request_dhl_pickup( $args, $forcePortalPickupAddressMatch );
+			$pickup_response 	= json_decode($pickup_response);
 
 			//Error?
-			if ( isset($pickup_response->confirmation->value->orderID) ) {
+			if ( isset( $pickup_response->confirmation->value->orderID ) ) {
 
-				$response_pickup_order_number = isset($pickup_response->confirmation->value->orderID) ? $pickup_response->confirmation->value->orderID : '';
-				$response_pickup_date = isset($pickup_response->confirmation->value->confirmedShipments) ? $pickup_response->confirmation->value->confirmedShipments[0]->orderDate : '';
+				$response_pickup_order_number 	= isset($pickup_response->confirmation->value->orderID) ? $pickup_response->confirmation->value->orderID : '';
+				$response_pickup_date 		  	= isset($pickup_response->confirmation->value->confirmedShipments) ? $pickup_response->confirmation->value->confirmedShipments[0]->orderDate : '';
 				$response_pickup_free_of_charge = isset($pickup_response->freeOfCharge) ? $pickup_response->freeOfCharge : '';
-				$response_pickup_type = isset($pickup_response->confirmation->type) ? $pickup_response->confirmation->type : '';
+				$response_pickup_type 			= isset($pickup_response->confirmation->type) ? $pickup_response->confirmation->type : '';
 
 			    // add the message and flag to each order
 				$order_numbers = [];
@@ -1092,33 +1093,33 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 					$order_numbers[] = $order->get_order_number();
 				}
 
-				array_push($array_messages, array(
+				array_push( $array_messages, array(
 					// Translators: %s is a list of order numbers for which the DHL pickup request was created.
-					'message' => sprintf( esc_html__( 'DHL Pickup Request created for Order(s): %s ', 'dhl-for-woocommerce'), implode(', ', $order_numbers) ),
-					'type' => 'success',
-				));
+					'message' => sprintf( esc_html__( 'DHL Pickup Request created for Order(s): %s ', 'dhl-for-woocommerce' ), implode( ', ', $order_numbers ) ),
+					'type' 	  => 'success',
+				) );
 
 			} else {
 				//Errors
-				if ( isset($pickup_response[0]->code) ) {
+				if ( isset( $pickup_response[0]->code ) ) {
 					$pickup_response_admin_notice = $pickup_response[0]->message;
 				} else {
 					$pickup_response_admin_notice = esc_html__( 'Error message detail is not exist!', 'dhl-for-woocommerce' );
 				}
 
-				array_push($array_messages, array(
+				array_push( $array_messages, array(
 					// Translators: %s is the error message returned from the DHL pickup request.
-					'message' => sprintf( esc_html__( 'DHL Pickup Request error: %s', 'dhl-for-woocommerce'), $pickup_response_admin_notice ),
-					'type' => 'error',
-				));
+					'message' => sprintf( esc_html__( 'DHL Pickup Request error: %s', 'dhl-for-woocommerce' ), $pickup_response_admin_notice ),
+					'type' 	  => 'error',
+				) );
 			}
 
-		} catch (Exception $e) {
-			array_push($array_messages, array(
+		} catch ( Exception $e ) {
+			array_push( $array_messages, array(
 				// Translators: %s is the error message returned from the DHL Pickup Request exception.
-				'message' => sprintf( esc_html__( 'DHL Pickup Request error: %s', 'dhl-for-woocommerce'), $e->getMessage() ),
-				'type' => 'error',
-			));
+				'message' => sprintf( esc_html__( 'DHL Pickup Request error: %s', 'dhl-for-woocommerce' ), $e->getMessage() ),
+				'type' 	  => 'error',
+			) );
 		}
 
 		return $array_messages;

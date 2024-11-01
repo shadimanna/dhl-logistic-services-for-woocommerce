@@ -67,15 +67,16 @@ class Client extends API_Client {
 		//Customer business portal user auth
 		$headers = array(
 			'Authorization'  	=>  'Basic '.base64_encode( $this->customer_portal_user . ':' . $this->customer_portal_password ),
-			'dhl-api-key'      	=> defined( 'PR_DHL_GLOBAL_API' )? PR_DHL_GLOBAL_API : '',
+			'dhl-api-key'      	=>  defined( 'PR_DHL_GLOBAL_API' )? PR_DHL_GLOBAL_API : '',
 		);
 
 		$data = $this->request_pickup_info_to_request_data( $pickup_request_info, $blnIncludeBillingNumber );
 
-		$response = $this->post($route, $data, $headers);
+		$response 		= $this->post( $route, $data, $headers );
+		$response_body  = json_decode( $response->body );
 
 		if ( $response->status === 200 ) {
-			if ( isset( $response->body->confirmation->value->orderID ) ) {
+			if ( isset( $response_body->confirmation->value->orderID ) ) {
 				return $response->body;
 
 			} elseif ( isset( $response->body ) ) {
