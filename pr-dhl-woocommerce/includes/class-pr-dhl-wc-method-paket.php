@@ -732,7 +732,13 @@ class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 					'title'             => esc_html__( 'API Key', 'dhl-for-woocommerce' ),
 					'type'              => 'text',
 					/* Translators: %s represents a link to obtain a Google Maps API key. */
-					'description'       => sprintf( esc_html__( 'The Google Maps API Key is necassary to display the DHL Locations on a google map.<br/>Get a free Google Maps API key %1$shere%2$s.', 'dhl-for-woocommerce' ), '<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target = "_blank">', '</a>' ),
+					'description' 		=> sprintf(
+						wp_kses(
+							__( 'The Google Maps API Key is necessary to display the DHL Locations on a Google map.<br/>Get a free Google Maps API key %1$s.', 'dhl-for-woocommerce' ),
+							array( 'br' => array() ) // Allow <br> tags
+						),
+						'<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank">' . esc_html__( 'here', 'dhl-for-woocommerce' ) . '</a>'
+					),					
 					'desc_tip'          => false,
 					'class'				=> ''
 				),

@@ -272,7 +272,7 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 
 
 	protected function generate_handover() {
-		return '8' . mt_rand( 1000000000, 9999999999 );
+		return '8' . wp_rand( 1000000000, 9999999999 );
 	}
 	/*
 	*
@@ -427,7 +427,7 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 
 		if ( 'pr_dhl_handover' === $action ) {
 			$redirect_url  = admin_url( 'edit.php?post_type=shop_order' );
-			$order_ids_hash = md5( json_encode( $order_ids ) );
+			$order_ids_hash = md5( wp_json_encode( $order_ids ) );
 			// Save the order IDs in a option.
 			// Initially we were using a transient, but this seemed to cause issues
 			// on some hosts (mainly GoDaddy) that had difficulty in implementing a
@@ -664,27 +664,53 @@ class PR_DHL_WC_Order_Ecomm extends PR_DHL_WC_Order {
 		}
 
 		$files_content = '';
-		foreach ($files as $key => $value) {
+		foreach ( $files as $key => $value ) {
 
 			if ( ! file_exists( $value ) ) {
 				// throw new Exception( esc_html__('File does not exist', 'dhl-for-woocommerce') );
 				continue;
 			}
 
-			$ext = pathinfo($value, PATHINFO_EXTENSION);
-			if ( stripos($ext, 'zpl') === false) {
-				throw new Exception( esc_html__('Not all the file formats are the same.', 'dhl-for-woocommerce') );
+			$ext = pathinfo( $value, PATHINFO_EXTENSION );
+			if ( stripos( $ext, 'zpl' ) === false ) {
+				throw new Exception( esc_html__( 'Not all the file formats are the same.', 'dhl-for-woocommerce' ) );
 			}
 
-			$files_content .= file_get_contents( $value );
+			// Check if the file is a remote URL or a local file
+			if ( filter_var( $value, FILTER_VALIDATE_URL ) ) {
+				// Use wp_remote_get() for remote files
+				$response = wp_remote_get( $value );
+				
+				if ( is_wp_error( $response ) ) {
+					throw new Exception( esc_html__( 'Failed to retrieve remote file.', 'dhl-for-woocommerce' ) );
+				}
+				
+				$files_content .= wp_remote_retrieve_body( $response );
+			} else {
+				// Use file_get_contents for local files
+				$files_content .= file_get_contents( $value );
+			}
+
 		}
 
 		$filename = 'dhl-label-bulk-' . time() . '.zpl';
 		$file_bulk_path = PR_DHL()->get_dhl_label_folder_dir() . $filename;
 		$file_bulk_url = PR_DHL()->get_dhl_label_folder_url() . $filename;
 		
-		$fp1 = fopen($file_bulk_path, 'a+');
-		fwrite($fp1, $files_content);
+		// Ensure the WP_Filesystem is initialized
+		require_once( ABSPATH . 'wp-admin/includes/file.php' );
+		WP_Filesystem();
+
+		global $wp_filesystem;
+
+		// Write files content using WP_Filesystem methods
+		if ( $wp_filesystem->exists( $file_bulk_path ) ) {
+			// Append content if the file exists
+			$wp_filesystem->append( $file_bulk_path, $files_content );
+		} else {
+			// Create the file and write content if it does not exist
+			$wp_filesystem->put_contents( $file_bulk_path, $files_content, FS_CHMOD_FILE );
+		}
 
 		return array( 'file_bulk_path' => $file_bulk_path, 'file_bulk_url' => $file_bulk_url);
 	}

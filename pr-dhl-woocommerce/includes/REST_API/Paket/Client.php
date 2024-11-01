@@ -150,7 +150,7 @@ class Client extends API_Client {
 	 * @return string The date and time of the message.
 	 */
 	protected function get_datetime(){
-		return date( 'c', time() );
+		return gmdate( 'c', time() );
 	}
 
 	/**

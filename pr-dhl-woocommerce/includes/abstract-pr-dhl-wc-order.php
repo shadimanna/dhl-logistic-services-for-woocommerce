@@ -435,12 +435,12 @@ abstract class PR_DHL_WC_Order {
 
 		return sprintf( 
 			/* translators: %1$s is the base tracking URL, %2$s is the tracking number, %3$s is the tracking number displayed as link text */
-			esc_html__( '<a href="%1$s%2$s" target="_blank">%3$s</a>', 'dhl-for-woocommerce' ), 
+			'<a href="%1$s%2$s" target="_blank">%3$s</a>', 'dhl-for-woocommerce' ), 
 			esc_url( $this->get_tracking_url() ), 
 			esc_html( $label_tracking_info['tracking_number'] ), 
 			esc_html( $label_tracking_info['tracking_number'] ) 
-			);
-		}
+		);
+	}
 
 	protected function get_return_label_number( $order_id ) {
 
@@ -1611,7 +1611,6 @@ abstract class PR_DHL_WC_Order {
 			header( 'Pragma: public' );
 			header( 'Content-Length: ' . $wp_filesystem->size( $file_path ) );
 	
-			// Read the file content using WP_Filesystem
 			echo $wp_filesystem->get_contents( $file_path );
 			exit;
 		} else {

@@ -52,12 +52,13 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 		$upload_path = wp_upload_dir();
 		$label_path = str_replace( $upload_path['url'], $upload_path['path'], $args['label_url'] );
 		
-		if( file_exists( $label_path ) ) {
-			$res = wp_delete_file( $label_path );
-			
-			if( ! $res ) {
-				throw new Exception( esc_html__( 'DHL Label could not be deleted!', 'dhl-for-woocommerce' ) );
+		if ( file_exists( $label_path ) ) {
+			if ( ! is_writable( $label_path ) ) {
+				throw new Exception( esc_html__( 'DHL Label file is not writable!', 'dhl-for-woocommerce' ) );
 			}
+			wp_delete_file( $label_path );	
+		}else{
+			throw new Exception( esc_html__( 'DHL Label could not be deleted!', 'dhl-for-woocommerce' ) );
 		}
 	}
 
@@ -100,22 +101,22 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 		}
 
 		$label_data_decoded = base64_decode($label_data);
-		// $file_ret = file_put_contents( $label_path, $label_data_decoded );
-		global $wp_filesystem;
+		$file_ret = file_put_contents( $label_path, $label_data_decoded );
+		// global $wp_filesystem;
 
-		// Initialize WP_Filesystem
-		if ( ! function_exists( 'WP_Filesystem' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-		}
+		// // Initialize WP_Filesystem
+		// if ( ! function_exists( 'WP_Filesystem' ) ) {
+		// 	require_once ABSPATH . 'wp-admin/includes/file.php';
+		// }
 
-		WP_Filesystem();
+		// WP_Filesystem();
 
-		// Check if WP_Filesystem object is properly initialized
-		if ( empty( $wp_filesystem ) ) {
-			return false;
-		}
+		// // Check if WP_Filesystem object is properly initialized
+		// if ( empty( $wp_filesystem ) ) {
+		// 	return false;
+		// }
 
-		$file_ret = $wp_filesystem->put_contents( $label_path, $label_data_decoded, FS_CHMOD_FILE );
+		// $file_ret = $wp_filesystem->put_contents( $label_path, $label_data_decoded, FS_CHMOD_FILE );
 
 		if( empty( $file_ret ) ) {
 			throw new Exception( esc_html__( 'DHL Label file cannot be saved!', 'dhl-for-woocommerce' ) );

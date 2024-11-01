@@ -15,7 +15,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 
 	protected $dhl_my_account = null;
 
-	private $de_national_holidays = array('2020-11-22','2020-11-29','2020-12-06','2020-12-13','2020-12-20','2020-12-25','2020-12-26','2020-12-27','2021-01-01','2021-04-02','2021-04-04','2021-04-05','2021-05-01','2021-05-13','2021-05-23','2021-05-24','2021-10-03','2021-12-25','2021-12-26','2022-01-01','2022-04-15','2022-04-17','2022-04-18','2022-05-01','2022-05-26','2022-06-05','2022-06-06','2022-10-03','2022-12-25','2022-12-26','2023-01-01','2023-04-07','2023-04-09','2023-04-10','2023-05-01','2023-05-18','2023-05-28','2023-05-29','2023-10-03','2023-12-25','2023-12-26','2024-01-01','2024-03-29','2024-03-31','2024-04-01','2024-05-01','2024-05-09','2024-05-19','2024-05-20','2024-10-03','2024-12-25','2024-12-26');
+	private $de_national_holidays = array( '2020-11-22', '2020-11-29', '2020-12-06', '2020-12-13', '2020-12-20', '2020-12-25', '2020-12-26', '2020-12-27', '2021-01-01', '2021-04-02', '2021-04-04', '2021-04-05', '2021-05-01', '2021-05-13', '2021-05-23', '2021-05-24', '2021-10-03', '2021-12-25', '2021-12-26', '2022-01-01', '2022-04-15', '2022-04-17', '2022-04-18', '2022-05-01', '2022-05-26', '2022-06-05', '2022-06-06', '2022-10-03', '2022-12-25', '2022-12-26', '2023-01-01', '2023-04-07', '2023-04-09', '2023-04-10', '2023-05-01', '2023-05-18', '2023-05-28', '2023-05-29', '2023-10-03', '2023-12-25', '2023-12-26', '2024-01-01', '2024-03-29', '2024-03-31', '2024-04-01', '2024-05-01', '2024-05-09', '2024-05-19', '2024-05-20', '2024-10-03', '2024-12-25', '2024-12-26' );
 
 	public function __construct( $country_code ) {
 		$this->country_code = $country_code;
@@ -30,7 +30,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 			//$this->dhl_finder = new PR_DHL_API_SOAP_Finder( );
 			$this->dhl_finder = new PR_DHL_API_REST_Finder( );
 			$this->dhl_my_account = new PR_DHL_API_REST_Parcel_DE_MyAccount( );
-		} catch (Exception $e) {
+		} catch ( Exception $e ) {
 			throw $e;
 		}
 	}
@@ -41,7 +41,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 
 	protected function maybe_sandbox( $args ) {
 
-		if ( isset($args['sandbox']) && ($args['sandbox'] == 'yes' ) ) {
+		if ( isset( $args['sandbox'] ) && ( $args['sandbox'] == 'yes' ) ) {
 			$sandbox_info = $this->sandbox_info();
 			$settings     = $this->get_settings();
 
@@ -131,23 +131,23 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 	}
 
 	public function set_dhl_myaccount_info($value) {
-        update_option( 'woocommerce_pr_dhl_paket_settings', $value);
+        update_option( 'woocommerce_pr_dhl_paket_settings', $value );
     }
 
 	public function get_dhl_myaccount_pwd_expiration() {
-        return get_option( 'wc_dhl_myaccount_pwd_expiration', '');
+        return get_option( 'wc_dhl_myaccount_pwd_expiration', '' );
     }
 
-    public function set_dhl_myaccount_pwd_expiration($value) {
-        update_option( 'wc_dhl_myaccount_pwd_expiration', $value);
+    public function set_dhl_myaccount_pwd_expiration( $value ) {
+        update_option( 'wc_dhl_myaccount_pwd_expiration', $value );
     }
     
     public function get_dhl_booking_text() {
         return get_option( 'wc_dhl_booking_text', '');
     }
 
-	public function set_dhl_booking_text($value) {
-        update_option( 'wc_dhl_booking_text', $value);
+	public function set_dhl_booking_text( $value ) {
+        update_option(  'wc_dhl_booking_text', $value );
     }
 
 	public function get_dhl_products_international() {
@@ -184,7 +184,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 
 		$dhl_prod_dom = array();
 
-		switch ($country_code) {
+		switch ( $country_code ) {
 			case 'DE':
 				$dhl_prod_dom = $germany_dom;
 				break;
@@ -202,10 +202,10 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		$day_counter = 0;
 
 		// Get existing timezone to reset afterwards
-		$current_timzone = date_default_timezone_get();
+		// $current_timzone = date_default_timezone_get();
+		
 		// Always set and get DE timezone and check against it.
-		date_default_timezone_set('Europe/Berlin');
-
+		// date_default_timezone_set('Europe/Berlin');
 		// Get existing time locale
 		// $current_locale = setlocale(LC_TIME, 0);
 		// Set time locale based on WP locale setting (Settings->General)
@@ -214,7 +214,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		// setlocale(LC_TIME, 'de_DE', 'deu_deu', 'de_DE.utf8', 'German', 'deu/ger', 'de_DE@euro', 'de', 'ge');
 
 		$tz_obj = new DateTimeZone( 'Europe/Berlin' );
-		$today  = new DateTime("now", $tz_obj);	// Should the order date be passed as a variable?
+		$today  = new DateTime( "now", $tz_obj );	// Should the order date be passed as a variable?
 		$today_de_timestamp = $today->getTimestamp();
 
 		$week_day  = $today->format('D');
@@ -223,7 +223,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 
 		// Compare week day with key since key includes capital letter in beginning and will work for English AND German!
 		// Check if today is a working day...
-		if ( ( ! array_key_exists($week_day, $exclude_working_days) ) && ( ! in_array($week_date, $this->de_national_holidays) ) ) {
+		if ( ( ! array_key_exists( $week_day, $exclude_working_days ) ) && ( ! in_array( $week_date, $this->de_national_holidays ) ) ) {
 			// ... and check if after cutoff time if today is a transfer day
 			if( $today_de_timestamp >= strtotime( $cutoff_time ) ) {
 				// If the cut off time has been passed, then add a day
@@ -237,8 +237,8 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		}
 
 		// Make sure the next transfer days are working days
-		while ( array_key_exists($week_day, $exclude_working_days) || in_array($week_date, $this->de_national_holidays) ) {
-			$today->add( new DateInterval('P1D') ); // Add 1 day
+		while ( array_key_exists( $week_day, $exclude_working_days ) || in_array( $week_date, $this->de_national_holidays ) ) {
+			$today->add( new DateInterval( 'P1D' ) ); // Add 1 day
 			$week_day  = $today->format('D');
 			$week_date = $today->format('Y-m-d');
 
@@ -265,7 +265,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		// Reset time locael
 		// setlocale(LC_TIME, $current_locale);
 		// Reset timezone to not affect any other plugins
-		date_default_timezone_set($current_timzone);
+		// date_default_timezone_set($current_timzone);
 
 		return $preferred_day_time;
 	}
@@ -284,11 +284,11 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		$preferred_days = array();
 		if( isset( $preferred_services->preferredDay->available ) && $preferred_services->preferredDay->available && isset( $preferred_services->preferredDay->validDays ) ) {
 
-			foreach ($preferred_services->preferredDay->validDays as $days_key => $days_value) {
+			foreach ( $preferred_services->preferredDay->validDays as $days_key => $days_value ) {
 				$temp_day_time = strtotime( $days_value->start );
 
-				$day_of_week = date('N', $temp_day_time );
-				$week_date = date('Y-m-d', $temp_day_time );
+				$day_of_week = gmdate( 'N', $temp_day_time );
+				$week_date 	 = gmdate( 'Y-m-d', $temp_day_time );
 
 				$preferred_days[ $week_date ] = $day_of_week_arr[ $day_of_week ];
 			}

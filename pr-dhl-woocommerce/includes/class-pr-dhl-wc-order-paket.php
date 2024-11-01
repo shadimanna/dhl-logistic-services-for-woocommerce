@@ -923,30 +923,32 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 
 	protected function get_tracking_link( $order_id ) {
 		$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
-		if( empty( $label_tracking_info['tracking_number'] ) ) {
+		if ( empty( $label_tracking_info['tracking_number'] ) ) {
 			return '';
 		}
-
+	
 		$tracking_number = $label_tracking_info['tracking_number'];
-
 		$tracking_link_str = '';
-		if (is_array( $tracking_number ) ) {
-			foreach ($tracking_number as $key => $value) {
-				// Translators: 1: Tracking URL, 2: Tracking value, 3: Tracking value (displayed as the link text).
-				$tracking_link[ $key ] = sprintf( esc_html__( '<a href="%1$s%2$s" target="_blank">%3$s</a>', 'dhl-for-woocommerce' ), 
-					esc_url( $this->get_tracking_url() ), 
-					esc_attr( $value ), 
-					esc_html( $value )
+	
+		if ( is_array( $tracking_number ) ) {
+			foreach ( $tracking_number as $key => $value ) {
+				$tracking_link[ $key ] = sprintf(
+					// Translators: 1: Tracking URL, 2: Tracking value, 3: Tracking value (displayed as the link text).
+					'<a href="%1$s%2$s" target="_blank">%3$s</a>', // Do not escape HTML here
+					esc_url( $this->get_tracking_url() ),
+					esc_attr( $value ),
+					esc_attr( $value )
 				);
 			}
-
+	
 			$tracking_link_str = implode('<br/>', $tracking_link);
 		} else {
 			$tracking_link_str = parent::get_tracking_link( $order_id );
 		}
-
+	
 		return $tracking_link_str;
 	}
+	
 
 	public function add_order_label_column_header( $columns ) {
 
@@ -974,12 +976,12 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		$order_id = $order->get_id();
 
 		if ( 'dhl_label_created' === $column ) {
-			echo esc_html( $this->get_print_status( $order_id ) );
+			echo wp_kses_post( $this->get_print_status( $order_id ) );
 		}
 
 		if ( 'dhl_tracking_number' === $column ) {
 			$tracking_link = $this->get_tracking_link( $order_id );
-			echo empty( $tracking_link ) ? '<strong>&ndash;</strong>' : esc_url( $tracking_link );
+			echo empty( $tracking_link ) ? '<strong>&ndash;</strong>' : $tracking_link;
 		}
 	}
 
@@ -989,7 +991,7 @@ class PR_DHL_WC_Order_Paket extends PR_DHL_WC_Order {
 		if( empty( $label_tracking_info ) ) {
 			return '<strong>&ndash;</strong>';
 		} else {
-			return '&#10004';
+			return '<span class="dashicons dashicons-yes"></span>'; 
 		}
 	}
 

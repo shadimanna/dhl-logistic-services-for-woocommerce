@@ -60,7 +60,7 @@ Please choose your preferred delivery option.', 'dhl-for-woocommerce' ); ?></td>
                 }
 
                 foreach ( $preferred_days as $key => $value ) {
-                  $week_day_num = empty( $key ) ? '-' : date('j', strtotime( $key ) );
+                  $week_day_num = empty( $key ) ? '-' : gmdate( 'j', strtotime( $key ) );
                   $is_selected = $pr_dhl_preferred_day_selected == $key ? 'checked="checked"' : '';
                 ?>
 
