@@ -543,10 +543,8 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 				return;
 			}
 
-			$button_text = $this->get_branch_location_text();
-
 			$dhl_logo = PR_DHL_PLUGIN_DIR_URL . '/assets/img/dhl-official.png';
-			echo '<a data-fancybox id="dhl_parcel_finder" class="button" data-src="#dhl_parcel_finder_form" href="javascript:;">' . esc_attr( $button_text ) . '<img src="' . esc_url( $dhl_logo ) . '" class="dhl-co-logo"></a>';
+			echo '<a data-fancybox id="dhl_parcel_finder" class="button" data-src="#dhl_parcel_finder_form" href="javascript:;">' . $this->get_branch_location_text() . '<img src="' . esc_url( $dhl_logo ) . '" class="dhl-co-logo"></a>';
 
 			// echo '<a id="dhl_parcel_finder_test" class="button" href="#dhl_parcel_finder_form_test">' . esc_html__('Parcel Finder TEST', 'dhl-for-woocommerce') . '</a>';
 			// echo '<div id="dhl_parcel_finder_form_test">TEST TEST</div>';
@@ -760,7 +758,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 				'label'    => esc_html__( 'Post Number', 'dhl-for-woocommerce' ),
 				'required' => false,
 				'type'     => 'text',
-				'class'    => array( 'shipping-dhl-postnum' ),
+				'class'    => 'shipping-dhl-postnum',
 				'clear'    => true,
 			);
 
@@ -778,12 +776,11 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 		}
 
 		public function admin_order_add_postnum_field( $fields ) {
-
 			$shipping_dhl_postnum_branch = array(
 				'label'    => esc_html__( 'Post Number', 'dhl-for-woocommerce' ),
 				'required' => false,
 				'type'     => 'text',
-				'class'    => array( 'shipping-dhl-postnum' ),
+				'class'    => 'shipping-dhl-postnum',
 				'clear'    => true,
 				'show'     => false,
 			);
