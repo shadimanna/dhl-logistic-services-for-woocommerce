@@ -48,7 +48,7 @@ class Client extends API_Client {
 						'message'  => sprintf(
 							// Translators: %s is replaced with the error message returned from the API.
 							esc_html__( 'Error creating label: %s', 'dhl-for-woocommerce' ),
-							wp_kses_post( $error_message )
+							$error_message
 						),
 					);
 				}
@@ -64,7 +64,7 @@ class Client extends API_Client {
 			sprintf(
 				// Translators: %s is replaced with the error message returned from the API.
 				esc_html__( 'Error creating label: %s', 'dhl-for-woocommerce' ),
-				wp_kses_post( $message )
+				$message
 			)
 		);
 	}
@@ -513,20 +513,11 @@ class Client extends API_Client {
 				$error_message .= '<strong class="wc_dhl_error">' . $key . ' : </strong>';
 				$error_message .= '<ul class="wc_dhl_error">';
 				foreach ( $errors as $error ) {
-					$error_message .= '<li>' . $error . '</li>';
+					$error_message .= '<li>' . esc_html( $error ) . '</li>';
 				}
 				$error_message .= '</ul>';
 			}
 		}
-
-		/*
-		if ( ! empty( $single_errors_list ) ) {
-			$error_message = '<ul class="wc_dhl_error">';
-			foreach ( $single_errors_list as $error ) {
-				$error_message .= '<li>' . $error . '</li>';
-			}
-			$error_message .= '</ul>';
-		}*/
 
 		return $error_message;
 	}
@@ -559,7 +550,7 @@ class Client extends API_Client {
 			sprintf(
 				// Translators: %s is replaced with the error message returned from the API.
 				esc_html__( 'Error deleting label: %s', 'dhl-for-woocommerce' ),
-				wp_kses_post( $message )
+				$message
 			)
 		);
 	}

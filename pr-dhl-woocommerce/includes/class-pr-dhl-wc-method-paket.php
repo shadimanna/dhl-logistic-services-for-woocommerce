@@ -59,8 +59,8 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 
 			ob_start();
 			?>
-		<div class="<?php echo esc_html( $type ); ?>" >
-			<p><?php echo esc_html( $message ); ?></p>
+		<div class="<?php echo $type; ?>" >
+			<p><?php echo $message; ?></p>
 		</div>
 			<?php
 			return ob_get_clean();
@@ -1029,14 +1029,14 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 			?>
 		<tr valign="top">
 			<th scope="row" class="titledesc">
-				<label for="<?php echo esc_attr( $field ); ?>"><?php echo wp_kses_post( $data['title'] ); ?></label>
-				<?php echo wp_kses_post( $this->get_tooltip_html( $data ) ); ?>
+				<label for="<?php echo esc_attr( $field ); ?>"><?php echo esc_html( $data['title'] ); ?></label>
+				<?php echo $this->get_tooltip_html( $data ); ?>
 			</th>
 			<td class="forminp">
 				<fieldset>
-					<legend class="screen-reader-text"><span><?php echo wp_kses_post( $data['title'] ); ?></span></legend>
-					<button class="<?php echo esc_attr( $data['class'] ); ?>" type="button" name="<?php echo esc_attr( $field ); ?>" id="<?php echo esc_attr( $field ); ?>" style="<?php echo esc_attr( $data['css'] ); ?>" <?php echo wp_kses_post( $this->get_custom_attribute_html( $data ) ); ?>><?php echo wp_kses_post( $data['title'] ); ?></button>
-					<?php echo wp_kses_post( $this->get_description_html( $data ) ); ?>
+					<legend class="screen-reader-text"><span><?php echo esc_html( $data['title'] ); ?></span></legend>
+					<button class="<?php echo esc_attr( $data['class'] ); ?>" type="button" name="<?php echo esc_attr( $field ); ?>" id="<?php echo esc_attr( $field ); ?>" style="<?php echo esc_attr( $data['css'] ); ?>" <?php echo $this->get_custom_attribute_html( $data ); ?>><?php echo esc_html( $data['title'] ); ?></button>
+					<?php echo $this->get_description_html( $data ); ?>
 				</fieldset>
 			</td>
 		</tr>
@@ -1065,15 +1065,12 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 			$value = wc_clean( $_POST[ $this->plugin_id . $this->id . '_' . $key ] );
 
 			try {
-
 				$dhl_obj = PR_DHL()->get_dhl_factory();
 				$dhl_obj->dhl_validate_field( 'pickup', $value );
 
 			} catch ( Exception $e ) {
-
-				echo wp_kses_post( $this->get_message( esc_html__( 'Pickup Account Number: ', 'dhl-for-woocommerce' ) . esc_html( $e->getMessage() ) ) );
+				echo $this->get_message( esc_html__( 'Pickup Account Number: ', 'dhl-for-woocommerce' ) . esc_html( $e->getMessage() ) );
 				throw $e;
-
 			}
 
 			return $value;
@@ -1094,7 +1091,7 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 
 			} catch ( Exception $e ) {
 
-				echo wp_kses_post( $this->get_message( esc_html__( 'Distribution Center: ', 'dhl-for-woocommerce' ) . esc_html( $e->getMessage() ) ) );
+				echo $this->get_message( esc_html__( 'Distribution Center: ', 'dhl-for-woocommerce' ) . esc_html( $e->getMessage() ) );
 				throw $e;
 			}
 
@@ -1177,11 +1174,8 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 			$shipper_reference = $_POST[ $this->plugin_id . $this->id . '_dhl_shipper_reference' ];
 
 			if ( empty( $shipper_reference ) ) {
-
 				$error_message = esc_html__( 'In order to use logo, you need to set a shipper reference first.', 'dhl-for-woocommerce' );
-
-				echo wp_kses_post( $this->get_message( $error_message ) );
-
+				echo $this->get_message( $error_message );
 				return 'no';
 			}
 
@@ -1192,7 +1186,7 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 		 * Validate the any location enabled field
 		 *
 		 * @see validate_settings_fields()
-		 * @return return 'no' or 'yes' (not exception) to 'disable' locations as opposed to NOT save them
+		 * @return string 'no' or 'yes' (not exception) to 'disable' locations as opposed to NOT save them
 		 */
 		protected function validate_location_enabled_field( $key, $location_type ) {
 			if ( ! isset( $_POST[ $this->plugin_id . $this->id . '_' . $key ] ) ) {
@@ -1213,7 +1207,7 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					$error_message = sprintf( esc_html__( 'In order to show %s on a map, you need to set a Google API Key first.', 'dhl-for-woocommerce' ), $location_type );
 				}
 
-				echo wp_kses_post( $this->get_message( $error_message ) );
+				echo $this->get_message( $error_message );
 
 				return 'no';
 			}

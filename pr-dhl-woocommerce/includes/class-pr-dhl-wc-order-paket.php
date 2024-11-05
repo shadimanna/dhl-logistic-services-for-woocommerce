@@ -1053,7 +1053,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			$order_id = $order->get_id();
 
 			if ( 'dhl_label_created' === $column ) {
-				echo wp_kses_post( $this->get_print_status( $order_id ) );
+				echo $this->get_print_status( $order_id );
 			}
 
 			if ( 'dhl_tracking_number' === $column ) {

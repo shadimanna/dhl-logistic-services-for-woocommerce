@@ -131,8 +131,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 					$dhl_product_list = $dhl_obj->get_dhl_products_international();
 				}
 			} catch ( Exception $e ) {
-
-				echo '<p class="wc_dhl_error">' . wp_kses_post( $e->getMessage() ) . '</p>';
+				echo '<p class="wc_dhl_error">' . esc_html( $e->getMessage() ) . '</p>';
 			}
 
 			$delete_label = '';
@@ -212,10 +211,10 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 				// A label has been generated already, allow to delete
 				if ( empty( $label_tracking_info ) ) {
-					echo wp_kses_post( $main_button );
+					echo $main_button;
 				} else {
-					echo wp_kses_post( $print_button );
-					echo wp_kses_post( $delete_label );
+					echo $print_button;
+					echo $delete_label;
 				}
 
 				wp_enqueue_script( 'wc-shipment-dhl-label-js', PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl.js', array( 'jquery' ), PR_DHL_VERSION );
@@ -1057,37 +1056,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 			return $redirect;
 		}
-		/*
-		public function render_messages( $current_screen = null ) {
-		if ( ! $current_screen instanceof WP_Screen ) {
-			$current_screen = get_current_screen();
-		}
-
-		if ( isset( $current_screen->id ) && in_array( $current_screen->id, array( 'shop_order', 'edit-shop_order' ), true ) ) {
-
-			$bulk_action_message_opt = get_option( '_pr_dhl_bulk_action_confirmation' );
-
-			if ( ( $bulk_action_message_opt ) && is_array( $bulk_action_message_opt ) ) {
-
-				$user_id = key( $bulk_action_message_opt );
-
-				if ( get_current_user_id() !== (int) $user_id ) {
-					return;
-				}
-
-				$message = wp_kses_post( current( $bulk_action_message_opt ) );
-				$is_error = wp_kses_post( next( $bulk_action_message_opt ) );
-
-				if( $is_error ) {
-					echo '<div class="error"><ul><li>' . $message . '</li></ul></div>';
-				} else {
-					echo '<div id="wp-admin-message-handler-message"  class="updated"><ul><li><strong>' . $message . '</strong></li></ul></div>';
-				}
-
-				delete_option( '_pr_dhl_bulk_action_confirmation' );
-			}
-		}
-		}*/
 
 		/**
 		 * Display messages on order view screen
@@ -1112,18 +1080,17 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 					}
 
 					foreach ( $bulk_action_message_opt as $key => $value ) {
-						$message = wp_kses_post( $value['message'] );
-						$type    = wp_kses_post( $value['type'] );
+						$message = esc_html( $value['message'] );
 
-						switch ( $type ) {
+						switch ( $value['type'] ) {
 							case 'error':
-								echo '<div class="notice notice-error"><ul><li>' . wp_kses_post( $message ) . '</li></ul></div>';
+								echo '<div class="notice notice-error"><ul><li>' . $message . '</li></ul></div>';
 								break;
 							case 'success':
-								echo '<div class="notice notice-success"><ul><li><strong>' . wp_kses_post( $message ) . '</strong></li></ul></div>';
+								echo '<div class="notice notice-success"><ul><li><strong>' . $message . '</strong></li></ul></div>';
 								break;
 							default:
-								echo '<div class="notice notice-warning"><ul><li><strong>' . wp_kses_post( $message ) . '</strong></li></ul></div>';
+								echo '<div class="notice notice-warning"><ul><li><strong>' . $message . '</strong></li></ul></div>';
 						}
 					}
 

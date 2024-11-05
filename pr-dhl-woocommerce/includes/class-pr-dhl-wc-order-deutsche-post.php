@@ -521,7 +521,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			</tr>
 			</thead>
 			<tbody>
-			<?php echo implode( '', wp_kses_post( $table_rows ) ); ?>
+			<?php echo implode( '', $table_rows ); ?>
 			</tbody>
 		</table>
 		<p>

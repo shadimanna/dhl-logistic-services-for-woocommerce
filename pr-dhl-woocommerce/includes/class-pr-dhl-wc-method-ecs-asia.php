@@ -470,14 +470,14 @@ if ( ! class_exists( 'PR_DHL_WC_Method_eCS_Asia' ) ) :
 			?>
 		<tr valign="top">
 			<th scope="row" class="titledesc">
-				<label for="<?php echo esc_attr( $field ); ?>"><?php echo wp_kses_post( $data['title'] ); ?></label>
-				<?php echo wp_kses_post( $this->get_tooltip_html( $data ) ); ?>
+				<label for="<?php echo esc_attr( $field ); ?>"><?php esc_html( $data['title'] ); ?></label>
+				<?php echo $this->get_tooltip_html( $data ); ?>
 			</th>
 			<td class="forminp">
 				<fieldset>
-					<legend class="screen-reader-text"><span><?php echo wp_kses_post( $data['title'] ); ?></span></legend>
-					<button class="<?php echo esc_attr( $data['class'] ); ?>" type="button" name="<?php echo esc_attr( $field ); ?>" id="<?php echo esc_attr( $field ); ?>" style="<?php echo esc_attr( $data['css'] ); ?>" <?php echo wp_kses_post( $this->get_custom_attribute_html( $data ) ); ?>><?php echo esc_html( $data['title'] ); ?></button>
-					<?php echo wp_kses_post( $this->get_description_html( $data ) ); ?>
+					<legend class="screen-reader-text"><span><?php echo esc_html( $data['title'] ); ?></span></legend>
+					<button class="<?php echo esc_attr( $data['class'] ); ?>" type="button" name="<?php echo esc_attr( $field ); ?>" id="<?php echo esc_attr( $field ); ?>" style="<?php echo esc_attr( $data['css'] ); ?>" <?php echo $this->get_custom_attribute_html( $data ); ?>><?php echo esc_html( $data['title'] ); ?></button>
+					<?php echo $this->get_description_html( $data ); ?>
 				</fieldset>
 			</td>
 		</tr>
@@ -491,15 +491,13 @@ if ( ! class_exists( 'PR_DHL_WC_Method_eCS_Asia' ) ) :
 		 * @see validate_settings_fields()
 		 */
 		public function validate_dhl_pickup_field( $key, $value ) {
-			// $value = wc_clean( $_POST[ $this->plugin_id . $this->id . '_' . $key ] );
-
 			try {
 
 				$dhl_obj = PR_DHL()->get_dhl_factory();
 				$dhl_obj->dhl_validate_field( 'pickup', $value );
 
 			} catch ( Exception $e ) {
-				echo wp_kses_post( $this->get_message( esc_html__( 'Pickup Account Number: ', 'dhl-for-woocommerce' ) . esc_html( $e->getMessage() ) ) );
+				echo $this->get_message( esc_html__( 'Pickup Account Number: ', 'dhl-for-woocommerce' ) . esc_html( $e->getMessage() ) );
 				throw $e;
 
 			}
@@ -513,16 +511,11 @@ if ( ! class_exists( 'PR_DHL_WC_Method_eCS_Asia' ) ) :
 		 * @see validate_settings_fields()
 		 */
 		public function validate_dhl_distribution_field( $key, $value ) {
-			// $value = wc_clean( $_POST[ $this->plugin_id . $this->id . '_' . $key ] );
-
 			try {
-
 				$dhl_obj = PR_DHL()->get_dhl_factory();
 				$dhl_obj->dhl_validate_field( 'distribution', $value );
-
 			} catch ( Exception $e ) {
-
-				echo wp_kses_post( $this->get_message( esc_html__( 'Distribution Center: ', 'dhl-for-woocommerce' ) . esc_html( $e->getMessage() ) ) );
+				echo $this->get_message( esc_html__( 'Distribution Center: ', 'dhl-for-woocommerce' ) . esc_html( $e->getMessage() ) );
 				throw $e;
 			}
 
@@ -588,16 +581,12 @@ if ( ! class_exists( 'PR_DHL_WC_Method_eCS_Asia' ) ) :
 		 * If there is an error thrown, will continue to save and validate fields, but will leave the erroring field out.
 		 */
 		public function process_admin_options() {
-
 			try {
-
 				$dhl_obj = PR_DHL()->get_dhl_factory();
 				$dhl_obj->dhl_reset_connection();
 
 			} catch ( Exception $e ) {
-
-				echo wp_kses_post( $this->get_message( esc_html__( 'Could not reset connection: ', 'dhl-for-woocommerce' ) . esc_html( $e->getMessage() ) ) );
-				// throw $e;
+				echo $this->get_message( esc_html__( 'Could not reset connection: ', 'dhl-for-woocommerce' ) . esc_html( $e->getMessage() ) );
 			}
 
 			return parent::process_admin_options();

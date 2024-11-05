@@ -314,12 +314,12 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
 		?>
 		<tr valign="top">
 			<th scope="row" class="titledesc">
-				<label for="<?php echo esc_attr( $field ); ?>"><?php echo wp_kses_post( $data['title'] ); ?></label>
-				<?php echo wp_kses_post( $this->get_tooltip_html( $data ) ); ?>
+				<label for="<?php echo esc_attr( $field ); ?>"><?php echo esc_html( $data['title'] ); ?></label>
+				<?php echo $this->get_tooltip_html( $data ); ?>
 			</th>
 			<td class="forminp">
 				<fieldset>
-					<legend class="screen-reader-text"><span><?php echo wp_kses_post( $data['title'] ); ?></span>
+					<legend class="screen-reader-text"><span><?php echo esc_html( $data['title'] ); ?></span>
 					</legend>
 					<button class="<?php echo esc_attr( $data['class'] ); ?>" type="button"
 							name="<?php echo esc_attr( $field ); ?>" id="<?php echo esc_attr( $field ); ?>"
@@ -329,14 +329,12 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
 								$data['css']
 							);
 							?>
-							" <?php echo wp_kses_post( $this->get_custom_attribute_html( $data ) ); ?>>
+							" <?php echo $this->get_custom_attribute_html( $data ); ?>>
 							<?php
-							echo wp_kses_post(
-								$data['title']
-							);
+							echo esc_html( $data['title'] );
 							?>
 						</button>
-					<?php echo wp_kses_post( $this->get_description_html( $data ) ); ?>
+					<?php echo $this->get_description_html( $data ); ?>
 				</fieldset>
 			</td>
 		</tr>
