@@ -442,9 +442,9 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 			return sprintf(
 			/* translators: %1$s is the base tracking URL, %2$s is the tracking number, %3$s is the tracking number displayed as link text */
 				'<a href="%1$s%2$s" target="_blank">%3$s</a>',
-			esc_url( $this->get_tracking_url() ),
-			esc_html( $label_tracking_info['tracking_number'] ),
-			esc_html( $label_tracking_info['tracking_number'] )
+				esc_url( $this->get_tracking_url() ),
+				esc_html( $label_tracking_info['tracking_number'] ),
+				esc_html( $label_tracking_info['tracking_number'] )
 			);
 		}
 

@@ -181,7 +181,8 @@ class Auth implements API_Auth_Interface {
 		// If the status code is not 200, throw an error with the raw response body
 		if ( $response->status !== 200 ) {
 			$response_body = json_decode( $response->body );
-			throw new RuntimeException( esc_html( $response_body->detail ) );		}
+			throw new RuntimeException( esc_html( $response_body->detail ) );
+		}
 
 		return $response->body;
 	}
