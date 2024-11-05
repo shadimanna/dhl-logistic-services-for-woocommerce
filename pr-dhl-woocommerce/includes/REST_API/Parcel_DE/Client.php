@@ -45,10 +45,12 @@ class Client extends API_Client {
 					$error_message           = $this->generate_error_message( $this->get_item_error_message( $item ) );
 					$labels_data['errors'][] = array(
 						'order_id' => '',
-						'message'  => sprintf(
+						'message'  => wp_kses_post(
+							sprintf(
 							// Translators: %s is replaced with the error message returned from the API.
-							esc_html__( 'Error creating label: %s', 'dhl-for-woocommerce' ),
-							$error_message
+								__( 'Error creating label: %s', 'dhl-for-woocommerce' ),
+								$error_message
+							)
 						),
 					);
 				}

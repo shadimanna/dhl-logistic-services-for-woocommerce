@@ -1080,7 +1080,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 					}
 
 					foreach ( $bulk_action_message_opt as $key => $value ) {
-						$message = esc_html( $value['message'] );
+						$message = wp_kses_post( $value['message'] );
 
 						switch ( $value['type'] ) {
 							case 'error':
@@ -1182,7 +1182,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 					} catch ( Exception $e ) {
 						$array_messages[] = array(
 							/* translators: %1$s is the order number, %2$s is the error message */
-							'message' => sprintf( esc_html__( 'Order #%1$s: %2$s', 'dhl-for-woocommerce' ), esc_html( $order->get_order_number() ), esc_html( $e->getMessage() ) ),
+							'message' => sprintf( esc_html__( 'Order #%1$s: %2$s', 'dhl-for-woocommerce' ), esc_html( $order->get_order_number() ), $e->getMessage() ),
 							'type'    => 'error',
 						);
 					}
@@ -1248,33 +1248,23 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 						// Construct URL pointing to the download label endpoint (with bulk param):
 						$bulk_download_label_url = $this->generate_download_url( '/' . self::DHL_DOWNLOAD_ENDPOINT . '/bulk' );
 
-						array_push(
-							$array_messages,
-							array(
-								/* translators: %1$s and %2$s are HTML tags for the download link */
-								'message' => sprintf( esc_html__( 'Bulk DHL labels file created - %1$sdownload file%2$s', 'dhl-for-woocommerce' ), '<a href="' . esc_url( $bulk_download_label_url ) . '" download>', '</a>' ),
-								'type'    => 'success',
-							)
+						$array_messages[] = array(
+							/* translators: %1$s and %2$s are HTML tags for the download link */
+							'message' => wp_kses_post( sprintf( __( 'Bulk DHL labels file created - %1$sdownload file%2$s', 'dhl-for-woocommerce' ), '<a href="' . esc_url( $bulk_download_label_url ) . '" download>', '</a>' ) ),
+							'type'    => 'success',
 						);
-
 					} else {
 						// $message .= __( '. Could not create bulk DHL label file, download individually.', 'dhl-for-woocommerce' );
 
-						array_push(
-							$array_messages,
-							array(
-								'message' => esc_html__( 'Could not create bulk DHL label file, download individually.', 'dhl-for-woocommerce' ),
-								'type'    => 'error',
-							)
+						$array_messages[] = array(
+							'message' => esc_html__( 'Could not create bulk DHL label file, download individually.', 'dhl-for-woocommerce' ),
+							'type'    => 'error',
 						);
 					}
 				} catch ( Exception $e ) {
-					array_push(
-						$array_messages,
-						array(
-							'message' => esc_html( $e->getMessage() ),
-							'type'    => 'error',
-						)
+					$array_messages[] = array(
+						'message' => wp_kses_post( $e->getMessage() ),
+						'type'    => 'error',
 					);
 				}
 			} elseif ( 'pr_dhl_delete_labels' === $action ) {
