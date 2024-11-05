@@ -66,7 +66,7 @@ class Client extends API_Client {
 
 		$data = $this->request_pickup_info_to_request_data( $pickup_request_info, $blnIncludeBillingNumber );
 
-		$response      = $this->post( $route, $data, $headers );
+		$response = $this->post( $route, $data, $headers );
 
 		if ( is_array( $response->body ) ) {
 			$response->body = $response->body[0];
@@ -114,13 +114,15 @@ class Client extends API_Client {
 			return $response->body;
 		}
 
-		throw new Exception( wp_kses_post(
-			sprintf(
-			// Translators: %s is replaced with the error details returned from the API.
-				__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
-				$this->generate_error_details( $response->body )
+		throw new Exception(
+			wp_kses_post(
+				sprintf(
+				// Translators: %s is replaced with the error details returned from the API.
+					__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
+					$this->generate_error_details( $response->body )
+				)
 			)
-		) );
+		);
 	}
 
 	public function generate_error_details( $body ) {

@@ -330,6 +330,7 @@ class Item_Info {
 			),
 			'is_codeable'            => array(
 				'rename'   => 'mustEncode',
+				'default'  => 'false',
 				'sanitize' => function ( $value ) use ( $self ) {
 					if ( 'yes' === $value ) {
 						return 'true';
@@ -448,36 +449,45 @@ class Item_Info {
 				'sanitize' => function ( $name ) use ( $self ) {
 					return $self->string_length_sanitization( $name, 50 );
 				},
+				'default'  => '',
 			),
 			'return_phone'         => array(
-				'rename' => 'phone',
+				'rename'  => 'phone',
+				'default' => '',
 			),
 			'return_email'         => array(
-				'rename' => 'email',
+				'rename'  => 'email',
+				'default' => '',
 			),
 			'return_address'       => array(
 				'rename'   => 'addressStreet',
 				'sanitize' => function ( $name ) use ( $self ) {
 					return $self->string_length_sanitization( $name, 50 );
 				},
+				'default'  => '',
 			),
 			'return_address_no'    => array(
-				'rename' => 'addressHouse',
+				'rename'  => 'addressHouse',
+				'default' => '',
 			),
 			'return_address_zip'   => array(
-				'rename' => 'postalCode',
+				'rename'  => 'postalCode',
+				'default' => '',
 			),
 			'return_address_city'  => array(
-				'rename' => 'city',
+				'rename'  => 'city',
+				'default' => '',
 			),
 			'return_address_state' => array(
 				'rename'   => 'state',
+				'default'  => '',
 				'sanitize' => function ( $value ) use ( $self ) {
 					return $self->string_length_sanitization( $value, 20 );
 				},
 			),
 			'shipper_country'      => array(
 				'rename'   => 'country',
+				'default'  => '',
 				'sanitize' => function ( $countryCode ) use ( $self ) {
 					return $self->country_code_to_alpha3( $countryCode );
 				},
