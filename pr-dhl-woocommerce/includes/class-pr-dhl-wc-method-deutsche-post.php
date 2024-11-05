@@ -363,7 +363,7 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
 				if ( empty( $value ) ) {
 
 					$msg = esc_html__( 'Contact Phone Number required, please add in settings.', 'dhl-for-woocommerce' );
-					echo esc_html( $this->get_message( $msg ) );
+					echo $this->get_message( $msg );
 					throw new Exception( esc_html( $msg ) );
 					break;
 				}

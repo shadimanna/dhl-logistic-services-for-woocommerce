@@ -309,7 +309,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 * @since [*next-version*]
 	 */
 	public function dhl_order_meta_box() {
-		echo wp_kses_post( $this->dhl_order_meta_box_table() );
+		echo $this->dhl_order_meta_box_table();
 
 		wp_enqueue_script(
 			'wc-shipment-dhl-dp-label-js',
@@ -445,7 +445,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			</tr>
 			</thead>
 			<tbody>
-			<?php echo implode( '', wp_kses_post( $table_rows ) ); ?>
+			<?php echo implode( '', $table_rows ); ?>
 			</tbody>
 		</table>
 		<p class="form-field pr_dhl_awb_copy_count_field">

@@ -559,7 +559,7 @@ class Client extends API_Client {
 			sprintf(
 				// Translators: %s is replaced with the error message returned from the API.
 				esc_html__( 'Error deleting label: %s', 'dhl-for-woocommerce' ),
-				esc_html( $message )
+				wp_kses_post( $message )
 			)
 		);
 	}

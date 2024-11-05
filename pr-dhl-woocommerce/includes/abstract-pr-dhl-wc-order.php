@@ -157,9 +157,9 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 			}
 
 			$dhl_label_data = array(
-				'main_button'  => wp_kses_post( $main_button ),
-				'delete_label' => wp_kses_post( $delete_label ),
-				'print_button' => wp_kses_post( $print_button ),
+				'main_button'  => $main_button,
+				'delete_label' => $delete_label,
+				'print_button' => $print_button,
 			);
 
 			echo '<div id="shipment-dhl-label-form">';
