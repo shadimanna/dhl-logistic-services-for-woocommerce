@@ -94,7 +94,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 				$message .= '<br>' . $error['message'];
 			}
 
-			throw new Exception( esc_html( $message ) );
+			throw new Exception( wp_kses_post( $message ) );
 		}
 
 		if ( count( $item_response['items'] ) > 1 ) {
