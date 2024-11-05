@@ -10,7 +10,7 @@
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
  * Version: 3.7.3
- * Tested up to: 6.6
+ * Tested up to: 6.7
  * Requires Plugins: woocommerce
  * WC requires at least: 3.0
  * WC tested up to: 9.3

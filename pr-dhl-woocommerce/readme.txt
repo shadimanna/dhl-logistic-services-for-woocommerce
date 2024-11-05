@@ -4,7 +4,7 @@ Donate link:
 Tags: DPDHL, DHL, DHL eCommerce, DHL Paket Germany, Shipping
 Requires at least: 4.6
 Requires PHP: 5.6
-Tested up to: 6.6
+Tested up to: 6.7
 Stable tag: 3.7.3
 Requires Plugins: woocommerce
 WC requires at least: 3.0
