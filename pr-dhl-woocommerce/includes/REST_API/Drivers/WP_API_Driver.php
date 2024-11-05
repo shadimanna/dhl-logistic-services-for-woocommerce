@@ -21,8 +21,8 @@ use RuntimeException;
  * @see API_Driver_Interface
  */
 class WP_API_Driver implements API_Driver_Interface {
-    // Set request timeout to 30 seconds, default of 5 is to small
-    const WP_REQUEST_TIMEOUT = 30;
+	// Set request timeout to 30 seconds, default of 5 is to small
+	const WP_REQUEST_TIMEOUT = 30;
 	/**
 	 * {@inheritdoc}
 	 *
@@ -38,7 +38,7 @@ class WP_API_Driver implements API_Driver_Interface {
 				'headers'    => $request->headers,
 				'cookies'    => $request->cookies,
 				'timeout'    => self::WP_REQUEST_TIMEOUT,
-				'user-agent' => 'WooCommerce/'. WC_VERSION . ' (WordPress/'. get_bloginfo('version') . ') DHL-plug-in/' . PR_DHL_VERSION,
+				'user-agent' => 'WooCommerce/' . WC_VERSION . ' (WordPress/' . get_bloginfo( 'version' ) . ') DHL-plug-in/' . PR_DHL_VERSION,
 			)
 		);
 
@@ -49,7 +49,7 @@ class WP_API_Driver implements API_Driver_Interface {
 
 		// Retrieve the headers from the response
 		$raw_headers = wp_remote_retrieve_headers( $response );
-		$headers 	 = array();
+		$headers     = array();
 
 		// Ensures that the headers use the correct casing
 		foreach ( $raw_headers as $header => $value ) {
@@ -76,7 +76,7 @@ class WP_API_Driver implements API_Driver_Interface {
 	/**
 	 * Get Request type.
 	 *
-	 * @param  Request  $request.
+	 * @param  Request $request.
 	 *
 	 * @return string.
 	 */

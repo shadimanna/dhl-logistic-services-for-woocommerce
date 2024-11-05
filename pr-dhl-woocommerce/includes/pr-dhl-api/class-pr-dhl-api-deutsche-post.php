@@ -75,7 +75,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 
 		try {
 			$this->api_driver = $this->create_api_driver();
-			$this->api_auth = $this->create_api_auth();
+			$this->api_auth   = $this->create_api_auth();
 			$this->api_client = $this->create_api_client();
 		} catch ( Exception $e ) {
 			throw $e;
@@ -123,7 +123,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 		// and parse responses returned from it as JSON.
 		$driver = new JSON_API_Driver( $driver );
 
-		//, decorated using the JSON driver decorator class
+		// , decorated using the JSON driver decorator class
 		return $driver;
 	}
 
@@ -170,8 +170,8 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 */
 	public function get_api_url() {
 		$is_sandbox = $this->get_setting( 'dhl_sandbox' );
-		$is_sandbox = filter_var($is_sandbox, FILTER_VALIDATE_BOOLEAN);
-		$api_url 	= ( $is_sandbox ) ? static::API_URL_SANDBOX : static::API_URL_PRODUCTION;
+		$is_sandbox = filter_var( $is_sandbox, FILTER_VALIDATE_BOOLEAN );
+		$api_url    = ( $is_sandbox ) ? static::API_URL_SANDBOX : static::API_URL_PRODUCTION;
 
 		return $api_url;
 	}
@@ -294,9 +294,9 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	public function get_dhl_products_international() {
 		return array(
 			'GMP-STANDARD' => esc_html__( 'Packet Standard', 'dhl-for-woocommerce' ),
-			'GMP' 		   => esc_html__( 'Packet Priority', 'dhl-for-woocommerce' ),
-			'GPP' 		   => esc_html__( 'Packet Plus', 'dhl-for-woocommerce' ),
-			'GPT' 		   => esc_html__( 'Packet Tracked', 'dhl-for-woocommerce' ),
+			'GMP'          => esc_html__( 'Packet Priority', 'dhl-for-woocommerce' ),
+			'GPP'          => esc_html__( 'Packet Plus', 'dhl-for-woocommerce' ),
+			'GPT'          => esc_html__( 'Packet Tracked', 'dhl-for-woocommerce' ),
 		);
 	}
 
@@ -315,25 +315,25 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 * @since [*next-version*]
 	 */
 	public function get_dhl_label( $args ) {
-		$order_id = isset( $args[ 'order_details' ][ 'order_id' ] )
-			? $args[ 'order_details' ][ 'order_id' ]
+		$order_id     = isset( $args['order_details']['order_id'] )
+			? $args['order_details']['order_id']
 			: null;
-		$order = wc_get_order( $order_id );
-		$item_barcode = $order->get_meta('pr_dhl_dp_item_barcode' );
+		$order        = wc_get_order( $order_id );
+		$item_barcode = $order->get_meta( 'pr_dhl_dp_item_barcode' );
 
 		// If order has no saved barcode, create the DHL item and get the barcode
 		if ( empty( $item_barcode ) ) {
 			$uom = get_option( 'woocommerce_weight_unit' );
 			try {
 				$item_info = new Item_Info( $args, $uom );
-			} catch (Exception $e) {
+			} catch ( Exception $e ) {
 				throw $e;
 			}
 
 			// Create the item and get the barcode
 			$item_response = $this->api_client->create_item( $item_info );
 			$item_barcode  = $item_response->barcode;
-			$item_id 	   = $item_response->id;
+			$item_id       = $item_response->id;
 
 			// Save it in the order
 			$order->update_meta_data( 'pr_dhl_dp_item_barcode', $item_barcode );
@@ -348,8 +348,8 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 		$this->save_dhl_label_file( 'item', $item_barcode, $label_pdf_data );
 
 		return array(
-			'label_path' 	  => $this->get_dhl_item_label_file_info( $item_barcode )->path,
-			'item_barcode' 	  => $item_barcode,
+			'label_path'      => $this->get_dhl_item_label_file_info( $item_barcode )->path,
+			'item_barcode'    => $item_barcode,
 			'tracking_number' => $item_barcode,
 			'tracking_status' => '',
 		);
@@ -371,8 +371,8 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 			if ( ! is_writable( $label_path ) ) {
 				throw new Exception( esc_html__( 'DHL Label file is not writable!', 'dhl-for-woocommerce' ) );
 			}
-			wp_delete_file( $label_path );	
-		}else{
+			wp_delete_file( $label_path );
+		} else {
 			throw new Exception( esc_html__( 'DHL Label could not be deleted!', 'dhl-for-woocommerce' ) );
 		}
 	}
@@ -433,7 +433,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 * @return object An object containing the file "path" and "url" strings.
 	 */
 	public function get_dhl_item_label_file_info( $barcode, $format = 'pdf' ) {
-		$file_name = $this->get_dhl_item_label_file_name($barcode, $format);
+		$file_name = $this->get_dhl_item_label_file_name( $barcode, $format );
 
 		return (object) array(
 			'path' => PR_DHL()->get_dhl_label_folder_dir() . $file_name,
@@ -452,7 +452,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 * @return object An object containing the file "path" and "url" strings.
 	 */
 	public function get_dhl_awb_label_file_info( $awb, $format = 'pdf' ) {
-		$file_name = $this->get_dhl_awb_label_file_name($awb, $format);
+		$file_name = $this->get_dhl_awb_label_file_name( $awb, $format );
 
 		return (object) array(
 			'path' => PR_DHL()->get_dhl_label_folder_dir() . $file_name,
@@ -470,8 +470,8 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 *
 	 * @return object An object containing the file "path" and "url" strings.
 	 */
-	public function get_dhl_order_label_file_info( $order_id, $format = 'pdf') {
-		$file_name = $this->get_dhl_order_label_file_name( $order_id, $format);
+	public function get_dhl_order_label_file_info( $order_id, $format = 'pdf' ) {
+		$file_name = $this->get_dhl_order_label_file_name( $order_id, $format );
 
 		return (object) array(
 			'path' => PR_DHL()->get_dhl_label_folder_dir() . $file_name,
@@ -491,7 +491,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 */
 	public function get_dhl_label_file_info( $type, $key ) {
 		// Return file info for "awb" type
-		if ( $type === 'awb') {
+		if ( $type === 'awb' ) {
 			return $this->get_dhl_awb_label_file_info( $key );
 		}
 
@@ -532,14 +532,14 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 
 		// // Initialize WP_Filesystem
 		// if ( ! function_exists( 'WP_Filesystem' ) ) {
-		// 	require_once ABSPATH . 'wp-admin/includes/file.php';
+		// require_once ABSPATH . 'wp-admin/includes/file.php';
 		// }
 
 		// WP_Filesystem();
 
 		// // Check if WP_Filesystem object is properly initialized
 		// if ( empty( $wp_filesystem ) ) {
-		// 	throw new Exception( esc_html__( 'DHL label file cannot be saved due to WP Filesystem initialization failure!', 'dhl-for-woocommerce' ) );
+		// throw new Exception( esc_html__( 'DHL label file cannot be saved due to WP Filesystem initialization failure!', 'dhl-for-woocommerce' ) );
 		// }
 
 		// // Write the data to the file using WP_Filesystem
@@ -562,8 +562,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 *
 	 * @throws Exception If the file could not be deleted.
 	 */
-	public function delete_dhl_label_file( $type, $key )
-	{
+	public function delete_dhl_label_file( $type, $key ) {
 		// Get the file info based on type
 		$file_info = $this->get_dhl_label_file_info( $type, $key );
 
@@ -576,7 +575,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 			return;
 		}
 
-		wp_delete_file( $file_info->path );	
+		wp_delete_file( $file_info->path );
 	}
 
 	/**
@@ -590,8 +589,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 *
 	 * @throws Exception
 	 */
-	public function create_dhl_awb_label_file( $awb )
-	{
+	public function create_dhl_awb_label_file( $awb ) {
 		$file_info = $this->get_dhl_awb_label_file_info( $awb );
 
 		// Skip creating the file if it already exists
@@ -618,8 +616,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 *
 	 * @throws Exception
 	 */
-	public function create_dhl_order_label_file( $order_id )
-	{
+	public function create_dhl_order_label_file( $order_id ) {
 		$file_info = $this->get_dhl_order_label_file_info( $order_id );
 
 		// Skip creating the file if it already exists
@@ -629,16 +626,16 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 
 		// Get the order with the given ID
 		$order = $this->api_client->get_order( $order_id );
-		if ($order === null) {
+		if ( $order === null ) {
 			// Translators: %s is replaced with the order ID.
 			throw new Exception( esc_html( sprintf( 'DHL order %s does not exist.', $order_id ) ) );
 		}
 
 		// For multiple shipments, maybe create each label file and then merge them
-		$loader = PR_DHL_Libraryloader::instance();
+		$loader    = PR_DHL_Libraryloader::instance();
 		$pdfMerger = $loader->get_pdf_merger();
 
-		if( $pdfMerger === null ){
+		if ( $pdfMerger === null ) {
 
 			throw new Exception( esc_html__( 'Library conflict, could not merge PDF files. Please download PDF files individually.', 'dhl-for-woocommerce' ) );
 		}
@@ -653,8 +650,8 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 			}
 
 			// Ensure it is a PDF file
-			$ext = pathinfo($awb_label_info->path, PATHINFO_EXTENSION);
-			if ( stripos($ext, 'pdf') === false) {
+			$ext = pathinfo( $awb_label_info->path, PATHINFO_EXTENSION );
+			if ( stripos( $ext, 'pdf' ) === false ) {
 				throw new Exception( esc_html__( 'Not all the file formats are the same.', 'dhl-for-woocommerce' ) );
 			}
 
@@ -663,7 +660,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 		}
 
 		// Merge all files in the queue
-		$pdfMerger->merge( 'file',  $file_info->path );
+		$pdfMerger->merge( 'file', $file_info->path );
 
 		return $file_info;
 	}
@@ -685,15 +682,14 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 *
 	 * @throws Exception If an error occurred while and the API failed to create the order.
 	 */
-	public function create_order( $copy_count = 1 )
-	{
+	public function create_order( $copy_count = 1 ) {
 		// Create the DHL order
 		$response = $this->api_client->create_order( $copy_count );
 
 		$this->get_settings();
 
 		// Get the current DHL order - the one that was just submitted
-		$order = $this->api_client->get_order($response->orderId);
+		$order       = $this->api_client->get_order( $response->orderId );
 		$order_items = $order['items'];
 
 		// Get the tracking note type setting
@@ -706,15 +702,15 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 		// At the same time, we will be collecting the AWBs to merge the label PDFs later on, as well
 		// as adding order notes for the AWB to each WC order.
 		$awbs = array();
-		foreach ($response->shipments as $shipment) {
-			foreach ($shipment->items as $item) {
+		foreach ( $response->shipments as $shipment ) {
+			foreach ( $shipment->items as $item ) {
 				if ( ! isset( $order_items[ $item->barcode ] ) ) {
 					continue;
 				}
 
 				// Get the WC order for this DHL item
 				$item_wc_order_id = $order_items[ $item->barcode ];
-				$item_wc_order = wc_get_order( $item_wc_order_id );
+				$item_wc_order    = wc_get_order( $item_wc_order_id );
 
 				// Save the AWB to the WC order
 				$item_wc_order->update_meta_data( 'pr_dhl_dp_awb', $shipment->awb );
@@ -739,15 +735,15 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 		return $response->orderId;
 	}
 
-    public function get_dhl_nature_type() {
-        return array(
-            'SALE_GOODS' 		=> esc_html__( 'Sale Goods', 'dhl-for-woocommerce' ),
-            'RETURN_GOODS'  	=> esc_html__( 'Return Goods', 'dhl-for-woocommerce' ),
-            'GIFT' 				=> esc_html__( 'Gift', 'dhl-for-woocommerce' ),
-            'COMMERCIAL_SAMPLE' => esc_html__( 'Commercial Sample', 'dhl-for-woocommerce' ),
-            'DOCUMENTS' 		=> esc_html__( 'Documents', 'dhl-for-woocommerce' ),
-            'MIXED_CONTENTS' 	=> esc_html__( 'Mixed Contents', 'dhl-for-woocommerce' ),
-            'OTHERS' 			=> esc_html__( 'Others', 'dhl-for-woocommerce' ),
-        );
-    }
+	public function get_dhl_nature_type() {
+		return array(
+			'SALE_GOODS'        => esc_html__( 'Sale Goods', 'dhl-for-woocommerce' ),
+			'RETURN_GOODS'      => esc_html__( 'Return Goods', 'dhl-for-woocommerce' ),
+			'GIFT'              => esc_html__( 'Gift', 'dhl-for-woocommerce' ),
+			'COMMERCIAL_SAMPLE' => esc_html__( 'Commercial Sample', 'dhl-for-woocommerce' ),
+			'DOCUMENTS'         => esc_html__( 'Documents', 'dhl-for-woocommerce' ),
+			'MIXED_CONTENTS'    => esc_html__( 'Mixed Contents', 'dhl-for-woocommerce' ),
+			'OTHERS'            => esc_html__( 'Others', 'dhl-for-woocommerce' ),
+		);
+	}
 }

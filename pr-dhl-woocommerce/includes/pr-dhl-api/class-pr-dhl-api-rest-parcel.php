@@ -45,22 +45,21 @@ class PR_DHL_API_REST_Parcel extends PR_DHL_API_REST {
 		// 2018-08-17
 		$dhl_label_query_string = array( 'startDate' => $this->args['start_date'] );
 
-		$this->query_string = http_build_query($dhl_label_query_string);
+		$this->query_string = http_build_query( $dhl_label_query_string );
 	}
 
-	protected function get_query_string( ) {
+	protected function get_query_string() {
 		return $this->query_string;
 	}
 
 	protected function set_header( $authorization = '' ) {
 		$dhl_header['Accept'] = 'application/json';
-		$dhl_header['X-EKP'] = $this->args['account_num'];
+		$dhl_header['X-EKP']  = $this->args['account_num'];
 
-		if ( !empty( $authorization ) ) {
+		if ( ! empty( $authorization ) ) {
 			$dhl_header['Authorization'] = $authorization;
 		}
 
 		$this->remote_header = $dhl_header;
 	}
 }
- 

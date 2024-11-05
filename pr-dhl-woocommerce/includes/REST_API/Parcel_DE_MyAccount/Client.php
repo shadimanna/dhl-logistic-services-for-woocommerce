@@ -28,9 +28,9 @@ class Client extends API_Client {
 	 */
 	public function get_user() {
 		// Prepare the request route and data
-		$route = $this->myaccount_route();
-		$lang = 'en';
-		$params = array('lang' => $lang );
+		$route  = $this->myaccount_route();
+		$lang   = 'en';
+		$params = array( 'lang' => $lang );
 
 		// Send the request and get the response
 		$response = $this->get( $route, $params );

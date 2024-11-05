@@ -10,16 +10,16 @@ class PR_DHL_API_SOAP_Finder extends PR_DHL_API_SOAP {
 	/**
 	 * WSDL definitions
 	 */
-	const PR_DHL_FINDER_WSDL_LINK = 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/parcelshopfinder/1.0/parcelshopfinder-1.0-production.wsdl';
+	const PR_DHL_FINDER_WSDL_LINK    = 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/parcelshopfinder/1.0/parcelshopfinder-1.0-production.wsdl';
 	const PR_DHL_FINDER_WSDL_LINK_QA = 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/parcelshopfinder/1.0/parcelshopfinder-1.0-sandbox.wsdl';
 
-	
-	public function __construct( ) {
+
+	public function __construct() {
 		try {
 
 			parent::__construct( self::PR_DHL_FINDER_WSDL_LINK );
 
-		} catch (Exception $e) {
+		} catch ( Exception $e ) {
 			throw $e;
 		}
 	}
@@ -34,12 +34,12 @@ class PR_DHL_API_SOAP_Finder extends PR_DHL_API_SOAP {
 			$soap_client = $this->get_access_token( $args['dhl_settings']['api_user'], $args['dhl_settings']['api_pwd'] );
 			PR_DHL()->log_msg( '"getParcellocationByAddress" called with: ' . print_r( $soap_request, true ) );
 
-			$response_body = $soap_client->getParcellocationByAddress($soap_request);
+			$response_body = $soap_client->getParcellocationByAddress( $soap_request );
 
-			PR_DHL()->log_msg( 'Response: Successful');
-		
+			PR_DHL()->log_msg( 'Response: Successful' );
+
 			return $response_body;
-		} catch (Exception $e) {
+		} catch ( Exception $e ) {
 			PR_DHL()->log_msg( 'Response Error: ' . $e->getMessage() );
 			throw $e;
 		}
@@ -47,7 +47,7 @@ class PR_DHL_API_SOAP_Finder extends PR_DHL_API_SOAP {
 
 	protected function set_arguments( $args ) {
 		// Validate set args
-		
+
 		if ( empty( $args['dhl_settings']['api_user'] ) ) {
 			throw new Exception( esc_html__( 'Please, provide the username in the DHL shipping settings', 'dhl-for-woocommerce' ) );
 		}
@@ -68,19 +68,19 @@ class PR_DHL_API_SOAP_Finder extends PR_DHL_API_SOAP {
 	}
 
 	protected function set_message() {
-		if( ! empty( $this->args ) ) {
+		if ( ! empty( $this->args ) ) {
 
-			$shipping_address = implode(' ', $this->args['shipping_address']);
+			$shipping_address = implode( ' ', $this->args['shipping_address'] );
 
-			$dhl_label_body = 
+			$dhl_label_body =
 				array(
-					'Version' =>
+					'Version'     =>
 						array(
-								'majorRelease' => '2',
-								'minorRelease' => '2'
+							'majorRelease' => '2',
+							'minorRelease' => '2',
 						),
-					'address' => $shipping_address,
-					'countrycode' => $this->args['shipping_address']['country']
+					'address'     => $shipping_address,
+					'countrycode' => $this->args['shipping_address']['country'],
 				);
 
 			// Unset/remove any items that are empty strings or 0, even if required!
@@ -88,6 +88,5 @@ class PR_DHL_API_SOAP_Finder extends PR_DHL_API_SOAP {
 
 			return $this->body_request;
 		}
-		
 	}
 }

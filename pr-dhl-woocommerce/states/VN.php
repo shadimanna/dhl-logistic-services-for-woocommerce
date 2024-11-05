@@ -71,5 +71,5 @@ $states['VN'] = array(
 	'VN-07' => esc_html__( 'Tuyên Quang', 'dhl-for-woocommerce' ),
 	'VN-49' => esc_html__( 'Vĩnh Long', 'dhl-for-woocommerce' ),
 	'VN-70' => esc_html__( 'Vĩnh Phúc', 'dhl-for-woocommerce' ),
-	'VN-06' => esc_html__( 'Yên Bái', 'dhl-for-woocommerce' )
+	'VN-06' => esc_html__( 'Yên Bái', 'dhl-for-woocommerce' ),
 );

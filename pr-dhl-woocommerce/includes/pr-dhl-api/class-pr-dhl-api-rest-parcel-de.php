@@ -126,8 +126,8 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 			if ( ! is_writable( $label_path ) ) {
 				throw new Exception( esc_html__( 'DHL Label file is not writable!', 'dhl-for-woocommerce' ) );
 			}
-			wp_delete_file( $label_path );	
-		}else{
+			wp_delete_file( $label_path );
+		} else {
 			throw new Exception( esc_html__( 'DHL Label could not be deleted!', 'dhl-for-woocommerce' ) );
 		}
 	}
@@ -145,28 +145,28 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	public function save_data_file( $prefix, $order_id, $label_data ) {
 		$data_name = 'dhl-' . $prefix . '-' . $order_id . '.pdf';
 		$data_path = PR_DHL()->get_dhl_label_folder_dir() . $data_name;
-		$data_url = PR_DHL()->get_dhl_label_folder_url() . $data_name;
+		$data_url  = PR_DHL()->get_dhl_label_folder_url() . $data_name;
 
-		//windows path will not get exception
-		if( validate_file($data_path) > 0 && validate_file($data_path) !== 2 ) {
+		// windows path will not get exception
+		if ( validate_file( $data_path ) > 0 && validate_file( $data_path ) !== 2 ) {
 			throw new Exception( esc_html__( 'Invalid file path!', 'dhl-for-woocommerce' ) );
 		}
 
-		$label_data_decoded = base64_decode($label_data);
-		$file_ret = file_put_contents( $data_path, $label_data_decoded );
+		$label_data_decoded = base64_decode( $label_data );
+		$file_ret           = file_put_contents( $data_path, $label_data_decoded );
 
 		// global $wp_filesystem;
 
 		// // Initialize WP_Filesystem
 		// if ( ! function_exists( 'WP_Filesystem' ) ) {
-		// 	require_once ABSPATH . 'wp-admin/includes/file.php';
+		// require_once ABSPATH . 'wp-admin/includes/file.php';
 		// }
 
 		// WP_Filesystem();
 
 		// // Check if WP_Filesystem object is properly initialized
 		// if ( empty( $wp_filesystem ) ) {
-		// 	throw new Exception( esc_html__( 'DHL label file cannot be saved due to WP Filesystem initialization failure!', 'dhl-for-woocommerce' ) );
+		// throw new Exception( esc_html__( 'DHL label file cannot be saved due to WP Filesystem initialization failure!', 'dhl-for-woocommerce' ) );
 		// }
 
 		// // Write the data to the file using WP_Filesystem
@@ -176,7 +176,10 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 			throw new Exception( esc_html__( 'DHL label file cannot be saved!', 'dhl-for-woocommerce' ) );
 		}
 
-		return array( 'label_url' => $data_url, 'label_path' => $data_path);
+		return array(
+			'label_url'  => $data_url,
+			'label_path' => $data_path,
+		);
 	}
 
 	/**
@@ -185,12 +188,11 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	 * @throws exception
 	 */
 	public function save_export_files( $prefix, $order_id, $item ) {
-		
 
 		$file = $this->save_data_file( $prefix, $order_id, $item->label->b64 );
 
 		// Merge export doc with label
-		if( isset( $item->customsDoc->b64 ) ) {
+		if ( isset( $item->customsDoc->b64 ) ) {
 			$loader    = PR_DHL_Libraryloader::instance();
 			$pdfMerger = $loader->get_pdf_merger();
 
@@ -208,20 +210,21 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 				throw new Exception( 'Failed to merge export files.' );
 			}
 		} else {
-			$label_url = $file['label_url'];
+			$label_url  = $file['label_url'];
 			$label_path = $file['label_path'];
 		}
 
 		// If return label exists, add number
 		$return_num = '';
-		if( isset( $item->returnShipmentNo ) ) {
+		if ( isset( $item->returnShipmentNo ) ) {
 			$return_num = $item->returnShipmentNo;
 		}
 
-		return array( 'label_url' => $label_url, 
-			'label_path' => $label_path,
-			'tracking_number' => $item->shipmentNo,
-			'return_label_number' =>  $return_num 
+		return array(
+			'label_url'           => $label_url,
+			'label_path'          => $label_path,
+			'tracking_number'     => $item->shipmentNo,
+			'return_label_number' => $return_num,
 		);
 	}
 
@@ -256,10 +259,11 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 			throw new Exception( 'Failed to merge multiple files.' );
 		}
 
-		return array( 'label_url' => $label_url, 
-			'label_path' => $label_path,
-			'tracking_number' => $shipmentNos,
-			'return_label_number' =>  $return_nums
+		return array(
+			'label_url'           => $label_url,
+			'label_path'          => $label_path,
+			'tracking_number'     => $shipmentNos,
+			'return_label_number' => $return_nums,
 		);
 	}
 
@@ -278,7 +282,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 			throw new Exception( esc_html__( 'Please, provide the username in the DHL shipping settings', 'dhl-for-woocommerce' ) );
 		}
 
-		if ( empty( $args['dhl_settings']['api_pwd'] )) {
+		if ( empty( $args['dhl_settings']['api_pwd'] ) ) {
 			throw new Exception( esc_html__( 'Please, provide the password for the username in the DHL shipping settings', 'dhl-for-woocommerce' ) );
 		}
 
@@ -287,43 +291,43 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 			throw new Exception( esc_html__( 'Please, provide an account in the DHL shipping settings', 'dhl-for-woocommerce' ) );
 		}
 
-		if ( empty( $args['dhl_settings']['participation'] )) {
+		if ( empty( $args['dhl_settings']['participation'] ) ) {
 			throw new Exception( esc_html__( 'Please, provide a participation number for the shipping method in the DHL shipping settings', 'dhl-for-woocommerce' ) );
 		}
 
-		if ( empty( $args['dhl_settings']['shipper_name'] )) {
+		if ( empty( $args['dhl_settings']['shipper_name'] ) ) {
 			throw new Exception( esc_html__( 'Please, provide a shipper name in the DHL shipping settings', 'dhl-for-woocommerce' ) );
 		}
 
-		if ( empty( $args['dhl_settings']['shipper_address'] )) {
+		if ( empty( $args['dhl_settings']['shipper_address'] ) ) {
 			throw new Exception( esc_html__( 'Please, provide a shipper address in the DHL shipping settings', 'dhl-for-woocommerce' ) );
 		}
 
-		if ( empty( $args['dhl_settings']['shipper_address_no'] )) {
+		if ( empty( $args['dhl_settings']['shipper_address_no'] ) ) {
 			throw new Exception( esc_html__( 'Please, provide a shipper address number in the DHL shipping settings', 'dhl-for-woocommerce' ) );
 		}
 
-		if ( empty( $args['dhl_settings']['shipper_address_city'] )) {
+		if ( empty( $args['dhl_settings']['shipper_address_city'] ) ) {
 			throw new Exception( esc_html__( 'Please, provide a shipper city in the DHL shipping settings', 'dhl-for-woocommerce' ) );
 		}
 
-		if ( empty( $args['dhl_settings']['shipper_address_zip'] )) {
+		if ( empty( $args['dhl_settings']['shipper_address_zip'] ) ) {
 			throw new Exception( esc_html__( 'Please, provide a shipper postcode in the DHL shipping settings', 'dhl-for-woocommerce' ) );
 		}
 
-		if( $args['dhl_settings']['add_logo'] == 'yes' && empty( $args['dhl_settings']['shipper_reference'] ) ){
+		if ( $args['dhl_settings']['add_logo'] == 'yes' && empty( $args['dhl_settings']['shipper_reference'] ) ) {
 			throw new Exception( esc_html__( 'Please, provide a shipper reference in the DHL shipping settings', 'dhl-for-woocommerce' ) );
 		}
 
 		// Order details
-		if ( empty( $args['order_details']['dhl_product'] )) {
+		if ( empty( $args['order_details']['dhl_product'] ) ) {
 			throw new Exception( esc_html__( 'DHL "Product" is empty!', 'dhl-for-woocommerce' ) );
 		}
 
 		// return receiver
 		if ( isset( $args['order_details']['return_address'] ) && ( $args['order_details']['return_address'] == 'yes' ) ) {
 
-			if ( ( $args['order_details']['dhl_product'] != 'V01PAK' ) && ( $args['order_details']['dhl_product'] != 'V01PRIO' ) && ( $args['order_details']['dhl_product'] != 'V86PARCEL' ) && ( $args['order_details']['dhl_product'] != 'V55PAK' ) ){
+			if ( ( $args['order_details']['dhl_product'] != 'V01PAK' ) && ( $args['order_details']['dhl_product'] != 'V01PRIO' ) && ( $args['order_details']['dhl_product'] != 'V86PARCEL' ) && ( $args['order_details']['dhl_product'] != 'V55PAK' ) ) {
 				throw new Exception( esc_html__( 'Returns are not supported by this DHL Service.', 'dhl-for-woocommerce' ) );
 			}
 
@@ -343,12 +347,12 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 				throw new Exception( esc_html__( 'Please, provide a return city in the DHL shipping settings', 'dhl-for-woocommerce' ) );
 			}
 
-			if ( empty( $args['dhl_settings']['return_address_zip'] )) {
+			if ( empty( $args['dhl_settings']['return_address_zip'] ) ) {
 				throw new Exception( esc_html__( 'Please, provide a return postcode in the DHL shipping settings', 'dhl-for-woocommerce' ) );
 			}
 		}
 
-		if ( empty( $args['order_details']['order_id'] )) {
+		if ( empty( $args['order_details']['order_id'] ) ) {
 			throw new Exception( esc_html__( 'Shop "Order ID" is empty!', 'dhl-for-woocommerce' ) );
 		}
 
@@ -369,7 +373,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		// Validate weight
 		try {
 			$this->validate_field( 'weight', $args['order_details']['weight'] );
-		} catch (Exception $e) {
+		} catch ( Exception $e ) {
 			throw new Exception( 'Weight - ' . esc_html( $e->getMessage() ) );
 		}
 
@@ -377,58 +381,54 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 
 			if ( isset( $args['order_details']['total_packages'] ) ) {
 
-				for ($i=0; $i<intval($args['order_details']['total_packages']); $i++) {
+				for ( $i = 0; $i < intval( $args['order_details']['total_packages'] ); $i++ ) {
 
-					if( empty($args['order_details']['packages_number'][$i]) ) {
+					if ( empty( $args['order_details']['packages_number'][ $i ] ) ) {
 						throw new Exception( esc_html__( ' A package number is empty. Ensure all package details are filled in.', 'dhl-for-woocommerce' ) );
 					}
 
-					if( empty($args['order_details']['packages_weight'][$i]) ) {
+					if ( empty( $args['order_details']['packages_weight'][ $i ] ) ) {
 						throw new Exception( esc_html__( 'A package weight is empty. Ensure all package details are filled in.', 'dhl-for-woocommerce' ) );
 					}
 
-					if( empty($args['order_details']['packages_length'][$i]) ) {
+					if ( empty( $args['order_details']['packages_length'][ $i ] ) ) {
 						throw new Exception( esc_html__( 'A package length is empty. Ensure all package details are filled in.', 'dhl-for-woocommerce' ) );
 					}
 
-					if( empty($args['order_details']['packages_width'][$i]) ) {
+					if ( empty( $args['order_details']['packages_width'][ $i ] ) ) {
 						throw new Exception( esc_html__( 'A package width is empty. Ensure all package details are filled in.', 'dhl-for-woocommerce' ) );
 					}
 
-					if( empty($args['order_details']['packages_height'][$i]) ) {
+					if ( empty( $args['order_details']['packages_height'][ $i ] ) ) {
 						throw new Exception( esc_html__( 'A package height is empty. Ensure all package details are filled in.', 'dhl-for-woocommerce' ) );
 					}
 				}
 			}
-		} else {
+		} elseif ( empty( $args['order_details']['weight'] ) ) {
 
-			if ( empty( $args['order_details']['weight'] )) {
 				throw new Exception( esc_html__( 'Order "Weight" is empty!', 'dhl-for-woocommerce' ) );
-			}
-
 		}
 
 		// if ( empty( $args['order_details']['duties'] )) {
-		// 	throw new Exception( esc_html__('DHL "Duties" is empty!', 'dhl-for-woocommerce') );
+		// throw new Exception( esc_html__('DHL "Duties" is empty!', 'dhl-for-woocommerce') );
 		// }
 
-		if ( empty( $args['order_details']['currency'] )) {
+		if ( empty( $args['order_details']['currency'] ) ) {
 			throw new Exception( esc_html__( 'Shop "Currency" is empty!', 'dhl-for-woocommerce' ) );
 		}
 
-		if ( empty( $args['shipping_address']['city'] )) {
+		if ( empty( $args['shipping_address']['city'] ) ) {
 			throw new Exception( esc_html__( 'Shipping "City" is empty!', 'dhl-for-woocommerce' ) );
 		}
 
-		if ( empty( $args['shipping_address']['country'] )) {
+		if ( empty( $args['shipping_address']['country'] ) ) {
 			throw new Exception( esc_html__( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' ) );
 		}
 
 		// Validate shipping address
-		if ( empty( $args['shipping_address']['address_1'] )) {
+		if ( empty( $args['shipping_address']['address_1'] ) ) {
 			throw new Exception( esc_html__( 'Shipping "Address 1" is empty!', 'dhl-for-woocommerce' ) );
 		}
-
 
 		$pos_ps = PR_DHL()->is_packstation( $args['shipping_address']['address_1'] );
 		$pos_rs = PR_DHL()->is_parcelshop( $args['shipping_address']['address_1'] );
@@ -442,15 +442,15 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		// Check address 2 if no parcel shop is being selected
 		if ( ! $pos_ps && ! $pos_rs && ! $pos_po ) {
 			// If address 2 missing, set last piece of an address to be address 2
-			if ( empty( $args['shipping_address']['address_2'] )) {
+			if ( empty( $args['shipping_address']['address_2'] ) ) {
 				$set_key = false;
 				// Break address into pieces by spaces
-				$address_exploded = explode(' ', $args['shipping_address']['address_1']);
+				$address_exploded = explode( ' ', $args['shipping_address']['address_1'] );
 
 				// If no spaces found
-				if( count($address_exploded) == 1 ) {
+				if ( count( $address_exploded ) == 1 ) {
 					// Break address into pieces by '.'
-					$address_exploded = explode('.', $args['shipping_address']['address_1']);
+					$address_exploded = explode( '.', $args['shipping_address']['address_1'] );
 
 					// If no address number and in Germany, return error
 					if ( 1 === count( $address_exploded ) && 'DE' === $args['shipping_address']['country'] ) {
@@ -470,12 +470,12 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 					}
 
 					// If no number was found, then take last part of address no matter what it is
-					if( false === $set_key ) {
+					if ( false === $set_key ) {
 						$set_key = $address_key;
 					}
 
 					// The number is the first part of address 1
-					if( 0 === $set_key ) {
+					if ( 0 === $set_key ) {
 						// Set "address_2" first, as first part
 						$args['shipping_address']['address_2'] = implode( ' ', array_slice( $address_exploded, 0, 1 ) );
 						// Remove "address_2" from "address_1"
@@ -484,46 +484,48 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 						// Set "address_2" first
 						$args['shipping_address']['address_2'] = implode( ' ', array_slice( $address_exploded, $set_key ) );
 						// Remove "address_2" from "address_1"
-						$args['shipping_address']['address_1'] = implode( ' ', array_slice( $address_exploded, 0 , $set_key ) );
+						$args['shipping_address']['address_1'] = implode( ' ', array_slice( $address_exploded, 0, $set_key ) );
 					}
 				}
 			}
 		}
 
 		// Add default values for required fields that might not be passed e.g. phone
-		$default_args = array( 'shipping_address' =>
-			                       array( 'name' => '',
-			                              'company' => '',
-			                              'address_2' => '',
-			                              'email' => '',
-			                              'postcode' => '',
-			                              'state' => '',
-			                              'phone' => ' '
-			                       ),
+		$default_args = array(
+			'shipping_address' =>
+										array(
+											'name'      => '',
+											'company'   => '',
+											'address_2' => '',
+											'email'     => '',
+											'postcode'  => '',
+											'state'     => '',
+											'phone'     => ' ',
+										),
 		);
 
 		$args['shipping_address'] = wp_parse_args( $args['shipping_address'], $default_args['shipping_address'] );
 
 		$default_args_item = array(
 			'item_description' => '',
-			'sku' => '',
-			'line_total' => 0,
-			'country_origin' => '',
-			'hs_code' => '',
-			'qty' => 1
+			'sku'              => '',
+			'line_total'       => 0,
+			'country_origin'   => '',
+			'hs_code'          => '',
+			'qty'              => 1,
 		);
 
-		foreach ($args['items'] as $key => $item) {
+		foreach ( $args['items'] as $key => $item ) {
 
 			if ( ! empty( $item['hs_code'] ) ) {
 				try {
 					$this->validate_field( 'hs_code', $item['hs_code'] );
-				} catch (Exception $e) {
+				} catch ( Exception $e ) {
 					throw new Exception( 'HS Code - ' . esc_html( $e->getMessage() ) );
 				}
 			}
 
-			$args['items'][$key] = wp_parse_args( $item, $default_args_item );
+			$args['items'][ $key ] = wp_parse_args( $item, $default_args_item );
 		}
 	}
 
@@ -554,8 +556,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 					$this->validate( $value, 'string', 6, 6 );
 					break;
 			}
-
-		} catch (Exception $e) {
+		} catch ( Exception $e ) {
 			throw $e;
 		}
 	}
@@ -575,18 +576,18 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 
 		switch ( $type ) {
 			case 'string':
-				if( ( strlen( $value ) < $min_len ) || ( strlen( $value ) > $max_len ) ) {
+				if ( ( strlen( $value ) < $min_len ) || ( strlen( $value ) > $max_len ) ) {
 					if ( $min_len == $max_len ) {
 						/* translators: %s is the required number of characters */
 						throw new Exception( sprintf( esc_html__( 'The value must be %s characters.', 'dhl-for-woocommerce' ), esc_attr( $min_len ) ) );
 					} else {
 						/* translators: %1$s is the minimum number of characters, %2$s is the maximum number of characters */
 						throw new Exception( sprintf( esc_html__( 'The value must be between %1$s and %2$s characters.', 'dhl-for-woocommerce' ), esc_attr( $min_len ), esc_attr( $max_len ) ) );
-					}					
+					}
 				}
 				break;
 			case 'int':
-				if( ! is_numeric( $value ) ) {
+				if ( ! is_numeric( $value ) ) {
 					throw new Exception( esc_html__( 'The value must be a number', 'dhl-for-woocommerce' ) );
 				}
 				break;
