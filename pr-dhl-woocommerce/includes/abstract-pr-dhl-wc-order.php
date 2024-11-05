@@ -1331,23 +1331,18 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 						$order_notes
 					);
 
-					array_push(
-						$array_messages,
-						array(
-							/* translators: %s is the order number */
-							'message' => sprintf( esc_html__( 'Order #%s: DHL Label Deleted', 'dhl-for-woocommerce' ), esc_html( $order->get_order_number() ) ),
-							'type'    => 'success',
-						)
+					$array_messages[] = array(
+						/* translators: %s is the order number */
+						'message' => sprintf( esc_html__( 'Order #%s: DHL Label Deleted', 'dhl-for-woocommerce' ), esc_html( $order->get_order_number() ) ),
+						'type'    => 'success',
 					);
-
 				} catch ( Exception $e ) {
-					array_push(
-						$array_messages,
-						array(
-							/* translators: %1$s is the order number, %2$s is the error message */
-							'message' => sprintf( esc_html__( 'Order #%1$s: %2$s', 'dhl-for-woocommerce' ), esc_html( $order->get_order_number() ), esc_html( $e->getMessage() ) ),
-							'type'    => 'error',
-						)
+					$array_messages[] = array(
+						/* translators: %1$s is the order number, %2$s is the error message */
+						'message' => wp_kses_post(
+							sprintf( __( 'Order #%1$s: %2$s', 'dhl-for-woocommerce' ), $order->get_order_number(), $e->getMessage() )
+						),
+						'type'    => 'error',
 					);
 				}
 			}

@@ -487,6 +487,12 @@ class Client extends API_Client {
 		}
 
 		$multiple_errors_list = array();
+
+		if ( isset( $item->sstatus ) ) {
+			$shipment_no = isset( $item->shipmentNo ) ? '( ' . $item->shipmentNo . ' ) : ' : '';
+			$multiple_errors_list[ $item->sstatus->title ][] = $shipment_no . $item->sstatus->detail;
+		}
+
 		foreach ( $item->validationMessages as $message ) {
 
 			if ( ! is_array( $multiple_errors_list[ $message->validationState ] ) ) {
@@ -549,10 +555,12 @@ class Client extends API_Client {
 		$message = $this->get_response_error_message( $response );
 
 		throw new Exception(
-			sprintf(
-				// Translators: %s is replaced with the error message returned from the API.
-				esc_html__( 'Error deleting label: %s', 'dhl-for-woocommerce' ),
-				$message
+			wp_kses_post(
+				sprintf(
+					// Translators: %s is replaced with the error message returned from the API.
+					__( 'Error deleting label: %s', 'dhl-for-woocommerce' ),
+					$message
+				)
 			)
 		);
 	}
