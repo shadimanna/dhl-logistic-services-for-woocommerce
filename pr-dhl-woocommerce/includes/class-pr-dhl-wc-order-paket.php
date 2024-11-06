@@ -1005,13 +1005,12 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			}
 
 			$tracking_number   = $label_tracking_info['tracking_number'];
-			$tracking_link_str = '';
 
 			if ( is_array( $tracking_number ) ) {
 				foreach ( $tracking_number as $key => $value ) {
 					$tracking_link[ $key ] = sprintf(
 					// Translators: 1: Tracking URL, 2: Tracking value, 3: Tracking value (displayed as the link text).
-						'<a href="%1$s%2$s" target="_blank">%3$s</a>', // Do not escape HTML here
+						'<a href="%1$s%2$s" target="_blank">%3$s</a>',
 						esc_url( $this->get_tracking_url() ),
 						esc_attr( $value ),
 						esc_attr( $value )

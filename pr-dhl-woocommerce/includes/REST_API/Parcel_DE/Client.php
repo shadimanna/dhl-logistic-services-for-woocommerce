@@ -63,10 +63,12 @@ class Client extends API_Client {
 		$message = $this->get_response_error_message( $response );
 
 		throw new Exception(
-			sprintf(
+			wp_kses_post(
+				sprintf(
 				// Translators: %s is replaced with the error message returned from the API.
-				esc_html__( 'Error creating label: %s', 'dhl-for-woocommerce' ),
-				$message
+					__( 'Error creating label: %s', 'dhl-for-woocommerce' ),
+					$message
+				)
 			)
 		);
 	}
@@ -488,9 +490,8 @@ class Client extends API_Client {
 
 		$multiple_errors_list = array();
 
-		if ( isset( $item->sstatus ) ) {
-			$shipment_no = isset( $item->shipmentNo ) ? '( ' . $item->shipmentNo . ' ) : ' : '';
-			$multiple_errors_list[ $item->sstatus->title ][] = $shipment_no . $item->sstatus->detail;
+		if ( isset( $item->sstatus ) && isset( $item->shipmentNo ) ) {
+			$multiple_errors_list[ $item->sstatus->title ][] = $item->shipmentNo . $item->sstatus->detail;
 		}
 
 		foreach ( $item->validationMessages as $message ) {
