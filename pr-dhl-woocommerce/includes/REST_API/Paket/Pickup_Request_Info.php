@@ -118,7 +118,6 @@ class Pickup_Request_Info {
 
 		$this->shipments = array();
 		foreach ( $args['dhl_pickup_shipments'] as $shipment_info ) {
-
 			$pickup_shipment = Args_Parser::parse_args( $shipment_info, $this->get_shipment_info_schema() );
 
 			// Empty tracking number?
@@ -193,29 +192,6 @@ class Pickup_Request_Info {
 			'dhl_pickup_type' => array(
 				'default' => 'asap',
 			),
-			// 'weight'     => array(
-			// 'error'    => esc_html__( 'Order "Weight" is empty!', 'dhl-for-woocommerce' ),
-			// 'validate' => function( $weight ) use ($self) {
-			// if ( ! is_numeric( $weight ) || $weight <= 0 ) {
-			// throw new Exception( esc_html__( 'The order "Weight" must be a positive number', 'dhl-for-woocommerce' ) );
-			// }
-			// },
-			// 'sanitize' => function ( $weight ) use ($self) {
-			//
-			// $weight = $self->maybe_convert_to_grams( $weight, $self->weightUom );
-			//
-			// return $weight;
-			// }
-			// ),
-			// 'weightUom'  => array(
-			// 'sanitize' => function ( $uom ) use ($self) {
-			//
-			// return ( $uom != 'G' )? 'G' : $uom;
-			// }
-			// ),
-			// 'dimensionUom'     => array(
-			// 'default' => 'CM'
-			// )
 		);
 	}
 
@@ -319,19 +295,10 @@ class Pickup_Request_Info {
 	 * @return array
 	 */
 	protected function get_shipment_info_schema() {
-
-		// Closures in PHP 5.3 do not inherit class context
-		// So we need to copy $this into a lexical variable and pass it to closures manually
-		$self = $this;
-
 		return array(
 			'transportation_type' => array(
 				'rename'  => 'transportationType',
 				'default' => 'PAKET',
-			),
-			'tracking_number'     => array(
-				'rename'  => 'shipmentNo',
-				'default' => '',
 			),
 		);
 	}
@@ -344,11 +311,6 @@ class Pickup_Request_Info {
 	 * @return array
 	 */
 	protected function get_pickup_business_hours_schema() {
-
-		// Closures in PHP 5.3 do not inherit class context
-		// So we need to copy $this into a lexical variable and pass it to closures manually
-		$self = $this;
-
 		return array(
 			'timeFrom'  => array(
 				'default' => 0,
