@@ -350,7 +350,6 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 	 * @since [*next-version*]
 	 */
 	public function request_dhl_pickup( $args, $forcePortalPickupAddressMatch = true ) {
-
 		$uom = get_option( 'woocommerce_weight_unit' );
 
 		// Maybe override account billing number here for Sandbox user
@@ -366,8 +365,6 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 
 		// Verify pickup address with DHL portal pickup address first
 		if ( $forcePortalPickupAddressMatch ) {
-			$blnIncludeBillingNumber = false;
-
 			$postalCode   = $request_pickup_info->pickup_address['postalCode'];
 			$localAddress = $request_pickup_info->pickup_address;
 
@@ -395,14 +392,11 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 			} catch ( Exception $e ) {
 				throw $e;
 			}
-		} else {
-			// If we are not matching a Pickup address, then we need to include the billing number
-			$blnIncludeBillingNumber = true;
 		}
 
 		// Create the shipping label
 		try {
-			$request_pickup_response = $this->api_client->create_pickup_request( $request_pickup_info, $blnIncludeBillingNumber );
+			$request_pickup_response = $this->api_client->create_pickup_request( $request_pickup_info );
 		} catch ( Exception $e ) {
 			throw $e;
 		}

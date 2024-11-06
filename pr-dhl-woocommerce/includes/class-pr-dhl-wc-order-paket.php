@@ -1141,8 +1141,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 				$base_country_code = PR_DHL()->get_base_country();
 				$pickup_rest       = new PR_DHL_API_REST_Paket( $base_country_code );
 				$pickup_response   = $pickup_rest->request_dhl_pickup( $args, $forcePortalPickupAddressMatch );
-				$pickup_response   = json_decode( $pickup_response );
-
+				//$pickup_response   = json_decode( $pickup_response );
 				// Error?
 				if ( isset( $pickup_response->confirmation->value->orderID ) ) {
 
