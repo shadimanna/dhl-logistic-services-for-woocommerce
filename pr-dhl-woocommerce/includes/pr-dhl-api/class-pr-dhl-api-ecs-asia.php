@@ -641,7 +641,7 @@ class PR_DHL_API_eCS_Asia extends PR_DHL_API {
 			throw new Exception( esc_html__( 'Invalid file path!', 'dhl-for-woocommerce' ) );
 		}
 
-		file_ret = file_put_contents( $file_info->path, $data );
+		$file_ret = file_put_contents( $file_info->path, $data );
 
 		// global $wp_filesystem;
 
