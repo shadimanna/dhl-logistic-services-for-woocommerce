@@ -16,25 +16,21 @@ class Client extends API_Client {
 
 	/**
 	 * The DHL Customer Portal Username
-	 *
 	 */
 	protected $customer_portal_user;
 
 	/**
 	 * The DHL Customer Portal Password
-	 *
 	 */
 	protected $customer_portal_password;
 
 	/**
 	 * The language of the message
-	 *
 	 */
 	protected $language = 'en';
 
 	/**
 	 * The version of the message
-	 *
 	 */
 	protected $version = '1';
 
@@ -48,7 +44,7 @@ class Client extends API_Client {
 	public function __construct( $customer_portal_user, $customer_portal_password, $base_url, API_Driver_Interface $driver, API_Auth_Interface $auth = null ) {
 		parent::__construct( $base_url, $driver, $auth );
 
-		$this->customer_portal_user = $customer_portal_user;
+		$this->customer_portal_user     = $customer_portal_user;
 		$this->customer_portal_password = $customer_portal_password;
 	}
 
@@ -58,42 +54,47 @@ class Client extends API_Client {
 	 * @since [*next-version*]
 	 *
 	 * @param class $pickup_request_info Pickup_Request_Info
-	 *
 	 */
-	public function create_pickup_request ( Pickup_Request_Info $pickup_request_info, $blnIncludeBillingNumber = false ){
+	public function create_pickup_request( Pickup_Request_Info $pickup_request_info, $blnIncludeBillingNumber = false ) {
+		$route = $this->request_pickup_route();
 
-		$route 	= $this->request_pickup_route();
-
-		//Customer business portal user auth
+		// Customer business portal user auth
 		$headers = array(
-			'Authorization'  	=>  'Basic '.base64_encode( $this->customer_portal_user . ':' . $this->customer_portal_password ),
-			'dhl-api-key'      	=> defined( 'PR_DHL_GLOBAL_API' )? PR_DHL_GLOBAL_API : '',
+			'Authorization' => 'Basic ' . base64_encode( $this->customer_portal_user . ':' . $this->customer_portal_password ),
+			'dhl-api-key'   => defined( 'PR_DHL_GLOBAL_API' ) ? PR_DHL_GLOBAL_API : '',
 		);
 
 		$data = $this->request_pickup_info_to_request_data( $pickup_request_info, $blnIncludeBillingNumber );
 
-		$response = $this->post($route, $data, $headers);
+		$response = $this->post( $route, $data, $headers );
+
+		if ( is_array( $response->body ) ) {
+			$response->body = $response->body[0];
+		}
+
+		$response_body = json_decode( $response->body );
 
 		if ( $response->status === 200 ) {
-			if ( isset( $response->body->confirmation->value->orderID ) ) {
+			if ( isset( $response_body->confirmation->value->orderID ) ) {
 				return $response->body;
 
 			} elseif ( isset( $response->body ) ) {
 
 				throw new Exception(
 					sprintf(
-						__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
-						$this->generate_error_details( $response->body )
+						// Translators: %s is replaced with the error details returned from the API.
+						esc_html__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
+						esc_html( $this->generate_error_details( $response->body ) )
 					)
 				);
 			}
-
 		}
 
 		throw new Exception(
 			sprintf(
-				__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
-				$this->generate_error_details( $response->body )
+				// Translators: %s is replaced with the error details returned from the API.
+				esc_html__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
+				esc_html( $this->generate_error_details( $response->body ) )
 			)
 		);
 	}
@@ -102,10 +103,8 @@ class Client extends API_Client {
 	 * Create get pickup locations request
 	 *
 	 * @since [*next-version*]
-	 *
-	 *
 	 */
-	public function get_pickup_location( $postalCode = '' ){
+	public function get_pickup_location( $postalCode = '' ) {
 
 		$route    = $this->get_pickup_location_route();
 		$data     = array( 'postalCode' => $postalCode );
@@ -116,9 +115,12 @@ class Client extends API_Client {
 		}
 
 		throw new Exception(
-			sprintf(
-				__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
-				$this->generate_error_details( $response->body )
+			wp_kses_post(
+				sprintf(
+				// Translators: %s is replaced with the error details returned from the API.
+					__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
+					$this->generate_error_details( $response->body )
+				)
 			)
 		);
 	}
@@ -128,7 +130,7 @@ class Client extends API_Client {
 
 		if ( isset( $body->title ) ) {
 			$error_details = $body->title;
-		} else if ( is_string( $body ) ) {
+		} elseif ( is_string( $body ) ) {
 			$error_details = $body;
 		} elseif ( is_array( $body ) ) {
 			$error_details = '<br><ol>';
@@ -146,8 +148,8 @@ class Client extends API_Client {
 	 *
 	 * @return string The date and time of the message.
 	 */
-	protected function get_datetime(){
-		return date( 'c', time() );
+	protected function get_datetime() {
+		return gmdate( 'c', time() );
 	}
 
 	/**
@@ -155,18 +157,18 @@ class Client extends API_Client {
 	 *
 	 * @return string The language of the message.
 	 */
-	protected function get_language(){
+	protected function get_language() {
 		return $this->language;
 	}
 
 	/**
- * Get message version.
- *
- * @return string The version of the message.
- */
-    protected function get_version(){
-        return $this->version;
-    }
+	 * Get message version.
+	 *
+	 * @return string The version of the message.
+	 */
+	protected function get_version() {
+		return $this->version;
+	}
 
 	/**
 	 * Transforms an item info object into a request data array.
@@ -177,31 +179,31 @@ class Client extends API_Client {
 	 */
 	protected function request_pickup_info_to_request_data( Pickup_Request_Info $request_pickup_info, $blnIncludeBillingNumber ) {
 
-		//Pickup date
-		if ( $request_pickup_info->pickup_details['dhl_pickup_type'] == 'date' ) { //date or asap
+		// Pickup date
+		if ( $request_pickup_info->pickup_details['dhl_pickup_type'] == 'date' ) { // date or asap
 			$pickup_info_array = array(
-				'type' 		=> 'Date',
-				'value' 	=> $request_pickup_info->pickup_details['dhl_pickup_date']
+				'type'  => 'Date',
+				'value' => $request_pickup_info->pickup_details['dhl_pickup_date'],
 			);
 		} else {
 			$pickup_info_array = array(
-				'type' 		=> 'ASAP'
+				'type' => 'ASAP',
 			);
 		}
 
-		//Pickup location & business hours
+		// Pickup location & business hours
 		$pickup_location_array = array(
-			"type" => "Address",
-			'pickupAddress' 	=> array(
-				'name1' 		=> $request_pickup_info->pickup_contact['name'],
-				'name2'			=> '',
+			'type'          => 'Address',
+			'pickupAddress' => array(
+				'name1'         => $request_pickup_info->pickup_contact['name'],
+				'name2'         => '',
 				'addressStreet' => $request_pickup_info->pickup_address['addressStreet'],
 				'addressHouse'  => $request_pickup_info->pickup_address['addressHouse'],
-				'city'			=> $request_pickup_info->pickup_address['city'],
-				'postalCode' 	=> $request_pickup_info->pickup_address['postalCode'],
-				'state' 		=> $request_pickup_info->pickup_address['state'],
-				'country'		=> $request_pickup_info->pickup_address['country']
-			)
+				'city'          => $request_pickup_info->pickup_address['city'],
+				'postalCode'    => $request_pickup_info->pickup_address['postalCode'],
+				'state'         => $request_pickup_info->pickup_address['state'],
+				'country'       => $request_pickup_info->pickup_address['country'],
+			),
 		);
 
 		$request_data = array(
@@ -229,12 +231,12 @@ class Client extends API_Client {
 
 		// Include customer details billing number (if excluded, we're forcing DHL to look for existing Pickup address in customers portal)
 		if ( $blnIncludeBillingNumber ) {
-			$request_data['customerDetails']  = array(
-				'billingNumber' 	=> $request_pickup_info->customer_details['billingNumber'],
+			$request_data['customerDetails'] = array(
+				'billingNumber' => $request_pickup_info->customer_details['billingNumber'],
 			);
 		}
 
-        return $request_data;
+		return $request_data;
 	}
 
 
@@ -260,5 +262,4 @@ class Client extends API_Client {
 	protected function get_pickup_location_route() {
 		return '/locations';
 	}
-
 }

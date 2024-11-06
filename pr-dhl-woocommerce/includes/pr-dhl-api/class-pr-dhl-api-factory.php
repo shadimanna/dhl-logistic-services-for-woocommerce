@@ -9,12 +9,12 @@ class PR_DHL_API_Factory {
 
 	public static function init() {
 		// Load abstract classes
-		include_once( 'abstract-pr-dhl-api-rest.php' );
-		include_once( 'abstract-pr-dhl-api-soap.php' );
-		include_once( 'abstract-pr-dhl-api.php' );
+		include_once 'abstract-pr-dhl-api-rest.php';
+		include_once 'abstract-pr-dhl-api-soap.php';
+		include_once 'abstract-pr-dhl-api.php';
 
 		// Load interfaces
-		include_once( 'interface-pr-dhl-api-label.php' );
+		include_once 'interface-pr-dhl-api-label.php';
 	}
 
 	public static function make_dhl( $country_code ) {
@@ -25,12 +25,12 @@ class PR_DHL_API_Factory {
 			return $cache[ $country_code ];
 		}
 
-		PR_DHL_API_Factory::init();
+		self::init();
 
 		$dhl_obj = null;
 
 		try {
-			switch ($country_code) {
+			switch ( $country_code ) {
 				case 'US':
 				case 'GU':
 				case 'AS':
@@ -38,7 +38,7 @@ class PR_DHL_API_Factory {
 				case 'UM':
 				case 'VI':
 				case 'CA':
-                    throw new Exception( __('The DHL plugin is not supported in your store\'s "Base Location"', 'dhl-for-woocommerce') );
+					throw new Exception( esc_html__( 'The DHL plugin is not supported in your store\'s "Base Location"', 'dhl-for-woocommerce' ) );
 				case 'SG':
 				case 'HK':
 				case 'TH':
@@ -47,11 +47,11 @@ class PR_DHL_API_Factory {
 				case 'VN':
 				case 'AU':
 				case 'IN':
-					throw new Exception( __('The DHL plugin is not supported in your store\'s "Base Location"', 'dhl-for-woocommerce') );
+					throw new Exception( esc_html__( 'The DHL plugin is not supported in your store\'s "Base Location"', 'dhl-for-woocommerce' ) );
 				case 'DE':
 					$dhl_obj = new PR_DHL_API_Paket( $country_code );
 					break;
-                case 'AT':
+				case 'AT':
 				case 'AL':
 				case 'AD':
 				case 'AM':
@@ -103,9 +103,9 @@ class PR_DHL_API_Factory {
 					$dhl_obj = new PR_DHL_API_Deutsche_Post( $country_code );
 					break;
 				default:
-					throw new Exception( __('The DHL plugin is not supported in your store\'s "Base Location"', 'dhl-for-woocommerce') );
+					throw new Exception( esc_html__( 'The DHL plugin is not supported in your store\'s "Base Location"', 'dhl-for-woocommerce' ) );
 			}
-		} catch (Exception $e) {
+		} catch ( Exception $e ) {
 			throw $e;
 		}
 

@@ -29,7 +29,7 @@ class API_Utils {
 		 * Only for Packet
 		 */
 		if ( 'DE' !== PR_DHL()->get_base_country() ) {
-			return  false;
+			return false;
 		}
 
 		return empty( get_option( 'woocommerce_pr_dhl_paket_settings', array() ) );

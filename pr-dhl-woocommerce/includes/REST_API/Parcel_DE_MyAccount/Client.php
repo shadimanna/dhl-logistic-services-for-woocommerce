@@ -28,9 +28,9 @@ class Client extends API_Client {
 	 */
 	public function get_user() {
 		// Prepare the request route and data
-		$route = $this->myaccount_route();
-		$lang = 'en';
-		$params = array('lang' => $lang );
+		$route  = $this->myaccount_route();
+		$lang   = 'en';
+		$params = array( 'lang' => $lang );
 
 		// Send the request and get the response
 		$response = $this->get( $route, $params );
@@ -46,7 +46,8 @@ class Client extends API_Client {
 			: strval( $response->body );
 
 		throw new Exception(
-			sprintf( __( 'API error: %s', 'dhl-for-woocommerce' ), $message )
+			// Translators: %s is replaced with the error message returned from the API.
+			sprintf( esc_html__( 'API error: %s', 'dhl-for-woocommerce' ), esc_html( $message ) )
 		);
 	}
 

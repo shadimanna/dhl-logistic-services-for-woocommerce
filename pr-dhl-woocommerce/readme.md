@@ -4,8 +4,8 @@ Donate link:
 Tags: DPDHL, DHL, DHL eCommerce, DHL Paket Germany, Shipping
 Requires at least: 4.6
 Requires PHP: 5.6
-Tested up to: 6.6
-Stable tag: 3.7.3
+Tested up to: 6.7
+Stable tag: 3.7.4
 Requires Plugins: woocommerce
 WC requires at least: 3.0
 WC tested up to: 9.3
@@ -75,6 +75,11 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
+
+= 3.7.4 =
+* WordPress 6.7 compatibility.
+* Update TCPDF library.
+* Security updates.A
 
 = 3.7.3 =
 * DHL Paket: Fix Pickup locations

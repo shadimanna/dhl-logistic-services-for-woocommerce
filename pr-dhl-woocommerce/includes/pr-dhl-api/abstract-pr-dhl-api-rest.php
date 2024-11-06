@@ -25,6 +25,7 @@ abstract class PR_DHL_API_REST {
 
 	/**
 	 * The request response
+	 *
 	 * @var array
 	 */
 	protected $response = null;
@@ -64,13 +65,13 @@ abstract class PR_DHL_API_REST {
 	 *
 	 * @param string $api_key, $api_secret
 	 */
-	public function __construct( ) {
+	public function __construct() {
 
 		try {
 
-			$this->dhl_rest_auth = PR_DHL_API_Auth_REST::get_instance( );
+			$this->dhl_rest_auth = PR_DHL_API_Auth_REST::get_instance();
 
-		} catch (Exception $e) {
+		} catch ( Exception $e ) {
 			throw $e;
 		}
 	}
@@ -151,17 +152,17 @@ abstract class PR_DHL_API_REST {
 		return $this->token_bearer;
 	}
 
-	public function delete_access_token( ) {
+	public function delete_access_token() {
 		$this->dhl_rest_auth->delete_access_token();
 	}
 
 	public function post_request( $client_id, $client_secret ) {
 		$this->set_header( $this->get_access_token( $client_id, $client_secret ) );
 
-		$wp_request_url = PR_DHL()->get_api_url() . $this->get_endpoint() . '?' . $this->get_query_string();
+		$wp_request_url     = PR_DHL()->get_api_url() . $this->get_endpoint() . '?' . $this->get_query_string();
 		$wp_request_headers = $this->get_header();
 		$this->set_message();
-		
+
 		$wp_request_body = $this->get_message();
 
 		PR_DHL()->log_msg( 'POST URL: ' . $wp_request_url );
@@ -169,16 +170,17 @@ abstract class PR_DHL_API_REST {
 		PR_DHL()->log_msg( 'POST Body: ' . $wp_request_body );
 
 		$wp_dhl_rest_response = wp_remote_post(
-		    $wp_request_url,
-		    array( 'headers' => $wp_request_headers,
-		    		'body' => $wp_request_body,
-		    		'timeout' => self::WP_POST_TIMEOUT
-		    	)
+			$wp_request_url,
+			array(
+				'headers' => $wp_request_headers,
+				'body'    => $wp_request_body,
+				'timeout' => self::WP_POST_TIMEOUT,
+			)
 		);
 
 		$response_code = wp_remote_retrieve_response_code( $wp_dhl_rest_response );
 		$response_body = json_decode( wp_remote_retrieve_body( $wp_dhl_rest_response ) );
-		$session_id = wp_remote_retrieve_header( $wp_dhl_rest_response, 'x-correlationid' );
+		$session_id    = wp_remote_retrieve_header( $wp_dhl_rest_response, 'x-correlationid' );
 
 		PR_DHL()->log_msg( 'POST Response Header Session ID: ' . $session_id );
 		PR_DHL()->log_msg( 'POST Response Code: ' . $response_code );
@@ -188,64 +190,64 @@ abstract class PR_DHL_API_REST {
 			case '201':
 				break;
 			case '400':
-				$error_message = str_replace('/', ' / ', $response_body->message);
-				
+				$error_message = str_replace( '/', ' / ', $response_body->message );
+
 				if ( isset( $response_body->backendError->message ) ) {
 					$error_message .= ' ' . $response_body->backendError->message;
 				}
 
-				throw new Exception( __('400 - ', 'dhl-for-woocommerce') . $error_message );
+				throw new Exception( esc_html__( '400 - ', 'dhl-for-woocommerce' ) . esc_html( $error_message ) );
 				break;
 			case '401':
-				throw new Exception( __('401 - Unauthorized Access - Invalid token or Authentication Header parameter', 'dhl-for-woocommerce') );
+				throw new Exception( esc_html__( '401 - Unauthorized Access - Invalid token or Authentication Header parameter', 'dhl-for-woocommerce' ) );
 				break;
 			case '408':
-				throw new Exception( __('408 - Request Timeout', 'dhl-for-woocommerce') );
+				throw new Exception( esc_html__( '408 - Request Timeout', 'dhl-for-woocommerce' ) );
 				break;
 			case '429':
-				throw new Exception( __('429 - Too many requests in given amount of time', 'dhl-for-woocommerce') );
+				throw new Exception( esc_html__( '429 - Too many requests in given amount of time', 'dhl-for-woocommerce' ) );
 				break;
 			case '503':
-				throw new Exception( __('503 - Service Unavailable', 'dhl-for-woocommerce') );
+				throw new Exception( esc_html__( '503 - Service Unavailable', 'dhl-for-woocommerce' ) );
 				break;
 			default:
-				if ( empty($response_body->message) ) {
-					$error_message = __('POST error or timeout occured. Please try again later.', 'dhl-for-woocommerce');
+				if ( empty( $response_body->message ) ) {
+					$error_message = esc_html__( 'POST error or timeout occured. Please try again later.', 'dhl-for-woocommerce' );
 				} else {
-					$error_message = str_replace('/', ' / ', $response_body->message);
+					$error_message = str_replace( '/', ' / ', $response_body->message );
 				}
-				
+
 				PR_DHL()->log_msg( 'POST Error: ' . $response_code . ' - ' . $error_message );
 
-				throw new Exception( $response_code .' - ' . $error_message );
+				throw new Exception( esc_html( $response_code ) . ' - ' . esc_html( $error_message ) );
 				break;
 		}
 
-		
 		return $response_body;
 	}
 
 	public function get_request() {
 
 		$rest_auth = '';
-		$api_url = PR_DHL()->get_api_url();
+		$api_url   = PR_DHL()->get_api_url();
 		if ( is_array( $api_url ) ) {
 			$rest_auth = $this->get_basic_auth_encode( $api_url['user'], $api_url['password'] );
-			$api_url = str_replace('/soap', '/rest', $api_url['auth_url'] );
+			$api_url   = str_replace( '/soap', '/rest', $api_url['auth_url'] );
 		}
-		
+
 		$this->set_header( $rest_auth );
 
-		$wp_request_url = $api_url . $this->get_endpoint() . '?' . $this->get_query_string();
+		$wp_request_url     = $api_url . $this->get_endpoint() . '?' . $this->get_query_string();
 		$wp_request_headers = $this->get_header();
-		
+
 		PR_DHL()->log_msg( 'GET URL: ' . $wp_request_url );
 
 		$wp_dhl_rest_response = wp_remote_get(
-		    $wp_request_url,
-		    array( 'headers' => $wp_request_headers,
-		    		'timeout' => self::WP_POST_TIMEOUT
-		    	)
+			$wp_request_url,
+			array(
+				'headers' => $wp_request_headers,
+				'timeout' => self::WP_POST_TIMEOUT,
+			)
 		);
 
 		$response_code = wp_remote_retrieve_response_code( $wp_dhl_rest_response );
@@ -259,35 +261,34 @@ abstract class PR_DHL_API_REST {
 			case '201':
 				break;
 			case '400':
-				$error_message = ! empty( $response_body->message ) ? str_replace( '/', ' / ', $response_body->message ) : __( 'Unknown Error!', 'dhl-for-woocommerce' );
-				throw new Exception( __( '400 - ', 'dhl-for-woocommerce' ) . $error_message );
+				$error_message = ! empty( $response_body->message ) ? str_replace( '/', ' / ', $response_body->message ) : esc_html__( 'Unknown Error!', 'dhl-for-woocommerce' );
+				throw new Exception( esc_html__( '400 - ', 'dhl-for-woocommerce' ) . esc_html( $error_message ) );
 				break;
 			case '401':
-				throw new Exception( __('401 - Unauthorized Access - Invalid token or Authentication Header parameter', 'dhl-for-woocommerce') );
+				throw new Exception( esc_html__( '401 - Unauthorized Access - Invalid token or Authentication Header parameter', 'dhl-for-woocommerce' ) );
 				break;
 			case '408':
-				throw new Exception( __('408 - Request Timeout', 'dhl-for-woocommerce') );
+				throw new Exception( esc_html__( '408 - Request Timeout', 'dhl-for-woocommerce' ) );
 				break;
 			case '429':
-				throw new Exception( __('429 - Too many requests in given amount of time', 'dhl-for-woocommerce') );
+				throw new Exception( esc_html__( '429 - Too many requests in given amount of time', 'dhl-for-woocommerce' ) );
 				break;
 			case '503':
-				throw new Exception( __('503 - Service Unavailable', 'dhl-for-woocommerce') );
+				throw new Exception( esc_html__( '503 - Service Unavailable', 'dhl-for-woocommerce' ) );
 				break;
 			default:
-				if ( empty($response_body->message) ) {
-					$error_message = __('GET error or timeout occured. Please try again later.', 'dhl-for-woocommerce');
+				if ( empty( $response_body->message ) ) {
+					$error_message = esc_html__( 'GET error or timeout occured. Please try again later.', 'dhl-for-woocommerce' );
 				} else {
-					$error_message = str_replace('/', ' / ', $response_body->message);
+					$error_message = str_replace( '/', ' / ', $response_body->message );
 				}
-				
+
 				PR_DHL()->log_msg( 'GET Error: ' . $response_code . ' - ' . $error_message );
 
-				throw new Exception( $response_code .' - ' . $error_message );
+				throw new Exception( esc_html( $response_code ) . ' - ' . esc_html( $error_message ) );
 				break;
 		}
 
-		
 		return $response_body;
 	}
 
@@ -296,29 +297,29 @@ abstract class PR_DHL_API_REST {
 	}
 
 	protected function set_header( $authorization = '' ) {
-		$wp_version = get_bloginfo('version');
+		$wp_version = get_bloginfo( 'version' );
 
-		$dhl_header['Content-Type'] = 'application/json';
-		$dhl_header['Accept'] = 'application/json';
+		$dhl_header['Content-Type']  = 'application/json';
+		$dhl_header['Accept']        = 'application/json';
 		$dhl_header['Authorization'] = 'Bearer ' . $authorization;
-		$dhl_header['User-Agent'] = 'WooCommerce/'. WC_VERSION . ' (WordPress/'. $wp_version . ') DHL-plug-in/' . PR_DHL_VERSION;
+		$dhl_header['User-Agent']    = 'WooCommerce/' . WC_VERSION . ' (WordPress/' . $wp_version . ') DHL-plug-in/' . PR_DHL_VERSION;
 
-		$this->remote_header = array_merge($this->remote_header, $dhl_header);
+		$this->remote_header = array_merge( $this->remote_header, $dhl_header );
 	}
 
-	protected function get_header( ) {
+	protected function get_header() {
 		return $this->remote_header;
 	}
 
-	abstract protected function set_query_string( );
+	abstract protected function set_query_string();
 
-	protected function get_query_string( ) {
+	protected function get_query_string() {
 		return $this->query_string;
 	}
 
-	protected function set_message( ) { }
+	protected function set_message() { }
 
-	protected function get_message( ) {
+	protected function get_message() {
 		return $this->body_request;
 	}
 
@@ -334,28 +335,28 @@ abstract class PR_DHL_API_REST {
 					$this->validate( $value, 'string', 6, 6 );
 					break;
 			}
-			
-		} catch (Exception $e) {
+		} catch ( Exception $e ) {
 			throw $e;
 		}
-
 	}
 
 	protected function validate( $value, $type = 'int', $min_len = 0, $max_len = 0 ) {
 
 		switch ( $type ) {
 			case 'string':
-				if( ( strlen($value) < $min_len ) || ( strlen($value) > $max_len ) ) {
+				if ( ( strlen( $value ) < $min_len ) || ( strlen( $value ) > $max_len ) ) {
 					if ( $min_len == $max_len ) {
-						throw new Exception( sprintf( __('The value must be %s characters.', 'dhl-for-woocommerce'), $min_len) );
+						/* translators: %s is the required number of characters */
+						throw new Exception( sprintf( esc_html__( 'The value must be %s characters.', 'dhl-for-woocommerce' ), esc_attr( $min_len ) ) );
 					} else {
-						throw new Exception( sprintf( __('The value must be between %s and %s characters.', 'dhl-for-woocommerce'), $min_len, $max_len ) );
+						/* translators: %1$s is the minimum number of characters, %2$s is the maximum number of characters */
+						throw new Exception( sprintf( esc_html__( 'The value must be between %1$s and %2$s characters.', 'dhl-for-woocommerce' ), esc_attr( $min_len ), esc_attr( $max_len ) ) );
 					}
 				}
 				break;
 			case 'int':
-				if( ! is_numeric( $value ) ) {
-					throw new Exception( __('The value must be a number') );
+				if ( ! is_numeric( $value ) ) {
+					throw new Exception( esc_html__( 'The value must be a number', 'dhl-for-woocommerce' ) );
 				}
 				break;
 		}
