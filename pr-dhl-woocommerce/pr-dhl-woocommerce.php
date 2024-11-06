@@ -47,11 +47,6 @@ class PR_DHL_WC {
 	 */
 	protected static $_instance = null;
 
-	/**
-	 * Product Editor.
-	 *
-	 * @var PR_DHL_WC_Product_Editor
-	 */
 	public $product_editor = null;
 	
 	/**
@@ -234,8 +229,8 @@ class PR_DHL_WC {
     public function init() {
         add_action( 'admin_notices', array( $this, 'environment_check' ),1 );
 
-        $this->get_pr_dhl_wc_product();
-        $this->get_pr_dhl_wc_order();
+		$this->get_pr_dhl_wc_product();
+		$this->get_pr_dhl_wc_order();
 		$this->get_product_editor();
     }
 
@@ -314,17 +309,24 @@ class PR_DHL_WC {
 		return $this->shipping_dhl_product;
 	}
 
-	/**
-	 * Get product editor class.
-	 *
-	 * @return PR_DHL_WC_Product_Editor
-	 */
 	public function get_product_editor() {
-		if ( empty( $this->product_editor ) ) {
-			$this->product_editor = new PR_DHL_WC_Product_Editor();
+		if ( ! isset( $this->product_editor ) ){
+			try {
+				$dhl_obj = $this->get_dhl_factory();
+
+				if( $dhl_obj->is_dhl_paket() ) {
+					$this->product_editor = new PR_DHL_WC_Product_Paket_Editor();
+				} elseif( $dhl_obj->is_dhl_deutsche_post() ){
+					$this->product_editor = new PR_DHL_WC_Product_Deutsche_Post_Editor();
+				}
+
+			} catch (Exception $e) {
+				add_action( 'admin_notices', array( $this, 'environment_check' ) );
+			}
 		}
 
 		return $this->product_editor;
+		
 	}
 
 	/**

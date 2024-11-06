@@ -14,9 +14,9 @@ use Automattic\WooCommerce\Admin\BlockTemplates\BlockInterface;
 /**
  * Product editor handler.
  */
-if ( ! class_exists( 'PR_DHL_WC_Product_Editor' ) ) :
+if ( ! class_exists( 'PR_DHL_WC_Product_Paket_Editor' ) ) :
 
-class PR_DHL_WC_Product_Editor {
+class PR_DHL_WC_Product_Paket_Editor {
 
     /**
 	 * Class constructor.
