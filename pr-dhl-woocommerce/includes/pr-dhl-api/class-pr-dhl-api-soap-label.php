@@ -293,7 +293,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 			return false;
 		}
 
-		$file_ret = $wp_filesystem->put_contents( $label_path, $label_data_decoded, FS_CHMOD_FILE );
+		$file_ret = $wp_filesystem->put_contents( $data_path, $label_data_decoded, FS_CHMOD_FILE );
 
 		if ( empty( $file_ret ) ) {
 			throw new Exception( esc_html__( 'File cannot be saved!', 'dhl-for-woocommerce' ) );
