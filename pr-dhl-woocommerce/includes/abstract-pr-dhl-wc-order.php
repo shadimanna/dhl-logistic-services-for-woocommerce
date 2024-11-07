@@ -1550,49 +1550,36 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 			return $has_error;
 		}
 
-		/**
-		 * Downloads the generated label file
-		 *
-		 * @param string $file_path
-		 * @return boolean|void
-		 */
-		protected function download_label( $file_path ) {
-			global $wp_filesystem;
+	  /**
+	   * Downloads the generated label file
+	   *
+	   * @param string $file_path
+	   *
+	   * @return boolean|void
+	   */
+	  protected function download_label( $file_path ) {
+		  if ( ! empty( $file_path ) && is_string( $file_path ) && file_exists( $file_path ) ) {
+			  // Check if buffer exists, then flush any buffered output to prevent it from being included in the file's content
+			  if ( ob_get_contents() ) {
+				  ob_clean();
+			  }
 
-			// Initialize WP_Filesystem
-			if ( ! function_exists( 'WP_Filesystem' ) ) {
-				require_once ABSPATH . 'wp-admin/includes/file.php';
-			}
+			  $filename = basename( $file_path );
 
-			WP_Filesystem();
+			  header( 'Content-Description: File Transfer' );
+			  header( 'Content-Type: application/octet-stream' );
+			  header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
+			  header( 'Expires: 0' );
+			  header( 'Cache-Control: must-revalidate' );
+			  header( 'Pragma: public' );
+			  header( 'Content-Length: ' . filesize( $file_path ) );
 
-			// Check if the WP_Filesystem object is properly initialized
-			if ( empty( $wp_filesystem ) ) {
-				return false;
-			}
-
-			if ( ! empty( $file_path ) && is_string( $file_path ) && $wp_filesystem->exists( $file_path ) ) {
-				// Check if buffer exists, then flush any buffered output to prevent it from being included in the file's content
-				if ( ob_get_contents() ) {
-					ob_clean();
-				}
-
-				$filename = basename( $file_path );
-
-				header( 'Content-Description: File Transfer' );
-				header( 'Content-Type: application/octet-stream' );
-				header( 'Content-Disposition: attachment; filename="' . esc_attr( $filename ) . '"' );
-				header( 'Expires: 0' );
-				header( 'Cache-Control: must-revalidate' );
-				header( 'Pragma: public' );
-				header( 'Content-Length: ' . $wp_filesystem->size( $file_path ) );
-
-				echo $wp_filesystem->get_contents( $file_path );
-				exit;
-			} else {
-				return false;
-			}
-		}
+			  readfile( $file_path );
+			  exit;
+		  } else {
+			  return FALSE;
+		  }
+	  }
 	}
 
 endif;

@@ -525,24 +525,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 			throw new Exception( esc_html__( 'Invalid file path!', 'dhl-for-woocommerce' ) );
 		}
 
-		//$file_ret = file_put_contents( $file_info->path, $data );
-
-		global $wp_filesystem;
-
-		// Initialize WP_Filesystem
-		if ( ! function_exists( 'WP_Filesystem' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-		}
-
-		WP_Filesystem();
-
-		// Check if WP_Filesystem object is properly initialized
-		if ( empty( $wp_filesystem ) ) {
-			throw new Exception( esc_html__( 'DHL label file cannot be saved due to WP Filesystem initialization failure!', 'dhl-for-woocommerce' ) );
-		}
-
-		// Write the data to the file using WP_Filesystem
-		$file_ret = $wp_filesystem->put_contents( $file_info->path, $data, FS_CHMOD_FILE );
+		$file_ret = file_put_contents( $file_info->path, $data );
 
 		if ( empty( $file_ret ) ) {
 			throw new Exception( esc_html__( 'DHL label file cannot be saved!', 'dhl-for-woocommerce' ) );
