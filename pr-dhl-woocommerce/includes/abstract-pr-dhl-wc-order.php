@@ -1557,14 +1557,14 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		 * @return boolean|void
 		 */
 		protected function download_label( $file_path ) {
-			global $wp_filesystem;
-
 			// Initialize WP_Filesystem
 			if ( ! function_exists( 'WP_Filesystem' ) ) {
 				require_once ABSPATH . 'wp-admin/includes/file.php';
 			}
 
 			WP_Filesystem();
+
+			global $wp_filesystem;
 
 			// Check if the WP_Filesystem object is properly initialized
 			if ( empty( $wp_filesystem ) ) {
