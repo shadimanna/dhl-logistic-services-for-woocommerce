@@ -155,23 +155,6 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		$label_data_decoded = base64_decode( $label_data );
 		$file_ret           = file_put_contents( $data_path, $label_data_decoded );
 
-		// global $wp_filesystem;
-
-		// // Initialize WP_Filesystem
-		// if ( ! function_exists( 'WP_Filesystem' ) ) {
-		// require_once ABSPATH . 'wp-admin/includes/file.php';
-		// }
-
-		// WP_Filesystem();
-
-		// // Check if WP_Filesystem object is properly initialized
-		// if ( empty( $wp_filesystem ) ) {
-		// throw new Exception( esc_html__( 'DHL label file cannot be saved due to WP Filesystem initialization failure!', 'dhl-for-woocommerce' ) );
-		// }
-
-		// // Write the data to the file using WP_Filesystem
-		// $file_ret = $wp_filesystem->put_contents( $data_path, $label_data_decoded, FS_CHMOD_FILE );
-
 		if ( empty( $file_ret ) ) {
 			throw new Exception( esc_html__( 'DHL label file cannot be saved!', 'dhl-for-woocommerce' ) );
 		}

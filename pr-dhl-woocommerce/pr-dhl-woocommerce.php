@@ -9,7 +9,7 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
- * Version: 3.7.5
+ * Version: 3.7.6
  * Tested up to: 6.7
  * Requires Plugins: woocommerce
  * WC requires at least: 3.0
@@ -39,7 +39,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 	class PR_DHL_WC {
 
-		private $version = '3.7.5';
+		private $version = '3.7.6';
 
 		/**
 		 * Instance to call certain functions globally within the plugin
@@ -881,46 +881,39 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			}
 		}
 
-		/**
-		 * Installation functions
-		 *
-		 * Create temporary folder and files. DHL labels will be stored here as required
-		 *
-		 * empty_pdf_task will delete them hourly
-		 */
-		public function create_dhl_label_folder() {
-			// Install files and folders for uploading files and prevent hotlinking
-			$upload_dir = wp_upload_dir();
+	  /**
+	   * Installation functions
+	   *
+	   * Create temporary folder and files. DHL labels will be stored here as required
+	   *
+	   * empty_pdf_task will delete them hourly
+	   */
+	  public function create_dhl_label_folder() {
+		  // Install files and folders for uploading files and prevent hotlinking
+		  $upload_dir = wp_upload_dir();
 
-			$files = array(
-				array(
-					'base'    => $upload_dir['basedir'] . '/woocommerce_dhl_label',
-					'file'    => '.htaccess',
-					'content' => 'deny from all',
-				),
-				array(
-					'base'    => $upload_dir['basedir'] . '/woocommerce_dhl_label',
-					'file'    => 'index.html',
-					'content' => '',
-				),
-			);
+		  $files = array(
+			  array(
+				  'base'    => $upload_dir['basedir'] . '/woocommerce_dhl_label',
+				  'file'    => '.htaccess',
+				  'content' => 'deny from all',
+			  ),
+			  array(
+				  'base'    => $upload_dir['basedir'] . '/woocommerce_dhl_label',
+				  'file'    => 'index.html',
+				  'content' => '',
+			  ),
+		  );
 
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-			WP_Filesystem();
-
-			global $wp_filesystem;
-
-			foreach ( $files as $file ) {
-				// Check if directory exists or can be created.
-				if ( $wp_filesystem->mkdir( $file['base'], FS_CHMOD_DIR ) &&
-					! $wp_filesystem->exists( trailingslashit( $file['base'] ) . $file['file'] ) ) {
-
-					// Create the file with content using WP_Filesystem.
-					$file_path = trailingslashit( $file['base'] ) . $file['file'];
-					$wp_filesystem->put_contents( $file_path, $file['content'], FS_CHMOD_FILE );
-				}
-			}
-		}
+		  foreach ( $files as $file ) {
+			  if ( wp_mkdir_p( $file['base'] ) && ! file_exists( trailingslashit( $file['base'] ) . $file['file'] ) ) {
+				  if ( $file_handle = @fopen( trailingslashit( $file['base'] ) . $file['file'], 'w' ) ) {
+					  fwrite( $file_handle, $file['content'] );
+					  fclose( $file_handle );
+				  }
+			  }
+		  }
+	  }
 
 		public function dhl_label_folder_check() {
 			$upload_dir = wp_upload_dir();
