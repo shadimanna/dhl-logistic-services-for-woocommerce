@@ -218,6 +218,7 @@ class PR_DHL_WC {
 		$this->define_constants();
 		$this->includes();
 		$this->init_hooks();
+        $this->checkout_block();
 	}
 
     /**
@@ -1057,6 +1058,21 @@ class PR_DHL_WC {
 		if (!empty($notice_message)) {
 			echo '<div class="notice notice-warning is-dismissible"><p>' . sprintf(__('%s', 'dhl-for-woocommerce'), $notice_message) . '</p></div>';
 		}
+	}
+
+	public function checkout_block() {
+		$extend_store = new PR_DHL_Extend_Store_Endpoint();
+		new PR_DHL_Extend_Block_core();
+
+		// Initialize endpoints and core functionality.
+		$extend_store->init();
+
+		// Register the blocks integration with WooCommerce blocks.
+		add_action( 'woocommerce_blocks_checkout_block_registration', function ( $integration_registry ) {
+			if ( class_exists( 'PR_DHL_Blocks_Integration' ) ) {
+				$integration_registry->register( new PR_DHL_Blocks_Integration() );
+			}
+		} );
 	}
 
 	public function register_pr_dhl_block_category( $categories ) {

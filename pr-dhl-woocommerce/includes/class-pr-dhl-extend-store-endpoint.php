@@ -39,7 +39,7 @@ if ( ! class_exists( 'PR_DHL_Extend_Store_Endpoint' ) ) :
 		 *
 		 */
 		public static function init() {
-			self::$extend = Automattic\WooCommerce\StoreApi\StoreApi::container()->get( Automattic\WooCommerce\StoreApi\Schemas\ExtendSchema::class );
+			self::$extend = Automattic\WooCommerce\StoreApi\StoreApi::container()->get( \Automattic\WooCommerce\StoreApi\Schemas\ExtendSchema::class );
 			self::extend_store();
 		}
 

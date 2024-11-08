@@ -34,8 +34,62 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 			// Register fee calculation
 			add_action( 'woocommerce_cart_calculate_fees', [ $this, 'add_preferred_day_fee' ] );
 
+			add_action( 'woocommerce_init', array($this, 'register_additional_checkout_fields'),101);
+
 		}
 
+		/**
+		 *
+		 * Register extra checkout fields.
+		 *
+		 * @return void
+		 */
+		public function register_additional_checkout_fields() {
+			$front_end_packet = new PR_DHL_Front_End_Paket();
+
+			$types[]  = array(
+				'value' => 'normal',
+				'label' => __( 'Regular Address', 'dhl-for-woocommerce' )
+			);
+
+			if ( $front_end_packet->is_packstation_enabled( )) {
+				$types[]  = array(
+					'value' => 'dhl_packstation',
+					'label' => __( 'DHL Packstation', 'dhl-for-woocommerce' )
+				);
+
+			}
+
+			if ( $front_end_packet->is_post_office_enabled()) {
+				$types[]  = array(
+					'value' => 'dhl_branch',
+					'label' => __( 'DHL Branch', 'dhl-for-woocommerce' )
+				);
+			}
+
+			woocommerce_register_additional_checkout_field(
+				array(
+					'id'          => 'dhl/address_type',
+					'label'       => 'Address Type',
+					'location'    => 'address',
+					'required'      => true,
+					'type'        => 'select',
+					'options'     => $types
+				)
+			);
+			woocommerce_register_additional_checkout_field(
+				array(
+					'id'            => 'pr-dhl/postnum',
+					'label'         => 'Post Number',
+					'location'      => 'address',
+					'required'      => false,
+					'attributes'    => array(
+						'autocomplete' => 'dhl-postnum',
+					),
+				),
+			);
+
+		}
 
 		/**
 		 * Saves the dhl fields to the order's metadata.
@@ -74,6 +128,21 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 			if ( ! empty( $dhl_label_options ) ) {
 				PR_DHL()->get_pr_dhl_wc_order()->save_dhl_label_items( $order->get_id(), $dhl_label_options );
 			}
+			if ( ! empty( $pr_dhl_request_data['preferredDay'] ) ) {
+				$dhl_label_options['pr_dhl_preferred_day'] = wc_clean( $pr_dhl_request_data['preferredDay'] );
+			}
+			// Extract billing and shipping house numbers with sanitization
+			$billing_postnum  = isset( $postnl_request_data['shipping-pr-dhl-postnum'] ) ? sanitize_text_field( $postnl_request_data['postnl_billing_house_number'] ) : '';
+			$shipping_postnum = isset( $postnl_request_data['billing-pr-dhl-postnum'] ) ? sanitize_text_field( $postnl_request_data['postnl_shipping_house_number'] ) : '';
+
+			// Update billing and shipping house numbers
+			$order->update_meta_data( '_billing_dhl_postnum', $billing_postnum );
+			$order->update_meta_data( '_shipping_dhl_postnum', $shipping_postnum );
+			/**
+			 * Save the order to persist changes
+			 */
+			$order->save();
+
 		}
 
 		/**

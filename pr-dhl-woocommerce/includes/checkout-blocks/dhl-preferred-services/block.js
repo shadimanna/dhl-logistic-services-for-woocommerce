@@ -122,7 +122,9 @@ export const Block = ({ checkoutExtensionData }) => {
             },
         })
             .then(response => {
+
                 if (response.data.success) {
+
                     setPreferredDays(response.data.data.preferredDays);
                     setDisplayPreferred(true);
                     setLoading(false);

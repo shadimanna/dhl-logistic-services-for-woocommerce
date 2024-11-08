@@ -1,93 +1,95 @@
-import { useState, useCallback } from '@wordpress/element';
-import { Modal, Button, TextControl, CheckboxControl } from '@wordpress/components';
+import { useEffect } from '@wordpress/element';
+import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-export const Block = ({ checkoutExtensionData }) => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [postcode, setPostcode] = useState('');
-    const [city, setCity] = useState('');
-    const [address, setAddress] = useState('');
-    const [isPackstationEnabled, setIsPackstationEnabled] = useState(prDhlGlobals.packstation_enabled);
-    const [isBranchEnabled, setIsBranchEnabled] = useState(prDhlGlobals.parcelshop_enabled || prDhlGlobals.post_office_enabled);
-
-    const toggleModal = useCallback(() => setIsModalOpen((prev) => !prev), []);
-
-    const imgUrl = prDhlGlobals.pluginUrl + "/assets/img/dhl-official.png";
-    const packstationImgUrl = prDhlGlobals.pluginUrl + "/assets/img/packstation.png";
-    const parcelshopImgUrl = prDhlGlobals.pluginUrl + "/assets/img/parcelshop.png";
-    const postOfficeImgUrl = prDhlGlobals.pluginUrl + "/assets/img/post_office.png";
-
-    const handleSearch = (event) => {
-        event.preventDefault();
-        // Perform AJAX call to parcel finder API here
-    };
+export const Block = () => {
+    useEffect(() => {
+        // Initialize Fancybox if it's not already initialized
+        if (jQuery && jQuery.fancybox) {
+            jQuery("[data-fancybox]").fancybox({
+                // You can add Fancybox options here if needed
+                modal: true,
+                animationEffect: "zoom-in-out",
+                transitionEffect: "slide",
+            });
+        }
+    }, []);
 
     return (
         <>
-            <Button isPrimary onClick={toggleModal} className="dhl-search-button">
+            {/* Button to trigger Fancybox */}
+            <Button
+                isPrimary
+                id="dhl_parcel_finder"
+                data-fancybox
+                data-src="#dhl_parcel_finder_form"
+                href="javascript:;"
+            >
                 {__('Search Packstation / Branch', 'dhl-for-woocommerce')}
-                <img src={imgUrl} alt="DHL logo" className="dhl-co-logo" />
+                <img src={`${prDhlGlobals.pluginUrl}/assets/img/dhl-official.png`} alt="DHL logo" className="dhl-co-logo" />
             </Button>
-            {isModalOpen && (
-                <Modal
-                    title={__('DHL Parcel Finder', 'dhl-for-woocommerce')}
-                    onRequestClose={toggleModal}
-                    className="dhl-parcel-finder-modal"
-                    isFullScreen
-                >
-                    <form id="checkout_dhl_parcel_finder" onSubmit={handleSearch}>
-                        <TextControl
-                            label={__('Post Code', 'dhl-for-woocommerce')}
-                            value={postcode}
-                            onChange={(value) => setPostcode(value)}
-                            id="dhl_parcelfinder_postcode"
-                        />
-                        <TextControl
-                            label={__('City', 'dhl-for-woocommerce')}
-                            value={city}
-                            onChange={(value) => setCity(value)}
-                            id="dhl_parcelfinder_city"
-                        />
-                        <TextControl
-                            label={__('Address', 'dhl-for-woocommerce')}
-                            value={address}
-                            onChange={(value) => setAddress(value)}
-                            id="dhl_parcelfinder_address"
-                        />
+
+            {/* Hidden Parcel Finder Form */}
+            <div style={{ display: 'none' }}>
+                <div id="dhl_parcel_finder_form">
+                    <form id="checkout_dhl_parcel_finder" method="post">
+
+                        <p className="form-row form-field small">
+                            <input type="text" name="dhl_parcelfinder_postcode" className="input-text" placeholder={__('Post Code', 'dhl-for-woocommerce')} id="dhl_parcelfinder_postcode" />
+                        </p>
+
+                        <p className="form-row form-field small">
+                            <input type="text" name="dhl_parcelfinder_city" className="input-text" placeholder={__('City', 'dhl-for-woocommerce')} id="dhl_parcelfinder_city" />
+                        </p>
+
+                        <p className="form-row form-field large">
+                            <input type="text" name="dhl_parcelfinder_address" className="input-text" placeholder={__('Address', 'dhl-for-woocommerce')} id="dhl_parcelfinder_address" />
+                        </p>
+
                         {prDhlGlobals.packstation_enabled && (
-                            <CheckboxControl
-                                label={__('Packstation', 'dhl-for-woocommerce')}
-                                checked={isPackstationEnabled}
-                                onChange={(isChecked) => setIsPackstationEnabled(isChecked)}
-                                id="dhl_packstation_filter"
-                            />
+                            <p className="form-row form-field packstation">
+                                <input type="checkbox" name="dhl_packstation_filter" className="input-checkbox" id="dhl_packstation_filter" value="1" defaultChecked />
+                                <label htmlFor="dhl_packstation_filter">{__('Packstation', 'dhl-for-woocommerce')}</label>
+                                <span className="icon" style={{ backgroundImage: `url(${prDhlGlobals.pluginUrl}/assets/img/packstation.png)` }}></span>
+                            </p>
                         )}
+
                         {(prDhlGlobals.parcelshop_enabled || prDhlGlobals.post_office_enabled) && (
-                            <CheckboxControl
-                                label={__('Branch', 'dhl-for-woocommerce')}
-                                checked={isBranchEnabled}
-                                onChange={(isChecked) => setIsBranchEnabled(isChecked)}
-                                id="dhl_branch_filter"
-                            />
+                            <p className="form-row form-field parcelshop">
+                                <input type="checkbox" name="dhl_branch_filter" className="input-checkbox" id="dhl_branch_filter" value="1" defaultChecked />
+                                <label htmlFor="dhl_branch_filter">{__('Branch', 'dhl-for-woocommerce')}</label>
+                                <span className="parcel-wrap">
+                                    {prDhlGlobals.parcelshop_enabled && (
+                                        <span className="icon" style={{ backgroundImage: `url(${prDhlGlobals.pluginUrl}/assets/img/parcelshop.png)` }}></span>
+                                    )}
+                                    {prDhlGlobals.post_office_enabled && (
+                                        <span className="icon" style={{ backgroundImage: `url(${prDhlGlobals.pluginUrl}/assets/img/post_office.png)` }}></span>
+                                    )}
+                                </span>
+                            </p>
                         )}
-                        <div className="parcel-icons">
-                            {prDhlGlobals.packstation_enabled && (
-                                <span className="icon" style={{ backgroundImage: `url(${packstationImgUrl})` }}></span>
-                            )}
-                            {prDhlGlobals.parcelshop_enabled && (
-                                <span className="icon" style={{ backgroundImage: `url(${parcelshopImgUrl})` }}></span>
-                            )}
-                            {prDhlGlobals.post_office_enabled && (
-                                <span className="icon" style={{ backgroundImage: `url(${postOfficeImgUrl})` }}></span>
-                            )}
-                        </div>
-                        <Button isPrimary type="submit">
-                            {__('Search', 'dhl-for-woocommerce')}
-                        </Button>
+
+                        <p id="dhl_seach_button" className="form-row form-field small">
+                            <input type="submit" className="button" name="apply_parcel_finder" value={__('Search', 'dhl-for-woocommerce')} />
+                        </p>
+
+                        <input type="hidden" name="dhl_parcelfinder_country" id="dhl_parcelfinder_country" />
+                        <input type="hidden" name="dhl_parcelfinder_nonce" value={prDhlGlobals.nonce} />
+
+                        <div className="clear"></div>
+
+                        {/* Close Button */}
+                        <button data-fancybox-close className="fancybox-close-small" title="close">
+                            <svg viewBox="0 0 32 32">
+                                <path d="M10,10 L22,22 M22,10 L10,22"></path>
+                            </svg>
+                        </button>
+
                     </form>
+
                     <div id="dhl_google_map"></div>
-                </Modal>
-            )}
+                </div>
+            </div>
         </>
     );
 };
