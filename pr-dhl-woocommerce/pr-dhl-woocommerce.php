@@ -1057,6 +1057,20 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		}
 	}
 
+	public function register_pr_dhl_block_category( $categories ) {
+		return array_merge(
+			$categories,
+			[
+				[
+					'slug'  => 'pr-dhl',
+					'title' => __( 'DHL checkout Blocks', 'dhl-for-woocommerce' ),
+				],
+			]
+		);
+	}
+	
+}
+
 endif;
 
 if ( ! function_exists( 'PR_DHL' ) ) {

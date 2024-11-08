@@ -20,6 +20,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 
 		private $preferred_location_neighbor = array();
 
+
 		private $cdp_service = array();
 
 		private $shipping_dhl_settings = array();
@@ -190,6 +191,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 				wp_enqueue_script( 'jquery-ui-tooltip' );
 			}
 
+
 			if ( $this->is_parcelfinder_enabled() ) {
 				// Enqueue Fancybox
 				// wp_enqueue_script( 'pr-dhl-fancybox-js', PR_DHL_PLUGIN_DIR_URL . '/assets/js/jquery.fancybox-1.3.4.pack.js', array('jquery') );
@@ -204,12 +206,14 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 		}
 
 		protected function validate_is_german_customer() {
+
 			// WC 3.0 comaptibilty
 			if ( defined( 'WOOCOMMERCE_VERSION' ) && version_compare( WOOCOMMERCE_VERSION, '3.0', '>=' ) ) {
 				$customer_country = WC()->customer->get_billing_country();
 			} else {
 				$customer_country = WC()->customer->get_country();
 			}
+
 
 			$base_country_code = PR_DHL()->get_base_country();
 
@@ -221,6 +225,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 				return false;
 			}
 		}
+
 
 		protected function validate_extra_services_available( $check_day_transfer = false ) {
 			// woocommerce_form_field('pr_dhl_paket_preferred_location');
@@ -242,6 +247,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 					}
 				}
 
+
 				if ( ! isset( $this->shipping_dhl_settings ) || empty( $this->shipping_dhl_settings['dhl_shipping_methods'] ) ) {
 					throw new Exception( esc_html__( 'No shipping method enabled.', 'dhl-for-woocommerce' ) );
 				}
@@ -257,6 +263,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 
 							if ( in_array( $ship_method_slug, $wc_methods_dhl ) ) {
 
+
 								$display_preferred = true;
 								break;
 							}
@@ -269,6 +276,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 						}
 					}
 				}
+
 
 				$wc_payment_dhl = $this->shipping_dhl_settings['dhl_payment_gateway'];
 				if ( isset( $chosen_payment_method ) && ! empty( $wc_payment_dhl ) ) {
@@ -700,6 +708,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 			}
 		}
 
+
 		protected function is_parcelshop_enabled() {
 
 			if ( ( isset( $this->shipping_dhl_settings['dhl_display_parcelshop'] ) &&
@@ -710,6 +719,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 			}
 		}
 
+<
 		protected function is_post_office_enabled() {
 
 			if ( ( isset( $this->shipping_dhl_settings['dhl_display_post_office'] ) &&
@@ -794,6 +804,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 		}
 
 		public function add_email_notification_checkbox() {
+
 
 			if ( $this->validate_is_german_customer() ) {
 				woocommerce_form_field(
