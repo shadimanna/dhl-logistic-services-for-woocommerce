@@ -402,7 +402,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 				$tracking_note = $this->shipping_dhl_settings['dhl_tracking_note_txt'];
 			} else {
 				/* translators: %s is the tracking link */
-				$tracking_note = sprintf( esc_html__( '%s Tracking Number: {tracking-link}', 'dhl-for-woocommerce' ), $this->service );
+				$tracking_note = sprintf( __( '%s Tracking Number: {tracking-link}', 'dhl-for-woocommerce' ), $this->service );
 			}
 
 			$tracking_link = $this->get_tracking_link( $order_id );

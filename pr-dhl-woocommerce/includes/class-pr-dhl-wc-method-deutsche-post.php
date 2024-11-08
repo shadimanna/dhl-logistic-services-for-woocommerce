@@ -240,12 +240,12 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
 			'dhl_tracking_note_txt'   => array(
 				'title'       => esc_html__( 'Tracking Note', 'dhl-for-woocommerce' ),
 				'type'        => 'textarea',
-				'description' => esc_html__(
+				'description' => __(
 					'Set the custom text when adding the tracking number to the order notes. {tracking-link} is where the tracking number will be set.',
 					'dhl-for-woocommerce'
 				),
 				'desc_tip'    => false,
-				'default'     => esc_html__( 'Deutsche Post Tracking Number: {tracking-link}', 'dhl-for-woocommerce' ),
+				'default'     => __( 'Deutsche Post Tracking Number: {tracking-link}', 'dhl-for-woocommerce' ),
 			),
 		);
 

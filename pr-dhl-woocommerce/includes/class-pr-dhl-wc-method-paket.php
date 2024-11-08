@@ -539,9 +539,9 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 				'dhl_tracking_note_txt'             => array(
 					'title'       => esc_html__( 'Tracking Text', 'dhl-for-woocommerce' ),
 					'type'        => 'textarea',
-					'description' => esc_html__( 'Set the custom text when adding the tracking number to the order notes or completed email. {tracking-link} is where the tracking number will be set.', 'dhl-for-woocommerce' ),
+					'description' => __( 'Set the custom text when adding the tracking number to the order notes or completed email. {tracking-link} is where the tracking number will be set.', 'dhl-for-woocommerce' ),
 					'desc_tip'    => false,
-					'default'     => esc_html__( 'DHL Tracking Number: {tracking-link}', 'dhl-for-woocommerce' ),
+					'default'     => __( 'DHL Tracking Number: {tracking-link}', 'dhl-for-woocommerce' ),
 				),
 				'dhl_add_tracking_info_completed'   => array(
 					'title'       => esc_html__( 'Tracking Email', 'dhl-for-woocommerce' ),
