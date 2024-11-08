@@ -38,12 +38,12 @@ class Auth implements API_Auth_Interface {
 	 * @var string
 	 */
 	protected $client_secret;
-    /**
-     * API key provided by DHL.
-     *
-     * @var string
-     */
-    protected $api_key;
+	/**
+	 * API key provided by DHL.
+	 *
+	 * @var string
+	 */
+	protected $api_key;
 	/**
 	 * The REST API base URL.
 	 *
@@ -64,12 +64,12 @@ class Auth implements API_Auth_Interface {
 	 * @param string               $client_secret The authentication secret for the client.
 	 * @param string               $api_key       The API key provided by DHL.
 	 */
-	public function __construct( API_Driver_Interface $driver, $api_url, $client_id, $client_secret, $api_key ){
-		$this->driver           = $driver;
-		$this->api_url          = $api_url;
-		$this->client_id        = $client_id;
-		$this->client_secret    = $client_secret;
-        $this->api_key          = $api_key;
+	public function __construct( API_Driver_Interface $driver, $api_url, $client_id, $client_secret, $api_key ) {
+		$this->driver        = $driver;
+		$this->api_url       = $api_url;
+		$this->client_id     = $client_id;
+		$this->client_secret = $client_secret;
+		$this->api_key       = $api_key;
 	}
 
 	/**
@@ -78,9 +78,8 @@ class Auth implements API_Auth_Interface {
 	 * @since [*next-version*]
 	 */
 	public function authorize( Request $request ) {
-		$request->headers[ 'Authorization' ]    = 'Basic '.base64_encode( $this->client_id . ':' . $this->client_secret );
-        $request->headers[ 'dhl-api-key' ]      = $this->api_key;
-        return $request;
+		$request->headers['Authorization'] = 'Basic ' . base64_encode( $this->client_id . ':' . $this->client_secret );
+		$request->headers['dhl-api-key']   = $this->api_key;
+		return $request;
 	}
-
 }

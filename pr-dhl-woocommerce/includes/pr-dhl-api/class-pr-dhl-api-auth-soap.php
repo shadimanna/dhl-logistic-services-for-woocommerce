@@ -37,48 +37,49 @@ class PR_DHL_API_Auth_SOAP {
 	}
 
 	public function get_access_token( $client_id, $client_secret ) {
-		
-		$this->client_id = $client_id;
+
+		$this->client_id     = $client_id;
 		$this->client_secret = $client_secret;
 
-		if( empty( $this->client_id ) || empty( $this->client_secret ) ) {
-			throw new Exception( __('The "Username" or "Password" is empty.','dhl-for-woocommerce' ) );
+		if ( empty( $this->client_id ) || empty( $this->client_secret ) ) {
+			throw new Exception( esc_html__( 'The "Username" or "Password" is empty.', 'dhl-for-woocommerce' ) );
 		}
 
 		// PR_DHL()->log_msg( 'Authorize User - Client ID: ' . $this->client_id );
-		
+
 		if ( ! class_exists( 'SoapClient' ) || ! class_exists( 'SoapHeader' ) ) {
-			throw new Exception( __( 'This plugin requires the <a href="http://php.net/manual/en/class.soapclient.php">SOAP</a> support on your server/hosting to function.', 'dhl-for-woocommerce' ) );
+			throw new Exception( esc_html__( 'This plugin requires the <a href="http://php.net/manual/en/class.soapclient.php">SOAP</a> support on your server/hosting to function.', 'dhl-for-woocommerce' ) );
 		}
 
 		try {
-			
+
 			$api_cred = PR_DHL()->get_api_url();
-			
-			$soap_client = new SoapClient( $this->wsdl_link,
-			array( 	
-					'login' => $api_cred['user'],
-					'password' => $api_cred['password'],
-					'location' => $api_cred['auth_url'],
+
+			$soap_client = new SoapClient(
+				$this->wsdl_link,
+				array(
+					'login'        => $api_cred['user'],
+					'password'     => $api_cred['password'],
+					'location'     => $api_cred['auth_url'],
 					'soap_version' => SOAP_1_1,
-					'trace' => true
-					)
+					'trace'        => true,
+				)
 			);
 
 		} catch ( Exception $e ) {
 			throw $e;
 		}
-		
+
 		$soap_authentication = array(
-            'user' => $this->client_id,
-            'signature' => $this->client_secret,
-			'type' => 0
-        );
-        
-        $soap_auth_header = new SoapHeader( self::PR_DHL_HEADER_LINK, 'Authentification', $soap_authentication );
-        
-        $soap_client->__setSoapHeaders( $soap_auth_header );
-		
+			'user'      => $this->client_id,
+			'signature' => $this->client_secret,
+			'type'      => 0,
+		);
+
+		$soap_auth_header = new SoapHeader( self::PR_DHL_HEADER_LINK, 'Authentification', $soap_authentication );
+
+		$soap_client->__setSoapHeaders( $soap_auth_header );
+
 		return $soap_client;
 	}
 }

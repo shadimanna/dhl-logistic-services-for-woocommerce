@@ -51,11 +51,10 @@ class PR_DHL_Logger {
 			// Add to logger
 			$wc_logger->add( 'DHL', $message );
 		}
-
 	}
 
 	public function get_log_url() {
-		return admin_url('admin.php?page=wc-status&tab=logs');
+		return admin_url( 'admin.php?page=wc-status&tab=logs' );
 		/*
 		$log_path = wc_get_log_file_path( 'DHL' );
 		$upload_path = wp_upload_dir();
@@ -64,5 +63,4 @@ class PR_DHL_Logger {
 
 		return $log_url;*/
 	}
-
 }

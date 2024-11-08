@@ -23,6 +23,7 @@ abstract class PR_DHL_API_SOAP {
 
 	/**
 	 * The request response
+	 *
 	 * @var array
 	 */
 	protected $response = null;
@@ -48,8 +49,8 @@ abstract class PR_DHL_API_SOAP {
 		try {
 
 			$this->dhl_soap_auth = new PR_DHL_API_Auth_SOAP( $wsdl_link );
-			
-		} catch (Exception $e) {
+
+		} catch ( Exception $e ) {
 			throw $e;
 		}
 	}
@@ -100,19 +101,18 @@ abstract class PR_DHL_API_SOAP {
 	}
 
 	// Unset/remove any items that are empty strings or 0
-	protected function walk_recursive_remove( array $array ) { 
-	    foreach ($array as $k => $v) { 
-	        if (is_array($v)) { 
-	            $array[$k] = $this->walk_recursive_remove($v); 
-	        } 
-            
-            if ( empty( $v ) ) { 
-                unset($array[$k]); 
-            } 
-	        
-	    }
-	    return $array; 
-	} 
+	protected function walk_recursive_remove( array $array ) {
+		foreach ( $array as $k => $v ) {
+			if ( is_array( $v ) ) {
+				$array[ $k ] = $this->walk_recursive_remove( $v );
+			}
+
+			if ( empty( $v ) ) {
+				unset( $array[ $k ] );
+			}
+		}
+		return $array;
+	}
 
 	protected function validate_field( $key, $value ) {
 
@@ -126,30 +126,30 @@ abstract class PR_DHL_API_SOAP {
 					$this->validate( $value, 'string', 6, 6 );
 					break;
 			}
-			
-		} catch (Exception $e) {
+		} catch ( Exception $e ) {
 			throw $e;
 		}
-
 	}
 
 	protected function validate( $value, $type = 'int', $min_len = 0, $max_len = 0 ) {
 
 		switch ( $type ) {
 			case 'string':
-				if( ( strlen($value) < $min_len ) || ( strlen($value) > $max_len ) ) {
+				if ( ( strlen( $value ) < $min_len ) || ( strlen( $value ) > $max_len ) ) {
 					if ( $min_len == $max_len ) {
-						throw new Exception( sprintf( __('The value must be %s characters.', 'dhl-for-woocommerce'), $min_len) );
+						/* translators: %s is the required number of characters */
+						throw new Exception( sprintf( esc_html__( 'The value must be %s characters.', 'dhl-for-woocommerce' ), esc_attr( $min_len ) ) );
 					} else {
-						throw new Exception( sprintf( __('The value must be between %s and %s characters.', 'dhl-for-woocommerce'), $min_len, $max_len ) );
+						/* translators: %1$s is the minimum number of characters, %2$s is the maximum number of characters */
+						throw new Exception( sprintf( esc_html__( 'The value must be between %1$s and %2$s characters.', 'dhl-for-woocommerce' ), esc_attr( $min_len ), esc_attr( $max_len ) ) );
 					}
 				}
 				break;
 			case 'int':
-				if( ! is_numeric( $value ) ) {
-					throw new Exception( __('The value must be a number') );
+				if ( ! is_numeric( $value ) ) {
+					throw new Exception( esc_html__( 'The value must be a number', 'dhl-for-woocommerce' ) );
 				}
 				break;
 		}
-	}	
+	}
 }

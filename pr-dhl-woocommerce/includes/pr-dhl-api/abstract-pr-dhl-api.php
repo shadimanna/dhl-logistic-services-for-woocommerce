@@ -6,30 +6,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class PR_DHL_API {
 
-	protected $dhl_label = null;
+	protected $dhl_label  = null;
 	protected $dhl_finder = null;
 
 	protected $country_code;
 
 	// abstract public function set_dhl_auth( $client_id, $client_secret );
-	
-	public function is_dhl_paket( ) {
+
+	public function is_dhl_paket() {
 		return false;
 	}
 
-	public function is_dhl_ecs( ) {
+	public function is_dhl_ecs() {
 		return false;
 	}
 
-	public function is_dhl_ecs_asia( ) {
+	public function is_dhl_ecs_asia() {
 		return false;
 	}
 
-	public function is_dhl_ecomm( ) {
+	public function is_dhl_ecomm() {
 		return false;
 	}
 
-	public function is_dhl_deutsche_post( ) {
+	public function is_dhl_deutsche_post() {
 		return false;
 	}
 
@@ -45,7 +45,7 @@ abstract class PR_DHL_API {
 		if ( $this->dhl_finder ) {
 			return $this->dhl_finder->get_parcel_location( $args );
 		} else {
-			throw new Exception( __('Parcel Finder not available', 'dhl-for-woocommerce') );
+			throw new Exception( esc_html__( 'Parcel Finder not available', 'dhl-for-woocommerce' ) );
 		}
 	}
 
@@ -53,7 +53,7 @@ abstract class PR_DHL_API {
 
 	abstract public function get_dhl_products_domestic();
 
-	public function get_dhl_content_indicator( ) {
+	public function get_dhl_content_indicator() {
 		return array();
 	}
 
@@ -65,7 +65,7 @@ abstract class PR_DHL_API {
 		return $this->dhl_label->dhl_validate_field( $key, $value );
 	}
 
-	public function dhl_reset_connection( ) {
+	public function dhl_reset_connection() {
 		return;
 	}
 
@@ -75,13 +75,13 @@ abstract class PR_DHL_API {
 
 	public function get_dhl_duties() {
 		$duties = array(
-					'DDU' => __('Delivery Duty Unpaid', 'dhl-for-woocommerce'),
-					'DDP' => __('Delivery Duty Paid', 'dhl-for-woocommerce')
-					);
+			'DDU' => esc_html__( 'Delivery Duty Unpaid', 'dhl-for-woocommerce' ),
+			'DDP' => esc_html__( 'Delivery Duty Paid', 'dhl-for-woocommerce' ),
+		);
 		return $duties;
 	}
 
 	public function get_dhl_visual_age() {
-		return array();	
+		return array();
 	}
 }

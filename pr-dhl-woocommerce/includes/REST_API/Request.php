@@ -108,10 +108,10 @@ class Request {
 		array $headers = array(),
 		array $cookies = array()
 	) {
-		$this->type = $type;
-		$this->url = $url;
-		$this->params = $params;
-		$this->body = $body;
+		$this->type    = $type;
+		$this->url     = $url;
+		$this->params  = $params;
+		$this->body    = $body;
 		$this->headers = $headers;
 		$this->cookies = $cookies;
 	}

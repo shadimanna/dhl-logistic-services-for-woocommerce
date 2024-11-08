@@ -48,10 +48,10 @@ class PR_DHL_API_REST_Parcel_DE_MyAccount extends PR_DHL_API_REST_Parcel_DE {
 	 *
 	 * @throws Exception If an error occurred while creating the API driver, auth or client.
 	 */
-	public function __construct( ) {
+	public function __construct() {
 		try {
 			$this->api_driver = $this->create_api_driver();
-			$this->api_auth = $this->create_api_auth();
+			$this->api_auth   = $this->create_api_auth();
 			$this->api_client = $this->create_api_client();
 		} catch ( Exception $e ) {
 			throw $e;
@@ -105,8 +105,8 @@ class PR_DHL_API_REST_Parcel_DE_MyAccount extends PR_DHL_API_REST_Parcel_DE {
 	 */
 	public function get_api_url() {
 		$is_sandbox = $this->get_setting( 'dhl_sandbox' );
-		$is_sandbox = filter_var($is_sandbox, FILTER_VALIDATE_BOOLEAN);
-		$api_url = ( $is_sandbox ) ? static::API_URL_SANDBOX : static::API_URL_PRODUCTION;
+		$is_sandbox = filter_var( $is_sandbox, FILTER_VALIDATE_BOOLEAN );
+		$api_url    = ( $is_sandbox ) ? static::API_URL_SANDBOX : static::API_URL_PRODUCTION;
 
 		return $api_url;
 	}
@@ -132,10 +132,10 @@ class PR_DHL_API_REST_Parcel_DE_MyAccount extends PR_DHL_API_REST_Parcel_DE {
 	 *
 	 * @return array
 	 */
-	public function sandbox_info_customer_portal(){
+	public function sandbox_info_customer_portal() {
 		return array(
-			'username' 	=> 'user-valid',
-			'pass' 		=> 'SandboxPasswort2023!',
+			'username' => 'user-valid',
+			'pass'     => 'SandboxPasswort2023!',
 			// 'account_no'=> '3333333333',
 		);
 	}
@@ -146,10 +146,9 @@ class PR_DHL_API_REST_Parcel_DE_MyAccount extends PR_DHL_API_REST_Parcel_DE {
 	 * @since [*next-version*]
 	 *
 	 * @return string
-	 *
 	 */
 	public function get_api_secret() {
-		$api_key = defined( 'PR_DHL_GLOBAL_SECRET' )? PR_DHL_GLOBAL_SECRET : '';
+		$api_key = defined( 'PR_DHL_GLOBAL_SECRET' ) ? PR_DHL_GLOBAL_SECRET : '';
 		return $api_key;
 	}
 
@@ -163,11 +162,9 @@ class PR_DHL_API_REST_Parcel_DE_MyAccount extends PR_DHL_API_REST_Parcel_DE {
 	 * @throws Exception
 	 */
 	public function get_dhl_my_account() {
-		
+
 		return $this->api_client->get_user();
 
 		// error_log(print_r($user_details, true));
-		
 	}
-	
 }

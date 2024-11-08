@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="256"
+   height="256"
+   id="svg3381"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   viewBox="0 0 256 256"
+   sodipodi:docname="icon.svg">
+  <defs
+     id="defs3383">
+    <clipPath
+       id="SVGID_2_">
+      <use
+         xlink:href="#SVGID_1_"
+         overflow="visible"
+         id="use9"
+         style="overflow:visible"
+         x="0"
+         y="0"
+         width="100%"
+         height="100%" />
+    </clipPath>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.375"
+     inkscape:cx="136.7152"
+     inkscape:cy="111.7671"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:document-units="px"
+     inkscape:grid-bbox="true"
+     inkscape:window-width="1500"
+     inkscape:window-height="977"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata3386">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     transform="translate(0,192)">
+    <g
+       id="g3"
+       transform="matrix(1.5033741,0,0,6.7146232,-0.019091,-192.81002)">
+      <defs
+         id="defs5">
+        <rect
+           id="SVGID_1_"
+           width="170.27901"
+           height="38.279999"
+           x="0"
+           y="0" />
+      </defs>
+      <clipPath
+         id="clipPath3402">
+        <use
+           xlink:href="#SVGID_1_"
+           overflow="visible"
+           id="use3404"
+           style="overflow:visible"
+           x="0"
+           y="0"
+           width="100%"
+           height="100%" />
+      </clipPath>
+      <path
+         clip-path="url(#SVGID_2_)"
+         d="m 170.22,-0.06 0,38.34 -21.24,0 c -42.58,0 -85.16,0 -127.74,0 l -21.24,0 0,-38.34 21.239,0 c 42.58,0 85.16,0 127.74,0 l 21.241,0"
+         id="path11"
+         inkscape:connector-curvature="0"
+         style="fill:#ffcc00" />
+    </g>
+    <path
+       inkscape:connector-curvature="0"
+       style="clip-rule:evenodd;fill:#d40511;fill-rule:evenodd"
+       d="m 54.716787,-81.067071 -7.380748,10.334954 40.847684,0 c 0.47027,0.173626 1.293239,-0.03957 1.312376,0.738211 l 0,0.328107 c -1.402602,2.464803 -3.388934,4.745057 -4.922772,7.136041 l 0,0.24609 -0.08202,0.164034 0.08202,0.08202 c 0.02718,0.802466 1.673278,0.77376 2.214633,0.738215 l 16.56873,0 4.92141,-6.80795 0.24745,-0.410116 c 1.29324,-2.13124 1.14423,-4.928243 -0.0834,-7.054016 l -0.24605,-0.574165 -0.41012,-0.492141 c -2.24884,-3.331535 -6.36095,-4.377332 -10.170936,-4.42928 l -42.898271,0"
+       id="path13" />
+    <path
+       inkscape:connector-curvature="0"
+       style="clip-rule:evenodd;fill:#d40511;fill-rule:evenodd"
+       d="m 44.299808,-47.519477 14.928268,-20.669913 18.866763,0 c 1.691048,0.144889 1.630899,0.894059 0.654823,2.132612 l -3.773082,5.331524 -0.164034,0.246091 -0.24609,0.328107 -0.08338,0.164033 0,0.656182 0.08338,0.164034 0.164034,0.164033 0.24609,0.08202 0.329466,0.08202 0.410116,0.08202 0.164033,0 0.24609,0.08202 25.345245,0 -0.41011,0.574169 c -4.689012,6.328108 -12.351371,10.818889 -20.341821,10.581025 l -36.419783,0"
+       id="path15" />
+    <polyline
+       transform="matrix(1.3670577,0,0,1.3670577,13.788446,-90.417744)"
+       style="clip-rule:evenodd;fill:#d40511;fill-rule:evenodd"
+       points="84.899,23.22 78.96,31.38 63.359,31.38 69.239,23.22   84.899,23.22 "
+       id="polyline17" />
+    <polyline
+       transform="matrix(1.3670577,0,0,1.3670577,13.788446,-90.417744)"
+       style="clip-rule:evenodd;fill:#d40511;fill-rule:evenodd"
+       points="108.84,21.3 70.56,21.3 81.06,6.84 96.659,6.84   90.659,15.18 97.619,15.18 103.619,6.84 119.279,6.84 108.84,21.3 "
+       id="polyline19" />
+    <polyline
+       transform="matrix(1.3670577,0,0,1.3670577,13.788446,-90.417744)"
+       style="clip-rule:evenodd;fill:#d40511;fill-rule:evenodd"
+       points="107.46,23.22 101.52,31.38 85.92,31.38 91.859,23.22   107.46,23.22 "
+       id="polyline21" />
+    <polyline
+       transform="matrix(1.3670577,0,0,1.3670577,13.788446,-90.417744)"
+       style="clip-rule:evenodd;fill:#d40511;fill-rule:evenodd"
+       points="0,26.4 23.04,26.4 21.779,28.2 0,28.2 0,26.4 "
+       id="polyline23" />
+    <polyline
+       transform="matrix(1.3670577,0,0,1.3670577,13.788446,-90.417744)"
+       style="clip-rule:evenodd;fill:#d40511;fill-rule:evenodd"
+       points="0,23.22 25.38,23.22 24.119,24.9 0,24.9 0,23.22 "
+       id="polyline25" />
+    <polyline
+       transform="matrix(1.3670577,0,0,1.3670577,13.788446,-90.417744)"
+       style="clip-rule:evenodd;fill:#d40511;fill-rule:evenodd"
+       points="0,29.64 20.699,29.64 19.439,31.38 0,31.38 0,29.64 "
+       id="polyline27" />
+    <polyline
+       transform="matrix(1.3670577,0,0,1.3670577,13.788446,-90.417744)"
+       style="clip-rule:evenodd;fill:#d40511;fill-rule:evenodd"
+       points="170.22,28.2 147.3,28.2 148.56,26.4 170.22,26.4   170.22,28.2 "
+       id="polyline29" />
+    <polyline
+       transform="matrix(1.3670577,0,0,1.3670577,13.788446,-90.417744)"
+       style="clip-rule:evenodd;fill:#d40511;fill-rule:evenodd"
+       points="170.22,31.38 144.96,31.38 146.279,29.64 170.22,29.64   170.22,31.38 "
+       id="polyline31" />
+    <polyline
+       transform="matrix(1.3670577,0,0,1.3670577,13.788446,-90.417744)"
+       style="clip-rule:evenodd;fill:#d40511;fill-rule:evenodd"
+       points="150.899,23.22 170.22,23.22 170.22,24.9 149.699,24.9   150.899,23.22 "
+       id="polyline33" />
+    <polyline
+       transform="matrix(1.3670577,0,0,1.3670577,13.788446,-90.417744)"
+       style="clip-rule:evenodd;fill:#d40511;fill-rule:evenodd"
+       points="140.939,6.84 130.439,21.3 113.88,21.3 124.38,6.84   140.939,6.84 "
+       id="polyline35" />
+    <path
+       inkscape:connector-curvature="0"
+       style="clip-rule:evenodd;fill:#d40511;fill-rule:evenodd"
+       d="m 167.66446,-58.674671 -2.29666,3.198917 c -3.9795,5.820931 3.91389,8.280267 8.44842,7.956277 l 34.2858,0 8.12032,-11.155194 -48.55788,0"
+       id="path37" />
+  </g>
+</svg>

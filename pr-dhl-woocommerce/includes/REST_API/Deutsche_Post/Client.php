@@ -53,8 +53,8 @@ class Client extends API_Client {
 	public function __construct( $ekp, $contact_name, $contact_phone, $base_url, API_Driver_Interface $driver, API_Auth_Interface $auth = null ) {
 		parent::__construct( $base_url, $driver, $auth );
 
-		$this->ekp = $ekp;
-		$this->contact_name = $contact_name;
+		$this->ekp           = $ekp;
+		$this->contact_name  = $contact_name;
 		$this->contact_phone = $contact_phone;
 	}
 
@@ -72,7 +72,7 @@ class Client extends API_Client {
 	public function create_item( Item_Info $item_info ) {
 		// Prepare the request route and data
 		$route = $this->customer_route( 'items' );
-		$data = $this->item_info_to_request_data( $item_info );
+		$data  = $this->item_info_to_request_data( $item_info );
 
 		// Send the request and get the response
 		$response = $this->post( $route, $data );
@@ -88,7 +88,8 @@ class Client extends API_Client {
 			: strval( $response->body );
 
 		throw new Exception(
-			sprintf( __( 'API error: %s', 'dhl-for-woocommerce' ), $message )
+			// Translators: %s is the error message from the API.
+			sprintf( esc_html__( 'API error: %s', 'dhl-for-woocommerce' ), esc_html( $message ) )
 		);
 	}
 
@@ -121,7 +122,8 @@ class Client extends API_Client {
 			: strval( $response->body );
 
 		throw new Exception(
-			sprintf( __( 'API error: %s', 'dhl-for-woocommerce' ), $message )
+			// Translators: %s is the error message from the API.
+			sprintf( esc_html__( 'API error: %s', 'dhl-for-woocommerce' ), esc_html( $message ) )
 		);
 	}
 
@@ -134,19 +136,18 @@ class Client extends API_Client {
 	 *
 	 * @throws Exception
 	 */
-	public function get_item_label($item_barcode)
-	{
-		$route = sprintf('items/%s/label', $item_barcode);
+	public function get_item_label( $item_barcode ) {
+		$route = sprintf( 'items/%s/label', $item_barcode );
 
 		$response = $this->get(
 			$this->customer_route( $route ),
 			array(),
 			array(
-				'Accept' => 'application/pdf'
+				'Accept' => 'application/pdf',
 			)
 		);
 
-		if ($response->status === 200) {
+		if ( $response->status === 200 ) {
 			return $response->body;
 		}
 
@@ -155,7 +156,8 @@ class Client extends API_Client {
 			: strval( $response->body );
 
 		throw new Exception(
-			sprintf( __( 'API error: %s', 'dhl-for-woocommerce' ), $message )
+			// Translators: %s is the error message from the API.
+			sprintf( esc_html__( 'API error: %s', 'dhl-for-woocommerce' ), esc_html( $message ) )
 		);
 	}
 
@@ -177,8 +179,9 @@ class Client extends API_Client {
 
 		throw new Exception(
 			sprintf(
-				__( 'Failed to get items from the API: %s', 'dhl-for-woocommerce' ),
-				implode( ', ', $response->body->messages )
+				// Translators: %s is the error message from the API.
+				esc_html__( 'Failed to get items from the API: %s', 'dhl-for-woocommerce' ),
+				esc_html( implode( ', ', $response->body->messages ) )
 			)
 		);
 	}
@@ -192,11 +195,10 @@ class Client extends API_Client {
 	 *
 	 * @return array
 	 */
-	public function get_order($orderId = null)
-	{
+	public function get_order( $orderId = null ) {
 		$current = get_option( 'pr_dhl_dp_order', $this->get_default_order_info() );
 
-		if (empty($orderId)) {
+		if ( empty( $orderId ) ) {
 			return $current;
 		}
 
@@ -211,11 +213,10 @@ class Client extends API_Client {
 	 * @param string $item_barcode The barcode of the item to add.
 	 * @param string $wc_order The ID of the WooCommerce order.
 	 */
-	public function add_item_to_order( $item_barcode, $wc_order )
-	{
+	public function add_item_to_order( $item_barcode, $wc_order ) {
 		$order = $this->get_order();
 
-		$order['items'][$item_barcode] = $wc_order;
+		$order['items'][ $item_barcode ] = $wc_order;
 
 		update_option( 'pr_dhl_dp_order', $order );
 	}
@@ -227,11 +228,10 @@ class Client extends API_Client {
 	 *
 	 * @param string $item_barcode The barcode of the item to add.
 	 */
-	public function remove_item_from_order( $item_barcode )
-	{
+	public function remove_item_from_order( $item_barcode ) {
 		$order = $this->get_order();
 
-		unset( $order['items'][$item_barcode] );
+		unset( $order['items'][ $item_barcode ] );
 
 		update_option( 'pr_dhl_dp_order', $order );
 	}
@@ -241,8 +241,7 @@ class Client extends API_Client {
 	 *
 	 * @since [*next-version*]
 	 */
-	public function reset_current_order()
-	{
+	public function reset_current_order() {
 		update_option( 'pr_dhl_dp_order', $this->get_default_order_info() );
 	}
 
@@ -255,24 +254,23 @@ class Client extends API_Client {
 	 *
 	 * @throws Exception
 	 */
-	public function create_order( $copy_count = 1 )
-	{
-		$order = $this->get_order();
-		$items = $order['items'];
-		$barcodes = array_keys( $items );
+	public function create_order( $copy_count = 1 ) {
+		$order      = $this->get_order();
+		$items      = $order['items'];
+		$barcodes   = array_keys( $items );
 		$copy_count = intval( $copy_count );
 
 		$route = $this->customer_route( 'orders' );
-		$data = array(
+		$data  = array(
 			'itemBarcodes' => $barcodes,
-			'paperwork' => array(
-				'awbCopyCount' => $copy_count,
-				'contactName' => $this->contact_name,
+			'paperwork'    => array(
+				'awbCopyCount'    => $copy_count,
+				'contactName'     => $this->contact_name,
 				'telephoneNumber' => $this->contact_phone,
 			),
 		);
 
-		$response = $this->post($route, $data);
+		$response = $this->post( $route, $data );
 
 		if ( $response->status === 200 ) {
 			$this->close_order( $response->body );
@@ -282,8 +280,9 @@ class Client extends API_Client {
 
 		throw new Exception(
 			sprintf(
-				__( 'Failed to create order: %s', 'dhl-for-woocommerce' ),
-				implode( ', ', $response->body->messages )
+				// Translators: %s is the error message from the API.
+				esc_html__( 'Failed to create order: %s', 'dhl-for-woocommerce' ),
+				esc_html( implode( ', ', $response->body->messages ) )
 			)
 		);
 	}
@@ -295,12 +294,11 @@ class Client extends API_Client {
 	 *
 	 * @param object $info The information received from the REST API.
 	 */
-	protected function close_order($info)
-	{
+	protected function close_order( $info ) {
 		// Get the current order from the options
 		$order = $this->get_order();
 		// Save the response info in the order
-		$order['id'] = $info->orderId;
+		$order['id']        = $info->orderId;
 		$order['shipments'] = $info->shipments;
 		// Save the order status if it's given
 		if ( ! empty( $info->orderStatus ) ) {
@@ -323,26 +321,26 @@ class Client extends API_Client {
 	 *
 	 * @throws Exception
 	 */
-	public function get_awb_label( $awb )
-	{
+	public function get_awb_label( $awb ) {
 		$response = $this->get(
-			sprintf('dpi/shipping/v1/shipments/%s/awblabels', $awb),
+			sprintf( 'dpi/shipping/v1/shipments/%s/awblabels', $awb ),
 			array(),
 			array(
 				'Accept' => 'application/pdf',
 			)
 		);
 
-		if ($response->status === 200) {
+		if ( $response->status === 200 ) {
 			return $response->body;
 		}
 
-		$message = !empty($response->body->messages)
-			? implode(', ', $response->body->messages)
-			: strval($response->body);
+		$message = ! empty( $response->body->messages )
+			? implode( ', ', $response->body->messages )
+			: strval( $response->body );
 
 		throw new Exception(
-			sprintf(__('API error: %s', 'dhl-for-woocommerce'), $message)
+			// Translators: %s is the error message from the API.
+			sprintf( esc_html__( 'API error: %s', 'dhl-for-woocommerce' ), esc_html( $message ) )
 		);
 	}
 
@@ -357,8 +355,7 @@ class Client extends API_Client {
 	 *
 	 * @throws Exception
 	 */
-	public function get_shipment_tracking_info( $awb )
-	{
+	public function get_shipment_tracking_info( $awb ) {
 		$response = $this->get( sprintf( 'dpi/tracking/v1/trackings/awb/%s', $awb ) );
 
 		if ( $response->status === 200 ) {
@@ -370,7 +367,8 @@ class Client extends API_Client {
 			: strval( $response->body );
 
 		throw new Exception(
-			sprintf( __( 'API error: %s', 'dhl-for-woocommerce' ), $message )
+			// Translators: %s is the error message from the API.
+			sprintf( esc_html__( 'API error: %s', 'dhl-for-woocommerce' ), esc_html( $message ) )
 		);
 	}
 
@@ -386,48 +384,48 @@ class Client extends API_Client {
 		foreach ( $item_info->contents as $content_info ) {
 
 			$item_desc = $content_info['description'];
-			if( !empty( $content_info['description_export'] ) ){
+			if ( ! empty( $content_info['description_export'] ) ) {
 				$item_desc = $content_info['description_export'];
 			}
 
 			$data = array(
-				'contentPieceAmount' => $content_info[ 'qty' ],
+				'contentPieceAmount'      => $content_info['qty'],
 				'contentPieceDescription' => $item_desc,
-				'contentPieceIndexNumber' => $content_info[ 'product_id' ],
-				'contentPieceNetweight' => $content_info[ 'weight' ],
-				'contentPieceOrigin' => $content_info[ 'origin' ],
-				'contentPieceValue' => $content_info[ 'value' ],
-				'contentPieceHsCode' => trim( $content_info[ 'hs_code' ] )
+				'contentPieceIndexNumber' => $content_info['product_id'],
+				'contentPieceNetweight'   => $content_info['weight'],
+				'contentPieceOrigin'      => $content_info['origin'],
+				'contentPieceValue'       => $content_info['value'],
+				'contentPieceHsCode'      => trim( $content_info['hs_code'] ),
 			);
 			// Only include HS code if it's not empty
-			if ( empty( $data[ 'contentPieceHsCode' ] ) ) {
-				unset( $data[ 'contentPieceHsCode' ] );
+			if ( empty( $data['contentPieceHsCode'] ) ) {
+				unset( $data['contentPieceHsCode'] );
 			}
 			$contents[] = $data;
 		}
 
 		return array(
-			'serviceLevel'        => $item_info->shipment[ 'service_level' ],
-			'product'             => $item_info->shipment[ 'product' ],
-			'custRef'             => $item_info->shipment[ 'label_ref' ],
-			'custRef2'            => $item_info->shipment[ 'label_ref_2' ],
-			'shipmentAmount'      => $item_info->shipment[ 'value' ],
-			'shipmentCurrency'    => $item_info->shipment[ 'currency' ],
-			'shipmentGrossWeight' => $item_info->shipment[ 'weight' ],
-			'shipmentNaturetype'  => $item_info->shipment[ 'nature_type' ],
-			'returnItemWanted' 	  => $item_info->shipment[ 'packet_return' ], 
-			'importerTaxId'		  => $item_info->shipment[ 'importer_taxid' ], 
-			'senderTaxId'		  => $item_info->shipment[ 'sender_taxid' ], 
-			'recipient'           => $item_info->recipient[ 'name' ],
-			'recipientPhone'      => $item_info->recipient[ 'phone' ],
-			'recipientEmail'      => $item_info->recipient[ 'email' ],
-			'addressLine1'        => $item_info->recipient[ 'address_1' ],
-			'addressLine2'        => $item_info->recipient[ 'address_2' ],
-			'city'                => $item_info->recipient[ 'city' ],
-			'postalCode'          => $item_info->recipient[ 'postcode' ],
-			'state'               => $item_info->recipient[ 'state' ],
-			'destinationCountry'  => $item_info->recipient[ 'country' ],
-			'contents'            => $contents
+			'serviceLevel'        => $item_info->shipment['service_level'],
+			'product'             => $item_info->shipment['product'],
+			'custRef'             => $item_info->shipment['label_ref'],
+			'custRef2'            => $item_info->shipment['label_ref_2'],
+			'shipmentAmount'      => $item_info->shipment['value'],
+			'shipmentCurrency'    => $item_info->shipment['currency'],
+			'shipmentGrossWeight' => $item_info->shipment['weight'],
+			'shipmentNaturetype'  => $item_info->shipment['nature_type'],
+			'returnItemWanted'    => $item_info->shipment['packet_return'],
+			'importerTaxId'       => $item_info->shipment['importer_taxid'],
+			'senderTaxId'         => $item_info->shipment['sender_taxid'],
+			'recipient'           => $item_info->recipient['name'],
+			'recipientPhone'      => $item_info->recipient['phone'],
+			'recipientEmail'      => $item_info->recipient['email'],
+			'addressLine1'        => $item_info->recipient['address_1'],
+			'addressLine2'        => $item_info->recipient['address_2'],
+			'city'                => $item_info->recipient['city'],
+			'postalCode'          => $item_info->recipient['postcode'],
+			'state'               => $item_info->recipient['state'],
+			'destinationCountry'  => $item_info->recipient['country'],
+			'contents'            => $contents,
 		);
 	}
 
@@ -436,9 +434,9 @@ class Client extends API_Client {
 	 */
 	protected function get_default_order_info() {
 		return array(
-			'id' => null,
-			'status' => null,
-			'items' => array(),
+			'id'        => null,
+			'status'    => null,
+			'items'     => array(),
 			'shipments' => array(),
 		);
 	}

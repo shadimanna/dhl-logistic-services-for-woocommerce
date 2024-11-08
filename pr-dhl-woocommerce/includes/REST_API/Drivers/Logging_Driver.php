@@ -8,15 +8,15 @@ use PR\DHL\REST_API\Response;
 use PR_DHL_WC;
 
 /**
-* A REST API driver decorator that automatically logs requests and responses.
+ * A REST API driver decorator that automatically logs requests and responses.
  *
  * This is a REST API driver DECORATOR class, which means that it is not a standalone driver but instead decorates
-* another driver. It does so to log the parameters and return values of the "inner" driver.
+ * another driver. It does so to log the parameters and return values of the "inner" driver.
  *
  * @since [*next-version*]
  *
  * @see API_Driver_Interface
-*/
+ */
 class Logging_Driver implements API_Driver_Interface {
 	/**
 	 * The plugin instance.
@@ -41,7 +41,7 @@ class Logging_Driver implements API_Driver_Interface {
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @param PR_DHL_WC $plugin The plugin instance to use for logging.
+	 * @param PR_DHL_WC            $plugin The plugin instance to use for logging.
 	 * @param API_Driver_Interface $driver The driver instance to decorate.
 	 */
 	public function __construct( PR_DHL_WC $plugin, API_Driver_Interface $driver ) {
@@ -76,16 +76,16 @@ class Logging_Driver implements API_Driver_Interface {
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @param string $message Prefix message to include in the log.
+	 * @param string  $message Prefix message to include in the log.
 	 * @param Request $request The request to log.
 	 */
 	protected function log_request( $message, Request $request ) {
 		$request_info = array(
-			'type' => $this->get_request_type_name($request->type),
-			'url' => $request->url,
-			'params' => $request->params,
+			'type'    => $this->get_request_type_name( $request->type ),
+			'url'     => $request->url,
+			'params'  => $request->params,
 			'headers' => $request->headers,
-			'body' => $request->body,
+			'body'    => $request->body,
 			'cookies' => $request->cookies,
 		);
 
@@ -97,18 +97,18 @@ class Logging_Driver implements API_Driver_Interface {
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @param string $message Prefix message to include in the log.
+	 * @param string   $message Prefix message to include in the log.
 	 * @param Response $response The response to log.
 	 */
 	protected function log_response( $message, Response $response ) {
-		$body = ( isset($response->headers['Content-Type']) && ($response->headers['Content-Type'] === 'application/pdf') )
+		$body = ( isset( $response->headers['Content-Type'] ) && ( $response->headers['Content-Type'] === 'application/pdf' ) )
 			? '[PDF data]'
 			: $response->body;
 
 		$response_info = array(
-			'status' => $response->status,
+			'status'  => $response->status,
 			'headers' => $response->headers,
-			'body' => $body,
+			'body'    => $body,
 			'cookies' => $response->cookies,
 		);
 
@@ -124,16 +124,16 @@ class Logging_Driver implements API_Driver_Interface {
 	 *
 	 * @return string|int The name of the request type, or the parameter if the request type is unknown.
 	 */
-	protected function get_request_type_name( $type) {
-		if ($type === Request::TYPE_GET) {
+	protected function get_request_type_name( $type ) {
+		if ( $type === Request::TYPE_GET ) {
 			return 'GET';
 		}
 
-		if ($type === Request::TYPE_POST) {
+		if ( $type === Request::TYPE_POST ) {
 			return 'POST';
 		}
 
-		if ($type === Request::TYPE_DELETE) {
+		if ( $type === Request::TYPE_DELETE ) {
 			return 'DELETE';
 		}
 
