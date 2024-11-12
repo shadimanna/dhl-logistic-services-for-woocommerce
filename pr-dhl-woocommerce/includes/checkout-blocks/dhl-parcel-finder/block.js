@@ -3,17 +3,7 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 export const Block = () => {
-    useEffect(() => {
-        // Initialize Fancybox if it's not already initialized
-        if (jQuery && jQuery.fancybox) {
-            jQuery("[data-fancybox]").fancybox({
-                // You can add Fancybox options here if needed
-                modal: true,
-                animationEffect: "zoom-in-out",
-                transitionEffect: "slide",
-            });
-        }
-    }, []);
+
 
     return (
         <>
@@ -74,7 +64,7 @@ export const Block = () => {
                         </p>
 
                         <input type="hidden" name="dhl_parcelfinder_country" id="dhl_parcelfinder_country" />
-                        <input type="hidden" name="dhl_parcelfinder_nonce" value={prDhlGlobals.nonce} />
+                        <input type="hidden" name="dhl_parcelfinder_nonce" value={prDhlGlobals.parcel_nonce} />
 
                         <div className="clear"></div>
 

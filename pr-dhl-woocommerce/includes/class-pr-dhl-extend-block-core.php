@@ -45,14 +45,13 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 		 * @return void
 		 */
 		public function register_additional_checkout_fields() {
-			$front_end_packet = new PR_DHL_Front_End_Paket();
-
 			$types[]  = array(
 				'value' => 'normal',
 				'label' => __( 'Regular Address', 'dhl-for-woocommerce' )
 			);
+			$dhl_settings = PR_DHL()->get_shipping_dhl_settings();
 
-			if ( $front_end_packet->is_packstation_enabled( )) {
+			if ( $dhl_settings['dhl_display_packstation'] == 'yes' ) {
 				$types[]  = array(
 					'value' => 'dhl_packstation',
 					'label' => __( 'DHL Packstation', 'dhl-for-woocommerce' )
@@ -60,7 +59,7 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 
 			}
 
-			if ( $front_end_packet->is_post_office_enabled()) {
+			if ( $dhl_settings['dhl_display_post_office'] == 'yes') {
 				$types[]  = array(
 					'value' => 'dhl_branch',
 					'label' => __( 'DHL Branch', 'dhl-for-woocommerce' )
@@ -88,6 +87,7 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 					),
 				),
 			);
+
 
 		}
 

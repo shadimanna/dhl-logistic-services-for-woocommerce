@@ -250,8 +250,6 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 	 * Localizes scripts with necessary data.
 	 */
 	private function localize_scripts() {
-		// Load the settings from PHP and make them available to JavaScript.
-		$front_end_packet = new PR_DHL_Front_End_Paket();
 
 		// Fetch the shipping settings
 		$dhl_settings = PR_DHL()->get_shipping_dhl_settings();
@@ -259,9 +257,9 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 		$display_preferred = true;
 
 		// Set conditions for parcel finder options
-		$packstation_enabled = $front_end_packet->is_packstation_enabled();
-		$parcelshop_enabled  = $front_end_packet->is_parcelshop_enabled();
-		$post_office_enabled = $front_end_packet->is_post_office_enabled();
+		$packstation_enabled = $dhl_settings['dhl_display_packstation'] == 'yes';
+		$parcelshop_enabled = $dhl_settings['dhl_display_parcelshop'] == 'yes';
+		$post_office_enabled = $dhl_settings['dhl_display_post_office'] == 'yes';
 
 		$localize_data = array(
 			'pluginUrl'           => PR_DHL_PLUGIN_DIR_URL,
@@ -272,6 +270,8 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 			'post_office_enabled' => $post_office_enabled,
 			'ajax_url'            => admin_url( 'admin-ajax.php' ),
 			'nonce'               => wp_create_nonce( 'pr_dhl_nonce' ),
+			'parcel_nonce'        => wp_create_nonce( 'dhl_parcelfinder' ),
+
 		);
 
 		// Localize the editor script
@@ -280,36 +280,7 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 			'prDhlGlobals',
 			$localize_data
 		);
-		$frontend_data = array(
-			'ajax_url'			=> admin_url( 'admin-ajax.php' ),
-			'packstation_icon'	=> PR_DHL_PLUGIN_DIR_URL . '/assets/img/packstation.png',
-			'parcelshop_icon'	=> PR_DHL_PLUGIN_DIR_URL . '/assets/img/parcelshop.png',
-			'post_office_icon'	=> PR_DHL_PLUGIN_DIR_URL . '/assets/img/post_office.png',
-			'opening_times'		=> __('Opening Times', 'dhl-for-woocommerce'),
-			'monday'			=> __('Monday', 'dhl-for-woocommerce'),
-			'tueday'			=> __('Tuesday', 'dhl-for-woocommerce'),
-			'wednesday'			=> __('Wednesday', 'dhl-for-woocommerce'),
-			'thrusday'			=> __('Thursday', 'dhl-for-woocommerce'),
-			'friday'			=> __('Friday', 'dhl-for-woocommerce'),
-			'satuday'			=> __('Saturday', 'dhl-for-woocommerce'),
-			'sunday'			=> __('Sunday', 'dhl-for-woocommerce'),
-			'services'			=> __('Services', 'dhl-for-woocommerce'),
-			'yes'				=> __('Yes', 'dhl-for-woocommerce'),
-			'no'				=> __('No', 'dhl-for-woocommerce'),
-			'parking'			=> __('Parking', 'dhl-for-woocommerce'),
-			'handicap'			=> __('Handicap Accessible', 'dhl-for-woocommerce'),
-			'packstation'		=> PR_DHL_PACKSTATION,
-			'parcelShop'		=> PR_DHL_PARCELSHOP,
-			'postoffice'		=> PR_DHL_POST_OFFICE,
-			'branch'			=> __('Branch', 'dhl-for-woocommerce'),
-			'select'			=> __('Select ', 'dhl-for-woocommerce'),
-			'post_number'		=> __('Post Number ', 'dhl-for-woocommerce'),
-			'post_number_tip'	=> __('<span class="dhl-tooltip" title="Indicate a preferred time, which suits you best for your parcel delivery by choosing one of the displayed time windows.">?</span>', 'dhl-for-woocommerce'),
-			'no_api_key'	=> sprintf( __('%sPlease insert an API Key to enable the display of locations in the frontend on a map.%s', 'dhl-for-woocommerce'), '<div class="woocommerce-error">', '<div>'),
-			'post_code_error'	=> __('Please enter a postcode to search locations.', 'dhl-for-woocommerce'),
-		);
 
-		wp_localize_script( 'pr-dhl-checkout-frontend', 'pr_dhl_checkout_frontend', $frontend_data);
 
 		// Localize the frontend scripts
 		wp_localize_script(
@@ -318,11 +289,6 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 			$localize_data
 		);
 
-		wp_localize_script(
-			'pr-dhl-parcel-finder-frontend',
-			'prDhlGlobals',
-			$localize_data
-		);
 	}
 
 	/**
@@ -341,17 +307,6 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 		return PR_DHL_VERSION;
 	}
 
-	/**
-	 * Logs response data to a file.
-	 *
-	 * @param mixed $response_data Data to log.
-	 */
-	private function log_response( $response_data ) {
-		$log_file = WP_CONTENT_DIR . '/postnl-response-log.txt'; // Path to the log file
-		$log_data = json_encode( $response_data, JSON_PRETTY_PRINT );
-		// Append the log data to the file
-		file_put_contents( $log_file, $log_data . PHP_EOL, FILE_APPEND );
-	}
 
 	public function handle_set_checkout_post_data() {
 		// Verify nonce
@@ -385,7 +340,6 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 
 		// Retrieve post_data from WooCommerce session
 		$order_data = WC()->session->get( 'pr_dhl_checkout_post_data' );
-		$this->log_response($order_data);
 		if ( empty( $order_data ) || ! is_array( $order_data ) ) {
 			wp_send_json_error( array( 'message' => 'No checkout data found.' ), 400 );
 			wp_die();
