@@ -65,10 +65,16 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 					'label' => __( 'DHL Branch', 'dhl-for-woocommerce' )
 				);
 			}
+			$points = array(
+				array(
+					'value' => '',
+					'label' => __( '' )
 
+				)
+			);
 			woocommerce_register_additional_checkout_field(
 				array(
-					'id'          => 'dhl/address_type',
+					'id'          => 'pr-dhl/address_type',
 					'label'       => 'Address Type',
 					'location'    => 'address',
 					'required'      => true,
@@ -87,8 +93,16 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 					),
 				),
 			);
-
-
+			woocommerce_register_additional_checkout_field(
+				array(
+					'id'          => 'pr-dhl/drop_off',
+					'label'       => 'Drop off points',
+					'location'    => 'address',
+					'required'      => false,
+					'type'        => 'select',
+					'options'     => $points
+				)
+			);
 		}
 
 		/**
