@@ -55,6 +55,8 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 
 			add_action( 'wp_enqueue_scripts', array( $this, 'load_styles_scripts' ) );
 
+			add_filter( 'woocommerce_get_country_locale', array( $this, 'get_country_locale' ) );
+
 			if ( $this->is_tracking_enabled() && ( $this->is_preferredservice_enabled() || $this->is_parcelfinder_enabled() || $this->is_cdp_enabled() ) ) {
 				// Add DHL meta tag
 				add_action( 'wp_head', array( $this, 'dhl_add_meta_tags' ) );
@@ -99,6 +101,26 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 			}
 		}
 
+		/**
+		 * is_using_checkout_block
+		 *
+		 * @param Array is_using_checkout_block local fields.
+		 *
+		 * @return boolean
+		 */
+		protected function is_using_checkout_block() {
+			$checkout_page_id = wc_get_page_id( 'checkout' );
+			$has_block_checkout = $checkout_page_id && has_block( 'woocommerce/checkout', $checkout_page_id );
+
+			if ( $has_block_checkout) {
+				$is_using_checkout_block=true;
+			}
+			else{
+				$is_using_checkout_block=false;
+			}
+			return $is_using_checkout_block;
+		}
+
 		protected function is_tracking_enabled() {
 			return false;
 		}
@@ -123,6 +145,50 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 
 		public function dhl_add_meta_tags() {
 			echo '<meta name="58vffw8g4r9_t3e38g4og588915" content="Yes">';
+		}
+
+		/**
+		 * Localization for NL address fields.
+		 *
+		 * @param Array $checkout_fields Checkout fields.
+		 *
+		 * @return array
+		 */
+		public function get_country_locale( $checkout_fields ) {
+
+			if ( $this->is_using_checkout_block() ) {
+				$fields_to_order = array(
+					'pr-dhl/address_type' 	  => array( 'priority' => 1 ),
+					'pr-dhl/drop_off' 	  	  => array( 'priority' => 2 ),
+					'first_name'          	  => array( 'priority' => 3 ),
+					'last_name'           	  => array( 'priority' => 4 ),
+					'company'             	  => array( 'priority' => 5 ),
+					'country'             	  => array( 'priority' => 6 ),
+					'postcode'            	  => array( 'priority' => 7 ),
+					'shipping_pr_dhl/postnum' => array( 'priority' => 8 ),
+				);
+			} else {
+				// Old checkout configuration
+				$fields_to_order = array(
+					'pr-dhl/address_type' 	  => array( 'priority' => 1 ),
+					'pr-dhl/drop_off' 		  => array( 'priority' => 2 ),
+					'first_name'   			  => array( 'priority' => 3 ),
+					'last_name'    			  => array( 'priority' => 4 ),
+					'company'      			  => array( 'priority' => 5 ),
+					'country'      			  => array( 'priority' => 6 ),
+					'postcode'            	  => array( 'priority' => 7 ),
+					'shipping_pr_dhl/postnum' => array( 'priority' => 8 ),
+					'city'         			  => array( 'priority' => 9 ),
+				);
+			}
+
+			foreach ( $fields_to_order as $field_key => $field ) {
+				foreach ( $field as $override => $value ) {
+					$checkout_fields['DE'][ $field_key ][ $override ] = $value;
+				}
+			}
+
+			return $checkout_fields;
 		}
 
 		public function load_styles_scripts() {
