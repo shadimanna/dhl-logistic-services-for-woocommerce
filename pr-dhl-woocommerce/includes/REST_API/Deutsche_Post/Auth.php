@@ -120,11 +120,11 @@ class Auth implements API_Auth_Interface {
 	 * @param string               $transient     The name of the transient to use for caching the access token.
 	 */
 	public function __construct( API_Driver_Interface $driver, $api_url, $client_id, $client_secret, $transient ) {
-		$this->driver = $driver;
-		$this->api_url = $api_url;
-		$this->client_id = $client_id;
+		$this->driver        = $driver;
+		$this->api_url       = $api_url;
+		$this->client_id     = $client_id;
 		$this->client_secret = $client_secret;
-		$this->transient = $transient;
+		$this->transient     = $transient;
 
 		// Load the token from the transient cache
 		$this->load_token();
@@ -148,7 +148,7 @@ class Auth implements API_Auth_Interface {
 		$code = $this->token->access_token;
 
 		$request->headers[ static::H_AUTH_TOKEN ] = $type . ' ' . $code;
-		$request->headers[ static::H_3PV_ID ] = static::V_3PV_ID;
+		$request->headers[ static::H_3PV_ID ]     = static::V_3PV_ID;
 
 		return $request;
 	}
@@ -169,18 +169,19 @@ class Auth implements API_Auth_Interface {
 	public function request_token() {
 		// Base64 encode the "<client_id>:<client_secret>" and send as the "Authorization" header
 		$auth_str_64 = base64_encode( $this->client_id . ':' . $this->client_secret );
-		$headers = array( static::H_AUTH_CREDENTIALS => 'Basic ' . $auth_str_64 );
+		$headers     = array( static::H_AUTH_CREDENTIALS => 'Basic ' . $auth_str_64 );
 
 		// Prepare the full request URL
 		$full_url = URL_Utils::merge_url_and_route( $this->api_url, static::AUTH_ROUTE );
 
 		// Send the authorization request to obtain the access token
-		$request = new Request( Request::TYPE_GET, $full_url, array(), '', $headers );
+		$request  = new Request( Request::TYPE_GET, $full_url, array(), '', $headers );
 		$response = $this->driver->send( $request );
 
 		// If the status code is not 200, throw an error with the raw response body
 		if ( $response->status !== 200 ) {
-			throw new RuntimeException( $response->body->error_description );
+			$response_body = json_decode( $response->body );
+			throw new RuntimeException( esc_html( $response_body->detail ) );
 		}
 
 		return $response->body;
@@ -202,7 +203,7 @@ class Auth implements API_Auth_Interface {
 		// Prepare the full request URL
 		$full_url = URL_Utils::merge_url_and_route( $this->api_url, static::REVOKE_ROUTE );
 		// Create the request
-		$params = array( 'token' => $this->token->access_token );
+		$params  = array( 'token' => $this->token->access_token );
 		$request = new Request( Request::TYPE_GET, $full_url, $params );
 
 		// Send the request
@@ -230,18 +231,18 @@ class Auth implements API_Auth_Interface {
 	 */
 	public function test_connection( $client_id, $client_secret ) {
 		// Backup the client credentials
-		$backup_client_id = $this->client_id;
+		$backup_client_id     = $this->client_id;
 		$backup_client_secret = $this->client_secret;
 
 		// Set params as credentials
-		$this->client_id = $client_id;
+		$this->client_id     = $client_id;
 		$this->client_secret = $client_secret;
 
 		// Send the request
 		$token = $this->request_token();
 
 		// Restore the credentials
-		$this->client_id = $backup_client_id;
+		$this->client_id     = $backup_client_id;
 		$this->client_secret = $backup_client_secret;
 
 		return $token;
@@ -253,7 +254,7 @@ class Auth implements API_Auth_Interface {
 	 * @param object $token The token to save.
 	 */
 	public function save_token( $token ) {
-		$expires_in = isset($token->expires_in)
+		$expires_in = isset( $token->expires_in )
 			? $token->expires_in
 			: time() + DAY_IN_SECONDS;
 
