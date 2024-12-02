@@ -111,12 +111,12 @@ class Auth implements API_Auth_Interface {
 	 * @param string               $transient     The name of the transient to use for caching the access token.
 	 */
 	public function __construct( API_Driver_Interface $driver, $api_url, $client_id, $client_secret, $username, $password ) {
-		$this->driver = $driver;
-		$this->api_url = $api_url;
-		$this->client_id = $client_id;
+		$this->driver        = $driver;
+		$this->api_url       = $api_url;
+		$this->client_id     = $client_id;
 		$this->client_secret = $client_secret;
-		$this->username = $username;
-		$this->password = $password;
+		$this->username      = $username;
+		$this->password      = $password;
 		// $this->transient = $transient;
 
 		// Load the token from the transient cache
@@ -165,15 +165,19 @@ class Auth implements API_Auth_Interface {
 		// $auth_str_64 = base64_encode( $this->client_id . ':' . $this->client_secret );
 		// $headers = array( static::H_AUTH_CREDENTIALS => 'Basic ' . $auth_str_64 );
 		$headers = array( 'Content-Type' => 'application/x-www-form-urlencoded' );
-		$body = array( 	'client_id' => $this->client_id, 
-						'client_secret' => $this->client_secret,
-						'username' => $this->username,
-						'password' => $this->password,
-						'grant_type' => 'password',
-					);
+		$body    = array(
+			'client_id'     => $this->client_id,
+			'client_secret' => $this->client_secret,
+			'username'      => $this->username,
+			'password'      => $this->password,
+			'grant_type'    => 'password',
+		);
 		// error_log(print_r($body, true));
 
-		$args = array( 'headers' => $headers, 'body' => $body );
+		$args = array(
+			'headers' => $headers,
+			'body'    => $body,
+		);
 
 		// $body = json_encode( $body );
 		// error_log($body);
@@ -193,7 +197,7 @@ class Auth implements API_Auth_Interface {
 
 		// If the status code is not 200, throw an error with the raw response body
 		if ( $response_code !== 200 ) {
-			throw new RuntimeException( $response->body->error_description );
+			throw new RuntimeException( esc_html( $response->body->error_description ) );
 		}
 
 		return $response_body;
@@ -205,7 +209,7 @@ class Auth implements API_Auth_Interface {
 	 * @param object $token The token to save.
 	 */
 	public function save_token( $token ) {
-		$expires_in = isset($token->expires_in)
+		$expires_in = isset( $token->expires_in )
 			? $token->expires_in
 			: time() + DAY_IN_SECONDS;
 

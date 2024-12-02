@@ -127,17 +127,16 @@ class Item_Info {
 	/**
 	 * Constructor.
 	 *
-	 * @param array $args The arguments to parse.
+	 * @param array  $args The arguments to parse.
 	 * @param string $weightUom The units of measurement used for weights in the input args.
 	 *
 	 * @throws Exception If some data in $args did not pass validation.
-	 *
 	 */
 	public function __construct( $args, $weightUom = 'kg' ) {
 		$this->weightUom     = $weightUom;
 		$this->isCrossBorder = PR_DHL()->is_crossborder_shipment( $args['shipping_address'] );
 
-		$this->args          = $args;
+		$this->args = $args;
 
 		$this->pos_ps = PR_DHL()->is_packstation( $args['shipping_address']['address_1'] );
 		$this->pos_rs = PR_DHL()->is_parcelshop( $args['shipping_address']['address_1'] );
@@ -145,14 +144,12 @@ class Item_Info {
 
 		$this->set_address_2();
 		$this->parse_args();
-		
 	}
 
 	/**
 	 * Parses the arguments and sets the instance's properties.
 	 *
 	 * @throws Exception If some data in $args did not pass validation.
-	 *
 	 */
 	protected function parse_args() {
 		$settings       = $this->args['dhl_settings'];
@@ -184,7 +181,6 @@ class Item_Info {
 	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing shipment info.
 	 *
 	 * @return array.
-	 *
 	 */
 	protected function get_shipment_info_schema() {
 		// Closures in PHP 5.3 do not inherit class context
@@ -194,7 +190,7 @@ class Item_Info {
 		return array(
 			'dhl_product'            => array(
 				'rename'   => 'product',
-				'error'    => __( 'DHL "Product" is empty!', 'dhl-for-woocommerce' ),
+				'error'    => esc_html__( 'DHL "Product" is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $product ) use ( $self ) {
 
 					$product_info = explode( '-', $product );
@@ -215,7 +211,7 @@ class Item_Info {
 				'sanitize' => function ( $account ) use ( $self ) {
 
 					if ( empty( $account ) ) {
-						throw new Exception( __( 'Check your settings "Account Number" and "Participation Number".', 'dhl-for-woocommerce' ) );
+						throw new Exception( esc_html__( 'Check your settings "Account Number" and "Participation Number".', 'dhl-for-woocommerce' ) );
 					}
 
 					// create account number
@@ -224,7 +220,7 @@ class Item_Info {
 					if ( $product_number ) {
 						return $self->args['dhl_settings']['account_num'] . $matches[0] . $self->args['dhl_settings']['participation'];
 					} else {
-						throw new Exception( __( 'Could not create account number - no product number.', 'dhl-for-woocommerce' ) );
+						throw new Exception( esc_html__( 'Could not create account number - no product number.', 'dhl-for-woocommerce' ) );
 					}
 				},
 			),
@@ -233,10 +229,10 @@ class Item_Info {
 				'default' => '',
 			),
 			'weight'                 => array(
-				'error'    => __( 'Order "Weight" is empty!', 'dhl-for-woocommerce' ),
+				'error'    => esc_html__( 'Order "Weight" is empty!', 'dhl-for-woocommerce' ),
 				'validate' => function ( $weight ) {
 					if ( ! is_numeric( wc_format_decimal( $weight ) ) ) {
-						throw new Exception( __( 'The order "Weight" must be a number', 'dhl-for-woocommerce' ) );
+						throw new Exception( esc_html__( 'The order "Weight" must be a number', 'dhl-for-woocommerce' ) );
 					}
 				},
 				'sanitize' => function ( $weight ) use ( $self ) {
@@ -244,14 +240,14 @@ class Item_Info {
 				},
 			),
 			'currency'               => array(
-				'error' => __( 'Shop "Currency" is empty!', 'dhl-for-woocommerce' ),
+				'error' => esc_html__( 'Shop "Currency" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'total_value'            => array(
 				'rename'   => 'value',
-				'error'    => __( 'Shipment "Value" is empty!', 'dhl-for-woocommerce' ),
+				'error'    => esc_html__( 'Shipment "Value" is empty!', 'dhl-for-woocommerce' ),
 				'validate' => function ( $value ) {
 					if ( ! is_numeric( $value ) ) {
-						throw new Exception( __( 'The order "value" must be a number', 'dhl-for-woocommerce' ) );
+						throw new Exception( esc_html__( 'The order "value" must be a number', 'dhl-for-woocommerce' ) );
 					}
 				},
 				'sanitize' => function ( $value ) use ( $self ) {
@@ -260,7 +256,7 @@ class Item_Info {
 				},
 			),
 			'cod_value'              => array(
-				'default' => '',
+				'default'  => '',
 				'sanitize' => function ( $value ) use ( $self ) {
 					return $self->float_round_sanitization( $value, 2 );
 				},
@@ -272,40 +268,60 @@ class Item_Info {
 				'default' => '',
 			),
 			'total_packages'         => array(
-				'default' => 'no',
+				'default'  => 'no',
 				'validate' => function ( $value ) use ( $self ) {
 					if ( isset( $self->args['order_details']['multi_packages_enabled'] ) && ( $self->args['order_details']['multi_packages_enabled'] == 'yes' ) ) {
-						for ( $i = 0; $i < intval( $value ); $i ++ ) {
+						for ( $i = 0; $i < intval( $value ); $i++ ) {
 
 							if ( empty( $self->args['order_details']['packages_number'][ $i ] ) ) {
-								throw new Exception( __( 'A package number is empty. Ensure all package details are filled in.',
-									'dhl-for-woocommerce' ) );
+								throw new Exception(
+									esc_html__(
+										'A package number is empty. Ensure all package details are filled in.',
+										'dhl-for-woocommerce'
+									)
+								);
 							}
 
 							if ( empty( $self->args['order_details']['packages_weight'][ $i ] ) ) {
-								throw new Exception( __( 'A package weight is empty. Ensure all package details are filled in.',
-									'dhl-for-woocommerce' ) );
+								throw new Exception(
+									esc_html__(
+										'A package weight is empty. Ensure all package details are filled in.',
+										'dhl-for-woocommerce'
+									)
+								);
 							}
 
 							if ( empty( $self->args['order_details']['packages_length'][ $i ] ) ) {
-								throw new Exception( __( 'A package length is empty. Ensure all package details are filled in.',
-									'dhl-for-woocommerce' ) );
+								throw new Exception(
+									esc_html__(
+										'A package length is empty. Ensure all package details are filled in.',
+										'dhl-for-woocommerce'
+									)
+								);
 							}
 
 							if ( empty( $self->args['order_details']['packages_width'][ $i ] ) ) {
-								throw new Exception( __( 'A package width is empty. Ensure all package details are filled in.',
-									'dhl-for-woocommerce' ) );
+								throw new Exception(
+									esc_html__(
+										'A package width is empty. Ensure all package details are filled in.',
+										'dhl-for-woocommerce'
+									)
+								);
 							}
 
 							if ( empty( $self->args['order_details']['packages_height'][ $i ] ) ) {
-								throw new Exception( __( 'A package height is empty. Ensure all package details are filled in.',
-									'dhl-for-woocommerce' ) );
+								throw new Exception(
+									esc_html__(
+										'A package height is empty. Ensure all package details are filled in.',
+										'dhl-for-woocommerce'
+									)
+								);
 							}
 						}
 					}
 				},
 				'sanitize' => function ( $value ) use ( $self ) {
-					for ( $i = 0; $i < intval( $value ); $i ++ ) {
+					for ( $i = 0; $i < intval( $value ); $i++ ) {
 						$self->args['order_details']['packages_weight'][ $i ] = $self->maybe_convert_weight( $self->args['order_details']['packages_weight'][ $i ], $self->weightUom );
 					}
 
@@ -314,6 +330,7 @@ class Item_Info {
 			),
 			'is_codeable'            => array(
 				'rename'   => 'mustEncode',
+				'default'  => 'false',
 				'sanitize' => function ( $value ) use ( $self ) {
 					if ( 'yes' === $value ) {
 						return 'true';
@@ -323,7 +340,7 @@ class Item_Info {
 				},
 			),
 			'label_format'           => array(
-				'rename'   => 'printFormat',
+				'rename' => 'printFormat',
 			),
 		);
 	}
@@ -332,7 +349,6 @@ class Item_Info {
 	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing shipper info.
 	 *
 	 * @return array.
-	 *
 	 */
 	protected function get_shipper_info_schema() {
 		// Closures in PHP 5.3 do not inherit class context
@@ -345,7 +361,7 @@ class Item_Info {
 				'sanitize' => function ( $name ) use ( $self ) {
 					if ( empty( $name ) ) {
 						throw new Exception(
-							__( '"Account Name" in settings is empty.', 'dhl-for-woocommerce' )
+							esc_html__( '"Account Name" in settings is empty.', 'dhl-for-woocommerce' )
 						);
 					}
 
@@ -360,12 +376,12 @@ class Item_Info {
 			),
 			'shipper_address'       => array(
 				'rename'   => 'addressStreet',
-				'error'    => __( 'Shipper "Address 1" is empty!', 'dhl-for-woocommerce' ),
+				'error'    => esc_html__( 'Shipper "Address 1" is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $name ) use ( $self ) {
 
 					if ( empty( $name ) ) {
 						throw new Exception(
-							__( 'Shipper "Address 1" is empty!', 'dhl-for-woocommerce' )
+							esc_html__( 'Shipper "Address 1" is empty!', 'dhl-for-woocommerce' )
 						);
 					}
 
@@ -377,27 +393,27 @@ class Item_Info {
 			),
 			'shipper_address_zip'   => array(
 				'rename' => 'postalCode',
-				'error'  => __( 'Shipper "Postcode" is empty!', 'dhl-for-woocommerce' ),
+				'error'  => esc_html__( 'Shipper "Postcode" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'shipper_address_city'  => array(
-				'rename' => 'city',
-				'error'  => __( 'Shipper "City" is empty!', 'dhl-for-woocommerce' ),
+				'rename'   => 'city',
+				'error'    => esc_html__( 'Shipper "City" is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $value ) use ( $self ) {
 					return $self->string_length_sanitization( $value, 40 );
-				}
+				},
 			),
 			'shipper_address_state' => array(
-				'rename' => 'state',
+				'rename'   => 'state',
 				'sanitize' => function ( $value ) use ( $self ) {
 					return $self->string_length_sanitization( $value, 20 );
-				}
+				},
 			),
 			'shipper_country'       => array(
 				'rename'   => 'country',
 				'sanitize' => function ( $countryCode ) use ( $self ) {
 					if ( empty( $countryCode ) ) {
 						throw new Exception(
-							__( 'Shipper "Country" is empty!', 'dhl-for-woocommerce' )
+							esc_html__( 'Shipper "Country" is empty!', 'dhl-for-woocommerce' )
 						);
 					}
 
@@ -405,9 +421,9 @@ class Item_Info {
 				},
 			),
 			'shipper_reference'     => array(
-				'rename' => 'shipperRef',
+				'rename'   => 'shipperRef',
 				'sanitize' => function ( $value ) use ( $self ) {
-					if( 'yes' === $self->args['dhl_settings']['add_logo'] ) {
+					if ( 'yes' === $self->args['dhl_settings']['add_logo'] ) {
 						return $value;
 					}
 
@@ -421,7 +437,6 @@ class Item_Info {
 	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing shipper info.
 	 *
 	 * @return array.
-	 *
 	 */
 	protected function get_return_address_schema() {
 		// Closures in PHP 5.3 do not inherit class context
@@ -434,36 +449,45 @@ class Item_Info {
 				'sanitize' => function ( $name ) use ( $self ) {
 					return $self->string_length_sanitization( $name, 50 );
 				},
+				'default'  => '',
 			),
 			'return_phone'         => array(
-				'rename' => 'phone',
+				'rename'  => 'phone',
+				'default' => '',
 			),
 			'return_email'         => array(
-				'rename' => 'email',
+				'rename'  => 'email',
+				'default' => '',
 			),
 			'return_address'       => array(
 				'rename'   => 'addressStreet',
 				'sanitize' => function ( $name ) use ( $self ) {
 					return $self->string_length_sanitization( $name, 50 );
 				},
+				'default'  => '',
 			),
 			'return_address_no'    => array(
-				'rename' => 'addressHouse',
+				'rename'  => 'addressHouse',
+				'default' => '',
 			),
 			'return_address_zip'   => array(
-				'rename' => 'postalCode',
+				'rename'  => 'postalCode',
+				'default' => '',
 			),
 			'return_address_city'  => array(
-				'rename' => 'city',
+				'rename'  => 'city',
+				'default' => '',
 			),
 			'return_address_state' => array(
 				'rename'   => 'state',
+				'default'  => '',
 				'sanitize' => function ( $value ) use ( $self ) {
 					return $self->string_length_sanitization( $value, 20 );
-				}
+				},
 			),
 			'shipper_country'      => array(
 				'rename'   => 'country',
+				'default'  => '',
 				'sanitize' => function ( $countryCode ) use ( $self ) {
 					return $self->country_code_to_alpha3( $countryCode );
 				},
@@ -475,7 +499,6 @@ class Item_Info {
 	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing consignee info.
 	 *
 	 * @return array.
-	 *
 	 */
 	protected function get_contact_address_schema() {
 		// Closures in PHP 5.3 do not inherit class context
@@ -483,61 +506,61 @@ class Item_Info {
 		$self = $this;
 
 		return array(
-			'name'      => array(
+			'name'               => array(
 				'rename'   => 'name1',
-				'error'    => __( 'Recipient name is empty!', 'dhl-for-woocommerce' ),
+				'error'    => esc_html__( 'Recipient name is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $name ) use ( $self ) {
 
 					return $self->string_length_sanitization( $name, 50 );
 				},
 			),
-			'company'      => array(
-				'rename'   => 'name2',
+			'company'            => array(
+				'rename' => 'name2',
 			),
-			'address_1' => array(
+			'address_1'          => array(
 				'rename' => 'addressStreet',
-				'error'  => __( 'Shipping "Address 1" is empty!', 'dhl-for-woocommerce' ),
+				'error'  => esc_html__( 'Shipping "Address 1" is empty!', 'dhl-for-woocommerce' ),
 			),
-			'address_2' => array(
-				'rename' => 'addressHouse',
+			'address_2'          => array(
+				'rename'   => 'addressHouse',
 				'sanitize' => function ( $value ) use ( $self ) {
 					return strlen( $value ) <= 10 ? $value : '';
 				},
 			),
 			'address_additional' => array(
-				'rename'    => 'additionalAddressInformation1',
-				'default'   => '',
+				'rename'  => 'additionalAddressInformation1',
+				'default' => '',
 			),
-			'postcode'  => array(
+			'postcode'           => array(
 				'rename' => 'postalCode',
-				'error'  => __( 'Shipping "Postcode" is empty!', 'dhl-for-woocommerce' ),
+				'error'  => esc_html__( 'Shipping "Postcode" is empty!', 'dhl-for-woocommerce' ),
 			),
-			'city'      => array(
-				'error' => __( 'Shipping "City" is empty!', 'dhl-for-woocommerce' )
+			'city'               => array(
+				'error' => esc_html__( 'Shipping "City" is empty!', 'dhl-for-woocommerce' ),
 			),
-			'state'     => array(
+			'state'              => array(
 				'sanitize' => function ( $value ) use ( $self ) {
 					return $self->string_length_sanitization( $value, 20 );
-				}
+				},
 			),
-			'country'   => array(
+			'country'            => array(
 				'sanitize' => function ( $countryCode ) use ( $self ) {
 					if ( empty( $countryCode ) ) {
 						throw new Exception(
-							__( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' )
+							esc_html__( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' )
 						);
 					}
 
 					return $self->country_code_to_alpha3( $countryCode );
 				},
 			),
-			'phone'     => array(
+			'phone'              => array(
 				'sanitize' => function ( $phone ) use ( $self ) {
 
 					return $self->string_length_sanitization( $phone, 20 );
 				},
 			),
-			'email'     => array(),
+			'email'              => array(),
 		);
 	}
 
@@ -555,31 +578,31 @@ class Item_Info {
 		return array(
 			'name'        => array(
 				'rename'   => 'name',
-				'error'    => __( 'Packstation name is empty!', 'dhl-for-woocommerce' ),
+				'error'    => esc_html__( 'Packstation name is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $name ) use ( $self ) {
 					return $self->string_length_sanitization( $name, 50 );
 				},
 			),
 			'dhl_postnum' => array(
 				'rename' => 'postNumber',
-				'error'  => __( 'Post Number is missing, it is mandatory for "Packstation" delivery.', 'dhl-for-woocommerce' ),
+				'error'  => esc_html__( 'Post Number is missing, it is mandatory for "Packstation" delivery.', 'dhl-for-woocommerce' ),
 			),
 			'address_1'   => array(
 				'rename'   => 'lockerID',
-				'error'    => __( 'Locker ID is missing, it is mandatory for "Packstation" delivery.', 'dhl-for-woocommerce' ),
+				'error'    => esc_html__( 'Locker ID is missing, it is mandatory for "Packstation" delivery.', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $name ) use ( $self ) {
 					return filter_var( $this->args['shipping_address']['address_1'], FILTER_SANITIZE_NUMBER_INT );
 				},
 			),
 			'postcode'    => array(
 				'rename' => 'postalCode',
-				'error'  => __( 'Shipping "Postcode" is empty!', 'dhl-for-woocommerce' ),
+				'error'  => esc_html__( 'Shipping "Postcode" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'city'        => array(
-				'error' => __( 'Shipping "City" is empty!', 'dhl-for-woocommerce' )
+				'error' => esc_html__( 'Shipping "City" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'country'     => array(
-				'error'    => __( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' ),
+				'error'    => esc_html__( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $countryCode ) use ( $self ) {
 					return $self->country_code_to_alpha3( $countryCode );
 				},
@@ -601,7 +624,7 @@ class Item_Info {
 		return array(
 			'name'        => array(
 				'rename'   => 'name',
-				'error'    => __( 'Name is empty!', 'dhl-for-woocommerce' ),
+				'error'    => esc_html__( 'Name is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $name ) use ( $self ) {
 					return $self->string_length_sanitization( $name, 50 );
 				},
@@ -611,25 +634,25 @@ class Item_Info {
 			),
 			'address_1'   => array(
 				'rename'   => 'retailID',
-				'error'    => __( 'Locker ID is missing, it is mandatory for "Packstation" delivery.', 'dhl-for-woocommerce' ),
+				'error'    => esc_html__( 'Locker ID is missing, it is mandatory for "Packstation" delivery.', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $name ) use ( $self ) {
 					return filter_var( $this->args['shipping_address']['address_1'], FILTER_SANITIZE_NUMBER_INT );
 				},
 			),
 			'postcode'    => array(
 				'rename' => 'postalCode',
-				'error'  => __( 'Shipping "Postcode" is empty!', 'dhl-for-woocommerce' ),
+				'error'  => esc_html__( 'Shipping "Postcode" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'city'        => array(
-				'error' => __( 'Shipping "City" is empty!', 'dhl-for-woocommerce' ),
+				'error' => esc_html__( 'Shipping "City" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'country'     => array(
-				'error'    => __( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' ),
+				'error'    => esc_html__( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' ),
 				'sanitize' => function ( $countryCode ) use ( $self ) {
 					return $self->country_code_to_alpha3( $countryCode );
 				},
 			),
-			'email'       => array()
+			'email'       => array(),
 		);
 	}
 
@@ -637,7 +660,6 @@ class Item_Info {
 	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing order content item info.
 	 *
 	 * @return array.
-	 *
 	 */
 	protected function get_content_item_info_schema() {
 		// Closures in PHP 5.3 do not inherit class context
@@ -673,7 +695,7 @@ class Item_Info {
 
 					if ( $length < 4 || $length > 11 ) {
 						throw new Exception(
-							__( 'Item HS Code must be between 4 and 11 characters long', 'dhl-for-woocommerce' )
+							esc_html__( 'Item HS Code must be between 4 and 11 characters long', 'dhl-for-woocommerce' )
 						);
 					}
 				},
@@ -706,7 +728,7 @@ class Item_Info {
 						'value' => $self->maybe_convert_weight( $weight, $self->weightUom ),
 					);
 				},
-			)
+			),
 		);
 	}
 
@@ -714,7 +736,6 @@ class Item_Info {
 	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing shipment services.
 	 *
 	 * @return array.
-	 *
 	 */
 	protected function get_services_schema() {
 		$self = $this;
@@ -805,11 +826,10 @@ class Item_Info {
 	/**
 	 * Converts a given weight into grams, if necessary.
 	 *
-	 * @param float $weight The weight amount.
+	 * @param float  $weight The weight amount.
 	 * @param string $uom The unit of measurement of the $weight parameter..
 	 *
 	 * @return float The potentially converted weight.
-	 *
 	 */
 	protected function maybe_convert_weight( $weight, $uom ) {
 		$weight = floatval( wc_format_decimal( $weight ) );
@@ -874,256 +894,256 @@ class Item_Info {
 	 */
 	protected function country_code_to_alpha3( $countryCode ) {
 		$countries = array(
-			'AF' => 'AFG', //Afghanistan
-			'AX' => 'ALA', //&#197;land Islands
-			'AL' => 'ALB', //Albania
-			'DZ' => 'DZA', //Algeria
-			'AS' => 'ASM', //American Samoa
-			'AD' => 'AND', //Andorra
-			'AO' => 'AGO', //Angola
-			'AI' => 'AIA', //Anguilla
-			'AQ' => 'ATA', //Antarctica
-			'AG' => 'ATG', //Antigua and Barbuda
-			'AR' => 'ARG', //Argentina
-			'AM' => 'ARM', //Armenia
-			'AW' => 'ABW', //Aruba
-			'AU' => 'AUS', //Australia
-			'AT' => 'AUT', //Austria
-			'AZ' => 'AZE', //Azerbaijan
-			'BS' => 'BHS', //Bahamas
-			'BH' => 'BHR', //Bahrain
-			'BD' => 'BGD', //Bangladesh
-			'BB' => 'BRB', //Barbados
-			'BY' => 'BLR', //Belarus
-			'BE' => 'BEL', //Belgium
-			'BZ' => 'BLZ', //Belize
-			'BJ' => 'BEN', //Benin
-			'BM' => 'BMU', //Bermuda
-			'BT' => 'BTN', //Bhutan
-			'BO' => 'BOL', //Bolivia
-			'BQ' => 'BES', //Bonaire, Saint Estatius and Saba
-			'BA' => 'BIH', //Bosnia and Herzegovina
-			'BW' => 'BWA', //Botswana
-			'BV' => 'BVT', //Bouvet Islands
-			'BR' => 'BRA', //Brazil
-			'IO' => 'IOT', //British Indian Ocean Territory
-			'BN' => 'BRN', //Brunei
-			'BG' => 'BGR', //Bulgaria
-			'BF' => 'BFA', //Burkina Faso
-			'BI' => 'BDI', //Burundi
-			'KH' => 'KHM', //Cambodia
-			'CM' => 'CMR', //Cameroon
-			'CA' => 'CAN', //Canada
-			'CV' => 'CPV', //Cape Verde
-			'KY' => 'CYM', //Cayman Islands
-			'CF' => 'CAF', //Central African Republic
-			'TD' => 'TCD', //Chad
-			'CL' => 'CHL', //Chile
-			'CN' => 'CHN', //China
-			'CX' => 'CXR', //Christmas Island
-			'CC' => 'CCK', //Cocos (Keeling) Islands
-			'CO' => 'COL', //Colombia
-			'KM' => 'COM', //Comoros
-			'CG' => 'COG', //Congo
-			'CD' => 'COD', //Congo, Democratic Republic of the
-			'CK' => 'COK', //Cook Islands
-			'CR' => 'CRI', //Costa Rica
-			'CI' => 'CIV', //Côte d\'Ivoire
-			'HR' => 'HRV', //Croatia
-			'CU' => 'CUB', //Cuba
-			'CW' => 'CUW', //Curaçao
-			'CY' => 'CYP', //Cyprus
-			'CZ' => 'CZE', //Czech Republic
-			'DK' => 'DNK', //Denmark
-			'DJ' => 'DJI', //Djibouti
-			'DM' => 'DMA', //Dominica
-			'DO' => 'DOM', //Dominican Republic
-			'EC' => 'ECU', //Ecuador
-			'EG' => 'EGY', //Egypt
-			'SV' => 'SLV', //El Salvador
-			'GQ' => 'GNQ', //Equatorial Guinea
-			'ER' => 'ERI', //Eritrea
-			'EE' => 'EST', //Estonia
-			'ET' => 'ETH', //Ethiopia
-			'FK' => 'FLK', //Falkland Islands
-			'FO' => 'FRO', //Faroe Islands
-			'FJ' => 'FIJ', //Fiji
-			'FI' => 'FIN', //Finland
-			'FR' => 'FRA', //France
-			'GF' => 'GUF', //French Guiana
-			'PF' => 'PYF', //French Polynesia
-			'TF' => 'ATF', //French Southern Territories
-			'GA' => 'GAB', //Gabon
-			'GM' => 'GMB', //Gambia
-			'GE' => 'GEO', //Georgia
-			'DE' => 'DEU', //Germany
-			'GH' => 'GHA', //Ghana
-			'GI' => 'GIB', //Gibraltar
-			'GR' => 'GRC', //Greece
-			'GL' => 'GRL', //Greenland
-			'GD' => 'GRD', //Grenada
-			'GP' => 'GLP', //Guadeloupe
-			'GU' => 'GUM', //Guam
-			'GT' => 'GTM', //Guatemala
-			'GG' => 'GGY', //Guernsey
-			'GN' => 'GIN', //Guinea
-			'GW' => 'GNB', //Guinea-Bissau
-			'GY' => 'GUY', //Guyana
-			'HT' => 'HTI', //Haiti
-			'HM' => 'HMD', //Heard Island and McDonald Islands
-			'VA' => 'VAT', //Holy See (Vatican City State)
-			'HN' => 'HND', //Honduras
-			'HK' => 'HKG', //Hong Kong
-			'HU' => 'HUN', //Hungary
-			'IS' => 'ISL', //Iceland
-			'IN' => 'IND', //India
-			'ID' => 'IDN', //Indonesia
-			'IR' => 'IRN', //Iran
-			'IQ' => 'IRQ', //Iraq
-			'IE' => 'IRL', //Republic of Ireland
-			'IM' => 'IMN', //Isle of Man
-			'IL' => 'ISR', //Israel
-			'IT' => 'ITA', //Italy
-			'JM' => 'JAM', //Jamaica
-			'JP' => 'JPN', //Japan
-			'JE' => 'JEY', //Jersey
-			'JO' => 'JOR', //Jordan
-			'KZ' => 'KAZ', //Kazakhstan
-			'KE' => 'KEN', //Kenya
-			'KI' => 'KIR', //Kiribati
-			'KP' => 'PRK', //Korea, Democratic People\'s Republic of
-			'KR' => 'KOR', //Korea, Republic of (South)
-			'KW' => 'KWT', //Kuwait
-			'KG' => 'KGZ', //Kyrgyzstan
-			'LA' => 'LAO', //Laos
-			'LV' => 'LVA', //Latvia
-			'LB' => 'LBN', //Lebanon
-			'LS' => 'LSO', //Lesotho
-			'LR' => 'LBR', //Liberia
-			'LY' => 'LBY', //Libya
-			'LI' => 'LIE', //Liechtenstein
-			'LT' => 'LTU', //Lithuania
-			'LU' => 'LUX', //Luxembourg
-			'MO' => 'MAC', //Macao S.A.R., China
-			'MK' => 'MKD', //Macedonia
-			'MG' => 'MDG', //Madagascar
-			'MW' => 'MWI', //Malawi
-			'MY' => 'MYS', //Malaysia
-			'MV' => 'MDV', //Maldives
-			'ML' => 'MLI', //Mali
-			'MT' => 'MLT', //Malta
-			'MH' => 'MHL', //Marshall Islands
-			'MQ' => 'MTQ', //Martinique
-			'MR' => 'MRT', //Mauritania
-			'MU' => 'MUS', //Mauritius
-			'YT' => 'MYT', //Mayotte
-			'MX' => 'MEX', //Mexico
-			'FM' => 'FSM', //Micronesia
-			'MD' => 'MDA', //Moldova
-			'MC' => 'MCO', //Monaco
-			'MN' => 'MNG', //Mongolia
-			'ME' => 'MNE', //Montenegro
-			'MS' => 'MSR', //Montserrat
-			'MA' => 'MAR', //Morocco
-			'MZ' => 'MOZ', //Mozambique
-			'MM' => 'MMR', //Myanmar
-			'NA' => 'NAM', //Namibia
-			'NR' => 'NRU', //Nauru
-			'NP' => 'NPL', //Nepal
-			'NL' => 'NLD', //Netherlands
-			'AN' => 'ANT', //Netherlands Antilles
-			'NC' => 'NCL', //New Caledonia
-			'NZ' => 'NZL', //New Zealand
-			'NI' => 'NIC', //Nicaragua
-			'NE' => 'NER', //Niger
-			'NG' => 'NGA', //Nigeria
-			'NU' => 'NIU', //Niue
-			'NF' => 'NFK', //Norfolk Island
-			'MP' => 'MNP', //Northern Mariana Islands
-			'NO' => 'NOR', //Norway
-			'OM' => 'OMN', //Oman
-			'PK' => 'PAK', //Pakistan
-			'PW' => 'PLW', //Palau
-			'PS' => 'PSE', //Palestinian Territory
-			'PA' => 'PAN', //Panama
-			'PG' => 'PNG', //Papua New Guinea
-			'PY' => 'PRY', //Paraguay
-			'PE' => 'PER', //Peru
-			'PH' => 'PHL', //Philippines
-			'PN' => 'PCN', //Pitcairn
-			'PL' => 'POL', //Poland
-			'PT' => 'PRT', //Portugal
-			'PR' => 'PRI', //Puerto Rico
-			'QA' => 'QAT', //Qatar
-			'RE' => 'REU', //Reunion
-			'RO' => 'ROU', //Romania
-			'RU' => 'RUS', //Russia
-			'RW' => 'RWA', //Rwanda
-			'BL' => 'BLM', //Saint Barth&eacute;lemy
-			'SH' => 'SHN', //Saint Helena
-			'KN' => 'KNA', //Saint Kitts and Nevis
-			'LC' => 'LCA', //Saint Lucia
-			'MF' => 'MAF', //Saint Martin (French part)
-			'SX' => 'SXM', //Sint Maarten / Saint Matin (Dutch part)
-			'PM' => 'SPM', //Saint Pierre and Miquelon
-			'VC' => 'VCT', //Saint Vincent and the Grenadines
-			'WS' => 'WSM', //Samoa
-			'SM' => 'SMR', //San Marino
-			'ST' => 'STP', //S&atilde;o Tom&eacute; and Pr&iacute;ncipe
-			'SA' => 'SAU', //Saudi Arabia
-			'SN' => 'SEN', //Senegal
-			'RS' => 'SRB', //Serbia
-			'SC' => 'SYC', //Seychelles
-			'SL' => 'SLE', //Sierra Leone
-			'SG' => 'SGP', //Singapore
-			'SK' => 'SVK', //Slovakia
-			'SI' => 'SVN', //Slovenia
-			'SB' => 'SLB', //Solomon Islands
-			'SO' => 'SOM', //Somalia
-			'ZA' => 'ZAF', //South Africa
-			'GS' => 'SGS', //South Georgia/Sandwich Islands
-			'SS' => 'SSD', //South Sudan
-			'ES' => 'ESP', //Spain
-			'LK' => 'LKA', //Sri Lanka
-			'SD' => 'SDN', //Sudan
-			'SR' => 'SUR', //Suriname
-			'SJ' => 'SJM', //Svalbard and Jan Mayen
-			'SZ' => 'SWZ', //Swaziland
-			'SE' => 'SWE', //Sweden
-			'CH' => 'CHE', //Switzerland
-			'SY' => 'SYR', //Syria
-			'TW' => 'TWN', //Taiwan
-			'TJ' => 'TJK', //Tajikistan
-			'TZ' => 'TZA', //Tanzania
-			'TH' => 'THA', //Thailand
-			'TL' => 'TLS', //Timor-Leste
-			'TG' => 'TGO', //Togo
-			'TK' => 'TKL', //Tokelau
-			'TO' => 'TON', //Tonga
-			'TT' => 'TTO', //Trinidad and Tobago
-			'TN' => 'TUN', //Tunisia
-			'TR' => 'TUR', //Turkey
-			'TM' => 'TKM', //Turkmenistan
-			'TC' => 'TCA', //Turks and Caicos Islands
-			'TV' => 'TUV', //Tuvalu
-			'UG' => 'UGA', //Uganda
-			'UA' => 'UKR', //Ukraine
-			'AE' => 'ARE', //United Arab Emirates
-			'GB' => 'GBR', //United Kingdom
-			'US' => 'USA', //United States
-			'UM' => 'UMI', //United States Minor Outlying Islands
-			'UY' => 'URY', //Uruguay
-			'UZ' => 'UZB', //Uzbekistan
-			'VU' => 'VUT', //Vanuatu
-			'VE' => 'VEN', //Venezuela
-			'VN' => 'VNM', //Vietnam
-			'VG' => 'VGB', //Virgin Islands, British
-			'VI' => 'VIR', //Virgin Island, U.S.
-			'WF' => 'WLF', //Wallis and Futuna
-			'EH' => 'ESH', //Western Sahara
-			'YE' => 'YEM', //Yemen
-			'ZM' => 'ZMB', //Zambia
-			'ZW' => 'ZWE', //Zimbabwe
+			'AF' => 'AFG', // Afghanistan
+			'AX' => 'ALA', // &#197;land Islands
+			'AL' => 'ALB', // Albania
+			'DZ' => 'DZA', // Algeria
+			'AS' => 'ASM', // American Samoa
+			'AD' => 'AND', // Andorra
+			'AO' => 'AGO', // Angola
+			'AI' => 'AIA', // Anguilla
+			'AQ' => 'ATA', // Antarctica
+			'AG' => 'ATG', // Antigua and Barbuda
+			'AR' => 'ARG', // Argentina
+			'AM' => 'ARM', // Armenia
+			'AW' => 'ABW', // Aruba
+			'AU' => 'AUS', // Australia
+			'AT' => 'AUT', // Austria
+			'AZ' => 'AZE', // Azerbaijan
+			'BS' => 'BHS', // Bahamas
+			'BH' => 'BHR', // Bahrain
+			'BD' => 'BGD', // Bangladesh
+			'BB' => 'BRB', // Barbados
+			'BY' => 'BLR', // Belarus
+			'BE' => 'BEL', // Belgium
+			'BZ' => 'BLZ', // Belize
+			'BJ' => 'BEN', // Benin
+			'BM' => 'BMU', // Bermuda
+			'BT' => 'BTN', // Bhutan
+			'BO' => 'BOL', // Bolivia
+			'BQ' => 'BES', // Bonaire, Saint Estatius and Saba
+			'BA' => 'BIH', // Bosnia and Herzegovina
+			'BW' => 'BWA', // Botswana
+			'BV' => 'BVT', // Bouvet Islands
+			'BR' => 'BRA', // Brazil
+			'IO' => 'IOT', // British Indian Ocean Territory
+			'BN' => 'BRN', // Brunei
+			'BG' => 'BGR', // Bulgaria
+			'BF' => 'BFA', // Burkina Faso
+			'BI' => 'BDI', // Burundi
+			'KH' => 'KHM', // Cambodia
+			'CM' => 'CMR', // Cameroon
+			'CA' => 'CAN', // Canada
+			'CV' => 'CPV', // Cape Verde
+			'KY' => 'CYM', // Cayman Islands
+			'CF' => 'CAF', // Central African Republic
+			'TD' => 'TCD', // Chad
+			'CL' => 'CHL', // Chile
+			'CN' => 'CHN', // China
+			'CX' => 'CXR', // Christmas Island
+			'CC' => 'CCK', // Cocos (Keeling) Islands
+			'CO' => 'COL', // Colombia
+			'KM' => 'COM', // Comoros
+			'CG' => 'COG', // Congo
+			'CD' => 'COD', // Congo, Democratic Republic of the
+			'CK' => 'COK', // Cook Islands
+			'CR' => 'CRI', // Costa Rica
+			'CI' => 'CIV', // Côte d\'Ivoire
+			'HR' => 'HRV', // Croatia
+			'CU' => 'CUB', // Cuba
+			'CW' => 'CUW', // Curaçao
+			'CY' => 'CYP', // Cyprus
+			'CZ' => 'CZE', // Czech Republic
+			'DK' => 'DNK', // Denmark
+			'DJ' => 'DJI', // Djibouti
+			'DM' => 'DMA', // Dominica
+			'DO' => 'DOM', // Dominican Republic
+			'EC' => 'ECU', // Ecuador
+			'EG' => 'EGY', // Egypt
+			'SV' => 'SLV', // El Salvador
+			'GQ' => 'GNQ', // Equatorial Guinea
+			'ER' => 'ERI', // Eritrea
+			'EE' => 'EST', // Estonia
+			'ET' => 'ETH', // Ethiopia
+			'FK' => 'FLK', // Falkland Islands
+			'FO' => 'FRO', // Faroe Islands
+			'FJ' => 'FIJ', // Fiji
+			'FI' => 'FIN', // Finland
+			'FR' => 'FRA', // France
+			'GF' => 'GUF', // French Guiana
+			'PF' => 'PYF', // French Polynesia
+			'TF' => 'ATF', // French Southern Territories
+			'GA' => 'GAB', // Gabon
+			'GM' => 'GMB', // Gambia
+			'GE' => 'GEO', // Georgia
+			'DE' => 'DEU', // Germany
+			'GH' => 'GHA', // Ghana
+			'GI' => 'GIB', // Gibraltar
+			'GR' => 'GRC', // Greece
+			'GL' => 'GRL', // Greenland
+			'GD' => 'GRD', // Grenada
+			'GP' => 'GLP', // Guadeloupe
+			'GU' => 'GUM', // Guam
+			'GT' => 'GTM', // Guatemala
+			'GG' => 'GGY', // Guernsey
+			'GN' => 'GIN', // Guinea
+			'GW' => 'GNB', // Guinea-Bissau
+			'GY' => 'GUY', // Guyana
+			'HT' => 'HTI', // Haiti
+			'HM' => 'HMD', // Heard Island and McDonald Islands
+			'VA' => 'VAT', // Holy See (Vatican City State)
+			'HN' => 'HND', // Honduras
+			'HK' => 'HKG', // Hong Kong
+			'HU' => 'HUN', // Hungary
+			'IS' => 'ISL', // Iceland
+			'IN' => 'IND', // India
+			'ID' => 'IDN', // Indonesia
+			'IR' => 'IRN', // Iran
+			'IQ' => 'IRQ', // Iraq
+			'IE' => 'IRL', // Republic of Ireland
+			'IM' => 'IMN', // Isle of Man
+			'IL' => 'ISR', // Israel
+			'IT' => 'ITA', // Italy
+			'JM' => 'JAM', // Jamaica
+			'JP' => 'JPN', // Japan
+			'JE' => 'JEY', // Jersey
+			'JO' => 'JOR', // Jordan
+			'KZ' => 'KAZ', // Kazakhstan
+			'KE' => 'KEN', // Kenya
+			'KI' => 'KIR', // Kiribati
+			'KP' => 'PRK', // Korea, Democratic People\'s Republic of
+			'KR' => 'KOR', // Korea, Republic of (South)
+			'KW' => 'KWT', // Kuwait
+			'KG' => 'KGZ', // Kyrgyzstan
+			'LA' => 'LAO', // Laos
+			'LV' => 'LVA', // Latvia
+			'LB' => 'LBN', // Lebanon
+			'LS' => 'LSO', // Lesotho
+			'LR' => 'LBR', // Liberia
+			'LY' => 'LBY', // Libya
+			'LI' => 'LIE', // Liechtenstein
+			'LT' => 'LTU', // Lithuania
+			'LU' => 'LUX', // Luxembourg
+			'MO' => 'MAC', // Macao S.A.R., China
+			'MK' => 'MKD', // Macedonia
+			'MG' => 'MDG', // Madagascar
+			'MW' => 'MWI', // Malawi
+			'MY' => 'MYS', // Malaysia
+			'MV' => 'MDV', // Maldives
+			'ML' => 'MLI', // Mali
+			'MT' => 'MLT', // Malta
+			'MH' => 'MHL', // Marshall Islands
+			'MQ' => 'MTQ', // Martinique
+			'MR' => 'MRT', // Mauritania
+			'MU' => 'MUS', // Mauritius
+			'YT' => 'MYT', // Mayotte
+			'MX' => 'MEX', // Mexico
+			'FM' => 'FSM', // Micronesia
+			'MD' => 'MDA', // Moldova
+			'MC' => 'MCO', // Monaco
+			'MN' => 'MNG', // Mongolia
+			'ME' => 'MNE', // Montenegro
+			'MS' => 'MSR', // Montserrat
+			'MA' => 'MAR', // Morocco
+			'MZ' => 'MOZ', // Mozambique
+			'MM' => 'MMR', // Myanmar
+			'NA' => 'NAM', // Namibia
+			'NR' => 'NRU', // Nauru
+			'NP' => 'NPL', // Nepal
+			'NL' => 'NLD', // Netherlands
+			'AN' => 'ANT', // Netherlands Antilles
+			'NC' => 'NCL', // New Caledonia
+			'NZ' => 'NZL', // New Zealand
+			'NI' => 'NIC', // Nicaragua
+			'NE' => 'NER', // Niger
+			'NG' => 'NGA', // Nigeria
+			'NU' => 'NIU', // Niue
+			'NF' => 'NFK', // Norfolk Island
+			'MP' => 'MNP', // Northern Mariana Islands
+			'NO' => 'NOR', // Norway
+			'OM' => 'OMN', // Oman
+			'PK' => 'PAK', // Pakistan
+			'PW' => 'PLW', // Palau
+			'PS' => 'PSE', // Palestinian Territory
+			'PA' => 'PAN', // Panama
+			'PG' => 'PNG', // Papua New Guinea
+			'PY' => 'PRY', // Paraguay
+			'PE' => 'PER', // Peru
+			'PH' => 'PHL', // Philippines
+			'PN' => 'PCN', // Pitcairn
+			'PL' => 'POL', // Poland
+			'PT' => 'PRT', // Portugal
+			'PR' => 'PRI', // Puerto Rico
+			'QA' => 'QAT', // Qatar
+			'RE' => 'REU', // Reunion
+			'RO' => 'ROU', // Romania
+			'RU' => 'RUS', // Russia
+			'RW' => 'RWA', // Rwanda
+			'BL' => 'BLM', // Saint Barth&eacute;lemy
+			'SH' => 'SHN', // Saint Helena
+			'KN' => 'KNA', // Saint Kitts and Nevis
+			'LC' => 'LCA', // Saint Lucia
+			'MF' => 'MAF', // Saint Martin (French part)
+			'SX' => 'SXM', // Sint Maarten / Saint Matin (Dutch part)
+			'PM' => 'SPM', // Saint Pierre and Miquelon
+			'VC' => 'VCT', // Saint Vincent and the Grenadines
+			'WS' => 'WSM', // Samoa
+			'SM' => 'SMR', // San Marino
+			'ST' => 'STP', // S&atilde;o Tom&eacute; and Pr&iacute;ncipe
+			'SA' => 'SAU', // Saudi Arabia
+			'SN' => 'SEN', // Senegal
+			'RS' => 'SRB', // Serbia
+			'SC' => 'SYC', // Seychelles
+			'SL' => 'SLE', // Sierra Leone
+			'SG' => 'SGP', // Singapore
+			'SK' => 'SVK', // Slovakia
+			'SI' => 'SVN', // Slovenia
+			'SB' => 'SLB', // Solomon Islands
+			'SO' => 'SOM', // Somalia
+			'ZA' => 'ZAF', // South Africa
+			'GS' => 'SGS', // South Georgia/Sandwich Islands
+			'SS' => 'SSD', // South Sudan
+			'ES' => 'ESP', // Spain
+			'LK' => 'LKA', // Sri Lanka
+			'SD' => 'SDN', // Sudan
+			'SR' => 'SUR', // Suriname
+			'SJ' => 'SJM', // Svalbard and Jan Mayen
+			'SZ' => 'SWZ', // Swaziland
+			'SE' => 'SWE', // Sweden
+			'CH' => 'CHE', // Switzerland
+			'SY' => 'SYR', // Syria
+			'TW' => 'TWN', // Taiwan
+			'TJ' => 'TJK', // Tajikistan
+			'TZ' => 'TZA', // Tanzania
+			'TH' => 'THA', // Thailand
+			'TL' => 'TLS', // Timor-Leste
+			'TG' => 'TGO', // Togo
+			'TK' => 'TKL', // Tokelau
+			'TO' => 'TON', // Tonga
+			'TT' => 'TTO', // Trinidad and Tobago
+			'TN' => 'TUN', // Tunisia
+			'TR' => 'TUR', // Turkey
+			'TM' => 'TKM', // Turkmenistan
+			'TC' => 'TCA', // Turks and Caicos Islands
+			'TV' => 'TUV', // Tuvalu
+			'UG' => 'UGA', // Uganda
+			'UA' => 'UKR', // Ukraine
+			'AE' => 'ARE', // United Arab Emirates
+			'GB' => 'GBR', // United Kingdom
+			'US' => 'USA', // United States
+			'UM' => 'UMI', // United States Minor Outlying Islands
+			'UY' => 'URY', // Uruguay
+			'UZ' => 'UZB', // Uzbekistan
+			'VU' => 'VUT', // Vanuatu
+			'VE' => 'VEN', // Venezuela
+			'VN' => 'VNM', // Vietnam
+			'VG' => 'VGB', // Virgin Islands, British
+			'VI' => 'VIR', // Virgin Island, U.S.
+			'WF' => 'WLF', // Wallis and Futuna
+			'EH' => 'ESH', // Western Sahara
+			'YE' => 'YEM', // Yemen
+			'ZM' => 'ZMB', // Zambia
+			'ZW' => 'ZWE', // Zimbabwe
 
 		);
 
@@ -1163,7 +1183,7 @@ class Item_Info {
 
 			// If no address number and in Germany, return error
 			if ( 1 === count( $address_exploded ) && 'DE' === $this->args['shipping_address']['country'] ) {
-				throw new Exception( __( 'Shipping street number is missing!', 'dhl-for-woocommerce' ) );
+				throw new Exception( esc_html__( 'Shipping street number is missing!', 'dhl-for-woocommerce' ) );
 			}
 		}
 
@@ -1188,10 +1208,14 @@ class Item_Info {
 				$this->args['shipping_address']['address_1'] = implode( ' ', array_slice( $address_exploded, 1 ) );
 				$this->args['shipping_address']['address_2'] = implode( ' ', array_slice( $address_exploded, 0, 1 ) );
 			} else {
-				$this->args['shipping_address']['address_1'] = implode( ' ',
-					array_slice( $address_exploded, 0, $set_key ) );
-				$this->args['shipping_address']['address_2'] = implode( ' ',
-					array_slice( $address_exploded, $set_key ) );
+				$this->args['shipping_address']['address_1'] = implode(
+					' ',
+					array_slice( $address_exploded, 0, $set_key )
+				);
+				$this->args['shipping_address']['address_2'] = implode(
+					' ',
+					array_slice( $address_exploded, $set_key )
+				);
 			}
 		}
 	}
