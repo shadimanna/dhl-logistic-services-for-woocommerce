@@ -69,11 +69,6 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 			'/build/pr-dhl-parcel-finder-frontend.asset.php'
 		);
 
-		$this->register_frontend_script(
-			'pr-dhl-checkout-frontend',
-			'/assets/js/pr-dhl-checkout-frontend.js',
-			'/build/pr-dhl-parcel-finder-frontend.asset.php'
-		);
 
 		// Register block styles
 		$this->register_styles();
