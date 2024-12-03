@@ -1,17 +1,37 @@
-import {useSelect} from '@wordpress/data';
-import {Button} from '@wordpress/components';
-import {__} from '@wordpress/i18n';
+import { useState, useEffect } from '@wordpress/element';
+import { useSelect } from '@wordpress/data';
+import { Button } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 export const Block = () => {
+    const [isPageLoaded, setIsPageLoaded] = useState(false);
 
-    const {hasCalculatedShipping, shippingRates} = useSelect((select) => {
-        const cartStore = select('wc/store/cart');
+    useEffect(() => {
+        const handlePageLoad = () => {
+            setIsPageLoaded(true);
+        };
+
+        if (document.readyState === 'complete') {
+            // The page is already loaded
+            setIsPageLoaded(true);
+        } else {
+            window.addEventListener('load', handlePageLoad);
+            // Cleanup the event listener on component unmount
+            return () => {
+                window.removeEventListener('load', handlePageLoad);
+            };
+        }
+    }, []);
+
+    const { hasCalculatedShipping, shippingRates } = useSelect( ( select ) => {
+        const cartStore = select( 'wc/store/cart' );
         return {
             hasCalculatedShipping: cartStore.getHasCalculatedShipping(),
             shippingRates: cartStore.getShippingRates(),
         };
-    }, []);
-    const showMapButton = hasCalculatedShipping && shippingRates.length > 0;
+    }, [] );
+
+    const showMapButton = hasCalculatedShipping && shippingRates.length > 0 && isPageLoaded;
 
     return (
         <>
