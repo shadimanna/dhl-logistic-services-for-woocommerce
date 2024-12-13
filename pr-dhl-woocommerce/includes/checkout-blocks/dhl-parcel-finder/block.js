@@ -1,5 +1,5 @@
 import { useState, useEffect } from '@wordpress/element';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
@@ -12,11 +12,9 @@ export const Block = () => {
         };
 
         if (document.readyState === 'complete') {
-            // The page is already loaded
             setIsPageLoaded(true);
         } else {
             window.addEventListener('load', handlePageLoad);
-            // Cleanup the event listener on component unmount
             return () => {
                 window.removeEventListener('load', handlePageLoad);
             };
@@ -32,6 +30,35 @@ export const Block = () => {
     }, [] );
 
     const showMapButton = hasCalculatedShipping && shippingRates.length > 0 && isPageLoaded;
+
+    const { setShippingAddress } = useDispatch( 'wc/store/cart' );
+
+    const shippingAddress = useSelect( ( select ) => {
+        return select( 'wc/store/cart' ).getCustomerData()?.shippingAddress || {};
+    }, [] );
+
+    useEffect(() => {
+        const handleShopSelected = (event) => {
+
+            const { address_1, address_2, postcode, city } = event.detail;
+            const newShippingAddress = {
+                ...shippingAddress,
+                address_1,
+                address_2,
+                postcode,
+                city,
+                'pr-dhl/address_type': address_type
+            };
+
+            setShippingAddress(newShippingAddress);
+        };
+
+        window.addEventListener('dhl-shop-selected', handleShopSelected);
+
+        return () => {
+            window.removeEventListener('dhl-shop-selected', handleShopSelected);
+        };
+    }, [setShippingAddress, shippingAddress]);
 
     return (
         <>
@@ -123,6 +150,7 @@ export const Block = () => {
                             <div id="dhl_google_map"></div>
                         </div>
                     </div>
+
                 </>
             )}
         </>
