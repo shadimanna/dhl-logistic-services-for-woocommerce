@@ -112,48 +112,72 @@ jQuery(document).ready(function($) {
         wc_checkout_dhl_parcelfinder.populateDropdown();
       }, 500);
 
-      $( 'form#checkout_dhl_parcel_finder' ).submit( this.submit );
+      //$( 'form#checkout_dhl_parcel_finder' ).submit( this.submit );
+
+       $(document.body).on('click', '#dhl_seach_button input[type="submit"]', function(e) {
+         e.preventDefault();
+         wc_checkout_dhl_parcelfinder.submit();
+       });
     },
     address_type: function() {
-        var address_type = $('.woocommerce-checkout #shipping_dhl_address_type').val();
+      var address_type = $('.woocommerce-checkout #shipping_dhl_address_type').val();
 
-        if (address_type == 'dhl_packstation') {
-          $( '.woocommerce-checkout #shipping_dhl_postnum_field' ).show();
-          // If does not have span or span with "required" class, add it
-          if ( ! $( '.woocommerce-checkout #shipping_dhl_postnum_field label span' ).length ||
-             ( ! $( '.woocommerce-checkout #shipping_dhl_postnum_field label span' ).hasClass('required') ) ) {
-              $( '.woocommerce-checkout #shipping_dhl_postnum_field label' ).append(' <span class="required">*</span>');
-          }
-        } else if (address_type == 'dhl_branch') {
-          $( '.woocommerce-checkout #shipping_dhl_postnum_field' ).show();
-          // remove "required" span tag
-          $( '.woocommerce-checkout #shipping_dhl_postnum_field label .required' ).remove();
-        } else {
-          $( '.woocommerce-checkout #shipping_dhl_postnum_field' ).hide();
+      if (address_type == 'dhl_packstation') {
+        $( '.woocommerce-checkout #shipping_dhl_postnum_field' ).show();
+        // If does not have span or span with "required" class, add it
+        if ( ! $( '.woocommerce-checkout #shipping_dhl_postnum_field label span' ).length ||
+            ( ! $( '.woocommerce-checkout #shipping_dhl_postnum_field label span' ).hasClass('required') ) ) {
+          $( '.woocommerce-checkout #shipping_dhl_postnum_field label' ).append(' <span class="required">*</span>');
         }
+      } else if (address_type == 'dhl_branch') {
+        $( '.woocommerce-checkout #shipping_dhl_postnum_field' ).show();
+        // remove "required" span tag
+        $( '.woocommerce-checkout #shipping_dhl_postnum_field label .required' ).remove();
+      } else {
+        $( '.woocommerce-checkout #shipping_dhl_postnum_field' ).hide();
+      }
     },
     init_form: function() {
+      var gmap_country = $('.woocommerce-checkout #shipping_country').val()
+          || $('.woocommerce-checkout #shipping-country').val()
+          || $('.woocommerce-checkout #billing_country').val()
+          || $('.woocommerce-checkout #billing-country').val()
+          || '';
+      $('#dhl_parcelfinder_country').val(gmap_country);
 
-      var gmap_country = $('.woocommerce-checkout #shipping_country').val() || $('.woocommerce-checkout #shipping-country').val() || $('.woocommerce-checkout #billing_country').val() || $('.woocommerce-checkout #billing-country').val() || '';
-      $('#dhl_parcelfinder_country').val( gmap_country );
+      var gmap_postcode = $('.woocommerce-checkout #shipping_postcode').val()
+          || $('.woocommerce-checkout #shipping-postcode').val()
+          || $('.woocommerce-checkout #billing_postcode').val()
+          || $('.woocommerce-checkout #billing-postcode').val()
+          || '';
+      $('#dhl_parcelfinder_postcode').val(gmap_postcode);
 
-      var gmap_postcode = $('.woocommerce-checkout #shipping_postcode').val() || $('.woocommerce-checkout #shipping-postcode').val() || $('.woocommerce-checkout #billing_postcode').val() || $('.woocommerce-checkout #billing-postcode').val() || '';
-      $('#dhl_parcelfinder_postcode').val( gmap_postcode );
+      var gmap_city = $('.woocommerce-checkout #shipping_city').val()
+          || $('.woocommerce-checkout #shipping-city').val()
+          || $('.woocommerce-checkout #billing_city').val()
+          || $('.woocommerce-checkout #billing-city').val()
+          || '';
+      $('#dhl_parcelfinder_city').val(gmap_city);
 
-      var gmap_city = $('.woocommerce-checkout #shipping_city').val() || $('.woocommerce-checkout #shipping-city').val() || $('.woocommerce-checkout #billing_city').val() || $('.woocommerce-checkout #billing-city').val() || '';
-      $('#dhl_parcelfinder_city').val( gmap_city );
-
-      var gmap_address_1 = $('.woocommerce-checkout #shipping_address_1').val() || $('.woocommerce-checkout #shipping-address_1').val() || $('.woocommerce-checkout #billing_address_1').val() || $('.woocommerce-checkout #billing-address_1').val() || '';
-      var gmap_address_2 = $('.woocommerce-checkout #shipping_address_2').val() || $('.woocommerce-checkout #shipping-address_2').val() || $('.woocommerce-checkout #billing_address_2').val() || $('.woocommerce-checkout #billing-address_2').val() || '';
+      var gmap_address_1 = $('.woocommerce-checkout #shipping_address_1').val()
+          || $('.woocommerce-checkout #shipping-address_1').val()
+          || $('.woocommerce-checkout #billing_address_1').val()
+          || $('.woocommerce-checkout #billing-address_1').val()
+          || '';
+      var gmap_address_2 = $('.woocommerce-checkout #shipping_address_2').val()
+          || $('.woocommerce-checkout #shipping-address_2').val()
+          || $('.woocommerce-checkout #billing_address_2').val()
+          || $('.woocommerce-checkout #billing-address_2').val()
+          || '';
 
       var gmap_address = (gmap_address_1 + ' ' + gmap_address_2).trim();
+      $('#dhl_parcelfinder_address').val(gmap_address);
 
-      $('#dhl_parcelfinder_address').val( gmap_address );
-
-      $( 'form#checkout_dhl_parcel_finder' ).submit();
+     // $( 'form#checkout_dhl_parcel_finder' ).submit();
+      $('#dhl_seach_button input[type="submit"]').trigger('click');
     },
     submit: function() {
-      var $form = $( this );
+      var $form = $('#checkout_dhl_parcel_finder');
 
       $('#dhl_parcel_finder_form #checkout_dhl_parcel_finder .woocommerce-error').remove();
 
