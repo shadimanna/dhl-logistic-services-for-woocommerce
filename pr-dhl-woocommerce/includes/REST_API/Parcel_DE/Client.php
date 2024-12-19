@@ -269,6 +269,9 @@ class Client extends API_Client {
 			$item_description .= $item['itemDescription'];
 		}
 
+		$additional_fee = floatval( $request_info->args['order_details']['additional_fee'] );
+		$shipping_fee   = floatval( $request_info->args['order_details']['shipping_fee'] );
+
 		return array(
 			'invoiceNo'         => $request_info->args['order_details']['invoice_num'],
 			'exportType'        => apply_filters( 'pr_shipping_dhl_paket_label_shipment_export_type', 'COMMERCIAL_GOODS' ),
@@ -276,7 +279,7 @@ class Client extends API_Client {
 			'items'             => $this->prepare_items( $request_info ),
 			'postalCharges'     => array(
 				'currency' => $request_info->args['order_details']['currency'],
-				'value'    => $request_info->args['order_details']['total_value'],
+				'value'    => $additional_fee + $shipping_fee,
 			),
 		);
 	}
@@ -402,7 +405,7 @@ class Client extends API_Client {
 				$array[ $k ] = $this->unset_empty_values( $v );
 			}
 
-			if ( empty( $v ) ) {
+			if ( empty( $v ) && ! is_numeric( $v ) ) {
 				unset( $array[ $k ] );
 			}
 		}
