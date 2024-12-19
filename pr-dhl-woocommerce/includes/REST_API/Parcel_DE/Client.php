@@ -405,7 +405,7 @@ class Client extends API_Client {
 				$array[ $k ] = $this->unset_empty_values( $v );
 			}
 
-			if ( empty( $v ) ) {
+			if ( empty( $v ) && ! is_numeric( $v ) ) {
 				unset( $array[ $k ] );
 			}
 		}
