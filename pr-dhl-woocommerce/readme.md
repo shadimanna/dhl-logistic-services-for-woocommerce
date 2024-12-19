@@ -76,6 +76,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 3.7.7 =
+* DHL Paket: Fix Customs Postal Charges value.
+
 = 3.7.6 =
 * DHL Paket: Fix "File cannot be saved" using SOAP API.
 
