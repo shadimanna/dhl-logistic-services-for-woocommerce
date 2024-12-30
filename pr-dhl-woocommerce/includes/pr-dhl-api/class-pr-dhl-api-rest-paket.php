@@ -301,11 +301,11 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 	public function get_dhl_products_domestic() {
 		$country_code = $this->country_code;
 
- 		$germany_dom = array(
-			'V62KP'   => esc_html__( 'DHL Kleinpaket', 'dhl-for-woocommerce' ),
+		$germany_dom = array(
 			'V01PAK'  => esc_html__( 'DHL Paket', 'dhl-for-woocommerce' ),
 			'V01PRIO' => esc_html__( 'DHL Paket PRIO', 'dhl-for-woocommerce' ),
 			'V62WP'   => esc_html__( 'DHL Warenpost National', 'dhl-for-woocommerce' ),
+			'V62KP'   => esc_html__( 'DHL Kleinpaket', 'dhl-for-woocommerce' ),
 		);
 
 		$dhl_prod_dom = array();
