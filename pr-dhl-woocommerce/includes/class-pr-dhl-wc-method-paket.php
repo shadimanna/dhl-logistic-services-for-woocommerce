@@ -507,7 +507,7 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 						'910-300-410'    => 'Laser printer 103 x 150 mm',
 						'910-300-300'    => 'Laser printer 105 x 148 mm',
 						'910-300-300-oZ' => 'Laser printer 105 x 148 mm (without additional labels)',
-						'100x70mm'       => '100 x 70 mm (only for Warenpost)',
+						'100x70mm'       => '100 x 70 mm (only for Warenpost & Kleinpaket)',
 					),
 					'default'     => '910-300-700',
 					'class'       => 'wc-enhanced-select',
