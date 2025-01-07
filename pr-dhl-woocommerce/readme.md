@@ -5,7 +5,7 @@ Tags: DPDHL, DHL, DHL eCommerce, DHL Paket Germany, Shipping
 Requires at least: 4.6
 Requires PHP: 5.6
 Tested up to: 6.7
-Stable tag: 3.7.7
+Stable tag: 3.7.8
 Requires Plugins: woocommerce
 WC requires at least: 3.0
 WC tested up to: 9.5
@@ -75,6 +75,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 
 == Changelog ==
+
+= 3.7.8 =
+* DHL Paket: Add DHL Kleinpaket product.
 
 = 3.7.7 =
 * DHL Paket: Fix Customs Postal Charges value.
