@@ -9,7 +9,7 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
- * Version: 3.7.7
+ * Version: 3.7.8
  * Tested up to: 6.7
  * Requires Plugins: woocommerce
  * WC requires at least: 3.0
@@ -39,7 +39,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 	class PR_DHL_WC {
 
-		private $version = '3.7.7';
+		private $version = '3.7.8';
 
 		/**
 		 * Instance to call certain functions globally within the plugin
