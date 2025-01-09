@@ -29,8 +29,8 @@ The following DHL services are no longer supported by this plugin:
 
 == Features ==
 
-1. NEW: Ship your orders with **DHL Warenpost International** in Germany.
-2. Fast and easy **label creation** of your national and international orders with DHL products such as DHL Paket, Warenpost, DHL Paket International and Warenpost International
+1. NEW: Ship your orders with **DHL Kleinpaket International** in Germany.
+2. Fast and easy **label creation** of your national and international orders with DHL products such as DHL Paket, Kleinpaket, Warenpost, DHL Paket International and Warenpost International
 3. Automatically receive a **tracking code** for each label.
 4. Use **additional delivery services** as e.g. the visual check of age available via the API of DHL Paket or Cash on delivery
 5. Offer **Preferred Delivery Options** to your customers via “Wunschzustellung”. The customer has the opportunity to select a specific date for his delivery or an alternative delivery location e.g. a drop-off location or his preferred neighbour.
