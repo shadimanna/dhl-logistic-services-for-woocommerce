@@ -906,7 +906,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
 		if ( 'dhl_tracking_number' === $column ) {
 			$tracking_link = $this->get_tracking_link( $order_id );
-			echo empty( $tracking_link ) ? '<strong>&ndash;</strong>' : esc_url( $tracking_link );
+			echo empty( $tracking_link ) ? '<strong>&ndash;</strong>' : $tracking_link;
 		}
 	}
 
