@@ -975,13 +975,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			}
 
 			if ( isset( $this->shipping_dhl_settings['dhl_add_tracking_info_completed'] ) && ( $this->shipping_dhl_settings['dhl_add_tracking_info_completed'] == 'yes' ) ) {
-
-				if ( defined( 'WOOCOMMERCE_VERSION' ) && version_compare( WOOCOMMERCE_VERSION, '3.0', '>=' ) ) {
-					$order_id = $order->get_id();
-				} else {
-					$order_id = $order->id;
-				}
-
+				$order_id      = $order->get_id();
 				$tracking_note = $this->get_tracking_note( $order_id );
 
 				if ( ! empty( $tracking_note ) ) {

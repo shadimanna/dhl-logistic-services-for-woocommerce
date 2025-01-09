@@ -186,12 +186,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Ecomm' ) ) :
 			}
 
 			if ( isset( $this->shipping_dhl_settings['dhl_order_note'] ) && $this->shipping_dhl_settings['dhl_order_note'] == 'yes' ) {
-
-				if ( defined( 'WOOCOMMERCE_VERSION' ) && version_compare( WOOCOMMERCE_VERSION, '3.0', '>=' ) ) {
-					$args['order_details']['order_note'] = $order->get_customer_note();
-				} else {
-					$args['order_details']['order_note'] = $order->customer_note;
-				}
+				$args['order_details']['order_note'] = $order->get_customer_note();
 			}
 
 			if ( ! empty( $dhl_label_items['pr_dhl_duties'] ) ) {
