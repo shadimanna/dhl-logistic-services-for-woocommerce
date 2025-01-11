@@ -566,7 +566,9 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 				return array();
 			}
 
-			return $order->get_meta( '_pr_shipment_dhl_label_tracking' );
+			$label_tracking = $order->get_meta( '_pr_shipment_dhl_label_tracking' );
+
+			return is_array( $label_tracking ) ? $label_tracking : array();
 		}
 
 		/**
