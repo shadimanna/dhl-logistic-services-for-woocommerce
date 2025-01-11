@@ -148,10 +148,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			$this->define( 'PR_DHL_BUTTON_TEST_CONNECTION', esc_html__( 'Test Connection', 'dhl-for-woocommerce' ) );
 			$this->define( 'PR_DHL_BUTTON_MY_ACCOUNT', esc_html__( 'Get Account Settings', 'dhl-for-woocommerce' ) );
 
-			// DHL eCS Asia tracking link. Sandbox => https://preprod2.dhlecommerce.dhl.com/track/?ref=
-			$this->define( 'PR_DHL_ECS_ASIA_SANDBOX_TRACKING_URL', 'https://sandbox.dhlecommerce.dhl.com/track/?locale=en&ref=' );
-			$this->define( 'PR_DHL_ECS_ASIA_TRACKING_URL', 'https://ecommerceportal.dhl.com/track/?ref=' );
-
 			// DHL Paket
 			$this->define( 'PR_DHL_CIG_USR', 'dhl_woocommerce_plugin_2_2' );
 			$this->define( 'PR_DHL_CIG_PWD', 'egOcb8buCPuqxFDf9fyOdWz6z7pKAQ' );
@@ -245,9 +241,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 					if ( $dhl_obj->is_dhl_paket() ) {
 						$this->shipping_dhl_order    = new PR_DHL_WC_Order_Paket();
 						$this->shipping_dhl_frontend = new PR_DHL_Front_End_Paket();
-					} elseif ( $dhl_obj->is_dhl_ecs_asia() ) {
-						$this->shipping_dhl_order = new PR_DHL_WC_Order_eCS_Asia();
-						// $this->shipping_dhl_notice = new PR_DHL_WC_Notice();
 					} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
 						$this->shipping_dhl_order = new PR_DHL_WC_Order_Deutsche_Post();
 					}
@@ -272,8 +265,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 					if ( $dhl_obj->is_dhl_paket() ) {
 						$this->shipping_dhl_product = new PR_DHL_WC_Product_Paket();
-					} elseif ( $dhl_obj->is_dhl_ecs_asia() ) {
-						$this->shipping_dhl_product = new PR_DHL_WC_Product_eCS_Asia();
 					} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
 						$this->shipping_dhl_product = new PR_DHL_WC_Product_Deutsche_Post();
 					}
@@ -423,9 +414,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 				if ( $dhl_obj->is_dhl_paket() ) {
 					$pr_dhl_ship_meth                = 'PR_DHL_WC_Method_Paket';
 					$shipping_method['pr_dhl_paket'] = $pr_dhl_ship_meth;
-				} elseif ( $dhl_obj->is_dhl_ecs_asia() ) {
-					$pr_dhl_ship_meth              = 'PR_DHL_WC_Method_eCS_Asia';
-					$shipping_method['pr_dhl_ecs'] = $pr_dhl_ship_meth;
 				} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
 					$pr_dhl_ship_meth             = 'PR_DHL_WC_Method_Deutsche_Post';
 					$shipping_method['pr_dhl_dp'] = $pr_dhl_ship_meth;
@@ -521,10 +509,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 					return $api_cred;
 
-				} elseif ( $dhl_obj->is_dhl_ecs_asia() ) {
-
-					return $dhl_obj->get_api_url();
-
 				} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
 					return $dhl_obj->get_api_url();
 				}
@@ -540,8 +524,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 				$dhl_obj = $this->get_dhl_factory();
 
 				if ( $dhl_obj->is_dhl_paket() ) {
-					$dhl_settings = $dhl_obj->get_settings();
-				} elseif ( $dhl_obj->is_dhl_ecs_asia() ) {
 					$dhl_settings = $dhl_obj->get_settings();
 				} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
 					$dhl_settings = $dhl_obj->get_settings();
@@ -564,13 +546,10 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 				if ( $dhl_obj->is_dhl_paket() ) {
 					$api_user = $shipping_dhl_settings['dhl_api_user'];
 					$api_pwd  = $shipping_dhl_settings['dhl_api_pwd'];
-				} elseif ( $dhl_obj->is_dhl_ecs_asia() ) {
-					list($api_user, $api_pwd) = $dhl_obj->get_api_creds();
 				} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
 					list($api_user, $api_pwd) = $dhl_obj->get_api_creds();
 				} else {
 					throw new Exception( esc_html__( 'Country not supported', 'dhl-for-woocommerce' ) );
-
 				}
 
 				$connection = $dhl_obj->dhl_test_connection( $api_user, $api_pwd );
