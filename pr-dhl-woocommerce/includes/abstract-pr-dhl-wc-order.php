@@ -561,6 +561,11 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		 */
 		public function get_dhl_label_tracking( $order_id ) {
 			$order = wc_get_order( $order_id );
+
+			if ( ! is_a( $order,'WC_Order' ) ) {
+				return '';
+			}
+
 			return $order->get_meta( '_pr_shipment_dhl_label_tracking' );
 		}
 
