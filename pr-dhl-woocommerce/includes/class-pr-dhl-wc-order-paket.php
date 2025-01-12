@@ -975,17 +975,11 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			}
 
 			if ( isset( $this->shipping_dhl_settings['dhl_add_tracking_info_completed'] ) && ( $this->shipping_dhl_settings['dhl_add_tracking_info_completed'] == 'yes' ) ) {
-
-				if ( defined( 'WOOCOMMERCE_VERSION' ) && version_compare( WOOCOMMERCE_VERSION, '3.0', '>=' ) ) {
-					$order_id = $order->get_id();
-				} else {
-					$order_id = $order->id;
-				}
-
+				$order_id      = $order->get_id();
 				$tracking_note = $this->get_tracking_note( $order_id );
 
 				if ( ! empty( $tracking_note ) ) {
-					echo '<p>' . esc_html( $tracking_note ) . '</p>';
+					echo '<p>' . $tracking_note . '</p>';
 				}
 			}
 		}
@@ -1005,6 +999,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			}
 
 			$tracking_number   = $label_tracking_info['tracking_number'];
+		  $tracking_link = array();
 
 			if ( is_array( $tracking_number ) ) {
 				foreach ( $tracking_number as $key => $value ) {
