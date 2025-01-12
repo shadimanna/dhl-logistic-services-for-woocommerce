@@ -552,16 +552,23 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 			do_action( 'pr_save_dhl_label_tracking', $order_id, $tracking_details );
 		}
 
-		/*
-		 * Gets all tracking items fron the post meta array for an order
+		/**
+		 * Gets all tracking items from the post meta array for an order.
 		 *
 		 * @param int  $order_id  Order ID
 		 *
-		 * @return tracking items
+		 * @return array Tracking items
 		 */
 		public function get_dhl_label_tracking( $order_id ) {
 			$order = wc_get_order( $order_id );
-			return $order->get_meta( '_pr_shipment_dhl_label_tracking' );
+
+			if ( ! is_a( $order, 'WC_Order' ) ) {
+				return array();
+			}
+
+			$label_tracking = $order->get_meta( '_pr_shipment_dhl_label_tracking' );
+
+			return is_array( $label_tracking ) ? $label_tracking : array();
 		}
 
 		/**

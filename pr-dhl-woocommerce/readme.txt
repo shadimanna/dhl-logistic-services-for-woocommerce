@@ -79,6 +79,7 @@ More detailed instructions on how to set up your store and configure it are cons
 * Drop old WooCommerce versions support.
 * DHL Paket: Fix tracking link in "Completed Order" emails.
 * DHL Paket: Fixed automatic label creation failure for international shipments on status change.
+* Fix WooCommerce emails customizer plugins compatibility.
 
 = 3.7.8 =
 * DHL Paket: Add DHL Kleinpaket product.
