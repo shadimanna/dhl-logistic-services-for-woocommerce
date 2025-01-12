@@ -776,6 +776,11 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	protected function get_tracking_link( $order_id ) {
 		// Get the item barcode
 		$order   = wc_get_order( $order_id );
+
+	  if ( ! is_a( $order, 'WC_Order' ) ) {
+		  return array();
+	  }
+
 		$barcode = $order->get_meta( 'pr_dhl_dp_item_barcode' );
 		if ( empty( $barcode ) ) {
 			return '';
