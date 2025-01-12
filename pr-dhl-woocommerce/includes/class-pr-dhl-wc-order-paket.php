@@ -988,7 +988,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 
 			$status_setting = str_replace( 'wc-', '', $this->shipping_dhl_settings['dhl_create_label_on_status'] );
 			if ( $status_setting == $status_to ) {
-				$this->process_bulk_actions( 'pr_dhl_create_labels', array( $order_id ), 1 );
+				$this->process_bulk_actions( 'pr_dhl_create_labels', array( $order_id ) );
 			}
 		}
 
