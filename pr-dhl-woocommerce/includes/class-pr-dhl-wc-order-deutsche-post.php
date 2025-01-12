@@ -1,7 +1,7 @@
 <?php
 use PR\DHL\Utils\API_Utils;
 
-if ( ! defined( 'ABSPATH' ) || class_exists( 'PR_DHL_WC_Order_Ecomm', false ) ) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 

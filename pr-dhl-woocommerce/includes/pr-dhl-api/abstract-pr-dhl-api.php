@@ -17,18 +17,6 @@ abstract class PR_DHL_API {
 		return false;
 	}
 
-	public function is_dhl_ecs() {
-		return false;
-	}
-
-	public function is_dhl_ecs_asia() {
-		return false;
-	}
-
-	public function is_dhl_ecomm() {
-		return false;
-	}
-
 	public function is_dhl_deutsche_post() {
 		return false;
 	}
