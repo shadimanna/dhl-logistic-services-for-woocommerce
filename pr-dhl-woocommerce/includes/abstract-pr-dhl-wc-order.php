@@ -754,32 +754,13 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 			$additional_fees = 0;
 			if ( count( $order->get_fees() ) > 0 ) {
 				foreach ( $order->get_fees() as $fee ) {
-
-					if ( defined( 'WOOCOMMERCE_VERSION' ) && version_compare( WOOCOMMERCE_VERSION, '3.0.0', '>=' ) ) {
-
-						$additional_fees += floatval( $fee->get_total() );
-
-					} else {
-
-						$additional_fees += floatval( $fee['line_total'] );
-
-					}
+					$additional_fees += floatval( $fee->get_total() );
 				}
 			}
 
 			$args['order_details']['additional_fee'] = $additional_fees;
-
-			if ( defined( 'WOOCOMMERCE_VERSION' ) && version_compare( WOOCOMMERCE_VERSION, '3.0.0', '>=' ) ) {
-
-				$args['order_details']['shipping_fee'] = $order->get_shipping_total();
-
-			} else {
-
-				$args['order_details']['shipping_fee'] = $order->get_total_shipping();
-
-			}
-
-			$args['order_details']['total_value'] = $order->get_total();
+			$args['order_details']['shipping_fee']   = $order->get_shipping_total();
+			$args['order_details']['total_value']    = $order->get_total();
 
 			// Get address related information
 			$billing_address  = $order->get_address();
@@ -949,30 +930,19 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		}
 
 		protected function is_cod_payment_method( $order_id ) {
-			$is_code = false;
-			$order   = wc_get_order( $order_id );
-			// WC 3.0 comaptibilty
-			if ( defined( 'WOOCOMMERCE_VERSION' ) && version_compare( WOOCOMMERCE_VERSION, '3.0', '>=' ) ) {
-				$payment_method = $order->get_payment_method();
-				if ( $payment_method == 'cod' ) {
-					$is_code = true;
-				}
-			} elseif ( isset( $order->payment_method ) && ( $order->payment_method == 'cod' ) ) {
-					$is_code = true;
+			$order          = wc_get_order( $order_id );
+			$payment_method = $order->get_payment_method();
+
+			if ( $payment_method == 'cod' ) {
+				return true;
 			}
 
-			return $is_code;
+			return false;
 		}
 
 		protected function get_wc_currency( $order_id ) {
 			$order = wc_get_order( $order_id );
-			// WC 3.0 comaptibilty
-			if ( defined( 'WOOCOMMERCE_VERSION' ) && version_compare( WOOCOMMERCE_VERSION, '3.0', '>=' ) ) {
-				$order_currency = $order->get_currency();
-			} else {
-				$order_currency = $order->get_order_currency();
-			}
-			return $order_currency;
+			return $order->get_currency();
 		}
 
 		/**

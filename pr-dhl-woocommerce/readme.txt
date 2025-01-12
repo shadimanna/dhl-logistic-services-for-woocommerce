@@ -1,13 +1,12 @@
 === DHL Shipping Germany for WooCommerce ===
 Contributors: DHL, shadim, utzfu
-Donate link:
 Tags: DPDHL, DHL, DHL eCommerce, DHL Paket Germany, Shipping
-Requires at least: 4.6
-Requires PHP: 5.6
-Tested up to: 6.7
-Stable tag: 3.7.8
+Stable tag: 3.8.0
 Requires Plugins: woocommerce
-WC requires at least: 3.0
+Requires PHP: 7.4
+Requires at least: 6.5
+Tested up to: 6.7
+WC requires at least: 9.3
 WC tested up to: 9.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -29,8 +28,8 @@ The following DHL services are no longer supported by this plugin:
 
 == Features ==
 
-1. NEW: Ship your orders with **DHL Warenpost International** in Germany.
-2. Fast and easy **label creation** of your national and international orders with DHL products such as DHL Paket, Warenpost, DHL Paket International and Warenpost International
+1. NEW: Ship your orders with **DHL Kleinpaket International** in Germany.
+2. Fast and easy **label creation** of your national and international orders with DHL products such as DHL Paket, Kleinpaket, Warenpost, DHL Paket International and Warenpost International
 3. Automatically receive a **tracking code** for each label.
 4. Use **additional delivery services** as e.g. the visual check of age available via the API of DHL Paket or Cash on delivery
 5. Offer **Preferred Delivery Options** to your customers via “Wunschzustellung”. The customer has the opportunity to select a specific date for his delivery or an alternative delivery location e.g. a drop-off location or his preferred neighbour.
@@ -76,7 +75,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
-= 3.7.9 =
+= 3.8.0 =
+* Drop old WooCommerce versions support.
+* DHL Paket: Fix tracking link in "Completed Order" emails.
 * DHL Paket: Fixed automatic label creation failure for international shipments on status change.
 
 = 3.7.8 =
