@@ -76,6 +76,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 3.7.9 =
+* DHL Paket: Fixed automatic label creation failure for international shipments on status change.
+
 = 3.7.8 =
 * DHL Paket: Add DHL Kleinpaket product.
 
