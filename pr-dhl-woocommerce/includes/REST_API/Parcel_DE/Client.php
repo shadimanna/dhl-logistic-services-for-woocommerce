@@ -464,7 +464,7 @@ class Client extends API_Client {
 		foreach ( $response->body->items as $item ) {
 			$errors_list = $this->get_item_error_message( $item );
 			foreach ( $errors_list as $key => $list ) {
-				if ( ! is_array( $multiple_errors_list[ $key ] ) ) {
+				if ( ! isset( $multiple_errors_list[ $key ] ) ) {
 					$multiple_errors_list[ $key ] = array();
 				}
 
@@ -498,8 +498,7 @@ class Client extends API_Client {
 		}
 
 		foreach ( $item->validationMessages as $message ) {
-
-			if ( ! is_array( $multiple_errors_list[ $message->validationState ] ) ) {
+			if ( ! isset( $multiple_errors_list[ $message->validationState ] ) ) {
 				$multiple_errors_list[ $message->validationState ] = array();
 			}
 
