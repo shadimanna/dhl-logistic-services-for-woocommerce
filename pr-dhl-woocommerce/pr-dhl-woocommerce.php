@@ -181,13 +181,13 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		 */
 		public function includes() {
 			// Auto loader class
-			include_once 'includes/class-pr-dhl-autoloader.php';
+			include_once PR_DHL_PLUGIN_DIR_PATH . '/includes/class-pr-dhl-autoloader.php';
 			// Load abstract classes
-			include_once 'includes/abstract-pr-dhl-wc-order.php';
-			include_once 'includes/abstract-pr-dhl-wc-product.php';
+			include_once PR_DHL_PLUGIN_DIR_PATH . '/includes/abstract-pr-dhl-wc-order.php';
+			include_once PR_DHL_PLUGIN_DIR_PATH . '/includes/abstract-pr-dhl-wc-product.php';
 
 			// Composer autoloader
-			include_once 'vendor/autoload.php';
+			include_once PR_DHL_PLUGIN_DIR_PATH . '/vendor/autoload.php';
 		}
 
 		/**
