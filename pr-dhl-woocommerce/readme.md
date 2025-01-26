@@ -75,6 +75,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 3.8.1 =
+* DHL Paket: Pickup request popup when HPOS enabled.
+
 = 3.8.0 =
 * Drop old WooCommerce versions support.
 * DHL Paket: Fix tracking link in "Completed Order" emails.
