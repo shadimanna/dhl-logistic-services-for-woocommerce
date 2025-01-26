@@ -75,6 +75,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 3.8.1 =
+* Fix: PHP fatal error related to class loading conflicts in environments with multiple active autoloaders.
+
 = 3.8.0 =
 * Drop old WooCommerce versions support.
 * DHL Paket: Fix tracking link in "Completed Order" emails.
