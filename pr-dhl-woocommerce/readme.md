@@ -77,6 +77,7 @@ More detailed instructions on how to set up your store and configure it are cons
 
 = 3.8.1 =
 * Fix: PHP fatal error related to class loading conflicts in environments with multiple active autoloaders.
+* DHL Paket: Pickup request popup when HPOS enabled.
 
 = 3.8.0 =
 * Drop old WooCommerce versions support.
