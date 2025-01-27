@@ -1,13 +1,13 @@
 === DHL Shipping Germany for WooCommerce ===
 Contributors: DHL, shadim, utzfu
 Tags: DPDHL, DHL, DHL eCommerce, DHL Paket Germany, Shipping
-Stable tag: 3.8.0
+Stable tag: 3.8.1
 Requires Plugins: woocommerce
 Requires PHP: 7.4
 Requires at least: 6.5
 Tested up to: 6.7
-WC requires at least: 9.3
-WC tested up to: 9.5
+WC requires at least: 9.4
+WC tested up to: 9.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -76,6 +76,7 @@ More detailed instructions on how to set up your store and configure it are cons
 == Changelog ==
 
 = 3.8.1 =
+* Fix: PHP fatal error related to class loading conflicts in environments with multiple active autoloaders.
 * DHL Paket: Pickup request popup when HPOS enabled.
 
 = 3.8.0 =
