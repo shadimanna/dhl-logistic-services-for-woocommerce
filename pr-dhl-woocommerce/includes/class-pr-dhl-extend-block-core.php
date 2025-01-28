@@ -93,16 +93,6 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 					),
 				),
 			);
-			woocommerce_register_additional_checkout_field(
-				array(
-					'id'          => 'pr-dhl/drop_off',
-					'label'       => 'Drop off points',
-					'location'    => 'address',
-					'required'      => false,
-					'type'        => 'select',
-					'options'     => $points
-				)
-			);
 		}
 
 		/**

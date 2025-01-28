@@ -167,19 +167,6 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 					'postcode'            	  => array( 'priority' => 7 ),
 					'shipping_pr_dhl/postnum' => array( 'priority' => 8 ),
 				);
-			} else {
-				// Old checkout configuration
-				$fields_to_order = array(
-					'pr-dhl/address_type' 	  => array( 'priority' => 1 ),
-					'pr-dhl/drop_off' 		  => array( 'priority' => 2 ),
-					'first_name'   			  => array( 'priority' => 3 ),
-					'last_name'    			  => array( 'priority' => 4 ),
-					'company'      			  => array( 'priority' => 5 ),
-					'country'      			  => array( 'priority' => 6 ),
-					'postcode'            	  => array( 'priority' => 7 ),
-					'shipping_pr_dhl/postnum' => array( 'priority' => 8 ),
-					'city'         			  => array( 'priority' => 9 ),
-				);
 			}
 
 			foreach ( $fields_to_order as $field_key => $field ) {
@@ -188,6 +175,18 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 				}
 			}
 
+			/**
+			 * Hide extra fields from the other countries .
+			 */
+			$countries_codes = array_keys( WC()->countries->get_countries() );
+			foreach ( $countries_codes as $country_code ) {
+				if ( 'DE' !== $country_code ) {
+					$checkout_fields[ $country_code ]['pr-dhl/address_type']['hidden']   = true;
+					$checkout_fields[ $country_code ]['pr-dhl/address_type']['required'] = false;
+					$checkout_fields[ $country_code ]['pr-dhl/postnum']['hidden']   = true;
+					$checkout_fields[ $country_code ]['pr-dhl/postnum']['required'] = false;
+				}
+			}
 			return $checkout_fields;
 		}
 
