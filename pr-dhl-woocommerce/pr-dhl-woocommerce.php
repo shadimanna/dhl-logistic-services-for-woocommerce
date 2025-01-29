@@ -9,11 +9,13 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
- * Version: 3.7.6
- * Tested up to: 6.7
+ * Version: 3.8.1
  * Requires Plugins: woocommerce
- * WC requires at least: 3.0
- * WC tested up to: 9.3
+ * Requires PHP: 7.4
+ * Requires at least: 6.5
+ * Tested up to: 6.7
+ * WC requires at least: 9.4
+ * WC tested up to: 9.6
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +41,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 	class PR_DHL_WC {
 
-		private $version = '3.7.6';
+		private $version = '3.8.1';
 
 		/**
 		 * Instance to call certain functions globally within the plugin
@@ -75,13 +77,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		 * @var PR_DHL_WC_Product_Paket_Editor | PR_DHL_WC_Product_Deutsche_Post_Editor
 		 */
 		public $product_editor = null;
-
-		/**
-		 * DHL Shipping Notice for user optin
-		 *
-		 * @var PR_DHL_WC_Notice
-		 */
-		protected $shipping_dhl_notice = null;
 
 		/**
 		 * DHL Shipping DHL Parcel (Legacy) notice
@@ -164,15 +159,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			$this->define( 'PR_DHL_BUTTON_TEST_CONNECTION', esc_html__( 'Test Connection', 'dhl-for-woocommerce' ) );
 			$this->define( 'PR_DHL_BUTTON_MY_ACCOUNT', esc_html__( 'Get Account Settings', 'dhl-for-woocommerce' ) );
 
-			// DHL eCommerce
-			$this->define( 'PR_DHL_REST_AUTH_URL', 'https://api.dhlecommerce.com' );
-			$this->define( 'PR_DHL_REST_AUTH_URL_QA', 'https://api-qa.dhlecommerce.com' );
-			$this->define( 'PR_DHL_ECOMM_TRACKING_URL', 'https://webtrack.dhlglobalmail.com/?trackingnumber=' );
-
-			// DHL eCS Asia tracking link. Sandbox => https://preprod2.dhlecommerce.dhl.com/track/?ref=
-			$this->define( 'PR_DHL_ECS_ASIA_SANDBOX_TRACKING_URL', 'https://sandbox.dhlecommerce.dhl.com/track/?locale=en&ref=' );
-			$this->define( 'PR_DHL_ECS_ASIA_TRACKING_URL', 'https://ecommerceportal.dhl.com/track/?ref=' );
-
 			// DHL Paket
 			$this->define( 'PR_DHL_CIG_USR', 'dhl_woocommerce_plugin_2_2' );
 			$this->define( 'PR_DHL_CIG_PWD', 'egOcb8buCPuqxFDf9fyOdWz6z7pKAQ' );
@@ -204,13 +190,13 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		 */
 		public function includes() {
 			// Auto loader class
-			include_once 'includes/class-pr-dhl-autoloader.php';
+			include_once PR_DHL_PLUGIN_DIR_PATH . '/includes/class-pr-dhl-autoloader.php';
 			// Load abstract classes
-			include_once 'includes/abstract-pr-dhl-wc-order.php';
-			include_once 'includes/abstract-pr-dhl-wc-product.php';
+			include_once PR_DHL_PLUGIN_DIR_PATH . '/includes/abstract-pr-dhl-wc-order.php';
+			include_once PR_DHL_PLUGIN_DIR_PATH . '/includes/abstract-pr-dhl-wc-product.php';
 
 			// Composer autoloader
-			include_once 'vendor/autoload.php';
+			include_once PR_DHL_PLUGIN_DIR_PATH . '/vendor/autoload.php';
 		}
 
 		/**
@@ -252,8 +238,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			// Test connection
 			add_action( 'wp_ajax_test_dhl_connection', array( $this, 'test_dhl_connection_callback' ) );
 			add_action( 'wp_ajax_dhl_get_myaccount', array( $this, 'dhl_get_myaccount_callback' ) );
-			// Add state field for 'VN'
-			add_filter( 'woocommerce_states', array( $this, 'add_vn_states' ) );
 
 			add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ) );
 
@@ -270,12 +254,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 					if ( $dhl_obj->is_dhl_paket() ) {
 						$this->shipping_dhl_order    = new PR_DHL_WC_Order_Paket();
 						$this->shipping_dhl_frontend = new PR_DHL_Front_End_Paket();
-					} elseif ( $dhl_obj->is_dhl_ecs_asia() ) {
-						$this->shipping_dhl_order = new PR_DHL_WC_Order_eCS_Asia();
-						// $this->shipping_dhl_notice = new PR_DHL_WC_Notice();
-					} elseif ( $dhl_obj->is_dhl_ecomm() ) {
-						$this->shipping_dhl_order = new PR_DHL_WC_Order_Ecomm();
-						// $this->shipping_dhl_notice = new PR_DHL_WC_Notice();
 					} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
 						$this->shipping_dhl_order = new PR_DHL_WC_Order_Deutsche_Post();
 					}
@@ -301,10 +279,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 					if ( $dhl_obj->is_dhl_paket() ) {
 						$this->shipping_dhl_product = new PR_DHL_WC_Product_Paket();
-					} elseif ( $dhl_obj->is_dhl_ecs_asia() ) {
-						$this->shipping_dhl_product = new PR_DHL_WC_Product_eCS_Asia();
-					} elseif ( $dhl_obj->is_dhl_ecomm() ) {
-						$this->shipping_dhl_product = new PR_DHL_WC_Product_Ecomm();
 					} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
 						$this->shipping_dhl_product = new PR_DHL_WC_Product_Deutsche_Post();
 					}
@@ -465,15 +439,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		}
 
 		/**
-		 * Include required core files used in admin and on the frontend.
-		 */
-		/*
-		public function include_shipping() {
-			// Auto loader class
-			include_once( 'includes/class-pr-dhl-ecomm-wc-method.php' );
-		}*/
-
-		/**
 		 * Define constant if not already set.
 		 *
 		 * @param string $name
@@ -496,12 +461,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 				if ( $dhl_obj->is_dhl_paket() ) {
 					$pr_dhl_ship_meth                = 'PR_DHL_WC_Method_Paket';
 					$shipping_method['pr_dhl_paket'] = $pr_dhl_ship_meth;
-				} elseif ( $dhl_obj->is_dhl_ecs_asia() ) {
-					$pr_dhl_ship_meth              = 'PR_DHL_WC_Method_eCS_Asia';
-					$shipping_method['pr_dhl_ecs'] = $pr_dhl_ship_meth;
-				} elseif ( $dhl_obj->is_dhl_ecomm() ) {
-					$pr_dhl_ship_meth                = 'PR_DHL_WC_Method_Ecomm';
-					$shipping_method['pr_dhl_ecomm'] = $pr_dhl_ship_meth;
 				} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
 					$pr_dhl_ship_meth             = 'PR_DHL_WC_Method_Deutsche_Post';
 					$shipping_method['pr_dhl_dp'] = $pr_dhl_ship_meth;
@@ -597,15 +556,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 					return $api_cred;
 				} elseif ( $dhl_obj->is_dhl_ecs_asia() ) {
 					return $dhl_obj->get_api_url();
-				} elseif ( $dhl_obj->is_dhl_ecomm() ) {
-					$shipping_dhl_settings = $this->get_shipping_dhl_settings();
-					$dhl_sandbox           = isset( $shipping_dhl_settings['dhl_sandbox'] ) ? $shipping_dhl_settings['dhl_sandbox'] : '';
-
-					if ( $dhl_sandbox == 'yes' ) {
-						return PR_DHL_REST_AUTH_URL_QA;
-					} else {
-						return PR_DHL_REST_AUTH_URL;
-					}
 				} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
 					return $dhl_obj->get_api_url();
 				}
@@ -622,10 +572,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 				$dhl_obj = $this->get_dhl_factory();
 
 				if ( $dhl_obj->is_dhl_paket() ) {
-					$dhl_settings = $dhl_obj->get_settings();
-				} elseif ( $dhl_obj->is_dhl_ecomm() ) {
-					$dhl_settings = get_option( 'woocommerce_pr_dhl_ecomm_settings' );
-				} elseif ( $dhl_obj->is_dhl_ecs_asia() ) {
 					$dhl_settings = $dhl_obj->get_settings();
 				} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
 					$dhl_settings = $dhl_obj->get_settings();
@@ -650,9 +596,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 					$api_pwd  = $shipping_dhl_settings['dhl_api_pwd'];
 				} elseif ( $dhl_obj->is_dhl_ecs_asia() ) {
 					list( $api_user, $api_pwd ) = $dhl_obj->get_api_creds();
-				} elseif ( $dhl_obj->is_dhl_ecomm() ) {
-					$api_user = $shipping_dhl_settings['dhl_api_key'];
-					$api_pwd  = $shipping_dhl_settings['dhl_api_secret'];
 				} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
 					list( $api_user, $api_pwd ) = $dhl_obj->get_api_creds();
 				} else {
@@ -971,23 +914,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			}
 
 			return '';
-		}
-
-		public function add_vn_states( $states ) {
-			try {
-				$dhl_obj = $this->get_dhl_factory();
-
-				if ( $dhl_obj->is_dhl_ecomm() ) {
-					if ( empty( $states['VN'] ) ) {
-						include PR_DHL_PLUGIN_DIR_PATH . '/states/VN.php';
-					}
-				}
-			}
-			catch ( Exception $e ) {
-				// add_action( 'admin_notices', array( $this, 'environment_check' ) );
-			}
-
-			return $states;
 		}
 
 		public function set_account_details( $account_details, $dhl_obj ) {

@@ -975,17 +975,11 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			}
 
 			if ( isset( $this->shipping_dhl_settings['dhl_add_tracking_info_completed'] ) && ( $this->shipping_dhl_settings['dhl_add_tracking_info_completed'] == 'yes' ) ) {
-
-				if ( defined( 'WOOCOMMERCE_VERSION' ) && version_compare( WOOCOMMERCE_VERSION, '3.0', '>=' ) ) {
-					$order_id = $order->get_id();
-				} else {
-					$order_id = $order->id;
-				}
-
+				$order_id      = $order->get_id();
 				$tracking_note = $this->get_tracking_note( $order_id );
 
 				if ( ! empty( $tracking_note ) ) {
-					echo '<p>' . esc_html( $tracking_note ) . '</p>';
+					echo '<p>' . $tracking_note . '</p>';
 				}
 			}
 		}
@@ -994,7 +988,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 
 			$status_setting = str_replace( 'wc-', '', $this->shipping_dhl_settings['dhl_create_label_on_status'] );
 			if ( $status_setting == $status_to ) {
-				$this->process_bulk_actions( 'pr_dhl_create_labels', array( $order_id ), 1 );
+				$this->process_bulk_actions( 'pr_dhl_create_labels', array( $order_id ) );
 			}
 		}
 
@@ -1005,6 +999,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			}
 
 			$tracking_number   = $label_tracking_info['tracking_number'];
+		  $tracking_link = array();
 
 			if ( is_array( $tracking_number ) ) {
 				foreach ( $tracking_number as $key => $value ) {
@@ -1256,23 +1251,29 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			return $redirect_url;
 		}
 
-		public function enqueue_order_list_assets() {
-			global $pagenow, $typenow;
+	  public function enqueue_order_list_assets() {
+		  global $typenow, $pagenow, $current_screen;
 
-			if ( 'shop_order' === $typenow && 'edit.php' === $pagenow ) {
-				// Enqueue the assets
-				wp_enqueue_style( 'thickbox' );
-				wp_enqueue_script( 'thickbox' );
+		  $is_orders_list = API_Utils::is_HPOS()
+			  ? ( wc_get_page_screen_id( 'shop-order' ) === $current_screen->id && 'admin.php' === $pagenow )
+			  : ( 'shop_order' === $typenow && 'edit.php' === $pagenow );
 
-				wp_enqueue_script(
-					'wc-shipment-dhl-paket-order-bulk-js',
-					PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-paket-order-bulk.js',
-					array(),
-					PR_DHL_VERSION,
-					true
-				);
-			}
-		}
+		  if ( ! $is_orders_list ) {
+			  return;
+		  }
+
+		  // Enqueue the assets
+		  wp_enqueue_style( 'thickbox' );
+		  wp_enqueue_script( 'thickbox' );
+
+		  wp_enqueue_script(
+			  'wc-shipment-dhl-paket-order-bulk-js',
+			  PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-paket-order-bulk.js',
+			  array(),
+			  PR_DHL_VERSION,
+			  true
+		  );
+	  }
 
 		public function bulk_actions_fields_pickup_request() {
 			global $typenow, $pagenow, $current_screen;

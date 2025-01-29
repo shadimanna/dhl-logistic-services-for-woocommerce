@@ -204,14 +204,8 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 		}
 
 		protected function validate_is_german_customer() {
-			// WC 3.0 comaptibilty
-			if ( defined( 'WOOCOMMERCE_VERSION' ) && version_compare( WOOCOMMERCE_VERSION, '3.0', '>=' ) ) {
-				$customer_country = WC()->customer->get_billing_country();
-			} else {
-				$customer_country = WC()->customer->get_country();
-			}
-
-			$base_country_code = PR_DHL()->get_base_country();
+			$customer_country 	= WC()->customer->get_billing_country();
+			$base_country_code 	= PR_DHL()->get_base_country();
 
 			$display_preferred = false;
 			// Preferred options are only for Germany customers
@@ -484,14 +478,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 		}
 
 		public function display_dhl_preferred_free_services_values( $total_rows, $order ) {
-
-			// WC 3.0 comaptibilty
-			if ( defined( 'WOOCOMMERCE_VERSION' ) && version_compare( WOOCOMMERCE_VERSION, '3.0', '>=' ) ) {
-				$order_id = $order->get_id();
-			} else {
-				$order_id = $order->id;
-			}
-
+			$order_id          = $order->get_id();
 			$dhl_label_options = PR_DHL()->get_pr_dhl_wc_order()->get_dhl_label_items( $order_id );
 
 			if ( isset( WC()->session ) ) {
@@ -922,13 +909,6 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 		}
 
 		public function display_post_number( $address, $order ) {
-			// WC 3.0 comaptibilty
-			if ( defined( 'WOOCOMMERCE_VERSION' ) && version_compare( WOOCOMMERCE_VERSION, '3.0', '>=' ) ) {
-				$order_id = $order->get_id();
-			} else {
-				$order_id = $order->id;
-			}
-
 			$pos_ps = PR_DHL()->is_packstation( $address['address_1'] );
 			$pos_rs = PR_DHL()->is_parcelshop( $address['address_1'] );
 			$pos_po = PR_DHL()->is_post_office( $address['address_1'] );
