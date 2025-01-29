@@ -279,8 +279,10 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 					if ( $dhl_obj->is_dhl_paket() ) {
 						$this->shipping_dhl_product = new PR_DHL_WC_Product_Paket();
+						$this->product_editor = new PR_DHL_WC_Product_Paket_Editor();
 					} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
 						$this->shipping_dhl_product = new PR_DHL_WC_Product_Deutsche_Post();
+						$this->product_editor = new PR_DHL_WC_Product_Deutsche_Post_Editor();
 					}
 				}
 				catch ( Exception $e ) {
@@ -289,28 +291,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			}
 
 			return $this->shipping_dhl_product;
-		}
-
-		/**
-		 * @return void
-		 */
-		public function get_product_editor() {
-			if ( ! is_null( $this->product_editor ) ) {
-				return;
-			}
-
-			try {
-				$dhl_obj = $this->get_dhl_factory();
-			}
-			catch ( Exception $e ) {
-				return;
-			}
-
-			if ( $dhl_obj->is_dhl_paket() ) {
-				$this->product_editor = new PR_DHL_WC_Product_Paket_Editor();
-			} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
-				$this->product_editor = new PR_DHL_WC_Product_Deutsche_Post_Editor();
-			}
 		}
 
 		/**
