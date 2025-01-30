@@ -14,24 +14,11 @@ use Automattic\WooCommerce\Admin\BlockTemplates\BlockInterface;
 /**
  * Product editor handler.
  */
-if ( ! class_exists( 'PR_DHL_WC_Product_Deutsche_Post_Editor' ) ) :
+if ( ! class_exists( 'PR_DHL_WC_Product_Editor_Deutsche_Post' ) ) :
 
-class PR_DHL_WC_Product_Deutsche_Post_Editor {
+class PR_DHL_WC_Product_Editor_Deutsche_Post extends PR_DHL_WC_Product_Editor {
 
-    /**
-	 * Class constructor.
-	 */
-	public function __construct() {
-		add_action( 'woocommerce_block_template_area_product-form_after_add_block_product-shipping-dimensions', array( $this, 'add_shipping_blocks' ) );
-		add_action( 'woocommerce_block_template_area_product-form_after_add_block_product-variation-shipping-dimensions', array( $this, 'add_shipping_blocks' ) );
-	}
-
-	/**
-	 * Add custom blocks to the product editor shipping section.
-	 *
-	 * @param BlockInterface $shipping_dimensions_block The shipping dimensions block.
-	 */
-	public function add_shipping_blocks( BlockInterface $shipping_dimensions_block ) {
+	public function add_shipping_blocks( BlockInterface $shipping_dimensions_block ): void {
 		if ( ! method_exists( $shipping_dimensions_block, 'get_parent' ) ) {
 			return;
 		}

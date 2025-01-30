@@ -194,6 +194,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			// Load abstract classes
 			include_once PR_DHL_PLUGIN_DIR_PATH . '/includes/abstract-pr-dhl-wc-order.php';
 			include_once PR_DHL_PLUGIN_DIR_PATH . '/includes/abstract-pr-dhl-wc-product.php';
+			include_once PR_DHL_PLUGIN_DIR_PATH . 'includes/abstract-pr-dhl-wc-product-editor.php';
 
 			// Composer autoloader
 			include_once PR_DHL_PLUGIN_DIR_PATH . '/vendor/autoload.php';
@@ -224,7 +225,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 			$this->get_pr_dhl_wc_product();
 			$this->get_pr_dhl_wc_order();
-			$this->get_product_editor();
 		}
 
 		public function init_hooks() {
@@ -279,10 +279,10 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 					if ( $dhl_obj->is_dhl_paket() ) {
 						$this->shipping_dhl_product = new PR_DHL_WC_Product_Paket();
-						$this->product_editor = new PR_DHL_WC_Product_Paket_Editor();
+						$this->product_editor = new PR_DHL_WC_Product_Editor_Paket();
 					} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
 						$this->shipping_dhl_product = new PR_DHL_WC_Product_Deutsche_Post();
-						$this->product_editor = new PR_DHL_WC_Product_Deutsche_Post_Editor();
+						$this->product_editor = new PR_DHL_WC_Product_Editor_Deutsche_Post();
 					}
 				}
 				catch ( Exception $e ) {

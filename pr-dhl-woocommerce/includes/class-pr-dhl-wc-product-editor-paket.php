@@ -16,22 +16,14 @@ use Automattic\WooCommerce\Admin\BlockTemplates\BlockInterface;
  */
 if ( ! class_exists( 'PR_DHL_WC_Product_Paket_Editor' ) ) :
 
-class PR_DHL_WC_Product_Paket_Editor {
-
-    /**
-	 * Class constructor.
-	 */
-	public function __construct() {
-		add_action( 'woocommerce_block_template_area_product-form_after_add_block_product-shipping-dimensions', array( $this, 'add_shipping_blocks' ) );
-		add_action( 'woocommerce_block_template_area_product-form_after_add_block_product-variation-shipping-dimensions', array( $this, 'add_shipping_blocks' ) );
-	}
+class PR_DHL_WC_Product_Editor_Paket extends PR_DHL_WC_Product_Editor {
 
 	/**
 	 * Add custom blocks to the product editor shipping section.
 	 *
 	 * @param BlockInterface $shipping_dimensions_block The shipping dimensions block.
 	 */
-	public function add_shipping_blocks( BlockInterface $shipping_dimensions_block ) {
+	public function add_shipping_blocks( BlockInterface $shipping_dimensions_block ): void {
 		if ( ! method_exists( $shipping_dimensions_block, 'get_parent' ) ) {
 			return;
 		}
