@@ -221,7 +221,7 @@ jQuery(document).ready(function($) {
               if( 'osm' === pr_dhl_checkout_frontend.map_type ){
                 wc_checkout_dhl_parcelfinder.populateOsmMap();
               } else {
-                wc_checkout_dhl_parcelfinder.populateMap();
+                wc_checkout_dhl_parcelfinder.populateGoogleMap();
               }
             }
             // $( document.body ).trigger( 'update_checkout', { update_shipping_method: false } );
@@ -327,7 +327,7 @@ jQuery(document).ready(function($) {
         }
       });
     },
-    populateMap: function() {
+    populateGoogleMap: function() {
       if( ! wc_checkout_dhl_parcelfinder.parcelShops ) {
         return;
       }
