@@ -174,13 +174,13 @@ class PR_DHL_Front_End_Paket {
 			$frontend_data['cod_enabled'] = false;
 		}
 
-		if( $this->is_preferredservice_enabled() || $this->is_parcelfinder_enabled() ) {
+		if ( $this->is_preferredservice_enabled() || $this->is_parcelfinder_enabled() ) {
 			// Register and load our styles and scripts
 			$frontend_data['map_type'] = $this->get_map_type();
-			
+
 			wp_register_script( 'pr-dhl-checkout-frontend', PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-checkout-frontend.js', array( 'jquery', 'wc-checkout' ), PR_DHL_VERSION, true );
-			
-			wp_localize_script( 'pr-dhl-checkout-frontend', 'pr_dhl_checkout_frontend', $frontend_data);
+
+			wp_localize_script( 'pr-dhl-checkout-frontend', 'pr_dhl_checkout_frontend', $frontend_data );
 
 			wp_enqueue_script( 'pr-dhl-checkout-frontend' );
 
