@@ -591,168 +591,177 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 			// IF USING PREFERRED OPTIONS AND COD IS ENABLED DISPALY A WARNING MESSAGE OR DON'T ALLOW IT TO BE USED?
 			if ( $base_country_code == 'DE' ) {
 
-				$this->form_fields += array(
-					'dhl_preferred'               => array(
-						'title'       => esc_html__( 'Preferred Service', 'dhl-for-woocommerce' ),
-						'type'        => 'title',
-						'description' => esc_html__( 'Preferred service options.', 'dhl-for-woocommerce' ),
-					),
-					'dhl_closest_drop_point'      => array(
-						'title'       => esc_html__( 'Closest Drop Point', 'dhl-for-woocommerce' ),
-						'type'        => 'checkbox',
-						'label'       => esc_html__( 'Enable Closest Drop Point', 'dhl-for-woocommerce' ),
-						'description' => esc_html__( 'Enabling this will display a front-end option for the user to select delivery option (Home address or CDP delivery).', 'dhl-for-woocommerce' ),
-						'desc_tip'    => true,
-					),
-					'dhl_preferred_day'           => array(
-						'title'       => esc_html__( 'Delivery Day', 'dhl-for-woocommerce' ),
-						'type'        => 'checkbox',
-						'label'       => esc_html__( 'Enable Delivery Day', 'dhl-for-woocommerce' ),
-						'description' => esc_html__( 'Enabling this will display a front-end option for the user to select their preferred day of delivery.', 'dhl-for-woocommerce' ),
-						'desc_tip'    => true,
-					),
-					'dhl_preferred_day_cost'      => array(
-						'title'       => esc_html__( 'Delivery Day Price', 'dhl-for-woocommerce' ),
-						'type'        => 'text',
-						'description' => esc_html__( 'Insert gross value as surcharge for the preferred day. Insert 0 to offer service for free.', 'dhl-for-woocommerce' ),
-						'desc_tip'    => true,
-						'default'     => '1.2',
-						'class'       => 'wc_input_decimal', // adds JS to validate input is in price format
-					),
-					'dhl_preferred_day_cutoff'    => array(
-						'title'       => esc_html__( 'Cut Off Time', 'dhl-for-woocommerce' ),
-						'type'        => 'time',
-						'description' => esc_html__( 'The cut-off time is the latest possible order time up to which the minimum preferred day (day of order + 2 working days) can be guaranteed. As soon as the time is exceeded, the earliest preferred day displayed in the frontend will be shifted to one day later (day of order + 3 working days).', 'dhl-for-woocommerce' ),
-						'desc_tip'    => true,
-						'default'     => '12:00',
-					),
-					'dhl_preferred_exclusion_mon' => array(
-						'title'       => esc_html__( 'Exclusion of transfer days', 'dhl-for-woocommerce' ),
-						'type'        => 'checkbox',
-						'label'       => esc_html__( 'Monday', 'dhl-for-woocommerce' ),
-						'description' => esc_html__( 'Exclude days to transfer packages to DHL.', 'dhl-for-woocommerce' ),
-						'desc_tip'    => true,
-					),
-					'dhl_preferred_exclusion_tue' => array(
-						'type'  => 'checkbox',
-						'label' => esc_html__( 'Tuesday', 'dhl-for-woocommerce' ),
-					),
-					'dhl_preferred_exclusion_wed' => array(
-						'type'  => 'checkbox',
-						'label' => esc_html__( 'Wednesday', 'dhl-for-woocommerce' ),
-					),
-					'dhl_preferred_exclusion_thu' => array(
-						'type'  => 'checkbox',
-						'label' => esc_html__( 'Thursday', 'dhl-for-woocommerce' ),
-					),
-					'dhl_preferred_exclusion_fri' => array(
-						'type'  => 'checkbox',
-						'label' => esc_html__( 'Friday', 'dhl-for-woocommerce' ),
-					),
-					'dhl_preferred_exclusion_sat' => array(
-						'type'  => 'checkbox',
-						'label' => esc_html__( 'Saturday', 'dhl-for-woocommerce' ),
-					),
-					'dhl_preferred_location'      => array(
-						'title'       => esc_html__( 'Preferred Location', 'dhl-for-woocommerce' ),
-						'type'        => 'checkbox',
-						'label'       => esc_html__( 'Enable Preferred Location', 'dhl-for-woocommerce' ),
-						'description' => esc_html__( 'Enabling this will display a front-end option for the user to select their preferred location.', 'dhl-for-woocommerce' ),
-						'desc_tip'    => true,
-					),
-					'dhl_preferred_neighbour'     => array(
-						'title'       => esc_html__( 'Preferred Neighbour', 'dhl-for-woocommerce' ),
-						'type'        => 'checkbox',
-						'label'       => esc_html__( 'Enable Preferred Neighbour', 'dhl-for-woocommerce' ),
-						'description' => esc_html__( 'Enabling this will display a front-end option for the user to select their preferred neighbour.', 'dhl-for-woocommerce' ),
-						'desc_tip'    => true,
-					),
-					'dhl_shipping_methods'        => array(
-						'title'       => esc_html__( 'Shipping Methods', 'dhl-for-woocommerce' ),
-						'type'        => 'multiselect',
-						'description' => esc_html__( 'Select the Shipping Methods to display the enabled DHL Paket preferred services and Location Finder below. You can press "ctrl" to select multiple options or click on a selected option to deselect it.', 'dhl-for-woocommerce' ),
-						'desc_tip'    => true,
-						'options'     => $wc_shipping_titles,
-						'class'       => 'wc-enhanced-select',
-					),
-					'dhl_payment_gateway'         => array(
-						'title'       => esc_html__( 'Exclude Payment Gateways', 'dhl-for-woocommerce' ),
-						'type'        => 'multiselect',
-						'default'     => 'cod',
-						'description' => esc_html__( 'Select the Payment Gateways to hide the enabled DHL Paket preferred services and Location Finder below. You can press "ctrl" to select multiple options or click on a selected option to deselect it.', 'dhl-for-woocommerce' ),
-						'desc_tip'    => true,
-						'options'     => array(),
-						'class'       => 'wc-enhanced-select',
-					),
-					'dhl_cod_payment_methods'     => array(
-						'title'       => esc_html__( 'COD Payment Gateways', 'dhl-for-woocommerce' ),
-						'type'        => 'multiselect',
-						'default'     => 'cod',
-						'description' => esc_html__( 'Select the Payment Gateways to use with DHL COD services. You can press "ctrl" to select multiple options or click on a selected option to deselect it.', 'dhl-for-woocommerce' ),
-						'desc_tip'    => true,
-						'options'     => array(),
-						'class'       => 'wc-enhanced-select',
-					),
-					'dhl_parcel_finder'           => array(
-						'title'       => esc_html__( 'Location Finder', 'dhl-for-woocommerce' ),
-						'type'        => 'title',
-						'description' => esc_html__( 'Please define the parameters for the display of dhl locations in the shop frontend.', 'dhl-for-woocommerce' ),
-					),
-					'dhl_display_packstation'     => array(
-						'title'       => esc_html__( 'Packstation', 'dhl-for-woocommerce' ),
-						'type'        => 'checkbox',
-						'label'       => esc_html__( 'Enable Packstation', 'dhl-for-woocommerce' ),
-						'description' => esc_html__( 'Enabling this will display Packstation locations on Google Maps when searching for drop off locations on the front-end.', 'dhl-for-woocommerce' ),
-						'desc_tip'    => true,
-					),
-					'dhl_display_parcelshop'      => array(
-						'title'       => esc_html__( 'Parcelshop', 'dhl-for-woocommerce' ),
-						'type'        => 'checkbox',
-						'label'       => esc_html__( 'Enable Parcelshop', 'dhl-for-woocommerce' ),
-						'description' => esc_html__( 'Enabling this will display Parcelshop locations on Google Maps when searching for drop off locations on the front-end.', 'dhl-for-woocommerce' ),
-						'desc_tip'    => true,
-					),
-					'dhl_display_post_office'     => array(
-						'title'       => esc_html__( 'Post Office', 'dhl-for-woocommerce' ),
-						'type'        => 'checkbox',
-						'label'       => esc_html__( 'Enable Post Office', 'dhl-for-woocommerce' ),
-						'description' => esc_html__( 'Enabling this will display Post Office locations on Google Maps when searching for drop off locations on the front-end.', 'dhl-for-woocommerce' ),
-						'desc_tip'    => true,
-					),
-					'dhl_display_google_maps'     => array(
-						'title'       => esc_html__( 'Google Maps', 'dhl-for-woocommerce' ),
-						'type'        => 'checkbox',
-						'label'       => esc_html__( 'Enable Google Maps', 'dhl-for-woocommerce' ),
-						'description' => esc_html__( 'Enabling this will display Google Maps on the front-end.', 'dhl-for-woocommerce' ),
-						'desc_tip'    => true,
-					),
-					'dhl_parcel_limit'            => array(
-						'title'             => esc_html__( 'Limit Results', 'dhl-for-woocommerce' ),
-						'type'              => 'number',
-						'description'       => esc_html__( 'Limit displayed results, from 1 to at most 50.', 'dhl-for-woocommerce' ),
-						'desc_tip'          => true,
-						'class'             => '',
-						'default'           => '20',
-						'custom_attributes' => array(
-							'min' => '1',
-							'max' => '50',
-						),
-					),
-					'dhl_google_maps_api_key'     => array(
-						'title'       => esc_html__( 'API Key', 'dhl-for-woocommerce' ),
-						'type'        => 'text',
-						/* Translators: %s represents a link to obtain a Google Maps API key. */
-						'description' => sprintf(
-							wp_kses(
-								__( 'The Google Maps API Key is necessary to display the DHL Locations on a Google map.<br/>Get a free Google Maps API key %1$s.', 'dhl-for-woocommerce' ),
-								array( 'br' => array() ) // Allow <br> tags
-							),
-							'<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank">' . esc_html__( 'here', 'dhl-for-woocommerce' ) . '</a>'
-						),
-						'desc_tip'    => false,
-						'class'       => '',
-					),
-				);
+		  $this->form_fields += array(
+			  'dhl_preferred'               => array(
+				  'title'       => esc_html__( 'Preferred Service', 'dhl-for-woocommerce' ),
+				  'type'        => 'title',
+				  'description' => esc_html__( 'Preferred service options.', 'dhl-for-woocommerce' ),
+			  ),
+			  'dhl_closest_drop_point'      => array(
+				  'title'       => esc_html__( 'Closest Drop Point', 'dhl-for-woocommerce' ),
+				  'type'        => 'checkbox',
+				  'label'       => esc_html__( 'Enable Closest Drop Point', 'dhl-for-woocommerce' ),
+				  'description' => esc_html__( 'Enabling this will display a front-end option for the user to select delivery option (Home address or CDP delivery).', 'dhl-for-woocommerce' ),
+				  'desc_tip'    => true,
+			  ),
+			  'dhl_preferred_day'           => array(
+				  'title'       => esc_html__( 'Delivery Day', 'dhl-for-woocommerce' ),
+				  'type'        => 'checkbox',
+				  'label'       => esc_html__( 'Enable Delivery Day', 'dhl-for-woocommerce' ),
+				  'description' => esc_html__( 'Enabling this will display a front-end option for the user to select their preferred day of delivery.', 'dhl-for-woocommerce' ),
+				  'desc_tip'    => true,
+			  ),
+			  'dhl_preferred_day_cost'      => array(
+				  'title'       => esc_html__( 'Delivery Day Price', 'dhl-for-woocommerce' ),
+				  'type'        => 'text',
+				  'description' => esc_html__( 'Insert gross value as surcharge for the preferred day. Insert 0 to offer service for free.', 'dhl-for-woocommerce' ),
+				  'desc_tip'    => true,
+				  'default'     => '1.2',
+				  'class'       => 'wc_input_decimal', // adds JS to validate input is in price format
+			  ),
+			  'dhl_preferred_day_cutoff'    => array(
+				  'title'       => esc_html__( 'Cut Off Time', 'dhl-for-woocommerce' ),
+				  'type'        => 'time',
+				  'description' => esc_html__( 'The cut-off time is the latest possible order time up to which the minimum preferred day (day of order + 2 working days) can be guaranteed. As soon as the time is exceeded, the earliest preferred day displayed in the frontend will be shifted to one day later (day of order + 3 working days).', 'dhl-for-woocommerce' ),
+				  'desc_tip'    => true,
+				  'default'     => '12:00',
+			  ),
+			  'dhl_preferred_exclusion_mon' => array(
+				  'title'       => esc_html__( 'Exclusion of transfer days', 'dhl-for-woocommerce' ),
+				  'type'        => 'checkbox',
+				  'label'       => esc_html__( 'Monday', 'dhl-for-woocommerce' ),
+				  'description' => esc_html__( 'Exclude days to transfer packages to DHL.', 'dhl-for-woocommerce' ),
+				  'desc_tip'    => true,
+			  ),
+			  'dhl_preferred_exclusion_tue' => array(
+				  'type'  => 'checkbox',
+				  'label' => esc_html__( 'Tuesday', 'dhl-for-woocommerce' ),
+			  ),
+			  'dhl_preferred_exclusion_wed' => array(
+				  'type'  => 'checkbox',
+				  'label' => esc_html__( 'Wednesday', 'dhl-for-woocommerce' ),
+			  ),
+			  'dhl_preferred_exclusion_thu' => array(
+				  'type'  => 'checkbox',
+				  'label' => esc_html__( 'Thursday', 'dhl-for-woocommerce' ),
+			  ),
+			  'dhl_preferred_exclusion_fri' => array(
+				  'type'  => 'checkbox',
+				  'label' => esc_html__( 'Friday', 'dhl-for-woocommerce' ),
+			  ),
+			  'dhl_preferred_exclusion_sat' => array(
+				  'type'  => 'checkbox',
+				  'label' => esc_html__( 'Saturday', 'dhl-for-woocommerce' ),
+			  ),
+			  'dhl_preferred_location'      => array(
+				  'title'       => esc_html__( 'Preferred Location', 'dhl-for-woocommerce' ),
+				  'type'        => 'checkbox',
+				  'label'       => esc_html__( 'Enable Preferred Location', 'dhl-for-woocommerce' ),
+				  'description' => esc_html__( 'Enabling this will display a front-end option for the user to select their preferred location.', 'dhl-for-woocommerce' ),
+				  'desc_tip'    => true,
+			  ),
+			  'dhl_preferred_neighbour'     => array(
+				  'title'       => esc_html__( 'Preferred Neighbour', 'dhl-for-woocommerce' ),
+				  'type'        => 'checkbox',
+				  'label'       => esc_html__( 'Enable Preferred Neighbour', 'dhl-for-woocommerce' ),
+				  'description' => esc_html__( 'Enabling this will display a front-end option for the user to select their preferred neighbour.', 'dhl-for-woocommerce' ),
+				  'desc_tip'    => true,
+			  ),
+			  'dhl_shipping_methods'        => array(
+				  'title'       => esc_html__( 'Shipping Methods', 'dhl-for-woocommerce' ),
+				  'type'        => 'multiselect',
+				  'description' => esc_html__( 'Select the Shipping Methods to display the enabled DHL Paket preferred services and Location Finder below. You can press "ctrl" to select multiple options or click on a selected option to deselect it.', 'dhl-for-woocommerce' ),
+				  'desc_tip'    => true,
+				  'options'     => $wc_shipping_titles,
+				  'class'       => 'wc-enhanced-select',
+			  ),
+			  'dhl_payment_gateway'         => array(
+				  'title'       => esc_html__( 'Exclude Payment Gateways', 'dhl-for-woocommerce' ),
+				  'type'        => 'multiselect',
+				  'default'     => 'cod',
+				  'description' => esc_html__( 'Select the Payment Gateways to hide the enabled DHL Paket preferred services and Location Finder below. You can press "ctrl" to select multiple options or click on a selected option to deselect it.', 'dhl-for-woocommerce' ),
+				  'desc_tip'    => true,
+				  'options'     => array(),
+				  'class'       => 'wc-enhanced-select',
+			  ),
+			  'dhl_cod_payment_methods'     => array(
+				  'title'       => esc_html__( 'COD Payment Gateways', 'dhl-for-woocommerce' ),
+				  'type'        => 'multiselect',
+				  'default'     => 'cod',
+				  'description' => esc_html__( 'Select the Payment Gateways to use with DHL COD services. You can press "ctrl" to select multiple options or click on a selected option to deselect it.', 'dhl-for-woocommerce' ),
+				  'desc_tip'    => true,
+				  'options'     => array(),
+				  'class'       => 'wc-enhanced-select',
+			  ),
+			  'dhl_parcel_finder'           => array(
+				  'title'       => esc_html__( 'Location Finder', 'dhl-for-woocommerce' ),
+				  'type'        => 'title',
+				  'description' => esc_html__( 'Please define the parameters for the display of dhl locations in the shop frontend.', 'dhl-for-woocommerce' ),
+			  ),
+			  'dhl_display_packstation'     => array(
+				  'title'       => esc_html__( 'Packstation', 'dhl-for-woocommerce' ),
+				  'type'        => 'checkbox',
+				  'label'       => esc_html__( 'Enable Packstation', 'dhl-for-woocommerce' ),
+				  'description' => esc_html__( 'Enabling this will display Packstation locations on Google Maps when searching for drop off locations on the front-end.', 'dhl-for-woocommerce' ),
+				  'desc_tip'    => true,
+			  ),
+			  'dhl_display_parcelshop'      => array(
+				  'title'       => esc_html__( 'Parcelshop', 'dhl-for-woocommerce' ),
+				  'type'        => 'checkbox',
+				  'label'       => esc_html__( 'Enable Parcelshop', 'dhl-for-woocommerce' ),
+				  'description' => esc_html__( 'Enabling this will display Parcelshop locations on Google Maps when searching for drop off locations on the front-end.', 'dhl-for-woocommerce' ),
+				  'desc_tip'    => true,
+			  ),
+			  'dhl_display_post_office'     => array(
+				  'title'       => esc_html__( 'Post Office', 'dhl-for-woocommerce' ),
+				  'type'        => 'checkbox',
+				  'label'       => esc_html__( 'Enable Post Office', 'dhl-for-woocommerce' ),
+				  'description' => esc_html__( 'Enabling this will display Post Office locations on Google Maps when searching for drop off locations on the front-end.', 'dhl-for-woocommerce' ),
+				  'desc_tip'    => true,
+			  ),
+			  'dhl_display_google_maps'     => array(
+				  'title'       => __( 'Map', 'dhl-for-woocommerce' ),
+				  'type'        => 'checkbox',
+				  'label'       => __( 'Enable Map', 'dhl-for-woocommerce' ),
+				  'description' => __( 'Enabling this will display the Map on the front-end.', 'dhl-for-woocommerce' ),
+				  'desc_tip'    => true,
+			  ),
+			  'dhl_map_type'                => array(
+				  'title'       => __( 'Map type', 'dhl-for-woocommerce' ),
+				  'type'        => 'select',
+				  'description' => __( 'Select the map type to show parcels shops.', 'dhl-for-woocommerce' ),
+				  'desc_tip'    => true,
+				  'options'     => array( 'gmaps' => 'Google Maps', 'osm' => 'Open Street Map' ),
+				  'class'       => 'wc-enhanced-select',
+				  'default'     => 'gmaps',
+			  ),
+			  'dhl_parcel_limit'            => array(
+				  'title'             => esc_html__( 'Limit Results', 'dhl-for-woocommerce' ),
+				  'type'              => 'number',
+				  'description'       => esc_html__( 'Limit displayed results, from 1 to at most 50.', 'dhl-for-woocommerce' ),
+				  'desc_tip'          => true,
+				  'class'             => '',
+				  'default'           => '20',
+				  'custom_attributes' => array(
+					  'min' => '1',
+					  'max' => '50',
+				  ),
+			  ),
+			  'dhl_google_maps_api_key'     => array(
+				  'title'       => esc_html__( 'API Key', 'dhl-for-woocommerce' ),
+				  'type'        => 'text',
+				  /* Translators: %s represents a link to obtain a Google Maps API key. */
+				  'description' => sprintf(
+					  wp_kses(
+						  __( 'The Google Maps API Key is necessary to display the DHL Locations on a Google map.<br/>Get a free Google Maps API key %1$s.', 'dhl-for-woocommerce' ),
+						  array( 'br' => array() ) // Allow <br> tags
+					  ),
+					  '<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank">' . esc_html__( 'here', 'dhl-for-woocommerce' ) . '</a>'
+				  ),
+				  'desc_tip'    => false,
+				  'class'       => '',
+			  ),
+		  );
 			}
 
 			$this->form_fields += array(
