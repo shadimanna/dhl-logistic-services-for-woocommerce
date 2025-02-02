@@ -14,7 +14,7 @@ class Client extends API_Client {
 	/**
 	 * Creates multiple item on the remote API.
 	 *
-	 * @param  Item_Info[]  $items_info set of Items.
+	 * @param  Item_Info[] $items_info set of Items.
 	 *
 	 * @return array.
 	 * @throws Exception
@@ -42,8 +42,17 @@ class Client extends API_Client {
 				if ( 200 === $item->sstatus->statusCode ) {
 					$labels_data['items'][] = $item;
 				} else {
-					$error_message = $this->generate_error_message( $this->get_item_error_message( $item ) );
-					$labels_data['errors'][] = array( 'order_id' => '' , 'message' => sprintf( __( 'Error creating label: %s', 'dhl-for-woocommerce' ), $error_message ) );
+					$error_message           = $this->generate_error_message( $this->get_item_error_message( $item ) );
+					$labels_data['errors'][] = array(
+						'order_id' => '',
+						'message'  => wp_kses_post(
+							sprintf(
+							// Translators: %s is replaced with the error message returned from the API.
+								__( 'Error creating label: %s', 'dhl-for-woocommerce' ),
+								$error_message
+							)
+						),
+					);
 				}
 			}
 
@@ -54,21 +63,27 @@ class Client extends API_Client {
 		$message = $this->get_response_error_message( $response );
 
 		throw new Exception(
-			sprintf( __( 'Error creating label: %s', 'dhl-for-woocommerce' ), $message )
+			wp_kses_post(
+				sprintf(
+				// Translators: %s is replaced with the error message returned from the API.
+					__( 'Error creating label: %s', 'dhl-for-woocommerce' ),
+					$message
+				)
+			)
 		);
 	}
 
 	/**
 	 * Transforms an item info object into a request data array.
 	 *
-	 * @param  array<Item_Info>  $items_info.
+	 * @param  array<Item_Info> $items_info.
 	 *
 	 * @return array.
 	 */
 	public function request_info_to_request_data( array $items_info ) {
 		$data = array(
 			'profile'   => apply_filters( 'pr_shipping_dhl_paket_label_shipment_profile', 'STANDARD_GRUPPENPROFIL' ),
-			'shipments' => array()
+			'shipments' => array(),
 		);
 
 		foreach ( $items_info as $item_info ) {
@@ -93,10 +108,10 @@ class Client extends API_Client {
 			// Is Multiple package
 			if ( isset( $item_info->args['order_details']['multi_packages_enabled'] ) && ( $item_info->args['order_details']['multi_packages_enabled'] == 'yes' ) ) {
 
-				for ( $i = 0; $i < intval( $item_info->shipment['total_packages'] ); $i ++ ) {
+				for ( $i = 0; $i < intval( $item_info->shipment['total_packages'] ); $i++ ) {
 					$shipment['details'] = array(
 						'weight' => array(
-							'uom'   => 'kg' === $item_info->weightUom ? 'kg' : 'g', //its converted to grams in item_info.
+							'uom'   => 'kg' === $item_info->weightUom ? 'kg' : 'g', // its converted to grams in item_info.
 							'value' => $item_info->args['order_details']['packages_weight'][ $i ],
 						),
 						'dim'    => array(
@@ -109,13 +124,12 @@ class Client extends API_Client {
 
 					$data['shipments'][] = $this->unset_empty_values( $shipment );
 				}
-
 			} else {
 				$shipment['details'] = array(
 					'weight' => array(
-						'uom'   => 'kg' === $item_info->weightUom ? 'kg' : 'g', //its converted to grams in item_info.
+						'uom'   => 'kg' === $item_info->weightUom ? 'kg' : 'g', // its converted to grams in item_info.
 						'value' => $item_info->shipment['weight'],
-					)
+					),
 				);
 
 				$data['shipments'][] = $this->unset_empty_values( $shipment );
@@ -128,7 +142,7 @@ class Client extends API_Client {
 	/**
 	 * Shipment selected services mapping.
 	 *
-	 * @param  Item_Info  $request_info  .
+	 * @param  Item_Info $request_info  .
 	 *
 	 * @return array.
 	 */
@@ -161,16 +175,16 @@ class Client extends API_Client {
 					);
 					$services[ $key ] = $ident_check;
 					break;
-				case 'additionalInsurance' :
+				case 'additionalInsurance':
 					$services[ $key ] = array(
 						'currency' => $request_info->shipment['currency'],
 						'value'    => $request_info->shipment['value'],
 					);
 					break;
-				case 'parcelOutletRouting' :
+				case 'parcelOutletRouting':
 					$services[ $key ] = $request_info->shipment['routing_email'];
 					break;
-				case 'cashOnDelivery' :
+				case 'cashOnDelivery':
 					if ( ! empty( $request_info->shipment['cod_value'] ) ) {
 						$bank_data_map = array(
 							'bank_holder' => 'accountHolder',
@@ -199,15 +213,14 @@ class Client extends API_Client {
 					}
 					break;
 
-				case 'dhlRetoure' :
+				case 'dhlRetoure':
 					$services[ $key ] = array(
-						'refNo'         => apply_filters( 'pr_shipping_dhl_paket_label_ref_no_prefix', 'order_' ) . $request_info->shipment['refNo'] ,
+						'refNo'         => apply_filters( 'pr_shipping_dhl_paket_label_ref_no_prefix', 'order_' ) . $request_info->shipment['refNo'],
 						'billingNumber' => $request_info->args['dhl_settings']['account_num'] . $request_info->dhl_return_product . $request_info->args['dhl_settings']['participation_return'],
 						'returnAddress' => $this->get_return_address( $request_info ),
 					);
 					break;
 			}
-
 		}
 
 		return $services;
@@ -216,7 +229,7 @@ class Client extends API_Client {
 	/**
 	 * Prepare shipment items.
 	 *
-	 * @param  Item_Info  $request_info.
+	 * @param  Item_Info $request_info.
 	 *
 	 * @return array.
 	 */
@@ -229,12 +242,12 @@ class Client extends API_Client {
 				'hsCode'          => $item['hsCode'],
 				'itemValue'       => array(
 					'currency' => $item['itemValue']['currency'],
-					'value'    => $item['itemValue']['amount']
+					'value'    => $item['itemValue']['amount'],
 				),
 				'itemWeight'      => array(
-					'uom'   => 'kg' === $item['itemWeight']['uom'] ? 'kg' : 'g', //its converted to grams in item_info.
+					'uom'   => 'kg' === $item['itemWeight']['uom'] ? 'kg' : 'g', // its converted to grams in item_info.
 					'value' => $item['itemWeight']['value'],
-				)
+				),
 			);
 		}
 
@@ -244,7 +257,7 @@ class Client extends API_Client {
 	/**
 	 * For international shipments, Get necessary information for customs about the exported goods.
 	 *
-	 * @param  Item_Info  $request_info.
+	 * @param  Item_Info $request_info.
 	 *
 	 * @return array.
 	 */
@@ -256,6 +269,9 @@ class Client extends API_Client {
 			$item_description .= $item['itemDescription'];
 		}
 
+		$additional_fee = floatval( $request_info->args['order_details']['additional_fee'] );
+		$shipping_fee   = floatval( $request_info->args['order_details']['shipping_fee'] );
+
 		return array(
 			'invoiceNo'         => $request_info->args['order_details']['invoice_num'],
 			'exportType'        => apply_filters( 'pr_shipping_dhl_paket_label_shipment_export_type', 'COMMERCIAL_GOODS' ),
@@ -263,7 +279,7 @@ class Client extends API_Client {
 			'items'             => $this->prepare_items( $request_info ),
 			'postalCharges'     => array(
 				'currency' => $request_info->args['order_details']['currency'],
-				'value'    => $request_info->args['order_details']['total_value'],
+				'value'    => $additional_fee + $shipping_fee,
 			),
 		);
 	}
@@ -273,7 +289,7 @@ class Client extends API_Client {
 	 * Either a doorstep address (contact address) including contact information or a droppoint address.
 	 * One of packstation (parcel locker), or post office (postfiliale/retail shop).
 	 *
-	 * @param  Item_Info  $request_info.
+	 * @param  Item_Info $request_info.
 	 *
 	 * @return array.
 	 */
@@ -290,7 +306,6 @@ class Client extends API_Client {
 			return $this->get_address( $address_fields, $request_info->packStationAddress );
 		}
 
-
 		// Normal shipping address.
 		$address_fields = array(
 			'name1',
@@ -303,7 +318,7 @@ class Client extends API_Client {
 			'state',
 			'country',
 			'phone',
-			'email'
+			'email',
 		);
 
 		return $this->get_address( $address_fields, $request_info->contactAddress );
@@ -312,7 +327,7 @@ class Client extends API_Client {
 	/**
 	 * Shipper address information.
 	 *
-	 * @param  Item_Info  $request_info.
+	 * @param  Item_Info $request_info.
 	 *
 	 * @return array.
 	 */
@@ -327,7 +342,7 @@ class Client extends API_Client {
 			'city',
 			'state',
 			'country',
-			'shipperRef'
+			'shipperRef',
 		);
 
 		return $this->get_address( $address_fields, $request_info->shipper );
@@ -336,7 +351,7 @@ class Client extends API_Client {
 	/**
 	 * Return address information.
 	 *
-	 * @param  Item_Info  $request_info.
+	 * @param  Item_Info $request_info.
 	 *
 	 * @return array.
 	 */
@@ -350,7 +365,7 @@ class Client extends API_Client {
 			'postalCode',
 			'city',
 			'state',
-			'country'
+			'country',
 		);
 
 		return $this->get_address( $address_fields, $request_info->returnAddress );
@@ -359,8 +374,8 @@ class Client extends API_Client {
 	/**
 	 * Get required address.
 	 *
-	 * @param  array  $address_fields
-	 * @param  array  $address
+	 * @param  array $address_fields
+	 * @param  array $address
 	 *
 	 * @return array
 	 */
@@ -380,7 +395,7 @@ class Client extends API_Client {
 	/**
 	 * Unset/remove any items that are empty strings.
 	 *
-	 * @param  array  $array.
+	 * @param  array $array.
 	 *
 	 * @return array.
 	 */
@@ -390,7 +405,7 @@ class Client extends API_Client {
 				$array[ $k ] = $this->unset_empty_values( $v );
 			}
 
-			if ( empty( $v ) ) {
+			if ( empty( $v ) && ! is_numeric( $v ) ) {
 				unset( $array[ $k ] );
 			}
 		}
@@ -429,13 +444,13 @@ class Client extends API_Client {
 	 */
 	protected function delete_shipment_route( $shipment_number ) {
 		$profile = apply_filters( 'pr_shipping_dhl_paket_label_shipment_profile', 'STANDARD_GRUPPENPROFIL' );
-		return 'v2/orders?profile='. $profile .'&shipment=' . $shipment_number;
+		return 'v2/orders?profile=' . $profile . '&shipment=' . $shipment_number;
 	}
 
 	/**
 	 * Get response error messages.
 	 *
-	 * @param  Response  $response  .
+	 * @param  Response $response  .
 	 *
 	 * @return string.
 	 */
@@ -449,7 +464,7 @@ class Client extends API_Client {
 		foreach ( $response->body->items as $item ) {
 			$errors_list = $this->get_item_error_message( $item );
 			foreach ( $errors_list as $key => $list ) {
-				if ( ! is_array( $multiple_errors_list[ $key ] ) ) {
+				if ( ! isset( $multiple_errors_list[ $key ] ) ) {
 					$multiple_errors_list[ $key ] = array();
 				}
 
@@ -477,13 +492,17 @@ class Client extends API_Client {
 		}
 
 		$multiple_errors_list = array();
-		foreach ( $item->validationMessages as $message ) {
 
-			if ( ! is_array( $multiple_errors_list[ $message->validationState ] ) ) {
+		if ( isset( $item->sstatus ) && isset( $item->shipmentNo ) ) {
+			$multiple_errors_list[ $item->sstatus->title ][] = $item->shipmentNo . $item->sstatus->detail;
+		}
+
+		foreach ( $item->validationMessages as $message ) {
+			if ( ! isset( $multiple_errors_list[ $message->validationState ] ) ) {
 				$multiple_errors_list[ $message->validationState ] = array();
 			}
 
-			$property                                            = isset( $message->property ) ? '( ' . $message->property . ' ) : ' : '';
+			$property = isset( $message->property ) ? '( ' . $message->property . ' ) : ' : '';
 			$multiple_errors_list[ $message->validationState ][] = $property . $message->validationMessage;
 		}
 
@@ -505,19 +524,11 @@ class Client extends API_Client {
 				$error_message .= '<strong class="wc_dhl_error">' . $key . ' : </strong>';
 				$error_message .= '<ul class="wc_dhl_error">';
 				foreach ( $errors as $error ) {
-					$error_message .= '<li>' . $error . '</li>';
+					$error_message .= '<li>' . esc_html( $error ) . '</li>';
 				}
 				$error_message .= '</ul>';
 			}
 		}
-
-		/*if ( ! empty( $single_errors_list ) ) {
-			$error_message = '<ul class="wc_dhl_error">';
-			foreach ( $single_errors_list as $error ) {
-				$error_message .= '<li>' . $error . '</li>';
-			}
-			$error_message .= '</ul>';
-		}*/
 
 		return $error_message;
 	}
@@ -547,7 +558,13 @@ class Client extends API_Client {
 		$message = $this->get_response_error_message( $response );
 
 		throw new Exception(
-			sprintf( __( 'Error deleting label: %s', 'dhl-for-woocommerce' ), $message )
+			wp_kses_post(
+				sprintf(
+					// Translators: %s is replaced with the error message returned from the API.
+					__( 'Error deleting label: %s', 'dhl-for-woocommerce' ),
+					$message
+				)
+			)
 		);
 	}
 }

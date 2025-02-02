@@ -27,7 +27,7 @@ defined( 'ABSPATH' ) or exit;
 	}
 
 	a {
-		color: <?php echo get_option( 'wc_pip_link_color', '#000000' ); ?>;
+		color: <?php echo esc_attr( get_option( 'wc_pip_link_color', '#000000' ) ); ?>;
 	}
 
 	.container {

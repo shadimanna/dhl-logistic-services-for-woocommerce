@@ -20,14 +20,14 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 	 *
 	 * @since [*next-version*]
 	 */
-	const API_URL_PRODUCTION = 'https://cig.dhl.de/services/production/rest/';
+	const API_URL_PRODUCTION = 'https://api.dhl.com/parcel/de/transportation/pickup/v3';
 
 	/**
 	 * The URL to the sandbox API.
 	 *
 	 * @since [*next-version*]
 	 */
-	const API_URL_SANDBOX = 'https://cig.dhl.de/services/sandbox/rest/';
+	const API_URL_SANDBOX = 'https://api-sandbox.dhl.com/parcel/de/transportation/pickup/v3';
 
 	/**
 	 * The API driver instance.
@@ -68,7 +68,7 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 
 		try {
 			$this->api_driver = $this->create_api_driver();
-			$this->api_auth = $this->create_api_auth();
+			$this->api_auth   = $this->create_api_auth();
 			$this->api_client = $this->create_api_client();
 		} catch ( Exception $e ) {
 			throw $e;
@@ -115,14 +115,12 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 		// and parse responses returned from it as JSON.
 		$driver = new JSON_API_Driver( $driver );
 
-		//, decorated using the JSON driver decorator class
+		// , decorated using the JSON driver decorator class
 		return $driver;
 	}
 
 	/**
 	 * Initializes the API auth instance.
-	 *
-	 * @since [*next-version*]
 	 *
 	 * @return API_Auth_Interface
 	 *
@@ -130,16 +128,15 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 	 */
 	protected function create_api_auth() {
 		// Get the saved DHL customer API credentials
-		$api_cred = $this->get_api_creds();
-		$client_id = $api_cred['user'];
-		$client_secret = $api_cred['password'];
+		list( $username, $password ) = $this->get_api_creds();
 
 		// Create the auth object using this instance's API driver and URL
 		return new Auth(
 			$this->api_driver,
 			$this->get_api_url(),
-			$client_id,
-			$client_secret
+			$username,
+			$password,
+			$this->get_api_key(),
 		);
 	}
 
@@ -155,47 +152,32 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 	/**
 	 * Retrieves the API URL.
 	 *
-	 * @since [*next-version*]
-	 *
 	 * @return string
 	 *
 	 * @throws Exception If failed to determine if using the sandbox API or not.
 	 */
 	public function get_api_url() {
-		$api_cred = $this->get_api_creds();
-		return $api_cred['auth_url'];
+		$is_sandbox = $this->get_setting( 'dhl_sandbox' );
+		$is_sandbox = filter_var( $is_sandbox, FILTER_VALIDATE_BOOLEAN );
+		$api_url    = ( $is_sandbox ) ? static::API_URL_SANDBOX : static::API_URL_PRODUCTION;
+
+		return $api_url;
 	}
 
 	/**
 	 * Retrieves the API credentials.
-	 *
-	 * @since [*next-version*]
 	 *
 	 * @return array The client ID and client secret.
 	 *
 	 * @throws Exception If failed to retrieve the API credentials.
 	 */
 	public function get_api_creds() {
-		$dhl_sandbox = $this->get_setting( 'dhl_sandbox' ) ? $this->get_setting( 'dhl_sandbox' ) : '';
-		if ( $dhl_sandbox == 'yes' || ( defined( 'PR_DHL_SANDBOX' ) && PR_DHL_SANDBOX ) ) {
+		$customer_portal_login = $this->get_customer_portal_login();
 
-			$user = defined( 'PR_DHL_CIG_USR_QA' )? PR_DHL_CIG_USR_QA : '';
-			$user = ( !$user )? $this->get_setting('dhl_api_sandbox_user') : $user;
-
-			$pass = defined( 'PR_DHL_CIG_PWD_QA' )? PR_DHL_CIG_PWD_QA : '';
-			$pass = ( !$pass )? $this->get_setting('dhl_api_sandbox_pwd') : $pass;
-
-			$api_cred['user'] = $user;
-			$api_cred['password'] = $pass;
-			//$api_cred['auth_url'] = trailingslashit(str_ireplace('/soap', '/rest', PR_DHL_CIG_AUTH_QA));
-			$api_cred['auth_url'] = self::API_URL_SANDBOX;
-		} else {
-			$api_cred['user'] = PR_DHL_CIG_USR;
-			$api_cred['password'] = PR_DHL_CIG_PWD;
-			//$api_cred['auth_url'] = trailingslashit(str_ireplace('/soap', '/rest', PR_DHL_CIG_AUTH));
-			$api_cred['auth_url'] = self::API_URL_PRODUCTION;
-		}
-		return $api_cred;
+		return array(
+			$customer_portal_login['username'],
+			$customer_portal_login['pass'],
+		);
 	}
 
 	/**
@@ -204,26 +186,25 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 	 * @since [*next-version*]
 	 *
 	 * @return array The customer username and password for Business portal API calls.
-	 *
 	 */
 	public function get_customer_portal_login() {
 		$is_sandbox = $this->get_setting( 'dhl_sandbox' );
-		$is_sandbox = filter_var($is_sandbox, FILTER_VALIDATE_BOOLEAN);
+		$is_sandbox = filter_var( $is_sandbox, FILTER_VALIDATE_BOOLEAN );
 		if ( $is_sandbox ) {
 			$sandbox = $this->sandbox_info_customer_portal();
 			return array(
 				'username' => $sandbox['username'],
-				'pass' => $sandbox['pass'],
+				'pass'     => $sandbox['pass'],
 			);
 			// return array(
-			// 	'username' => $this->get_setting('dhl_api_sandbox_user'),
-			// 	'pass' => $this->get_setting('dhl_api_sandbox_pwd'),
+			// 'username' => $this->get_setting('dhl_api_sandbox_user'),
+			// 'pass' => $this->get_setting('dhl_api_sandbox_pwd'),
 			// );
 
 		} else {
 			return array(
 				'username' => $this->get_setting( 'dhl_api_user' ),
-				'pass' => $this->get_setting( 'dhl_api_pwd' ),
+				'pass'     => $this->get_setting( 'dhl_api_pwd' ),
 			);
 		}
 	}
@@ -249,7 +230,7 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 	 */
 	public function maybe_get_sandbox_account_number() {
 		$is_sandbox = $this->get_setting( 'dhl_sandbox' );
-		$is_sandbox = filter_var($is_sandbox, FILTER_VALIDATE_BOOLEAN);
+		$is_sandbox = filter_var( $is_sandbox, FILTER_VALIDATE_BOOLEAN );
 		if ( $is_sandbox ) {
 			$sandbox_info = $this->sandbox_info_customer_portal();
 			return $sandbox_info['account_no'];
@@ -291,15 +272,15 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 	 */
 	public function dhl_test_connection( $client_id, $client_secret ) {
 		// try {
-		// 	// Test the given ID and secret
-		// 	$token = $this->api_auth->test_connection( $client_id, $client_secret );
-		// 	// Save the token if successful
-		// 	//$this->api_auth->save_token( $token );
+		// Test the given ID and secret
+		// $token = $this->api_auth->test_connection( $client_id, $client_secret );
+		// Save the token if successful
+		// $this->api_auth->save_token( $token );
 		//
-		// 	return $token;
+		// return $token;
 		// } catch ( Exception $e ) {
-		// 	//$this->api_auth->save_token( null );
-		// 	throw $e;
+		// $this->api_auth->save_token( null );
+		// throw $e;
 		// }
 	}
 
@@ -309,7 +290,7 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 	 * @since [*next-version*]
 	 */
 	public function dhl_reset_connection() {
-		//return $this->api_auth->revoke();
+		// return $this->api_auth->revoke();
 	}
 
 	/**
@@ -317,41 +298,42 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 	 *
 	 * @since [*next-version*]
 	 */
-	 public function get_dhl_products_domestic() {
- 		$country_code = $this->country_code;
+	public function get_dhl_products_domestic() {
+		$country_code = $this->country_code;
 
- 		$germany_dom = array(
- 								'V01PAK' => __('DHL Paket', 'dhl-for-woocommerce'),
- 								'V01PRIO' => __('DHL Paket PRIO', 'dhl-for-woocommerce'),
- 								'V62WP' => __('DHL Warenpost National', 'dhl-for-woocommerce'),
- 								);
+		$germany_dom = array(
+			'V01PAK'  => esc_html__( 'DHL Paket', 'dhl-for-woocommerce' ),
+			'V01PRIO' => esc_html__( 'DHL Paket PRIO', 'dhl-for-woocommerce' ),
+			'V62WP'   => esc_html__( 'DHL Warenpost National', 'dhl-for-woocommerce' ),
+			'V62KP'   => esc_html__( 'DHL Kleinpaket', 'dhl-for-woocommerce' ),
+		);
 
- 		$dhl_prod_dom = array();
+		$dhl_prod_dom = array();
 
- 		switch ($country_code) {
- 			case 'DE':
- 				$dhl_prod_dom = $germany_dom;
- 				break;
- 			default:
- 				break;
- 		}
+		switch ( $country_code ) {
+			case 'DE':
+				$dhl_prod_dom = $germany_dom;
+				break;
+			default:
+				break;
+		}
 
-         return apply_filters( 'pr_shipping_dhl_paket_products_domestic', $dhl_prod_dom );
- 	}
+		return apply_filters( 'pr_shipping_dhl_paket_products_domestic', $dhl_prod_dom );
+	}
 
 	public function get_dhl_products_international() {
 		$country_code = $this->country_code;
 
-		$germany_int =  array(
-								'V55PAK' => __('DHL Paket Connect', 'dhl-for-woocommerce'),
-								'V54EPAK' => __('DHL Europaket (B2B)', 'dhl-for-woocommerce'),
-								'V53WPAK' => __('DHL Paket International', 'dhl-for-woocommerce'),
-								'V66WPI' => __('DHL Warenpost International', 'dhl-for-woocommerce'),
-								);
+		$germany_int = array(
+			'V55PAK'  => esc_html__( 'DHL Paket Connect', 'dhl-for-woocommerce' ),
+			'V54EPAK' => esc_html__( 'DHL Europaket (B2B)', 'dhl-for-woocommerce' ),
+			'V53WPAK' => esc_html__( 'DHL Paket International', 'dhl-for-woocommerce' ),
+			'V66WPI'  => esc_html__( 'DHL Warenpost International', 'dhl-for-woocommerce' ),
+		);
 
 		$dhl_prod_int = array();
 
-		switch ($country_code) {
+		switch ( $country_code ) {
 			case 'DE':
 				$dhl_prod_int = $germany_int;
 				break;
@@ -359,7 +341,7 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 				break;
 		}
 
-        return apply_filters( 'pr_shipping_dhl_paket_products_international', $dhl_prod_int );
+		return apply_filters( 'pr_shipping_dhl_paket_products_international', $dhl_prod_int );
 	}
 
 
@@ -368,9 +350,8 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 	 *
 	 * @since [*next-version*]
 	 */
-	public function request_dhl_pickup ( $args, $forcePortalPickupAddressMatch = true ) {
-
-		$uom 				= get_option( 'woocommerce_weight_unit' );
+	public function request_dhl_pickup( $args, $forcePortalPickupAddressMatch = true ) {
+		$uom = get_option( 'woocommerce_weight_unit' );
 
 		// Maybe override account billing number here for Sandbox user
 		if ( $this->maybe_get_sandbox_account_number() ) {
@@ -379,57 +360,45 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 
 		try {
 			$request_pickup_info = new Pickup_Request_Info( $args, $uom );
-		} catch (Exception $e) {
+		} catch ( Exception $e ) {
 			throw $e;
 		}
 
 		// Verify pickup address with DHL portal pickup address first
 		if ( $forcePortalPickupAddressMatch ) {
-
-			$blnIncludeBillingNumber = false;
-
-			$zipCode = $request_pickup_info->pickup_address['zip'];
+			$postalCode   = $request_pickup_info->pickup_address['postalCode'];
 			$localAddress = $request_pickup_info->pickup_address;
 
 			try {
-				$pickup_location_response = $this->api_client->get_pickup_location( $zipCode );
+				$pickup_location_response = $this->api_client->get_pickup_location( $postalCode );
 
 				$foundPickupLocMatch = false;
 				foreach ( $pickup_location_response as $pickup_address ) {
-
-					if ( $pickup_address && isset( $pickup_address->pickupLocation) ) {
-						$portalAddress = ( isset($pickup_address->pickupLocation->pickupAddress->nativeAddress )) ? $pickup_address->pickupLocation->pickupAddress->nativeAddress : null;
-						if ( strtolower(preg_replace("/[^A-Za-z0-9]/", '', $portalAddress->streetName)) == strtolower(preg_replace("/[^A-Za-z0-9]/", '', $localAddress['streetName']))
-				            && strtolower(preg_replace("/[^A-Za-z0-9]/", '', $portalAddress->houseNumber)) == strtolower(preg_replace("/[^A-Za-z0-9]/", '', $localAddress['houseNumber']))
-				            && strtolower(preg_replace("/[^A-Za-z0-9]/", '', $portalAddress->city)) == strtolower(preg_replace("/[^A-Za-z0-9]/", '', $localAddress['city']))
-				            && strtolower(preg_replace("/[^A-Za-z0-9]/", '', $portalAddress->zip)) == strtolower(preg_replace("/[^A-Za-z0-9]/", '', $localAddress['zip']))
-				            && strtolower(preg_replace("/[^A-Za-z0-9]/", '', $portalAddress->countryIso2Code)) == strtolower(preg_replace("/[^A-Za-z0-9]/", '', $localAddress['countryIso2Code'])) )
-				        {
-				            $foundPickupLocMatch = true;
-				            break;
-				        }
+					$portalAddress = $pickup_address->pickupAddress ?? null;
+					if ( strtolower( preg_replace( '/[^A-Za-z0-9]/', '', $portalAddress->addressStreet ) ) == strtolower( preg_replace( '/[^A-Za-z0-9]/', '', $localAddress['addressStreet'] ) )
+						&& strtolower( preg_replace( '/[^A-Za-z0-9]/', '', $portalAddress->addressHouse ) ) == strtolower( preg_replace( '/[^A-Za-z0-9]/', '', $localAddress['addressHouse'] ) )
+						&& strtolower( preg_replace( '/[^A-Za-z0-9]/', '', $portalAddress->city ) ) == strtolower( preg_replace( '/[^A-Za-z0-9]/', '', $localAddress['city'] ) )
+						&& strtolower( preg_replace( '/[^A-Za-z0-9]/', '', $portalAddress->postalCode ) ) == strtolower( preg_replace( '/[^A-Za-z0-9]/', '', $localAddress['postalCode'] ) )
+					) {
+						$foundPickupLocMatch = true;
+						break;
 					}
 				}
 
 				if ( ! $foundPickupLocMatch ) {
 					throw new Exception(
-						__('Your Shipper Address must match a Pickup address on your DHL Portal.', 'dhl-for-woocommerce')
+						esc_html__( 'Your Shipper Address must match a Pickup address on your DHL Portal.', 'dhl-for-woocommerce' )
 					);
 				}
-
-			} catch (Exception $e) {
+			} catch ( Exception $e ) {
 				throw $e;
 			}
-
-		} else {
-			//If we are not matching a Pickup address, then we need to include the billing number
-			$blnIncludeBillingNumber = true;
 		}
 
 		// Create the shipping label
 		try {
-			$request_pickup_response = $this->api_client->create_pickup_request( $request_pickup_info, $blnIncludeBillingNumber );
-		} catch (Exception $e) {
+			$request_pickup_response = $this->api_client->create_pickup_request( $request_pickup_info );
+		} catch ( Exception $e ) {
 			throw $e;
 		}
 
@@ -437,12 +406,11 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 	}
 
 
-	public function sandbox_info_customer_portal(){
-		//
+	public function sandbox_info_customer_portal() {
 		return array(
-			'username' 	=> '2222222222_abr_0801',
-			'pass' 		=> 'S8PjmLB!s2vrzWV3o',
-			'account_no'=> '22222222220801',
+			'username'   => 'user-valid',
+			'pass'       => 'SandboxPasswort2023!',
+			'account_no' => '22222222220801',
 		);
 	}
 
@@ -452,10 +420,9 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 	 * @since [*next-version*]
 	 *
 	 * @return string
-	 *
 	 */
 	public function get_api_key() {
-		$api_key = defined( 'PR_DHL_GLOBAL_API' )? PR_DHL_GLOBAL_API : '';
+		$api_key = defined( 'PR_DHL_GLOBAL_API' ) ? PR_DHL_GLOBAL_API : '';
 		return $api_key;
 	}
 }

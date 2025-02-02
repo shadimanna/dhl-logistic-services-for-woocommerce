@@ -27,15 +27,15 @@ class PR_DHL_API_REST_Parcel extends PR_DHL_API_REST {
 		// Validate set args
 
 		if ( empty( $args['account_num'] ) ) {
-			throw new Exception( __('Please, provide an account in the DHL shipping settings', 'dhl-for-woocommerce' ) );
+			throw new Exception( esc_html__( 'Please, provide an account in the DHL shipping settings', 'dhl-for-woocommerce' ) );
 		}
 
 		if ( empty( $args['postcode'] ) ) {
-			throw new Exception( __('Please, provide the receiver postnumber.', 'dhl-for-woocommerce' ) );
+			throw new Exception( esc_html__( 'Please, provide the receiver postnumber.', 'dhl-for-woocommerce' ) );
 		}
 
 		if ( empty( $args['start_date'] ) ) {
-			throw new Exception( __('Please, provide the shipment start date.', 'dhl-for-woocommerce' ) );
+			throw new Exception( esc_html__( 'Please, provide the shipment start date.', 'dhl-for-woocommerce' ) );
 		}
 
 		$this->args = $args;
@@ -45,18 +45,18 @@ class PR_DHL_API_REST_Parcel extends PR_DHL_API_REST {
 		// 2018-08-17
 		$dhl_label_query_string = array( 'startDate' => $this->args['start_date'] );
 
-		$this->query_string = http_build_query($dhl_label_query_string);
+		$this->query_string = http_build_query( $dhl_label_query_string );
 	}
 
-	protected function get_query_string( ) {
+	protected function get_query_string() {
 		return $this->query_string;
 	}
 
 	protected function set_header( $authorization = '' ) {
 		$dhl_header['Accept'] = 'application/json';
-		$dhl_header['X-EKP'] = $this->args['account_num'];
+		$dhl_header['X-EKP']  = $this->args['account_num'];
 
-		if ( !empty( $authorization ) ) {
+		if ( ! empty( $authorization ) ) {
 			$dhl_header['Authorization'] = $authorization;
 		}
 

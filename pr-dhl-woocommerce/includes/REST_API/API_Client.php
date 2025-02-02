@@ -74,8 +74,8 @@ class API_Client {
 	 */
 	public function __construct( $base_url, API_Driver_Interface $driver, API_Auth_Interface $auth = null ) {
 		$this->base_url = $base_url;
-		$this->driver = $driver;
-		$this->auth = $auth;
+		$this->driver   = $driver;
+		$this->auth     = $auth;
 	}
 
 	/**
@@ -128,12 +128,12 @@ class API_Client {
 		array $cookies = array()
 	) {
 		// Generate the full URL and the request object
-		$full_url = URL_Utils::merge_url_and_route($this->base_url, $route);
-		$request = new Request( $type, $full_url, $params, $body, $headers, $cookies );
+		$full_url = URL_Utils::merge_url_and_route( $this->base_url, $route );
+		$request  = new Request( $type, $full_url, $params, $body, $headers, $cookies );
 
 		// If we have an authorization driver, authorize the request
-		if ($this->auth !== null) {
-			$request = $this->auth->authorize($request);
+		if ( $this->auth !== null ) {
+			$request = $this->auth->authorize( $request );
 		}
 
 		// Send the request using the driver and obtain the response
