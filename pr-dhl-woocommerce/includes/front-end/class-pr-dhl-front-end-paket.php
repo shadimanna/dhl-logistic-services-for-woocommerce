@@ -712,14 +712,18 @@ class PR_DHL_Front_End_Paket {
 		}
 	}
 
+	/**
+	 * Get Location Finder map type.
+	 *
+	 * @return string
+	 */
 	protected function get_map_type() {
-
-		if( ( isset( $this->shipping_dhl_settings['dhl_map_type'] ) &&
-			( 'osm' === $this->shipping_dhl_settings['dhl_map_type'] ) ) ) {
+		if ( ( isset( $this->shipping_dhl_settings['dhl_map_type'] ) &&
+			   ( 'osm' === $this->shipping_dhl_settings['dhl_map_type'] ) ) ) {
 			return 'osm';
-		} else {
-			return 'gmaps';
 		}
+
+		return 'gmaps';
 	}
 
 	protected function is_packstation_enabled() {
