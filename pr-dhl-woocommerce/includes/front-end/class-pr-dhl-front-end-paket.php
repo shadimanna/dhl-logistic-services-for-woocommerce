@@ -557,22 +557,14 @@ class PR_DHL_Front_End_Paket {
 	}
 
 	public function add_parcel_finder_btn() {
-		// echo '<a id="dhl_parcel_finder" class="button" href="#dhl_parcel_finder_form">' . __('Parcel Finder', 'dhl-for-woocommerce') . '</a>';
-
-		if( !$this->is_map_enabled() ){
-			return ;
+		if ( ! $this->is_map_enabled() ) {
+			return;
 		}
 
 		$button_text = $this->get_branch_location_text();
 
 		$dhl_logo = PR_DHL_PLUGIN_DIR_URL . '/assets/img/dhl-official.png';
 		echo '<a data-fancybox id="dhl_parcel_finder" class="button" data-src="#dhl_parcel_finder_form" href="javascript:;">' . $button_text . '<img src="' . $dhl_logo .'" class="dhl-co-logo"></a>';
-
-		// echo '<a id="dhl_parcel_finder_test" class="button" href="#dhl_parcel_finder_form_test">' . __('Parcel Finder TEST', 'dhl-for-woocommerce') . '</a>';
-		// echo '<div id="dhl_parcel_finder_form_test">TEST TEST</div>';
-
-		// echo '<a id="dhl_parcel_finder" class="button" href="' . PR_DHL_PLUGIN_DIR_URL . '/templates/checkout/dhl-parcel-finder.php">' . __('Parcel Finder', 'dhl-for-woocommerce') . '</a>';
-
 	}
 
 	protected function get_branch_location_text() {
