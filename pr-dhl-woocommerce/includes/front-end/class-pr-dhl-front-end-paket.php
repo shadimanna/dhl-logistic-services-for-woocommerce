@@ -194,20 +194,21 @@ class PR_DHL_Front_End_Paket {
 			wp_enqueue_script( 'jquery-ui-tooltip' );
 		}
 
-		if( $this->is_parcelfinder_enabled() ) {
-			// Enqueue Fancybox
-			// wp_enqueue_script( 'pr-dhl-fancybox-js', PR_DHL_PLUGIN_DIR_URL . '/assets/js/jquery.fancybox-1.3.4.pack.js', array('jquery') );
-			wp_enqueue_script( 'pr-dhl-fancybox-js', 'https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.js', array('jquery') );
-			// wp_enqueue_style( 'pr-dhl-fancybox-css', PR_DHL_PLUGIN_DIR_URL . '/assets/css/jquery.fancybox-1.3.4.css', array(), PR_DHL_VERSION );
-			wp_enqueue_style( 'pr-dhl-fancybox-css', 'https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.css', PR_DHL_VERSION );
+		$is_parcelfinder_enabled = $this->is_parcelfinder_enabled();
 
-			if( 'osm' === $this->get_map_type() ){
+		if ( $is_parcelfinder_enabled ) {
+			// Enqueue Fancybox
+			wp_enqueue_script( 'pr-dhl-fancybox-js', 'https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.js', '', array( 'jquery' ) );
+			wp_enqueue_style( 'pr-dhl-fancybox-css', 'https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.css', '', PR_DHL_VERSION );
+		}
+
+		if ( $is_parcelfinder_enabled && $this->is_map_enabled() ) {
+			if ( 'osm' === $this->get_map_type() ) {
 				// Enqueue Leaflet
-				wp_enqueue_style('leaflet_css', 'https://unpkg.com/leaflet/dist/leaflet.css' , PR_DHL_VERSION);
-				wp_enqueue_script( 'leaflet_js','https://unpkg.com/leaflet/dist/leaflet.js', PR_DHL_VERSION);
+				wp_enqueue_style( 'leaflet_css', 'https://unpkg.com/leaflet/dist/leaflet.css', '', PR_DHL_VERSION );
+				wp_enqueue_script( 'leaflet_js', 'https://unpkg.com/leaflet/dist/leaflet.js', '', PR_DHL_VERSION );
 			} else {
-			// Enqueue Google Maps
-			// wp_enqueue_script( 'pr-dhl-google-maps', 'http://maps.googleapis.com/maps/api/js?libraries=places,geometry&callback=initParcelFinderMap&key=' . $this->shipping_dhl_settings['dhl_google_maps_api_key'] );
+				// Enqueue Google Maps
 				wp_enqueue_script( 'pr-dhl-google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . $this->shipping_dhl_settings['dhl_google_maps_api_key'] );
 			}
 		}
