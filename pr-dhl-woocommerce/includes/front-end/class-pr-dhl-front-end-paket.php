@@ -702,14 +702,18 @@ class PR_DHL_Front_End_Paket {
 		}
 	}
 
+	/**
+	 * Is Location Finder map enabled?
+	 *
+	 * @return bool
+	 */
 	protected function is_map_enabled() {
-
-		if( ( isset( $this->shipping_dhl_settings['dhl_display_google_maps'] ) &&
-			( $this->shipping_dhl_settings['dhl_display_google_maps'] == 'yes' ) ) ) {
+		if ( ( isset( $this->shipping_dhl_settings['dhl_display_google_maps'] ) &&
+			   ( $this->shipping_dhl_settings['dhl_display_google_maps'] == 'yes' ) ) ) {
 			return true;
-		} else {
-			return false;
 		}
+
+		return false;
 	}
 
 	/**
