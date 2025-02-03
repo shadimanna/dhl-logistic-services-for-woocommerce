@@ -279,13 +279,12 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 					if ( $dhl_obj->is_dhl_paket() ) {
 						$this->shipping_dhl_product = new PR_DHL_WC_Product_Paket();
-						$this->product_editor = new PR_DHL_WC_Product_Editor_Paket();
+						$this->product_editor       = new PR_DHL_WC_Product_Editor_Paket();
 					} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
 						$this->shipping_dhl_product = new PR_DHL_WC_Product_Deutsche_Post();
-						$this->product_editor = new PR_DHL_WC_Product_Editor_Deutsche_Post();
+						$this->product_editor       = new PR_DHL_WC_Product_Editor_Deutsche_Post();
 					}
-				}
-				catch ( Exception $e ) {
+				} catch ( Exception $e ) {
 					add_action( 'admin_notices', array( $this, 'environment_check' ) );
 				}
 			}
