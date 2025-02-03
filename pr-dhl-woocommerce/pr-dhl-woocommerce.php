@@ -74,7 +74,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		/**
 		 * Product Editor instance.
 		 *
-		 * @var PR_DHL_WC_Product_Paket_Editor | PR_DHL_WC_Product_Deutsche_Post_Editor
+		 * @var PR_DHL_WC_Product_Editor
 		 */
 		public $product_editor = null;
 
@@ -194,7 +194,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			// Load abstract classes
 			include_once PR_DHL_PLUGIN_DIR_PATH . '/includes/abstract-pr-dhl-wc-order.php';
 			include_once PR_DHL_PLUGIN_DIR_PATH . '/includes/abstract-pr-dhl-wc-product.php';
-			include_once PR_DHL_PLUGIN_DIR_PATH . 'includes/abstract-pr-dhl-wc-product-editor.php';
+			include_once PR_DHL_PLUGIN_DIR_PATH . '/includes/abstract-pr-dhl-wc-product-editor.php';
 
 			// Composer autoloader
 			include_once PR_DHL_PLUGIN_DIR_PATH . '/vendor/autoload.php';
