@@ -757,7 +757,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 			}
 
 			$points = array(
-				''          => esc_html__( 'Select a drop-off point', 'dhl-for-woocommerce' ),
+				'' => esc_html__( 'Select a drop-off point', 'dhl-for-woocommerce' ),
 			);
 
 			$shipping_dhl_address_type = array(
@@ -771,15 +771,15 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 			);
 
 			$shipping_dhl_postnum_branch = array(
-				'label'    => esc_html__( 'Post Number', 'dhl-for-woocommerce' ),
+				'label'    => __( 'Post Number', 'dhl-for-woocommerce' ),
 				'required' => false,
 				'type'     => 'text',
-				'class'    => 'shipping-dhl-postnum',
+				'class'    => array( 'shipping-dhl-postnum' ),
 				'clear'    => true,
 			);
 
 			$shipping_dhl_drop_off = array(
-				'label'    => esc_html__( 'Drop off points', 'dhl-for-woocommerce' ),
+				'label'    => __( 'Drop off points', 'dhl-for-woocommerce' ),
 				'required' => true,
 				'type'     => 'select',
 				'class'    => array( 'shipping-dhl-drop-off-points' ),
@@ -787,7 +787,8 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 				'default'  => 'normal',
 				'options'  => $points,
 			);
-			$new_shipping_fields   = array();
+
+			$new_shipping_fields = array();
 
 			foreach ( $checkout_fields['shipping'] as $key => $field ) {
 				if ( 'shipping_first_name' === $key ) {
@@ -798,21 +799,25 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 					$new_shipping_fields['shipping_dhl_postnum'] = $shipping_dhl_postnum_branch;
 				}
 				$new_shipping_fields[ $key ] = $field;
+
 			}
 
 			if ( empty( $new_shipping_fields ) ) {
 				$new_shipping_fields['shipping_dhl_address_type'] = $shipping_dhl_address_type;
 				$new_shipping_fields['shipping_dhl_drop_off']     = $shipping_dhl_drop_off;
 				$new_shipping_fields['shipping_dhl_postnum']      = $shipping_dhl_postnum_branch;
-	
-				$checkout_fields['shipping'] = $new_shipping_fields;
-				$new_shipping_fields         = array_merge( $new_shipping_fields, $checkout_fields['shipping'] );
+
+				$new_shipping_fields = array_merge( $new_shipping_fields, $checkout_fields['shipping'] );
 			}
+
+			// Update the checkout fields array
+			$checkout_fields['shipping'] = $new_shipping_fields;
 
 			return $checkout_fields;
 		}
 
 		public function admin_order_add_postnum_field( $fields ) {
+
 			$shipping_dhl_postnum_branch = array(
 				'label'    => esc_html__( 'Post Number', 'dhl-for-woocommerce' ),
 				'required' => false,
@@ -823,7 +828,6 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 			);
 
 			if ( $new_shipping_fields = $this->array_insert_before( 'address_1', $fields, 'dhl_postnum', $shipping_dhl_postnum_branch ) ) {
-
 				$fields = $new_shipping_fields;
 			}
 
