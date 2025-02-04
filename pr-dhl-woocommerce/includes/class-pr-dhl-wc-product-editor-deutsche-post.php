@@ -18,54 +18,16 @@ if ( ! class_exists( 'PR_DHL_WC_Product_Editor_Deutsche_Post' ) ) :
 
 	class PR_DHL_WC_Product_Editor_Deutsche_Post extends PR_DHL_WC_Product_Editor {
 
-		public function add_shipping_blocks( BlockInterface $shipping_dimensions_block ): void {
-			if ( ! method_exists( $shipping_dimensions_block, 'get_parent' ) ) {
-				return;
-			}
+		public function __construct() {
+			parent::__construct();
 
-			$parent = $shipping_dimensions_block->get_parent();
+			$this->manufacture_tooltip       = esc_html__( 'Country of origin of goods. Mandatory for all non-EU shipments. Appears on CN22 (Deutsche Post International).', 'dhl-for-woocommerce' );
+			$this->manufacture_country_label = esc_html__( 'Country of origin (Deutsche Post International)', 'dhl-for-woocommerce' );
+			$this->hs_code_label             = esc_html__( 'Harmonized Tariff code (Deutsche Post International)', 'dhl-for-woocommerce' );
+			$this->hs_code_description       = esc_html__( 'Optional information for non-EU shipments. Appears on CN22 (Deutsche Post International).', 'dhl-for-woocommerce' );
+		}
 
-			// Add Country of Origin Select Block.
-			$parent->add_block(
-				array(
-					'id'         => '_dhl_manufacture_country',
-					'blockName'  => 'woocommerce/product-select-field',
-					'attributes' => array(
-						'label'    => __( 'Country of origin (Deutsche Post International)', 'dhl-for-woocommerce' ),
-						'property' => 'meta_data._dhl_manufacture_country',
-						'options'  => array_merge(
-							array(
-								array(
-									'value' => '0',
-									'label' => __( '- select country -', 'dhl-for-woocommerce' )
-								)
-							),
-							array_map( function ( $key, $value ) {
-								return array(
-									'value' => $key,
-									'label' => $value,
-								);
-							}, array_keys( WC()->countries->get_countries() ), WC()->countries->get_countries() )
-						),
-						'tooltip'  => __( 'Country of origin of goods. Mandatory for all non-EU shipments. Appears on CN22 (Deutsche Post International).', 'dhl-for-woocommerce' ),
-					),
-				)
-			);
-
-			// Add HS Tariff Code Text Block.
-			$parent->add_block(
-				array(
-					'id'         => '_dhl_hs_code',
-					'blockName'  => 'woocommerce/product-text-field',
-					'attributes' => array(
-						'label'       => __( 'Harmonized Tariff code (Deutsche Post International)', 'dhl-for-woocommerce' ),
-						'property'    => 'meta_data._dhl_hs_code',
-						'placeholder' => __( 'HS Code', 'dhl-for-woocommerce' ),
-						'tooltip'     => __( 'Optional information for non-EU shipments. Appears on CN22 (Deutsche Post International).', 'dhl-for-woocommerce' ),
-					),
-				)
-			);
-
+		public function save_shipping_blocks( $parent ): void {
 			// Add shipment info on the order page Checkbox Block.
 			$parent->add_block(
 				array(
@@ -78,7 +40,6 @@ if ( ! class_exists( 'PR_DHL_WC_Product_Editor_Deutsche_Post' ) ) :
 					),
 				)
 			);
-
 		}
 	}
 
