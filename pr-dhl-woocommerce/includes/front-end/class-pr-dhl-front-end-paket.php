@@ -151,8 +151,9 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 		}
 
 		public function load_styles_scripts() {
+			$is_parcelfinder_enabled = $this->is_parcelfinder_enabled();
 
-			if ( $this->is_tracking_enabled() && ( $this->is_preferredservice_enabled() || $this->is_parcelfinder_enabled() ) ) {
+			if ( $this->is_tracking_enabled() && ( $this->is_preferredservice_enabled() || $is_parcelfinder_enabled ) ) {
 
 				wp_enqueue_script( 'pr-dhl-frontend-pixel', PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-frontend-pixel.js', array(), PR_DHL_VERSION, true );
 			}
@@ -198,7 +199,9 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 				$frontend_data['cod_enabled'] = false;
 			}
 
-			if ( $this->is_preferredservice_enabled() || $this->is_parcelfinder_enabled() ) {
+			if ( $this->is_preferredservice_enabled() || $is_parcelfinder_enabled ) {
+				$frontend_data['map_type'] = $this->get_map_type();
+
 				// Register and load our styles and scripts
 				$frontend_data['shipToDifferentAddressText'] = esc_html__( 'Ship to a different address?', 'dhl-for-woocommerce' );
 				wp_register_script( 'pr-dhl-checkout-frontend', PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-checkout-frontend.js', array( 'jquery', 'wc-checkout' ), PR_DHL_VERSION, true );
@@ -215,16 +218,18 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 				wp_enqueue_script( 'jquery-ui-tooltip' );
 			}
 
-			if ( $this->is_parcelfinder_enabled() ) {
+			if ( $is_parcelfinder_enabled && $this->is_map_enabled() ) {
 				// Enqueue Fancybox
-				// wp_enqueue_script( 'pr-dhl-fancybox-js', PR_DHL_PLUGIN_DIR_URL . '/assets/js/jquery.fancybox-1.3.4.pack.js', array('jquery') );
 				wp_enqueue_script( 'pr-dhl-fancybox-js', PR_DHL_PLUGIN_DIR_URL . '/assets/js/jquery.fancybox.min.js', array( 'jquery' ) );
-				// wp_enqueue_style( 'pr-dhl-fancybox-css', PR_DHL_PLUGIN_DIR_URL . '/assets/css/jquery.fancybox-1.3.4.css', array(), PR_DHL_VERSION );
-				wp_enqueue_style( 'pr-dhl-fancybox-css', PR_DHL_PLUGIN_DIR_URL . '/assets/css/jquery.fancybox.min.css', PR_DHL_VERSION );
-
-				// Enqueue Google Maps
-				// wp_enqueue_script( 'pr-dhl-google-maps', 'http://maps.googleapis.com/maps/api/js?libraries=places,geometry&callback=initParcelFinderMap&key=' . $this->shipping_dhl_settings['dhl_google_maps_api_key'] );
-				wp_enqueue_script( 'pr-dhl-google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . $this->shipping_dhl_settings['dhl_google_maps_api_key'] );
+				wp_enqueue_style( 'pr-dhl-fancybox-css', PR_DHL_PLUGIN_DIR_URL . '/assets/css/jquery.fancybox.min.css', '', PR_DHL_VERSION );
+				if ( 'osm' === $this->get_map_type() ) {
+					// Enqueue Leaflet
+					wp_enqueue_style( 'leaflet_css', 'https://unpkg.com/leaflet/dist/leaflet.css', '', PR_DHL_VERSION );
+					wp_enqueue_script( 'leaflet_js', 'https://unpkg.com/leaflet/dist/leaflet.js', '', PR_DHL_VERSION );
+				} else {
+					// Enqueue Google Maps
+					wp_enqueue_script( 'pr-dhl-google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . $this->shipping_dhl_settings['dhl_google_maps_api_key'] );
+				}
 			}
 		}
 
@@ -549,19 +554,12 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 		}
 
 		public function add_parcel_finder_btn() {
-			// echo '<a id="dhl_parcel_finder" class="button" href="#dhl_parcel_finder_form">' . esc_html__('Parcel Finder', 'dhl-for-woocommerce') . '</a>';
-
-			if ( ! $this->is_google_maps_enabled() ) {
+			if ( ! $this->is_map_enabled() ) {
 				return;
 			}
 
 			$dhl_logo = PR_DHL_PLUGIN_DIR_URL . '/assets/img/dhl-official.png';
 			echo '<a data-fancybox id="dhl_parcel_finder" class="button" data-src="#dhl_parcel_finder_form" href="javascript:;">' . $this->get_branch_location_text() . '<img src="' . esc_url( $dhl_logo ) . '" class="dhl-co-logo"></a>';
-
-			// echo '<a id="dhl_parcel_finder_test" class="button" href="#dhl_parcel_finder_form_test">' . esc_html__('Parcel Finder TEST', 'dhl-for-woocommerce') . '</a>';
-			// echo '<div id="dhl_parcel_finder_form_test">TEST TEST</div>';
-
-			// echo '<a id="dhl_parcel_finder" class="button" href="' . PR_DHL_PLUGIN_DIR_URL . '/templates/checkout/dhl-parcel-finder.php">' . esc_html__('Parcel Finder', 'dhl-for-woocommerce') . '</a>';
 		}
 
 		protected function get_branch_location_text() {
@@ -692,14 +690,32 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 			}
 		}
 
-		protected function is_google_maps_enabled() {
-
+		/**
+		 * Is Location Finder map enabled?
+		 *
+		 * @return bool
+		 */
+		protected function is_map_enabled() {
 			if ( ( isset( $this->shipping_dhl_settings['dhl_display_google_maps'] ) &&
-			( $this->shipping_dhl_settings['dhl_display_google_maps'] == 'yes' ) ) ) {
+				   ( $this->shipping_dhl_settings['dhl_display_google_maps'] == 'yes' ) ) ) {
 				return true;
-			} else {
-				return false;
 			}
+
+			return false;
+		}
+
+		/**
+		 * Get Location Finder map type.
+		 *
+		 * @return string
+		 */
+		protected function get_map_type() {
+			if ( ( isset( $this->shipping_dhl_settings['dhl_map_type'] ) &&
+				   ( 'osm' === $this->shipping_dhl_settings['dhl_map_type'] ) ) ) {
+				return 'osm';
+			}
+
+			return 'gmaps';
 		}
 
 		protected function is_packstation_enabled() {
