@@ -50,7 +50,7 @@ class Item_Info {
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @param array $args The arguments to parse.
+	 * @param array  $args The arguments to parse.
 	 * @param string $weightUom The units of measurement used for weights in the input args.
 	 *
 	 * @throws Exception If some data in $args did not pass validation.
@@ -70,14 +70,14 @@ class Item_Info {
 	 * @throws Exception If some data in $args did not pass validation.
 	 */
 	protected function parse_args( $args ) {
-		$settings = $args[ 'dhl_settings' ];
-		$recipient_info = $args[ 'shipping_address' ] + $settings;
-		$shipping_info = $args[ 'order_details' ] + $settings;
-		$items_info = $args['items'];
+		$settings       = $args['dhl_settings'];
+		$recipient_info = $args['shipping_address'] + $settings;
+		$shipping_info  = $args['order_details'] + $settings;
+		$items_info     = $args['items'];
 
-		$this->shipment = Args_Parser::parse_args( $shipping_info, $this->get_shipment_info_schema() );
+		$this->shipment  = Args_Parser::parse_args( $shipping_info, $this->get_shipment_info_schema() );
 		$this->recipient = Args_Parser::parse_args( $recipient_info, $this->get_recipient_info_schema() );
-		$this->contents = array();
+		$this->contents  = array();
 
 		$this->contents = array();
 		foreach ( $items_info as $item_info ) {
@@ -98,27 +98,27 @@ class Item_Info {
 		$self = $this;
 
 		return array(
-			'dhl_label_ref'       => array(
-				'rename' => 'label_ref',
-				'sanitize' => function( $label_ref ) use ($self) {
+			'dhl_label_ref'     => array(
+				'rename'   => 'label_ref',
+				'sanitize' => function ( $label_ref ) use ( $self ) {
 
 					return $self->string_length_sanitization( $label_ref, 28 );
-				}
+				},
 			),
-            'dhl_label_ref_2'       => array(
-				'rename' => 'label_ref_2',
-				'sanitize' => function( $label_ref_2 ) use ($self) {
+			'dhl_label_ref_2'   => array(
+				'rename'   => 'label_ref_2',
+				'sanitize' => function ( $label_ref_2 ) use ( $self ) {
 
 					return $self->string_length_sanitization( $label_ref_2, 28 );
-				}
+				},
 			),
-            'dhl_product'       => array(
-				'rename' => 'product',
-				'error'  => __( 'DHL "Product" is empty!', 'dhl-for-woocommerce' ),
-				'sanitize' => function ( $product ) use ($self) {
+			'dhl_product'       => array(
+				'rename'   => 'product',
+				'error'    => esc_html__( 'DHL "Product" is empty!', 'dhl-for-woocommerce' ),
+				'sanitize' => function ( $product ) use ( $self ) {
 
-					$product_info 	= explode( '-', $product );
-					$product 		= $product_info[0];
+					$product_info   = explode( '-', $product );
+					$product        = $product_info[0];
 
 					return $product;
 				},
@@ -126,85 +126,83 @@ class Item_Info {
 			'dhl_service_level' => array(
 				'rename'   => 'service_level',
 				'default'  => 'PRIORITY',
-				'validate' => function( $level ) {
+				'validate' => function ( $level ) {
 					if ( $level !== 'STANDARD' && $level !== 'PRIORITY' && $level !== 'REGISTERED' ) {
-						throw new Exception( __( 'Order "Service Level" is invalid', 'dhl-for-woocommerce' ) );
+						throw new Exception( esc_html__( 'Order "Service Level" is invalid', 'dhl-for-woocommerce' ) );
 					}
 				},
 			),
 			'weight'            => array(
-				'error'    => __( 'Order "Weight" is empty!', 'dhl-for-woocommerce' ),
-				'validate' => function( $weight ) {
+				'error'    => esc_html__( 'Order "Weight" is empty!', 'dhl-for-woocommerce' ),
+				'validate' => function ( $weight ) {
 					if ( ! is_numeric( wc_format_decimal( $weight ) ) ) {
-						throw new Exception( __( 'The order "Weight" must be a number', 'dhl-for-woocommerce' ) );
+						throw new Exception( esc_html__( 'The order "Weight" must be a number', 'dhl-for-woocommerce' ) );
 					}
 				},
-				'sanitize' => function ( $weight ) use ($self) {
+				'sanitize' => function ( $weight ) use ( $self ) {
 					$weight = $self->maybe_convert_to_grams( $weight, $self->weightUom );
 
 					return $weight;
-				}
+				},
 			),
 			'currency'          => array(
-				'error' => __( 'Shop "Currency" is empty!', 'dhl-for-woocommerce' ),
+				'error' => esc_html__( 'Shop "Currency" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'total_value'       => array(
-				'rename' => 'value',
-				'error'  => __( 'Shipment "Value" is empty!', 'dhl-for-woocommerce' ),
-				'validate' => function( $value ) {
+				'rename'   => 'value',
+				'error'    => esc_html__( 'Shipment "Value" is empty!', 'dhl-for-woocommerce' ),
+				'validate' => function ( $value ) {
 					if ( ! is_numeric( $value ) ) {
-						throw new Exception( __( 'The order "value" must be a number', 'dhl-for-woocommerce' ) );
+						throw new Exception( esc_html__( 'The order "value" must be a number', 'dhl-for-woocommerce' ) );
 					}
 				},
-				'sanitize' => function( $value ) use ($self) {
+				'sanitize' => function ( $value ) use ( $self ) {
 
 					return $self->float_round_sanitization( $value, 2 );
-				}
+				},
 			),
-            'nature_type'          => array(
-                'rename' => 'nature_type',
-                'default' => 'SALE_GOODS',
+			'nature_type'       => array(
+				'rename'  => 'nature_type',
+				'default' => 'SALE_GOODS',
 			),
-			'packet_return' 	=> array(
-				'default' => false,
-				'sanitize' => function ( $return ) use ($self) {
+			'packet_return'     => array(
+				'default'  => false,
+				'sanitize' => function ( $return ) use ( $self ) {
 
-					return ( $return == 'yes' )? true : false;
-				}
+					return ( $return == 'yes' ) ? true : false;
+				},
 			),
-			'importer_taxid'          => array(
-				'default' => '',
-				'validate' => function( $value ) use ($self) {
+			'importer_taxid'    => array(
+				'default'  => '',
+				'validate' => function ( $value ) use ( $self ) {
 
-					if( !empty( $value ) ){
-						
-						if( !ctype_alnum( $value ) ){
-							throw new Exception( __( 'The importer customs reference "value" must be an alphanumeric', 'dhl-for-woocommerce' ) );
+					if ( ! empty( $value ) ) {
+
+						if ( ! ctype_alnum( $value ) ) {
+							throw new Exception( esc_html__( 'The importer customs reference "value" must be an alphanumeric', 'dhl-for-woocommerce' ) );
 						}
 
-						if( strlen( $value ) > 35 ){
-							throw new Exception( __( 'The importer customs reference "value" must be between 1 and 35 characters long', 'dhl-for-woocommerce' ) );
+						if ( strlen( $value ) > 35 ) {
+							throw new Exception( esc_html__( 'The importer customs reference "value" must be between 1 and 35 characters long', 'dhl-for-woocommerce' ) );
 						}
-						
 					}
-				}
+				},
 			),
-			'sender_taxid'          => array(
-				'default' => '',
-				'validate' => function( $value ) use ($self) {
+			'sender_taxid'      => array(
+				'default'  => '',
+				'validate' => function ( $value ) use ( $self ) {
 
-					if( !empty( $value ) ){
+					if ( ! empty( $value ) ) {
 
-						if( !ctype_alnum( $value ) ){
-							throw new Exception( __( 'The sender customs reference "value" must be an alphanumeric', 'dhl-for-woocommerce' ) );
-						}
-	
-						if( strlen( $value ) > 35 ){
-							throw new Exception( __( 'The sender customs reference "value" must be between 1 and 35 characters long', 'dhl-for-woocommerce' ) );
+						if ( ! ctype_alnum( $value ) ) {
+							throw new Exception( esc_html__( 'The sender customs reference "value" must be an alphanumeric', 'dhl-for-woocommerce' ) );
 						}
 
+						if ( strlen( $value ) > 35 ) {
+							throw new Exception( esc_html__( 'The sender customs reference "value" must be between 1 and 35 characters long', 'dhl-for-woocommerce' ) );
+						}
 					}
-				}
+				},
 			),
 		);
 	}
@@ -221,34 +219,34 @@ class Item_Info {
 		// Closures in PHP 5.3 do not inherit class context
 		// So we need to copy $this into a lexical variable and pass it to closures manually
 		$self = $this;
-		
+
 		return array(
 			'name'      => array(
-				'default' => '',
-				'error'  => __( 'Recipient is empty!', 'dhl-for-woocommerce' ),
-				'sanitize' => function( $name ) use ($self) {
+				'default'  => '',
+				'error'    => esc_html__( 'Recipient is empty!', 'dhl-for-woocommerce' ),
+				'sanitize' => function ( $name ) use ( $self ) {
 
 					return $self->string_length_sanitization( $name, 30 );
-				}
+				},
 			),
 			'phone'     => array(
-				'default' => '',
-				'sanitize' => function( $phone ) use ($self) {
+				'default'  => '',
+				'sanitize' => function ( $phone ) use ( $self ) {
 
 					return $self->string_length_sanitization( $phone, 15 );
-				}
+				},
 			),
 			'email'     => array(
 				'default' => '',
 			),
 			'address_1' => array(
-				'error' => __( 'Shipping "Address 1" is empty!', 'dhl-for-woocommerce' ),
+				'error' => esc_html__( 'Shipping "Address 1" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'address_2' => array(
 				'default' => '',
 			),
 			'city'      => array(
-				'error' => __( 'Shipping "City" is empty!', 'dhl-for-woocommerce' ),
+				'error' => esc_html__( 'Shipping "City" is empty!', 'dhl-for-woocommerce' ),
 			),
 			'postcode'  => array(
 				'default' => '',
@@ -257,7 +255,7 @@ class Item_Info {
 				'default' => '',
 			),
 			'country'   => array(
-				'error' => __( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' ),
+				'error' => esc_html__( 'Shipping "Country" is empty!', 'dhl-for-woocommerce' ),
 			),
 		);
 	}
@@ -269,78 +267,77 @@ class Item_Info {
 	 *
 	 * @return array
 	 */
-	protected function get_content_item_info_schema()
-	{
+	protected function get_content_item_info_schema() {
 		// Closures in PHP 5.3 do not inherit class context
 		// So we need to copy $this into a lexical variable and pass it to closures manually
 		$self = $this;
 
 		return array(
-			'hs_code'     => array(
+			'hs_code'          => array(
 				'default'  => '',
-				'validate' => function( $hs_code ) {
+				'validate' => function ( $hs_code ) {
 					$length = is_string( $hs_code ) ? strlen( $hs_code ) : 0;
 
-					if (empty($length)) {
+					if ( empty( $length ) ) {
 						return;
 					}
 
 					if ( $length < 4 || $length > 20 ) {
 						throw new Exception(
-							__( 'Item HS Code must be between 4 and 20 characters long', 'dhl-for-woocommerce' )
+							esc_html__( 'Item HS Code must be between 4 and 20 characters long', 'dhl-for-woocommerce' )
 						);
 					}
 				},
 			),
 			'item_description' => array(
-				'rename' => 'description',
-				'default' => '',
-				'sanitize' => function( $description ) use ($self) {
+				'rename'   => 'description',
+				'default'  => '',
+				'sanitize' => function ( $description ) use ( $self ) {
 
 					return $self->string_length_sanitization( $description, 33 );
-				}
+				},
 			),
-			'item_export' => array(
-				'rename' => 'description_export',
-				'default' => '',
-				'sanitize' => function( $description_export ) use ($self) {
+			'item_export'      => array(
+				'rename'   => 'description_export',
+				'default'  => '',
+				'sanitize' => function ( $description_export ) use ( $self ) {
 
 					return $self->string_length_sanitization( $description_export, 33 );
-				}
+				},
 			),
-			'product_id'  => array(
+			'product_id'       => array(
 				'default' => '',
 			),
-			'sku'         => array(
+			'sku'              => array(
 				'default' => '',
 			),
 			'item_value'       => array(
-				'rename' => 'value',
-				'default' => 0,
-				'sanitize' => function( $value, $args ) use ($self) {
-					
-					$qty 			= isset( $args['qty'] ) && is_numeric( $args['qty'] )? floatval( $args['qty'] ) : 1;
-					$total_value 	= floatval( $value ) * $qty;
-					
+				'rename'   => 'value',
+				'default'  => 0,
+				'sanitize' => function ( $value, $args ) use ( $self ) {
+
+					$qty            = isset( $args['qty'] ) && is_numeric( $args['qty'] ) ? floatval( $args['qty'] ) : 1;
+					$total_value    = floatval( $value ) * $qty;
+
 					return (string) $self->float_round_sanitization( $total_value, 2 );
-				}
+				},
 			),
-			'country_origin' => array(
-				'rename' => 'origin',
+			'country_origin'   => array(
+				'rename'  => 'origin',
 				'default' => PR_DHL()->get_base_country(),
 			),
-			'qty'         => array(
+			'qty'              => array(
 				'default' => 1,
 			),
 			'item_weight'      => array(
-				'rename' => 'weight',
-				'default' => 1,
-				'sanitize' => function ( $weight ) use ($self) {
+				'rename'   => 'weight',
+				'default'  => 1,
+				'sanitize' => function ( $weight ) use ( $self ) {
 
 					$weight = $self->maybe_convert_to_grams( $weight, $self->weightUom );
 
 					return $weight;
-				}
+				},
 			),
 		);
 	}
@@ -350,7 +347,7 @@ class Item_Info {
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @param float $weight The weight amount.
+	 * @param float  $weight The weight amount.
 	 * @param string $uom The unit of measurement of the $weight parameter..
 	 *
 	 * @return float The potentially converted weight.
@@ -369,27 +366,26 @@ class Item_Info {
 				$weight = $weight / 35.274;
 				break;
 		}
-		
+
 		return round( $weight );
 	}
 
 	protected function float_round_sanitization( $float, $numcomma ) {
 
-		$float = round( floatval( $float ), $numcomma);
+		$float = round( floatval( $float ), $numcomma );
 
-        return number_format($float, 2, '.', '');
+		return number_format( $float, 2, '.', '' );
 	}
 
 	protected function string_length_sanitization( $string, $max ) {
 
 		$max = intval( $max );
 
-		if( strlen( $string ) <= $max ){
+		if ( strlen( $string ) <= $max ) {
 
 			return $string;
 		}
 
-		return substr( $string, 0, ( $max-1 ));
+		return substr( $string, 0, ( $max - 1 ) );
 	}
-
 }

@@ -35,7 +35,7 @@ class Args_Parser {
 
 		foreach ( $scheme as $key => $s_scheme ) {
 			// If not an array, just use it as a value.
-			if (!is_array($s_scheme)) {
+			if ( ! is_array( $s_scheme ) ) {
 				$final_args[ $key ] = $s_scheme;
 				continue;
 			}
@@ -54,11 +54,9 @@ class Args_Parser {
 				// If no default value is given, throw
 				if ( ! isset( $s_scheme['default'] ) ) {
 					// If no default value is specified, throw an exception
-					$message = ! isset( $s_scheme['error'] )
-						? sprintf( __( 'Please specify a "%s" argument', 'dhl-for-woocommerce' ), $key )
-						: $s_scheme['error'];
-
-					throw new Exception( $message );
+					/* translators: %s is the name of the required argument */
+					$message = ! isset( $s_scheme['error'] ) ? sprintf( esc_html__( 'Please specify a "%s" argument', 'dhl-for-woocommerce' ), $key ) : $s_scheme['error'];
+					throw new Exception( esc_html( $message ) );
 				}
 				// If a default value is specified, use that as the value
 				$value = $s_scheme['default'];
@@ -82,25 +80,24 @@ class Args_Parser {
 		return $final_args;
 	}
 
-    /**
-     * Unset/remove any items that are empty strings or 0
-     *
-     * @param array $array
-     * @return array
-     */
-    public static function unset_empty_values( array $array ) {
+	/**
+	 * Unset/remove any items that are empty strings or 0
+	 *
+	 * @param array $array
+	 * @return array
+	 */
+	public static function unset_empty_values( array $array ) {
 
-        foreach ($array as $k => $v) {
-            if ( is_array( $v ) ) {
-                $array[$k] = self::unset_empty_values( $v );
-            }
+		foreach ( $array as $k => $v ) {
+			if ( is_array( $v ) ) {
+				$array[ $k ] = self::unset_empty_values( $v );
+			}
 
-            if ( empty( $v ) ) {
-                unset($array[$k]);
-            }
+			if ( empty( $v ) ) {
+				unset( $array[ $k ] );
+			}
+		}
 
-        }
-
-        return $array;
-    }
+		return $array;
+	}
 }
