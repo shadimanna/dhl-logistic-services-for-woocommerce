@@ -108,76 +108,64 @@ jQuery(document).ready(function($) {
 
       wc_checkout_dhl_parcelfinder.address_type();
 
-      setTimeout(function() {
-        wc_checkout_dhl_parcelfinder.populateDropdown();
-      }, 500);
-
-      //$( 'form#checkout_dhl_parcel_finder' ).submit( this.submit );
-
-       $(document.body).on('click', '#dhl_seach_button input[type="submit"]', function(e) {
-         e.preventDefault();
-         wc_checkout_dhl_parcelfinder.submit();
-       });
+      $( 'form#checkout_dhl_parcel_finder' ).submit( this.submit );
     },
     address_type: function() {
-      var address_type = $('.woocommerce-checkout #shipping_dhl_address_type').val();
+        var address_type = $('.woocommerce-checkout #shipping_dhl_address_type').val();
 
-      if (address_type == 'dhl_packstation') {
-        $( '.woocommerce-checkout #shipping_dhl_postnum_field' ).show();
-        // If does not have span or span with "required" class, add it
-        if ( ! $( '.woocommerce-checkout #shipping_dhl_postnum_field label span' ).length ||
-            ( ! $( '.woocommerce-checkout #shipping_dhl_postnum_field label span' ).hasClass('required') ) ) {
-          $( '.woocommerce-checkout #shipping_dhl_postnum_field label' ).append(' <span class="required">*</span>');
+        if (address_type == 'dhl_packstation') {
+          $( '.woocommerce-checkout #shipping_dhl_postnum_field' ).show();
+          // If does not have span or span with "required" class, add it
+          if ( ! $( '.woocommerce-checkout #shipping_dhl_postnum_field label span' ).length ||
+             ( ! $( '.woocommerce-checkout #shipping_dhl_postnum_field label span' ).hasClass('required') ) ) {
+              $( '.woocommerce-checkout #shipping_dhl_postnum_field label' ).append(' <span class="required">*</span>');
+          }
+        } else if (address_type == 'dhl_branch') {
+          $( '.woocommerce-checkout #shipping_dhl_postnum_field' ).show();
+          // remove "required" span tag
+          $( '.woocommerce-checkout #shipping_dhl_postnum_field label .required' ).remove();
+        } else {
+          $( '.woocommerce-checkout #shipping_dhl_postnum_field' ).hide();
         }
-      } else if (address_type == 'dhl_branch') {
-        $( '.woocommerce-checkout #shipping_dhl_postnum_field' ).show();
-        // remove "required" span tag
-        $( '.woocommerce-checkout #shipping_dhl_postnum_field label .required' ).remove();
-      } else {
-        $( '.woocommerce-checkout #shipping_dhl_postnum_field' ).hide();
-      }
     },
     init_form: function() {
-      var gmap_country = $('.woocommerce-checkout #shipping_country').val()
-          || $('.woocommerce-checkout #shipping-country').val()
-          || $('.woocommerce-checkout #billing_country').val()
-          || $('.woocommerce-checkout #billing-country').val()
-          || '';
-      $('#dhl_parcelfinder_country').val(gmap_country);
 
-      var gmap_postcode = $('.woocommerce-checkout #shipping_postcode').val()
-          || $('.woocommerce-checkout #shipping-postcode').val()
-          || $('.woocommerce-checkout #billing_postcode').val()
-          || $('.woocommerce-checkout #billing-postcode').val()
-          || '';
-      $('#dhl_parcelfinder_postcode').val(gmap_postcode);
+        var gmap_country = '';
+        if ( $('.woocommerce-checkout #billing_country').length ) {
+            gmap_country = $('.woocommerce-checkout #billing_country').val();
+        }
+        $('#dhl_parcelfinder_country').val( gmap_country );
 
-      var gmap_city = $('.woocommerce-checkout #shipping_city').val()
-          || $('.woocommerce-checkout #shipping-city').val()
-          || $('.woocommerce-checkout #billing_city').val()
-          || $('.woocommerce-checkout #billing-city').val()
-          || '';
-      $('#dhl_parcelfinder_city').val(gmap_city);
+        var gmap_postcode = '';
+        if ( $('.woocommerce-checkout #billing_postcode').length ) {
+            gmap_postcode = $('.woocommerce-checkout #billing_postcode').val();
+        }
+        $('#dhl_parcelfinder_postcode').val( gmap_postcode );
 
-      var gmap_address_1 = $('.woocommerce-checkout #shipping_address_1').val()
-          || $('.woocommerce-checkout #shipping-address_1').val()
-          || $('.woocommerce-checkout #billing_address_1').val()
-          || $('.woocommerce-checkout #billing-address_1').val()
-          || '';
-      var gmap_address_2 = $('.woocommerce-checkout #shipping_address_2').val()
-          || $('.woocommerce-checkout #shipping-address_2').val()
-          || $('.woocommerce-checkout #billing_address_2').val()
-          || $('.woocommerce-checkout #billing-address_2').val()
-          || '';
+        var gmap_city = '';
+        if ( $('.woocommerce-checkout #billing_city').length ) {
+            gmap_city = $('.woocommerce-checkout #billing_city').val();
+        }
+         $('#dhl_parcelfinder_city').val( gmap_city );
 
-      var gmap_address = (gmap_address_1 + ' ' + gmap_address_2).trim();
-      $('#dhl_parcelfinder_address').val(gmap_address);
+        var gmap_address_1 = '';
+        if ( $('.woocommerce-checkout #billing_address_1').length ) {
+            gmap_address_1 = $('.woocommerce-checkout #billing_address_1').val();
+        }
+        var gmap_address_2 = '';
+        if ( $('.woocommerce-checkout #billing_address_2').length ) {
+            gmap_address_2 = $('.woocommerce-checkout #billing_address_2').val();
+        }
 
-     // $( 'form#checkout_dhl_parcel_finder' ).submit();
-      $('#dhl_seach_button input[type="submit"]').trigger('click');
+        var gmap_address = gmap_address_1 + ' ' + gmap_address_2;
+        gmap_address = gmap_address.trim();
+
+      $('#dhl_parcelfinder_address').val( gmap_address );
+
+      $( 'form#checkout_dhl_parcel_finder' ).submit();
     },
     submit: function() {
-      var $form = $('#checkout_dhl_parcel_finder');
+      var $form = $( this );
 
       $('#dhl_parcel_finder_form #checkout_dhl_parcel_finder .woocommerce-error').remove();
 
@@ -207,7 +195,7 @@ jQuery(document).ready(function($) {
         parcelfinder_address:     $('#dhl_parcelfinder_address').val(),
         packstation_filter:       $('#dhl_packstation_filter').is(":checked"),
         branch_filter:            $('#dhl_branch_filter').is(":checked"),
-        security:                 prDhlGlobals.parcel_nonce
+        security:                 $form.find( 'input[name="dhl_parcelfinder_nonce"]' ).val()
       };
 
       $.ajax({
@@ -392,109 +380,6 @@ jQuery(document).ready(function($) {
 
       // marker.addListener('click', toggleBounce);
     },
-    populateDropdown: function() {
-
-      var pf_post_code = $('#shipping-postcode').val();
-      setTimeout(function() {
-        var data = {
-          action:                   'wc_shipment_dhl_parcelfinder_search',
-          parcelfinder_country:     $('#shipping-country').val(),
-          parcelfinder_postcode:    pf_post_code,
-          parcelfinder_city:        $('#shipping-city').val(),
-          parcelfinder_address:     $('#billing_address_1').val(),
-          packstation_filter:       $('#dhl_packstation_filter').is(":checked"),
-          branch_filter:            $('#dhl_branch_filter').is(":checked"),
-          security:                   prDhlGlobals.parcel_nonce
-
-        };
-
-        $.ajax({
-          type:   'POST',
-          url:    pr_dhl_checkout_frontend.ajax_url,
-          data:   data,
-          success:  function( parcelShopsJSON ) {
-            $( '.woocommerce-error, .woocommerce-message' ).remove();
-            if ( parcelShopsJSON ) {
-              var parcelShopsRes = JSON.parse( parcelShopsJSON );
-
-              if( parcelShopsRes.error ) {
-                $('#dhl_parcel_finder_form #checkout_dhl_parcel_finder').append('<div class="woocommerce-error">' + parcelShopsRes.error + '</div>');
-              } else {
-                // JSON parse returned results
-                // Find the dropdown element in the DOM
-                const dropdown = document.getElementById('shipping-pr-dhl-drop_off');
-                if (dropdown) {                
-                  wc_checkout_dhl_parcelfinder.parcelShops = parcelShopsRes.parcel_res;
-
-                  const options = dropdown.querySelectorAll('option');
-                  options.forEach(option => {
-                    if (option.label === '') {
-                      option.remove();
-                    }
-                  });
-                  // Populate the dropdown with parcel shop names
-                  wc_checkout_dhl_parcelfinder.parcelShops.forEach(element => {
-                      // Create a new option element
-                      const option = document.createElement('option');
-                      option.value = element.location.ids[0].locationId; // Use a relevant value if needed
-                      option.text = element.name;  // Display the name as the text of the option
-  
-                      // Add the new option to the dropdown
-                      dropdown.add(option);
-                  });
-                }
-                 
-              }
-            }
-          },
-          dataType: 'html'
-        });
-      }, 500);
-      return false;
-    },
-    selectedDropOff: function() {
-
-      var parcelShopId = $(this).val();
-      $.each(wc_checkout_dhl_parcelfinder.parcelShops, function(key,value) {
-
-        if( value.location.ids[0].locationId == parcelShopId ) {
-
-          switch (value.location.type) {
-            case 'locker':
-              var shop_name = pr_dhl_checkout_frontend.packstation;
-              $('.woocommerce-checkout #shipping_dhl_address_type').val('dhl_packstation').trigger('change');
-              break;
-            case 'servicepoint':
-              var shop_name = pr_dhl_checkout_frontend.parcelShop;
-              $('.woocommerce-checkout #shipping_dhl_address_type').val('dhl_branch').trigger('change');
-              break;
-            case 'postoffice':
-              var shop_name = pr_dhl_checkout_frontend.postoffice;
-              $('.woocommerce-checkout #shipping_dhl_address_type').val('dhl_branch').trigger('change');
-              break;
-            case 'postbank':
-              var shop_name = pr_dhl_checkout_frontend.postoffice;
-              $('.woocommerce-checkout #shipping_dhl_address_type').val('dhl_branch').trigger('change');
-              break;
-            default:
-              var shop_name = pr_dhl_checkout_frontend.packstation;
-              $('.woocommerce-checkout #shipping_dhl_address_type').val('dhl_packstation').trigger('change');
-              break;
-          }
-
-          $('.woocommerce-checkout #shipping_first_name').val( $('.woocommerce-checkout #billing_first_name').val() );
-          $('.woocommerce-checkout #shipping_last_name').val( $('.woocommerce-checkout #billing_last_name').val() );
-          // $('.woocommerce-checkout #shipping_company').val( '' );
-          $('.woocommerce-checkout #shipping_address_1').val( shop_name + ' ' + value.location.keywordId );
-          $('.woocommerce-checkout #shipping_address_2').val( '' );
-          $('.woocommerce-checkout #shipping_postcode').val( value.place.address.postalCode );
-          $('.woocommerce-checkout #shipping_city').val( value.place.address.addressLocality );
-
-          $.fancybox.close();
-        }
-      });
-    },
-
     selectedShop: function() {
 
       var parcelShopId = $(this).attr('id');
@@ -505,27 +390,22 @@ jQuery(document).ready(function($) {
           switch (value.location.type) {
             case 'locker':
               var shop_name = pr_dhl_checkout_frontend.packstation;
-              address_type = 'dhl_packstation';
               $('.woocommerce-checkout #shipping_dhl_address_type').val('dhl_packstation').trigger('change');
               break;
             case 'servicepoint':
               var shop_name = pr_dhl_checkout_frontend.parcelShop;
-              address_type = 'dhl_branch';
               $('.woocommerce-checkout #shipping_dhl_address_type').val('dhl_branch').trigger('change');
               break;
             case 'postoffice':
               var shop_name = pr_dhl_checkout_frontend.postoffice;
-              address_type = 'dhl_branch';
               $('.woocommerce-checkout #shipping_dhl_address_type').val('dhl_branch').trigger('change');
               break;
             case 'postbank':
               var shop_name = pr_dhl_checkout_frontend.postoffice;
-              address_type = 'dhl_branch';
               $('.woocommerce-checkout #shipping_dhl_address_type').val('dhl_branch').trigger('change');
               break;
             default:
               var shop_name = pr_dhl_checkout_frontend.packstation;
-              address_type = 'dhl_packstation';
               $('.woocommerce-checkout #shipping_dhl_address_type').val('dhl_packstation').trigger('change');
               break;
           }
@@ -537,16 +417,6 @@ jQuery(document).ready(function($) {
           $('.woocommerce-checkout #shipping_address_2').val( '' );
           $('.woocommerce-checkout #shipping_postcode').val( value.place.address.postalCode );
           $('.woocommerce-checkout #shipping_city').val( value.place.address.addressLocality );
-          var event = new CustomEvent('dhl-shop-selected', {
-            detail: {
-              address_1: shop_name + ' ' + value.location.keywordId,
-              address_2: '',
-              postcode: value.place.address.postalCode,
-              city: value.place.address.addressLocality
-            }
-          });
-          window.dispatchEvent(event);
-
 
           $.fancybox.close();
         }
@@ -563,4 +433,5 @@ jQuery(document).ready(function($) {
   }
 
   wc_checkout_dhl_parcelfinder.init();
+
 });
