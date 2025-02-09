@@ -9,13 +9,13 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
- * Version: 3.8.0
+ * Version: 3.8.1
  * Requires Plugins: woocommerce
  * Requires PHP: 7.4
  * Requires at least: 6.5
  * Tested up to: 6.7
- * WC requires at least: 9.3
- * WC tested up to: 9.5
+ * WC requires at least: 9.4
+ * WC tested up to: 9.6
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 	class PR_DHL_WC {
 
-		private $version = '3.8.0';
+		private $version = '3.8.1';
 
 		/**
 		 * Instance to call certain functions globally within the plugin
@@ -181,13 +181,13 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		 */
 		public function includes() {
 			// Auto loader class
-			include_once 'includes/class-pr-dhl-autoloader.php';
+			include_once PR_DHL_PLUGIN_DIR_PATH . '/includes/class-pr-dhl-autoloader.php';
 			// Load abstract classes
-			include_once 'includes/abstract-pr-dhl-wc-order.php';
-			include_once 'includes/abstract-pr-dhl-wc-product.php';
+			include_once PR_DHL_PLUGIN_DIR_PATH . '/includes/abstract-pr-dhl-wc-order.php';
+			include_once PR_DHL_PLUGIN_DIR_PATH . '/includes/abstract-pr-dhl-wc-product.php';
 
 			// Composer autoloader
-			include_once 'vendor/autoload.php';
+			include_once PR_DHL_PLUGIN_DIR_PATH . '/vendor/autoload.php';
 		}
 
 		/**
