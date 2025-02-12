@@ -118,13 +118,11 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 			);
 
 			try {
-
 				$dhl_obj                  = PR_DHL()->get_dhl_factory();
 				$select_dhl_product_int   = $dhl_obj->get_dhl_products_international();
 				$select_dhl_product_dom   = $dhl_obj->get_dhl_products_domestic();
 				$select_dhl_visual_age    = $dhl_obj->get_dhl_visual_age();
 				$myaccount_pwd_expiration = $dhl_obj->get_dhl_myaccount_pwd_expiration();
-
 			} catch ( Exception $e ) {
 				PR_DHL()->log_msg( esc_html__( 'DHL Products not displaying - ', 'dhl-for-woocommerce' ) . esc_html( $e->getMessage() ) );
 			}
@@ -156,7 +154,7 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					'title'       => esc_html__( 'Username', 'dhl-for-woocommerce' ),
 					'type'        => 'text',
 					'description' => sprintf(
-						/* Translators: %s is the URL for the DHL business customer portal. */
+					/* Translators: %s is the URL for the DHL business customer portal. */
 						esc_html__( 'Your username for the DHL business customer portal. Please note the lower case and test your access data in advance at %1$shere%2$s.', 'dhl-for-woocommerce' ),
 						'<a href="' . esc_url( PR_DHL_PAKET_BUSSINESS_PORTAL ) . '" target="_blank">',
 						'</a>'
@@ -168,11 +166,11 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					'title'       => esc_html__( 'Password', 'dhl-for-woocommerce' ),
 					'type'        => 'password',
 					'description' => sprintf(
-						/* Translators: %s is the URL for the DHL business customer portal. */
-						esc_html__( 'Your password for the DHL business customer portal. Please note the new assignment of the password to 3 (Standard User) or 12 (System User) months and test your access data in advance at %1$shere%2$s.', 'dhl-for-woocommerce' ),
-						'<a href="' . esc_url( PR_DHL_PAKET_BUSSINESS_PORTAL ) . '" target="_blank">', // Use esc_url() for security
-						'</a>'
-					) . $password_expiration_message,
+					                 /* Translators: %s is the URL for the DHL business customer portal. */
+						                 esc_html__( 'Your password for the DHL business customer portal. Please note the new assignment of the password to 3 (Standard User) or 12 (System User) months and test your access data in advance at %1$shere%2$s.', 'dhl-for-woocommerce' ),
+						                 '<a href="' . esc_url( PR_DHL_PAKET_BUSSINESS_PORTAL ) . '" target="_blank">', // Use esc_url() for security
+						                 '</a>'
+					                 ) . $password_expiration_message,
 					'desc_tip'    => false,
 					'default'     => '',
 				),
@@ -218,7 +216,7 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					'title'       => esc_html__( 'Sandbox Username', 'dhl-for-woocommerce' ),
 					'type'        => 'text',
 					'description' => sprintf(
-						/* Translators: %s is the URL for creating a DHL developer portal account. */
+					/* Translators: %s is the URL for creating a DHL developer portal account. */
 						esc_html__( 'Your sandbox username is the same as for the DHL developer portal. You can create an account %1$shere%2$s.', 'dhl-for-woocommerce' ),
 						'<a href="' . esc_url( PR_DHL_PAKET_DEVELOPER_PORTAL ) . '" target="_blank">',
 						'</a>'
@@ -230,7 +228,7 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					'title'       => esc_html__( 'Sandbox Password', 'dhl-for-woocommerce' ),
 					'type'        => 'password',
 					'description' => sprintf(
-						/* Translators: %s is the URL for creating a DHL developer portal account. */
+					/* Translators: %s is the URL for creating a DHL developer portal account. */
 						esc_html__( 'Your sandbox password is the same as for the DHL developer portal. You can create an account %1$shere%2$s.', 'dhl-for-woocommerce' ),
 						'<a href="' . esc_url( PR_DHL_PAKET_DEVELOPER_PORTAL ) . '" target="_blank">',
 						'</a>'
@@ -244,7 +242,7 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					'label'       => esc_html__( 'Enable logging', 'dhl-for-woocommerce' ),
 					'default'     => 'no',
 					'description' => sprintf(
-						/* Translators: %s is the URL to the log file. */
+					/* Translators: %s is the URL to the log file. */
 						esc_html__( 'A log file containing the communication to the DHL server will be maintained if this option is checked. This can be used in case of technical issues and can be found %1$shere%2$s.', 'dhl-for-woocommerce' ),
 						'<a href="' . esc_url( $log_path ) . '" target="_blank">',
 						'</a>'
@@ -472,7 +470,7 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 				),
 				'dhl_add_weight'                    => array(
 					'title'       => sprintf(
-						/* Translators: %s represents the weight unit (e.g., kg, lbs, %). */
+					/* Translators: %s represents the weight unit (e.g., kg, lbs, %). */
 						esc_html__( 'Additional Weight (%s or %%)', 'dhl-for-woocommerce' ),
 						esc_html( $weight_units ) // Escaped for security
 					),
@@ -590,7 +588,6 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 			// Preferred options for Germany only
 			// IF USING PREFERRED OPTIONS AND COD IS ENABLED DISPALY A WARNING MESSAGE OR DON'T ALLOW IT TO BE USED?
 			if ( $base_country_code == 'DE' ) {
-
 				$this->form_fields += array(
 					'dhl_preferred'               => array(
 						'title'       => esc_html__( 'Preferred Service', 'dhl-for-woocommerce' ),
@@ -720,11 +717,20 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 						'desc_tip'    => true,
 					),
 					'dhl_display_google_maps'     => array(
-						'title'       => esc_html__( 'Google Maps', 'dhl-for-woocommerce' ),
+						'title'       => __( 'Map', 'dhl-for-woocommerce' ),
 						'type'        => 'checkbox',
-						'label'       => esc_html__( 'Enable Google Maps', 'dhl-for-woocommerce' ),
-						'description' => esc_html__( 'Enabling this will display Google Maps on the front-end.', 'dhl-for-woocommerce' ),
+						'label'       => __( 'Enable Map', 'dhl-for-woocommerce' ),
+						'description' => __( 'Enabling this will display the Map on the front-end.', 'dhl-for-woocommerce' ),
 						'desc_tip'    => true,
+					),
+					'dhl_map_type'                => array(
+						'title'       => __( 'Map type', 'dhl-for-woocommerce' ),
+						'type'        => 'select',
+						'description' => __( 'Select the map type to show parcels shops.', 'dhl-for-woocommerce' ),
+						'desc_tip'    => true,
+						'options'     => array( 'gmaps' => 'Google Maps', 'osm' => 'Open Street Map' ),
+						'class'       => 'wc-enhanced-select',
+						'default'     => 'gmaps',
 					),
 					'dhl_parcel_limit'            => array(
 						'title'             => esc_html__( 'Limit Results', 'dhl-for-woocommerce' ),
@@ -940,15 +946,15 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					'desc_tip'          => true,
 					'default'           => '{email}',
 				),
-			/*
-			'dhl_cod_fee' => array(
-				'title'             => esc_html__( 'Add COD Fee', 'dhl-for-woocommerce' ),
-				'type'              => 'checkbox',
-				'description'       => esc_html__( 'Add €2 fee for users using COD.', 'dhl-for-woocommerce' ),
-				'desc_tip'          => true,
-				'default'           => '',
-				'custom_attributes' => array( 'maxlength' => '35' )
-			),*/
+				/*
+				'dhl_cod_fee' => array(
+					'title'             => esc_html__( 'Add COD Fee', 'dhl-for-woocommerce' ),
+					'type'              => 'checkbox',
+					'description'       => esc_html__( 'Add €2 fee for users using COD.', 'dhl-for-woocommerce' ),
+					'desc_tip'          => true,
+					'default'           => '',
+					'custom_attributes' => array( 'maxlength' => '35' )
+				),*/
 			);
 
 			// Business Hours for DHL Pickkup Request
