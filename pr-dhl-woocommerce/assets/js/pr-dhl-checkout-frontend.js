@@ -107,31 +107,31 @@ jQuery( function ( $ ) {
 	} )
 } )
 
-jQuery( function($) {
-  function toggleDhlParcelFinder() {
-    var selectedCountry = $( '#shipping_country' ).val();
-    if ( 'DE' !== selectedCountry ) {
-      $( '#dhl_parcel_finder' ).hide();
-      $( '#shipping_dhl_drop_off_field' ).hide();
-      $( '#shipping_dhl_address_type_field' ).hide();
-      $( '#ship-to-different-address span' ).text( pr_dhl_checkout_frontend.shipToDifferentAddressText );
-      $( '.registration_info' ).hide();
-    } else {
-      $( '#dhl_parcel_finder' ).show();
-      $( '#shipping_dhl_drop_off_field' ).show();
-      $( '#shipping_dhl_address_type_field' ).show();
-      $( '.registration_info' ).show();
-    }
-  }
+jQuery( function ( $ ) {
+	function toggleDhlParcelFinder() {
+		var selectedCountry = $( '#shipping_country' ).val()
+		if ( 'DE' !== selectedCountry ) {
+			$( '#dhl_parcel_finder' ).hide()
+			$( '#shipping_dhl_drop_off_field' ).hide()
+			$( '#shipping_dhl_address_type_field' ).hide()
+			$( '#ship-to-different-address span' ).text( pr_dhl_checkout_frontend.ship_to_different_address_text )
+			$( '.registration_info' ).hide()
+		} else {
+			$( '#dhl_parcel_finder' ).show()
+			$( '#shipping_dhl_drop_off_field' ).show()
+			$( '#shipping_dhl_address_type_field' ).show()
+			$( '.registration_info' ).show()
+		}
+	}
 
-  // Run on page load
-  toggleDhlParcelFinder();
+	// Run on page load
+	toggleDhlParcelFinder()
 
-  // Run when the shipping country changes
-  $( '#shipping_country' ).change( function() {
-      toggleDhlParcelFinder();
-  });
-});
+	// Run when the shipping country changes
+	$( '#shipping_country' ).change( function () {
+		toggleDhlParcelFinder()
+	} )
+} )
 
 function gm_authFailure() {
 	// alert('gm_authFailure');

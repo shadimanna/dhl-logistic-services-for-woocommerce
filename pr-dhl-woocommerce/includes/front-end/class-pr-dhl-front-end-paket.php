@@ -73,8 +73,6 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 				add_filter( 'woocommerce_get_order_item_totals', array( $this, 'display_dhl_preferred_free_services_values' ), 10, 2 );
 			}
 
-			add_action( 'woocommerce_before_checkout_shipping_form', array( $this, 'add_registration_text_above_shipping_fields' ) );
-
 			// Parcel finder hooks
 			if ( $this->is_parcelfinder_enabled() ) {
 				// add_action( 'woocommerce_after_checkout_billing_form', array( $this, 'add_parcel_finder_btn' ) );
@@ -95,8 +93,9 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 				add_filter( 'woocommerce_admin_shipping_fields', array( $this, 'admin_order_add_postnum_field' ), 10 );
 			}
 
-			if( $this->is_parcelfinder_enabled() ) {
+			if ( $this->is_parcelfinder_enabled() ) {
 				add_filter( 'gettext', array( $this, 'change_ship_to_different_address_text' ), 20, 3 );
+				add_action( 'woocommerce_before_checkout_shipping_form', array( $this, 'add_registration_text_above_shipping_fields' ) );
 			}
 			
 			if ( $this->is_email_notification_enabled() ) {
@@ -106,20 +105,36 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 			}
 		}
 
-		public function change_ship_to_different_address_text( $translated_text, $text, $domain ) {
-			if ( 'Ship to a different address?' === $text ) {
-				$translated_text = __( 'Ship to same address or Packstation / Branch?', 'dhl-for-woocommerce' );
+		/**
+		 * Change "Ship to a different address?" text if Parcelfinder is enabled.
+		 *
+		 * @param $translated_text
+		 * @param $text
+		 * @param $domain
+		 *
+		 * @return string
+		 */
+		public function change_ship_to_different_address_text( $translated_text, $text, $domain ): string {
+			if ( 'Ship to a different address?' !== $text ) {
+				return $translated_text;
 			}
-			return $translated_text;
+
+			return esc_html__( 'Ship to a different address or Packstation/Branch?', 'dhl-for-woocommerce' );
 		}
-	
-		public function add_registration_text_above_shipping_fields() {
-			echo '<div class="registration_info" >';
+
+		/**
+		 * Add DHL registration link above the shipping fields.
+		 *
+		 * @return void
+		 */
+		public function add_registration_text_above_shipping_fields(): void {
+			$link = DHL_GERMAN_REGISTRATION_LINK;
+
 			if ( 'en_US' === get_locale() ) {
 				$link = DHL_ENGLISH_REGISTRATION_LINK;
-			} else {
-				$link = DHL_GERMAN_REGISTRATION_LINK;
 			}
+
+			echo '<div class="registration_info" >';
 			echo sprintf( esc_html__( 'For deliveries to DHL Parcel Lockers you have to <a href="%s" target="_blank">create a DHL account</a> and get a Post Number', 'dhl-for-woocommerce' ), esc_url( $link ) );
 			echo '</div>';
 		}
@@ -200,10 +215,10 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 			}
 
 			if ( $this->is_preferredservice_enabled() || $is_parcelfinder_enabled ) {
-				$frontend_data['map_type'] = $this->get_map_type();
+				$frontend_data['map_type']                       = $this->get_map_type();
+				$frontend_data['ship_to_different_address_text'] = esc_html__( 'Ship to a different address?', 'dhl-for-woocommerce' );
 
 				// Register and load our styles and scripts
-				$frontend_data['shipToDifferentAddressText'] = esc_html__( 'Ship to a different address?', 'dhl-for-woocommerce' );
 				wp_register_script( 'pr-dhl-checkout-frontend', PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-checkout-frontend.js', array( 'jquery', 'wc-checkout' ), PR_DHL_VERSION, true );
 				wp_localize_script( 'pr-dhl-checkout-frontend', 'pr_dhl_checkout_frontend', $frontend_data );
 				wp_enqueue_script( 'pr-dhl-checkout-frontend' );
