@@ -121,6 +121,12 @@ export const Block = () => {
                         data-fancybox
                         data-src="#dhl_parcel_finder_form"
                         href="javascript:;"
+                        onClick={() => {
+                            // Reinitialize jQuery bindings, for example:
+                            if ( typeof wc_checkout_dhl_parcelfinder !== 'undefined' ) {
+                                wc_checkout_dhl_parcelfinder.init();
+                            }
+                        }}
                     >
                         {__('Search Packstation / Branch', 'dhl-for-woocommerce')}
                         <img
