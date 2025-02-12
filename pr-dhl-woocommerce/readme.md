@@ -77,6 +77,7 @@ More detailed instructions on how to set up your store and configure it are cons
 
 = 3.8.2 =
 * Add: OpenStreetMap support to the checkout shipping location finder.
+* Add: New product editor compatibility.
 
 = 3.8.1 =
 * Fix: PHP fatal error related to class loading conflicts in environments with multiple active autoloaders.
