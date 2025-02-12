@@ -803,7 +803,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 
 			$shipping_dhl_postnum_branch = array(
 				'label'    => esc_html__( 'Post Number', 'dhl-for-woocommerce' ),
-				'required' => false,
+				'required' => true,
 				'type'     => 'text',
 				'class'    => array( 'shipping-dhl-postnum' ),
 				'clear'    => true,
@@ -811,7 +811,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 
 			$shipping_dhl_drop_off = array(
 				'label'    => __( 'Drop off points', 'dhl-for-woocommerce' ),
-				'required' => true,
+				'required' => false,
 				'type'     => 'select',
 				'class'    => array( 'shipping-dhl-drop-off-points' ),
 				'clear'    => true,

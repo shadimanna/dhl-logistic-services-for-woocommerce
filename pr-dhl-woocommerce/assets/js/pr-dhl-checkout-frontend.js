@@ -280,13 +280,13 @@ jQuery( document ).ready( function ( $ ) {
 		populateDropdown: function () {
 
 			var pf_post_code = $( '#dhl_parcelfinder_postcode' ).val()
-
+			
 			var data = {
 				action: 'wc_shipment_dhl_parcelfinder_search',
 				parcelfinder_country: $( '#billing_country' ).val(),
 				parcelfinder_postcode: pf_post_code,
 				parcelfinder_city: $( '#billing_city' ).val(),
-				parcelfinder_address: $( '#billing_address_1' ).val(),
+				parcelfinder_address: $( '#billing_address_1' ).val()+' '+$( 'billing_address_2').val(),
 				packstation_filter: $( '#dhl_packstation_filter' ).is( ':checked' ),
 				branch_filter: $( '#dhl_branch_filter' ).is( ':checked' ),
 				security: $( 'form#checkout_dhl_parcel_finder' ).find( 'input[name="dhl_parcelfinder_nonce"]' ).val(),
