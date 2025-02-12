@@ -263,8 +263,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 					// Ensure DHL Labels folder exists
 					$this->dhl_label_folder_check();
-				}
-				catch ( Exception $e ) {
+				} catch ( Exception $e ) {
 					add_action( 'admin_notices', array( $this, 'environment_check' ) );
 				}
 			}
@@ -444,8 +443,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 					$pr_dhl_ship_meth             = 'PR_DHL_WC_Method_Deutsche_Post';
 					$shipping_method['pr_dhl_dp'] = $pr_dhl_ship_meth;
 				}
-			}
-			catch ( Exception $e ) {
+			} catch ( Exception $e ) {
 				// do nothing
 			}
 
@@ -470,8 +468,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			// Try to get the DHL object...if exception if thrown display to user, mainly to check country support.
 			try {
 				$this->get_dhl_factory();
-			}
-			catch ( Exception $e ) {
+			} catch ( Exception $e ) {
 				echo '<div class="error"><p>' . esc_html( $e->getMessage() ) . '</p></div>';
 			}
 		}
@@ -501,8 +498,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 			try {
 				$dhl_obj = PR_DHL_API_Factory::make_dhl( $base_country_code );
-			}
-			catch ( Exception $e ) {
+			} catch ( Exception $e ) {
 				throw $e;
 			}
 
@@ -538,8 +534,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 				} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
 					return $dhl_obj->get_api_url();
 				}
-			}
-			catch ( Exception $e ) {
+			} catch ( Exception $e ) {
 				throw new Exception( 'Cannot get DHL api credentials!' );
 			}
 		}
@@ -555,8 +550,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 				} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
 					$dhl_settings = $dhl_obj->get_settings();
 				}
-			}
-			catch ( Exception $e ) {
+			} catch ( Exception $e ) {
 				throw $e;
 			}
 
@@ -592,8 +586,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 						'button_txt'         => PR_DHL_BUTTON_TEST_CONNECTION,
 					)
 				);
-			}
-			catch ( Exception $e ) {
+			} catch ( Exception $e ) {
 				$this->log_msg( $e->getMessage() );
 
 				wp_send_json(
@@ -627,8 +620,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 						'button_txt'         => PR_DHL_BUTTON_MY_ACCOUNT,
 					)
 				);
-			}
-			catch ( Exception $e ) {
+			} catch ( Exception $e ) {
 				$this->log_msg( $e->getMessage() );
 
 				wp_send_json(
@@ -653,8 +645,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 				}
 
 				$this->logger->write( $msg );
-			}
-			catch ( Exception $e ) {
+			} catch ( Exception $e ) {
 				// do nothing
 			}
 		}
@@ -669,8 +660,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 				}
 
 				return $this->logger->get_log_url();
-			}
-			catch ( Exception $e ) {
+			} catch ( Exception $e ) {
 				throw $e;
 			}
 		}
@@ -691,8 +681,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			try {
 				$shipping_dhl_settings = $this->get_shipping_dhl_settings();
 				$dhl_obj               = $this->get_dhl_factory();
-			}
-			catch ( Exception $e ) {
+			} catch ( Exception $e ) {
 				return;
 			}
 
@@ -952,8 +941,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		public function dhl_myaccount_pwd_expiration_month_callback() {
 			try {
 				$dhl_obj = $this->get_dhl_factory();
-			}
-			catch ( Exception $e ) {
+			} catch ( Exception $e ) {
 				return;
 			}
 
@@ -963,8 +951,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		public function dhl_myaccount_pwd_expiration_week_callback() {
 			try {
 				$dhl_obj = $this->get_dhl_factory();
-			}
-			catch ( Exception $e ) {
+			} catch ( Exception $e ) {
 				return;
 			}
 
@@ -974,8 +961,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		public function password_expiration_notice_callback() {
 			try {
 				$dhl_obj = $this->get_dhl_factory();
-			}
-			catch ( Exception $e ) {
+			} catch ( Exception $e ) {
 				return;
 			}
 
