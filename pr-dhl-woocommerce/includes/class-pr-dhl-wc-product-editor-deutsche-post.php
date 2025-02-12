@@ -1,23 +1,21 @@
 <?php
 /**
- * Product editor handler class.
- *
- * @package PR_DHL_WC_Product
+ * PR_DHL_WC_Product_Editor_Deutsche_Post class file.
+ * Adds Deutsche Post product fields.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Automattic\WooCommerce\Admin\BlockTemplates\BlockInterface;
-
-/**
- * Product editor handler.
- */
 if ( ! class_exists( 'PR_DHL_WC_Product_Editor_Deutsche_Post' ) ) :
-
+	/**
+	 * PR_DHL_WC_Product_Editor_Deutsche_Post class.
+	 */
 	class PR_DHL_WC_Product_Editor_Deutsche_Post extends PR_DHL_WC_Product_Editor {
-
+		/**
+		 * Class constructor.
+		 */
 		public function __construct() {
 			parent::__construct();
 
@@ -27,7 +25,14 @@ if ( ! class_exists( 'PR_DHL_WC_Product_Editor_Deutsche_Post' ) ) :
 			$this->hs_code_description       = esc_html__( 'Optional information for non-EU shipments. Appears on CN22 (Deutsche Post International).', 'dhl-for-woocommerce' );
 		}
 
-		public function save_shipping_blocks( $parent ): void {
+		/**
+		 * Add additional product fields.
+		 *
+		 * @param $parent
+		 *
+		 * @return void
+		 */
+		public function additional_product_fields( $parent ): void {
 			// Add shipment info on the order page Checkbox Block.
 			$parent->add_block(
 				array(

@@ -1,29 +1,38 @@
 <?php
 /**
- * Product editor handler class.
- *
- * @package PR_DHL_WC_Product
+ * PR_DHL_WC_Product_Editor_Paket class file.
+ * Adds DHL Paket product fields.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Automattic\WooCommerce\Admin\BlockTemplates\BlockInterface;
-
-/**
- * Product editor handler.
- */
 if ( ! class_exists( 'PR_DHL_WC_Product_Paket_Editor' ) ) :
-
+	/**
+	 * PR_DHL_WC_Product_Editor_Paket class.
+	 */
 	class PR_DHL_WC_Product_Editor_Paket extends PR_DHL_WC_Product_Editor {
+		/**
+		 * Class constructor.
+		 */
+		public function __construct() {
+			parent::__construct();
+
+			$this->manufacture_tooltip       = esc_html__( 'Country of Manufacture', 'dhl-for-woocommerce' );
+			$this->manufacture_country_label = esc_html__( 'Country of Manufacture (DHL)', 'dhl-for-woocommerce' );
+			$this->hs_code_label             = esc_html__( 'Harmonized Tariff Schedule (DHL)', 'dhl-for-woocommerce' );
+			$this->hs_code_description       = esc_html__( 'Harmonized Tariff Schedule is a number assigned to every possible commodity that can be imported or exported from any country.', 'dhl-for-woocommerce' );
+		}
 
 		/**
-		 * Add custom blocks to the product editor shipping section.
+		 * Add additional product fields.
 		 *
+		 * @param $parent
+		 *
+		 * @return void
 		 */
-		public function save_shipping_blocks( $parent ): void {
-
+		public function additional_product_fields( $parent ): void {
 			// Add shipment info on the order page Checkbox Block.
 			$parent->add_block(
 				array(

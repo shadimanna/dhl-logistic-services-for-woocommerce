@@ -1,4 +1,7 @@
 <?php
+/**
+ * PR_DHL_WC_Product_Editor class file.
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -6,39 +9,70 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Automattic\WooCommerce\Admin\BlockTemplates\BlockInterface;
 
-/**
- * WooCommerce DHL Shipping Order.
- *
- * @package  PR_DHL_WC_Product_Editor
- * @category Product
- * @author   Shadi Manna
- */
-
 if ( ! class_exists( 'PR_DHL_WC_Product_Editor' ) ) :
-
+	/**
+	 * PR_DHL_WC_Product_Editor Class.
+	 */
 	abstract class PR_DHL_WC_Product_Editor {
+		/**
+		 * Manufacture country tooltip.
+		 *
+		 * @var string
+		 */
+		protected $manufacture_tooltip = '';
 
-		protected $manufacture_tooltip       = '';
+		/**
+		 * Manufacture country label.
+		 *
+		 * @var string
+		 */
 		protected $manufacture_country_label = '';
-		protected $hs_code_label             = '';
-		protected $hs_code_description       = '';
+
+		/**
+		 * HS Code label.
+		 *
+		 * @var string
+		 */
+		protected $hs_code_label = '';
+
+		/**
+		 * HS Code description.
+		 *
+		 * @var string
+		 */
+		protected $hs_code_description = '';
 
 		/**
 		 * Class constructor.
 		 */
 		public function __construct() {
-			$this->manufacture_tooltip       = esc_html__( 'Country of Manufacture', 'dhl-for-woocommerce' );
-			$this->manufacture_country_label = esc_html__( 'Country of Manufacture (DHL)', 'dhl-for-woocommerce' );
-			$this->hs_code_label             = esc_html__( 'Harmonized Tariff Schedule (DHL)', 'dhl-for-woocommerce' );
-			$this->hs_code_description       = esc_html__( 'Harmonized Tariff Schedule is a number assigned to every possible commodity that can be imported or exported from any country.', 'dhl-for-woocommerce' );
-
-			add_action( 'woocommerce_block_template_area_product-form_after_add_block_product-shipping-dimensions', array( $this, 'add_shipping_blocks' ) );
-			add_action( 'woocommerce_block_template_area_product-form_after_add_block_product-variation-shipping-dimensions', array( $this, 'add_shipping_blocks' ) );
+			add_action( 'woocommerce_block_template_area_product-form_after_add_block_product-shipping-dimensions', array(
+				$this,
+				'add_product_shipping_fields'
+			) );
+			add_action( 'woocommerce_block_template_area_product-form_after_add_block_product-variation-shipping-dimensions', array(
+				$this,
+				'add_product_shipping_fields'
+			) );
 		}
 
-		abstract public function save_shipping_blocks( $parent ): void;
+		/**
+		 * Add additional product fields.
+		 *
+		 * @param $parent
+		 *
+		 * @return void
+		 */
+		abstract public function additional_product_fields( $parent ): void;
 
-		public function add_shipping_blocks( BlockInterface $shipping_dimensions_block ): void {
+		/**
+		 * Add DHL product fields.
+		 *
+		 * @param BlockInterface $shipping_dimensions_block
+		 *
+		 * @return void
+		 */
+		public function add_product_shipping_fields( BlockInterface $shipping_dimensions_block ): void {
 			if ( ! method_exists( $shipping_dimensions_block, 'get_parent' ) ) {
 				return;
 			}
@@ -46,6 +80,7 @@ if ( ! class_exists( 'PR_DHL_WC_Product_Editor' ) ) :
 			$parent = $shipping_dimensions_block->get_parent();
 
 			// Add Country of Origin Select Block.
+			$countries = WC()->countries->get_countries();
 			$parent->add_block(
 				array(
 					'id'         => '_dhl_manufacture_country',
@@ -57,7 +92,7 @@ if ( ! class_exists( 'PR_DHL_WC_Product_Editor' ) ) :
 							array(
 								array(
 									'value' => '0',
-									'label' => __( '- select country -', 'dhl-for-woocommerce' )
+									'label' => __( '- select country -', 'dhl-for-woocommerce' ),
 								)
 							),
 							array_map( function ( $key, $value ) {
@@ -65,7 +100,7 @@ if ( ! class_exists( 'PR_DHL_WC_Product_Editor' ) ) :
 									'value' => $key,
 									'label' => $value,
 								);
-							}, array_keys( WC()->countries->get_countries() ), WC()->countries->get_countries() )
+							}, array_keys( $countries ), $countries )
 						),
 						'tooltip'  => $this->manufacture_tooltip,
 					),
@@ -86,8 +121,8 @@ if ( ! class_exists( 'PR_DHL_WC_Product_Editor' ) ) :
 				)
 			);
 
-			$this->save_shipping_blocks( $parent );
+			$this->additional_product_fields( $parent );
 		}
 	}
-	
+
 endif;
