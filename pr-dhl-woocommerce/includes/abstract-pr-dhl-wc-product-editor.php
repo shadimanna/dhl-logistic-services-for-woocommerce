@@ -67,7 +67,7 @@ if ( ! class_exists( 'PR_DHL_WC_Product_Editor' ) ) :
 								);
 							}, array_keys( WC()->countries->get_countries() ), WC()->countries->get_countries() )
 						),
-						'tooltip'  => $manufacture_tip,
+						'tooltip'  => $this->manufacture_tooltip,
 					),
 				)
 			);
