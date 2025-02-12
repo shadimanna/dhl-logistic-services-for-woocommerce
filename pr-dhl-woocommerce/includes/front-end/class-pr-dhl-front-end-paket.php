@@ -135,7 +135,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 			}
 
 			echo '<div class="registration_info" >';
-			echo sprintf( esc_html__( 'For deliveries to DHL Parcel Lockers you have to <a href="%s" target="_blank">create a DHL account</a> and get a Post Number', 'dhl-for-woocommerce' ), esc_url( $link ) );
+			echo sprintf( esc_html__( 'For deliveries to DHL Parcel Lockers you have to %1screate a DHL account%2s and get a Post Number.', 'dhl-for-woocommerce' ), '<a href="' . esc_url( $link ) . '" target="_blank">', '</a>' );
 			echo '</div>';
 		}
 
@@ -802,7 +802,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 			);
 
 			$shipping_dhl_postnum_branch = array(
-				'label'    => __( 'Post Number', 'dhl-for-woocommerce' ),
+				'label'    => esc_html__( 'Post Number', 'dhl-for-woocommerce' ),
 				'required' => false,
 				'type'     => 'text',
 				'class'    => array( 'shipping-dhl-postnum' ),
@@ -826,11 +826,12 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 					$new_shipping_fields['shipping_dhl_address_type'] = $shipping_dhl_address_type;
 					$new_shipping_fields['shipping_dhl_drop_off']     = $shipping_dhl_drop_off;
 				}
+
 				if ( 'shipping_address_1' === $key ) {
 					$new_shipping_fields['shipping_dhl_postnum'] = $shipping_dhl_postnum_branch;
 				}
-				$new_shipping_fields[ $key ] = $field;
 
+				$new_shipping_fields[ $key ] = $field;
 			}
 
 			if ( empty( $new_shipping_fields ) ) {
