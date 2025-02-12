@@ -100,6 +100,26 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 			}
 		}
 
+		/**
+		 * is_using_checkout_block
+		 *
+		 * @param Array is_using_checkout_block local fields.
+		 *
+		 * @return boolean
+		 */
+		protected function is_using_checkout_block() {
+			$checkout_page_id = wc_get_page_id( 'checkout' );
+			$has_block_checkout = $checkout_page_id && has_block( 'woocommerce/checkout', $checkout_page_id );
+
+			if ( $has_block_checkout) {
+				$is_using_checkout_block=true;
+			}
+			else{
+				$is_using_checkout_block=false;
+			}
+			return $is_using_checkout_block;
+		}
+
 		protected function is_tracking_enabled() {
 			return false;
 		}
@@ -124,6 +144,48 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 
 		public function dhl_add_meta_tags() {
 			echo '<meta name="58vffw8g4r9_t3e38g4og588915" content="Yes">';
+		}
+
+		/**
+		 * Localization for NL address fields.
+		 *
+		 * @param Array $checkout_fields Checkout fields.
+		 *
+		 * @return array
+		 */
+		public function get_country_locale( $checkout_fields ) {
+
+			if ( $this->is_using_checkout_block() ) {
+				$fields_to_order = array(
+					'pr-dhl/address_type' 	  => array( 'priority' => 1 ),
+					'first_name'          	  => array( 'priority' => 3 ),
+					'last_name'           	  => array( 'priority' => 4 ),
+					'company'             	  => array( 'priority' => 5 ),
+					'country'             	  => array( 'priority' => 6 ),
+					'postcode'            	  => array( 'priority' => 7 ),
+					'shipping_pr_dhl/postnum' => array( 'priority' => 8 ),
+				);
+			}
+
+			foreach ( $fields_to_order as $field_key => $field ) {
+				foreach ( $field as $override => $value ) {
+					$checkout_fields['DE'][ $field_key ][ $override ] = $value;
+				}
+			}
+
+			/**
+			 * Hide extra fields from the other countries .
+			 */
+			$countries_codes = array_keys( WC()->countries->get_countries() );
+			foreach ( $countries_codes as $country_code ) {
+				if ( 'DE' !== $country_code ) {
+					$checkout_fields[ $country_code ]['pr-dhl/address_type']['hidden']   = true;
+					$checkout_fields[ $country_code ]['pr-dhl/address_type']['required'] = false;
+					$checkout_fields[ $country_code ]['pr-dhl/postnum']['hidden']   = true;
+					$checkout_fields[ $country_code ]['pr-dhl/postnum']['required'] = false;
+				}
+			}
+			return $checkout_fields;
 		}
 
 		public function load_styles_scripts() {
@@ -221,7 +283,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 			}
 		}
 
-		protected function validate_extra_services_available( $check_day_transfer = false ) {
+		public function validate_extra_services_available( $check_day_transfer = false ) {
 			// woocommerce_form_field('pr_dhl_paket_preferred_location');
 			$chosen_shipping_methods = WC()->session->get( 'chosen_shipping_methods' );
 			$chosen_payment_method   = WC()->session->get( 'chosen_payment_method' );
@@ -605,14 +667,14 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 				foreach ( $parcel_res->locations as $key => $value ) {
 
 					if ( ( $this->is_packstation_enabled() &&
-						( $packstation_filter == 'true' ) &&
-						( $value->location->type == 'locker' ) ) ||
-					( $this->is_parcelshop_enabled() &&
-						( $branch_filter == 'true' ) &&
-						( $value->location->type == 'servicepoint' ) ) ||
-					( $this->is_post_office_enabled() &&
-						( $branch_filter == 'true' ) &&
-						( $value->location->type == 'postoffice' || $value->location->type == 'postbank' ) ) ) {
+					       ( $packstation_filter == 'true' ) &&
+					       ( $value->location->type == 'locker' ) ) ||
+					     ( $this->is_parcelshop_enabled() &&
+					       ( $branch_filter == 'true' ) &&
+					       ( $value->location->type == 'servicepoint' ) ) ||
+					     ( $this->is_post_office_enabled() &&
+					       ( $branch_filter == 'true' ) &&
+					       ( $value->location->type == 'postoffice' || $value->location->type == 'postbank' ) ) ) {
 
 						if ( $value->serviceTypes ) {
 							if ( is_array( $value->serviceTypes ) ) {
@@ -626,8 +688,8 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 									}
 								}
 							} elseif ( in_array( $value->serviceTypes, array( 'parcel:pick-up', 'parcel:pick-up-unregistered', 'parcel:pick-up-registered' ) ) ) {
-									array_push( $parcel_res_filtered, $value );
-									++$res_count;
+								array_push( $parcel_res_filtered, $value );
+								++$res_count;
 							}
 						}
 					}
@@ -645,7 +707,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 				wp_send_json(
 					array(
 						'parcel_res' => $parcel_res_filtered,
-					// 'tracking_note'    => $tracking_note
+						// 'tracking_note'    => $tracking_note
 					)
 				);
 
@@ -672,7 +734,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 		 */
 		protected function is_map_enabled() {
 			if ( ( isset( $this->shipping_dhl_settings['dhl_display_google_maps'] ) &&
-				   ( $this->shipping_dhl_settings['dhl_display_google_maps'] == 'yes' ) ) ) {
+			       ( $this->shipping_dhl_settings['dhl_display_google_maps'] == 'yes' ) ) ) {
 				return true;
 			}
 
@@ -686,7 +748,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 		 */
 		protected function get_map_type() {
 			if ( ( isset( $this->shipping_dhl_settings['dhl_map_type'] ) &&
-				   ( 'osm' === $this->shipping_dhl_settings['dhl_map_type'] ) ) ) {
+			       ( 'osm' === $this->shipping_dhl_settings['dhl_map_type'] ) ) ) {
 				return 'osm';
 			}
 
@@ -696,7 +758,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 		protected function is_packstation_enabled() {
 
 			if ( ( isset( $this->shipping_dhl_settings['dhl_display_packstation'] ) &&
-			( $this->shipping_dhl_settings['dhl_display_packstation'] == 'yes' ) ) ) {
+			       ( $this->shipping_dhl_settings['dhl_display_packstation'] == 'yes' ) ) ) {
 				return true;
 			} else {
 				return false;
@@ -706,7 +768,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 		protected function is_parcelshop_enabled() {
 
 			if ( ( isset( $this->shipping_dhl_settings['dhl_display_parcelshop'] ) &&
-			( $this->shipping_dhl_settings['dhl_display_parcelshop'] == 'yes' ) ) ) {
+			       ( $this->shipping_dhl_settings['dhl_display_parcelshop'] == 'yes' ) ) ) {
 				return true;
 			} else {
 				return false;
@@ -716,7 +778,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 		protected function is_post_office_enabled() {
 
 			if ( ( isset( $this->shipping_dhl_settings['dhl_display_post_office'] ) &&
-			( $this->shipping_dhl_settings['dhl_display_post_office'] == 'yes' ) ) ) {
+			       ( $this->shipping_dhl_settings['dhl_display_post_office'] == 'yes' ) ) ) {
 				return true;
 			} else {
 				return false;
@@ -726,7 +788,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 		protected function is_email_notification_enabled() {
 
 			if ( ( isset( $this->shipping_dhl_settings['dhl_email_notification'] ) &&
-			( $this->shipping_dhl_settings['dhl_email_notification'] == 'yes' ) ) ) {
+			       ( $this->shipping_dhl_settings['dhl_email_notification'] == 'yes' ) ) ) {
 				return true;
 			} else {
 				return false;
@@ -930,7 +992,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 			$pos_po = PR_DHL()->is_post_office( $address['address_1'] );
 
 			if ( ( $pos_ps || $pos_rs || $pos_po ) &&
-			( ! empty( $shipping_dhl_postnum = $order->get_meta( '_shipping_dhl_postnum' ) ) ) ) {
+			     ( ! empty( $shipping_dhl_postnum = $order->get_meta( '_shipping_dhl_postnum' ) ) ) ) {
 				$address['dhl_postnum'] = $shipping_dhl_postnum;
 			}
 
