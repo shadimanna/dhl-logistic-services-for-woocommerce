@@ -793,7 +793,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 
 			$shipping_dhl_address_type = array(
 				'label'    => esc_html__( 'Address Type', 'dhl-for-woocommerce' ),
-				'required' => false,
+				'required' => true,
 				'type'     => 'select',
 				'class'    => array( 'shipping-dhl-address-type' ),
 				'clear'    => true,
@@ -803,7 +803,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 
 			$shipping_dhl_postnum_branch = array(
 				'label'    => esc_html__( 'Post Number', 'dhl-for-woocommerce' ),
-				'required' => true,
+				'required' => false,
 				'type'     => 'text',
 				'class'    => array( 'shipping-dhl-postnum' ),
 				'clear'    => true,
