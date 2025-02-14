@@ -731,6 +731,7 @@ jQuery( document ).ready( function ( $ ) {
 					$( '.woocommerce-checkout #shipping_address_2' ).val( '' )
 					$( '.woocommerce-checkout #shipping_postcode' ).val( value.place.address.postalCode )
 					$( '.woocommerce-checkout #shipping_city' ).val( value.place.address.addressLocality )
+					$('.woocommerce-checkout #shipping_dhl_drop_off').val(parcelShopId).trigger('change');
 
 					$.fancybox.close()
 				}
