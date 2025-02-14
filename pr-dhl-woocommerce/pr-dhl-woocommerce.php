@@ -183,6 +183,9 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			$this->define( 'PR_DHL_PACKSTATION', esc_html__( 'Packstation ', 'dhl-for-woocommerce' ) );
 			$this->define( 'PR_DHL_PARCELSHOP', esc_html__( 'Postfiliale ', 'dhl-for-woocommerce' ) );
 			$this->define( 'PR_DHL_POST_OFFICE', esc_html__( 'Postfiliale ', 'dhl-for-woocommerce' ) );
+
+			$this->define( 'DHL_ENGLISH_REGISTRATION_LINK', 'https://www.dhl.de/en/privatkunden/kundenkonto/registrierung.html' );
+			$this->define( 'DHL_GERMAN_REGISTRATION_LINK', 'https://www.dhl.de/de/privatkunden/kundenkonto/registrierung.html' );
 		}
 
 		/**
