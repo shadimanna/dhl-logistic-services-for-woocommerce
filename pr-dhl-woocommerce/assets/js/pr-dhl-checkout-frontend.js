@@ -263,6 +263,7 @@ jQuery( document ).ready( function ( $ ) {
 						} else {
 							// JSON parse returned results
 							wc_checkout_dhl_parcelfinder.parcelShops = parcelShopsRes.parcel_res
+							wc_checkout_dhl_parcelfinder.populateDropdown();
 							if ( 'osm' === pr_dhl_checkout_frontend.map_type ) {
 								wc_checkout_dhl_parcelfinder.populateOsmMap()
 							} else {
@@ -278,56 +279,71 @@ jQuery( document ).ready( function ( $ ) {
 			return false
 		},
 		populateDropdown: function () {
+			if ( !wc_checkout_dhl_parcelfinder.parcelShops ) {
+				
+				var pf_post_code = $( '#dhl_parcelfinder_postcode' ).val()
+				
+				var data = {
+					action: 'wc_shipment_dhl_parcelfinder_search',
+					parcelfinder_country: $( '#billing_country' ).val(),
+					parcelfinder_postcode: pf_post_code,
+					parcelfinder_city: $( '#billing_city' ).val(),
+					parcelfinder_address: $( '#billing_address_1' ).val()+' '+$( 'billing_address_2').val(),
+					packstation_filter: $( '#dhl_packstation_filter' ).is( ':checked' ),
+					branch_filter: $( '#dhl_branch_filter' ).is( ':checked' ),
+					security: $( 'form#checkout_dhl_parcel_finder' ).find( 'input[name="dhl_parcelfinder_nonce"]' ).val(),
+				}
 
-			var pf_post_code = $( '#dhl_parcelfinder_postcode' ).val()
-			
-			var data = {
-				action: 'wc_shipment_dhl_parcelfinder_search',
-				parcelfinder_country: $( '#billing_country' ).val(),
-				parcelfinder_postcode: pf_post_code,
-				parcelfinder_city: $( '#billing_city' ).val(),
-				parcelfinder_address: $( '#billing_address_1' ).val()+' '+$( 'billing_address_2').val(),
-				packstation_filter: $( '#dhl_packstation_filter' ).is( ':checked' ),
-				branch_filter: $( '#dhl_branch_filter' ).is( ':checked' ),
-				security: $( 'form#checkout_dhl_parcel_finder' ).find( 'input[name="dhl_parcelfinder_nonce"]' ).val(),
-			}
+				$.ajax( {
+					type: 'POST',
+					url: pr_dhl_checkout_frontend.ajax_url,
+					data: data,
+					success: function ( parcelShopsJSON ) {
+						$( '.woocommerce-error, .woocommerce-message' ).remove()
+						if ( parcelShopsJSON ) {
+							var parcelShopsRes = JSON.parse( parcelShopsJSON )
 
-			$.ajax( {
-				type: 'POST',
-				url: pr_dhl_checkout_frontend.ajax_url,
-				data: data,
-				success: function ( parcelShopsJSON ) {
-					$( '.woocommerce-error, .woocommerce-message' ).remove()
-					if ( parcelShopsJSON ) {
-						var parcelShopsRes = JSON.parse( parcelShopsJSON )
+							if ( parcelShopsRes.error ) {
+								$( '#dhl_parcel_finder_form #checkout_dhl_parcel_finder' ).append( '<div class="woocommerce-error">' + parcelShopsRes.error + '</div>' )
+							} else {
+								// JSON parse returned results
+								// Find the dropdown element in the DOM
+								const dropdown = document.getElementById( 'shipping_dhl_drop_off' )
+								if ( dropdown ) {
+									wc_checkout_dhl_parcelfinder.parcelShops = parcelShopsRes.parcel_res
+									// Populate the dropdown with parcel shop names
+									wc_checkout_dhl_parcelfinder.parcelShops.forEach( element => {
+										// Create a new option element
+										const option = document.createElement( 'option' )
+										option.value = element.location.ids[0].locationId // Use a relevant value if needed
+										option.text = element.name  // Display the name as the text of the option
 
-						if ( parcelShopsRes.error ) {
-							$( '#dhl_parcel_finder_form #checkout_dhl_parcel_finder' ).append( '<div class="woocommerce-error">' + parcelShopsRes.error + '</div>' )
-						} else {
-							// JSON parse returned results
-							// Find the dropdown element in the DOM
-							const dropdown = document.getElementById( 'shipping_dhl_drop_off' )
-							if ( dropdown ) {
-								wc_checkout_dhl_parcelfinder.parcelShops = parcelShopsRes.parcel_res
-								// Populate the dropdown with parcel shop names
-								wc_checkout_dhl_parcelfinder.parcelShops.forEach( element => {
-									// Create a new option element
-									const option = document.createElement( 'option' )
-									option.value = element.location.ids[0].locationId // Use a relevant value if needed
-									option.text = element.name  // Display the name as the text of the option
+										// Add the new option to the dropdown
+										dropdown.add( option )
+									} )
+								}
 
-									// Add the new option to the dropdown
-									dropdown.add( option )
-								} )
 							}
-
 						}
-					}
-				},
-				dataType: 'html',
-			} )
+					},
+					dataType: 'html',
+				} )
 
-			return false
+				return false
+			} else {
+				const dropdown = document.getElementById( 'shipping_dhl_drop_off' )
+				if ( dropdown ) {
+					wc_checkout_dhl_parcelfinder.parcelShops.forEach( element => {
+						// Create a new option element
+						const option = document.createElement( 'option' )
+						option.value = element.location.ids[0].locationId // Use a relevant value if needed
+						option.text = element.name  // Display the name as the text of the option
+
+						// Add the new option to the dropdown
+						dropdown.add( option )
+					} )
+				}
+			}
 		},
 		selectedDropOff: function () {
 
