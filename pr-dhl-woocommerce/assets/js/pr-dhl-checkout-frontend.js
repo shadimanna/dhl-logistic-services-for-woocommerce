@@ -318,7 +318,8 @@ jQuery( document ).ready( function ( $ ) {
 								if ( dropdown ) {
 									wc_checkout_dhl_parcelfinder.emptyDropdown()
 									// Populate the dropdown with parcel shop names
-									parcelShopsRes.parcel_res.forEach( element => {
+									wc_checkout_dhl_parcelfinder.parcelPoints = parcelShopsRes.parcel_res
+									wc_checkout_dhl_parcelfinder.parcelPoints.forEach( element => {
 										// Create a new option element
 										const option = document.createElement( 'option' )
 										option.value = element.location.ids[0].locationId // Use a relevant value if needed
@@ -339,7 +340,20 @@ jQuery( document ).ready( function ( $ ) {
 
 				return false
 			} else {
-				wc_checkout_dhl_parcelfinder.emptyDropdown()
+				const dropdown = document.getElementById( 'shipping_dhl_drop_off' )
+				if ( dropdown ) {
+					wc_checkout_dhl_parcelfinder.emptyDropdown()
+					wc_checkout_dhl_parcelfinder.parcelPoints = wc_checkout_dhl_parcelfinder.parcelShops
+					wc_checkout_dhl_parcelfinder.parcelPoints.forEach( element => {
+						// Create a new option element
+						const option = document.createElement( 'option' )
+						option.value = element.location.ids[0].locationId // Use a relevant value if needed
+						option.text = element.name  // Display the name as the text of the option
+
+						// Add the new option to the dropdown
+						dropdown.add( option )
+					} )
+				}
 			}
 		},
 		emptyDropdown: function () {
@@ -354,7 +368,7 @@ jQuery( document ).ready( function ( $ ) {
 		selectedDropOff: function () {
 
 			var parcelShopId = $( this ).val()
-			$.each( wc_checkout_dhl_parcelfinder.parcelShops, function ( key, value ) {
+			$.each( wc_checkout_dhl_parcelfinder.parcelPoints, function ( key, value ) {
 
 				if ( value.location.ids[0].locationId == parcelShopId ) {
 
