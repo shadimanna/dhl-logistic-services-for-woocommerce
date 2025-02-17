@@ -151,7 +151,12 @@ jQuery( document ).ready( function ( $ ) {
 			$( document.body ).on( 'change', '#shipping_dhl_address_type', this.address_type )
 
 			$( document.body ).on( 'change', '#shipping_dhl_drop_off', this.selectedDropOff )
-
+			$( document.body ).on( 'change', '#billing_country', this.populateDropdown )
+			$( document.body ).on( 'change', '#billing_city', this.populateDropdown )
+			$( document.body ).on( 'change', '#billing_address_1', this.populateDropdown )
+			$( document.body ).on( 'change', '#billing_address_2', this.populateDropdown )
+			$( document.body ).on( 'change', '#billing_postcode', this.populateDropdown )
+			
 			wc_checkout_dhl_parcelfinder.address_type()
 			wc_checkout_dhl_parcelfinder.populateDropdown()
 
@@ -281,12 +286,10 @@ jQuery( document ).ready( function ( $ ) {
 		populateDropdown: function () {
 			if ( !wc_checkout_dhl_parcelfinder.parcelShops ) {
 				
-				var pf_post_code = $( '#dhl_parcelfinder_postcode' ).val()
-				
 				var data = {
 					action: 'wc_shipment_dhl_parcelfinder_search',
 					parcelfinder_country: $( '#billing_country' ).val(),
-					parcelfinder_postcode: pf_post_code,
+					parcelfinder_postcode: $( '#billing_postcode' ).val(),
 					parcelfinder_city: $( '#billing_city' ).val(),
 					parcelfinder_address: $( '#billing_address_1' ).val()+' '+$( 'billing_address_2').val(),
 					packstation_filter: $( '#dhl_packstation_filter' ).is( ':checked' ),
@@ -304,15 +307,15 @@ jQuery( document ).ready( function ( $ ) {
 							var parcelShopsRes = JSON.parse( parcelShopsJSON )
 
 							if ( parcelShopsRes.error ) {
-								$( '#dhl_parcel_finder_form #checkout_dhl_parcel_finder' ).append( '<div class="woocommerce-error">' + parcelShopsRes.error + '</div>' )
+								wc_checkout_dhl_parcelfinder.emptyDropdown()
 							} else {
 								// JSON parse returned results
 								// Find the dropdown element in the DOM
 								const dropdown = document.getElementById( 'shipping_dhl_drop_off' )
 								if ( dropdown ) {
-									wc_checkout_dhl_parcelfinder.parcelShops = parcelShopsRes.parcel_res
+									wc_checkout_dhl_parcelfinder.emptyDropdown()
 									// Populate the dropdown with parcel shop names
-									wc_checkout_dhl_parcelfinder.parcelShops.forEach( element => {
+									parcelShopsRes.parcel_res.forEach( element => {
 										// Create a new option element
 										const option = document.createElement( 'option' )
 										option.value = element.location.ids[0].locationId // Use a relevant value if needed
@@ -324,6 +327,8 @@ jQuery( document ).ready( function ( $ ) {
 								}
 
 							}
+						}else{
+							wc_checkout_dhl_parcelfinder.emptyDropdown()
 						}
 					},
 					dataType: 'html',
@@ -331,18 +336,16 @@ jQuery( document ).ready( function ( $ ) {
 
 				return false
 			} else {
-				const dropdown = document.getElementById( 'shipping_dhl_drop_off' )
-				if ( dropdown ) {
-					wc_checkout_dhl_parcelfinder.parcelShops.forEach( element => {
-						// Create a new option element
-						const option = document.createElement( 'option' )
-						option.value = element.location.ids[0].locationId // Use a relevant value if needed
-						option.text = element.name  // Display the name as the text of the option
-
-						// Add the new option to the dropdown
-						dropdown.add( option )
-					} )
-				}
+				wc_checkout_dhl_parcelfinder.emptyDropdown()
+			}
+		},
+		emptyDropdown: function () {
+			const dropdown = document.getElementById( 'shipping_dhl_drop_off' )
+			if ( dropdown ) {
+				$( dropdown ).empty()
+				const option = document.createElement( 'option' )
+				option.text = 'Select a drop-off point' 
+				dropdown.add( option )
 			}
 		},
 		selectedDropOff: function () {
