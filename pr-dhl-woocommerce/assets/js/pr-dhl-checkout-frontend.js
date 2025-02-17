@@ -167,6 +167,7 @@ jQuery( document ).ready( function ( $ ) {
 
 			if ( address_type == 'dhl_packstation' ) {
 				$( '.woocommerce-checkout #shipping_dhl_postnum_field' ).show()
+				$( '.woocommerce-checkout #shipping_dhl_drop_off_field' ).show()
 				// If does not have span or span with "required" class, add it
 				if ( !$( '.woocommerce-checkout #shipping_dhl_postnum_field label span' ).length ||
 				     (
@@ -176,10 +177,12 @@ jQuery( document ).ready( function ( $ ) {
 				}
 			} else if ( address_type == 'dhl_branch' ) {
 				$( '.woocommerce-checkout #shipping_dhl_postnum_field' ).show()
+				$( '.woocommerce-checkout #shipping_dhl_drop_off_field' ).show()
 				// remove "required" span tag
 				$( '.woocommerce-checkout #shipping_dhl_postnum_field label .required' ).remove()
 			} else {
 				$( '.woocommerce-checkout #shipping_dhl_postnum_field' ).hide()
+				$( '.woocommerce-checkout #shipping_dhl_drop_off_field' ).hide()
 			}
 		},
 		init_form: function () {
