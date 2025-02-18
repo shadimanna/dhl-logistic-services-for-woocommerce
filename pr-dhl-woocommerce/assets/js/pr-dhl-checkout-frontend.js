@@ -149,14 +149,12 @@ jQuery( document ).ready( function ( $ ) {
 			$( document.body ).on( 'click', '.parcelshop-select-btn', this.selectedShop )
 
 			$( document.body ).on( 'change', '#shipping_dhl_address_type', this.address_type )
+			$( document.body ).on( 'change', '#shipping_dhl_address_type', this.populateDropdown )
 
 			$( document.body ).on( 'change', '#shipping_dhl_drop_off', this.selectedDropOff )
-			$( document.body ).on( 'change', '#billing_country', this.populateDropdown )
-			$( document.body ).on( 'change', '#billing_city', this.populateDropdown )
-			$( document.body ).on( 'change', '#billing_address_1', this.populateDropdown )
-			$( document.body ).on( 'change', '#billing_address_2', this.populateDropdown )
-			$( document.body ).on( 'change', '#billing_postcode', this.populateDropdown )
-			
+
+			$( document.body ).on( 'update_checkout', this.populateDropdown )
+
 			wc_checkout_dhl_parcelfinder.address_type()
 			wc_checkout_dhl_parcelfinder.populateDropdown()
 
@@ -287,16 +285,24 @@ jQuery( document ).ready( function ( $ ) {
 			return false
 		},
 		populateDropdown: function () {
-			if ( !wc_checkout_dhl_parcelfinder.parcelShops ) {
-				
+			let address_type = $( '.woocommerce-checkout #shipping_dhl_address_type' ).val();
+
+			if ( 'normal' === address_type ) {
+				return;
+			}
+
+			let packstation_address = 'dhl_packstation' === address_type;
+			let branch_address = 'dhl_branch' === address_type;
+
+			if ( ! wc_checkout_dhl_parcelfinder.parcelShops ) {
 				var data = {
 					action: 'wc_shipment_dhl_parcelfinder_search',
 					parcelfinder_country: $( '#billing_country' ).val(),
 					parcelfinder_postcode: $( '#billing_postcode' ).val(),
 					parcelfinder_city: $( '#billing_city' ).val(),
 					parcelfinder_address: $( '#billing_address_1' ).val()+' '+$( 'billing_address_2').val(),
-					packstation_filter: $( '#dhl_packstation_filter' ).is( ':checked' ),
-					branch_filter: $( '#dhl_branch_filter' ).is( ':checked' ),
+					packstation_filter: packstation_address,
+					branch_filter: branch_address,
 					security: $( 'form#checkout_dhl_parcel_finder' ).find( 'input[name="dhl_parcelfinder_nonce"]' ).val(),
 				}
 
@@ -304,8 +310,19 @@ jQuery( document ).ready( function ( $ ) {
 					type: 'POST',
 					url: pr_dhl_checkout_frontend.ajax_url,
 					data: data,
+					beforeSend: function() {
+						// Disable the dropdown field
+						$('#shipping_dhl_drop_off').prop('disabled', true);
+						// Insert a loading message right after the dropdown if it's not already there
+						if ($('#shipping_dhl_drop_off').next('.loading-indicator').length === 0) {
+							$('#shipping_dhl_drop_off').after('<span class="loading-indicator">Loading...</span>');
+						}
+					},
 					success: function ( parcelShopsJSON ) {
 						$( '.woocommerce-error, .woocommerce-message' ).remove()
+						$('.loading-indicator').remove();
+						$('#shipping_dhl_drop_off').prop('disabled', false);
+
 						if ( parcelShopsJSON ) {
 							var parcelShopsRes = JSON.parse( parcelShopsJSON )
 
@@ -323,7 +340,7 @@ jQuery( document ).ready( function ( $ ) {
 										// Create a new option element
 										const option = document.createElement( 'option' )
 										option.value = element.location.ids[0].locationId // Use a relevant value if needed
-										option.text = element.name  // Display the name as the text of the option
+										option.text = element.name + ' - ' + element.place.address.addressLocality + ', ' + element.place.address.streetAddress
 
 										// Add the new option to the dropdown
 										dropdown.add( option )
@@ -345,10 +362,20 @@ jQuery( document ).ready( function ( $ ) {
 					wc_checkout_dhl_parcelfinder.emptyDropdown()
 					wc_checkout_dhl_parcelfinder.parcelPoints = wc_checkout_dhl_parcelfinder.parcelShops
 					wc_checkout_dhl_parcelfinder.parcelPoints.forEach( element => {
+						if ( (
+							     packstation_address && 'locker' !== element.location.type
+						     ) ||
+						     (
+							     branch_address && 'locker' === element.location.type
+						     )
+						) {
+							return
+						}
+
 						// Create a new option element
 						const option = document.createElement( 'option' )
 						option.value = element.location.ids[0].locationId // Use a relevant value if needed
-						option.text = element.name  // Display the name as the text of the option
+						option.text = element.name + ' - ' + element.place.address.addressLocality + ', ' + element.place.address.streetAddress    // Display the name as the text of the option
 
 						// Add the new option to the dropdown
 						dropdown.add( option )
