@@ -311,16 +311,10 @@ jQuery( document ).ready( function ( $ ) {
 					url: pr_dhl_checkout_frontend.ajax_url,
 					data: data,
 					beforeSend: function() {
-						// Disable the dropdown field
 						$('#shipping_dhl_drop_off').prop('disabled', true);
-						// Insert a loading message right after the dropdown if it's not already there
-						if ($('#shipping_dhl_drop_off').next('.loading-indicator').length === 0) {
-							$('#shipping_dhl_drop_off').after('<span class="loading-indicator">Loading...</span>');
-						}
 					},
 					success: function ( parcelShopsJSON ) {
 						$( '.woocommerce-error, .woocommerce-message' ).remove()
-						$('.loading-indicator').remove();
 						$('#shipping_dhl_drop_off').prop('disabled', false);
 
 						if ( parcelShopsJSON ) {
