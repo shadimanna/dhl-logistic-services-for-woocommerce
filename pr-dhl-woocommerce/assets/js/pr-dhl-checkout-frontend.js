@@ -153,7 +153,11 @@ jQuery( document ).ready( function ( $ ) {
 
 			$( document.body ).on( 'change', '#shipping_dhl_drop_off', this.selectedDropOff )
 
-			$( document.body ).on( 'update_checkout', this.populateDropdown )
+			$( document.body ).on( 'change', '#billing_country', this.populateDropdown )
+			$( document.body ).on( 'change', '#billing_city', this.populateDropdown )
+			$( document.body ).on( 'change', '#billing_address_1', this.populateDropdown )
+			$( document.body ).on( 'change', '#billing_address_2', this.populateDropdown )
+			$( document.body ).on( 'change', '#billing_postcode', this.populateDropdown )
 
 			wc_checkout_dhl_parcelfinder.address_type()
 			wc_checkout_dhl_parcelfinder.populateDropdown()
