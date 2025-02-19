@@ -110,6 +110,7 @@ jQuery( function ( $ ) {
 jQuery( document ).ready( function ( $ ) {
 	var wc_checkout_dhl_parcelfinder = {
 		updateTimer: false,
+		skipPopulateDropdown: false,
 		init: function () {
 			// $( document.body ).on( 'click', 'a.showcoupon', this.show_coupon_form );
 			$( document.body ).on( 'click', '#dhl_parcel_finder', this.init_form )
@@ -256,6 +257,12 @@ jQuery( document ).ready( function ( $ ) {
 			return false
 		},
 		populateDropdown: function () {
+			// If this function was triggered due to a change on #shipping_dhl_drop_off, do nothing.
+			if ( wc_checkout_dhl_parcelfinder.skipPopulateDropdown ) {
+				wc_checkout_dhl_parcelfinder.skipPopulateDropdown = false
+				return
+			}
+
 			let address_type = $( '.woocommerce-checkout #shipping_dhl_address_type' ).val();
 
 			if ( 'normal' === address_type ) {
@@ -358,6 +365,8 @@ jQuery( document ).ready( function ( $ ) {
 			}
 		},
 		selectedDropOff: function () {
+			// Do not get the drop-off points.
+			wc_checkout_dhl_parcelfinder.skipPopulateDropdown = true;
 
 			var parcelShopId = $( this ).val()
 			$.each( wc_checkout_dhl_parcelfinder.parcelPoints, function ( key, value ) {
