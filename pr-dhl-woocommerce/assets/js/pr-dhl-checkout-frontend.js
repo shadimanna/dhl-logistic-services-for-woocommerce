@@ -133,11 +133,6 @@ jQuery( function ( $ ) {
 	} )
 } )
 
-function gm_authFailure() {
-	// alert('gm_authFailure');
-	jQuery( '.woocommerce-checkout #dhl_parcel_finder_form #dhl_google_map' ).before( pr_dhl_checkout_frontend.no_api_key )
-}
-
 // Load fancybox
 jQuery( document ).ready( function ( $ ) {
 	var wc_checkout_dhl_parcelfinder = {
