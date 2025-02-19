@@ -107,33 +107,6 @@ jQuery( function ( $ ) {
 	} )
 } )
 
-jQuery( function ( $ ) {
-	function toggleDhlParcelFinder() {
-		var selectedCountry = $( '#shipping_country' ).val()
-		if ( 'DE' !== selectedCountry ) {
-			$( '#dhl_parcel_finder' ).hide()
-			$( '#shipping_dhl_drop_off_field' ).hide()
-			$( '#shipping_dhl_address_type_field' ).hide()
-			$( '#ship-to-different-address span' ).text( pr_dhl_checkout_frontend.ship_to_different_address_text )
-			$( '.registration_info' ).hide()
-		} else {
-			$( '#dhl_parcel_finder' ).show()
-			$( '#shipping_dhl_drop_off_field' ).show()
-			$( '#shipping_dhl_address_type_field' ).show()
-			$( '.registration_info' ).show()
-		}
-	}
-
-	// Run on page load
-	toggleDhlParcelFinder()
-
-	// Run when the shipping country changes
-	$( '#shipping_country' ).change( function () {
-		toggleDhlParcelFinder()
-	} )
-} )
-
-// Load fancybox
 jQuery( document ).ready( function ( $ ) {
 	var wc_checkout_dhl_parcelfinder = {
 		updateTimer: false,
@@ -148,12 +121,11 @@ jQuery( document ).ready( function ( $ ) {
 
 			$( document.body ).on( 'change', '#shipping_dhl_drop_off', this.selectedDropOff )
 
-			$( document.body ).on( 'change', '#billing_country', this.populateDropdown )
-			$( document.body ).on( 'change', '#billing_city', this.populateDropdown )
-			$( document.body ).on( 'change', '#billing_address_1', this.populateDropdown )
-			$( document.body ).on( 'change', '#billing_address_2', this.populateDropdown )
-			$( document.body ).on( 'change', '#billing_postcode', this.populateDropdown )
+			$( document.body ).on( 'update_checkout', this.populateDropdown );
 
+			$( document.body ).on( 'change', '#shipping_country', this.toggleDhlParcelFinder )
+
+			wc_checkout_dhl_parcelfinder.toggleDhlParcelFinder()
 			wc_checkout_dhl_parcelfinder.address_type()
 			wc_checkout_dhl_parcelfinder.populateDropdown()
 
@@ -793,6 +765,21 @@ jQuery( document ).ready( function ( $ ) {
 				}
 			} )
 		},
+		toggleDhlParcelFinder: function() {
+		let selectedCountry = $( '#shipping_country' ).val()
+		if ( 'DE' !== selectedCountry ) {
+			$( '#dhl_parcel_finder' ).hide()
+			$( '#shipping_dhl_drop_off_field' ).hide()
+			$( '#shipping_dhl_address_type_field' ).hide()
+			$( '#ship-to-different-address span' ).text( pr_dhl_checkout_frontend.ship_to_different_address_text )
+			$( '.registration_info' ).hide()
+		} else {
+			$( '#dhl_parcel_finder' ).show()
+			$( '#shipping_dhl_drop_off_field' ).show()
+			$( '#shipping_dhl_address_type_field' ).show()
+			$( '.registration_info' ).show()
+		}
+	}
 	}
 
 	if ( jQuery( '[data-fancybox]' ).length > 0 ) {
