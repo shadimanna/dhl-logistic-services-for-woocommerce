@@ -634,7 +634,8 @@ class Item_Info {
 				},
 			),
 			'dhl_postnum' => array(
-				'rename' => 'postNumber',
+				'default' => '',
+				'rename'  => 'postNumber',
 			),
 			'address_1'   => array(
 				'rename'   => 'retailID',

@@ -266,6 +266,9 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 			'ajax_url'            => admin_url( 'admin-ajax.php' ),
 			'nonce'               => wp_create_nonce( 'pr_dhl_nonce' ),
 			'parcel_nonce'        => wp_create_nonce( 'dhl_parcelfinder' ),
+			'DHL_ENGLISH_REGISTRATION_LINK'        => DHL_ENGLISH_REGISTRATION_LINK,
+			'DHL_GERMAN_REGISTRATION_LINK'        => DHL_GERMAN_REGISTRATION_LINK,
+
 
 		);
 

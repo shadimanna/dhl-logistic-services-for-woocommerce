@@ -253,6 +253,10 @@ export const Block = ({ checkoutExtensionData }) => {
         );
     }
 
+    if ( shippingAddress && shippingAddress.country !== 'DE' ) {
+        return null;
+    }
+
     // Render DHL logo dynamically from the localized data
     return (<table className="dhl-co-table">
         {/* DHL logo */}

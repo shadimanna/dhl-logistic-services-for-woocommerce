@@ -35,7 +35,7 @@ export const Block = () => {
         }
     }, []);
 
-    const showMapButton = hasCalculatedShipping && shippingRates.length > 0 && isPageLoaded;
+    const showMapButton = hasCalculatedShipping && shippingRates.length > 0 && isPageLoaded && (shippingAddress.country === 'DE');
 
     // Fetch parcel shops when shippingAddress changes and is available
     useEffect(() => {
@@ -108,13 +108,47 @@ export const Block = () => {
             setShippingAddress(newShippingAddress);
         }
     }, [dropOffPoint]);
+    useEffect(() => {
+        const handleShopSelected = (event) => {
+
+            const { address_1, address_2, postcode, city ,parcel_ID} = event.detail;
+            const newShippingAddress = {
+                ...shippingAddress,
+                address_1,
+                address_2,
+                postcode,
+                city,
+                'pr-dhl/address_type': address_type
+            };
+            setShippingAddress(newShippingAddress);
+            setDropOffPoint(parcel_ID);
+        };
+
+        window.addEventListener('dhl-shop-selected', handleShopSelected);
+
+        return () => {
+            window.removeEventListener('dhl-shop-selected', handleShopSelected);
+        };
+    }, [setShippingAddress, shippingAddress]);
+
+    // Determine the correct registration link based on locale.
+    const registrationLink = prDhlGlobals.locale === 'en_US'
+        ? prDhlGlobals.DHL_ENGLISH_REGISTRATION_LINK
+        : prDhlGlobals.DHL_GERMAN_REGISTRATION_LINK;
 
     return (
         <>
             {showMapButton && (
                 <>
 
-                    {/* Existing button and fancybox form */}
+                    {/* Registration info displayed above the shipping fields */}
+                    <div className="registration_info">
+                        { __( 'For deliveries to DHL Parcel Lockers you have to', 'dhl-for-woocommerce' ) }{' '}
+                        <a href={ registrationLink } target="_blank" rel="noopener noreferrer">
+                            { __( 'create a DHL account', 'dhl-for-woocommerce' ) }
+                        </a>{' '}
+                        { __( 'and get a Post Number.', 'dhl-for-woocommerce' ) }
+                    </div>
                     <Button
                         isPrimary
                         id="dhl_parcel_finder"

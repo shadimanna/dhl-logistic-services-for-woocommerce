@@ -340,6 +340,11 @@ a#dhl_parcel_finder:hover {
   display: inline;
 }
 
+.registration_info {
+  font-size:.95rem; 
+  margin-bottom: 10px;
+}
+
 @media only screen and (max-width: 600px) {
   ul.dhl-co-times > li {
     min-width: 30%;

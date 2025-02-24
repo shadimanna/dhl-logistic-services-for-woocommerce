@@ -31,30 +31,18 @@ try {
 		<!-- <div class="clear"></div> -->
 		<?php if ( $packstation_enabled ) : ?>
 			<p class="form-row form-field packstation">
-				<input type="checkbox" name="dhl_packstation_filter" class="input-checkbox" id="dhl_packstation_filter" value="1" checked />
-				<label for="dhl_packstation_filter"><?php esc_attr_e( 'Packstation', 'dhl-for-woocommerce' ); ?></label>
-				<span class="icon" style="background-image: url('<?php echo esc_url( $packstation_img ); ?>');"></span>
+				<input type="checkbox" name="dhl_packstation_filter" class="input-checkbox" id="dhl_packstation_filter" value="1" checked /><label for="dhl_packstation_filter"><?php esc_attr_e( 'Packstation', 'dhl-for-woocommerce' ); ?></label><span class="icon" style="background-image: url( '<?php echo esc_url( $packstation_img ); ?>' );"></span>
 			</p>
 		<?php endif; ?>
 
 		<?php if ( $parcelshop_enabled || $post_office_enabled ) : ?>
 			<p class="form-row form-field parcelshop">
-				<input type="checkbox" name="dhl_branch_filter" class="input-checkbox" placeholder="" id="dhl_branch_filter" value="1" checked />
-				<label for="dhl_branch_filter"><?php esc_attr_e( 'Branch', 'dhl-for-woocommerce' ); ?></label>
-				<span class="parcel-wrap">
-					<?php if ( $parcelshop_enabled ) : ?>
-						<span class="icon" style="background-image: url( '<?php echo esc_url( $parcelshop_img ); ?>' );"></span>
-					<?php endif; ?>
-					<?php if ( $post_office_enabled ) : ?>
-						<span class="icon" style="background-image: url( '<?php echo esc_url( $post_office_img ); ?>' );"></span>
-					<?php endif; ?>
-				</span>
+				<input type="checkbox" name="dhl_branch_filter" class="input-checkbox" placeholder="" id="dhl_branch_filter" value="1" checked /><label for="dhl_branch_filter"><?php esc_attr_e( 'Branch', 'dhl-for-woocommerce' ); ?></label><span class="parcel-wrap"><?php if ( $parcelshop_enabled ) : ?><span class="icon" style="background-image: url( '<?php echo esc_url( $parcelshop_img ); ?>' );"></span><?php endif; ?><?php if ( $post_office_enabled ) : ?><span class="icon" style="background-image: url( '<?php echo esc_url( $post_office_img ); ?>' );"></span><?php endif; ?></span>
 			</p>
-
 		<?php endif; ?>
 		
 		<p id="dhl_seach_button" class="form-row form-field small">
-			<input type="submit" class="button" name="apply_parcel_finder" value="<?php esc_attr_e( 'Search', 'dhl-for-woocommerce' ); ?>" />
+			<input type="submit" class="button alt wp-element-button" name="apply_parcel_finder" value="<?php esc_attr_e( 'Search', 'dhl-for-woocommerce' ); ?>" />
 		</p>
 		
 		<input type="hidden" name="dhl_parcelfinder_country" id="dhl_parcelfinder_country" />

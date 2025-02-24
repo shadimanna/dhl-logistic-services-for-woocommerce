@@ -53,31 +53,27 @@ class PR_DHL_API_REST_Finder extends PR_DHL_API_REST {
 	}
 
 	protected function set_query_string() {
+		$packstation = ( $this->args['dhl_packstation_filter'] == 'true' );
+		$branch      = ( $this->args['dhl_branch_filter'] == 'true' );
+		$country     = $this->args['shipping_address']['country'];
+
+		if ( $packstation && $branch ) {
+			$serviceType = 'parcel:pick-up-all';
+		} elseif ( $branch ) {
+			$serviceType = 'parcel:pick-up';
+		} elseif ( $packstation ) {
+			$serviceType = ( $country == 'DE' ) ? 'parcel:pick-up-registered' : 'parcel:pick-up-unregistered';
+		}
 
 		$finder_query_string = array(
 			'radius'          => 2000, // in meters
 			'limit'           => ( $this->args['dhl_parcel_limit'] ) ? $this->args['dhl_parcel_limit'] : 10,
-			// 'serviceType'     => 'parcel:pick-up',
+			'serviceType'     => $serviceType,
 			'streetAddress'   => $this->args['shipping_address']['address'],
 			'zipCode'         => $this->args['shipping_address']['postcode'],
 			'addressLocality' => $this->args['shipping_address']['city'],
 			'countryCode'     => $this->args['shipping_address']['country'],
 		);
-
-		// by serviceType
-		// For Post office, Branch use parcel:pick-up
-		// For Packstation (locker) use
-		// parcel:pick-up-registered ==== Germany
-		// parcel:pick-up-unregistered ===== Europe, excluding Germany
-		if ( $this->args['dhl_packstation_filter'] == 'true' && $this->args['dhl_branch_filter'] != 'true' ) {
-			if ( $this->args['shipping_address']['country'] == 'DE' ) {
-				$finder_query_string['serviceType'] = 'parcel:pick-up-registered';
-			} else {
-				$finder_query_string['serviceType'] = 'pick-up-unregistered';
-			}
-		} else {
-			$finder_query_string['serviceType'] = 'parcel:pick-up';
-		}
 
 		$this->query_string = http_build_query( $finder_query_string );
 	}
