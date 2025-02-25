@@ -5,12 +5,14 @@
 	"license": "GPL-2.0-or-later",
 	"main": "build/index.js",
 	"scripts": {
-		"build": "wp-scripts build",
+		"build": "npm run build:prod && npm run archive",
+		"build:dev": "composer install -o && npm run makepot && npm run uglify && npm run sass && webpack --env mode=development",
+		"build:prod": "composer install --no-dev && wp-scripts build",
+		"archive": "composer archive --file=dhl-for-woocommerce --format=zip",
 		"format": "wp-scripts format",
 		"lint:css": "wp-scripts lint-style",
 		"lint:js": "wp-scripts lint-js",
 		"packages-update": "wp-scripts packages-update",
-		"plugin-zip": "wp-scripts plugin-zip",
 		"start": "wp-scripts start",
 		"env": "wp-env"
 	},
