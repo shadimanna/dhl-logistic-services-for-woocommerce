@@ -218,7 +218,9 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			$this->define_constants();
 			$this->includes();
 			$this->init_hooks();
-			$this->checkout_block();
+			if ( 'DE' == $this->get_base_country() ) {
+				$this->checkout_block();
+			}
 
 		}
 
