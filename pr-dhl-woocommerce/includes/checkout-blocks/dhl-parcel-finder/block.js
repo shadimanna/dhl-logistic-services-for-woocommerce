@@ -170,21 +170,23 @@ export const Block = () => {
                         />
                     </Button>
 
-                    {/* New SelectControl for drop off points */}
-                    <div className="wc-blocks-components-select__select">
+                    {shippingAddress['pr-dhl/address_type'] !== 'normal' && (
+                        <div className="wc-blocks-components-select__select">
                         <SelectControl
-                            value={dropOffPoint}
-                            onChange={(value) => setDropOffPoint(value)}
-                            options={[
-                                { label: __('Select a drop off points', 'dhl-for-woocommerce'), value: '' },
-                                ...parcelShops.map((shop) => ({
-                                    label: shop.name,
-                                    value: shop.location.ids[0].locationId,
-                                })),
-                            ]}
+                        value={dropOffPoint}
+                        onChange={(value) => setDropOffPoint(value)}
+                        options={[
+                    { label: __('Select a drop off points', 'dhl-for-woocommerce'), value: '' },
+                        ...parcelShops.map((shop) => ({
+                        label: shop.name,
+                        value: shop.location.ids[0].locationId,
+                    })),
+                        ]}
                         />
 
-                    </div>
+                        </div>
+
+                    )}
 
                     <div style={{ display: 'none' }}>
                         <div id="dhl_parcel_finder_form">
