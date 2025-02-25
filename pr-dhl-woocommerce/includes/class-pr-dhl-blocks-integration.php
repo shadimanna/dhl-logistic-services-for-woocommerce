@@ -245,16 +245,14 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 	 * Localizes scripts with necessary data.
 	 */
 	private function localize_scripts() {
-
 		// Fetch the shipping settings
-		$dhl_settings = PR_DHL()->get_shipping_dhl_settings();
-
+		$dhl_settings      = PR_DHL()->get_shipping_dhl_settings();
 		$display_preferred = true;
 
-		// Set conditions for parcel finder options
-		$packstation_enabled = $dhl_settings['dhl_display_packstation'] == 'yes';
-		$parcelshop_enabled = $dhl_settings['dhl_display_parcelshop'] == 'yes';
-		$post_office_enabled = $dhl_settings['dhl_display_post_office'] == 'yes';
+		// Set conditions for parcel finder options.
+		$packstation_enabled = ! empty( $dhl_settings['dhl_display_packstation'] ) && 'yes' === $dhl_settings['dhl_display_packstation'];
+		$parcelshop_enabled  = ! empty( $dhl_settings['dhl_display_parcelshop'] ) && 'yes' === $dhl_settings['dhl_display_parcelshop'];
+		$post_office_enabled = ! empty( $dhl_settings['dhl_display_post_office'] ) && 'yes' === $dhl_settings['dhl_display_post_office'];
 
 		$localize_data = array(
 			'pluginUrl'           => PR_DHL_PLUGIN_DIR_URL,
@@ -268,11 +266,9 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 			'parcel_nonce'        => wp_create_nonce( 'dhl_parcelfinder' ),
 			'DHL_ENGLISH_REGISTRATION_LINK'        => DHL_ENGLISH_REGISTRATION_LINK,
 			'DHL_GERMAN_REGISTRATION_LINK'        => DHL_GERMAN_REGISTRATION_LINK,
-
-
 		);
 
-		// Localize the editor script
+		// Localize the editor script.
 		wp_localize_script(
 			'pr-dhl-preferred-services-editor',
 			'prDhlGlobals',
@@ -280,7 +276,7 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 		);
 
 
-		// Localize the frontend scripts
+		// Localize the frontend scripts.
 		wp_localize_script(
 			'pr-dhl-preferred-services-frontend',
 			'prDhlGlobals',
