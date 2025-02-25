@@ -12,7 +12,7 @@ export const Block = ({ checkoutExtensionData }) => {
     // Access the localized data from prDhlGlobals
     const imgUrl = prDhlGlobals.pluginUrl + "/assets/img/dhl-official.png";
     const dhlSettings = prDhlGlobals.dhlSettings;
-    const [displayPreferred, setDisplayPreferred] = useState(prDhlGlobals.displayPreferred);
+    const [displayPreferred, setDisplayPreferred] = useState(true);
 
     const { updateCustomerData } = useDispatch(CART_STORE_KEY);
 

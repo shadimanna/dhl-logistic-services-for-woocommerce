@@ -247,7 +247,6 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 	private function localize_scripts() {
 		// Fetch the shipping settings
 		$dhl_settings      = PR_DHL()->get_shipping_dhl_settings();
-		$display_preferred = true;
 
 		// Set conditions for parcel finder options.
 		$packstation_enabled = ! empty( $dhl_settings['dhl_display_packstation'] ) && 'yes' === $dhl_settings['dhl_display_packstation'];
@@ -257,7 +256,6 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 		$localize_data = array(
 			'pluginUrl'           => PR_DHL_PLUGIN_DIR_URL,
 			'dhlSettings'         => $dhl_settings,
-			'displayPreferred'    => $display_preferred,
 			'packstation_enabled' => $packstation_enabled,
 			'parcelshop_enabled'  => $parcelshop_enabled,
 			'post_office_enabled' => $post_office_enabled,
