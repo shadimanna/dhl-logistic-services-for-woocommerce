@@ -52,60 +52,80 @@ export const Block = ({ checkoutExtensionData }) => {
     const [preferredDayFeeApplied, setPreferredDayFeeApplied] = useState(false);
 
     useEffect(() => {
-        if (shippingAddress) {
-            const data = {
-                shipping_country: shippingAddress.country || '',
-                shipping_postcode: shippingAddress.postcode || '',
-                shipping_address_1: shippingAddress.address_1 || '',
-                shipping_address_2: shippingAddress.address_2 || '',
-                shipping_city: shippingAddress.city || '',
-                shipping_state: shippingAddress.state || '',
-                shipping_email: shippingAddress.email || '',
-                shipping_phone: shippingAddress.phone || '',
-                shipping_company: shippingAddress.company || '',
-                shipping_methods: selectedShippingMethods,
-                payment_method: selectedPaymentMethod,
-            };
 
-            const formData = new URLSearchParams();
-            formData.append('action', 'pr_dhl_set_checkout_post_data');
-            formData.append('nonce', prDhlGlobals.nonce);
-
-            // Append each data field
-            Object.keys(data).forEach((key) => {
-                if (Array.isArray(data[key])) {
-                    data[key].forEach((item, index) => {
-                        formData.append(`data[${key}][${index}]`, item);
-                    });
-                } else {
-                    formData.append(`data[${key}]`, data[key]);
-                }
-            });
-
-            // Send the data via AJAX
-            axios.post(prDhlGlobals.ajax_url, formData, {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-            })
-                .then(response => {
-                    if (response.data.success) {
-                        // Fetch the preferredDays
-                        fetchPreferredDays();
-                    } else {
-                        setDisplayPreferred(false);
-                        setLoading(false);
-                    }
-                })
-                .catch(error => {
-                    setDisplayPreferred(false);
-                    setLoading(false);
-                });
-        } else {
-            // No shipping address, cannot display preferred services
+        // Clear previous timer on re-render.
+        if (debounceTimer.current) {
+            clearTimeout(debounceTimer.current);
+        }
+        // Check if shippingAddress is valid
+        if (
+            !shippingAddress ||
+            shippingAddress.country !== 'DE' ||
+            !shippingAddress.city ||
+            !shippingAddress.postcode
+        ) {
             setDisplayPreferred(false);
             setLoading(false);
+            return;
         }
+
+        // Debounce the request by 1.5 seconds.
+        debounceTimer.current = setTimeout(() => {
+            if (shippingAddress) {
+                const data = {
+                    shipping_country: shippingAddress.country || '',
+                    shipping_postcode: shippingAddress.postcode || '',
+                    shipping_address_1: shippingAddress.address_1 || '',
+                    shipping_address_2: shippingAddress.address_2 || '',
+                    shipping_city: shippingAddress.city || '',
+                    shipping_state: shippingAddress.state || '',
+                    shipping_email: shippingAddress.email || '',
+                    shipping_phone: shippingAddress.phone || '',
+                    shipping_company: shippingAddress.company || '',
+                    shipping_methods: selectedShippingMethods,
+                    payment_method: selectedPaymentMethod,
+                };
+
+                const formData = new URLSearchParams();
+                formData.append('action', 'pr_dhl_set_checkout_post_data');
+                formData.append('nonce', prDhlGlobals.nonce);
+
+                // Append each data field
+                Object.keys(data).forEach((key) => {
+                    if (Array.isArray(data[key])) {
+                        data[key].forEach((item, index) => {
+                            formData.append(`data[${key}][${index}]`, item);
+                        });
+                    } else {
+                        formData.append(`data[${key}]`, data[key]);
+                    }
+                });
+
+                // Send the data via AJAX
+                axios.post(prDhlGlobals.ajax_url, formData, {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                })
+                    .then(response => {
+                        if (response.data.success) {
+                            // Fetch the preferredDays
+                            fetchPreferredDays();
+                        } else {
+                            setDisplayPreferred(false);
+                            setLoading(false);
+                        }
+                    })
+                    .catch(error => {
+                        setDisplayPreferred(false);
+                        setLoading(false);
+                    });
+            }
+
+        }, 750);
+        // clear timer if user keeps typing.
+        return () => clearTimeout(debounceTimer.current);
+
     }, [shippingAddress, selectedShippingMethods, selectedPaymentMethod]);
 
     const fetchPreferredDays = () => {
