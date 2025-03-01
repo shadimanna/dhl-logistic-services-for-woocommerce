@@ -264,6 +264,8 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 			'parcel_nonce'        => wp_create_nonce( 'dhl_parcelfinder' ),
 			'DHL_ENGLISH_REGISTRATION_LINK'        => DHL_ENGLISH_REGISTRATION_LINK,
 			'DHL_GERMAN_REGISTRATION_LINK'        => DHL_GERMAN_REGISTRATION_LINK,
+			'locale' => get_locale(),
+
 		);
 
 		// Localize the editor script.
