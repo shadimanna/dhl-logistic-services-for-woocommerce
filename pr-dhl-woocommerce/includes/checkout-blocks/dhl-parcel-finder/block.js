@@ -24,6 +24,13 @@ export const Block = () => {
             select('wc/store/cart').getCustomerData()?.shippingAddress || {},
         []);
 
+    // Determine address type
+    const addressType = shippingAddress['pr-dhl/address_type'] || '';
+
+    // Derive booleans for each filter.
+    const isPackstation = addressType === 'dhl_packstation';
+    const isBranch      = addressType === 'dhl_branch';
+
     // Handle page load (for when map button should display)
     useEffect(() => {
         const handlePageLoad = () => setIsPageLoaded(true);
@@ -49,9 +56,8 @@ export const Block = () => {
         formData.append('parcelfinder_postcode', shippingAddress.postcode);
         formData.append('parcelfinder_city', shippingAddress.city || '');
         formData.append('parcelfinder_address', shippingAddress.address_1 || '');
-        // For demo, enabling both packstation & branch filters
-        formData.append('packstation_filter', 'true');
-        formData.append('branch_filter', 'true');
+        formData.append('packstation_filter', isPackstation ? 'true' : 'false');
+        formData.append('branch_filter',      isBranch      ? 'true' : 'false');
         formData.append('security', prDhlGlobals.parcel_nonce);
 
         axios.post(prDhlGlobals.ajax_url, formData.toString(), {

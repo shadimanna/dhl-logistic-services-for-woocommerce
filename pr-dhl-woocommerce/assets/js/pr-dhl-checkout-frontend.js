@@ -119,7 +119,7 @@ jQuery( document ).ready( function ( $ ) {
 
 			$( document.body ).on( 'change', '#shipping_dhl_address_type', this.address_type )
 			$( document.body ).on( 'change', '#shipping_dhl_address_type', this.populateDropdown )
-
+			$( document.body ).on( 'change', '#shipping-pr-dhl-address_type', this.populateDropdown )
 			$( document.body ).on( 'change', '#shipping_dhl_drop_off', this.selectedDropOff )
 
 			$( document.body ).on( 'update_checkout', this.populateDropdown );
@@ -274,8 +274,7 @@ jQuery( document ).ready( function ( $ ) {
 				return
 			}
 
-			let address_type = $( '.woocommerce-checkout #shipping_dhl_address_type' ).val();
-
+			let address_type = $( '.woocommerce-checkout #shipping_dhl_address_type' ).val() || $('.woocommerce-checkout #shipping-pr-dhl-address_type').val();
 			if ( 'normal' === address_type ) {
 				return;
 			}

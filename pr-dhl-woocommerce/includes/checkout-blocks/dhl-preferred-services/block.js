@@ -21,6 +21,8 @@ export const Block = ({ checkoutExtensionData }) => {
         setExtensionData(namespace, key, value);
     }, 500), [setExtensionData]);
 
+    const debounceTimer = useState(null);
+
     // Determine availability of location and neighbor options
     const locationAvailable = dhlSettings?.dhl_preferred_location === 'yes';
     const neighborAvailable = dhlSettings?.dhl_preferred_neighbour === 'yes';
