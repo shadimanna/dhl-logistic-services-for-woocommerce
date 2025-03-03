@@ -265,7 +265,7 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 			'DHL_ENGLISH_REGISTRATION_LINK'        => DHL_ENGLISH_REGISTRATION_LINK,
 			'DHL_GERMAN_REGISTRATION_LINK'        => DHL_GERMAN_REGISTRATION_LINK,
 			'locale' => get_locale(),
-
+			'google_maps_enabled' => $dhl_settings['dhl_display_google_maps'],
 		);
 
 		// Localize the editor script.

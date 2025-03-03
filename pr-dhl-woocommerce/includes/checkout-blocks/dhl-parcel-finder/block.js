@@ -42,7 +42,8 @@ export const Block = () => {
         }
     }, []);
 
-    const showMapButton = hasCalculatedShipping && shippingRates.length > 0 && isPageLoaded && (shippingAddress.country === 'DE');
+    const showMapButton = hasCalculatedShipping && shippingRates.length > 0 && isPageLoaded && (shippingAddress.country === 'DE') &&
+        prDhlGlobals.google_maps_enabled === 'yes';
 
     // Fetch parcel shops when shippingAddress changes and is available
     useEffect(() => {
