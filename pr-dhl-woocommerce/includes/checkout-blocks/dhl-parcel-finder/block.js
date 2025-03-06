@@ -1,10 +1,19 @@
-import { useState, useEffect } from '@wordpress/element';
+import {useState, useEffect, useCallback} from '@wordpress/element';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { Button, SelectControl } from '@wordpress/components';
+import {Button, TextControl, SelectControl} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import axios from 'axios';
+import {debounce} from "lodash";
 
-export const Block = () => {
+export const Block = ({checkoutExtensionData}) => {
+
+    const { setExtensionData } = checkoutExtensionData;
+
+    // Debounce for reducing the number of updates to the extension data
+    const debouncedSetExtensionData = useCallback(debounce((namespace, key, value) => {
+        setExtensionData(namespace, key, value);
+    }, 500), [setExtensionData]);
+
     const [isPageLoaded, setIsPageLoaded] = useState(false);
     const [parcelShops, setParcelShops] = useState([]);
     const [dropOffPoint, setDropOffPoint] = useState('');
@@ -25,7 +34,8 @@ export const Block = () => {
         []);
 
     // Determine address type
-    const addressType = shippingAddress['pr-dhl/address_type'] || '';
+    const [addressType, setAddressType] = useState('');
+    const [postNumber, setPostNumber]   = useState('');
 
     // Derive booleans for each filter.
     const isPackstation = addressType === 'dhl_packstation';
@@ -42,7 +52,9 @@ export const Block = () => {
         }
     }, []);
 
-    const showMapButton = hasCalculatedShipping && shippingRates.length > 0 && isPageLoaded && (shippingAddress.country === 'DE') &&
+    const showMapButton = hasCalculatedShipping &&
+        shippingRates.length > 0 &&
+        isPageLoaded && (shippingAddress.country === 'DE') &&
         prDhlGlobals.google_maps_enabled === 'yes';
 
     // Fetch parcel shops when shippingAddress changes and is available
@@ -109,10 +121,10 @@ export const Block = () => {
                 address_2: '',
                 postcode: selectedShop.place.address.postalCode,
                 city: selectedShop.place.address.addressLocality,
-                'pr-dhl/address_type': address_type,
             };
 
             setShippingAddress(newShippingAddress);
+            setAddressType(address_type);
         }
     }, [dropOffPoint]);
     useEffect(() => {
@@ -125,10 +137,11 @@ export const Block = () => {
                 address_2,
                 postcode,
                 city,
-                'pr-dhl/address_type': address_type
             };
             setShippingAddress(newShippingAddress);
             setDropOffPoint(parcel_ID);
+            setAddressType(address_type);
+
         };
 
         window.addEventListener('dhl-shop-selected', handleShopSelected);
@@ -143,8 +156,62 @@ export const Block = () => {
         ? prDhlGlobals.DHL_ENGLISH_REGISTRATION_LINK
         : prDhlGlobals.DHL_GERMAN_REGISTRATION_LINK;
 
+    const validationErrorId = 'dhl-post-number-validation';
+
+    //clearing validation errors.
+    const { setValidationErrors, clearValidationError } = useDispatch( 'wc/store/validation' );
+
+    // Retrieve the current validation error.
+    const validationError = useSelect( ( select ) => {
+        return select( 'wc/store/validation' ).getValidationError( validationErrorId );
+    }, [ validationErrorId ] );
+
+    useEffect(() => {
+        setExtensionData('pr-dhl', 'addressType', addressType);
+        debouncedSetExtensionData('pr-dhl', 'addressType', addressType);
+    }, [addressType]);
+
+    useEffect(() => {
+        setExtensionData('pr-dhl', 'postNumber', postNumber);
+        debouncedSetExtensionData('pr-dhl', 'postNumber', postNumber);
+    }, [postNumber]);
+
+    /**
+     * Whenever addressType or postNumber change, check if postNumber is required.
+     */
+    useEffect( () => {
+        const needsPostNumber =
+            addressType === 'dhl_packstation' || addressType === 'dhl_branch';
+
+        // If user must have postNumber but it's blank, set a validation error:
+        if ( needsPostNumber && ! postNumber.trim() ) {
+            setValidationErrors( {
+                [ validationErrorId ]: {
+                    message: __( 'Post Number is required.', 'dhl-for-woocommerce' ),
+                    hidden: false,
+                },
+            } );
+        } else {
+            // Otherwise clear the validation error
+            clearValidationError( validationErrorId );
+        }
+    }, [ addressType, postNumber, setValidationErrors, clearValidationError, validationErrorId ] );
+
     return (
         <>
+            {/* Address Type */}
+            <SelectControl
+                value={ addressType }
+                id="shipping_dhl_address_type"
+                onChange={ ( value ) => setAddressType(value) }
+                options={[
+                    { label: __('Adress Type', 'dhl-for-woocommerce'), value: '' },
+                    { label: __('Regular Address', 'dhl-for-woocommerce'), value: 'normal' },
+                    { label: __('DHL Packstation', 'dhl-for-woocommerce'), value: 'dhl_packstation' },
+                    { label: __('DHL Branch', 'dhl-for-woocommerce'), value: 'dhl_branch' },
+                ]}
+            />
+
             {showMapButton && (
                 <>
 
@@ -177,19 +244,19 @@ export const Block = () => {
                         />
                     </Button>
 
-                    {shippingAddress['pr-dhl/address_type'] !== 'normal' && (
+                    {addressType !== 'normal' && (
                         <div className="wc-blocks-components-select__select">
-                        <SelectControl
-                        value={dropOffPoint}
-                        onChange={(value) => setDropOffPoint(value)}
-                        options={[
-                    { label: __('Select a drop off points', 'dhl-for-woocommerce'), value: '' },
-                        ...parcelShops.map((shop) => ({
-                        label: shop.name,
-                        value: shop.location.ids[0].locationId,
-                    })),
-                        ]}
-                        />
+                            <SelectControl
+                                value={dropOffPoint}
+                                onChange={(value) => setDropOffPoint(value)}
+                                options={[
+                                    {label: __('Select a drop off points', 'dhl-for-woocommerce'), value: ''},
+                                    ...parcelShops.map((shop) => ({
+                                        label: shop.name,
+                                        value: shop.location.ids[0].locationId,
+                                    })),
+                                ]}
+                            />
 
                         </div>
 
@@ -305,6 +372,21 @@ export const Block = () => {
                     </div>
                 </>
             )}
+            {/* Post Number */}
+            <div className="wc-block-components-country-input">
+                <TextControl
+                    placeholder={ __('Post Number', 'dhl-for-woocommerce') }
+                    value={ postNumber }
+                    className="wc-block-components-text-input"
+                    onChange={ ( val ) => setPostNumber(val) }
+                    required={ addressType === 'dhl_packstation' || addressType === 'dhl_branch' }
+                />
+            </div>
+            { validationError && ! validationError.hidden && (
+                <div className="wc-block-components-validation-error">
+                    { validationError.message }
+                </div>
+            ) }
         </>
     );
 };

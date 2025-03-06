@@ -123,6 +123,28 @@ if ( ! class_exists( 'PR_DHL_Extend_Store_Endpoint' ) ) :
 						},
 					]
 				],
+				'addressType'  => [
+					'description' => 'Address Type',
+					'type'        => 'string',
+					'context'     => [ 'view', 'edit' ],
+					'readonly'    => true,
+					'arg_options' => [
+						'validate_callback' => function ( $value ) {
+							return is_string( $value );
+						},
+					]
+				],
+				'postNumber'  => [
+					'description' => 'Post Number',
+					'type'        => 'string',
+					'context'     => [ 'view', 'edit' ],
+					'readonly'    => true,
+					'arg_options' => [
+						'validate_callback' => function ( $value ) {
+							return is_string( $value );
+						},
+					]
+				],
 			];
 		}
 

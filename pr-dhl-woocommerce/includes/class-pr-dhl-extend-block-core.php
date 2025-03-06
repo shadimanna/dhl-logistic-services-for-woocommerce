@@ -34,61 +34,9 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 			// Register fee calculation
 			add_action( 'woocommerce_cart_calculate_fees', [ $this, 'add_preferred_day_fee' ] );
 
-			add_action( 'woocommerce_init', array($this, 'register_additional_checkout_fields'),101);
 
 		}
 
-		/**
-		 *
-		 * Register extra checkout fields.
-		 *
-		 * @return void
-		 */
-		public function register_additional_checkout_fields() {
-			$types[]  = array(
-				'value' => 'normal',
-				'label' => __( 'Regular Address', 'dhl-for-woocommerce' )
-			);
-
-			$dhl_settings = PR_DHL()->get_shipping_dhl_settings();
-
-			if ( ! empty( $dhl_settings['dhl_display_packstation'] ) && 'yes' === $dhl_settings['dhl_display_packstation'] ) {
-				$types[] = array(
-					'value' => 'dhl_packstation',
-					'label' => __( 'DHL Packstation', 'dhl-for-woocommerce' )
-				);
-			}
-
-			if ( ! empty( $dhl_settings['dhl_display_post_office'] ) && 'yes' === $dhl_settings['dhl_display_post_office'] ) {
-				$types[]  = array(
-					'value' => 'dhl_branch',
-					'label' => __( 'DHL Branch', 'dhl-for-woocommerce' )
-				);
-			}
-
-			woocommerce_register_additional_checkout_field(
-				array(
-					'id'          => 'pr-dhl/address_type',
-					'label'       => 'Address Type',
-					'location'    => 'address',
-					'required'      => true,
-					'type'        => 'select',
-					'options'     => $types
-				)
-			);
-
-			woocommerce_register_additional_checkout_field(
-				array(
-					'id'            => 'pr-dhl/postnum',
-					'label'         => 'Post Number',
-					'location'      => 'address',
-					'required'      => false,
-					'attributes'    => array(
-						'autocomplete' => 'dhl-postnum',
-					),
-				),
-			);
-		}
 
 		/**
 		 * Saves the dhl fields to the order's metadata.
@@ -131,11 +79,9 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 				$dhl_label_options['pr_dhl_preferred_day'] = wc_clean( $pr_dhl_request_data['preferredDay'] );
 			}
 			// Extract billing and shipping house numbers with sanitization
-			$billing_postnum  = isset( $postnl_request_data['shipping-pr-dhl-postnum'] ) ? sanitize_text_field( $postnl_request_data['postnl_billing_house_number'] ) : '';
-			$shipping_postnum = isset( $postnl_request_data['billing-pr-dhl-postnum'] ) ? sanitize_text_field( $postnl_request_data['postnl_shipping_house_number'] ) : '';
+			$shipping_postnum = sanitize_text_field( $pr_dhl_request_data['postNumber'] ) ;
 
 			// Update billing and shipping house numbers
-			$order->update_meta_data( '_billing_dhl_postnum', $billing_postnum );
 			$order->update_meta_data( '_shipping_dhl_postnum', $shipping_postnum );
 			/**
 			 * Save the order to persist changes
