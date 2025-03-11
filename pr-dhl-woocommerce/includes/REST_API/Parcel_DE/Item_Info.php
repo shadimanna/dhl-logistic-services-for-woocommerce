@@ -268,7 +268,7 @@ class Item_Info {
 				'default' => '',
 			),
 			'total_packages'         => array(
-				'default'  => 'no',
+				'default'  => '',
 				'validate' => function ( $value ) use ( $self ) {
 					if ( isset( $self->args['order_details']['multi_packages_enabled'] ) && ( $self->args['order_details']['multi_packages_enabled'] == 'yes' ) ) {
 						for ( $i = 0; $i < intval( $value ); $i++ ) {
@@ -321,6 +321,10 @@ class Item_Info {
 					}
 				},
 				'sanitize' => function ( $value ) use ( $self ) {
+					if ( ! isset( $self->args['order_details']['multi_packages_enabled'] ) || 'yes' !== $self->args['order_details']['multi_packages_enabled'] ) {
+						return $value;
+					}
+
 					for ( $i = 0; $i < intval( $value ); $i++ ) {
 						$self->args['order_details']['packages_weight'][ $i ] = $self->maybe_convert_weight( $self->args['order_details']['packages_weight'][ $i ], $self->weightUom );
 					}
@@ -630,7 +634,8 @@ class Item_Info {
 				},
 			),
 			'dhl_postnum' => array(
-				'rename' => 'postNumber',
+				'default' => '',
+				'rename'  => 'postNumber',
 			),
 			'address_1'   => array(
 				'rename'   => 'retailID',

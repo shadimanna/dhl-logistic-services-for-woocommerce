@@ -55,7 +55,7 @@ class Client extends API_Client {
 	 *
 	 * @param class $pickup_request_info Pickup_Request_Info
 	 */
-	public function create_pickup_request( Pickup_Request_Info $pickup_request_info, $blnIncludeBillingNumber = false ) {
+	public function create_pickup_request( Pickup_Request_Info $pickup_request_info ) {
 		$route = $this->request_pickup_route();
 
 		// Customer business portal user auth
@@ -64,37 +64,23 @@ class Client extends API_Client {
 			'dhl-api-key'   => defined( 'PR_DHL_GLOBAL_API' ) ? PR_DHL_GLOBAL_API : '',
 		);
 
-		$data = $this->request_pickup_info_to_request_data( $pickup_request_info, $blnIncludeBillingNumber );
-
+		$data     = $this->request_pickup_info_to_request_data( $pickup_request_info );
 		$response = $this->post( $route, $data, $headers );
 
-		if ( is_array( $response->body ) ) {
-			$response->body = $response->body[0];
-		}
-
-		$response_body = json_decode( $response->body );
-
 		if ( $response->status === 200 ) {
-			if ( isset( $response_body->confirmation->value->orderID ) ) {
+			$response->body = json_decode( $response->body );
+			if ( isset( $response->body->confirmation->value->orderID ) ) {
 				return $response->body;
-
-			} elseif ( isset( $response->body ) ) {
-
-				throw new Exception(
-					sprintf(
-						// Translators: %s is replaced with the error details returned from the API.
-						esc_html__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
-						esc_html( $this->generate_error_details( $response->body ) )
-					)
-				);
 			}
 		}
 
 		throw new Exception(
-			sprintf(
+			wp_kses_post(
+				sprintf(
 				// Translators: %s is replaced with the error details returned from the API.
-				esc_html__( 'Failed DHL Request Pickup: %s', 'dhl-for-woocommerce' ),
-				esc_html( $this->generate_error_details( $response->body ) )
+					__( 'Failed DHL Request Pickup1: %s', 'dhl-for-woocommerce' ),
+					$this->generate_error_details( $response->body )
+				)
 			)
 		);
 	}
@@ -173,20 +159,19 @@ class Client extends API_Client {
 	/**
 	 * Transforms an item info object into a request data array.
 	 *
-	 * @param Item_Info $item_info The item info object to transform.
+	 * @param Pickup_Request_Info $request_pickup_info The item info object to transform.
 	 *
 	 * @return array The request data for the given item info object.
 	 */
-	protected function request_pickup_info_to_request_data( Pickup_Request_Info $request_pickup_info, $blnIncludeBillingNumber ) {
-
+	protected function request_pickup_info_to_request_data( Pickup_Request_Info $request_pickup_info ) {
 		// Pickup date
-		if ( $request_pickup_info->pickup_details['dhl_pickup_type'] == 'date' ) { // date or asap
-			$pickup_info_array = array(
+		if ( 'date' === $request_pickup_info->pickup_details['dhl_pickup_type'] ) {
+			$pickup_date = array(
 				'type'  => 'Date',
 				'value' => $request_pickup_info->pickup_details['dhl_pickup_date'],
 			);
 		} else {
-			$pickup_info_array = array(
+			$pickup_date = array(
 				'type' => 'ASAP',
 			);
 		}
@@ -206,12 +191,21 @@ class Client extends API_Client {
 			),
 		);
 
-		$request_data = array(
+		foreach ( $request_pickup_info->shipments as $key => $shipment ) {
+			if ( 'SPERRGUT' === $shipment['transportationType'] ) {
+				$request_pickup_info->shipments[$key]['pickupServices']['bulkyGood'] = array(
+					'comment' => 'Bulky Goods',
+				);
+			}
+		}
+
+		return array(
+			'customerDetails' => array(
+				'billingNumber' => $request_pickup_info->customer_details['billingNumber'],
+			),
 			'pickupLocation'  => $pickup_location_array,
 			'pickupDetails'   => array(
-				'pickupDate'  => $pickup_info_array,
-				'totalWeight' => $request_pickup_info->pickup_details['weight'],
-				'comment'     => '',
+				'pickupDate' => $pickup_date,
 			),
 			'shipmentDetails' => array(
 				'shipments' => $request_pickup_info->shipments,
@@ -228,18 +222,7 @@ class Client extends API_Client {
 				),
 			),
 		);
-
-		// Include customer details billing number (if excluded, we're forcing DHL to look for existing Pickup address in customers portal)
-		if ( $blnIncludeBillingNumber ) {
-			$request_data['customerDetails'] = array(
-				'billingNumber' => $request_pickup_info->customer_details['billingNumber'],
-			);
-		}
-
-		return $request_data;
 	}
-
-
 
 	/**
 	 * Prepares an API route with the customer namespace and EKP.
