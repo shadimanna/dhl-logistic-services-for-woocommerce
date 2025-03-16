@@ -181,7 +181,7 @@ export const Block = ({checkoutExtensionData}) => {
      */
     useEffect( () => {
         const needsPostNumber =
-            addressType === 'dhl_packstation' || addressType === 'dhl_branch';
+            addressType === 'dhl_packstation';
 
         // If user must have postNumber but it's blank, set a validation error:
         if ( needsPostNumber && ! postNumber.trim() ) {
@@ -199,29 +199,16 @@ export const Block = ({checkoutExtensionData}) => {
 
     return (
         <>
-            {/* Address Type */}
-            <SelectControl
-                value={ addressType }
-                id="shipping_dhl_address_type"
-                onChange={ ( value ) => setAddressType(value) }
-                options={[
-                    { label: __('Adress Type', 'dhl-for-woocommerce'), value: '' },
-                    { label: __('Regular Address', 'dhl-for-woocommerce'), value: 'normal' },
-                    { label: __('DHL Packstation', 'dhl-for-woocommerce'), value: 'dhl_packstation' },
-                    { label: __('DHL Branch', 'dhl-for-woocommerce'), value: 'dhl_branch' },
-                ]}
-            />
-
             {showMapButton && (
                 <>
 
                     {/* Registration info displayed above the shipping fields */}
                     <div className="registration_info">
-                        { __( 'For deliveries to DHL Parcel Lockers you have to', 'dhl-for-woocommerce' ) }{' '}
-                        <a href={ registrationLink } target="_blank" rel="noopener noreferrer">
-                            { __( 'create a DHL account', 'dhl-for-woocommerce' ) }
+                        {__('For deliveries to DHL Parcel Lockers you have to', 'dhl-for-woocommerce')}{' '}
+                        <a href={registrationLink} target="_blank" rel="noopener noreferrer">
+                            {__('create a DHL account', 'dhl-for-woocommerce')}
                         </a>{' '}
-                        { __( 'and get a Post Number.', 'dhl-for-woocommerce' ) }
+                        {__('and get a Post Number.', 'dhl-for-woocommerce')}
                     </div>
                     <Button
                         isPrimary
@@ -231,7 +218,7 @@ export const Block = ({checkoutExtensionData}) => {
                         href="javascript:;"
                         onClick={() => {
                             // Reinitialize jQuery bindings, for example:
-                            if ( typeof wc_checkout_dhl_parcelfinder !== 'undefined' ) {
+                            if (typeof wc_checkout_dhl_parcelfinder !== 'undefined') {
                                 wc_checkout_dhl_parcelfinder.init();
                             }
                         }}
@@ -244,25 +231,7 @@ export const Block = ({checkoutExtensionData}) => {
                         />
                     </Button>
 
-                    {addressType !== 'normal' && (
-                        <div className="wc-blocks-components-select__select">
-                            <SelectControl
-                                value={dropOffPoint}
-                                onChange={(value) => setDropOffPoint(value)}
-                                options={[
-                                    {label: __('Select a drop off points', 'dhl-for-woocommerce'), value: ''},
-                                    ...parcelShops.map((shop) => ({
-                                        label: shop.name,
-                                        value: shop.location.ids[0].locationId,
-                                    })),
-                                ]}
-                            />
-
-                        </div>
-
-                    )}
-
-                    <div style={{ display: 'none' }}>
+                    <div style={{display: 'none'}}>
                         <div id="dhl_parcel_finder_form">
                             <form id="checkout_dhl_parcel_finder" method="post">
                                 <p className="form-row form-field small">
@@ -310,7 +279,7 @@ export const Block = ({checkoutExtensionData}) => {
                                         </label>
                                         <span
                                             className="icon"
-                                            style={{ backgroundImage: `url(${prDhlGlobals.pluginUrl}/assets/img/packstation.png)` }}
+                                            style={{backgroundImage: `url(${prDhlGlobals.pluginUrl}/assets/img/packstation.png)`}}
                                         ></span>
                                     </p>
                                 )}
@@ -332,13 +301,13 @@ export const Block = ({checkoutExtensionData}) => {
                                             {prDhlGlobals.parcelshop_enabled && (
                                                 <span
                                                     className="icon"
-                                                    style={{ backgroundImage: `url(${prDhlGlobals.pluginUrl}/assets/img/parcelshop.png)` }}
+                                                    style={{backgroundImage: `url(${prDhlGlobals.pluginUrl}/assets/img/parcelshop.png)`}}
                                                 ></span>
                                             )}
                                             {prDhlGlobals.post_office_enabled && (
                                                 <span
                                                     className="icon"
-                                                    style={{ backgroundImage: `url(${prDhlGlobals.pluginUrl}/assets/img/post_office.png)` }}
+                                                    style={{backgroundImage: `url(${prDhlGlobals.pluginUrl}/assets/img/post_office.png)`}}
                                                 ></span>
                                             )}
                                         </span>
@@ -354,8 +323,8 @@ export const Block = ({checkoutExtensionData}) => {
                                     />
                                 </p>
 
-                                <input type="hidden" name="dhl_parcelfinder_country" id="dhl_parcelfinder_country" />
-                                <input type="hidden" name="dhl_parcelfinder_nonce" value={prDhlGlobals.parcel_nonce} />
+                                <input type="hidden" name="dhl_parcelfinder_country" id="dhl_parcelfinder_country"/>
+                                <input type="hidden" name="dhl_parcelfinder_nonce" value={prDhlGlobals.parcel_nonce}/>
 
                                 <div className="clear"></div>
 
@@ -372,14 +341,47 @@ export const Block = ({checkoutExtensionData}) => {
                     </div>
                 </>
             )}
+            {/* Address Type */}
+            <SelectControl
+                className="wc-blocks-components-select__select"
+                value={addressType}
+                id="shipping_dhl_address_type"
+                onChange={(value) => setAddressType(value)}
+                options={[
+                    {label: __('Adress Type', 'dhl-for-woocommerce'), value: ''},
+                    {label: __('Regular Address', 'dhl-for-woocommerce'), value: 'normal'},
+                    {label: __('DHL Packstation', 'dhl-for-woocommerce'), value: 'dhl_packstation'},
+                    {label: __('DHL Branch', 'dhl-for-woocommerce'), value: 'dhl_branch'},
+                ]}
+            />
+
+            {/* Drop off point */}
+            {showMapButton && addressType !== 'normal' && (
+                <>
+                    <div className="wc-blocks-components-select__select">
+                        <SelectControl
+                            value={dropOffPoint}
+                            onChange={(value) => setDropOffPoint(value)}
+                            options={[
+                                {label: __('Select a drop off points', 'dhl-for-woocommerce'), value: ''},
+                                ...parcelShops.map((shop) => ({
+                                    label: shop.name,
+                                    value: shop.location.ids[0].locationId,
+                                })),
+                            ]}
+                        />
+
+                    </div>
+                </>
+            )}
             {/* Post Number */}
-            <div className="wc-block-components-country-input">
+            <div className="wc-block-components-text-input ">
                 <TextControl
                     placeholder={ __('Post Number', 'dhl-for-woocommerce') }
                     value={ postNumber }
                     className="wc-block-components-text-input"
                     onChange={ ( val ) => setPostNumber(val) }
-                    required={ addressType === 'dhl_packstation' || addressType === 'dhl_branch' }
+                    required={ addressType === 'dhl_packstation' }
                 />
             </div>
             { validationError && ! validationError.hidden && (
