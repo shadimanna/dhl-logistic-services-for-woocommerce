@@ -364,6 +364,6 @@ a#dhl_parcel_finder:hover {
     }
 }
 
-.select2-selection {
+.shipping-dhl-drop-off-points .select2-selection {
   max-width: 90vw !important;
 }
