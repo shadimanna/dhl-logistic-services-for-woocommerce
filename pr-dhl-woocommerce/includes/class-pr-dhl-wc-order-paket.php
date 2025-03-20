@@ -821,7 +821,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			}
 
 			$args['dhl_settings']['shipper_country'] = PR_DHL()->get_base_country();
-			$args['dhl_settings']['participation']   = ! empty( $dhl_label_items ) ? $this->shipping_dhl_settings[ 'dhl_participation_' . $dhl_label_items['pr_dhl_product'] ] : '';
+			$args['dhl_settings']['participation']   = isset( $dhl_label_items ) && ! empty( $dhl_label_items ) ? $this->shipping_dhl_settings[ 'dhl_participation_' . $dhl_label_items['pr_dhl_product'] ] : '';
 
 			return $args;
 		}
