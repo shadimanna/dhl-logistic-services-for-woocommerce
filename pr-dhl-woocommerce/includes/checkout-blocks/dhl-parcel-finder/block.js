@@ -177,25 +177,91 @@ export const Block = ({checkoutExtensionData}) => {
     }, [postNumber]);
 
     /**
-     * Whenever addressType or postNumber change, check if postNumber is required.
+     * PostNumber Validation.
      */
-    useEffect( () => {
-        const needsPostNumber =
-            addressType === 'dhl_packstation';
 
-        // If user must have postNumber but it's blank, set a validation error:
-        if ( needsPostNumber && ! postNumber.trim() ) {
-            setValidationErrors( {
-                [ validationErrorId ]: {
-                    message: __( 'Post Number is required.', 'dhl-for-woocommerce' ),
-                    hidden: false,
-                },
-            } );
-        } else {
-            // Otherwise clear the validation error
-            clearValidationError( validationErrorId );
+    useEffect(() => {
+        clearValidationError(validationErrorId);
+
+        const address1 = shippingAddress.address_1 ? shippingAddress.address_1.toLowerCase() : '';
+        const pos_ps = address1.includes('packstation');
+        const pos_rs = address1.includes('parcelshop');
+        const pos_po = address1.includes('post office');
+
+
+        if ( addressType === 'dhl_packstation' ) {
+
+            if ( ! postNumber.trim() ) {
+                setValidationErrors({
+                    [validationErrorId]: {
+                        message: __( 'Post Number is mandatory for a Packstation location.', 'dhl-for-woocommerce' ),
+                        hidden: false,
+                    },
+                });
+                return;
+            }
+
+            if ( ! pos_ps ) {
+                setValidationErrors({
+                    [validationErrorId]: {
+                        message: __( 'The text "Packstation" must be included in the address.', 'dhl-for-woocommerce' ),
+                        hidden: false,
+                    },
+                });
+                return;
+            }
+
+        } else if ( addressType === 'dhl_branch' ) {
+            if ( ! pos_rs ) {
+                setValidationErrors({
+                    [validationErrorId]: {
+                        message: __( 'The text "Postfiliale" must be included in the address.', 'dhl-for-woocommerce' ),
+                        hidden: false,
+                    },
+                });
+                return;
+            }
+            if ( ! pos_po ) {
+                setValidationErrors({
+                    [validationErrorId]: {
+                        message: __( 'The text "Postfiliale" must be included in the address.', 'dhl-for-woocommerce' ),
+                        hidden: false,
+                    },
+                });
+                return;
+            }
         }
-    }, [ addressType, postNumber, setValidationErrors, clearValidationError, validationErrorId ] );
+
+        if ( postNumber ) {
+            if ( isNaN( parseInt( postNumber, 10 ) ) ) {
+                setValidationErrors({
+                    [validationErrorId]: {
+                        message: __( 'Post Number must be a number.', 'dhl-for-woocommerce' ),
+                        hidden: false,
+                    },
+                });
+                return;
+            }
+
+            if ( postNumber.length < 6 || postNumber.length > 12 ) {
+                setValidationErrors({
+                    [validationErrorId]: {
+                        message: __( 'The post number you entered is not valid. Please correct the number.', 'dhl-for-woocommerce' ),
+                        hidden: false,
+                    },
+                });
+                return;
+            }
+        }
+
+    }, [
+        addressType,
+        postNumber,
+        shippingAddress,
+        clearValidationError,
+        setValidationErrors,
+        validationErrorId,
+    ]);
 
     const addressTypeOptions = [
         {label: __('Address Type', 'dhl-for-woocommerce'), value: ''},
@@ -218,6 +284,7 @@ export const Block = ({checkoutExtensionData}) => {
 
     return (
         <>
+
             {showMapButton && (prDhlGlobals.post_office_enabled || prDhlGlobals.packstation_enabled ) && (
                 <>
 
@@ -360,6 +427,11 @@ export const Block = ({checkoutExtensionData}) => {
                     </div>
                 </>
             )}
+            { validationError && ! validationError.hidden && (
+                <div className="wc-block-components-validation-error">
+                    { validationError.message }
+                </div>
+            ) }
 
             {/* Address Type */}
             {(prDhlGlobals.post_office_enabled || prDhlGlobals.packstation_enabled) && (
@@ -407,11 +479,6 @@ export const Block = ({checkoutExtensionData}) => {
                     </div>
                 </>
             )}
-            { validationError && ! validationError.hidden && (
-                <div className="wc-block-components-validation-error">
-                    { validationError.message }
-                </div>
-            ) }
         </>
     );
 };
