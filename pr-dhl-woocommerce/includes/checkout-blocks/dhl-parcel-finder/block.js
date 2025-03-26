@@ -197,9 +197,28 @@ export const Block = ({checkoutExtensionData}) => {
         }
     }, [ addressType, postNumber, setValidationErrors, clearValidationError, validationErrorId ] );
 
+    const addressTypeOptions = [
+        {label: __('Address Type', 'dhl-for-woocommerce'), value: ''},
+        {label: __('Regular Address', 'dhl-for-woocommerce'), value: 'normal'},
+    ];
+    if (prDhlGlobals.packstation_enabled) {
+        addressTypeOptions.push({
+            label: __('DHL Packstation', 'dhl-for-woocommerce'),
+            value: 'dhl_packstation',
+        });
+    }
+
+    if (prDhlGlobals.post_office_enabled) {
+        addressTypeOptions.push({
+            label: __('DHL Branch', 'dhl-for-woocommerce'),
+            value: 'dhl_branch',
+        });
+    }
+
+
     return (
         <>
-            {showMapButton && (
+            {showMapButton && (prDhlGlobals.post_office_enabled || prDhlGlobals.packstation_enabled ) && (
                 <>
 
                     {/* Registration info displayed above the shipping fields */}
@@ -341,22 +360,22 @@ export const Block = ({checkoutExtensionData}) => {
                     </div>
                 </>
             )}
+
             {/* Address Type */}
-            <SelectControl
-                className="wc-blocks-components-select__select"
-                value={addressType}
-                id="shipping_dhl_address_type"
-                onChange={(value) => setAddressType(value)}
-                options={[
-                    {label: __('Adress Type', 'dhl-for-woocommerce'), value: ''},
-                    {label: __('Regular Address', 'dhl-for-woocommerce'), value: 'normal'},
-                    {label: __('DHL Packstation', 'dhl-for-woocommerce'), value: 'dhl_packstation'},
-                    {label: __('DHL Branch', 'dhl-for-woocommerce'), value: 'dhl_branch'},
-                ]}
-            />
+            {(prDhlGlobals.post_office_enabled || prDhlGlobals.packstation_enabled) && (
+                <>
+                    <SelectControl
+                        className="wc-blocks-components-select__select"
+                        value={addressType}
+                        id="shipping_dhl_address_type"
+                        onChange={(value) => setAddressType(value)}
+                        options={addressTypeOptions}
+                    />
+                </>
+            )}
 
             {/* Drop off point */}
-            {showMapButton && addressType !== 'normal' && (
+            {showMapButton && addressType !== 'normal' && (prDhlGlobals.post_office_enabled || prDhlGlobals.packstation_enabled ) &&(
                 <>
                     <div className="wc-blocks-components-select__select">
                         <SelectControl
@@ -375,15 +394,19 @@ export const Block = ({checkoutExtensionData}) => {
                 </>
             )}
             {/* Post Number */}
-            <div className="wc-block-components-text-input ">
-                <TextControl
-                    placeholder={ __('Post Number', 'dhl-for-woocommerce') }
-                    value={ postNumber }
-                    className="wc-block-components-text-input"
-                    onChange={ ( val ) => setPostNumber(val) }
-                    required={ addressType === 'dhl_packstation' }
-                />
-            </div>
+            {addressType !== 'normal' && (prDhlGlobals.post_office_enabled || prDhlGlobals.packstation_enabled ) &&(
+                <>
+                    <div className="wc-block-components-text-input ">
+                        <TextControl
+                            placeholder={ __('Post Number', 'dhl-for-woocommerce') }
+                            value={ postNumber }
+                            className="wc-block-components-text-input"
+                            onChange={ ( val ) => setPostNumber(val) }
+                            required={ addressType === 'dhl_packstation' }
+                        />
+                    </div>
+                </>
+            )}
             { validationError && ! validationError.hidden && (
                 <div className="wc-block-components-validation-error">
                     { validationError.message }
