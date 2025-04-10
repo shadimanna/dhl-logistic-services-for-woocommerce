@@ -86,7 +86,7 @@ export const Block = ({checkoutExtensionData}) => {
             .catch(() => {
                 setParcelShops([]);
             });
-    }, [shippingAddress]);
+    }, [shippingAddress, isPackstation, isBranch]);
 
     // Update shipping address when user selects a drop-off point
     useEffect(() => {
@@ -102,12 +102,12 @@ export const Block = ({checkoutExtensionData}) => {
                     address_type = 'dhl_packstation';
                     break;
                 case 'servicepoint':
-                    shop_name = __('ParcelShop', 'dhl-for-woocommerce');
+                    shop_name = __('Postfiliale', 'dhl-for-woocommerce');
                     address_type = 'dhl_branch';
                     break;
                 case 'postoffice':
                 case 'postbank':
-                    shop_name = __('Post Office', 'dhl-for-woocommerce');
+                    shop_name = __('Postfiliale', 'dhl-for-woocommerce');
                     address_type = 'dhl_branch';
                     break;
                 default:
@@ -183,11 +183,10 @@ export const Block = ({checkoutExtensionData}) => {
     useEffect(() => {
         clearValidationError(validationErrorId);
 
-        const address1 = shippingAddress.address_1 ? shippingAddress.address_1.toLowerCase() : '';
+        const address1 = shippingAddress.address_1 ? shippingAddress.address_1 : '';
         const pos_ps = address1.includes('packstation');
-        const pos_rs = address1.includes('parcelshop');
-        const pos_po = address1.includes('post office');
-
+        const pos_rs = address1.includes('Postfiliale');
+        const pos_po = address1.includes('Postfiliale');
 
         if ( addressType === 'dhl_packstation' ) {
 
@@ -285,7 +284,7 @@ export const Block = ({checkoutExtensionData}) => {
     return (
         <>
 
-            {showMapButton && (prDhlGlobals.post_office_enabled || prDhlGlobals.packstation_enabled ) && (
+            {showMapButton && (prDhlGlobals.post_office_enabled || prDhlGlobals.parcelshop_enabled || prDhlGlobals.packstation_enabled ) && (
                 <>
 
                     {/* Registration info displayed above the shipping fields */}
@@ -434,7 +433,7 @@ export const Block = ({checkoutExtensionData}) => {
             ) }
 
             {/* Address Type */}
-            {(prDhlGlobals.post_office_enabled || prDhlGlobals.packstation_enabled) && (
+            {((prDhlGlobals.post_office_enabled || prDhlGlobals.parcelshop_enabled || prDhlGlobals.packstation_enabled))  && shippingAddress.country === 'DE' && (
                 <>
                     <SelectControl
                         className="wc-blocks-components-select__select"
