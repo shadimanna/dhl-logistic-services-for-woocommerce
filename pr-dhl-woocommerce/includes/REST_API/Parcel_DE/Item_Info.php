@@ -839,7 +839,11 @@ class Item_Info {
 	protected function maybe_convert_weight( $weight, $uom ) {
 		$weight = floatval( wc_format_decimal( $weight ) );
 
-		if ( 'kg' === $uom || 'g' === $uom ) {
+		if ( 'kg' === $uom ) {
+			return round( $weight, 3 );
+		}
+
+		if ( 'g' === $uom ) {
 			return round( $weight, 2 );
 		}
 
