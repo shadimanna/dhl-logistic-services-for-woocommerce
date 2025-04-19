@@ -300,6 +300,7 @@ export const Block = ({checkoutExtensionData}) => {
                         id="dhl_parcel_finder"
                         data-fancybox
                         data-src="#dhl_parcel_finder_form"
+                        data-options='{"touch":false,"clickSlide":false,"dragToClose":false}'
                         href="javascript:;"
                         onClick={() => {
                             // Reinitialize jQuery bindings, for example:
