@@ -80,6 +80,7 @@ More detailed instructions on how to set up your store and configure it are cons
 * Add: OpenStreetMap support to the checkout shipping location finder.
 * Add: New product editor compatibility.
 * Add: Allow customers to choose Drop-off point from a dropdown list.
+* Fix: Always send `packagedQuantity` for every customs item to prevent “missing parameter” errors.
 
 = 3.8.1 =
 * Fix: PHP fatal error related to class loading conflicts in environments with multiple active autoloaders.

@@ -479,8 +479,9 @@ jQuery( document ).ready( function ( $ ) {
 
 					prev_day = value_times.dayOfWeek
 
-					openingTimes += value_times.opens + ' - ' + value_times.closes
-
+					var opens     = value_times.opens.slice( 0, -3 );
+					var closes    = value_times.closes.slice( 0, -3 );
+					openingTimes += opens + ' - ' + closes;
 				} )
 
 				// Get services
@@ -646,7 +647,9 @@ jQuery( document ).ready( function ( $ ) {
 
 					prev_day = value_times.dayOfWeek
 
-					openingTimes += value_times.opens + ' - ' + value_times.closes
+					var opens     = value_times.opens.slice( 0, -3 );
+					var closes    = value_times.closes.slice( 0, -3 );
+					openingTimes += opens + ' - ' + closes;
 				} )
 
 				// Get services
