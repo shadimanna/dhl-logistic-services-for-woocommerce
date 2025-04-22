@@ -832,7 +832,9 @@ jQuery( document ).ready( function ( $ ) {
 
 	wc_checkout_dhl_parcelfinder.init()
 
-	$('#shipping_dhl_address_type').selectWoo();
-	$('#shipping_dhl_drop_off').selectWoo();
+	if ($.fn.selectWoo) {
+		$('#shipping_dhl_address_type').selectWoo();
+		$('#shipping_dhl_drop_off').selectWoo();
+	}
 
 } )
