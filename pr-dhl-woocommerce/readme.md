@@ -75,6 +75,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 3.8.3 =
+* Fix: Always send `packagedQuantity` for every customs item to prevent “missing parameter” errors.
+
 = 3.8.2 =
 * Add: OpenStreetMap support to the checkout shipping location finder.
 * Add: New product editor compatibility.
