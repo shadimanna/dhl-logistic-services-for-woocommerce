@@ -677,12 +677,12 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 		public function call_parcel_finder() {
 			check_ajax_referer( 'dhl_parcelfinder', 'security' );
 
-			$parcelfinder_country  = wc_clean( $_POST['parcelfinder_country'] );
-			$parcelfinder_postcode = wc_clean( $_POST['parcelfinder_postcode'] );
-			$parcelfinder_city     = wc_clean( $_POST['parcelfinder_city'] );
-			$parcelfinder_address  = wc_clean( $_POST['parcelfinder_address'] );
-			$packstation_filter    = wc_clean( $_POST['packstation_filter'] );
-			$branch_filter         = wc_clean( $_POST['branch_filter'] );
+			$parcelfinder_country  = isset( $_POST['parcelfinder_country'] ) ? wc_clean( wp_unslash( $_POST['parcelfinder_country'] ) ) : '';
+			$parcelfinder_postcode = isset( $_POST['parcelfinder_postcode'] ) ? wc_clean( wp_unslash( $_POST['parcelfinder_postcode'] ) ) : '';
+			$parcelfinder_city     = isset( $_POST['parcelfinder_city'] ) ? wc_clean( wp_unslash( $_POST['parcelfinder_city'] ) ) : '';
+			$parcelfinder_address  = isset( $_POST['parcelfinder_address'] ) ? wc_clean( wp_unslash( $_POST['parcelfinder_address'] ) ) : '';
+			$packstation_filter    = isset( $_POST['packstation_filter'] ) ? wc_clean( wp_unslash( $_POST['packstation_filter'] ) ) : '';
+			$branch_filter         = isset( $_POST['branch_filter'] ) ? wc_clean( wp_unslash( $_POST['branch_filter'] ) ) : '';
 
 			try {
 				$dhl_obj                              = PR_DHL()->get_dhl_factory();
