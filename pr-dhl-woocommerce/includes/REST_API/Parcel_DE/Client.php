@@ -240,6 +240,7 @@ class Client extends API_Client {
 				'itemDescription' => $item['itemDescription'],
 				'countryOfOrigin' => $item['countryOfOrigin'],
 				'hsCode'          => $item['hsCode'],
+				'packagedQuantity'  => $item['packagedQuantity'],
 				'itemValue'       => array(
 					'currency' => $item['itemValue']['currency'],
 					'value'    => $item['itemValue']['amount'],
