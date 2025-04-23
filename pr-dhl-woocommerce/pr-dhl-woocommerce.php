@@ -9,13 +9,13 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
- * Version: 3.8.1
+ * Version: 3.9.0
  * Requires Plugins: woocommerce
  * Requires PHP: 7.4
- * Requires at least: 6.5
- * Tested up to: 6.7
- * WC requires at least: 9.4
- * WC tested up to: 9.6
+ * Requires at least: 6.6
+ * Tested up to: 6.8
+ * WC requires at least: 9.6
+ * WC tested up to: 9.8
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 	class PR_DHL_WC {
 
-		private $version = '3.8.1';
+		private $version = '3.9.0';
 
 		/**
 		 * Instance to call certain functions globally within the plugin
@@ -218,6 +218,10 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			$this->define_constants();
 			$this->includes();
 			$this->init_hooks();
+			if ( 'DE' == $this->get_base_country() ) {
+				$this->checkout_block();
+			}
+
 		}
 
 		/**
@@ -247,6 +251,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			add_action( 'dhl_myaccount_pwd_expiration_month', array( $this, 'dhl_myaccount_pwd_expiration_month_callback' ) );
 			add_action( 'dhl_myaccount_pwd_expiration_week', array( $this, 'dhl_myaccount_pwd_expiration_week_callback' ) );
 			add_action( 'admin_notices', array( $this, 'password_expiration_notice_callback' ) );
+			add_action( 'block_categories_all',array($this, 'register_pr_dhl_block_category'), 10, 2 );
 		}
 
 		public function get_pr_dhl_wc_order() {
@@ -986,6 +991,33 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 				/* translators: %s is the warning message */
 				echo '<div class="notice notice-warning is-dismissible"><p>' . sprintf( esc_html__( 'Warning: %s', 'dhl-for-woocommerce' ), esc_html( $notice_message ) ) . '</p></div>';
 			}
+		}
+
+		public function checkout_block() {
+			$extend_store = new PR_DHL_Extend_Store_Endpoint();
+			new PR_DHL_Extend_Block_core();
+
+			// Initialize endpoints and core functionality.
+			$extend_store->init();
+
+			// Register the blocks integration with WooCommerce blocks.
+			add_action( 'woocommerce_blocks_checkout_block_registration', function ( $integration_registry ) {
+				if ( class_exists( 'PR_DHL_Blocks_Integration' ) ) {
+					$integration_registry->register( new PR_DHL_Blocks_Integration() );
+				}
+			} );
+		}
+
+		public function register_pr_dhl_block_category( $categories ) {
+			return array_merge(
+				$categories,
+				[
+					[
+						'slug'  => 'pr-dhl',
+						'title' => __( 'DHL checkout Blocks', 'dhl-for-woocommerce' ),
+					],
+				]
+			);
 		}
 
 	}
