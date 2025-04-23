@@ -844,7 +844,7 @@ class Item_Info {
 		}
 
 		if ( 'g' === $uom ) {
-			return round( $weight, 2 );
+			return (int) ceil( $weight );
 		}
 
 		switch ( $uom ) {
