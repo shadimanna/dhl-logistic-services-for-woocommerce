@@ -6,5 +6,29 @@
         "psr-4": {
             "PR\\DHL\\": "includes"
         }
+    },
+    "archive": {
+        "exclude": [
+            "!/assets",
+            "!/languages",
+            "!/assets/js/*.js",
+            "!/assets/js/*.min.js",
+            "/assets/css/*.scss",
+            "bin",
+            "tests",
+            "node_modules",
+            "Gruntfile.js",
+            "README.md",
+            "package.json",
+            "package-lock.json",
+            "composer.json",
+            "composer.lock",
+            "phpunit.xml.dist",
+            ".*",
+            "dhl-for-woocommerce.zip",
+            "pr-dhl-woocommerce.zip",
+            "pnpm-lock.yaml",
+            "client"
+        ]
     }
 }
