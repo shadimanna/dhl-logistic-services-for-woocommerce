@@ -128,7 +128,7 @@ class Client extends API_Client {
 				$shipment['details'] = array(
 					'weight' => array(
 						'uom'   => 'kg' === $item_info->weightUom ? 'kg' : 'g', // its converted to grams in item_info.
-						'value' => round( $item_info->shipment['weight'], 3 ),
+						'value' => $item_info->shipment['weight'],
 					),
 				);
 
