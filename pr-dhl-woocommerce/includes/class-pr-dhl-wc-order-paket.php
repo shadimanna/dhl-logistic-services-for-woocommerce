@@ -22,6 +22,8 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 
 		const DHL_PICKUP_PRODUCT = '08';
 
+		protected $dhl_label_items;
+
 		public function init_hooks() {
 
 			parent::init_hooks();
@@ -821,7 +823,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			}
 
 			$args['dhl_settings']['shipper_country'] = PR_DHL()->get_base_country();
-			$args['dhl_settings']['participation']   = isset( $dhl_label_items ) && ! empty( $dhl_label_items ) ? $this->shipping_dhl_settings[ 'dhl_participation_' . $dhl_label_items['pr_dhl_product'] ] : '';
+			$args['dhl_settings']['participation']   = ! empty( $this->dhl_label_items ) ? $this->shipping_dhl_settings[ 'dhl_participation_' . $this->dhl_label_items['pr_dhl_product'] ] : '';
 
 			return $args;
 		}
@@ -834,7 +836,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			// Services and COD only for Germany
 			if ( $base_country_code == 'DE' ) {
 
-				$dhl_label_items = $this->get_dhl_label_items( $order_id );
+				$this->dhl_label_items = $this->get_dhl_label_items( $order_id );
 
 				if ( $this->is_shipping_domestic( $order_id ) ) {
 					// Domestic
@@ -865,8 +867,8 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 					);
 
 					$order = wc_get_order( $order_id );
-					if ( $this->is_cod_payment_method( $order_id ) && empty( $dhl_label_items['pr_dhl_cod_value'] ) ) {
-						$dhl_label_items['pr_dhl_cod_value'] = $order->get_total();
+					if ( $this->is_cod_payment_method( $order_id ) && empty( $this->dhl_label_items['pr_dhl_cod_value'] ) ) {
+						$this->dhl_label_items['pr_dhl_cod_value'] = $order->get_total();
 					}
 				} else {
 					// International
@@ -883,16 +885,16 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 				foreach ( $settings_default_ids as $default_id ) {
 					$id_name = str_replace( 'pr_dhl_', '', $default_id );
 
-					if ( ! isset( $dhl_label_items[ $default_id ] ) ) {
-						$dhl_label_items[ $default_id ] = isset( $this->shipping_dhl_settings[ 'dhl_default_' . $id_name ] ) ? $this->shipping_dhl_settings[ 'dhl_default_' . $id_name ] : '';
+					if ( ! isset( $this->dhl_label_items[ $default_id ] ) ) {
+						$this->dhl_label_items[ $default_id ] = isset( $this->shipping_dhl_settings[ 'dhl_default_' . $id_name ] ) ? $this->shipping_dhl_settings[ 'dhl_default_' . $id_name ] : '';
 						// Check alternate setting id format if not found in dhl_default prefix id
 						if ( ! isset( $this->shipping_dhl_settings[ 'dhl_default_' . $id_name ] ) ) {
-							$dhl_label_items[ $default_id ] = isset( $this->shipping_dhl_settings[ 'dhl_' . $id_name ] ) ? $this->shipping_dhl_settings[ 'dhl_' . $id_name ] : '';
+							$this->dhl_label_items[ $default_id ] = isset( $this->shipping_dhl_settings[ 'dhl_' . $id_name ] ) ? $this->shipping_dhl_settings[ 'dhl_' . $id_name ] : '';
 						}
 					}
 				}
 
-				$this->save_dhl_label_items( $order_id, $dhl_label_items );
+				$this->save_dhl_label_items( $order_id, $this->dhl_label_items );
 			}
 		}
 
@@ -1071,20 +1073,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 
 			$array_messages = array();
 
-			$args = $this->get_pickup_request_args();
-
-			$pickup_business_hours             = array();
-			$pickup_business_hours[0]['start'] = $this->shipping_dhl_settings['dhl_business_hours_1_start'];
-			$pickup_business_hours[0]['end']   = $this->shipping_dhl_settings['dhl_business_hours_1_end'];
-			$pickup_business_hours[1]['start'] = $this->shipping_dhl_settings['dhl_business_hours_2_start'];
-			$pickup_business_hours[1]['end']   = $this->shipping_dhl_settings['dhl_business_hours_2_end'];
-
-			$args['dhl_pickup_type'] = $pickup_type;
-			$args['dhl_pickup_date'] = $pickup_date;
-
-			$args['dhl_pickup_business_hours'] = $pickup_business_hours;
-			// $args['dhl_pickup_transportation_type'] = $transportation_type; // Disabled, use bulky_goods to determine transportation type (see Pickup_Request_info.php)
-
+			
 			$pickup_shipments = array();
 			foreach ( $order_ids as $order_id ) {
 				$order = wc_get_order( $order_id );
@@ -1123,6 +1112,20 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			}
 
 			$args['dhl_pickup_shipments']      = $pickup_shipments;
+			$args = $this->get_pickup_request_args();
+
+			$pickup_business_hours             = array();
+			$pickup_business_hours[0]['start'] = $this->shipping_dhl_settings['dhl_business_hours_1_start'];
+			$pickup_business_hours[0]['end']   = $this->shipping_dhl_settings['dhl_business_hours_1_end'];
+			$pickup_business_hours[1]['start'] = $this->shipping_dhl_settings['dhl_business_hours_2_start'];
+			$pickup_business_hours[1]['end']   = $this->shipping_dhl_settings['dhl_business_hours_2_end'];
+
+			$args['dhl_pickup_type'] = $pickup_type;
+			$args['dhl_pickup_date'] = $pickup_date;
+
+			$args['dhl_pickup_business_hours'] = $pickup_business_hours;
+			// $args['dhl_pickup_transportation_type'] = $transportation_type; // Disabled, use bulky_goods to determine transportation type (see Pickup_Request_info.php)
+
 			$args['dhl_pickup_billing_number'] = $args['dhl_settings']['account_num'] . self::DHL_PICKUP_PRODUCT . $args['dhl_settings']['participation'];
 
 			// Allow third parties to modify the args to the DHL APIs
