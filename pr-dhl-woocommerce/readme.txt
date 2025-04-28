@@ -1,13 +1,13 @@
 === DHL Shipping Germany for WooCommerce ===
 Contributors: DHL, shadim, utzfu
 Tags: DPDHL, DHL, DHL eCommerce, DHL Paket Germany, Shipping
-Stable tag: 3.8.1
+Stable tag: 3.9.0
 Requires Plugins: woocommerce
 Requires PHP: 7.4
-Requires at least: 6.5
-Tested up to: 6.7
-WC requires at least: 9.4
-WC tested up to: 9.6
+Requires at least: 6.6
+Tested up to: 6.8
+WC requires at least: 9.6
+WC tested up to: 9.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -75,10 +75,13 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
-= 3.8.2 =
+= 3.9.0 =
+* Add: Cart/Checkout Blocks compatibility.
 * Add: OpenStreetMap support to the checkout shipping location finder.
 * Add: New product editor compatibility.
 * Add: Allow customers to choose Drop-off point from a dropdown list.
+* Fix: Always send `packagedQuantity` for every customs item to prevent “missing parameter” errors.
+* Fix: Adjusted weight conversion to avoid unexpected additional grams.
 
 = 3.8.1 =
 * Fix: PHP fatal error related to class loading conflicts in environments with multiple active autoloaders.

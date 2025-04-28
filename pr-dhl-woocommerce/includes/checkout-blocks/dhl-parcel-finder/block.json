@@ -1,0 +1,48 @@
+{
+  "apiVersion": 3,
+  "name": "pr-dhl/dhl-parcel-finder",
+  "version": "1.0.0",
+  "title": "DHL Order Block",
+  "category": "woocommerce",
+  "description": "Adds DHL block to checkout.",
+  "supports": {
+    "html": false,
+    "align": true,
+    "multiple": false,
+    "reusable": false
+  },
+  "parent": [
+    "woocommerce/checkout-contact-information-block"
+  ],
+  "attributes": {
+    "lock": {
+      "type": "object",
+      "default": {
+        "remove": true,
+        "move": true
+      }
+    },
+    "addressType": {
+      "type": "object",
+      "default": ""
+    },
+    "dhlPostnum": {
+      "type": "string",
+      "default": ""
+    },
+    "pfPostcode": {
+      "type": "string",
+      "default": ""
+    },
+    "pfCity": {
+      "type": "string",
+      "default": ""
+    },
+    "pfAddress": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "textdomain": "dhl-for-woocommerce",
+  "editorStyle": "file:../../../build/style-dhl-preferred-services.css"
+}

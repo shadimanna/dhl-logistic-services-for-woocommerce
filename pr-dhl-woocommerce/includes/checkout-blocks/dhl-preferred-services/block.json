@@ -1,0 +1,72 @@
+{
+  "apiVersion": 3,
+  "name": "pr-dhl/dhl-preferred-services",
+  "version": "1.0.0",
+  "title": "DHL Order Block",
+  "category": "woocommerce",
+  "description": "Adds DHL block to checkout.",
+  "supports": {
+    "html": false,
+    "align": true,
+    "multiple": false,
+    "reusable": false
+  },
+  "parent": [
+    "woocommerce/checkout-order-summary-block"
+  ],
+  "attributes": {
+    "lock": {
+      "type": "object",
+      "default": {
+        "remove": true,
+        "move": true
+      }
+    },
+    "preferredDay": {
+      "type": "string",
+      "default": ""
+    },
+    "preferredLocationNeighbor": {
+      "type": "string",
+      "default": ""
+    },
+    "preferredLocation": {
+      "type": "string",
+      "default": ""
+    },
+    "preferredNeighborName": {
+      "type": "string",
+      "default": ""
+    },
+    "preferredNeighborAddress": {
+      "type": "string",
+      "default": ""
+    },
+    "mainTitle": {
+      "type": "string",
+      "default": "DHL Preferred Delivery. Delivered just as you wish."
+    },
+    "infoText": {
+      "type": "string",
+      "default": "Thanks to the flexible recipient services of DHL Preferred Delivery, you decide when and where you want to receive your parcels. Please choose your preferred delivery option."
+    },
+    "deliveryDayLabel": {
+      "type": "string",
+      "default": "Delivery day: Delivery at your preferred day ?"
+    },
+    "dropOffOrNeighborLabel": {
+      "type": "string",
+      "default": "Drop-off location or neighbor"
+    },
+    "dropOffLocationLabel": {
+      "type": "string",
+      "default": "Drop-off location: Delivery to your preferred drop-off location"
+    },
+    "neighborLabel": {
+      "type": "string",
+      "default": "Neighbour: Delivery to a neighbour of your choice"
+    }
+  },
+  "textdomain": "dhl-for-woocommerce",
+  "editorStyle": "file:../../../build/style-dhl-preferred-services.css"
+}

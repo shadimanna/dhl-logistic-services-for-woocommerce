@@ -237,14 +237,15 @@ class Client extends API_Client {
 		$items = array();
 		foreach ( $request_info->items as $item ) {
 			$items[] = array(
-				'itemDescription' => $item['itemDescription'],
-				'countryOfOrigin' => $item['countryOfOrigin'],
-				'hsCode'          => $item['hsCode'],
-				'itemValue'       => array(
+				'itemDescription'  => $item['itemDescription'],
+				'countryOfOrigin'  => $item['countryOfOrigin'],
+				'hsCode'           => $item['hsCode'],
+				'packagedQuantity' => $item['packagedQuantity'],
+				'itemValue'        => array(
 					'currency' => $item['itemValue']['currency'],
 					'value'    => $item['itemValue']['amount'],
 				),
-				'itemWeight'      => array(
+				'itemWeight'       => array(
 					'uom'   => 'kg' === $item['itemWeight']['uom'] ? 'kg' : 'g', // its converted to grams in item_info.
 					'value' => $item['itemWeight']['value'],
 				),

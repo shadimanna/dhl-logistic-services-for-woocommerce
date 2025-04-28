@@ -119,7 +119,7 @@ jQuery( document ).ready( function ( $ ) {
 
 			$( document.body ).on( 'change', '#shipping_dhl_address_type', this.address_type )
 			$( document.body ).on( 'change', '#shipping_dhl_address_type', this.populateDropdown )
-
+			$( document.body ).on( 'change', '#shipping-pr-dhl-address_type', this.populateDropdown )
 			$( document.body ).on( 'change', '#shipping_dhl_drop_off', this.selectedDropOff )
 
 			$( document.body ).on( 'update_checkout', this.populateDropdown );
@@ -128,9 +128,14 @@ jQuery( document ).ready( function ( $ ) {
 
 			wc_checkout_dhl_parcelfinder.toggleDhlParcelFinder()
 			wc_checkout_dhl_parcelfinder.address_type()
-			wc_checkout_dhl_parcelfinder.populateDropdown()
+			setTimeout(function() {
+				wc_checkout_dhl_parcelfinder.populateDropdown();
+			}, 500);
 
-			$( 'form#checkout_dhl_parcel_finder' ).submit( this.submit )
+			$(document.body).on('click', '#dhl_seach_button input[type="submit"]', function (e) {
+				e.preventDefault();
+				wc_checkout_dhl_parcelfinder.submit();
+			});
 		},
 		address_type: function () {
 			var address_type = $( '.woocommerce-checkout #shipping_dhl_address_type' ).val()
@@ -157,43 +162,49 @@ jQuery( document ).ready( function ( $ ) {
 		},
 		init_form: function () {
 
-			var gmap_country = ''
-			if ( $( '.woocommerce-checkout #billing_country' ).length ) {
-				gmap_country = $( '.woocommerce-checkout #billing_country' ).val()
-			}
-			$( '#dhl_parcelfinder_country' ).val( gmap_country )
+			var gmap_country = $('.woocommerce-checkout #shipping_country').val()
+				|| $('.woocommerce-checkout #shipping-country').val()
+				|| $('.woocommerce-checkout #billing_country').val()
+				|| $('.woocommerce-checkout #billing-country').val()
+				|| '';
+			$('#dhl_parcelfinder_country').val(gmap_country);
 
-			var gmap_postcode = ''
-			if ( $( '.woocommerce-checkout #billing_postcode' ).length ) {
-				gmap_postcode = $( '.woocommerce-checkout #billing_postcode' ).val()
-			}
-			$( '#dhl_parcelfinder_postcode' ).val( gmap_postcode )
+			var gmap_postcode = $('.woocommerce-checkout #shipping_postcode').val()
+				|| $('.woocommerce-checkout #shipping-postcode').val()
+				|| $('.woocommerce-checkout #billing_postcode').val()
+				|| $('.woocommerce-checkout #billing-postcode').val()
+				|| '';
+			$('#dhl_parcelfinder_postcode').val(gmap_postcode);
 
-			var gmap_city = ''
-			if ( $( '.woocommerce-checkout #billing_city' ).length ) {
-				gmap_city = $( '.woocommerce-checkout #billing_city' ).val()
-			}
-			$( '#dhl_parcelfinder_city' ).val( gmap_city )
+			var gmap_city = $('.woocommerce-checkout #shipping_city').val()
+				|| $('.woocommerce-checkout #shipping-city').val()
+				|| $('.woocommerce-checkout #billing_city').val()
+				|| $('.woocommerce-checkout #billing-city').val()
+				|| '';
+			$('#dhl_parcelfinder_city').val(gmap_city);
 
-			var gmap_address_1 = ''
-			if ( $( '.woocommerce-checkout #billing_address_1' ).length ) {
-				gmap_address_1 = $( '.woocommerce-checkout #billing_address_1' ).val()
-			}
-			var gmap_address_2 = ''
-			if ( $( '.woocommerce-checkout #billing_address_2' ).length ) {
-				gmap_address_2 = $( '.woocommerce-checkout #billing_address_2' ).val()
-			}
+			var gmap_address_1 = $('.woocommerce-checkout #shipping_address_1').val()
+				|| $('.woocommerce-checkout #shipping-address_1').val()
+				|| $('.woocommerce-checkout #billing_address_1').val()
+				|| $('.woocommerce-checkout #billing-address_1').val()
+				|| '';
+
+			var gmap_address_2 = $('.woocommerce-checkout #shipping_address_2').val()
+				|| $('.woocommerce-checkout #shipping-address_2').val()
+				|| $('.woocommerce-checkout #billing_address_2').val()
+				|| $('.woocommerce-checkout #billing-address_2').val()
+				|| '';
 
 			var gmap_address = gmap_address_1 + ' ' + gmap_address_2
 			gmap_address = gmap_address.trim()
 
 			$( '#dhl_parcelfinder_address' ).val( gmap_address )
 
-			$( 'form#checkout_dhl_parcel_finder' ).submit()
+			$('#dhl_seach_button input[type="submit"]').trigger('click');
 
 		},
 		submit: function () {
-			var $form = $( this )
+			var $form = $('#checkout_dhl_parcel_finder');
 
 			$( '#dhl_parcel_finder_form #checkout_dhl_parcel_finder .woocommerce-error' ).remove()
 
@@ -223,7 +234,7 @@ jQuery( document ).ready( function ( $ ) {
 				parcelfinder_address: $( '#dhl_parcelfinder_address' ).val(),
 				packstation_filter: $( '#dhl_packstation_filter' ).is( ':checked' ),
 				branch_filter: $( '#dhl_branch_filter' ).is( ':checked' ),
-				security: $form.find( 'input[name="dhl_parcelfinder_nonce"]' ).val(),
+				security: prDhlGlobals.parcel_nonce
 			}
 
 			$.ajax( {
@@ -263,8 +274,7 @@ jQuery( document ).ready( function ( $ ) {
 				return
 			}
 
-			let address_type = $( '.woocommerce-checkout #shipping_dhl_address_type' ).val();
-
+			let address_type = $( '.woocommerce-checkout #shipping_dhl_address_type' ).val() || $('.woocommerce-checkout #shipping-pr-dhl-address_type').val();
 			if ( 'normal' === address_type ) {
 				return;
 			}
@@ -360,7 +370,7 @@ jQuery( document ).ready( function ( $ ) {
 			if ( dropdown ) {
 				$( dropdown ).empty()
 				const option = document.createElement( 'option' )
-				option.text = 'Select a drop-off point' 
+				option.text = 'Select a drop-off point'
 				dropdown.add( option )
 			}
 		},
@@ -469,8 +479,9 @@ jQuery( document ).ready( function ( $ ) {
 
 					prev_day = value_times.dayOfWeek
 
-					openingTimes += value_times.opens + ' - ' + value_times.closes
-
+					var opens     = value_times.opens.slice( 0, -3 );
+					var closes    = value_times.closes.slice( 0, -3 );
+					openingTimes += opens + ' - ' + closes;
 				} )
 
 				// Get services
@@ -636,7 +647,9 @@ jQuery( document ).ready( function ( $ ) {
 
 					prev_day = value_times.dayOfWeek
 
-					openingTimes += value_times.opens + ' - ' + value_times.closes
+					var opens     = value_times.opens.slice( 0, -3 );
+					var closes    = value_times.closes.slice( 0, -3 );
+					openingTimes += opens + ' - ' + closes;
 				} )
 
 				// Get services
@@ -741,22 +754,27 @@ jQuery( document ).ready( function ( $ ) {
 					switch ( value.location.type ) {
 						case 'locker':
 							var shop_name = pr_dhl_checkout_frontend.packstation
+							address_type = 'dhl_packstation';
 							$( '.woocommerce-checkout #shipping_dhl_address_type' ).val( 'dhl_packstation' ).trigger( 'change' )
 							break
 						case 'servicepoint':
 							var shop_name = pr_dhl_checkout_frontend.parcelShop
+							address_type = 'dhl_branch';
 							$( '.woocommerce-checkout #shipping_dhl_address_type' ).val( 'dhl_branch' ).trigger( 'change' )
 							break
 						case 'postoffice':
 							var shop_name = pr_dhl_checkout_frontend.postoffice
+							address_type = 'dhl_branch';
 							$( '.woocommerce-checkout #shipping_dhl_address_type' ).val( 'dhl_branch' ).trigger( 'change' )
 							break
 						case 'postbank':
 							var shop_name = pr_dhl_checkout_frontend.postoffice
+							address_type = 'dhl_branch';
 							$( '.woocommerce-checkout #shipping_dhl_address_type' ).val( 'dhl_branch' ).trigger( 'change' )
 							break
 						default:
 							var shop_name = pr_dhl_checkout_frontend.packstation
+							address_type = 'dhl_packstation';
 							$( '.woocommerce-checkout #shipping_dhl_address_type' ).val( 'dhl_packstation' ).trigger( 'change' )
 							break
 					}
@@ -770,12 +788,25 @@ jQuery( document ).ready( function ( $ ) {
 					$( '.woocommerce-checkout #shipping_city' ).val( value.place.address.addressLocality )
 					$('.woocommerce-checkout #shipping_dhl_drop_off').val(parcelShopId).trigger('change');
 
+					var event = new CustomEvent('dhl-shop-selected', {
+						detail: {
+							address_1: shop_name + ' ' + value.location.keywordId,
+							address_2: '',
+							postcode: value.place.address.postalCode,
+							city: value.place.address.addressLocality,
+							parcel_ID: parcelShopId,
+							address_type: address_type
+						}
+					});
+					window.dispatchEvent(event);
+
 					$.fancybox.close()
 				}
 			} )
 		},
 		toggleDhlParcelFinder: function() {
-		let selectedCountry = $( '#shipping_country' ).val()
+		let selectedCountry = $('.woocommerce-checkout #shipping_country').val()
+			|| $('.woocommerce-checkout #shipping-country').val()
 		if ( 'DE' !== selectedCountry ) {
 			$( '#dhl_parcel_finder' ).hide()
 			$( '#shipping_dhl_drop_off_field' ).hide()
@@ -800,5 +831,10 @@ jQuery( document ).ready( function ( $ ) {
 	}
 
 	wc_checkout_dhl_parcelfinder.init()
+
+	if ($.fn.selectWoo) {
+		$('#shipping_dhl_address_type').selectWoo();
+		$('#shipping_dhl_drop_off').selectWoo();
+	}
 
 } )
