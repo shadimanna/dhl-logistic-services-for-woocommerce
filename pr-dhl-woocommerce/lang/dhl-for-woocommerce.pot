@@ -441,6 +441,10 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
+#: includes/front-end/class-pr-dhl-front-end-paket.php:123
+msgid "Ship to a different address or Packstation/Branch?"
+msgstr ""
+
 #: dhlpwoocommerce/includes/model/service/class-dhlpwc-model-service-parcelshop.php:153
 #: dhlpwoocommerce/includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:712
 #: includes/class-pr-dhl-wc-method-paket.php:471
