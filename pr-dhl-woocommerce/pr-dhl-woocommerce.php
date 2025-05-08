@@ -228,8 +228,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		 * Initialize the plugin.
 		 */
 		public function init() {
-			add_action( 'admin_notices', array( $this, 'environment_check' ), 1 );
-
 			$this->get_pr_dhl_wc_product();
 			$this->get_pr_dhl_wc_order();
 		}
