@@ -95,12 +95,13 @@ if ( ! class_exists( 'PR_DHL_WC_Wizard_Paket' ) ) :
 								<div class="wizard-description">
 									<?php
 										printf(
-											/* translators: %s: link to DHL business portal */
-											esc_html__( 'Please configure your access to the DHL Paket APIs by means of authentication. Your username for the DHL business customer portal is required. Please note the lowercase letters and test your access data in advance at <a href="%s" target="_blank">here</a>.', 'dhl-for-woocommerce' ),
-											esc_url( PR_DHL_PAKET_BUSSINESS_PORTAL )
+											/* translators: %1$s & %2$s: link to DHL business portal */
+											esc_html__( 'Please configure your access to the DHL Paket APIs by means of authentication. Your username for the DHL business customer portal is required. Please note the lowercase letters and test your access data in advance at %1$shere%2$s.', 'dhl-for-woocommerce' ),
+											'<a href="' . PR_DHL_PAKET_BUSSINESS_PORTAL . '" target="_blank">',
+                                            '</a>'
 										);
 									?>
-																	</div>
+								</div>
 								<div class="form-group">
 									<input type="text" name="dhl_api_user" class="form-control required wizard-dhl-field" id="wizard_dhl_api_user" placeholder="<?php esc_html_e( 'Username', 'dhl-for-woocommerce' ); ?>">
 								</div>
