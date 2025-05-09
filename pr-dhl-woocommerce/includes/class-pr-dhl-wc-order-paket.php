@@ -1074,6 +1074,20 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			$array_messages = array();
 
 			
+			$args = $this->get_pickup_request_args();
+
+			$pickup_business_hours             = array();
+			$pickup_business_hours[0]['start'] = $this->shipping_dhl_settings['dhl_business_hours_1_start'];
+			$pickup_business_hours[0]['end']   = $this->shipping_dhl_settings['dhl_business_hours_1_end'];
+			$pickup_business_hours[1]['start'] = $this->shipping_dhl_settings['dhl_business_hours_2_start'];
+			$pickup_business_hours[1]['end']   = $this->shipping_dhl_settings['dhl_business_hours_2_end'];
+
+			$args['dhl_pickup_type'] = $pickup_type;
+			$args['dhl_pickup_date'] = $pickup_date;
+
+			$args['dhl_pickup_business_hours'] = $pickup_business_hours;
+			// $args['dhl_pickup_transportation_type'] = $transportation_type; // Disabled, use bulky_goods to determine transportation type (see Pickup_Request_info.php)
+
 			$pickup_shipments = array();
 			foreach ( $order_ids as $order_id ) {
 				$order = wc_get_order( $order_id );
@@ -1112,20 +1126,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			}
 
 			$args['dhl_pickup_shipments']      = $pickup_shipments;
-			$args = $this->get_pickup_request_args();
-
-			$pickup_business_hours             = array();
-			$pickup_business_hours[0]['start'] = $this->shipping_dhl_settings['dhl_business_hours_1_start'];
-			$pickup_business_hours[0]['end']   = $this->shipping_dhl_settings['dhl_business_hours_1_end'];
-			$pickup_business_hours[1]['start'] = $this->shipping_dhl_settings['dhl_business_hours_2_start'];
-			$pickup_business_hours[1]['end']   = $this->shipping_dhl_settings['dhl_business_hours_2_end'];
-
-			$args['dhl_pickup_type'] = $pickup_type;
-			$args['dhl_pickup_date'] = $pickup_date;
-
-			$args['dhl_pickup_business_hours'] = $pickup_business_hours;
-			// $args['dhl_pickup_transportation_type'] = $transportation_type; // Disabled, use bulky_goods to determine transportation type (see Pickup_Request_info.php)
-
 			$args['dhl_pickup_billing_number'] = $args['dhl_settings']['account_num'] . self::DHL_PICKUP_PRODUCT . $args['dhl_settings']['participation'];
 
 			// Allow third parties to modify the args to the DHL APIs
