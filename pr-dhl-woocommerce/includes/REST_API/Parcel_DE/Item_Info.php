@@ -346,6 +346,27 @@ class Item_Info {
 			'label_format'           => array(
 				'rename' => 'printFormat',
 			),
+			'mrn'                    => array(
+				'default'  => '',
+				'validate' => function ( $mrn ) use ( $self ) {
+					$product   = $self->args['order_details']['dhl_product'];
+					$needs_ead = $self->needs_export_declaration();
+
+					if ( ! in_array( $product, [ 'V53WPAK', 'V54EPAK' ], true ) || ! $needs_ead || $mrn == '' ) {
+						return;   // keep the old behaviour
+					}
+
+					if ( strlen( $mrn ) !== 18 || ! ctype_alnum( $mrn ) ) {
+						throw new Exception(
+							__( 'MRN must be exactly 18 alphanumeric characters', 'dhl-for-woocommerce' )
+						);
+					}
+				},
+				'sanitize' => function ( $mrn ) {
+					return strtoupper( trim( $mrn ) );
+				},
+			),
+
 		);
 	}
 
@@ -691,17 +712,23 @@ class Item_Info {
 			'hs_code'          => array(
 				'rename'   => 'hsCode',
 				'default'  => '',
-				'validate' => function ( $hs_code ) {
-					$length = is_string( $hs_code ) ? strlen( $hs_code ) : 0;
+				'validate' => function ( $hs ) use ( $self ) {
 
-					if ( empty( $length ) ) {
+					$needs_ead = $self->needs_export_declaration();
+					$len       = strlen( trim( $hs ) );
+					$product   = $self->args['order_details']['dhl_product'];
+
+					if ( ! in_array( $product, [ 'V53WPAK', 'V54EPAK' ], true ) ) {
 						return;
 					}
-
-					if ( $length < 4 || $length > 11 ) {
-						throw new Exception(
-							esc_html__( 'Item HS Code must be between 4 and 11 characters long', 'dhl-for-woocommerce' )
-						);
+					if ( $needs_ead && $len !== 8 ) {
+						throw new Exception( __( 'HS code must be exactly 8 digits when an export declaration is required.', 'dhl-for-woocommerce' ) );
+					}
+					if ( ! $needs_ead && $len !== 6 ) {
+						throw new Exception( __( 'HS code must be exactly 6 digits for low-value exports (< €1 000).', 'dhl-for-woocommerce' ) );
+					}
+					if ( ! ctype_digit( $hs ) ) {
+						throw new Exception( __( 'HS code may contain digits only.', 'dhl-for-woocommerce' ) );
 					}
 				},
 			),
@@ -736,6 +763,20 @@ class Item_Info {
 			),
 		);
 	}
+
+	/**
+	 * Check if order needs export declartion.
+	 *
+	 * @return boolean.
+	 */
+	protected function needs_export_declaration() {
+		$value = isset( $this->shipment['value'] )
+			? (float) $this->shipment['value']
+			: (float) $this->args['order_details']['total_value'];
+
+		return $value >= 1000;
+	}
+
 
 	/**
 	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing shipment services.
