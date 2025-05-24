@@ -784,8 +784,14 @@ class Item_Info {
 			),
 			'bulky_goods_europaket'       => array(
 				'default'  => '',
-				'rename'   => 'bulkyGoods',
+				'rename'   => 'bulkyGoodsEuro',
 				'validate' => function ( $value ) use ( $self ) {
+
+					$product = $self->args['order_details']['dhl_product'];
+
+					if ( $product !== 'V54EPAK' ) {
+						return $value;
+					}
 
 					// pull first-package dims that were posted in the meta-box
 					$L = (float) ( $self->args['order_details']['packages_length'][0] ?? 0 );
@@ -794,16 +800,16 @@ class Item_Info {
 
 					if ( ! $L && ! $W && ! $H && ! empty( $self->args['items'][0]['product_id'] ) ) {
 						$product = wc_get_product( $self->args['items'][0]['product_id'] );
-						$L = (float) $p->get_length( 'edit' );
-						$W = (float) $p->get_width( 'edit' );
-						$H = (float) $p->get_height( 'edit' );
+						$L = (float) $product->get_length( 'edit' );
+						$W = (float) $product->get_width( 'edit' );
+						$H = (float) $product->get_height( 'edit' );
 					}
 
 					$g = 2 * $H + 2 * $W + $L;   // girth
 
 					$oversize = ( $L > 200 || $W > 60 || $H > 60 || $g > 360 );
 
-					if ( 'yes' === $v && $oversize ) {
+					if ( 'yes' === $value && $oversize ) {
 						throw new \Exception(
 							__( 'Package exceeds Bulky Goods (Europaket) limits (200 × 60 × 60 cm / 360 cm girth).', 'dhl-for-woocommerce' )
 						);
