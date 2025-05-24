@@ -793,7 +793,7 @@ class Item_Info {
 					$H = (float) ( $self->args['order_details']['packages_height'][0] ?? 0 );
 
 					if ( ! $L && ! $W && ! $H && ! empty( $self->args['items'][0]['product_id'] ) ) {
-						$p = wc_get_product( $self->args['items'][0]['product_id'] );
+						$product = wc_get_product( $self->args['items'][0]['product_id'] );
 						$L = (float) $p->get_length( 'edit' );
 						$W = (float) $p->get_width( 'edit' );
 						$H = (float) $p->get_height( 'edit' );
