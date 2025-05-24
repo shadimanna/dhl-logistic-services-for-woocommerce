@@ -785,7 +785,7 @@ class Item_Info {
 			'bulky_goods_europaket'       => array(
 				'default'  => '',
 				'rename'   => 'bulkyGoods',
-				'validate' => function ( $v ) use ( $self ) {
+				'validate' => function ( $value ) use ( $self ) {
 
 					// pull first-package dims that were posted in the meta-box
 					$L = (float) ( $self->args['order_details']['packages_length'][0] ?? 0 );
