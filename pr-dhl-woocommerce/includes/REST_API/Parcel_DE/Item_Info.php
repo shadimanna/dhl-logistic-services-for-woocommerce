@@ -782,7 +782,7 @@ class Item_Info {
 				'default' => '',
 				'rename'  => 'additionalInsurance',
 			),
-			'bulky_goods_intl'       => array(
+			'bulky_goods_europaket'       => array(
 				'default'  => '',
 				'rename'   => 'bulkyGoods',
 				'validate' => function ( $v ) use ( $self ) {
