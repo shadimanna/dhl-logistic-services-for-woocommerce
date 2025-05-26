@@ -724,8 +724,10 @@ class Item_Info {
 					if ( $needs_ead && $len !== 8 ) {
 						throw new Exception( __( 'HS code must be exactly 8 digits when an export declaration is required.', 'dhl-for-woocommerce' ) );
 					}
-					if ( ! $needs_ead && $len !== 6 ) {
-						throw new Exception( __( 'HS code must be exactly 6 digits for low-value exports (< €1 000).', 'dhl-for-woocommerce' ) );
+					if ( ! $needs_ead ) {
+						if ( $len < 6 || $len > 8 ) {
+							throw new Exception( __( 'HS code must be exactly 6 digits for low-value exports (< €1 000).', 'dhl-for-woocommerce' ) );
+						}
 					}
 					if ( ! ctype_digit( $hs ) ) {
 						throw new Exception( __( 'HS code may contain digits only.', 'dhl-for-woocommerce' ) );
