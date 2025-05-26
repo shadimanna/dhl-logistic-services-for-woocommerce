@@ -22,7 +22,12 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 
 		const DHL_PICKUP_PRODUCT = '08';
 
-		protected $dhl_label_items;
+		/**
+         * Order label items.
+         *
+		 * @var array
+		 */
+		protected array $dhl_label_items;
 
 		public function init_hooks() {
 

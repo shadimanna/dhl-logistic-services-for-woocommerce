@@ -75,6 +75,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 3.9.1 =
+* Fix: PHP warning that could appear when creating a pickup request.
+
 = 3.9.0 =
 * Add: Cart/Checkout Blocks compatibility.
 * Add: OpenStreetMap support to the checkout shipping location finder.
