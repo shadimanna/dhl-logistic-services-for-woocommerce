@@ -22,6 +22,13 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 
 		const DHL_PICKUP_PRODUCT = '08';
 
+		/**
+		 * Order label items.
+		 *
+		 * @var array
+		 */
+		protected array $dhl_label_items;
+
 		public function init_hooks() {
 
 			parent::init_hooks();
@@ -821,7 +828,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			}
 
 			$args['dhl_settings']['shipper_country'] = PR_DHL()->get_base_country();
-			$args['dhl_settings']['participation']   = $this->shipping_dhl_settings[ 'dhl_participation_' . $dhl_label_items['pr_dhl_product'] ];
+			$args['dhl_settings']['participation']   = ! empty( $this->dhl_label_items ) ? $this->shipping_dhl_settings[ 'dhl_participation_' . $this->dhl_label_items['pr_dhl_product'] ] : '';
 
 			return $args;
 		}
@@ -834,7 +841,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			// Services and COD only for Germany
 			if ( $base_country_code == 'DE' ) {
 
-				$dhl_label_items = $this->get_dhl_label_items( $order_id );
+				$this->dhl_label_items = $this->get_dhl_label_items( $order_id );
 
 				if ( $this->is_shipping_domestic( $order_id ) ) {
 					// Domestic
@@ -865,8 +872,8 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 					);
 
 					$order = wc_get_order( $order_id );
-					if ( $this->is_cod_payment_method( $order_id ) && empty( $dhl_label_items['pr_dhl_cod_value'] ) ) {
-						$dhl_label_items['pr_dhl_cod_value'] = $order->get_total();
+					if ( $this->is_cod_payment_method( $order_id ) && empty( $this->dhl_label_items['pr_dhl_cod_value'] ) ) {
+						$this->dhl_label_items['pr_dhl_cod_value'] = $order->get_total();
 					}
 				} else {
 					// International
@@ -883,16 +890,16 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 				foreach ( $settings_default_ids as $default_id ) {
 					$id_name = str_replace( 'pr_dhl_', '', $default_id );
 
-					if ( ! isset( $dhl_label_items[ $default_id ] ) ) {
-						$dhl_label_items[ $default_id ] = isset( $this->shipping_dhl_settings[ 'dhl_default_' . $id_name ] ) ? $this->shipping_dhl_settings[ 'dhl_default_' . $id_name ] : '';
+					if ( ! isset( $this->dhl_label_items[ $default_id ] ) ) {
+						$this->dhl_label_items[ $default_id ] = isset( $this->shipping_dhl_settings[ 'dhl_default_' . $id_name ] ) ? $this->shipping_dhl_settings[ 'dhl_default_' . $id_name ] : '';
 						// Check alternate setting id format if not found in dhl_default prefix id
 						if ( ! isset( $this->shipping_dhl_settings[ 'dhl_default_' . $id_name ] ) ) {
-							$dhl_label_items[ $default_id ] = isset( $this->shipping_dhl_settings[ 'dhl_' . $id_name ] ) ? $this->shipping_dhl_settings[ 'dhl_' . $id_name ] : '';
+							$this->dhl_label_items[ $default_id ] = isset( $this->shipping_dhl_settings[ 'dhl_' . $id_name ] ) ? $this->shipping_dhl_settings[ 'dhl_' . $id_name ] : '';
 						}
 					}
 				}
 
-				$this->save_dhl_label_items( $order_id, $dhl_label_items );
+				$this->save_dhl_label_items( $order_id, $this->dhl_label_items );
 			}
 		}
 
@@ -1071,6 +1078,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 
 			$array_messages = array();
 
+			
 			$args = $this->get_pickup_request_args();
 
 			$pickup_business_hours             = array();
