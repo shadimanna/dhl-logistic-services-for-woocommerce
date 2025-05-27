@@ -8,6 +8,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class PR_DHL_API_REST_Finder extends PR_DHL_API_REST {
 
 	/**
+	 * Request arguments.
+	 *
+	 * @var array
+	 */
+	private array $args = array();
+
+	/**
 	 * The URL to the API.
 	 *
 	 * @since [*next-version*]
@@ -63,6 +70,10 @@ class PR_DHL_API_REST_Finder extends PR_DHL_API_REST {
 			$serviceType = 'parcel:pick-up';
 		} elseif ( $packstation ) {
 			$serviceType = ( $country == 'DE' ) ? 'parcel:pick-up-registered' : 'parcel:pick-up-unregistered';
+		}
+
+		if ( ! isset( $serviceType ) ) {
+			throw new Exception( esc_html__( 'No service type selected', 'dhl-for-woocommerce' ) );
 		}
 
 		$finder_query_string = array(
