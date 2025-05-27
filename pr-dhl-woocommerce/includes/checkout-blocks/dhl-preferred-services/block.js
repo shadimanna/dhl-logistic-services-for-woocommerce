@@ -24,8 +24,8 @@ export const Block = ({ checkoutExtensionData }) => {
     const debounceTimer = useState(null);
 
     // Determine availability of location and neighbor options
-    const locationAvailable = dhlSettings?.preferred_location === 'yes';
-    const neighborAvailable = dhlSettings?.preferred_neighbour === 'yes';
+    const locationAvailable = dhlSettings?.preferred_location;
+    const neighborAvailable = dhlSettings?.preferred_neighbour;
     const showRadioControl = locationAvailable && neighborAvailable;
 
     // Initialize preferredLocationNeighbor
@@ -302,7 +302,7 @@ export const Block = ({ checkoutExtensionData }) => {
             </td>
         </tr>
         {/* Preferred Delivery Day */}
-        {dhlSettings?.preferred_day === 'yes' && (<>
+        {dhlSettings?.preferred_day && (<>
             <tr className="dhl-co-tr">
                 <th colSpan="2" className="dhl-pt">
                     {__('Delivery day: Delivery at your preferred day', 'dhl-for-woocommerce')}

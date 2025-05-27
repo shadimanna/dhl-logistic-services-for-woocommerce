@@ -55,7 +55,7 @@ export const Block = ({checkoutExtensionData}) => {
     const showMapButton = hasCalculatedShipping &&
         shippingRates.length > 0 &&
         isPageLoaded && (shippingAddress.country === 'DE') &&
-        prDhlGlobals.dhlSettings.display_google_maps === 'yes';
+        prDhlGlobals.dhlSettings.display_google_maps;
 
     // Fetch parcel shops when shippingAddress changes and is available
     useEffect(() => {
