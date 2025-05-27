@@ -14,24 +14,27 @@
         "exclude": [
             "!/assets",
             "!/languages",
-            "!/assets/js/*.js",
-            "!/assets/js/*.min.js",
-            "/assets/css/*.scss",
+            "/node_modules",
             "bin",
             "tests",
-            "node_modules",
-            "Gruntfile.js",
+            "LICENSE",
             "README.md",
+            "DEVELOPER.md",
             "package.json",
+            "composer.lock",
+            "pnpm-lock.yaml",
+            "phpunit.xml.dist",
+            "webpack.config.js",
+            "postcss.config.js",
+            "phpcs.xml",
             "package-lock.json",
             "composer.json",
             "composer.lock",
-            "phpunit.xml.dist",
+            "babel.config.js",
+            "phpunit.xml",
+            "jest-puppeteer.config.js",
             ".*",
-            "dhl-for-woocommerce.zip",
-            "pr-dhl-woocommerce.zip",
-            "pnpm-lock.yaml",
-            "client"
+            "*.zip"
         ]
     }
 }
