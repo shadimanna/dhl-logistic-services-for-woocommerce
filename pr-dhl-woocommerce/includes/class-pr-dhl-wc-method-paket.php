@@ -397,6 +397,14 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					'description' => esc_html__( 'Please, tick here if you want the "Premium" option to be checked in the "Edit Order" before printing a label.', 'dhl-for-woocommerce' ),
 					'desc_tip'    => true,
 				),
+				'dhl_default_bulky_goods_europaket'           => array(
+					'title'       => esc_html__( 'Bulky Goods Europaket default', 'dhl-for-woocommerce' ),
+					'type'        => 'checkbox',
+					'label'       => esc_html__( 'Checked', 'dhl-for-woocommerce' ),
+					'default'     => 'no',
+					'description' => esc_html__( 'Please, tick here if you want the "Bulky Goods Europaket" option to be checked in the "Edit Order" before printing a label.', 'dhl-for-woocommerce' ),
+					'desc_tip'    => true,
+				),
 				'dhl_default_bulky_goods'           => array(
 					'title'       => esc_html__( 'Bulky Goods default', 'dhl-for-woocommerce' ),
 					'type'        => 'checkbox',
