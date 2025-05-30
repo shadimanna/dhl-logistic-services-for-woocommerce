@@ -116,8 +116,9 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 		 * @return string
 		 */
 		public function change_ship_to_different_address_text( $translated_text, $text, $domain ): string {
-			if ( 'Ship to a different address?' !== $text ) {
-				return $translated_text;
+
+			if ( 'Ship to a different address?' !== $text || 'woocommerce' !== $domain ) {
+				return (string) $translated_text;
 			}
 
 			return esc_html__( 'Ship to a different address or Packstation/Branch?', 'dhl-for-woocommerce' );
