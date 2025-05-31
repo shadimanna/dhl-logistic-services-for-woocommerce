@@ -352,7 +352,7 @@ class Item_Info {
 					$product   = $self->args['order_details']['dhl_product'];
 					$needs_ead = $self->needs_export_declaration();
 
-					if ( ! in_array( $product, [ 'V53WPAK', 'V54EPAK' ], true ) || ! $needs_ead || $mrn == '' ) {
+					if ( ! in_array( $product, [ 'V53WPAK', 'V54EPAK' ], true ) || ! $needs_ead ) {
 						return;   // keep the old behaviour
 					}
 
