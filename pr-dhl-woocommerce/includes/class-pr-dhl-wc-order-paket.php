@@ -545,25 +545,17 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			if ( ! $this->is_cdp_delivery( $dhl_label_items ) ) {
 
 				$is_europaket = isset( $dhl_label_items['pr_dhl_product'] ) && $dhl_label_items['pr_dhl_product'] === 'V54EPAK';
-
-				// Set parameters based on product type.
-				$bulky_id          = $is_europaket ? 'pr_dhl_bulky_goods_europaket' : 'pr_dhl_bulky_goods';
 				$bulky_label       = $is_europaket
 					? esc_html__( 'Bulky Goods Europaket: ', 'dhl-for-woocommerce' )
 					: esc_html__( 'Bulky Goods: ', 'dhl-for-woocommerce' );
-				$bulky_value_key   = $is_europaket ? 'pr_dhl_bulky_goods_europaket' : 'pr_dhl_bulky_goods';
-				$bulky_default_key = $is_europaket
-					? 'dhl_default_bulky_goods_europaket'
-					: 'dhl_default_bulky_goods';
-				$default_bulky = isset( $this->shipping_dhl_settings[ $bulky_default_key ] ) ? $this->shipping_dhl_settings[ $bulky_default_key ] : '';
 				woocommerce_wp_checkbox(
 					array(
-						'id'                => $bulky_id,
+						'id'                => 'pr_dhl_bulky_goods',
 						'label'             => $bulky_label,
 						'placeholder'       => '',
 						'description'       => '',
-						'value'             => isset( $dhl_label_items[ $bulky_value_key ] ) ? $dhl_label_items[ $bulky_value_key ] : $this->shipping_dhl_settings[ $default_bulky ],
-						'custom_attributes' => array( $is_disabled => $is_disabled ),
+						'value'             => isset( $dhl_label_items['pr_dhl_bulky_goods'] ) ? $dhl_label_items['pr_dhl_bulky_goods'] : $this->shipping_dhl_settings['dhl_default_bulky_goods'],
+                        'custom_attributes' => array( $is_disabled => $is_disabled ),
 					)
 				);
 			} else {

@@ -782,47 +782,39 @@ class Item_Info {
 				'default' => '',
 				'rename'  => 'additionalInsurance',
 			),
-			'bulky_goods_europaket'       => array(
-				'default'  => '',
-				'rename'   => 'bulkyGoodsEuro',
+			'bulky_goods'            => array(
+				'default' => '',
+				'rename'  => 'bulkyGoods',
 				'validate' => function ( $value ) use ( $self ) {
 
-					$product = $self->args['order_details']['dhl_product'];
-
-					if ( $product !== 'V54EPAK' ) {
+					if ( $self->args['order_details']['dhl_product'] !== 'V54EPAK' ) {
 						return $value;
 					}
 
-					// pull first-package dims that were posted in the meta-box
+					// get dimensions (either from the packages fields or the product)
 					$L = (float) ( $self->args['order_details']['packages_length'][0] ?? 0 );
 					$W = (float) ( $self->args['order_details']['packages_width'][0] ?? 0 );
 					$H = (float) ( $self->args['order_details']['packages_height'][0] ?? 0 );
 
-					if ( ! $L && ! $W && ! $H && ! empty( $self->args['items'][0]['product_id'] ) ) {
-						$product = wc_get_product( $self->args['items'][0]['product_id'] );
-						$L = (float) $product->get_length( 'edit' );
-						$W = (float) $product->get_width( 'edit' );
-						$H = (float) $product->get_height( 'edit' );
+					if ( ! ( $L && $W && $H ) && ! empty( $self->args['items'][0]['product_id'] ) ) {
+						$p = wc_get_product( $self->args['items'][0]['product_id'] );
+						$L = (float) $p->get_length( 'edit' );
+						$W = (float) $p->get_width( 'edit' );
+						$H = (float) $p->get_height( 'edit' );
 					}
 
-					$g = 2 * $H + 2 * $W + $L;   // girth
+					$girth    = 2 * ( $W + $H ) + $L;
+					$oversize = $L > 200 || $W > 60 || $H > 60 || $girth > 360;
 
-					$oversize = ( $L > 200 || $W > 60 || $H > 60 || $g > 360 );
-
-					if ( 'yes' === $value && $oversize ) {
-						throw new \Exception(
+					if ( $value === 'yes' && $oversize ) {
+						throw new Exception(
 							__( 'Package exceeds Bulky Goods (Europaket) limits (200 × 60 × 60 cm / 360 cm girth).', 'dhl-for-woocommerce' )
 						);
 					}
-
 				},
 				'sanitize' => static function ( $v ) {
-					return ( 'yes' === $v || true === $v ) ? 'true' : 'false';
+					return ( $v === 'yes' || $v === true ) ? 'true' : 'false';
 				},
-			),
-			'bulky_goods'            => array(
-				'default' => '',
-				'rename'  => 'bulkyGoods',
 			),
 			'cdp_delivery'           => array(
 				'default' => '',
