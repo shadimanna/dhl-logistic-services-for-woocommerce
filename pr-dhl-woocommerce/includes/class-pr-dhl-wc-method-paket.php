@@ -457,7 +457,15 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					'description' => esc_html__( 'Please, tick here if you want the "Parcel Outlet Routing" option to be checked in the "Edit Order" before printing a label.', 'dhl-for-woocommerce' ),
 					'desc_tip'    => true,
 				),
-				'dhl_add_weight_type'               => array(
+				'dhl_default_go_green_plus'         => array(
+					'title'       => esc_html__( 'GoGreen Plus default', 'dhl-for-woocommerce' ),
+					'type'        => 'checkbox',
+					'label'       => esc_html__( 'Checked', 'dhl-for-woocommerce' ),
+					'default'     => 'no',
+					'description' => esc_html__( 'Check to request GoGreen Plus for every domestic shipment unless you turn it off per order.', 'dhl-for-woocommerce' ),
+					'desc_tip'    => true,
+				),
+				'dhl_add_weight_type'              => array(
 					'title'       => esc_html__( 'Additional Weight Type', 'dhl-for-woocommerce' ),
 					'type'        => 'select',
 					'description' => esc_html__( 'Select whether to add an absolute weight amount or percentage amount to the total product weight.', 'dhl-for-woocommerce' ),
