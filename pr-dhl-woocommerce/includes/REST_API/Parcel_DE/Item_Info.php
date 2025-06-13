@@ -806,17 +806,6 @@ class Item_Info {
 						return false;
 					}
 				},
-				'sanitize' => function ( $value ) use ( $self ) {
-					if ( $self->isCrossBorder ) {
-						return '';
-					}
-
-					if ( true === $value || 'yes' === $value ) {
-						return true;
-					}
-
-					return false;
-				},
 			),
 			'PDDP'                   => array(
 				'default' => '',
@@ -848,17 +837,6 @@ class Item_Info {
 					if ( $self->isCrossBorder ) {
 						return false;
 					}
-				},
-				'sanitize' => function ( $value ) use ( $self ) {
-					if ( $self->isCrossBorder ) {
-						return '';
-					}
-
-					if ( true === $value || 'yes' === $value ) {
-						return true;
-					}
-
-					return false;
 				},
 			),
 			'signature_service'      => array(
