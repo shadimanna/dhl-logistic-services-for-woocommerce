@@ -798,6 +798,15 @@ class Item_Info {
 				'default' => '',
 				'rename'  => 'parcelOutletRouting',
 			),
+			'go_green_plus'          => array(
+				'default'  => '',
+				'rename'   => 'goGreenPlus',
+				'validate' => function ( $value ) use ( $self ) {
+					if ( $self->isCrossBorder ) {
+						return false;
+					}
+				},
+			),
 			'PDDP'                   => array(
 				'default' => '',
 				'rename'  => 'postalDeliveryDutyPaid',
@@ -820,6 +829,15 @@ class Item_Info {
 			'return_address_enabled' => array(
 				'default' => '',
 				'rename'  => 'dhlRetoure',
+			),
+			'return_go_green_plus'   => array(
+				'default'  => '',
+				'rename'   => 'returnShipmentGoGreenPlus',
+				'validate' => function ( $value ) use ( $self ) {
+					if ( $self->isCrossBorder ) {
+						return false;
+					}
+				},
 			),
 			'signature_service'      => array(
 				'default' => '',
