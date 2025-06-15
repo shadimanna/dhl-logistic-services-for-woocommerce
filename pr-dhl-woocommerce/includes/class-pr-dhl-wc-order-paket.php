@@ -665,7 +665,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 		 * Function for saving tracking items
 		 */
 		public function get_additional_meta_ids() {
-			return array( 'pr_dhl_signature_service', 'pr_dhl_endorsement', 'pr_dhl_PDDP', 'pr_dhl_cdp_delivery', 'pr_dhl_cod_value', 'pr_dhl_preferred_day', 'pr_dhl_preferred_location', 'pr_dhl_preferred_neighbor', 'pr_dhl_duties', 'pr_dhl_age_visual', 'pr_dhl_email_notification', 'pr_dhl_additional_insurance', 'pr_dhl_personally', 'pr_dhl_no_neighbor', 'pr_dhl_named_person', 'pr_dhl_premium', 'pr_dhl_bulky_goods', 'pr_dhl_is_codeable', 'pr_dhl_identcheck', 'pr_dhl_identcheck_dob', 'pr_dhl_identcheck_age', 'pr_dhl_return_address_enabled', 'pr_dhl_return_name', 'pr_dhl_return_company', 'pr_dhl_return_address', 'pr_dhl_return_address_no', 'pr_dhl_return_address_city', 'pr_dhl_return_address_state', 'pr_dhl_return_address_zip', 'pr_dhl_return_phone', 'pr_dhl_return_email', 'pr_dhl_routing', 'pr_dhl_routing_email', 'pr_dhl_total_packages', 'pr_dhl_multi_packages_enabled', 'pr_dhl_packages_number', 'pr_dhl_packages_weight', 'pr_dhl_packages_length', 'pr_dhl_packages_width', 'pr_dhl_packages_height', 'pr_dhl_invoice_num', 'pr_dhl_description' , 'pr_dhl_bulky_goods_europaket' );
+			return array( 'pr_dhl_signature_service', 'pr_dhl_endorsement', 'pr_dhl_PDDP', 'pr_dhl_cdp_delivery', 'pr_dhl_cod_value', 'pr_dhl_preferred_day', 'pr_dhl_preferred_location', 'pr_dhl_preferred_neighbor', 'pr_dhl_duties', 'pr_dhl_age_visual', 'pr_dhl_email_notification', 'pr_dhl_additional_insurance', 'pr_dhl_personally', 'pr_dhl_no_neighbor', 'pr_dhl_named_person', 'pr_dhl_premium', 'pr_dhl_bulky_goods', 'pr_dhl_is_codeable', 'pr_dhl_identcheck', 'pr_dhl_identcheck_dob', 'pr_dhl_identcheck_age', 'pr_dhl_return_address_enabled', 'pr_dhl_return_name', 'pr_dhl_return_company', 'pr_dhl_return_address', 'pr_dhl_return_address_no', 'pr_dhl_return_address_city', 'pr_dhl_return_address_state', 'pr_dhl_return_address_zip', 'pr_dhl_return_phone', 'pr_dhl_return_email', 'pr_dhl_routing', 'pr_dhl_routing_email', 'pr_dhl_total_packages', 'pr_dhl_multi_packages_enabled', 'pr_dhl_packages_number', 'pr_dhl_packages_weight', 'pr_dhl_packages_length', 'pr_dhl_packages_width', 'pr_dhl_packages_height', 'pr_dhl_invoice_num', 'pr_dhl_description' );
 		}
 
 		protected function get_tracking_url() {
@@ -878,7 +878,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 						'pr_dhl_premium',
 						'pr_dhl_bulky_goods',
 						'pr_dhl_endorsement',
-						'pr_dhl_bulky_goods_europaket',
 					);
 
 				}
