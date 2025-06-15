@@ -551,18 +551,20 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 
 			if ( ! $this->is_cdp_delivery( $dhl_label_items ) ) {
 
-				$bulky_is_disabled = $is_disabled;
+				$is_europaket = isset( $dhl_label_items['pr_dhl_product'] ) && $dhl_label_items['pr_dhl_product'] === 'V54EPAK';
+				$bulky_label       = $is_europaket
+					? esc_html__( 'Bulky Goods Europaket: ', 'dhl-for-woocommerce' )
+					: esc_html__( 'Bulky Goods: ', 'dhl-for-woocommerce' );
 				woocommerce_wp_checkbox(
 					array(
 						'id'                => 'pr_dhl_bulky_goods',
-						'label'             => esc_html__( 'Bulky Goods: ', 'dhl-for-woocommerce' ),
+						'label'             => $bulky_label,
 						'placeholder'       => '',
 						'description'       => '',
 						'value'             => isset( $dhl_label_items['pr_dhl_bulky_goods'] ) ? $dhl_label_items['pr_dhl_bulky_goods'] : $this->shipping_dhl_settings['dhl_default_bulky_goods'],
-						'custom_attributes' => array( $bulky_is_disabled => $bulky_is_disabled ),
+                        'custom_attributes' => array( $is_disabled => $is_disabled ),
 					)
 				);
-
 			} else {
 
 				woocommerce_wp_checkbox(
