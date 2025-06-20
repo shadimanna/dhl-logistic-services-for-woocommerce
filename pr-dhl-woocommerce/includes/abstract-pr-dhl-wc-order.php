@@ -542,6 +542,23 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 			$order->update_meta_data( '_pr_shipment_dhl_label_tracking', $tracking_items );
 			$order->save();
 
+			if ( 'DHL Paket' === $this->carrier && function_exists( 'wc_st_add_tracking_number' ) ) {
+				$tracking_numbers = is_array( $tracking_items['tracking_number'] ) ? $tracking_items['tracking_number'] : array( $tracking_items['tracking_number'] );
+				foreach ( $tracking_numbers as $tracking_number ) {
+					if ( empty( $tracking_number ) ) {
+						continue;
+					}
+					$tracking_url = $this->get_tracking_url() . $tracking_number;
+					wc_st_add_tracking_number(
+						$order_id,
+						$tracking_number,
+						'DHL Paket',
+						time(),
+						$tracking_url
+					);
+				}
+			}
+
 			$tracking_details = array(
 				'carrier'         => $this->carrier,
 				'tracking_number' => $tracking_items['tracking_number'],
