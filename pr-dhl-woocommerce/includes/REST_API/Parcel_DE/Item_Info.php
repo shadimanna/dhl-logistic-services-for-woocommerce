@@ -716,12 +716,9 @@ class Item_Info {
 					'amount'   => 0,
 				),
 				'sanitize' => function ( $value, $args ) use ( $self ) {
-					$qty         = isset( $args['qty'] ) && is_numeric( $args['qty'] ) ? floatval( $args['qty'] ) : 1;
-					$total_value = floatval( $value ) * $qty;
-
 					return array(
 						'currency' => $self->args['order_details']['currency'],
-						'amount'   => (string) $self->float_round_sanitization( $total_value, 2 ),
+						'amount'   => (string) $self->float_round_sanitization( $value, 2 ),
 					);
 				},
 			),
