@@ -153,7 +153,7 @@ class PR_DHL_API_REST_Parcel_DE_MyAccount extends PR_DHL_API_REST_Parcel_DE {
 
 
 	/**
-	 * Get user.x
+	 * Get user.
 	 *
 	 * @return stdClass
 	 * @throws Exception
