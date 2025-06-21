@@ -228,6 +228,8 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		 * Initialize the plugin.
 		 */
 		public function init() {
+			add_action( 'admin_notices', array( $this, 'environment_check' ), 1 );
+
 			$this->get_pr_dhl_wc_product();
 			$this->get_pr_dhl_wc_order();
 		}
@@ -270,7 +272,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 					// Ensure DHL Labels folder exists
 					$this->dhl_label_folder_check();
 				} catch ( Exception $e ) {
-					add_action( 'admin_notices', array( $this, 'environment_check' ) );
+					return null;
 				}
 			}
 
@@ -290,7 +292,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 						$this->product_editor       = new PR_DHL_WC_Product_Editor_Deutsche_Post();
 					}
 				} catch ( Exception $e ) {
-					add_action( 'admin_notices', array( $this, 'environment_check' ) );
+					return null;
 				}
 			}
 
