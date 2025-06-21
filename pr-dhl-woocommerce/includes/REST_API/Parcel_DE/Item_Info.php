@@ -716,7 +716,6 @@ class Item_Info {
 					'amount'   => 0,
 				),
 				'sanitize' => function ( $value, $args ) use ( $self ) {
-
 					return array(
 						'currency' => $self->args['order_details']['currency'],
 						'amount'   => (string) $self->float_round_sanitization( $value, 2 ),
