@@ -537,8 +537,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 					}
 
 					return $api_cred;
-				} elseif ( $dhl_obj->is_dhl_ecs_asia() ) {
-					return $dhl_obj->get_api_url();
 				} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
 					return $dhl_obj->get_api_url();
 				}
@@ -575,8 +573,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 				if ( $dhl_obj->is_dhl_paket() ) {
 					$api_user = $shipping_dhl_settings['dhl_api_user'];
 					$api_pwd  = $shipping_dhl_settings['dhl_api_pwd'];
-				} elseif ( $dhl_obj->is_dhl_ecs_asia() ) {
-					list( $api_user, $api_pwd ) = $dhl_obj->get_api_creds();
 				} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
 					list( $api_user, $api_pwd ) = $dhl_obj->get_api_creds();
 				} else {
