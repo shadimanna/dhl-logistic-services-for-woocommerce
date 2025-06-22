@@ -2,7 +2,6 @@
 
 use PR\DHL\REST_API\Parcel_DE_MyAccount\Auth;
 use PR\DHL\REST_API\Parcel_DE_MyAccount\Client;
-use PR\DHL\REST_API\Parcel_DE_MyAccount\Item_Info;
 use PR\DHL\REST_API\Interfaces\API_Auth_Interface;
 use PR\DHL\REST_API\Interfaces\API_Driver_Interface;
 
@@ -156,15 +155,10 @@ class PR_DHL_API_REST_Parcel_DE_MyAccount extends PR_DHL_API_REST_Parcel_DE {
 	/**
 	 * Get user.
 	 *
-	 * @param $args
-	 *
-	 * @return array
+	 * @return stdClass
 	 * @throws Exception
 	 */
 	public function get_dhl_my_account() {
-
 		return $this->api_client->get_user();
-
-		// error_log(print_r($user_details, true));
 	}
 }

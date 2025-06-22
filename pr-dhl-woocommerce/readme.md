@@ -75,6 +75,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 3.9.2 =
+* Fix: CN23 form total calculation for multi-quantity items in international shipments.
+
 = 3.9.1 =
 * Fix: PHP warning that could appear when creating a pickup request.
 * Fix: Removed exposed sensitive data from frontend JavaScript output.
