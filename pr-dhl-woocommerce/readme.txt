@@ -76,9 +76,7 @@ More detailed instructions on how to set up your store and configure it are cons
 == Changelog ==
 
 = 3.9.2 =
-* Add: GoGreen Plus service for all domestic DHL Paket products and for return labels (REST v2 & Returns API).
-* Add: Single “GoGreen Plus” toggle in order meta-box and corresponding default checkbox in the shipping-method settings.
-
+* Add: Support GoGreen Plus service for both outbound and return shipments.
 = 3.9.1 =
 * Fix: PHP warning that could appear when creating a pickup request.
 * Fix: Removed exposed sensitive data from frontend JavaScript output.
