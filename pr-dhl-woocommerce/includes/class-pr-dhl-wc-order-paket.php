@@ -710,7 +710,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 				'pr_dhl_identcheck',
 				'pr_dhl_identcheck_dob',
 				'pr_dhl_identcheck_age',
-				'pr_dhl_go_green_plus',
 				'pr_dhl_return_address_enabled',
 				'pr_dhl_return_name',
 				'pr_dhl_return_company',
@@ -731,7 +730,8 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 				'pr_dhl_packages_width',
 				'pr_dhl_packages_height',
 				'pr_dhl_invoice_num',
-				'pr_dhl_description'
+				'pr_dhl_description',
+				'pr_dhl_go_green_plus',
 			);
 		}
 
@@ -934,12 +934,12 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 						'pr_dhl_named_person',
 						'pr_dhl_premium',
 						'pr_dhl_bulky_goods',
-						'pr_dhl_go_green_plus',
 						'pr_dhl_identcheck',
 						'pr_dhl_identcheck_age',
 						'pr_dhl_identcheck_dob',
 						'pr_dhl_routing',
 						'pr_dhl_signature_service',
+						'pr_dhl_go_green_plus',
 					);
 
 					$order = wc_get_order( $order_id );
