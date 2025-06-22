@@ -594,7 +594,7 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				'routing'              => array(
 					'name' => 'ParcelOutletRouting',
 				),
-				'go_green_plus' => array(
+				'go_green_plus'        => array(
 					'name' => 'goGreenPlus',
 				),
 				'return_go_green_plus' => array(
