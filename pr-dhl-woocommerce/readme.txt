@@ -77,7 +77,7 @@ More detailed instructions on how to set up your store and configure it are cons
 
 = 3.9.2 =
 * Fix: CN23 form total calculation for multi-quantity items in international shipments.
-* Fix: Improved DHL message for the "Ship to a different address" toggle based on the selected shipping country at checkout.
+* Fix: Changed the "Ship to a different address" text based on the selected shipping country at checkout for DHL.
 
 = 3.9.1 =
 * Fix: PHP warning that could appear when creating a pickup request.
