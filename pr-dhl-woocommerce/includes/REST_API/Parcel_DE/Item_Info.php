@@ -717,20 +717,28 @@ class Item_Info {
 					$needs_ead = $self->needs_export_declaration();
 					$len       = strlen( trim( $hs ) );
 					$product   = $self->args['order_details']['dhl_product'];
+					$country   = $self->contactAddress['country'];
+					$is_euro_paket = ( $product === 'V54EPAK' );
+					$is_switzerland = ( $product === 'V53WPAK' && $country === 'CHE' );
 
-					if ( ! in_array( $product, [ 'V53WPAK', 'V54EPAK' ], true ) ) {
-						return;
-					}
-					if ( $needs_ead && $len !== 8 ) {
-						throw new Exception( __( 'HS code must be exactly 8 digits when an export declaration is required.', 'dhl-for-woocommerce' ) );
-					}
-					if ( ! $needs_ead ) {
-						if ( $len < 6 || $len > 8 ) {
-							throw new Exception( __( 'HS code must be exactly 6 digits for low-value exports (< €1 000).', 'dhl-for-woocommerce' ) );
+					if ( $is_euro_paket || $is_switzerland ) {
+						if ( $needs_ead && $len !== 8 ) {
+							throw new Exception( __( 'HS code must be exactly 8 digits when an export declaration is required.', 'dhl-for-woocommerce' ) );
 						}
-					}
-					if ( ! ctype_digit( $hs ) ) {
-						throw new Exception( __( 'HS code may contain digits only.', 'dhl-for-woocommerce' ) );
+						if ( ! $needs_ead ) {
+							if ( $len < 6 || $len > 8 ) {
+								throw new Exception( __( 'HS code must be exactly 6 digits for low-value exports (< €1 000).', 'dhl-for-woocommerce' ) );
+							}
+						}
+						if ( ! ctype_digit( $hs ) ) {
+							throw new Exception( __( 'HS code may contain digits only.', 'dhl-for-woocommerce' ) );
+						}
+					} else {
+						if ( $len < 4 || $len > 11 ) {
+							throw new Exception(
+								esc_html__( $product . 'Item HS Code must be between 4 and 11 characters long', 'dhl-for-woocommerce' )
+							);
+						}
 					}
 				},
 			),
