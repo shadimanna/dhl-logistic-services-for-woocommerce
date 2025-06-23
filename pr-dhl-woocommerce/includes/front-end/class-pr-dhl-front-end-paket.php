@@ -95,32 +95,11 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 				add_filter( 'woocommerce_admin_shipping_fields', array( $this, 'admin_order_add_postnum_field' ), 10 );
 			}
 
-			if ( $this->is_parcelfinder_enabled() ) {
-				add_filter( 'gettext', array( $this, 'change_ship_to_different_address_text' ), 20, 3 );
-			}
-
 			if ( $this->is_email_notification_enabled() ) {
 				$pos = apply_filters( 'pr_shipping_dhl_email_notification_position', 'woocommerce_review_order_before_submit' );
 				add_action( $pos, array( $this, 'add_email_notification_checkbox' ), 10 );
 				add_action( 'woocommerce_checkout_order_processed', array( $this, 'process_email_notification_fields' ), 30, 2 );
 			}
-		}
-
-		/**
-		 * Change "Ship to a different address?" text if Parcelfinder is enabled.
-		 *
-		 * @param $translated_text
-		 * @param $text
-		 * @param $domain
-		 *
-		 * @return string
-		 */
-		public function change_ship_to_different_address_text( $translated_text, $text, $domain ): string {
-			if ( 'Ship to a different address?' !== $text ) {
-				return $translated_text;
-			}
-
-			return esc_html__( 'Ship to a different address or Packstation/Branch?', 'dhl-for-woocommerce' );
 		}
 
 		/**
@@ -279,7 +258,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 
 			if ( $this->is_preferredservice_enabled() || $is_parcelfinder_enabled ) {
 				$frontend_data['map_type']                       = $this->get_map_type();
-				$frontend_data['ship_to_different_address_text'] = esc_html__( 'Ship to a different address?', 'dhl-for-woocommerce' );
+				$frontend_data['ship_to_different_address_text'] = esc_html__( 'Ship to a different address or Packstation/Branch?', 'dhl-for-woocommerce' );
 
 				// Register and load our styles and scripts
 				wp_register_script( 'pr-dhl-checkout-frontend', PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-checkout-frontend.js', array( 'jquery', 'wc-checkout' ), PR_DHL_VERSION, true );
