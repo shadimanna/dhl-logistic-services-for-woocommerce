@@ -540,16 +540,38 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 			$order = wc_get_order( $order_id );
 			$order->update_meta_data( '_pr_shipment_dhl_label_tracking', $tracking_items );
-			$order->save();
+			$order->save_meta_data();
 
-			$tracking_details = array(
-				'carrier'         => $this->carrier,
-				'tracking_number' => $tracking_items['tracking_number'],
-				'ship_date'       => gmdate( 'Y-m-d', time() ),
-			);
+			$tracking_numbers = is_array( $tracking_items['tracking_number'] ) ? $tracking_items['tracking_number'] : array( $tracking_items['tracking_number'] );
+			$ship_date        = gmdate( 'Y-m-d', time() );
 
-			// Primarily added for "Advanced Tracking" plugin integration
-			do_action( 'pr_save_dhl_label_tracking', $order_id, $tracking_details );
+			foreach ( $tracking_numbers as $tracking_number ) {
+				if ( empty( $tracking_number ) ) {
+					continue;
+				}
+
+				$tracking_details = array(
+					'carrier'         => $this->carrier,
+					'tracking_number' => $tracking_number,
+					'ship_date'       => $ship_date,
+					'tracking_url'    => $this->get_tracking_url() . $tracking_number,
+				);
+
+				// Primarily added for "Advanced Tracking" plugin integration.
+				// Will be triggered for each ( Label ) tracking number.
+				do_action( 'pr_save_dhl_label_tracking', $order_id, $tracking_details );
+
+				// Add support for "WooCommerce Shipment Tracking" plugin.
+				if ( function_exists( 'wc_st_add_tracking_number' ) ) {
+					wc_st_add_tracking_number(
+						$order_id,
+						$tracking_details['tracking_number'],
+						$tracking_details['carrier'],
+						time(),
+						$tracking_details['tracking_url']
+					);
+				}
+			}
 		}
 
 		/**
