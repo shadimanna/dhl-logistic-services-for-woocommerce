@@ -567,7 +567,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 						$order_id,
 						$tracking_details['tracking_number'],
 						$tracking_details['carrier'],
-						$tracking_details['ship_date'],
+						time(),
 						$tracking_details['tracking_url']
 					);
 				}
