@@ -552,7 +552,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 				$tracking_details = array(
 					'carrier'         => $this->carrier,
-					'tracking_number' => $tracking_items['tracking_number'],
+					'tracking_number' => $tracking_number,
 					'ship_date'       => $ship_date,
 					'tracking_url'    => $this->get_tracking_url() . $tracking_number,
 				);
