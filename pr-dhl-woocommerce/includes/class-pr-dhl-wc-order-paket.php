@@ -335,7 +335,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 						)
 					);
 
-				$this->crossborder_and_domestic_fields( $dhl_label_items, $is_disabled, $order_id = 0 );
+				$this->crossborder_and_domestic_fields( $order_id, $dhl_label_items, $is_disabled );
 
 					echo '<hr/>';
 
