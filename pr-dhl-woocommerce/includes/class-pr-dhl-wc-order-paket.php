@@ -335,10 +335,20 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 						)
 					);
 
-				$this->crossborder_and_domestic_fields( $order_id, $dhl_label_items, $is_disabled );
+				$this->crossborder_and_domestic_fields( $dhl_label_items, $is_disabled );
 
 					echo '<hr/>';
 
+				woocommerce_wp_checkbox(
+					array(
+						'id'                => 'pr_dhl_go_green_plus',
+						'label'             => esc_html__( 'GoGreen Plus: ', 'dhl-for-woocommerce' ),
+						'placeholder'       => '',
+						'description'       => '',
+						'value'             => isset( $dhl_label_items['pr_dhl_go_green_plus'] ) ? $dhl_label_items['pr_dhl_go_green_plus'] : $this->shipping_dhl_settings['dhl_default_go_green_plus'],
+						'custom_attributes' => array( $is_disabled => $is_disabled ),
+					)
+				);
 					woocommerce_wp_checkbox(
 						array(
 							'id'                => 'pr_dhl_identcheck',
@@ -484,7 +494,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 				echo '<div class="shipment-dhl-row-container shipment-dhl-row-additional-services">';
 				echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon shipment-dhl-icon-additional-services"></span> ' . esc_html__( 'Additional Services', 'dhl-for-woocommerce' ) . '</div>';
 
-				$this->crossborder_and_domestic_fields( $order_id, $dhl_label_items, $is_disabled );
+				$this->crossborder_and_domestic_fields( $dhl_label_items, $is_disabled );
 
 				// Only for crossborder orders
 				woocommerce_wp_select(
@@ -505,7 +515,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			}
 		}
 
-		public function crossborder_and_domestic_fields( $order_id, $dhl_label_items, $is_disabled ) {
+		public function crossborder_and_domestic_fields( $dhl_label_items, $is_disabled ) {
 
 
 			woocommerce_wp_hidden_input(
@@ -552,19 +562,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 
 			$order             = wc_get_order( $order_id );
 			$base_country_code = PR_DHL()->get_base_country();
-
-			if ( ( $base_country_code == 'DE' ) && ( $this->is_shipping_domestic( $order_id ) ) ) {
-				woocommerce_wp_checkbox(
-					array(
-						'id'                => 'pr_dhl_go_green_plus',
-						'label'             => esc_html__( 'GoGreen Plus: ', 'dhl-for-woocommerce' ),
-						'placeholder'       => '',
-						'description'       => '',
-						'value'             => isset( $dhl_label_items['pr_dhl_go_green_plus'] ) ? $dhl_label_items['pr_dhl_go_green_plus'] : $this->shipping_dhl_settings['dhl_default_go_green_plus'],
-						'custom_attributes' => array( $is_disabled => $is_disabled ),
-					)
-				);
-			}
 
 
 			if ( ! $this->is_cdp_delivery( $dhl_label_items ) ) {
