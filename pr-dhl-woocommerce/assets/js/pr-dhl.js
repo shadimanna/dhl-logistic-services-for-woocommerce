@@ -25,7 +25,8 @@ jQuery( function( $ ) {
 			$( '#woocommerce-shipment-dhl-label' )
 				.on( 'change', '#pr_dhl_product', this.validate_product_return )
 				.on( 'change', '#pr_dhl_product', this.enable_disable_paket_international_fields )
-				.on( 'change', '#pr_dhl_product', this.enable_disable_signature_service );
+				.on( 'change', '#pr_dhl_product', this.enable_disable_signature_service )
+	        	.on( 'change', '#pr_dhl_product', this.toggle_mrn_row );
 
 			wc_shipment_dhl_label_items.enable_disable_paket_international_fields();
 			wc_shipment_dhl_label_items.enable_disable_signature_service();
@@ -48,6 +49,9 @@ jQuery( function( $ ) {
 			$( '#woocommerce-shipment-dhl-label' )
 				.on( 'change', '#pr_dhl_tax_id_type', this.show_hide_tax_id );
 			wc_shipment_dhl_label_items.show_hide_tax_id();
+			$( '#_shipping_country' ).on( 'change', this.toggle_mrn_row );
+			wc_shipment_dhl_label_items.toggle_mrn_row();
+
 		},
 
 		// Extract the entries for the given package attribute
@@ -564,6 +568,17 @@ jQuery( function( $ ) {
 				$('#pr_dhl_signature_service').prop('disabled', 'disabled');
 			} else {
 				$('#pr_dhl_signature_service').removeAttr('disabled');
+			}
+		},
+		toggle_mrn_row: function () {
+			const prod = ($('#pr_dhl_product').val() || '').split('-')[0];
+			const dest = ($('#_shipping_country').val() || '').toUpperCase();
+
+			const show = prod === 'V54EPAK' || (prod === 'V53WPAK' && dest === 'CH');
+			$('#pr-dhl-mrn-row').toggle(show);
+
+			if (!show) {
+				$('#pr_dhl_mrn').val('');
 			}
 		},
 	};

@@ -460,7 +460,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 						)
 					);
 
-						woocommerce_wp_text_input(
+				    woocommerce_wp_text_input(
 							array(
 								'id'                => 'pr_dhl_invoice_num',
 								'class'             => '',
@@ -472,29 +472,26 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 							)
 						);
 
-					$current_product = isset( $dhl_label_items['pr_dhl_product'] )
-						? strtok( $dhl_label_items['pr_dhl_product'], '-' )
-						: '';
 
-					if ( in_array( $current_product, array( 'V53WPAK', 'V54EPAK' ), true ) ) {
-						// MRN
-						woocommerce_wp_text_input( array(
-							'id'                => 'pr_dhl_mrn',
-							'label'             => __( 'MRN (18-digit export number):', 'dhl-for-woocommerce' ),
-							'placeholder'       => '25DE1234567890ABCDE',
-							'description'       => '',
-							'value'             => isset( $dhl_label_items['pr_dhl_mrn'] ) ? $dhl_label_items['pr_dhl_mrn'] : '',
-							'custom_attributes' => array(
-								$is_disabled => $is_disabled,
-								'maxlength'  => 18,
-								'pattern'    => '[0-9A-Z]{18}',
-							),
-						) );
 
-					}
 
 					echo '</div>'; // END -- Non Domestic
 				}
+				echo '<div id="pr-dhl-mrn-row" style="display:none">';
+				// MRN
+				woocommerce_wp_text_input( array(
+					'id'                => 'pr_dhl_mrn',
+					'label'             => __( 'MRN (18-digit export number):', 'dhl-for-woocommerce' ),
+					'placeholder'       => '25DE1234567890ABCDE',
+					'description'       => '',
+					'value'             => isset( $dhl_label_items['pr_dhl_mrn'] ) ? $dhl_label_items['pr_dhl_mrn'] : '',
+					'custom_attributes' => array(
+						$is_disabled => $is_disabled,
+						'maxlength'  => 18,
+						'pattern'    => '[0-9A-Z]{18}',
+					),
+				) );
+				echo '</div>';
 
 				echo '<div class="shipment-dhl-row-container shipment-dhl-row-additional-services">';
 				echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon shipment-dhl-icon-additional-services"></span> ' . esc_html__( 'Additional Services', 'dhl-for-woocommerce' ) . '</div>';
