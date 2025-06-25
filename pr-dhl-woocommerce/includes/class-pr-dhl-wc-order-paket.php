@@ -560,8 +560,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 				)
 			);
 
-			$order             = wc_get_order( $order_id );
-			$base_country_code = PR_DHL()->get_base_country();
 
 
 			if ( ! $this->is_cdp_delivery( $dhl_label_items ) ) {
