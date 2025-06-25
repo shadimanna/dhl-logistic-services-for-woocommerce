@@ -351,9 +351,12 @@ class Item_Info {
 				'validate' => function ( $mrn ) use ( $self ) {
 					$product   = $self->args['order_details']['dhl_product'];
 					$needs_ead = $self->needs_export_declaration();
+					$country   = $self->contactAddress['country'];
+					$is_euro_paket = ( $product === 'V54EPAK' );
+					$is_switzerland = ( $product === 'V53WPAK' && $country === 'CHE' );
 
-					if ( ! in_array( $product, [ 'V53WPAK', 'V54EPAK' ], true ) || ! $needs_ead ) {
-						return;   // keep the old behaviour
+					if ( ( ! $is_euro_paket && ! $is_switzerland ) || ! $needs_ead ) {
+						return;
 					}
 
 					if ( strlen( $mrn ) !== 18 || ! ctype_alnum( $mrn ) ) {
