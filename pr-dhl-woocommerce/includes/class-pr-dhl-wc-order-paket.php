@@ -831,13 +831,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 				}
 			}
 
-			if ( $this->is_crossborder_shipment( $order_id ) ) {
-				unset( $args['order_details']['go_green_plus'], $args['order_details']['return_go_green_plus'] );
-			} else {
-				if ( isset( $args['order_details']['return_address_enabled'] ) && 'yes' === $args['order_details']['return_address_enabled'] ) {
-					$args['order_details']['return_go_green_plus'] = $args['order_details']['go_green_plus'] ?? false;
-				}
-			}
 
 			// if ( $this->is_crossborder_shipment( $order_id ) ) {
 			// $dhl_label_items['pr_dhl_description'] = $this->get_package_description( $order_id );
