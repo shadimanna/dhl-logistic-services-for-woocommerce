@@ -801,11 +801,6 @@ class Item_Info {
 			'go_green_plus'          => array(
 				'default'  => '',
 				'rename'   => 'goGreenPlus',
-				'validate' => function ( $value ) use ( $self ) {
-					if ( $self->isCrossBorder ) {
-						return false;
-					}
-				},
 			),
 			'PDDP'                   => array(
 				'default' => '',
@@ -833,11 +828,6 @@ class Item_Info {
 			'return_go_green_plus'   => array(
 				'default'  => '',
 				'rename'   => 'returnShipmentGoGreenPlus',
-				'validate' => function ( $value ) use ( $self ) {
-					if ( $self->isCrossBorder ) {
-						return false;
-					}
-				},
 			),
 			'signature_service'      => array(
 				'default' => '',
