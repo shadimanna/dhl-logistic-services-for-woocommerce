@@ -827,7 +827,7 @@ class Item_Info {
 			),
 			'return_go_green_plus'   => array(
 				'default'  => '',
-				'rename'   => 'returnShipmentGoGreenPlus',
+				'rename'   => 'goGreenPlus',
 			),
 			'signature_service'      => array(
 				'default' => '',
