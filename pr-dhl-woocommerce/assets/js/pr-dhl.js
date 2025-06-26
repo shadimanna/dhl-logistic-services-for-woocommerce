@@ -574,10 +574,11 @@ jQuery( function( $ ) {
 			const prod = ($('#pr_dhl_product').val() || '').split('-')[0];
 			const dest = ($('#_shipping_country').val() || '').toUpperCase();
 
-			const show = prod === 'V54EPAK' || (prod === 'V53WPAK' && dest === 'CH');
-			$('#pr-dhl-mrn-row').toggle(show);
+			const enable = prod === 'V54EPAK' || (prod === 'V53WPAK' && dest === 'CH');
 
-			if (!show) {
+			$('#pr_dhl_mrn').prop('disabled', !enable);
+
+			if (!enable) {
 				$('#pr_dhl_mrn').val('');
 			}
 		},

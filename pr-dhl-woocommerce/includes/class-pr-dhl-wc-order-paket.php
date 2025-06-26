@@ -477,7 +477,23 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 
 					echo '</div>'; // END -- Non Domestic
 				}
-				echo '<div id="pr-dhl-mrn-row" style="display:none">';
+
+				echo '<div id="pr-dhl-mrn-row">';
+
+
+				$order_total = (float) wc_get_order( $order_id )->get_total();
+				$needs_ead   = $order_total >= 1000;
+
+				$product        = isset( $dhl_label_items['pr_dhl_product'] )
+					? strtok( $dhl_label_items['pr_dhl_product'], '-' )
+					: '';
+				$is_euro_paket  = ( $product === 'V54EPAK' );
+				$country        = $shipping_address['country'] ?? '';
+				$is_switzerland = ( $product === 'V53WPAK' && $country === 'CH' );
+
+				$mrn_required = ( $is_euro_paket || $is_switzerland ) && $needs_ead;
+				$mrn_disabled = $mrn_required ? '' : 'disabled';
+
 				// MRN
 				woocommerce_wp_text_input( array(
 					'id'                => 'pr_dhl_mrn',
@@ -486,9 +502,9 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 					'description'       => '',
 					'value'             => isset( $dhl_label_items['pr_dhl_mrn'] ) ? $dhl_label_items['pr_dhl_mrn'] : '',
 					'custom_attributes' => array(
-						$is_disabled => $is_disabled,
-						'maxlength'  => 18,
-						'pattern'    => '[0-9A-Z]{18}',
+						$mrn_disabled => $mrn_disabled,
+						'maxlength'   => 18,
+						'pattern'     => '[0-9A-Z]{18}',
 					),
 				) );
 				echo '</div>';
