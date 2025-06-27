@@ -570,16 +570,19 @@ jQuery( function( $ ) {
 				$('#pr_dhl_signature_service').removeAttr('disabled');
 			}
 		},
-		toggle_mrn_row: function () {
-			const prod = ($('#pr_dhl_product').val() || '').split('-')[0];
-			const dest = ($('#_shipping_country').val() || '').toUpperCase();
+		enable_disable_mrn: function () {
+			const mrn_field = $( '#pr_dhl_mrn' );
+			const selected_product = $( '#pr_dhl_product' ).val();
+			const shipping_country = $( '#_shipping_country' ).val().toUpperCase();
+			const is_mrn_required = 'V54EPAK' === selected_product || (
+				'CH' === shipping_country && 'V53WPAK' === selected_product
+			);
 
-			const enable = prod === 'V54EPAK' || (prod === 'V53WPAK' && dest === 'CH');
-
-			$('#pr_dhl_mrn').prop('disabled', !enable);
-
-			if (!enable) {
-				$('#pr_dhl_mrn').val('');
+			if ( is_mrn_required ) {
+				mrn_field.removeAttr( 'disabled' );
+			} else {
+				mrn_field.val( '' )
+				mrn_field.prop( 'disabled', 'disabled' );
 			}
 		},
 	};
