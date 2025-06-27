@@ -349,19 +349,19 @@ class Item_Info {
 			'mrn'                    => array(
 				'default'  => '',
 				'validate' => function ( $mrn ) use ( $self ) {
-					$product   = $self->args['order_details']['dhl_product'];
-					$needs_ead = $self->needs_export_declaration();
-					$country   = $self->contactAddress['country'];
-					$is_euro_paket = ( $product === 'V54EPAK' );
-					$is_switzerland = ( $product === 'V53WPAK' && $country === 'CHE' );
+					$dhl_product    = $self->args['order_details']['dhl_product'];
+					$needs_ead      = $self->needs_export_declaration();
+					$country        = $self->contactAddress['country'];
+					$is_europaket   = 'V54EPAK' === $dhl_product;
+					$is_switzerland = 'V53WPAK' === $dhl_product && 'CHE' === $country;
 
-					if ( ( ! $is_euro_paket && ! $is_switzerland ) || ! $needs_ead ) {
+					if ( ( ! $is_europaket && ! $is_switzerland ) || ! $needs_ead ) {
 						return;
 					}
 
 					if ( strlen( $mrn ) !== 18 || ! ctype_alnum( $mrn ) ) {
 						throw new Exception(
-							__( 'MRN must be exactly 18 alphanumeric characters', 'dhl-for-woocommerce' )
+							esc_html__( 'MRN must be exactly 18 alphanumeric characters', 'dhl-for-woocommerce' )
 						);
 					}
 				},
@@ -369,7 +369,6 @@ class Item_Info {
 					return strtoupper( trim( $mrn ) );
 				},
 			),
-
 		);
 	}
 
