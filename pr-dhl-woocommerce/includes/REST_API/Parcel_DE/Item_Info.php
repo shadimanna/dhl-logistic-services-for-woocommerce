@@ -724,11 +724,11 @@ class Item_Info {
 					$is_switzerland = ( $product === 'V53WPAK' && $country === 'CHE' );
 
 					if ( $is_euro_paket || $is_switzerland ) {
-						if ( $needs_ead && $len !== 8 ) {
+						if ( $needs_ead && $len < 8 || $len > 11 ) {
 							throw new Exception( __( 'HS code must be exactly 8 digits when an export declaration is required.', 'dhl-for-woocommerce' ) );
 						}
 						if ( ! $needs_ead ) {
-							if ( $len < 6 || $len > 8 ) {
+							if ( $len < 6 || $len > 11 ) {
 								throw new Exception( __( 'HS code must be exactly 6 digits for low-value exports (< €1 000).', 'dhl-for-woocommerce' ) );
 							}
 						}
