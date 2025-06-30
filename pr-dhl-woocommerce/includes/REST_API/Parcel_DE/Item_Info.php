@@ -714,33 +714,32 @@ class Item_Info {
 			'hs_code'          => array(
 				'rename'   => 'hsCode',
 				'default'  => '',
-				'validate' => function ( $hs ) use ( $self ) {
+				'validate' => function ( $hs_code ) use ( $self ) {
+					$needs_ead        = $self->needs_export_declaration();
+					$code_length      = is_string( $hs_code ) ? strlen( $hs_code ) : 0;
+					$dhl_product      = $self->args['order_details']['dhl_product'];
+					$shipping_country = $self->contactAddress['country'];
+					$is_europaket     = 'V54EPAK' === $dhl_product;
+					$to_switzerland   = 'V53WPAK' === $dhl_product && 'CHE' === $shipping_country;
 
-					$needs_ead = $self->needs_export_declaration();
-					$len       = strlen( trim( $hs ) );
-					$product   = $self->args['order_details']['dhl_product'];
-					$country   = $self->contactAddress['country'];
-					$is_euro_paket = ( $product === 'V54EPAK' );
-					$is_switzerland = ( $product === 'V53WPAK' && $country === 'CHE' );
+					if ( $is_europaket || $to_switzerland ) {
+						if ( $code_length < 6 ) {
+							throw new Exception( esc_html__( 'HS code must be at-least 6 digits for low-value exports (< €1 000).', 'dhl-for-woocommerce' ) );
+						}
 
-					if ( $is_euro_paket || $is_switzerland ) {
-						if ( $needs_ead && $len < 8 || $len > 11 ) {
-							throw new Exception( __( 'HS code must be more than 8 digits when an export declaration is required.', 'dhl-for-woocommerce' ) );
+						if ( $needs_ead && $code_length < 8 ) {
+							throw new Exception( esc_html__( 'HS code must be at-least 8 digits when an export declaration is required.', 'dhl-for-woocommerce' ) );
 						}
-						if ( ! $needs_ead ) {
-							if ( $len < 6 || $len > 11 ) {
-								throw new Exception( __( 'HS code must be more than 6 digits for low-value exports (< €1 000).', 'dhl-for-woocommerce' ) );
-							}
-						}
-						if ( ! ctype_digit( $hs ) ) {
-							throw new Exception( __( 'HS code may contain digits only.', 'dhl-for-woocommerce' ) );
-						}
-					} else {
-						if ( $len < 4 || $len > 11 ) {
-							throw new Exception(
-								esc_html__( $product . 'Item HS Code must be between 4 and 11 characters long', 'dhl-for-woocommerce' )
-							);
-						}
+					}
+
+					if ( empty( $code_length ) ) {
+						return;
+					}
+
+					if ( $code_length < 4 || $code_length > 11 ) {
+						throw new Exception(
+							esc_html__( 'Item HS Code must be between 4 and 11 characters long', 'dhl-for-woocommerce' )
+						);
 					}
 				},
 			),
