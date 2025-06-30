@@ -75,6 +75,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 3.9.3 =
+* Add: Support for updated DHL customs data requirements (NCTS Phase 5), including MRN handling.
+
 = 3.9.2 =
 * Add: Support for `Shipment Tracking for WooCommerce` plugin.
 * Fix: CN23 form total calculation for multi-quantity items in international shipments.
