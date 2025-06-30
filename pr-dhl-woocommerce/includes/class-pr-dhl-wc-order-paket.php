@@ -426,7 +426,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 
 			} else { // Non-domestic shipment
 
-				// Outside EU
+				// Outside EU.
 				if ( $this->is_crossborder_shipment( $order_id ) ) {
 
 					echo '<div class="shipment-dhl-row-container shipment-dhl-row-non-domestic">';
@@ -447,7 +447,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 						);
 					}
 
-					// Duties drop down
+					// Duties drop down.
 					$duties_opt = $dhl_obj->get_dhl_duties();
 					woocommerce_wp_select(
 						array(
@@ -460,54 +460,33 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 						)
 					);
 
-				    woocommerce_wp_text_input(
-							array(
-								'id'                => 'pr_dhl_invoice_num',
-								'class'             => '',
-								'label'             => esc_html__( 'Invoice Number:', 'dhl-for-woocommerce' ),
-								'placeholder'       => '',
-								'description'       => '',
-								'value'             => isset( $dhl_label_items['pr_dhl_invoice_num'] ) ? $dhl_label_items['pr_dhl_invoice_num'] : $order_id,
-								'custom_attributes' => array( $is_disabled => $is_disabled ),
-							)
-						);
-
-
-
+					woocommerce_wp_text_input(
+						array(
+							'id'                => 'pr_dhl_invoice_num',
+							'class'             => '',
+							'label'             => esc_html__( 'Invoice Number:', 'dhl-for-woocommerce' ),
+							'placeholder'       => '',
+							'description'       => '',
+							'value'             => isset( $dhl_label_items['pr_dhl_invoice_num'] ) ? $dhl_label_items['pr_dhl_invoice_num'] : $order_id,
+							'custom_attributes' => array( $is_disabled => $is_disabled ),
+						)
+					);
 
 					echo '</div>'; // END -- Non Domestic
 				}
 
-				echo '<div id="pr-dhl-mrn-row">';
-
-
-				$order_total = (float) wc_get_order( $order_id )->get_total();
-				$needs_ead   = $order_total >= 1000;
-
-				$product        = isset( $dhl_label_items['pr_dhl_product'] )
-					? strtok( $dhl_label_items['pr_dhl_product'], '-' )
-					: '';
-				$is_euro_paket  = ( $product === 'V54EPAK' );
-				$country        = $shipping_address['country'] ?? '';
-				$is_switzerland = ( $product === 'V53WPAK' && $country === 'CH' );
-
-				$mrn_required = ( $is_euro_paket || $is_switzerland ) && $needs_ead;
-				$mrn_disabled = $mrn_required ? '' : 'disabled';
-
-				// MRN
+                // MRN, Required for DHL Paket International to Switzerland and DHL Europaket to all customs destinations.
 				woocommerce_wp_text_input( array(
 					'id'                => 'pr_dhl_mrn',
-					'label'             => __( 'MRN (18-digit export number):', 'dhl-for-woocommerce' ),
+					'label'             => esc_html__( 'Master Reference Number (MRN):', 'dhl-for-woocommerce' ),
 					'placeholder'       => '25DE1234567890ABCDE',
 					'description'       => '',
 					'value'             => isset( $dhl_label_items['pr_dhl_mrn'] ) ? $dhl_label_items['pr_dhl_mrn'] : '',
 					'custom_attributes' => array(
-						$mrn_disabled => $mrn_disabled,
 						'maxlength'   => 18,
 						'pattern'     => '[0-9A-Z]{18}',
 					),
 				) );
-				echo '</div>';
 
 				echo '<div class="shipment-dhl-row-container shipment-dhl-row-additional-services">';
 				echo '<div class="shipment-dhl-icon-container"><span class="shipment-dhl-icon shipment-dhl-icon-additional-services"></span> ' . esc_html__( 'Additional Services', 'dhl-for-woocommerce' ) . '</div>';
