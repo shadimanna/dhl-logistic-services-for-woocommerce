@@ -245,27 +245,18 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 	 * Localizes scripts with necessary data.
 	 */
 	private function localize_scripts() {
-		// Fetch the shipping settings
-		$dhl_settings      = PR_DHL()->get_shipping_dhl_settings();
-
-		// Set conditions for parcel finder options.
-		$packstation_enabled = ! empty( $dhl_settings['dhl_display_packstation'] ) && 'yes' === $dhl_settings['dhl_display_packstation'];
-		$parcelshop_enabled  = ! empty( $dhl_settings['dhl_display_parcelshop'] ) && 'yes' === $dhl_settings['dhl_display_parcelshop'];
-		$post_office_enabled = ! empty( $dhl_settings['dhl_display_post_office'] ) && 'yes' === $dhl_settings['dhl_display_post_office'];
+		// Fetch the shipping settings.
+		$dhl_settings = $this->get_dhl_settings();
 
 		$localize_data = array(
-			'pluginUrl'           => PR_DHL_PLUGIN_DIR_URL,
-			'dhlSettings'         => $dhl_settings,
-			'packstation_enabled' => $packstation_enabled,
-			'parcelshop_enabled'  => $parcelshop_enabled,
-			'post_office_enabled' => $post_office_enabled,
-			'ajax_url'            => admin_url( 'admin-ajax.php' ),
-			'nonce'               => wp_create_nonce( 'pr_dhl_nonce' ),
-			'parcel_nonce'        => wp_create_nonce( 'dhl_parcelfinder' ),
-			'DHL_ENGLISH_REGISTRATION_LINK'        => DHL_ENGLISH_REGISTRATION_LINK,
-			'DHL_GERMAN_REGISTRATION_LINK'        => DHL_GERMAN_REGISTRATION_LINK,
-			'locale' => get_locale(),
-			'google_maps_enabled' => $dhl_settings['dhl_display_google_maps'] ?? '',
+			'pluginUrl'                     => PR_DHL_PLUGIN_DIR_URL,
+			'dhlSettings'                   => $dhl_settings,
+			'ajax_url'                      => admin_url( 'admin-ajax.php' ),
+			'nonce'                         => wp_create_nonce( 'pr_dhl_nonce' ),
+			'parcel_nonce'                  => wp_create_nonce( 'dhl_parcelfinder' ),
+			'DHL_ENGLISH_REGISTRATION_LINK' => DHL_ENGLISH_REGISTRATION_LINK,
+			'DHL_GERMAN_REGISTRATION_LINK'  => DHL_GERMAN_REGISTRATION_LINK,
+			'locale'                        => get_locale(),
 		);
 
 		// Localize the editor script.
@@ -283,6 +274,45 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 			$localize_data
 		);
 
+	}
+
+	/**
+	 * Get the DHL settings that are relevant to the blocks.
+	 *
+	 * @return array
+	 * @throws Exception
+	 */
+	private function get_dhl_settings(): array {
+		$dhl_settings = PR_DHL()->get_shipping_dhl_settings();
+
+		$settings_keys = array(
+			'dhl_display_packstation',
+			'dhl_display_parcelshop',
+			'dhl_display_post_office',
+			'dhl_preferred_day',
+			'dhl_preferred_location',
+			'dhl_preferred_neighbour',
+			'dhl_preferred_day_cost',
+			'dhl_display_google_maps',
+		);
+
+		$filtered_settings = array();
+
+		foreach ( $settings_keys as $key ) {
+			$value = $dhl_settings[ $key ] ?? false;
+
+			if ( 'yes' === $value ) {
+				$value = true;
+			} elseif ( ! is_numeric( $value ) ) {
+				$value = false;
+			}
+
+			// Remove 'dhl_' prefix from the key.
+			$clean_key                       = str_replace( 'dhl_', '', $key );
+			$filtered_settings[ $clean_key ] = $value;
+		}
+
+		return $filtered_settings;
 	}
 
 	/**

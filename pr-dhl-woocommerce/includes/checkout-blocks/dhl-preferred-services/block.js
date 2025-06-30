@@ -24,8 +24,8 @@ export const Block = ({ checkoutExtensionData }) => {
     const debounceTimer = useState(null);
 
     // Determine availability of location and neighbor options
-    const locationAvailable = dhlSettings?.dhl_preferred_location === 'yes';
-    const neighborAvailable = dhlSettings?.dhl_preferred_neighbour === 'yes';
+    const locationAvailable = dhlSettings?.preferred_location;
+    const neighborAvailable = dhlSettings?.preferred_neighbour;
     const showRadioControl = locationAvailable && neighborAvailable;
 
     // Initialize preferredLocationNeighbor
@@ -171,7 +171,7 @@ export const Block = ({ checkoutExtensionData }) => {
         updateCustomerData();
 
         // Handle adding/removing the preferred day fee
-        const preferredDayCost = parseFloat(dhlSettings?.dhl_preferred_day_cost || 0);
+        const preferredDayCost = parseFloat(dhlSettings?.preferred_day_cost || 0);
 
         // Function to update the cart fee via Store API
         const updateCartFee = async (feeAmount, feeLabel) => {
@@ -302,7 +302,7 @@ export const Block = ({ checkoutExtensionData }) => {
             </td>
         </tr>
         {/* Preferred Delivery Day */}
-        {dhlSettings?.dhl_preferred_day === 'yes' && (<>
+        {dhlSettings?.preferred_day && (<>
             <tr className="dhl-co-tr">
                 <th colSpan="2" className="dhl-pt">
                     {__('Delivery day: Delivery at your preferred day', 'dhl-for-woocommerce')}
@@ -316,11 +316,11 @@ export const Block = ({ checkoutExtensionData }) => {
             </tr>
             <tr className="dhl-co-tr">
                 <td colSpan="2">
-                    {dhlSettings?.dhl_preferred_day_cost && parseFloat(dhlSettings.dhl_preferred_day_cost) > 0 ? (
+                    {dhlSettings?.preferred_day_cost && parseFloat(dhlSettings.preferred_day_cost) > 0 ? (
                         <>
                             {sprintf(
                                 __('There is a surcharge of %s incl. VAT for this service.*', 'dhl-for-woocommerce'),
-                                wcPrice(parseFloat(dhlSettings.dhl_preferred_day_cost))
+                                wcPrice(parseFloat(dhlSettings.preferred_day_cost))
                             )}
                         </>
                     ) : (

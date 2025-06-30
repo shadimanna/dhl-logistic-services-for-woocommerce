@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DHL for WooCommerce\n"
 "POT-Creation-Date: 2022-09-20 10:11+0300\n"
-"PO-Revision-Date: 2022-09-20 10:12+0300\n"
+"PO-Revision-Date: 2025-05-05 15:18+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -10,14 +10,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.5\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-Flags-xgettext: --add-comments=translators:\n"
 "X-Poedit-WPHeader: pr-dhl-woocommerce.php\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
-"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
-"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;"
+"esc_html_x:1,2c;_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.min.js\n"
 
@@ -251,8 +250,7 @@ msgid "Printers found. Click to use."
 msgstr ""
 
 #: dhlpwoocommerce/includes/controller/admin/class-dhlpwc-controller-admin-settings.php:163
-msgid ""
-"You need to check the same day delivery option to use this shipping method"
+msgid "You need to check the same day delivery option to use this shipping method"
 msgstr ""
 
 #: dhlpwoocommerce/includes/controller/admin/class-dhlpwc-controller-admin-settings.php:164
@@ -347,9 +345,7 @@ msgid "Choose a DHL ServicePoint"
 msgstr ""
 
 #: dhlpwoocommerce/includes/controller/class-dhlpwc-controller-checkout.php:103
-msgid ""
-"The DHL ServicePoint country cannot be different than the shipping address "
-"country."
+msgid "The DHL ServicePoint country cannot be different than the shipping address country."
 msgstr ""
 
 #: dhlpwoocommerce/includes/controller/class-dhlpwc-controller-mail.php:53
@@ -358,9 +354,7 @@ msgstr ""
 
 #: dhlpwoocommerce/includes/controller/isolated/class-dhlpwc-controller-isolated-load-switcher.php:136
 #, php-format
-msgid ""
-"Were you looking to use DHL Parcel instead? %sClick here to switch%s (this "
-"will turn off Deutsche Post International)."
+msgid "Were you looking to use DHL Parcel instead? %sClick here to switch%s (this will turn off Deutsche Post International)."
 msgstr ""
 
 #: dhlpwoocommerce/includes/controller/isolated/class-dhlpwc-controller-isolated-load-switcher.php:139
@@ -408,20 +402,28 @@ msgid "Add fee (keep repeating)"
 msgstr ""
 
 #: dhlpwoocommerce/includes/model/service/class-dhlpwc-model-service-delivery-times.php:446
-msgid "Send\nASAP"
+msgid ""
+"Send\n"
+"ASAP"
 msgstr ""
 
 #: dhlpwoocommerce/includes/model/service/class-dhlpwc-model-service-delivery-times.php:450
-msgid "Send\ntomorrow"
+msgid ""
+"Send\n"
+"tomorrow"
 msgstr ""
 
 #: dhlpwoocommerce/includes/model/service/class-dhlpwc-model-service-delivery-times.php:464
 #, php-format
-msgid "Send in\n%s days"
+msgid ""
+"Send in\n"
+"%s days"
 msgstr ""
 
 #: dhlpwoocommerce/includes/model/service/class-dhlpwc-model-service-delivery-times.php:468
-msgid "Send\ntoday"
+msgid ""
+"Send\n"
+"today"
 msgstr ""
 
 #: dhlpwoocommerce/includes/model/service/class-dhlpwc-model-service-label-metabox.php:134
@@ -484,6 +486,10 @@ msgstr ""
 #: templates/checkout/dhl-parcel-finder.php:58
 msgid "Search"
 msgstr "Suche"
+
+#: includes/front-end/class-pr-dhl-front-end-paket.php:123
+msgid "Ship to a different address or Packstation/Branch?"
+msgstr "Versand an eine abweichende Adresse oder an eine Packstation/Filiale?"
 
 #: dhlpwoocommerce/includes/model/service/class-dhlpwc-model-service-parcelshop.php:153
 #: dhlpwoocommerce/includes/model/woocommerce/settings/class-dhlpwc-model-woocommerce-settings-shipping-method.php:730

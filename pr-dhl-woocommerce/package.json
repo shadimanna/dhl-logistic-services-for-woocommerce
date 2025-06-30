@@ -1,20 +1,20 @@
 {
-	"name": "pr-dhl",
-	"version": "3.9.0",
+	"name": "dhl-for-woocommerce",
+	"version": "3.9.2",
 	"author": "DHL",
 	"license": "GPL-2.0-or-later",
 	"main": "build/index.js",
 	"scripts": {
-		"build": "npm run build:prod && npm run archive",
-		"build:dev": "composer install -o && npm run makepot && npm run uglify && npm run sass && webpack --env mode=development",
-		"build:prod": "composer install --no-dev && wp-scripts build",
+		"build": "npm run prebuild && composer install && wp-scripts build && npm run makepot && composer install --no-dev && npm run archive",
 		"archive": "composer archive --file=dhl-for-woocommerce --format=zip",
+		"prebuild": "rm -rf $npm_package_name && rm -f $npm_package_name.zip",
 		"format": "wp-scripts format",
 		"lint:css": "wp-scripts lint-style",
 		"lint:js": "wp-scripts lint-js",
 		"packages-update": "wp-scripts packages-update",
 		"start": "wp-scripts start",
-		"env": "wp-env"
+		"env": "wp-env",
+		"makepot": "vendor/bin/wp i18n make-pot ./ lang/$npm_package_name.pot --exclude=node_modules,tests,docs,vendor"
 	},
 	"dependencies": {
 		"@wordpress/icons": "^9.49.0",

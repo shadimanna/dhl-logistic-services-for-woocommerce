@@ -55,7 +55,7 @@ export const Block = ({checkoutExtensionData}) => {
     const showMapButton = hasCalculatedShipping &&
         shippingRates.length > 0 &&
         isPageLoaded && (shippingAddress.country === 'DE') &&
-        prDhlGlobals.google_maps_enabled === 'yes';
+        prDhlGlobals.dhlSettings.display_google_maps;
 
     // Fetch parcel shops when shippingAddress changes and is available
     useEffect(() => {
@@ -266,14 +266,14 @@ export const Block = ({checkoutExtensionData}) => {
         {label: __('Address Type', 'dhl-for-woocommerce'), value: ''},
         {label: __('Regular Address', 'dhl-for-woocommerce'), value: 'normal'},
     ];
-    if (prDhlGlobals.packstation_enabled) {
+    if (prDhlGlobals.dhlSettings.display_packstation) {
         addressTypeOptions.push({
             label: __('DHL Packstation', 'dhl-for-woocommerce'),
             value: 'dhl_packstation',
         });
     }
 
-    if (prDhlGlobals.post_office_enabled) {
+    if (prDhlGlobals.dhlSettings.display_post_office) {
         addressTypeOptions.push({
             label: __('DHL Branch', 'dhl-for-woocommerce'),
             value: 'dhl_branch',
@@ -284,7 +284,7 @@ export const Block = ({checkoutExtensionData}) => {
     return (
         <>
 
-            {showMapButton && (prDhlGlobals.post_office_enabled || prDhlGlobals.parcelshop_enabled || prDhlGlobals.packstation_enabled ) && (
+            {showMapButton && (prDhlGlobals.dhlSettings.display_post_office || prDhlGlobals.dhlSettings.display_parcelshop || prDhlGlobals.dhlSettings.display_packstation ) && (
                 <>
 
                     {/* Registration info displayed above the shipping fields */}
@@ -350,7 +350,7 @@ export const Block = ({checkoutExtensionData}) => {
                                     />
                                 </p>
 
-                                {prDhlGlobals.packstation_enabled && (
+                                {prDhlGlobals.dhlSettings.display_packstation && (
                                     <p className="form-row form-field packstation">
                                         <input
                                             type="checkbox"
@@ -370,7 +370,7 @@ export const Block = ({checkoutExtensionData}) => {
                                     </p>
                                 )}
 
-                                {(prDhlGlobals.parcelshop_enabled || prDhlGlobals.post_office_enabled) && (
+                                {(prDhlGlobals.dhlSettings.display_parcelshop || prDhlGlobals.dhlSettings.display_post_office) && (
                                     <p className="form-row form-field parcelshop">
                                         <input
                                             type="checkbox"
@@ -384,13 +384,13 @@ export const Block = ({checkoutExtensionData}) => {
                                             {__('Branch', 'dhl-for-woocommerce')}
                                         </label>
                                         <span className="parcel-wrap">
-                                            {prDhlGlobals.parcelshop_enabled && (
+                                            {prDhlGlobals.dhlSettings.display_parcelshop && (
                                                 <span
                                                     className="icon"
                                                     style={{backgroundImage: `url(${prDhlGlobals.pluginUrl}/assets/img/parcelshop.png)`}}
                                                 ></span>
                                             )}
-                                            {prDhlGlobals.post_office_enabled && (
+                                            {prDhlGlobals.dhlSettings.display_post_office && (
                                                 <span
                                                     className="icon"
                                                     style={{backgroundImage: `url(${prDhlGlobals.pluginUrl}/assets/img/post_office.png)`}}
@@ -434,7 +434,7 @@ export const Block = ({checkoutExtensionData}) => {
             ) }
 
             {/* Address Type */}
-            {((prDhlGlobals.post_office_enabled || prDhlGlobals.parcelshop_enabled || prDhlGlobals.packstation_enabled))  && shippingAddress.country === 'DE' && (
+            {((prDhlGlobals.dhlSettings.display_post_office || prDhlGlobals.dhlSettings.display_parcelshop || prDhlGlobals.dhlSettings.display_packstation))  && shippingAddress.country === 'DE' && (
                 <>
                     <SelectControl
                         className="wc-blocks-components-select__select"
@@ -447,7 +447,7 @@ export const Block = ({checkoutExtensionData}) => {
             )}
 
             {/* Drop off point */}
-            {showMapButton && addressType !== 'normal' && (prDhlGlobals.post_office_enabled || prDhlGlobals.packstation_enabled ) &&(
+            {showMapButton && addressType !== 'normal' && (prDhlGlobals.dhlSettings.display_post_office || prDhlGlobals.dhlSettings.display_packstation ) &&(
                 <>
                     <div className="wc-blocks-components-select__select">
                         <SelectControl
@@ -466,7 +466,7 @@ export const Block = ({checkoutExtensionData}) => {
                 </>
             )}
             {/* Post Number */}
-            {addressType !== 'normal' && (prDhlGlobals.post_office_enabled || prDhlGlobals.packstation_enabled ) &&(
+            {addressType !== 'normal' && (prDhlGlobals.dhlSettings.display_post_office || prDhlGlobals.dhlSettings.display_packstation ) &&(
                 <>
                     <div className="wc-block-components-text-input ">
                         <TextControl
