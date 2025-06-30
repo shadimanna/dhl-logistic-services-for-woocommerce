@@ -86,16 +86,11 @@ if ( ! class_exists( 'PR_DHL_WC_Product' ) ) :
 
 			woocommerce_wp_text_input(
 				array(
-					'id'                => '_dhl_hs_code',
-					'label'             => $this->hs_code_label,
-					'description'       => $this->hs_code_description,
-					'desc_tip'          => 'true',
-					'placeholder'       => 'HS Code',
-					'custom_attributes' => array(
-						'pattern'   => '\d{6,8}',
-						'maxlength' => 8,
-						'inputmode' => 'numeric',
-					),
+					'id'          => '_dhl_hs_code',
+					'label'       => $this->hs_code_label,
+					'description' => $this->hs_code_description,
+					'desc_tip'    => 'true',
+					'placeholder' => esc_html__( 'HS Code', 'dhl-for-woocommerce' ),
 				)
 			);
 
