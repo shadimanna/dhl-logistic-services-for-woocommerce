@@ -285,13 +285,13 @@ class Client extends API_Client {
 		);
 
 		if ( ! empty( $request_info->shipment['mrn'] ) ) {
-			$base['exportReference'] = array(
+			$customs['exportReference'] = array(
 				'type'  => 'MRN',
 				'value' => $request_info->shipment['mrn'],
 			);
 		}
 
-		return $base;
+		return $customs;
 	}
 
 	/**
