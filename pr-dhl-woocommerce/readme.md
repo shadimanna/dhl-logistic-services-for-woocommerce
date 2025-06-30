@@ -65,14 +65,6 @@ More detailed instructions on how to set up your store and configure it are cons
 == Additional Information ==
 * A “Google Maps API Key” is required if you wish to display DHL locations on a map for your customers.
 
-== Screenshots ==
-
-1. screenshot-4.(png|jpg|jpeg|gif)
-1. screenshot-1.(png|jpg|jpeg|gif)
-1. screenshot-2.(png|jpg|jpeg|gif)
-1. screenshot-3.(png|jpg|jpeg|gif)
-
-
 == Changelog ==
 
 = 3.9.3 =
