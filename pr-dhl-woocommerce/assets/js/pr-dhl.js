@@ -26,7 +26,7 @@ jQuery( function( $ ) {
 				.on( 'change', '#pr_dhl_product', this.validate_product_return )
 				.on( 'change', '#pr_dhl_product', this.enable_disable_paket_international_fields )
 				.on( 'change', '#pr_dhl_product', this.enable_disable_signature_service )
-	        	.on( 'change', '#pr_dhl_product', this.toggle_mrn_row );
+	        	.on( 'change', '#pr_dhl_product', this.enable_disable_mrn );
 
 			wc_shipment_dhl_label_items.enable_disable_paket_international_fields();
 			wc_shipment_dhl_label_items.enable_disable_signature_service();
@@ -49,8 +49,8 @@ jQuery( function( $ ) {
 			$( '#woocommerce-shipment-dhl-label' )
 				.on( 'change', '#pr_dhl_tax_id_type', this.show_hide_tax_id );
 			wc_shipment_dhl_label_items.show_hide_tax_id();
-			$( '#_shipping_country' ).on( 'change', this.toggle_mrn_row );
-			wc_shipment_dhl_label_items.toggle_mrn_row();
+			$( '#_shipping_country' ).on( 'change', this.enable_disable_mrn );
+			wc_shipment_dhl_label_items.enable_disable_mrn();
 
 		},
 
