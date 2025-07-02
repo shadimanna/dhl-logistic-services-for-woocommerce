@@ -149,6 +149,16 @@ class Client extends API_Client {
 	protected function services_mappimng( Item_Info $request_info ) {
 		$services = array();
 		foreach ( $request_info->services as $key => $service ) {
+
+			if (
+				'goGreenPlus' === $key &&
+				'DE' === PR_DHL()->get_base_country() &&
+				PR_DHL()->is_shipping_domestic( $request_info->args['shipping_address']['country'] )
+			) {
+				$services[ $key ] = ( 'true' === $service || 'yes' === $service ) ? 'true' : 'false';
+				continue;
+			}
+
 			// If checkbox not checked
 			if ( empty( $request_info->services[ $key ] ) || ( $request_info->services[ $key ] == 'no' ) ) {
 				continue;
