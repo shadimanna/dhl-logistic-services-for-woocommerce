@@ -801,12 +801,6 @@ class Item_Info {
 			'go_green_plus'          => array(
 				'default'  => '',
 				'rename'   => 'goGreenPlus',
-				'sanitize' => function ( $args ) use ( $self ) {
-					if ( ! empty( $args['go_green_plus'] ) && 'true' === $args['go_green_plus'] ) {
-						$args['goGreenPlus'] = true;
-					}
-					return $args;
-				},
 			),
 			'PDDP'                   => array(
 				'default' => '',
