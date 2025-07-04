@@ -157,9 +157,9 @@ class Item_Info {
 		$shipping_info  = $this->args['order_details'] + $settings;
 		$items_info     = $this->args['items'];
 
+		$this->contactAddress = Args_Parser::parse_args( $recipient_info, $this->get_contact_address_schema() );
 		$this->shipment       = Args_Parser::parse_args( $shipping_info, $this->get_shipment_info_schema() );
 		$this->shipper        = Args_Parser::parse_args( $shipping_info, $this->get_shipper_info_schema() );
-		$this->contactAddress = Args_Parser::parse_args( $recipient_info, $this->get_contact_address_schema() );
 		$this->services       = Args_Parser::parse_args( $shipping_info, $this->get_services_schema() );
 		$this->returnAddress  = Args_Parser::parse_args( $shipping_info, $this->get_return_address_schema() );
 
@@ -345,6 +345,40 @@ class Item_Info {
 			),
 			'label_format'           => array(
 				'rename' => 'printFormat',
+			),
+			'mrn'                    => array(
+				'default'  => '',
+				'validate' => function ( $mrn ) use ( $self ) {
+					$mrn_length = strlen( $mrn );
+
+					if ( $mrn_length > 18 ) {
+						throw new Exception(
+							esc_html__( 'Master Reference Number (MRN) must be a maximum of 18 alphanumeric characters.', 'dhl-for-woocommerce' )
+						);
+					}
+
+					if ( ! $self->needs_export_declaration() ) {
+						return;
+					}
+
+					$dhl_product    = $self->args['order_details']['dhl_product'];
+					$country        = $self->contactAddress['country'];
+					$is_europaket   = 'V54EPAK' === $dhl_product;
+					$to_switzerland = 'V53WPAK' === $dhl_product && 'CHE' === $country;
+
+					if ( ! $is_europaket && ! $to_switzerland ) {
+						return;
+					}
+
+					if ( empty( $mrn ) ) {
+						throw new Exception(
+							esc_html__( 'Master Reference Number (MRN) is required for shipments valued at €1000 or more.', 'dhl-for-woocommerce' )
+						);
+					}
+				},
+				'sanitize' => function ( $mrn ) {
+					return strtoupper( trim( $mrn ) );
+				},
 			),
 		);
 	}
@@ -691,14 +725,29 @@ class Item_Info {
 			'hs_code'          => array(
 				'rename'   => 'hsCode',
 				'default'  => '',
-				'validate' => function ( $hs_code ) {
-					$length = is_string( $hs_code ) ? strlen( $hs_code ) : 0;
+				'validate' => function ( $hs_code ) use ( $self ) {
+					$needs_ead        = $self->needs_export_declaration();
+					$code_length      = is_string( $hs_code ) ? strlen( $hs_code ) : 0;
+					$dhl_product      = $self->args['order_details']['dhl_product'];
+					$shipping_country = $self->contactAddress['country'];
+					$is_europaket     = 'V54EPAK' === $dhl_product;
+					$to_switzerland   = 'V53WPAK' === $dhl_product && 'CHE' === $shipping_country;
 
-					if ( empty( $length ) ) {
+					if ( $is_europaket || $to_switzerland ) {
+						if ( $needs_ead && $code_length < 8 ) {
+							throw new Exception( esc_html__( 'HS code must be at-least 8 digits when an export declaration is required.', 'dhl-for-woocommerce' ) );
+						}
+
+						if ( $code_length < 6 ) {
+							throw new Exception( esc_html__( 'HS code must be at-least 6 digits for low-value exports (< €1 000).', 'dhl-for-woocommerce' ) );
+						}
+					}
+
+					if ( empty( $code_length ) ) {
 						return;
 					}
 
-					if ( $length < 4 || $length > 11 ) {
+					if ( $code_length < 4 || $code_length > 11 ) {
 						throw new Exception(
 							esc_html__( 'Item HS Code must be between 4 and 11 characters long', 'dhl-for-woocommerce' )
 						);
@@ -732,6 +781,17 @@ class Item_Info {
 				},
 			),
 		);
+	}
+
+	/**
+	 * Check if order needs export declaration.
+	 *
+	 * @return boolean.
+	 */
+	protected function needs_export_declaration(): bool {
+		$value = isset( $this->shipment['value'] ) ? $this->shipment['value'] : $this->args['order_details']['total_value'];
+
+		return floatval( $value ) >= 1000;
 	}
 
 	/**
