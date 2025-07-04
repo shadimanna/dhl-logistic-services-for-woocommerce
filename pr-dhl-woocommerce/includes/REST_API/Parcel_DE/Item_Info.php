@@ -784,18 +784,15 @@ class Item_Info {
 	}
 
 	/**
-	 * Check if order needs export declartion.
+	 * Check if order needs export declaration.
 	 *
 	 * @return boolean.
 	 */
-	protected function needs_export_declaration() {
-		$value = isset( $this->shipment['value'] )
-			? (float) $this->shipment['value']
-			: (float) $this->args['order_details']['total_value'];
+	protected function needs_export_declaration(): bool {
+		$value = isset( $this->shipment['value'] ) ? $this->shipment['value'] : $this->args['order_details']['total_value'];
 
-		return $value >= 1000;
+		return floatval( $value ) >= 1000;
 	}
-
 
 	/**
 	 * Retrieves the args scheme to use with {@link Args_Parser} for parsing shipment services.
