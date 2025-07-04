@@ -487,8 +487,9 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 						'description'       => '',
 						'value'             => isset( $dhl_label_items['pr_dhl_mrn'] ) ? $dhl_label_items['pr_dhl_mrn'] : '',
 						'custom_attributes' => array(
-							'maxlength'   => 18,
-							'pattern'     => '[0-9A-Z]{18}',
+							'maxlength'         => 18,
+							'pattern'           => '[0-9A-Z]{18}',
+							'custom_attributes' => array( $is_disabled => $is_disabled ),
 						),
 					) );
 
