@@ -361,7 +361,7 @@ class Item_Info {
 
 					if ( strlen( $mrn ) !== 18 || ! ctype_alnum( $mrn ) ) {
 						throw new Exception(
-							esc_html__( 'MRN must be exactly 18 alphanumeric characters', 'dhl-for-woocommerce' )
+							esc_html__( 'MRN is required for shipments valued at €1000 or more, and it must be exactly 18 alphanumeric characters long.', 'dhl-for-woocommerce' )
 						);
 					}
 				},
