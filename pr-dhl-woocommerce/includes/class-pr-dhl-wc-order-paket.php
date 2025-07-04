@@ -482,7 +482,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 					// MRN, Required for DHL Paket International to Switzerland and DHL Europaket to all customs destinations.
 					woocommerce_wp_text_input( array(
 						'id'                => 'pr_dhl_mrn',
-						'label'             => esc_html__( 'Master Reference Number (MRN):', 'dhl-for-woocommerce' ),
+						'label'             => esc_html__( 'Movement Reference Number (MRN):', 'dhl-for-woocommerce' ),
 						'placeholder'       => '25DE1234567890ABCDE',
 						'description'       => '',
 						'value'             => isset( $dhl_label_items['pr_dhl_mrn'] ) ? $dhl_label_items['pr_dhl_mrn'] : '',
