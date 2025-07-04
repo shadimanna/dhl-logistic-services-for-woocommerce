@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-06-26T22:07:30+00:00\n"
+"POT-Creation-Date: 2025-07-04T21:15:56+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: dhl-for-woocommerce\n"
@@ -174,6 +174,7 @@ msgid "- select country -"
 msgstr ""
 
 #: includes/abstract-pr-dhl-wc-product-editor.php:112
+#: includes/abstract-pr-dhl-wc-product.php:93
 msgid "HS Code"
 msgstr ""
 
@@ -672,12 +673,12 @@ msgid "Endorsement type"
 msgstr ""
 
 #: includes/class-pr-dhl-wc-method-paket.php:438
-#: includes/class-pr-dhl-wc-order-paket.php:497
+#: includes/class-pr-dhl-wc-order-paket.php:512
 msgid "Sending back to sender"
 msgstr ""
 
 #: includes/class-pr-dhl-wc-method-paket.php:439
-#: includes/class-pr-dhl-wc-order-paket.php:498
+#: includes/class-pr-dhl-wc-order-paket.php:513
 msgid "Abandonment of parcel"
 msgstr ""
 
@@ -1399,7 +1400,7 @@ msgstr ""
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:992
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:999
-#: includes/class-pr-dhl-wc-order-paket.php:943
+#: includes/class-pr-dhl-wc-order-paket.php:958
 msgid "No orders selected for the DHL bulk action, please select orders before performing the DHL action."
 msgstr ""
 
@@ -1499,7 +1500,7 @@ msgid "Preferred Neighbor (80 characters max): "
 msgstr ""
 
 #: includes/class-pr-dhl-wc-order-paket.php:281
-#: includes/class-pr-dhl-wc-order-paket.php:485
+#: includes/class-pr-dhl-wc-order-paket.php:500
 msgid "Additional Services"
 msgstr ""
 
@@ -1559,112 +1560,116 @@ msgstr ""
 msgid "Invoice Number:"
 msgstr ""
 
-#: includes/class-pr-dhl-wc-order-paket.php:493
+#: includes/class-pr-dhl-wc-order-paket.php:485
+msgid "Movement Reference Number (MRN):"
+msgstr ""
+
+#: includes/class-pr-dhl-wc-order-paket.php:508
 msgid "Endorsement:"
 msgstr ""
 
-#: includes/class-pr-dhl-wc-order-paket.php:513
-#: includes/class-pr-dhl-wc-order-paket.php:571
+#: includes/class-pr-dhl-wc-order-paket.php:528
+#: includes/class-pr-dhl-wc-order-paket.php:586
 msgid "Closest drop-point delivery: "
 msgstr ""
 
-#: includes/class-pr-dhl-wc-order-paket.php:523
+#: includes/class-pr-dhl-wc-order-paket.php:538
 msgid "Email Notification:"
 msgstr ""
 
-#: includes/class-pr-dhl-wc-order-paket.php:533
+#: includes/class-pr-dhl-wc-order-paket.php:548
 msgid "Additional Insurance:"
 msgstr ""
 
-#: includes/class-pr-dhl-wc-order-paket.php:544
+#: includes/class-pr-dhl-wc-order-paket.php:559
 msgid "Premium: "
 msgstr ""
 
-#: includes/class-pr-dhl-wc-order-paket.php:558
+#: includes/class-pr-dhl-wc-order-paket.php:573
 msgid "Bulky Goods: "
 msgstr ""
 
-#: includes/class-pr-dhl-wc-order-paket.php:599
+#: includes/class-pr-dhl-wc-order-paket.php:614
 msgid "Multiple Packages"
 msgstr ""
 
-#: includes/class-pr-dhl-wc-order-paket.php:604
+#: includes/class-pr-dhl-wc-order-paket.php:619
 msgid "Send multiple packages: "
 msgstr ""
 
-#: includes/class-pr-dhl-wc-order-paket.php:616
+#: includes/class-pr-dhl-wc-order-paket.php:631
 msgid "Total Packages:"
 msgstr ""
 
-#: includes/class-pr-dhl-wc-order-paket.php:927
+#: includes/class-pr-dhl-wc-order-paket.php:942
 msgid "DHL Create Labels"
 msgstr ""
 
-#: includes/class-pr-dhl-wc-order-paket.php:928
+#: includes/class-pr-dhl-wc-order-paket.php:943
 msgid "DHL Delete Labels"
 msgstr ""
 
-#: includes/class-pr-dhl-wc-order-paket.php:929
+#: includes/class-pr-dhl-wc-order-paket.php:944
 msgid "DHL Request Pickup"
 msgstr ""
 
-#: includes/class-pr-dhl-wc-order-paket.php:1039
+#: includes/class-pr-dhl-wc-order-paket.php:1054
 msgid "DHL Label Created"
 msgstr ""
 
-#: includes/class-pr-dhl-wc-order-paket.php:1040
+#: includes/class-pr-dhl-wc-order-paket.php:1055
 msgid "DHL Tracking Number"
 msgstr ""
 
 #. Translators: %s is the scheduled pickup date.
-#: includes/class-pr-dhl-wc-order-paket.php:1163
+#: includes/class-pr-dhl-wc-order-paket.php:1178
 #, php-format
 msgid "DHL pickup scheduled for %s"
 msgstr ""
 
 #. Translators: %s is a list of order numbers for which the DHL pickup request was created.
-#: includes/class-pr-dhl-wc-order-paket.php:1177
+#: includes/class-pr-dhl-wc-order-paket.php:1192
 #, php-format
 msgid "DHL Pickup Request created for Order(s): %s "
 msgstr ""
 
-#: includes/class-pr-dhl-wc-order-paket.php:1187
+#: includes/class-pr-dhl-wc-order-paket.php:1202
 msgid "Error message detail is not exist!"
 msgstr ""
 
 #. Translators: %s is the error message returned from the DHL pickup request.
 #. Translators: %s is the error message returned from the DHL Pickup Request exception.
-#: includes/class-pr-dhl-wc-order-paket.php:1194
-#: includes/class-pr-dhl-wc-order-paket.php:1204
+#: includes/class-pr-dhl-wc-order-paket.php:1209
+#: includes/class-pr-dhl-wc-order-paket.php:1219
 #, php-format
 msgid "DHL Pickup Request error: %s"
 msgstr ""
 
-#: includes/class-pr-dhl-wc-order-paket.php:1341
+#: includes/class-pr-dhl-wc-order-paket.php:1356
 msgid "Schedule a DHL Pickup Request."
 msgstr ""
 
-#: includes/class-pr-dhl-wc-order-paket.php:1342
+#: includes/class-pr-dhl-wc-order-paket.php:1357
 msgid "Your Shipper address and business hours from Settings will be used for the pickup."
 msgstr ""
 
-#: includes/class-pr-dhl-wc-order-paket.php:1365
+#: includes/class-pr-dhl-wc-order-paket.php:1380
 msgid "Request Pickup: "
 msgstr ""
 
-#: includes/class-pr-dhl-wc-order-paket.php:1371
+#: includes/class-pr-dhl-wc-order-paket.php:1386
 msgid "Pickup ASAP"
 msgstr ""
 
-#: includes/class-pr-dhl-wc-order-paket.php:1372
+#: includes/class-pr-dhl-wc-order-paket.php:1387
 msgid "Pickup Date"
 msgstr ""
 
-#: includes/class-pr-dhl-wc-order-paket.php:1382
+#: includes/class-pr-dhl-wc-order-paket.php:1397
 msgid "Pickup Date: "
 msgstr ""
 
-#: includes/class-pr-dhl-wc-order-paket.php:1396
+#: includes/class-pr-dhl-wc-order-paket.php:1411
 msgid "Submit"
 msgstr ""
 
@@ -2284,9 +2289,9 @@ msgstr ""
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-finder.php:64
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:440
 #: includes/REST_API/Deutsche_Post/Item_Info.php:258
-#: includes/REST_API/Parcel_DE/Item_Info.php:554
-#: includes/REST_API/Parcel_DE/Item_Info.php:609
-#: includes/REST_API/Parcel_DE/Item_Info.php:655
+#: includes/REST_API/Parcel_DE/Item_Info.php:588
+#: includes/REST_API/Parcel_DE/Item_Info.php:643
+#: includes/REST_API/Parcel_DE/Item_Info.php:689
 msgid "Shipping \"Country\" is empty!"
 msgstr ""
 
@@ -2365,7 +2370,7 @@ msgstr ""
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:413
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:445
 #: includes/REST_API/Deutsche_Post/Item_Info.php:243
-#: includes/REST_API/Parcel_DE/Item_Info.php:526
+#: includes/REST_API/Parcel_DE/Item_Info.php:560
 msgid "Shipping \"Address 1\" is empty!"
 msgstr ""
 
@@ -2373,9 +2378,9 @@ msgstr ""
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:404
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:436
 #: includes/REST_API/Deutsche_Post/Item_Info.php:249
-#: includes/REST_API/Parcel_DE/Item_Info.php:543
-#: includes/REST_API/Parcel_DE/Item_Info.php:606
-#: includes/REST_API/Parcel_DE/Item_Info.php:652
+#: includes/REST_API/Parcel_DE/Item_Info.php:577
+#: includes/REST_API/Parcel_DE/Item_Info.php:640
+#: includes/REST_API/Parcel_DE/Item_Info.php:686
 msgid "Shipping \"City\" is empty!"
 msgstr ""
 
@@ -2494,13 +2499,13 @@ msgstr ""
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:422
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:454
-#: includes/REST_API/Parcel_DE/Item_Info.php:592
+#: includes/REST_API/Parcel_DE/Item_Info.php:626
 msgid "Post Number is missing, it is mandatory for \"Packstation\" delivery."
 msgstr ""
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:440
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:472
-#: includes/REST_API/Parcel_DE/Item_Info.php:1192
+#: includes/REST_API/Parcel_DE/Item_Info.php:1255
 msgid "Shipping street number is missing!"
 msgstr ""
 
@@ -2628,23 +2633,23 @@ msgstr ""
 
 #: includes/REST_API/Paket/Pickup_Request_Info.php:255
 #: includes/REST_API/Paket/Pickup_Request_Info.php:260
-#: includes/REST_API/Parcel_DE/Item_Info.php:383
-#: includes/REST_API/Parcel_DE/Item_Info.php:388
+#: includes/REST_API/Parcel_DE/Item_Info.php:417
+#: includes/REST_API/Parcel_DE/Item_Info.php:422
 msgid "Shipper \"Address 1\" is empty!"
 msgstr ""
 
 #: includes/REST_API/Paket/Pickup_Request_Info.php:273
-#: includes/REST_API/Parcel_DE/Item_Info.php:404
+#: includes/REST_API/Parcel_DE/Item_Info.php:438
 msgid "Shipper \"City\" is empty!"
 msgstr ""
 
 #: includes/REST_API/Paket/Pickup_Request_Info.php:277
-#: includes/REST_API/Parcel_DE/Item_Info.php:400
+#: includes/REST_API/Parcel_DE/Item_Info.php:434
 msgid "Shipper \"Postcode\" is empty!"
 msgstr ""
 
 #: includes/REST_API/Paket/Pickup_Request_Info.php:285
-#: includes/REST_API/Parcel_DE/Item_Info.php:420
+#: includes/REST_API/Parcel_DE/Item_Info.php:454
 msgid "Shipper \"Country\" is empty!"
 msgstr ""
 
@@ -2656,39 +2661,55 @@ msgid "Error creating label: %s"
 msgstr ""
 
 #. Translators: %s is replaced with the error message returned from the API.
-#: includes/REST_API/Parcel_DE/Client.php:565
+#: includes/REST_API/Parcel_DE/Client.php:571
 #, php-format
 msgid "Error deleting label: %s"
 msgstr ""
 
-#: includes/REST_API/Parcel_DE/Item_Info.php:368
+#: includes/REST_API/Parcel_DE/Item_Info.php:356
+msgid "Master Reference Number (MRN) must be a maximum of 18 alphanumeric characters."
+msgstr ""
+
+#: includes/REST_API/Parcel_DE/Item_Info.php:375
+msgid "Master Reference Number (MRN) is required for shipments valued at €1000 or more."
+msgstr ""
+
+#: includes/REST_API/Parcel_DE/Item_Info.php:402
 msgid "\"Account Name\" in settings is empty."
 msgstr ""
 
-#: includes/REST_API/Parcel_DE/Item_Info.php:515
+#: includes/REST_API/Parcel_DE/Item_Info.php:549
 msgid "Recipient name is empty!"
 msgstr ""
 
-#: includes/REST_API/Parcel_DE/Item_Info.php:540
-#: includes/REST_API/Parcel_DE/Item_Info.php:603
-#: includes/REST_API/Parcel_DE/Item_Info.php:649
+#: includes/REST_API/Parcel_DE/Item_Info.php:574
+#: includes/REST_API/Parcel_DE/Item_Info.php:637
+#: includes/REST_API/Parcel_DE/Item_Info.php:683
 msgid "Shipping \"Postcode\" is empty!"
 msgstr ""
 
-#: includes/REST_API/Parcel_DE/Item_Info.php:585
+#: includes/REST_API/Parcel_DE/Item_Info.php:619
 msgid "Packstation name is empty!"
 msgstr ""
 
-#: includes/REST_API/Parcel_DE/Item_Info.php:596
-#: includes/REST_API/Parcel_DE/Item_Info.php:642
+#: includes/REST_API/Parcel_DE/Item_Info.php:630
+#: includes/REST_API/Parcel_DE/Item_Info.php:676
 msgid "Locker ID is missing, it is mandatory for \"Packstation\" delivery."
 msgstr ""
 
-#: includes/REST_API/Parcel_DE/Item_Info.php:631
+#: includes/REST_API/Parcel_DE/Item_Info.php:665
 msgid "Name is empty!"
 msgstr ""
 
-#: includes/REST_API/Parcel_DE/Item_Info.php:703
+#: includes/REST_API/Parcel_DE/Item_Info.php:738
+msgid "HS code must be at-least 8 digits when an export declaration is required."
+msgstr ""
+
+#: includes/REST_API/Parcel_DE/Item_Info.php:742
+msgid "HS code must be at-least 6 digits for low-value exports (< €1 000)."
+msgstr ""
+
+#: includes/REST_API/Parcel_DE/Item_Info.php:752
 msgid "Item HS Code must be between 4 and 11 characters long"
 msgstr ""
 
