@@ -691,7 +691,16 @@ class Item_Info {
 					return $self->country_code_to_alpha3( $countryCode );
 				},
 			),
-			'email'       => array(),
+			'email'       => array(
+				'error'    => esc_html__( 'Postfiliale needs post number or email', 'dhl-for-woocommerce' ),
+				'validate' => function ( $email, $args ) {
+					$has_postnum = ! empty( $args['dhl_postnum'] );
+					$has_email   = ! empty( $email );
+					if ( ! $has_postnum && ! $has_email ) {
+						throw new Exception( esc_html__( 'Either post number or email is required for Postfiliale', 'dhl-for-woocommerce' ) );
+					}
+				},
+			),
 		);
 	}
 
