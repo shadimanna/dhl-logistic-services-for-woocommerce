@@ -77,6 +77,7 @@ More detailed instructions on how to set up your store and configure it are cons
 
 = 3.9.3 =
 * Add: Support for updated DHL customs data requirements (NCTS Phase 5), including MRN handling.
+* Add: Support GoGreen Plus service for both outbound and return shipments.
 
 = 3.9.2 =
 * Add: Support for `Shipment Tracking for WooCommerce` plugin.

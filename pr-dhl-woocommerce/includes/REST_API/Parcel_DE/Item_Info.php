@@ -855,6 +855,10 @@ class Item_Info {
 				'default' => '',
 				'rename'  => 'parcelOutletRouting',
 			),
+			'go_green_plus'          => array(
+				'default'  => '',
+				'rename'   => 'goGreenPlus',
+			),
 			'PDDP'                   => array(
 				'default' => '',
 				'rename'  => 'postalDeliveryDutyPaid',
@@ -877,6 +881,13 @@ class Item_Info {
 			'return_address_enabled' => array(
 				'default' => '',
 				'rename'  => 'dhlRetoure',
+				'sanitize' => function ( $args ) use ( $self ) {
+
+					if ( ! empty( $args['go_green_plus'] ) && 'yes' === $args['go_green_plus'] ) {
+						$args['goGreenPlus'] = true;
+					}
+					return $args;
+				},
 			),
 			'signature_service'      => array(
 				'default' => '',

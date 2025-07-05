@@ -702,6 +702,14 @@ msgstr ""
 msgid "Please, tick here if you want the \"Parcel Outlet Routing\" option to be checked in the \"Edit Order\" before printing a label."
 msgstr ""
 
+#: includes/class-pr-dhl-wc-method-paket.php:458
+msgid "GoGreen Plus default"
+msgstr ""
+
+#: includes/class-pr-dhl-wc-method-paket.php:459
+msgid "Check to request GoGreen Plus for every domestic shipment unless you turn it off per order."
+msgstr ""
+
 #: includes/class-pr-dhl-wc-method-paket.php:478
 msgid "Add extra weight in addition to the products.  Either an absolute amount or percentage (e.g. 10 for 10%)."
 msgstr ""
