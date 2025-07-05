@@ -90,7 +90,7 @@ if ( ! class_exists( 'PR_DHL_WC_Product' ) ) :
 					'label'       => $this->hs_code_label,
 					'description' => $this->hs_code_description,
 					'desc_tip'    => 'true',
-					'placeholder' => 'HS Code',
+					'placeholder' => esc_html__( 'HS Code', 'dhl-for-woocommerce' ),
 				)
 			);
 
