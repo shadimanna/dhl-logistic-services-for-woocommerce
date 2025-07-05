@@ -1,13 +1,13 @@
 === DHL Shipping Germany for WooCommerce ===
 Contributors: DHL, shadim, utzfu
 Tags: DPDHL, DHL, DHL eCommerce, DHL Paket Germany, Shipping
-Stable tag: 3.9.1
+Stable tag: 3.9.2
 Requires Plugins: woocommerce
 Requires PHP: 7.4
 Requires at least: 6.6
 Tested up to: 6.8
 WC requires at least: 9.6
-WC tested up to: 9.8
+WC tested up to: 10.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,15 +65,15 @@ More detailed instructions on how to set up your store and configure it are cons
 == Additional Information ==
 * A “Google Maps API Key” is required if you wish to display DHL locations on a map for your customers.
 
-== Screenshots ==
-
-1. screenshot-4.(png|jpg|jpeg|gif)
-1. screenshot-1.(png|jpg|jpeg|gif)
-1. screenshot-2.(png|jpg|jpeg|gif)
-1. screenshot-3.(png|jpg|jpeg|gif)
-
-
 == Changelog ==
+
+= 3.9.3 =
+* Add: Support for updated DHL customs data requirements (NCTS Phase 5), including MRN handling.
+
+= 3.9.2 =
+* Add: Support for `Shipment Tracking for WooCommerce` plugin.
+* Fix: CN23 form total calculation for multi-quantity items in international shipments.
+* Fix: Change the "Ship to a different address" text based on the selected shipping country at checkout for DHL.
 
 = 3.9.2 =
 * Add: Support for `Shipment Tracking for WooCommerce` plugin.

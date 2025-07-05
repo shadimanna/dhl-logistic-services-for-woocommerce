@@ -443,7 +443,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 
 			} else { // Non-domestic shipment
 
-				// Outside EU
+				// Outside EU.
 				if ( $this->is_crossborder_shipment( $order_id ) ) {
 
 					echo '<div class="shipment-dhl-row-container shipment-dhl-row-non-domestic">';
@@ -464,7 +464,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 						);
 					}
 
-					// Duties drop down
+					// Duties drop down.
 					$duties_opt = $dhl_obj->get_dhl_duties();
 					woocommerce_wp_select(
 						array(
@@ -477,17 +477,32 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 						)
 					);
 
-						woocommerce_wp_text_input(
-							array(
-								'id'                => 'pr_dhl_invoice_num',
-								'class'             => '',
-								'label'             => esc_html__( 'Invoice Number:', 'dhl-for-woocommerce' ),
-								'placeholder'       => '',
-								'description'       => '',
-								'value'             => isset( $dhl_label_items['pr_dhl_invoice_num'] ) ? $dhl_label_items['pr_dhl_invoice_num'] : $order_id,
-								'custom_attributes' => array( $is_disabled => $is_disabled ),
-							)
-						);
+					woocommerce_wp_text_input(
+						array(
+							'id'                => 'pr_dhl_invoice_num',
+							'class'             => '',
+							'label'             => esc_html__( 'Invoice Number:', 'dhl-for-woocommerce' ),
+							'placeholder'       => '',
+							'description'       => '',
+							'value'             => isset( $dhl_label_items['pr_dhl_invoice_num'] ) ? $dhl_label_items['pr_dhl_invoice_num'] : $order_id,
+							'custom_attributes' => array( $is_disabled => $is_disabled ),
+						)
+					);
+
+					// MRN, Required for DHL Paket International to Switzerland and DHL Europaket to all customs destinations.
+					woocommerce_wp_text_input( array(
+						'id'                => 'pr_dhl_mrn',
+						'label'             => esc_html__( 'Movement Reference Number (MRN):', 'dhl-for-woocommerce' ),
+						'placeholder'       => '25DE1234567890ABCDE',
+						'description'       => '',
+						'value'             => isset( $dhl_label_items['pr_dhl_mrn'] ) ? $dhl_label_items['pr_dhl_mrn'] : '',
+						'custom_attributes' => array(
+							'maxlength'  => 18,
+							'pattern'    => '[0-9A-Z]{18}',
+							$is_disabled => $is_disabled,
+						),
+					) );
+
 					echo '</div>'; // END -- Non Domestic
 				}
 
@@ -726,6 +741,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 				'pr_dhl_packages_height',
 				'pr_dhl_invoice_num',
 				'pr_dhl_description',
+				'pr_dhl_mrn',
 				'pr_dhl_go_green_plus',
 			);
 		}

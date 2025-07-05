@@ -9,13 +9,13 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
- * Version: 3.9.1
+ * Version: 3.9.2
  * Requires Plugins: woocommerce
  * Requires PHP: 7.4
  * Requires at least: 6.6
  * Tested up to: 6.8
  * WC requires at least: 9.6
- * WC tested up to: 9.8
+ * WC tested up to: 10.0
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 	class PR_DHL_WC {
 
-		private $version = '3.9.1';
+		private $version = '3.9.2';
 
 		/**
 		 * Instance to call certain functions globally within the plugin
@@ -272,7 +272,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 					// Ensure DHL Labels folder exists
 					$this->dhl_label_folder_check();
 				} catch ( Exception $e ) {
-					add_action( 'admin_notices', array( $this, 'environment_check' ) );
+					return null;
 				}
 			}
 
@@ -292,7 +292,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 						$this->product_editor       = new PR_DHL_WC_Product_Editor_Deutsche_Post();
 					}
 				} catch ( Exception $e ) {
-					add_action( 'admin_notices', array( $this, 'environment_check' ) );
+					return null;
 				}
 			}
 
@@ -537,8 +537,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 					}
 
 					return $api_cred;
-				} elseif ( $dhl_obj->is_dhl_ecs_asia() ) {
-					return $dhl_obj->get_api_url();
 				} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
 					return $dhl_obj->get_api_url();
 				}
@@ -575,8 +573,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 				if ( $dhl_obj->is_dhl_paket() ) {
 					$api_user = $shipping_dhl_settings['dhl_api_user'];
 					$api_pwd  = $shipping_dhl_settings['dhl_api_pwd'];
-				} elseif ( $dhl_obj->is_dhl_ecs_asia() ) {
-					list( $api_user, $api_pwd ) = $dhl_obj->get_api_creds();
 				} elseif ( $dhl_obj->is_dhl_deutsche_post() ) {
 					list( $api_user, $api_pwd ) = $dhl_obj->get_api_creds();
 				} else {

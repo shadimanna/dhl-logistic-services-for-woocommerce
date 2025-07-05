@@ -122,9 +122,8 @@ jQuery( document ).ready( function ( $ ) {
 			$( document.body ).on( 'change', '#shipping-pr-dhl-address_type', this.populateDropdown )
 			$( document.body ).on( 'change', '#shipping_dhl_drop_off', this.selectedDropOff )
 
-			$( document.body ).on( 'update_checkout', this.populateDropdown );
-
-			$( document.body ).on( 'change', '#shipping_country', this.toggleDhlParcelFinder )
+			$( document.body ).on( 'update_checkout', this.toggleDhlParcelFinder )
+			$( document.body ).on( 'update_checkout', this.populateDropdown )
 
 			wc_checkout_dhl_parcelfinder.toggleDhlParcelFinder()
 			wc_checkout_dhl_parcelfinder.address_type()
@@ -804,22 +803,45 @@ jQuery( document ).ready( function ( $ ) {
 				}
 			} )
 		},
-		toggleDhlParcelFinder: function() {
-		let selectedCountry = $('.woocommerce-checkout #shipping_country').val()
-			|| $('.woocommerce-checkout #shipping-country').val()
-		if ( 'DE' !== selectedCountry ) {
-			$( '#dhl_parcel_finder' ).hide()
-			$( '#shipping_dhl_drop_off_field' ).hide()
-			$( '#shipping_dhl_address_type_field' ).hide()
-			$( '#ship-to-different-address span' ).text( pr_dhl_checkout_frontend.ship_to_different_address_text )
-			$( '.registration_info' ).hide()
-		} else {
-			$( '#dhl_parcel_finder' ).show()
-			$( '#shipping_dhl_drop_off_field' ).show()
-			$( '#shipping_dhl_address_type_field' ).show()
-			$( '.registration_info' ).show()
+		toggleDhlParcelFinder: function () {
+			let selectedCountry
+
+			const $shipToCheckbox = $( '#ship-to-different-address-checkbox' )
+
+			if ( $shipToCheckbox.length ) {
+				// Classic checkout
+				selectedCountry = $shipToCheckbox.is( ':checked' )
+					? $( '.woocommerce-checkout #shipping_country' ).val()
+					: $( '.woocommerce-checkout #billing_country' ).val()
+			} else {
+				// Block-based checkout.
+				selectedCountry = $( '.woocommerce-checkout #shipping-country' ).val()
+			}
+
+			const parcelFinder = $( '#dhl_parcel_finder' )
+			const dropOffField = $( '#shipping_dhl_drop_off_field' )
+			const addressTypeField = $( '#shipping_dhl_address_type_field' )
+			const registrationInfo = $( '.registration_info' )
+			const shipToText = $( '#ship-to-different-address span' )
+
+			if ( !shipToText.data( 'original' ) ) {
+				shipToText.data( 'original', shipToText.text() )
+			}
+
+			if ( selectedCountry === 'DE' ) {
+				parcelFinder.show()
+				dropOffField.show()
+				addressTypeField.show()
+				registrationInfo.show()
+				shipToText.text( pr_dhl_checkout_frontend.ship_to_different_address_text )
+			} else {
+				parcelFinder.hide()
+				dropOffField.hide()
+				addressTypeField.hide()
+				registrationInfo.hide()
+				shipToText.text( shipToText.data( 'original' ) )
+			}
 		}
-	}
 	}
 
 	if ( jQuery( '[data-fancybox]' ).length > 0 ) {
