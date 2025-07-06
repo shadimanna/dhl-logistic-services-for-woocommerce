@@ -67,15 +67,16 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Screenshots ==
 
-1. screenshot-4.(png|jpg|jpeg|gif)
-1. screenshot-1.(png|jpg|jpeg|gif)
-1. screenshot-2.(png|jpg|jpeg|gif)
-1. screenshot-3.(png|jpg|jpeg|gif)
-
+1. Orders list with DHL columns.
+2. Order edit page with DHL widget.
+3. DHL plugin setup wizard.
+4. DHL Paket settings.
+5. Blocks Checkout with DHL services.
 
 == Changelog ==
 
 = 3.9.3 =
+* Add: Support for updated DHL customs data requirements (NCTS Phase 5), including MRN handling.
 * Fix: Prevent fatal error caused by incorrect number of placeholders in the Google Maps API key description string on settings page.
 
 = 3.9.2 =
