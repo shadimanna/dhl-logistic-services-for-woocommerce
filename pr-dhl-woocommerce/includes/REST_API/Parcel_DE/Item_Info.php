@@ -855,6 +855,10 @@ class Item_Info {
 				'default' => '',
 				'rename'  => 'parcelOutletRouting',
 			),
+			'go_green_plus'          => array(
+				'default'  => '',
+				'rename'   => 'goGreenPlus',
+			),
 			'PDDP'                   => array(
 				'default' => '',
 				'rename'  => 'postalDeliveryDutyPaid',
