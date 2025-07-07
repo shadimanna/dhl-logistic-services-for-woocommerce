@@ -228,6 +228,7 @@ class Client extends API_Client {
 						'refNo'         => apply_filters( 'pr_shipping_dhl_paket_label_ref_no_prefix', 'order_' ) . $request_info->shipment['refNo'],
 						'billingNumber' => $request_info->args['dhl_settings']['account_num'] . $request_info->dhl_return_product . $request_info->args['dhl_settings']['participation_return'],
 						'returnAddress' => $this->get_return_address( $request_info ),
+						'goGreenPlus'   => ( 'true' === $request_info->services['goGreenPlus'] || 'yes' === $request_info->services['goGreenPlus'] ) ? 'true' : 'false',
 					);
 					break;
 			}
