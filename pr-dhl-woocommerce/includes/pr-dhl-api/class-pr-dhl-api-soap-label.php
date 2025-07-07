@@ -597,9 +597,6 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 				'go_green_plus'        => array(
 					'name' => 'goGreenPlus',
 				),
-				'return_go_green_plus' => array(
-					'name' => 'returnShipmentGoGreenPlus',
-				),
 				'PDDP'                 => array(
 					'name' => 'PDDP',
 				),
@@ -644,6 +641,11 @@ class PR_DHL_API_SOAP_Label extends PR_DHL_API_SOAP implements PR_DHL_API_Label 
 								break;
 							case 'routing':
 								$services[ $value['name'] ]['details'] = isset( $this->args['order_details']['routing_email'] ) ? $this->args['order_details']['routing_email'] : '';
+								break;
+							case 'go_green_plus':
+								$services['returnShipmentGoGreenPlus'] = array(
+									'active' => 1,
+								);
 								break;
 						}
 					} else {
