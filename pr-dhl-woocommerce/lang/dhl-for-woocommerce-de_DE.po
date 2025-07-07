@@ -4119,10 +4119,10 @@ msgstr ""
 msgid "API Key"
 msgstr "API Schlüssel"
 
-#: includes/class-pr-dhl-wc-method-paket.php:751
+#: includes/class-pr-dhl-wc-method-paket.php:753
 #, php-format
-msgid "The Google Maps API Key is necessary to display the DHL Locations on a Google map<br/>Get a free Google Maps API key %1$s%2$s"
-msgstr "Der Google Maps API Schlüssel ist notwendig um DHL Standorte auf der Karte anzuzeigen<br/>Klicken Sie %1$shier%2$s um einen kostenlosen Google Maps Schlüssel zu erhalten"
+msgid "The Google Maps API Key is necessary to display the DHL Locations on a Google map.%1$sGet a free Google Maps API key %2$shere%3$s."
+msgstr "Der Google Maps API Schlüssel ist erforderlich um DHL Standorte auf einer Google Karte anzuzeigen%1$sHole dir einen kostenlosen Google Maps API Schlüssel %2$shier%3$s"
 
 #: includes/class-pr-dhl-wc-method-paket.php:631
 #, fuzzy
