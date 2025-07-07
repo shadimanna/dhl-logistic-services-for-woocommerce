@@ -844,7 +844,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 				}
 			}
 
-
 			// if ( $this->is_crossborder_shipment( $order_id ) ) {
 			// $dhl_label_items['pr_dhl_description'] = $this->get_package_description( $order_id );
 			// $args['order_details']['description'] = $dhl_label_items['pr_dhl_description'];
