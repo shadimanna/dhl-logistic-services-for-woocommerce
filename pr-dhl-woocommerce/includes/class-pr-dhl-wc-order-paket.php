@@ -335,7 +335,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 						)
 					);
 
-				$this->crossborder_and_domestic_fields( $dhl_label_items, $is_disabled );
+					$this->crossborder_and_domestic_fields( $dhl_label_items, $is_disabled );
 
 					echo '<hr/>';
 
@@ -532,7 +532,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 
 		public function crossborder_and_domestic_fields( $dhl_label_items, $is_disabled ) {
 
-
 			woocommerce_wp_hidden_input(
 				array(
 					'id'          => 'pr_dhl_cdp_delivery',
@@ -574,8 +573,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 					'custom_attributes' => array( $is_disabled => $is_disabled ),
 				)
 			);
-
-
 
 			if ( ! $this->is_cdp_delivery( $dhl_label_items ) ) {
 
