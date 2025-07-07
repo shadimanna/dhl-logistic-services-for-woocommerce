@@ -149,17 +149,16 @@ class Client extends API_Client {
 	protected function services_mappimng( Item_Info $request_info ) {
 		$services = array();
 		foreach ( $request_info->services as $key => $service ) {
-
-			if (
-				'goGreenPlus' === $key &&
-				'DE' === PR_DHL()->get_base_country() &&
-				PR_DHL()->is_shipping_domestic( $request_info->args['shipping_address']['country'] )
-			) {
-				$services[ $key ] = ( 'yes' === $service ) ? 'true' : 'false';
+			/**
+			 * GoGreenService.
+			 * We should send a value to the API, even when not selected to allow the merchant to turn this option off.
+			 */
+			if ( 'goGreenPlus' === $key && ! empty( $service ) ) {
+				$services[ $key ] = 'yes' === $service;
 				continue;
 			}
 
-			// If checkbox not checked
+			// If checkbox not checked.
 			if ( empty( $request_info->services[ $key ] ) || ( $request_info->services[ $key ] == 'no' ) ) {
 				continue;
 			}
@@ -228,8 +227,11 @@ class Client extends API_Client {
 						'refNo'         => apply_filters( 'pr_shipping_dhl_paket_label_ref_no_prefix', 'order_' ) . $request_info->shipment['refNo'],
 						'billingNumber' => $request_info->args['dhl_settings']['account_num'] . $request_info->dhl_return_product . $request_info->args['dhl_settings']['participation_return'],
 						'returnAddress' => $this->get_return_address( $request_info ),
-						'goGreenPlus'   => ( 'true' === $request_info->services['goGreenPlus'] || 'yes' === $request_info->services['goGreenPlus'] ) ? 'true' : 'false',
 					);
+
+					if ( isset( $request_info->services['goGreenPlus'] ) ) {
+						$services[ $key ]['goGreenPlus'] = 'yes' === $request_info->services['goGreenPlus'];
+					}
 					break;
 			}
 		}
@@ -424,6 +426,11 @@ class Client extends API_Client {
 			}
 
 			if ( empty( $v ) && ! is_numeric( $v ) ) {
+				// Don't unset GoGreenPlus value if its false.
+				if ( $k === 'goGreenPlus' ) {
+					continue;
+				}
+
 				unset( $array[ $k ] );
 			}
 		}
