@@ -748,12 +748,20 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 						'title'       => esc_html__( 'API Key', 'dhl-for-woocommerce' ),
 						'type'        => 'text',
 						/* Translators: %s represents a link to obtain a Google Maps API key. */
-						'description' => sprintf(
-							wp_kses(
-								__( 'The Google Maps API Key is necessary to display the DHL Locations on a Google map.<br/>Get a free Google Maps API key %1$s.', 'dhl-for-woocommerce' ),
-								array( 'br' => array() ) // Allow <br> tags
+						'description' => wp_kses(
+							sprintf(
+								esc_html__( 'The Google Maps API Key is necessary to display the DHL Locations on a Google map.%1$sGet a free Google Maps API key %2$shere%3$s.', 'dhl-for-woocommerce' ),
+								'<br/>',
+								'<a href="' . esc_url( 'https://developers.google.com/maps/documentation/javascript/get-api-key' ) . '" target="_blank">',
+								'</a>'
 							),
-							'<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank">' . esc_html__( 'here', 'dhl-for-woocommerce' ) . '</a>'
+							array(
+								'br' => array(),
+								'a'  => array(
+									'href'   => array(),
+									'target' => array(),
+								),
+							)
 						),
 						'desc_tip'    => false,
 						'class'       => '',
