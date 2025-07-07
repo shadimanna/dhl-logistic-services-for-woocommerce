@@ -427,7 +427,7 @@ class Client extends API_Client {
 
 			if ( empty( $v ) && ! is_numeric( $v ) ) {
 				// Don't unset GoGreenPlus value if its false.
-				if ( $k === 'goGreenPlus' ) {
+				if ( 'goGreenPlus' === $k ) {
 					continue;
 				}
 
