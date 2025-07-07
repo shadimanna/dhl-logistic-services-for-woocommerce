@@ -155,7 +155,7 @@ class Client extends API_Client {
 				'DE' === PR_DHL()->get_base_country() &&
 				PR_DHL()->is_shipping_domestic( $request_info->args['shipping_address']['country'] )
 			) {
-				$services[ $key ] = ( 'true' === $service || 'yes' === $service ) ? 'true' : 'false';
+				$services[ $key ] = ( 'yes' === $service ) ? 'true' : 'false';
 				continue;
 			}
 
