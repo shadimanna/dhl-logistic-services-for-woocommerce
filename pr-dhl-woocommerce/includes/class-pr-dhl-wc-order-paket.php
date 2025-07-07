@@ -338,17 +338,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 					$this->crossborder_and_domestic_fields( $dhl_label_items, $is_disabled );
 
 					echo '<hr/>';
-
-				woocommerce_wp_checkbox(
-					array(
-						'id'                => 'pr_dhl_go_green_plus',
-						'label'             => esc_html__( 'GoGreen Plus: ', 'dhl-for-woocommerce' ),
-						'placeholder'       => '',
-						'description'       => '',
-						'value'             => isset( $dhl_label_items['pr_dhl_go_green_plus'] ) ? $dhl_label_items['pr_dhl_go_green_plus'] : $this->shipping_dhl_settings['dhl_default_go_green_plus'],
-						'custom_attributes' => array( $is_disabled => $is_disabled ),
-					)
-				);
 					woocommerce_wp_checkbox(
 						array(
 							'id'                => 'pr_dhl_identcheck',
@@ -439,6 +428,16 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 						)
 					);
 
+                    woocommerce_wp_checkbox(
+                        array(
+                            'id'                => 'pr_dhl_go_green_plus',
+                            'label'             => esc_html__( 'GoGreen Plus:', 'dhl-for-woocommerce' ),
+                            'placeholder'       => '',
+                            'description'       => '',
+                            'value'             => isset( $dhl_label_items['pr_dhl_go_green_plus'] ) ? $dhl_label_items['pr_dhl_go_green_plus'] : $this->shipping_dhl_settings['dhl_default_go_green_plus'],
+                            'custom_attributes' => array( $is_disabled => $is_disabled ),
+                        )
+                    );
 				echo '</div>'; // END -- Additional Services
 
 			} else { // Non-domestic shipment
