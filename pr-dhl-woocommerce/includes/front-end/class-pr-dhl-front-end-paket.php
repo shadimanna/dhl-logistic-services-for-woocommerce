@@ -243,6 +243,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 				'postoffice'       => PR_DHL_POST_OFFICE,
 				'branch'           => esc_html__( 'Branch', 'dhl-for-woocommerce' ),
 				'select'           => esc_html__( 'Select ', 'dhl-for-woocommerce' ),
+				'select_drop'      => esc_html__( 'Select a drop-off point', 'dhl-for-woocommerce' ),
 				'post_number'      => esc_html__( 'Post Number ', 'dhl-for-woocommerce' ),
 				'post_number_tip'  => esc_html__( '<span class="dhl-tooltip" title="Indicate a preferred time, which suits you best for your parcel delivery by choosing one of the displayed time windows.">?</span>', 'dhl-for-woocommerce' ),
 				// Translators: %1$s is an opening HTML tag and %2$s is a closing HTML tag for styling the error message.
@@ -850,7 +851,6 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 				'class'    => array( 'shipping-dhl-postnum' ),
 				'clear'    => true,
 			);
-
 			$shipping_dhl_drop_off = array(
 				'label'    => __( 'Drop off points', 'dhl-for-woocommerce' ),
 				'required' => false,
@@ -862,6 +862,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 			);
 
 			$new_shipping_fields = array();
+
 
 			foreach ( $checkout_fields['shipping'] as $key => $field ) {
 				if ( 'shipping_first_name' === $key ) {
