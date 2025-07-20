@@ -227,12 +227,11 @@ abstract class PR_DHL_API_REST {
 	}
 
 	public function get_request() {
-
 		$rest_auth = '';
 		$api_url   = PR_DHL()->get_api_url();
 		if ( is_array( $api_url ) ) {
 			$rest_auth = $this->get_basic_auth_encode( $api_url['user'], $api_url['password'] );
-			$api_url   = str_replace( '/soap', '/rest', $api_url['auth_url'] );
+			$api_url   = $api_url['auth_url'];
 		}
 
 		$this->set_header( $rest_auth );

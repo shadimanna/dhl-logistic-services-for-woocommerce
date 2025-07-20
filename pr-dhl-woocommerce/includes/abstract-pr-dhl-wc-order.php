@@ -1149,7 +1149,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 							// Allow third parties to modify the args to the DHL APIs
 							$args = apply_filters( 'pr_shipping_dhl_label_args', $args, $order_id );
 
-							// SOAP API request.
+							// API request.
 							$label_tracking_info = $dhl_obj->get_dhl_label( $args );
 							$this->save_dhl_label_tracking( $order_id, $label_tracking_info );
 							$tracking_note = $this->get_tracking_note( $order_id );
@@ -1167,12 +1167,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 								'type'    => 'success',
 							);
 
-							// if ( ! empty( $label_tracking_info['label_path'] ) ) {
-							// $merge_files[] = $label_tracking_info['label_path'];
-							// }
-
 							do_action( 'pr_shipping_dhl_label_created', $order_id );
-
 						}
 
 						if ( ! empty( $label_tracking_info['label_path'] ) ) {
@@ -1186,55 +1181,10 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 						);
 					}
 				}
-				/*
-				if ( API_Utils::is_new_merchant() || API_Utils::is_rest_api_enabled() ) {
-				$labels_tracking_info = $dhl_obj->get_dhl_labels( $orders_args );
-
-				foreach ( $labels_tracking_info['labels'] as $label_tracking_info ) {
-					$this->save_dhl_label_tracking( $label_tracking_info['order_id'], $label_tracking_info );
-
-					if ( ! empty( $label_tracking_info['label_path'] ) ) {
-						$merge_files[] = $label_tracking_info['label_path'];
-					}
-
-					$tracking_note      = $this->get_tracking_note( $label_tracking_info['order_id'] );
-					$tracking_note_type = $this->get_tracking_note_type();
-					$tracking_note_type = empty( $tracking_note_type ) ? 0 : 1;
-
-					$order = wc_get_order( $label_tracking_info['order_id'] );
-					$order->add_order_note( $tracking_note, $tracking_note_type, true );
-
-					++ $label_count;
-
-					$array_messages[] = array(
-						'message' => sprintf( __( 'Order #%s: DHL label Created', 'dhl-for-woocommerce' ),
-							$order->get_order_number() ),
-						'type'    => 'success',
-					);
-
-					do_action( 'pr_shipping_dhl_label_created', $order->get_order_number() );
-				}
-
-				if ( isset( $labels_tracking_info['errors'] ) ) {
-					foreach ( $labels_tracking_info['errors'] as $label_tracking_info ) {
-						$array_messages[] = array(
-							'message' => sprintf( __( 'Order #%s: %s', 'dhl-for-woocommerce' ),
-								$label_tracking_info['order_id'], $label_tracking_info['message'] ),
-							'type'    => 'error',
-						);
-					}
-				}
-				}
-				*/
 				try {
-
 					$file_bulk = $this->merge_label_files( $merge_files );
 
-					// $message = sprintf( __( 'DHL label created for %1$s out of %2$s selected order(s).', 'dhl-for-woocommerce' ), $label_count , sizeof($order_ids) );
-
 					if ( file_exists( $file_bulk['file_bulk_path'] ) ) {
-						// $message .= sprintf( __( ' - %sdownload labels file%s', 'dhl-for-woocommerce' ), '<a href="' . $file_bulk['file_bulk_url'] . '" target="_blank">', '</a>' );
-
 						// We're saving the bulk file path temporarily and access it later during the download process.
 						// This information expires in 3 minutes (180 seconds), just enough for the user to see the
 						// displayed link and click it if he or she wishes to download the bulk labels
@@ -1253,8 +1203,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 							'type'    => 'success',
 						);
 					} else {
-						// $message .= __( '. Could not create bulk DHL label file, download individually.', 'dhl-for-woocommerce' );
-
 						$array_messages[] = array(
 							'message' => esc_html__( 'Could not create bulk DHL label file, download individually.', 'dhl-for-woocommerce' ),
 							'type'    => 'error',

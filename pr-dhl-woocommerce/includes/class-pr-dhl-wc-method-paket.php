@@ -192,18 +192,6 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					'placeholder'       => '1234567890',
 					'custom_attributes' => array( 'maxlength' => '10' ),
 				),
-				'dhl_default_api'            => array(
-					'title'       => esc_html__( 'API Protocol', 'dhl-for-woocommerce' ),
-					'type'        => 'select',
-					'description' => esc_html__( 'Select the API protocol to use for creating shipping labels.', 'dhl-for-woocommerce' ),
-					'desc_tip'    => true,
-					'options'     => array(
-						'soap'     => 'SOAP',
-						'rest-api' => 'REST',
-					),
-					'class'       => 'wc-enhanced-select',
-					'default'     => API_Utils::is_new_merchant() ? 'rest-api' : 'soap',
-				),
 				'dhl_sandbox'                => array(
 					'title'       => esc_html__( 'Sandbox Mode', 'dhl-for-woocommerce' ),
 					'type'        => 'checkbox',

@@ -83,22 +83,12 @@ function DHLSandboxEnabled( sandbox_checkbox ) {
 	var tr_sandbox_password = api_sandbox_password.closest( 'tr' )
 
 	if ( sandbox_checkbox.prop( 'checked' ) === true ) {
-
-		// api_settings_username.val( dhl_paket_settings_obj.username );
-		// api_settings_password.val( dhl_paket_settings_obj.pass );
-		// account_number.val( dhl_paket_settings_obj.account_no );
-
 		api_settings_username.prop( 'readonly', true )
 		api_settings_password.prop( 'readonly', true )
 		account_number.prop( 'readonly', true )
 
-		if ( 'soap' === api_mode.val() ) {
-			tr_sandbox_username.show()
-			tr_sandbox_password.show()
-		} else {
-			tr_sandbox_username.hide()
-			tr_sandbox_password.hide()
-		}
+		tr_sandbox_username.hide()
+		tr_sandbox_password.hide()
 
 	} else {
 		api_settings_username.prop( 'readonly', false )

@@ -22,9 +22,6 @@ class PR_DHL_API_REST_Finder extends PR_DHL_API_REST {
 	public function __construct() {}
 
 	public function get_parcel_location( $args ) {
-
-		$soap_request = $this->set_message();
-
 		try {
 
 			$this->set_arguments( $args );
