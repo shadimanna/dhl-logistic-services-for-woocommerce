@@ -30,15 +30,7 @@ if ( ! class_exists( 'PR_DHL_WC_Notice_SOAP_Deprecation' ) ) :
 		 * @return bool
 		 */
 		protected static function should_show() {
-			if ( ! is_admin() ) {
-				return false;
-			}
-
 			if ( ! current_user_can( 'manage_woocommerce' ) ) {
-				return false;
-			}
-
-			if ( ! defined( 'PR_DHL_VERSION' ) ) {
 				return false;
 			}
 
