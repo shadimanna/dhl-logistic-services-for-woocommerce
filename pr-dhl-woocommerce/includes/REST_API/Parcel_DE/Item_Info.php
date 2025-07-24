@@ -692,7 +692,7 @@ class Item_Info {
 				},
 			),
 			'email'       => array(
-				'error'    => esc_html__( 'Postfiliale needs post number or email', 'dhl-for-woocommerce' ),
+				'default' => '',
 				'validate' => function ( $email, $args ) {
 					$has_postnum = ! empty( $args['dhl_postnum'] );
 					$has_email   = ! empty( $email );
