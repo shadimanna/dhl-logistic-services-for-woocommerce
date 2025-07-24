@@ -851,6 +851,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 				'class'    => array( 'shipping-dhl-postnum' ),
 				'clear'    => true,
 			);
+
 			$shipping_dhl_drop_off = array(
 				'label'    => __( 'Drop off points', 'dhl-for-woocommerce' ),
 				'required' => false,
@@ -862,7 +863,6 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 			);
 
 			$new_shipping_fields = array();
-
 
 			foreach ( $checkout_fields['shipping'] as $key => $field ) {
 				if ( 'shipping_first_name' === $key ) {
