@@ -184,7 +184,7 @@ export const Block = ({checkoutExtensionData}) => {
         clearValidationError(validationErrorId);
 
         const address1 = shippingAddress.address_1 ? shippingAddress.address_1 : '';
-        const pos_ps = address1.includes('packstation');
+        const pos_ps = address1.includes('Packstation');
         const pos_rs = address1.includes('Postfiliale');
         const pos_po = address1.includes('Postfiliale');
 
