@@ -30,12 +30,9 @@ if ( ! class_exists( 'PR_DHL_WC_Notice_SOAP_Deprecation' ) ) :
 		 * @return bool
 		 */
 		protected static function should_show() {
-			if ( ! current_user_can( 'manage_woocommerce' ) ) {
-				return false;
-			}
+			$base_country_code = PR_DHL()->get_base_country();
 
-			// If REST already enabled we are done (hides notice).
-			if ( API_Utils::is_rest_api_enabled() ) {
+			if ( ! current_user_can( 'manage_woocommerce' ) || API_Utils::is_rest_api_enabled() || $base_country_code !== "DE" ) {
 				return false;
 			}
 
