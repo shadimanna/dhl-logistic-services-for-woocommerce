@@ -315,7 +315,7 @@ class Client extends API_Client {
 	 */
 	protected function get_consignee_address( Item_Info $request_info ) {
 		if ( $request_info->pos_rs || $request_info->pos_po ) {
-			$address_fields = array( 'name', 'postNumber', 'retailID', 'postalCode', 'city', 'country' );
+			$address_fields = array( 'name', 'postNumber', 'retailID', 'postalCode', 'city', 'country', 'email' );
 
 			return $this->get_address( $address_fields, $request_info->postOfficeAddress );
 		}
