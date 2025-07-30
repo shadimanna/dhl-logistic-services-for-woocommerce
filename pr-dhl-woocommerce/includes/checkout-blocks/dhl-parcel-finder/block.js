@@ -184,9 +184,13 @@ export const Block = ({checkoutExtensionData}) => {
         clearValidationError(validationErrorId);
 
         const address1 = shippingAddress.address_1 ? shippingAddress.address_1 : '';
-        const pos_ps = address1.includes('packstation');
-        const pos_rs = address1.includes('Postfiliale');
-        const pos_po = address1.includes('Postfiliale');
+        const addressLower  = address1.toLowerCase();
+        const PACKSTATION_RE  = /\bpackstation\s+\d{3}\b/i;
+        const POSTFILIALE_RE  = /\bpostfiliale\s+\d{3,5}\b/i;
+
+        const pos_ps = PACKSTATION_RE.test(addressLower);
+        const pos_rs = POSTFILIALE_RE.test(addressLower);
+        const pos_po = POSTFILIALE_RE.test(addressLower);
 
         if ( addressType === 'dhl_packstation' ) {
 
