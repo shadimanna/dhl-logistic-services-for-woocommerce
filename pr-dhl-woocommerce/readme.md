@@ -67,6 +67,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 3.9.4 =
+* Add: SOAP API deprecation notice.
+
 = 3.9.3 =
 * Add: Support for updated DHL customs data requirements (NCTS Phase 5), including MRN handling.
 * Add: Support GoGreen Plus service for both outbound and return shipments.
