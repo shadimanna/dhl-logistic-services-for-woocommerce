@@ -9,12 +9,12 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
- * Version: 3.9.2
+ * Version: 3.9.3
  * Requires Plugins: woocommerce
  * Requires PHP: 7.4
  * Requires at least: 6.6
  * Tested up to: 6.8
- * WC requires at least: 9.6
+ * WC requires at least: 9.8
  * WC tested up to: 10.0
  *
  * This program is free software: you can redistribute it and/or modify
@@ -41,7 +41,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 	class PR_DHL_WC {
 
-		private $version = '3.9.2';
+		private $version = '3.9.3';
 
 		/**
 		 * Instance to call certain functions globally within the plugin
@@ -252,6 +252,9 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			add_action( 'dhl_myaccount_pwd_expiration_week', array( $this, 'dhl_myaccount_pwd_expiration_week_callback' ) );
 			add_action( 'admin_notices', array( $this, 'password_expiration_notice_callback' ) );
 			add_action( 'block_categories_all',array($this, 'register_pr_dhl_block_category'), 10, 2 );
+
+			// SOAP deprecation notice.
+			PR_DHL_WC_Notice_SOAP_Deprecation::init();
 		}
 
 		public function get_pr_dhl_wc_order() {

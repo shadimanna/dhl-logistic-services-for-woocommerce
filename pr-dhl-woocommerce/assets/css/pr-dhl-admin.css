@@ -111,6 +111,7 @@ div#shipment-dhl-label-form > div:nth-of-type(even) {
 .pr_dhl_is_codeable_field,
 .pr_dhl_routing_field,
 .pr_dhl_PDDP_field,
+.pr_dhl_go_green_plus_field,
 .pr_dhl_signature_service_field{
 	display: flex;
 }
@@ -133,6 +134,7 @@ div#shipment-dhl-label-form > div:nth-of-type(even) {
 .pr_dhl_is_codeable_field label,
 .pr_dhl_routing_field label,
 .pr_dhl_PDDP_field label,
+.pr_dhl_go_green_plus_field label,
 .pr_dhl_signature_service_field label{
 	order: 2;
 	margin-left: 4px;

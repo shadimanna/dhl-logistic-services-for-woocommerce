@@ -149,7 +149,16 @@ class Client extends API_Client {
 	protected function services_mappimng( Item_Info $request_info ) {
 		$services = array();
 		foreach ( $request_info->services as $key => $service ) {
-			// If checkbox not checked
+			/**
+			 * GoGreenService.
+			 * We should send a value to the API, even when not selected to allow the merchant to turn this option off.
+			 */
+			if ( 'goGreenPlus' === $key && ! empty( $service ) ) {
+				$services[ $key ] = 'yes' === $service;
+				continue;
+			}
+
+			// If checkbox not checked.
 			if ( empty( $request_info->services[ $key ] ) || ( $request_info->services[ $key ] == 'no' ) ) {
 				continue;
 			}
@@ -219,6 +228,10 @@ class Client extends API_Client {
 						'billingNumber' => $request_info->args['dhl_settings']['account_num'] . $request_info->dhl_return_product . $request_info->args['dhl_settings']['participation_return'],
 						'returnAddress' => $this->get_return_address( $request_info ),
 					);
+
+					if ( isset( $request_info->services['goGreenPlus'] ) ) {
+						$services[ $key ]['goGreenPlus'] = 'yes' === $request_info->services['goGreenPlus'];
+					}
 					break;
 			}
 		}
@@ -413,6 +426,11 @@ class Client extends API_Client {
 			}
 
 			if ( empty( $v ) && ! is_numeric( $v ) ) {
+				// Don't unset GoGreenPlus value if its false.
+				if ( 'goGreenPlus' === $k ) {
+					continue;
+				}
+
 				unset( $array[ $k ] );
 			}
 		}
