@@ -692,13 +692,18 @@ class Item_Info {
 				},
 			),
 			'email'       => array(
-				'default' => '',
-				'validate' => function ( $email, $args ) {
+				'default'  => '',
+				'validate' => function ( $email, $args ) use ( $self ) {
 					$has_postnum = ! empty( $args['dhl_postnum'] );
 					$has_email   = ! empty( $email );
 					if ( ! $has_postnum && ! $has_email ) {
-						throw new Exception( esc_html__( 'Either post number or email is required for Postfiliale', 'dhl-for-woocommerce' ) );
+						throw new Exception(
+							esc_html__( 'Either post number or email is required for Postfiliale', 'dhl-for-woocommerce' )
+						);
 					}
+				},
+				'sanitize' => function ( $email, $args ) use ( $self ) {
+					return ! empty( $args['dhl_postnum'] ) ? '' : $email;
 				},
 			),
 		);
