@@ -77,6 +77,8 @@ More detailed instructions on how to set up your store and configure it are cons
 
 = 3.9.4 =
 * Fix: Correct Packstation text validation in the checkout block .
+* Fix: Resolved an issue causing the translated text for "Select a drop-off point" to display incorrectly.
+* Add: SOAP API deprecation notice.
 
 = 3.9.3 =
 * Add: Support for updated DHL customs data requirements (NCTS Phase 5), including MRN handling.

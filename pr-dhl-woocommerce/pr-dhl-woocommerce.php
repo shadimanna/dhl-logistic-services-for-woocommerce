@@ -252,6 +252,9 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			add_action( 'dhl_myaccount_pwd_expiration_week', array( $this, 'dhl_myaccount_pwd_expiration_week_callback' ) );
 			add_action( 'admin_notices', array( $this, 'password_expiration_notice_callback' ) );
 			add_action( 'block_categories_all',array($this, 'register_pr_dhl_block_category'), 10, 2 );
+
+			// SOAP deprecation notice.
+			PR_DHL_WC_Notice_SOAP_Deprecation::init();
 		}
 
 		public function get_pr_dhl_wc_order() {
