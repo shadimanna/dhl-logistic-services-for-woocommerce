@@ -369,7 +369,9 @@ jQuery( document ).ready( function ( $ ) {
 			if ( dropdown ) {
 				$( dropdown ).empty()
 				const option = document.createElement( 'option' )
-				option.text = 'Select a drop-off point'
+				option.text = pr_dhl_checkout_frontend.select_drop;
+				option.value = '';
+				option.disabled = true;
 				dropdown.add( option )
 			}
 		},
