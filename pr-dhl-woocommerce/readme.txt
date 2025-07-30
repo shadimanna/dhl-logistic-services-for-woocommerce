@@ -76,7 +76,7 @@ More detailed instructions on how to set up your store and configure it are cons
 == Changelog ==
 
 = 3.9.4 =
-* Fix: Update overwritten translated text "Select a drop-off point".
+* Fix: Resolved an issue causing the translated text for "Select a drop-off point" to display incorrectly.
 
 = 3.9.3 =
 * Add: Support for updated DHL customs data requirements (NCTS Phase 5), including MRN handling.
