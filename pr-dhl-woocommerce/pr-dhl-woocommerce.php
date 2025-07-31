@@ -41,7 +41,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 	class PR_DHL_WC {
 
-		private $version = '3.9.3';
+		private $version = '3.9.4';
 
 		/**
 		 * Instance to call certain functions globally within the plugin
