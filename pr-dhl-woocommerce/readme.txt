@@ -1,7 +1,7 @@
 === DHL Shipping Germany for WooCommerce ===
 Contributors: DHL, shadim, utzfu
 Tags: DPDHL, DHL, DHL eCommerce, DHL Paket Germany, Shipping
-Stable tag: 3.9.3
+Stable tag: 3.9.4
 Requires Plugins: woocommerce
 Requires PHP: 7.4
 Requires at least: 6.6
