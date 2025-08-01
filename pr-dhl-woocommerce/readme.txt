@@ -79,7 +79,7 @@ More detailed instructions on how to set up your store and configure it are cons
 * Add: SOAP API deprecation notice.
 * Fix: Correct Packstation text validation in the checkout block.
 * Fix: An issue causing the translated text for "Select a drop-off point" to display incorrectly.
-* Fix: An issue generating label where shipping to a Postfiliale address would fail if the Postnummer was missing.
+* Fix: Make Postnummer optional for Postfiliale if email is provided.
 
 = 3.9.3 =
 * Add: Support for updated DHL customs data requirements (NCTS Phase 5), including MRN handling.
