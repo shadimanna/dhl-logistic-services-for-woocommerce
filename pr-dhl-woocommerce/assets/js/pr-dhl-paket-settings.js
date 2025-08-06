@@ -34,17 +34,12 @@ jQuery( document ).ready( function () {
 	}
 	dhl_settings.init()
 
-	var sandbox_checkbox = jQuery( '#woocommerce_pr_dhl_paket_dhl_sandbox' )
-	var api_mode = jQuery( '#woocommerce_pr_dhl_paket_dhl_default_api' )
-	DHLSandboxEnabled( sandbox_checkbox )
+       var sandbox_checkbox = jQuery( '#woocommerce_pr_dhl_paket_dhl_sandbox' )
+       DHLSandboxEnabled( sandbox_checkbox )
 
-	sandbox_checkbox.on( 'click', function ( evt ) {
-		DHLSandboxEnabled( jQuery( this ) )
-	} )
-
-	api_mode.on( 'change', () => {
-		DHLSandboxEnabled( sandbox_checkbox )
-	} )
+       sandbox_checkbox.on( 'click', function ( evt ) {
+               DHLSandboxEnabled( jQuery( this ) )
+       } )
 
 	var logo_checkbox = jQuery( '#woocommerce_pr_dhl_paket_dhl_add_logo' )
 	DHLLogoEnabled( logo_checkbox )
@@ -74,10 +69,9 @@ function DHLLogoEnabled( logo_checkbox ) {
 function DHLSandboxEnabled( sandbox_checkbox ) {
 	var api_settings_username = jQuery( '#woocommerce_pr_dhl_paket_dhl_api_user' )
 	var api_settings_password = jQuery( '#woocommerce_pr_dhl_paket_dhl_api_pwd' )
-	var account_number = jQuery( '#woocommerce_pr_dhl_paket_dhl_account_num' )
-	var api_mode = jQuery( '#woocommerce_pr_dhl_paket_dhl_default_api' )
+	var account_number = jQuery('#woocommerce_pr_dhl_paket_dhl_account_num')
 
-	var api_sandbox_username = jQuery( '#woocommerce_pr_dhl_paket_dhl_api_sandbox_user' )
+	var api_sandbox_username = jQuery('#woocommerce_pr_dhl_paket_dhl_api_sandbox_user')
 	var api_sandbox_password = jQuery( '#woocommerce_pr_dhl_paket_dhl_api_sandbox_pwd' )
 	var tr_sandbox_username = api_sandbox_username.closest( 'tr' )
 	var tr_sandbox_password = api_sandbox_password.closest( 'tr' )
