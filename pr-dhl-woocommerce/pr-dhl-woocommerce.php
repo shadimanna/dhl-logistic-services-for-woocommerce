@@ -162,11 +162,15 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			// DHL Paket
 			$this->define( 'PR_DHL_CIG_USR', 'dhl_woocommerce_plugin_2_2' );
 			$this->define( 'PR_DHL_CIG_PWD', 'egOcb8buCPuqxFDf9fyOdWz6z7pKAQ' );
+			$this->define( 'PR_DHL_CIG_AUTH', 'https://cig.dhl.de/services/production/rest' );
 
 			// DHL Global api.dhl.com
 			$this->define( 'PR_DHL_GLOBAL_URL', 'https://api.dhl.com' );
 			$this->define( 'PR_DHL_GLOBAL_API', 'l7do9bl8gS6y9aHys0u3NR5uqAufPARS' );
 			$this->define( 'PR_DHL_GLOBAL_SECRET', '3128XM6J5XHt6knH' );
+
+			// To use Sandbox, define 'PR_DHL_SANDBOX' to be 'true' and set 'PR_DHL_CIG_USR_QA' and 'PR_DHL_CIG_PWD_QA' outside this plugin
+			$this->define( 'PR_DHL_CIG_AUTH_QA', 'https://cig.dhl.de/services/sandbox/rest' );
 
 			$this->define( 'PR_DHL_PAKET_TRACKING_URL', 'https://www.dhl.de/de/privatkunden/dhl-sendungsverfolgung.html?piececode=' );
 			$this->define( 'PR_DHL_PAKET_TRACKING_URL_EN', 'https://www.dhl.de/en/privatkunden/dhl-sendungsverfolgung.html?piececode=' );
@@ -249,8 +253,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			add_action( 'admin_notices', array( $this, 'password_expiration_notice_callback' ) );
 			add_action( 'block_categories_all',array($this, 'register_pr_dhl_block_category'), 10, 2 );
 
-			// SOAP deprecation notice.
-			PR_DHL_WC_Notice_SOAP_Deprecation::init();
 		}
 
 		public function get_pr_dhl_wc_order() {
