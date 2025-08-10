@@ -1,0 +1,33 @@
+{
+  "translation-revision-date": "2025-08-10 00:00+0000",
+  "generator": "WP-CLI/2.11.0",
+  "source": "includes/checkout-blocks/dhl-preferred-services/block.js",
+  "domain": "dhl-for-woocommerce",
+  "locale_data": {
+    "dhl-for-woocommerce": {
+      "": {
+        "domain": "dhl-for-woocommerce",
+        "lang": "de",
+        "plural-forms": "nplurals=2; plural=(n != 1);"
+      },
+      "DHL Preferred Delivery. Delivered just as you wish.": ["DHL Wunschzustellung. Genau so, wie Sie es wünschen."],
+      "Thanks to the flexible recipient services of DHL Preferred Delivery, you decide when and where you want to receive your parcels. Please choose your preferred delivery option.": ["Mit den Services von DHL Wunschzustellung entscheiden Sie, wann und wo Sie Ihre Pakete empfangen. Bitte wählen Sie Ihre bevorzugte Lieferoption."],
+      "Delivery day: Delivery at your preferred day": ["Liefertag: Lieferung zum gewünschten Tag"],
+      "Choose one of the displayed days as your preferred day for your parcel delivery. Other days are not possible due to delivery processes.": ["Wählen Sie einen der angezeigten Tage als Liefertag für Ihre Paketlieferung. Andere Tage sind aufgrund der Zustellprozesse nicht möglich."],
+      "There is a surcharge of %s incl. VAT for this service.*": ["Für diesen Service fällt ein Aufpreis in Höhe von %s inkl. MwSt. an.*"],
+      "There is a surcharge for this service.": ["Für diesen Service fällt ein Aufpreis an."],
+      "Unfortunately, for the selected delivery address the service Delivery Day is not available": ["Für die ausgewählte Lieferadresse steht der Service „Liefertag“ leider nicht zur Verfügung."],
+      "Drop-off location or neighbor": ["Ablageort oder Nachbar"],
+      "None": ["Keine"],
+      "Location": ["Ablageort"],
+      "Neighbor": ["Nachbar"],
+      "Drop-off location: Delivery to your preferred drop-off location": ["Ablageort: Lieferung an Ihren gewünschten Ablageort"],
+      "e.g. Garage, Terrace": ["z. B. Garage, Terrasse"],
+      "Neighbour: Delivery to a neighbour of your choice": ["Nachbar: Lieferung an einen Nachbarn Ihrer Wahl"],
+      "First name, last name of neighbour": ["Vorname, Nachname des Nachbarn"],
+      "Street, number, postal code, city": ["Straße, Hausnummer, Postleitzahl, Ort"],
+      "DHL Delivery Day": ["DHL Liefertag"],
+      "Error fetching preferred days.": ["Fehler beim Abrufen der Wunschtage."]
+    }
+  }
+}

@@ -110,7 +110,7 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 		wp_set_script_translations(
 			'pr-dhl-preferred-services-integration',
 			'dhl-for-woocommerce',
-			PR_DHL_PLUGIN_DIR_PATH . '/languages'
+			PR_DHL_PLUGIN_DIR_PATH . '/lang'
 		);
 	}
 
@@ -155,7 +155,7 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 		wp_set_script_translations(
 			$handle,
 			'dhl-for-woocommerce',
-			PR_DHL_PLUGIN_DIR_PATH . '/languages'
+			PR_DHL_PLUGIN_DIR_PATH . '/lang'
 		);
 	}
 
@@ -188,7 +188,7 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 		wp_set_script_translations(
 			$handle,
 			'dhl-for-woocommerce',
-			PR_DHL_PLUGIN_DIR_PATH . '/languages'
+			PR_DHL_PLUGIN_DIR_PATH . '/lang'
 		);
 	}
 
