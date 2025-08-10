@@ -1,0 +1,37 @@
+{
+  "translation-revision-date": "2025-08-10 00:00+0000",
+  "generator": "WP-CLI/2.11.0",
+  "source": "includes/checkout-blocks/dhl-parcel-finder/block.js",
+  "domain": "dhl-for-woocommerce",
+  "locale_data": {
+    "dhl-for-woocommerce": {
+      "": {
+        "domain": "dhl-for-woocommerce",
+        "lang": "de",
+        "plural-forms": "nplurals=2; plural=(n != 1);"
+      },
+      "Packstation": ["Packstation"],
+      "Postfiliale": ["Postfiliale"],
+      "For deliveries to DHL Parcel Lockers you have to": ["Für Lieferungen an DHL Packstationen müssen Sie"],
+      "create a DHL account": ["einen DHL-Account anlegen"],
+      "and get a Post Number.": ["und eine Postnummer angeben."],
+      "Search Packstation / Branch": ["Packstation / Filiale suchen"],
+      "Post Code": ["Postleitzahl"],
+      "City": ["Ort"],
+      "Address": ["Adresse"],
+      "Branch": ["Filiale"],
+      "Search": ["Suchen"],
+      "Post Number is mandatory for a Packstation location.": ["Die Angabe der Postnummer ist für Packstationen verpflichtend."],
+      "The text \"Packstation\" must be included in the address.": ["Der Text \"Packstation\" muss in der Adresse vorhanden sein."],
+      "The text \"Postfiliale\" must be included in the address.": ["Der Text \"Postfiliale\" muss in der Adresse vorhanden sein."],
+      "Post Number must be a number.": ["Die Postnummer muss aus Zahlen bestehen."],
+      "The post number you entered is not valid. Please correct the number.": ["Die eingegebene Postnummer ist ungültig. Bitte korrigieren Sie die Postnummer."],
+      "Address Type": ["Adresstyp"],
+      "Regular Address": ["Privat-/Firmenadresse"],
+      "DHL Packstation": ["DHL Packstation"],
+      "DHL Branch": ["DHL Filiale"],
+      "Select a drop off points": ["Abgabeort auswählen"],
+      "Post Number": ["Postnummer"]
+    }
+  }
+}
