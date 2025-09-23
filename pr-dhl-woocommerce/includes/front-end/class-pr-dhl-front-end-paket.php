@@ -382,7 +382,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 
 		protected function validate_cdp_available() {
 			$shipping_country = WC()->customer->get_shipping_country();
-			$valid_countries  = array( 'SE', 'FI', 'BE', 'AT' );
+			$valid_countries  = array( 'SE', 'FI', 'BE', 'AT', 'FR' );
 
 			if ( in_array( $shipping_country, $valid_countries ) ) {
 				// Check if COD payment gateway selected
