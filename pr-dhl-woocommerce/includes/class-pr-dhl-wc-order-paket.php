@@ -1476,10 +1476,11 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 				return false;
 			}
 
-			$shipping_address = $order->get_address( 'shipping' );
-			$shipping_country = $shipping_address['country'];
+			$shipping_address    = $order->get_address( 'shipping' );
+			$shipping_country    = $shipping_address['country'];
+			$supported_countries = array( 'GB', 'NO', 'CH', 'US', 'PR' );
 
-			if ( 'GB' === $shipping_country || 'NO' === $shipping_country || 'CH' === $shipping_country ) {
+			if ( in_array( $shipping_country, $supported_countries ) ) {
 				return true;
 			}
 
