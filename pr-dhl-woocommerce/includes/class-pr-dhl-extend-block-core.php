@@ -73,7 +73,6 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 			}
 
 			if ( ! empty( $pr_dhl_request_data['closestDP'] ) ) {
-				error_log('Closest DP value: ' . $pr_dhl_request_data['closestDP']); // Debugging line
 				$dhl_label_options['pr_dhl_cdp_delivery'] = wc_clean( $pr_dhl_request_data['closestDP'] );
 			}
 
