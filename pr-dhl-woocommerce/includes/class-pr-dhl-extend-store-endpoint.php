@@ -145,6 +145,17 @@ if ( ! class_exists( 'PR_DHL_Extend_Store_Endpoint' ) ) :
 						},
 					]
 				],
+				'closestDP'     => [
+					'description' => 'Closest Drop Point for delivery',
+					'type'        => 'string',
+					'context'     => [ 'view', 'edit' ],
+					'readonly'    => true,
+					'arg_options' => [
+						'validate_callback' => function ( $value ) {
+							return is_string( $value );
+						},
+					]
+				],
 			];
 		}
 

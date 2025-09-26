@@ -1,7 +1,8 @@
-import { useEffect, useState } from '@wordpress/element';
+import { useEffect, useState, useCallback } from '@wordpress/element';
 import { Notice } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { CART_STORE_KEY } from '@woocommerce/block-data';
+import { debounce } from 'lodash';
 import { __ } from '@wordpress/i18n';
 
 export const Block = ({ checkoutExtensionData }) => {
@@ -12,6 +13,7 @@ export const Block = ({ checkoutExtensionData }) => {
     const dhlSettings = prDhlGlobals.dhlSettings;
 
     const [error, setError] = useState( null );
+    const [closestDP, setClosestDP] = useState('no');
     const [displayClosest, setDisplayClosest] = useState( true );
 
     const closestAvailable = dhlSettings?.closest_drop_point;
@@ -21,6 +23,11 @@ export const Block = ({ checkoutExtensionData }) => {
     // Retrieve customer data
     const customerData    = useSelect( ( select ) => select( CART_STORE_KEY ).getCustomerData(), [] );
     const shippingAddress = customerData ? customerData.shippingAddress : null;
+
+    // Debounce for reducing the number of updates to the extension data
+    const debouncedSetExtensionData = useCallback( debounce( ( namespace, key, value ) => {
+        setExtensionData( namespace, key, value );
+    }, 500 ), [setExtensionData] );
 
     useEffect( () => {
         if (
@@ -36,6 +43,12 @@ export const Block = ({ checkoutExtensionData }) => {
         }
 
     }, [ shippingAddress, closestAvailable ] );
+
+    // useEffect for closestDP
+    useEffect( () => {
+        setExtensionData( 'pr-dhl', 'closestDP', closestDP );
+        debouncedSetExtensionData( 'pr-dhl', 'closestDP', closestDP );
+    }, [ closestDP ] );
 
     if ( ! displayClosest ) {
         return null; 
@@ -87,7 +100,8 @@ export const Block = ({ checkoutExtensionData }) => {
                                     name="pr_dhl_cdp_delivery"
                                     data-index={0} id="dhl_home_deliver_option"
                                     value="no"
-                                    className=""/ >
+                                    className=""
+                                    onChange={(e) => setClosestDP(e.target.value)} />
                                 <label htmlFor="dhl_home_deliver_option">{ __( 'Home delivery', 'dhl-for-woocommerce' ) }</label>
                             </li>
                             <li>
@@ -96,7 +110,8 @@ export const Block = ({ checkoutExtensionData }) => {
                                     name="pr_dhl_cdp_delivery"
                                     data-index={0} id="dhl_cdp_option"
                                     value="yes"
-                                    className="" />
+                                    className=""
+                                    onChange={(e) => setClosestDP(e.target.value)} />
                                 <label htmlFor="dhl_cdp_option">{ __( 'Closest Drop Point', 'dhl-for-woocommerce' ) }</label>
                             </li>
                         </ul>
