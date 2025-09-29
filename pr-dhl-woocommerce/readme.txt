@@ -75,6 +75,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 3.9.6 =
+* DHL Paket:  Added Postal Delivered Duty Paid (PDDP) service for United States and Puerto Rico.
+
 = 3.9.4 =
 * Add: SOAP API deprecation notice.
 * Fix: Correct Packstation text validation in the checkout block.
