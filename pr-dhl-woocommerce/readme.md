@@ -67,6 +67,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 3.9.5 =
+* Added compatibility for the Closest Drop-Point Delivery block with Block Checkout.
+
 = 3.9.4 =
 * Add: SOAP API deprecation notice.
 * Fix: Correct Packstation text validation in the checkout block.
