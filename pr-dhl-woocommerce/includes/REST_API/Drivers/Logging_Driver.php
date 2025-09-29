@@ -84,7 +84,7 @@ class Logging_Driver implements API_Driver_Interface {
 			'type'    => $this->get_request_type_name( $request->type ),
 			'url'     => $request->url,
 			'params'  => $request->params,
-			'headers' => $request->headers,
+			'headers' => $this->pr_dhl_redact_sensitive_headers( $request->headers ),
 			'body'    => $request->body,
 			'cookies' => $request->cookies,
 		);
@@ -107,7 +107,7 @@ class Logging_Driver implements API_Driver_Interface {
 
 		$response_info = array(
 			'status'  => $response->status,
-			'headers' => $response->headers,
+			'headers' => $this->pr_dhl_redact_sensitive_headers( $response->headers ),
 			'body'    => $body,
 			'cookies' => $response->cookies,
 		);
@@ -138,5 +138,21 @@ class Logging_Driver implements API_Driver_Interface {
 		}
 
 		return $type;
+	}
+
+	/**
+	 * Redact sensitive headers before logging.
+	 *
+	 * @param array $headers
+	 * @return array
+	 */
+	protected function pr_dhl_redact_sensitive_headers( $headers ) {
+		$sensitive_keys = array( 'Authorization', 'dhl-api-key' );
+		foreach ( $sensitive_keys as $key ) {
+			if ( isset( $headers[ $key ] ) ) {
+				$headers[ $key ] = '***REDACTED***';
+			}
+		}
+		return $headers;
 	}
 }
