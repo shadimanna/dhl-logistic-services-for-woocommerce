@@ -72,8 +72,8 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 				}
 			}
 
-			if ( ! empty( $pr_dhl_request_data['closestDP'] ) ) {
-				$dhl_label_options['pr_dhl_cdp_delivery'] = wc_clean( $pr_dhl_request_data['closestDP'] );
+			if ( ! empty( $pr_dhl_request_data['closest_drop_point'] ) ) {
+				$dhl_label_options['pr_dhl_cdp_delivery'] = wc_clean( $pr_dhl_request_data['closest_drop_point'] );
 			}
 
 			if ( ! empty( $dhl_label_options ) ) {

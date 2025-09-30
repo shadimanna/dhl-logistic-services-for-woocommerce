@@ -17,7 +17,7 @@ export const Block = ({ checkoutExtensionData }) => {
     const [displayClosest, setDisplayClosest] = useState( true );
 
     const closestAvailable = dhlSettings?.closest_drop_point;
-    const validCountries   = [ 'SE', 'FI', 'BE', 'AT', 'FR' ];
+    const validCountries   = prDhlGlobals?.valid_countries || [];
 
 
     // Retrieve customer data
@@ -46,8 +46,8 @@ export const Block = ({ checkoutExtensionData }) => {
 
     // useEffect for closestDP
     useEffect( () => {
-        setExtensionData( 'pr-dhl', 'closestDP', closestDP );
-        debouncedSetExtensionData( 'pr-dhl', 'closestDP', closestDP );
+        setExtensionData( 'pr-dhl', 'closest_drop_point', closestDP );
+        debouncedSetExtensionData( 'pr-dhl', 'closest_drop_point', closestDP );
     }, [ closestDP ] );
 
     if ( ! displayClosest ) {
