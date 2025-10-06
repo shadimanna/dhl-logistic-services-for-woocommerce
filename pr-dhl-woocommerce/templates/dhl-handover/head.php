@@ -9,6 +9,6 @@
 	<body>
 		<?php
 		if ( isset( $action ) && 'print' === $action ) {
-			echo '<a class="button" href="#" onclick="window.print()">' . esc_html_e( 'Print', 'dhl-for-woocommerce' ) . '</a>';
+			echo '<a class="button" href="#" onclick="window.print()">' . esc_html__( 'Print', 'dhl-for-woocommerce' ) . '</a>';
 
 		}
