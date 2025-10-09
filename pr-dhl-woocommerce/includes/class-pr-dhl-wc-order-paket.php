@@ -1480,7 +1480,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			$shipping_country    = $shipping_address['country'];
 			$supported_countries = array( 'GB', 'NO', 'CH', 'US', 'PR' );
 
-			// If not supported, done.
 			if ( ! in_array( $shipping_country, $supported_countries, true ) ) {
 				return false;
 			}
