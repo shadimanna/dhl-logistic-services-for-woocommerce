@@ -1480,12 +1480,32 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			$shipping_country    = $shipping_address['country'];
 			$supported_countries = array( 'GB', 'NO', 'CH', 'US', 'PR' );
 
-			if ( in_array( $shipping_country, $supported_countries ) ) {
-				return true;
+			if ( ! in_array( $shipping_country, $supported_countries ) ) {
+				return false;
 			}
 
-			return false;
+			// Special rules for the United States.
+			if ( 'US' === $shipping_country ) {
+				$order_total = (float) $order->get_total();
+				$currency    = strtoupper( $order->get_currency() );
+
+				// Allow only USD or EUR currencies.
+				if ( ! in_array( $currency, array( 'USD', 'EUR' ), true ) ) {
+					return false;
+				}
+
+				// USD: limit $800 | EUR: limit €680
+				if ( ( 'USD' === $currency && $order_total > 800 ) || 
+					( 'EUR' === $currency && $order_total > 680 ) ) {
+					return true;
+				}
+
+				return false;
+			}
+
+			return true;
 		}
+
 
 		public function is_cdp_delivery( $dhl_label_items ) {
 
