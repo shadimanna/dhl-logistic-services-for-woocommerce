@@ -1480,7 +1480,8 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			$shipping_country    = $shipping_address['country'];
 			$supported_countries = array( 'GB', 'NO', 'CH', 'US', 'PR' );
 
-			if ( ! in_array( $shipping_country, $supported_countries ) ) {
+			// If not supported, done.
+			if ( ! in_array( $shipping_country, $supported_countries, true ) ) {
 				return false;
 			}
 
@@ -1494,18 +1495,29 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 					return false;
 				}
 
-				// USD: limit $800 | EUR: limit €680
-				if ( ( 'USD' === $currency && $order_total > 800 ) || 
-					( 'EUR' === $currency && $order_total > 680 ) ) {
-					return true;
+				if ( ( 'USD' === $currency && $order_total <= 800 ) ||
+					( 'EUR' === $currency && $order_total <= 680 ) ) {
+					return false;
+				}
+			}
+
+			// Check HS codes for all items BEFORE approving PDDP.
+			foreach ( $order->get_items() as $item ) {
+				$product = $item->get_product();
+
+				if ( ! $product ) {
+					continue;
 				}
 
-				return false;
+				$hs_code = $product->get_meta( '_dhl_hs_code', true );
+
+				if ( $hs_code === '' ) {
+					return false;
+				}
 			}
 
 			return true;
 		}
-
 
 		public function is_cdp_delivery( $dhl_label_items ) {
 
