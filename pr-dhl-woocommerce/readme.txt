@@ -76,7 +76,7 @@ More detailed instructions on how to set up your store and configure it are cons
 == Changelog ==
 
 = 3.9.5 =
-* Security: Sensitive HTTP headers are now redacted from all request and response logs.
+* Fix: Remove sensitive HTTP headers from API request and response logs.
 
 = 3.9.4 =
 * Add: SOAP API deprecation notice.
