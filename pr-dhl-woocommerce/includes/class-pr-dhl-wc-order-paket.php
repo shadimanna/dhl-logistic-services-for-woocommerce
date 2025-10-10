@@ -1494,8 +1494,8 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 					return false;
 				}
 
-				if ( ( 'USD' === $currency && $order_total <= 800 ) ||
-					( 'EUR' === $currency && $order_total <= 680 ) ) {
+				if ( ( 'USD' === $currency && $order_total > 800 ) ||
+					( 'EUR' === $currency && $order_total > 680 ) ) {
 					return false;
 				}
 			}
