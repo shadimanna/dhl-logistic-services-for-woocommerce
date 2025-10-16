@@ -55,6 +55,20 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 			'/build/pr-dhl-preferred-services-frontend.asset.php'
 		);
 
+		// Register block editor scripts
+		$this->register_block_script(
+			'pr-dhl-closest-drop-point-editor',
+			'/build/pr-dhl-closest-drop-point.js',
+			'/build/pr-dhl-closest-drop-point.asset.php'
+		);
+
+		// Register frontend scripts for blocks
+		$this->register_frontend_script(
+			'pr-dhl-closest-drop-point-frontend',
+			'/build/pr-dhl-closest-drop-point-frontend.js',
+			'/build/pr-dhl-closest-drop-point-frontend.asset.php'
+		);
+
 		// Register parcel finder editor scripts
 		$this->register_block_script(
 			'pr-dhl-parcel-finder-editor',
@@ -213,6 +227,7 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 		return [
 			'pr-dhl-preferred-services-integration',
 			'pr-dhl-preferred-services-frontend',
+			'pr-dhl-closest-drop-point-frontend',
 			'pr-dhl-parcel-finder-frontend',
 		];
 	}
@@ -226,6 +241,7 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 		return [
 			'pr-dhl-preferred-services-integration',
 			'pr-dhl-preferred-services-editor',
+			'pr-dhl-closest-drop-point-editor',
 			'pr-dhl-parcel-finder-editor',
 		];
 	}
@@ -257,6 +273,7 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 			'DHL_ENGLISH_REGISTRATION_LINK' => DHL_ENGLISH_REGISTRATION_LINK,
 			'DHL_GERMAN_REGISTRATION_LINK'  => DHL_GERMAN_REGISTRATION_LINK,
 			'locale'                        => get_locale(),
+			'valid_countries'               => array( 'SE', 'FI', 'BE', 'AT', 'FR' ),
 		);
 
 		// Localize the editor script.
@@ -270,6 +287,13 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 		// Localize the frontend scripts.
 		wp_localize_script(
 			'pr-dhl-preferred-services-frontend',
+			'prDhlGlobals',
+			$localize_data
+		);
+
+		// Localize the frontend scripts.
+		wp_localize_script(
+			'pr-dhl-closest-drop-point-frontend',
 			'prDhlGlobals',
 			$localize_data
 		);
@@ -294,6 +318,7 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 			'dhl_preferred_neighbour',
 			'dhl_preferred_day_cost',
 			'dhl_display_google_maps',
+			'dhl_closest_drop_point',
 		);
 
 		$filtered_settings = array();

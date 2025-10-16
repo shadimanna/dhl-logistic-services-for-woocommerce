@@ -76,6 +76,9 @@ More detailed instructions on how to set up your store and configure it are cons
 == Changelog ==
 
 = 3.9.5 =
+* Add: Added Closest drop-point delivery (CDP) service for France.
+* Fix: Delivery Day UI and fee no longer appear on Checkout Blocks for virtual-only carts.
+* Fix: Checkout Blocks compatibility for the Closest Drop-Point Delivery.
 * Fix: Email template preview error.
 
 = 3.9.4 =
