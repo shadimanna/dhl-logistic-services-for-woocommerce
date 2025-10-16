@@ -1485,7 +1485,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			}
 
 			// Special rules for the United States.
-			if ( 'US' === $shipping_country ) {
+			if ( in_array( $shipping_country, array( 'US', 'PR' ), true ) ) {
 				$order_total = (float) $order->get_total();
 				$currency    = strtoupper( $order->get_currency() );
 
