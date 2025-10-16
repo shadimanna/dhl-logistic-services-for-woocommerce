@@ -111,6 +111,9 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		// These are all considered domestic by DHL
 		protected $us_territories = array( 'US', 'GU', 'AS', 'PR', 'UM', 'VI' );
 
+		// PDDP supported countries.
+		private $pddp_supported_countries = array( 'GB', 'NO', 'CH', 'US', 'PR' );
+
 		/**
 		 * Construct the plugin.
 		 */
@@ -186,6 +189,8 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 			$this->define( 'DHL_ENGLISH_REGISTRATION_LINK', 'https://www.dhl.de/en/privatkunden/kundenkonto/registrierung.html' );
 			$this->define( 'DHL_GERMAN_REGISTRATION_LINK', 'https://www.dhl.de/de/privatkunden/kundenkonto/registrierung.html' );
+			$this->define( 'PR_DHL_PDDP_SUPPORTED_COUNTRIES', $this->pddp_supported_countries );
+
 		}
 
 		/**

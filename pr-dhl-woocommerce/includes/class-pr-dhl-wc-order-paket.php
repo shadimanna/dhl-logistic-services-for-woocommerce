@@ -1478,9 +1478,8 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 
 			$shipping_address    = $order->get_address( 'shipping' );
 			$shipping_country    = $shipping_address['country'];
-			$supported_countries = array( 'GB', 'NO', 'CH', 'US', 'PR' );
 
-			if ( ! in_array( $shipping_country, $supported_countries, true ) ) {
+			if ( ! in_array( $shipping_country, PR_DHL_PDDP_SUPPORTED_COUNTRIES, true ) ) {
 				return false;
 			}
 
@@ -1496,21 +1495,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 
 				if ( ( 'USD' === $currency && $order_total > 800 ) ||
 					( 'EUR' === $currency && $order_total > 680 ) ) {
-					return false;
-				}
-			}
-
-			// Check HS codes for all items BEFORE approving PDDP.
-			foreach ( $order->get_items() as $item ) {
-				$product = $item->get_product();
-
-				if ( ! $product ) {
-					continue;
-				}
-
-				$hs_code = $product->get_meta( '_dhl_hs_code', true );
-
-				if ( $hs_code === '' ) {
 					return false;
 				}
 			}
