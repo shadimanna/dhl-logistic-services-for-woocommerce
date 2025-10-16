@@ -72,12 +72,14 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 				}
 			}
 
+			if ( ! empty( $pr_dhl_request_data['closest_drop_point'] ) ) {
+				$dhl_label_options['pr_dhl_cdp_delivery'] = wc_clean( $pr_dhl_request_data['closest_drop_point'] );
+			}
+
 			if ( ! empty( $dhl_label_options ) ) {
 				PR_DHL()->get_pr_dhl_wc_order()->save_dhl_label_items( $order->get_id(), $dhl_label_options );
 			}
-			if ( ! empty( $pr_dhl_request_data['preferredDay'] ) ) {
-				$dhl_label_options['pr_dhl_preferred_day'] = wc_clean( $pr_dhl_request_data['preferredDay'] );
-			}
+			
 			// Extract billing and shipping house numbers with sanitization
 			$shipping_postnum = sanitize_text_field( $pr_dhl_request_data['postNumber'] ) ;
 
