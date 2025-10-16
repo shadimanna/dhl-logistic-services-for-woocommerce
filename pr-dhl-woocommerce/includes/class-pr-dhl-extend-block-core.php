@@ -116,9 +116,18 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 				$price = isset( $data['price'] ) ? floatval( $data['price'] ) : 0;
 				$label = isset( $data['label'] ) ? sanitize_text_field( $data['label'] ) : '';
 
-				// Store the fee amount and label in session
-				WC()->session->set( 'pr_dhl_preferred_day_fee', $price );
-				WC()->session->set( 'pr_dhl_preferred_day_label', $label );
+				if ( $price > 0 && $label !== '' ) {
+					// Store the fee amount and label in session
+					WC()->session->set( 'pr_dhl_preferred_day_fee', $price );
+					WC()->session->set( 'pr_dhl_preferred_day_label', $label );
+				} else {
+					WC()->session->__unset( 'pr_dhl_preferred_day_fee' );
+					WC()->session->__unset( 'pr_dhl_preferred_day_label' );
+				}
+			} else {
+
+				WC()->session->__unset( 'pr_dhl_preferred_day_fee' );
+				WC()->session->__unset( 'pr_dhl_preferred_day_label' );
 			}
 		}
 
@@ -131,7 +140,12 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 			if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
 				return;
 			}
+			if ( ! $cart->needs_shipping() ) {
+				WC()->session->__unset( 'pr_dhl_preferred_day_fee' );
+				WC()->session->__unset( 'pr_dhl_preferred_day_label' );
 
+				return;
+			}
 			// Get the fee amount and label from session
 			$fee_amount = WC()->session->get( 'pr_dhl_preferred_day_fee', 0 );
 			$fee_label  = WC()->session->get( 'pr_dhl_preferred_day_label', '' );
