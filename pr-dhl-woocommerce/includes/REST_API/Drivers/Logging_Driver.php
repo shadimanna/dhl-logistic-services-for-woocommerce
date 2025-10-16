@@ -84,7 +84,7 @@ class Logging_Driver implements API_Driver_Interface {
 			'type'    => $this->get_request_type_name( $request->type ),
 			'url'     => $request->url,
 			'params'  => $request->params,
-			'body'    => empty( $request->body ) ? '' : json_decode( $request->body, true ),
+			'body'    => empty( $request->body ) ? '' : $request->body,
 		);
 
 		$this->plugin->log_msg( sprintf( '%s %s', $message, print_r( $request_info, true ) ) );
@@ -113,7 +113,7 @@ class Logging_Driver implements API_Driver_Interface {
 
 		$response_info = array(
 			'status'  => $response->status,
-			'body'    => $body,
+			'body'    => json_encode( $body ),
 		);
 
 		$this->plugin->log_msg( sprintf( '%s %s', $message, print_r( $response_info, true ) ) );
