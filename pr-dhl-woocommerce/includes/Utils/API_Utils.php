@@ -70,4 +70,13 @@ class API_Utils {
 
 		return false;
 	}
+
+	/**
+	 * Get PDDP supported countries.
+	 *
+	 * @return array
+	 */
+	public static function PDDP_supported_countries() {
+		return array( 'GB', 'NO', 'CH', 'US', 'PR' );
+	}
 }

@@ -1476,14 +1476,30 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 				return false;
 			}
 
-			$shipping_address = $order->get_address( 'shipping' );
-			$shipping_country = $shipping_address['country'];
+			$shipping_address    = $order->get_address( 'shipping' );
+			$shipping_country    = $shipping_address['country'];
 
-			if ( 'GB' === $shipping_country || 'NO' === $shipping_country || 'CH' === $shipping_country ) {
-				return true;
+			if ( ! in_array( $shipping_country, API_Utils::PDDP_supported_countries(), true ) ) {
+				return false;
 			}
 
-			return false;
+			// Special rules for the United States.
+			if ( in_array( $shipping_country, array( 'US', 'PR' ), true ) ) {
+				$order_total = (float) $order->get_total();
+				$currency    = strtoupper( $order->get_currency() );
+
+				// Allow only USD or EUR currencies.
+				if ( ! in_array( $currency, array( 'USD', 'EUR' ), true ) ) {
+					return false;
+				}
+
+				if ( ( 'USD' === $currency && $order_total > 800 ) ||
+					( 'EUR' === $currency && $order_total > 680 ) ) {
+					return false;
+				}
+			}
+
+			return true;
 		}
 
 		public function is_cdp_delivery( $dhl_label_items ) {
