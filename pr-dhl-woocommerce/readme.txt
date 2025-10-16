@@ -75,6 +75,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 3.9.6 =
+* Fix: hide label generation UI and option when order contains only virtual products.
+
 = 3.9.5 =
 * Add: Added Closest drop-point delivery (CDP) service for France.
 * Fix: Delivery Day UI and fee no longer appear on Checkout Blocks for virtual-only carts.

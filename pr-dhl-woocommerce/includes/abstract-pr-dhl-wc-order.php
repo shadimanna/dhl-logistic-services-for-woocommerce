@@ -104,6 +104,11 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 			$order    = ( $post_or_order_object instanceof WC_Order ) ? $post_or_order_object : wc_get_order( $post_or_order_object );
 			$order_id = $order->get_id();
 
+			if ( $this->order_has_only_virtual_products( $order ) ) {
+				echo '<div id="shipment-dhl-label-form"><div class="shipment-dhl-row-container shipment-dhl-row-service"><p class="wc_dhl_notice">' . esc_html__( 'DHL labels are not available for orders containing only virtual products.', 'dhl-for-woocommerce' ) . '</p></div></div>';
+
+				return;
+			}
 			// Get saved label input fields or set default values
 			$dhl_label_items = $this->get_dhl_label_items( $order_id );
 
@@ -684,6 +689,30 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 			}
 		}
 
+		protected function order_has_only_virtual_products( $order ) {
+			if ( ! ( $order instanceof WC_Order ) ) {
+				return false;
+			}
+
+			$items          = $order->get_items( 'line_item' );
+			$has_line_items = false;
+
+			foreach ( $items as $item ) {
+				$product = $item->get_product();
+
+				if ( ! $product ) {
+					continue;
+				}
+
+				$has_line_items = true;
+
+				if ( ! $product->is_virtual() ) {
+					return false;
+				}
+			}
+
+			return $has_line_items;
+		}
 		protected function calculate_order_weight( $order_id ) {
 
 			$total_weight = 0;
