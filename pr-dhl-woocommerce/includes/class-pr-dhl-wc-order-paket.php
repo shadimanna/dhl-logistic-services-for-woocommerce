@@ -1479,7 +1479,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			$shipping_address    = $order->get_address( 'shipping' );
 			$shipping_country    = $shipping_address['country'];
 
-			if ( ! in_array( $shipping_country, PR_DHL_PDDP_SUPPORTED_COUNTRIES, true ) ) {
+			if ( ! in_array( $shipping_country, API_Utils::PDDP_supported_countries(), true ) ) {
 				return false;
 			}
 
