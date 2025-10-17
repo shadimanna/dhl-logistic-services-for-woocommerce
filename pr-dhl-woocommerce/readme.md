@@ -74,6 +74,7 @@ More detailed instructions on how to set up your store and configure it are cons
 * Fix: Checkout Blocks compatibility for the Closest Drop-Point Delivery.
 * Fix: Email template preview error.
 * Fix: Remove sensitive data from debug logs.
+* Fix: Remove DHL meta box if the order does not need shipping.
 
 = 3.9.4 =
 * Add: SOAP API deprecation notice.
