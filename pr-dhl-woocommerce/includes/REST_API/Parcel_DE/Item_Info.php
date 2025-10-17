@@ -759,11 +759,10 @@ class Item_Info {
 					}
 
 					if ( empty( $code_length ) ) {
-						if ( ! in_array( $shipping_country, API_Utils::PDDP_supported_countries(), true ) ) {
-							throw new Exception(
-								esc_html__( 'Item HS Code must has value to can use PDDP', 'dhl-for-woocommerce' )
-							);
+						if ( ! in_array( $shipping_country, API_Utils::PDDP_supported_countries(), true ) && 'yes' === $self->args['order_details']['PDDP'] ) {
+							throw new Exception( esc_html__( 'Item HS Code must has value to can use PDDP.', 'dhl-for-woocommerce' ) );
 						}
+
 						return;
 					}
 
