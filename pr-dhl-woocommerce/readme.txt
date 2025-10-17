@@ -7,7 +7,7 @@ Requires PHP: 7.4
 Requires at least: 6.6
 Tested up to: 6.8
 WC requires at least: 9.8
-WC tested up to: 10.0
+WC tested up to: 10.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -83,6 +83,7 @@ More detailed instructions on how to set up your store and configure it are cons
 * Fix: Email template preview error.
 * Fix: Remove sensitive data from debug logs.
 * Fix: Remove DHL meta box if the order does not need shipping.
+* Tweak: WooCommerce 10.3 compatibility.
 
 = 3.9.4 =
 * Add: SOAP API deprecation notice.
