@@ -26,6 +26,20 @@ module.exports = {
 			'dhl-preferred-services',
 			'frontend.js'
 		),
+		'pr-dhl-closest-drop-point': path.resolve(
+			process.cwd(),
+			'includes',
+			'checkout-blocks',
+			'dhl-closest-drop-point',
+			'index.js'
+		),
+		'pr-dhl-closest-drop-point-frontend': path.resolve(
+			process.cwd(),
+			'includes',
+			'checkout-blocks',
+			'dhl-closest-drop-point',
+			'frontend.js'
+		),
 		'pr-dhl-parcel-finder': path.resolve(
 			process.cwd(),
 			'includes',

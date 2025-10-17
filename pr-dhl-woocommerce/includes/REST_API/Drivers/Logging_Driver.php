@@ -79,14 +79,12 @@ class Logging_Driver implements API_Driver_Interface {
 	 * @param string  $message Prefix message to include in the log.
 	 * @param Request $request The request to log.
 	 */
-	protected function log_request( $message, Request $request ) {
+	protected function log_request( string $message, Request $request ) {
 		$request_info = array(
 			'type'    => $this->get_request_type_name( $request->type ),
 			'url'     => $request->url,
 			'params'  => $request->params,
-			'headers' => $request->headers,
-			'body'    => $request->body,
-			'cookies' => $request->cookies,
+			'body'    => empty( $request->body ) ? '' : $request->body,
 		);
 
 		$this->plugin->log_msg( sprintf( '%s %s', $message, print_r( $request_info, true ) ) );
@@ -100,16 +98,22 @@ class Logging_Driver implements API_Driver_Interface {
 	 * @param string   $message Prefix message to include in the log.
 	 * @param Response $response The response to log.
 	 */
-	protected function log_response( $message, Response $response ) {
-		$body = ( isset( $response->headers['Content-Type'] ) && ( $response->headers['Content-Type'] === 'application/pdf' ) )
-			? '[PDF data]'
-			: $response->body;
+	protected function log_response( string $message, Response $response ) {
+		if ( isset( $response->headers['Content-Type'] ) && $response->headers['Content-Type'] === 'application/pdf' ) {
+			$body = '[PDF data]';
+		} else {
+			$decoded = json_decode( $response->body, true );
+			$body    = $decoded ?: $response->body;
+
+			// Remove b64 data from response body for cleaner logs.
+			if ( is_array( $body ) ) {
+				$body = $this->remove_b64_data( $body );
+			}
+		}
 
 		$response_info = array(
 			'status'  => $response->status,
-			'headers' => $response->headers,
-			'body'    => $body,
-			'cookies' => $response->cookies,
+			'body'    => json_encode( $body ),
 		);
 
 		$this->plugin->log_msg( sprintf( '%s %s', $message, print_r( $response_info, true ) ) );
@@ -138,5 +142,24 @@ class Logging_Driver implements API_Driver_Interface {
 		}
 
 		return $type;
+	}
+
+	/**
+	 * Removes b64 data from response body to keep logs clean.
+	 *
+	 * @param array $data The response body array.
+	 *
+	 * @return array The array with b64 data removed.
+	 */
+	protected function remove_b64_data( array $data ): array {
+		if ( isset( $data['items'] ) && is_array( $data['items'] ) ) {
+			foreach ( $data['items'] as $item_key => $item ) {
+				if ( isset( $item['label']['b64'] ) ) {
+					$data['items'][ $item_key ]['label']['b64'] = '[Base64 PDF data removed from log]';
+				}
+			}
+		}
+
+		return $data;
 	}
 }
