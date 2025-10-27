@@ -21,14 +21,17 @@ try {
 
 <tr class="dhl-co-tr">
 	<td colspan="2">
-	<?php
-	echo esc_html_e(
-		'Thanks to the ﬂexible recipient services of DHL Preferred Delivery, you decide
+		<?php
+		echo wp_kses(
+			__(
+				'Thanks to the ﬂexible recipient services of DHL Preferred Delivery, you decide
 when and where you want to receive your parcels.<br>
 Please choose your preferred delivery option.',
-		'dhl-for-woocommerce'
-	);
-	?>
+				'dhl-for-woocommerce'
+			),
+			array( 'br' => array() )
+		);
+		?>
 	</td>
 </tr>
 
