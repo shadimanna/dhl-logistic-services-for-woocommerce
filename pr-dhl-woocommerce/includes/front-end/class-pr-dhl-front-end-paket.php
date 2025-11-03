@@ -292,12 +292,13 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 		}
 
 		protected function validate_is_german_customer() {
-			$customer_country 	= WC()->customer->get_billing_country();
-			$base_country_code 	= PR_DHL()->get_base_country();
+			$billing_country   = WC()->customer ? WC()->customer->get_billing_country() : '';
+			$shipping_country  = WC()->customer ? WC()->customer->get_shipping_country() : '';
+			$base_country_code = PR_DHL()->get_base_country();
 
 			$display_preferred = false;
 			// Preferred options are only for Germany customers
-			if ( $base_country_code == 'DE' && $customer_country == 'DE' ) {
+			if ( $base_country_code == 'DE' && ($shipping_country == 'DE' || $billing_country=='DE')) {
 				return true;
 			} else {
 				return false;
