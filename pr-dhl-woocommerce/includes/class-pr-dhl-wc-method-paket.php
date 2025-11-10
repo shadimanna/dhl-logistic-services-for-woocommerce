@@ -198,8 +198,8 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					'description' => esc_html__( 'Select the API protocol to use for creating shipping labels.', 'dhl-for-woocommerce' ),
 					'desc_tip'    => true,
 					'options'     => array(
-						'soap'     => 'SOAP',
 						'rest-api' => 'REST',
+						'soap'     => 'SOAP',
 					),
 					'class'       => 'wc-enhanced-select',
 					'default'     => API_Utils::is_new_merchant() ? 'rest-api' : 'soap',

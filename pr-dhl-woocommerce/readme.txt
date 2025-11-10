@@ -75,6 +75,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 3.9.6 =
+* Tweak: Set the REST API as the default selection in the setup wizard.
+
 = 3.9.5 =
 * Add: Added Closest drop-point delivery (CDP) service for France.
 * Add: Postal Delivered Duty Paid (PDDP) service for United States and Puerto Rico.

@@ -20,6 +20,8 @@ jQuery( document ).ready( function(){
     
     wizard.init();
 
+    pr_dhl_force_rest_protocol();
+
     wizard_overlay.find( '#wizard_dhl_participation_V01PAK' ).on( 'change', function( evt ){
         var participant_value = jQuery( this ).val();
         wizard_overlay.find( '.wizard-dhl-field.participation-field' ).val( participant_value );
@@ -28,6 +30,7 @@ jQuery( document ).ready( function(){
     jQuery( document ).on( 'nextWizard', pr_dhl_wizard_update_fields );
 
     jQuery( document ).on( 'submitWizard', function (e) {
+        pr_dhl_force_rest_protocol();
         jQuery( 'p.submit button.woocommerce-save-button' ).click();
     });
 
@@ -45,6 +48,12 @@ jQuery( document ).ready( function(){
     finish_button.on( 'click', pr_dhl_wizard_finish_button );
 });
 
+function pr_dhl_force_rest_protocol() {
+    var $api = jQuery('#woocommerce_pr_dhl_paket_dhl_default_api');
+    if ($api.length) {
+        $api.val('rest-api').trigger('change').trigger('change.select2');
+    }
+}
 function pr_dhl_wizard_next_button( evt ) {
     evt.preventDefault();
 
@@ -55,6 +64,7 @@ function pr_dhl_wizard_next_button( evt ) {
 
 function pr_dhl_wizard_finish_button( evt ) {
     evt.preventDefault();
+    pr_dhl_force_rest_protocol();
     jQuery('.wizard-btn.btn.finish').click();
     jQuery( 'p.submit button.woocommerce-save-button' ).click();
 }
