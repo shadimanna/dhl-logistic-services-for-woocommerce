@@ -68,7 +68,7 @@ More detailed instructions on how to set up your store and configure it are cons
 == Changelog ==
 
 = 3.9.6 =
-* Fix: Fix fatal error in needs_shipping() when order contains permanently deleted product.
+* Fix: Fatal error in needs_shipping() when order contains permanently deleted product.
 
 = 3.9.5 =
 * Add: Closest drop-point delivery (CDP) service for France.
