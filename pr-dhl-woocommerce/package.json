@@ -1,6 +1,6 @@
 {
 	"name": "dhl-for-woocommerce",
-	"version": "3.9.3",
+	"version": "3.9.6",
 	"author": "DHL",
 	"license": "GPL-2.0-or-later",
 	"main": "build/index.js",
@@ -23,7 +23,7 @@
 	"devDependencies": {
 		"@woocommerce/dependency-extraction-webpack-plugin": "^2.2.0",
 		"@woocommerce/eslint-plugin": "^2.2.0",
-		"@wordpress/env": "^7.0.0",
+		"@wordpress/env": "^10.35.0",
 		"@wordpress/prettier-config": "^2.25.13",
 		"@wordpress/scripts": "^30.15.0",
 		"prettier": "npm:wp-prettier@^2.6.2"
