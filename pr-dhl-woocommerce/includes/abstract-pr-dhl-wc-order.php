@@ -267,6 +267,16 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 				}
 			}
 
+			if ( empty( $_POST['pr_dhl_label_nonce'] ) ) {
+				return;
+			}
+
+			$nonce = sanitize_text_field( wp_unslash( $_POST['pr_dhl_label_nonce'] ) );
+
+			if ( ! wp_verify_nonce( $nonce, 'create-dhl-label' ) ) {
+				return;
+			}
+
 			// loop through inputs within id 'shipment-dhl-label-form'
 			$meta_box_ids = array( 'pr_dhl_product', 'pr_dhl_weight' );
 
