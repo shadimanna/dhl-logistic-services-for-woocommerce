@@ -75,6 +75,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 3.9.7 =
+* Fix: Preserve DHL label selections when running WooCommerce order actions.
+
 = 3.9.6 =
 * Tweak: WordPress 6.9 compatibility.
 * Fix: Remove Warenpost National.
