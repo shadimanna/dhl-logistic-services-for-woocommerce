@@ -122,8 +122,9 @@ ul.dhl-co-preffered-time > li {
 }
 
 ul.dhl-co-times > li {
-  flex-grow: 1;
-  flex-basis: 0;
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0 3px;
 }
 
 ul.dhl-co-preffered-time > li:first-child {
