@@ -29,6 +29,13 @@ export const Block = ({ checkoutExtensionData }) => {
         setExtensionData( namespace, key, value );
     }, 500 ), [setExtensionData] );
 
+    const cart = useSelect(
+        (select) => select(CART_STORE_KEY).getCartData(),
+        []
+    ) || {};
+
+    const cartNeedsShipping = cart.needsShipping === true;
+
     useEffect( () => {
         if (
             ! shippingAddress ||
@@ -49,6 +56,10 @@ export const Block = ({ checkoutExtensionData }) => {
         setExtensionData( 'pr-dhl', 'closest_drop_point', closestDP );
         debouncedSetExtensionData( 'pr-dhl', 'closest_drop_point', closestDP );
     }, [ closestDP ] );
+
+    if ( cartNeedsShipping === false ) {
+        return null;
+    }
 
     if ( ! displayClosest ) {
         return null; 
