@@ -67,6 +67,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 3.9.6 =
+* Fix: Hide Closest drop-point delivery option on Checkout Blocks when the cart contains only virtual products.
+
 = 3.9.5 =
 * Add: Closest drop-point delivery (CDP) service for France.
 * Add: Postal Delivered Duty Paid (PDDP) service for United States and Puerto Rico.
