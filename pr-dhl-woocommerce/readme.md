@@ -67,6 +67,10 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 3.9.7 =
+Fix: Hide DHL Postnummer from frontend address formats in Checkout Blocks and Store API.
+Fix: Preferred Location/Neighbour selection when only one of the options is enabled in DHL Paket settings.
+
 = 3.9.6 =
 * Tweak: WordPress 6.9 compatibility.
 * Fix: Remove Warenpost National.
