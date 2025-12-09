@@ -1218,6 +1218,18 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 			// Verify whether Google API key set
 			$google_maps_api_key = $_POST[ $this->plugin_id . $this->id . '_dhl_google_maps_api_key' ];
 
+			// If Open Street Map is selected no API key is necessary.
+			$map_type_key = $this->plugin_id . $this->id . '_dhl_map_type';
+			if ( isset( $_POST[ $map_type_key ] ) ) {
+				$map_type = wc_clean( wp_unslash( $_POST[ $map_type_key ] ) );
+			} else {
+				$map_type = $this->get_option( 'dhl_map_type', 'gmaps' );
+			}
+
+			if ( 'gmaps' !== $map_type ) {
+				return 'yes';
+			}
+
 			// If not return 'no'
 			if ( empty( $google_maps_api_key ) ) {
 

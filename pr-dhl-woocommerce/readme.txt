@@ -76,6 +76,7 @@ More detailed instructions on how to set up your store and configure it are cons
 == Changelog ==
 
 = 3.9.7 =
+* Fix: Errors appear when trying to save map settings.
 * Tweak: Set the REST API as the default selection in the setup wizard.
 * Fix: Delivery options now correctly appear when shipping to Germany, even if the billing country is different.
 * Tweak: Hide “Drop-off location or neighbor” option when a Packstation* or DHL Branch (Postfiliale) is selected.
