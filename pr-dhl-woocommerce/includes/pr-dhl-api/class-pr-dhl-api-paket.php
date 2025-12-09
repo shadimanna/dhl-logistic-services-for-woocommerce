@@ -185,7 +185,6 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		$germany_dom = array(
 			'V01PAK'  => esc_html__( 'DHL Paket', 'dhl-for-woocommerce' ),
 			'V01PRIO' => esc_html__( 'DHL Paket PRIO', 'dhl-for-woocommerce' ),
-			'V62WP'   => esc_html__( 'DHL Warenpost National', 'dhl-for-woocommerce' ),
 			'V62KP'   => esc_html__( 'DHL Kleinpaket', 'dhl-for-woocommerce' ),
 		);
 
