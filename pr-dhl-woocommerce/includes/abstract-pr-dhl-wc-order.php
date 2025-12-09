@@ -102,7 +102,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
         public function add_meta_box( $post_type, $post_or_order_object ) {
 			$order = $this->init_order_object( $post_or_order_object );
 
-			if ( ! is_a( $order, 'WC_Order' ) || ! $order->needs_shipping() ) {
+			if ( ! is_a( $order, 'WC_Order' ) || ! API_Utils::order_needs_shipping( $order ) ) {
 				return;
 			}
 
