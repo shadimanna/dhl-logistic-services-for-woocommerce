@@ -76,7 +76,14 @@ More detailed instructions on how to set up your store and configure it are cons
 == Changelog ==
 
 = 3.9.7 =
+* Fix: Errors appear when trying to save map settings.
+* Fix: Delivery options now correctly appear when shipping to Germany, even if the billing country is different.
+* Fix: Hide Closest drop-point delivery option on Checkout Blocks when the cart contains only virtual products.
+* Fix: Hide DHL Postnummer from frontend address formats in Checkout Blocks and Store API.
+* Fix: Preferred Location/Neighbour selection when only one of the options is enabled in DHL Paket settings.
 * Fix: Preserve DHL label selections when running WooCommerce order actions.
+* Tweak: Hide “Drop-off location or neighbor” option when a Packstation* or DHL Branch (Postfiliale) is selected.
+* Tweak: Set the REST API as the default selection in the setup wizard.
 
 = 3.9.6 =
 * Tweak: WordPress 6.9 compatibility.

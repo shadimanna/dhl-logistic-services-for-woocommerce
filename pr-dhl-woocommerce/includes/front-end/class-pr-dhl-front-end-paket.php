@@ -292,12 +292,13 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 		}
 
 		protected function validate_is_german_customer() {
-			$customer_country 	= WC()->customer->get_billing_country();
-			$base_country_code 	= PR_DHL()->get_base_country();
+			$billing_country   = WC()->customer ? WC()->customer->get_billing_country() : '';
+			$shipping_country  = WC()->customer ? WC()->customer->get_shipping_country() : '';
+			$base_country_code = PR_DHL()->get_base_country();
 
 			$display_preferred = false;
 			// Preferred options are only for Germany customers
-			if ( $base_country_code == 'DE' && $customer_country == 'DE' ) {
+			if ( $base_country_code == 'DE' && ($shipping_country == 'DE' || $billing_country=='DE')) {
 				return true;
 			} else {
 				return false;
@@ -1053,6 +1054,18 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 		}
 
 		public function set_format_post_number( $formats ) {
+			$is_store_api = defined( 'REST_REQUEST' ) && REST_REQUEST
+			                && ! empty( $_SERVER['REQUEST_URI'] )
+			                && strpos( $_SERVER['REQUEST_URI'], '/wc/store/' ) !== false;
+
+			$is_blocks_checkout = function_exists( 'is_checkout' ) && is_checkout()
+			                      && method_exists( $this, 'is_using_checkout_block' )
+			                      && $this->is_using_checkout_block();
+
+			if ( $is_store_api || $is_blocks_checkout ) {
+				return $formats;
+			}
+
 			foreach ( $formats as $key => $value ) {
 				$count = 0;
 
