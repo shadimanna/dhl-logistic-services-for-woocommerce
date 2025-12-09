@@ -1053,6 +1053,18 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 		}
 
 		public function set_format_post_number( $formats ) {
+			$is_store_api = defined( 'REST_REQUEST' ) && REST_REQUEST
+			                && ! empty( $_SERVER['REQUEST_URI'] )
+			                && strpos( $_SERVER['REQUEST_URI'], '/wc/store/' ) !== false;
+
+			$is_blocks_checkout = function_exists( 'is_checkout' ) && is_checkout()
+			                      && method_exists( $this, 'is_using_checkout_block' )
+			                      && $this->is_using_checkout_block();
+
+			if ( $is_store_api || $is_blocks_checkout ) {
+				return $formats;
+			}
+
 			foreach ( $formats as $key => $value ) {
 				$count = 0;
 
