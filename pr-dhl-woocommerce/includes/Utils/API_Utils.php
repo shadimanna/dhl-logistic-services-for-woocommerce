@@ -79,4 +79,26 @@ class API_Utils {
 	public static function PDDP_supported_countries() {
 		return array( 'GB', 'NO', 'CH', 'US', 'PR' );
 	}
+
+	/**
+	 * Returns true if the order contains items that need shipping.
+	 *
+	 * @param \WC_Order $order Order object.
+	 *
+	 * @return bool
+	 */
+	public static function order_needs_shipping( \WC_Order $order ): bool {
+		foreach ( $order->get_items() as $item ) {
+			if ( ! is_a( $item, 'WC_Order_Item_Product' ) ) {
+				continue;
+			}
+
+			$product = $item->get_product();
+			if ( is_a( $product, 'WC_Product' ) && $product->needs_shipping() ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 }

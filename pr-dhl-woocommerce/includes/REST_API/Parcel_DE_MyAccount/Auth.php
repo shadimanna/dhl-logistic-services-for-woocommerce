@@ -172,32 +172,20 @@ class Auth implements API_Auth_Interface {
 			'password'      => $this->password,
 			'grant_type'    => 'password',
 		);
-		// error_log(print_r($body, true));
 
 		$args = array(
 			'headers' => $headers,
 			'body'    => $body,
 		);
 
-		// $body = json_encode( $body );
-		// error_log($body);
-		// Prepare the full request URL
-		$full_url = URL_Utils::merge_url_and_route( $this->api_url, static::AUTH_ROUTE );
-		// error_log($this->api_url);
-		// error_log($full_url);
-
-		// Send the authorization request to obtain the access token
-		// $request = new Request( Request::TYPE_POST, $full_url, array(), $body, $headers );
-		// $response = $this->driver->send( $request );
-		$response = wp_remote_post( $full_url, $args );
-
+		$full_url      = URL_Utils::merge_url_and_route( $this->api_url, static::AUTH_ROUTE );
+		$response      = wp_remote_post( $full_url, $args );
 		$response_code = wp_remote_retrieve_response_code( $response );
 		$response_body = json_decode( wp_remote_retrieve_body( $response ) );
-		// error_log(print_r($response, true));
 
 		// If the status code is not 200, throw an error with the raw response body
 		if ( $response_code !== 200 ) {
-			throw new RuntimeException( esc_html( $response->body->error_description ) );
+			throw new RuntimeException( esc_html( $response_body->title ) );
 		}
 
 		return $response_body;

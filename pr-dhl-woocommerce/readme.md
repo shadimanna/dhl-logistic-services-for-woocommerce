@@ -1,13 +1,13 @@
 === DHL Shipping Germany for WooCommerce ===
 Contributors: DHL, shadim, utzfu
 Tags: DPDHL, DHL, DHL eCommerce, DHL Paket Germany, Shipping
-Stable tag: 3.9.4
+Stable tag: 3.9.6
 Requires Plugins: woocommerce
 Requires PHP: 7.4
 Requires at least: 6.6
-Tested up to: 6.8
-WC requires at least: 9.8
-WC tested up to: 10.0
+Tested up to: 6.9
+WC requires at least: 10.1
+WC tested up to: 10.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,9 +67,14 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
-= 3.9.6 =
+= 3.9.7 =
 Fix: Hide DHL Postnummer from frontend address formats in Checkout Blocks and Store API.
 Fix: Preferred Location/Neighbour selection when only one of the options is enabled in DHL Paket settings.
+
+= 3.9.6 =
+* Tweak: WordPress 6.9 compatibility.
+* Fix: Remove Warenpost National.
+* Fix: Fatal error in needs_shipping() when order contains permanently deleted product.
 
 = 3.9.5 =
 * Add: Closest drop-point delivery (CDP) service for France.
@@ -79,6 +84,7 @@ Fix: Preferred Location/Neighbour selection when only one of the options is enab
 * Fix: Email template preview error.
 * Fix: Remove sensitive data from debug logs.
 * Fix: Remove DHL meta box if the order does not need shipping.
+* Tweak: WooCommerce 10.3 compatibility.
 
 = 3.9.4 =
 * Add: SOAP API deprecation notice.

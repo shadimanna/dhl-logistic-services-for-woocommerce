@@ -72,7 +72,7 @@ class API_Client {
 	 * @param API_Driver_Interface    $driver   The REST API driver to use.
 	 * @param API_Auth_Interface|null $auth     Optional authorization driver to use.
 	 */
-	public function __construct( $base_url, API_Driver_Interface $driver, API_Auth_Interface $auth = null ) {
+	public function __construct( string $base_url, API_Driver_Interface $driver, ?API_Auth_Interface $auth = null ) {
 		$this->base_url = $base_url;
 		$this->driver   = $driver;
 		$this->auth     = $auth;
