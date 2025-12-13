@@ -259,10 +259,9 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 		public function save_meta_box( $post_id, $post = null ) {
 
-			// Do nothing if it's not an order.
-			$screen = get_current_screen();
+			$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 			if ( ! empty( $screen ) ) {
-				if ( 'shop_order' !== $screen->post_type ) {
+				if ( isset( $screen->post_type ) && 'shop_order' !== $screen->post_type ) {
 					return;
 				}
 			}
@@ -277,22 +276,24 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 				return;
 			}
 
-			// loop through inputs within id 'shipment-dhl-label-form'
 			$meta_box_ids = array( 'pr_dhl_product', 'pr_dhl_weight' );
 
 			$additional_meta_box_ids = $this->get_additional_meta_ids();
-			$meta_box_ids            = array_merge( $meta_box_ids, $additional_meta_box_ids );
-			foreach ( $meta_box_ids as $key => $value ) {
-				// Save value if it exists
+			if ( is_array( $additional_meta_box_ids ) && ! empty( $additional_meta_box_ids ) ) {
+				$meta_box_ids = array_merge( $meta_box_ids, $additional_meta_box_ids );
+			}
+
+			$args = array();
+
+			foreach ( $meta_box_ids as $value ) {
 				if ( isset( $_POST[ $value ] ) ) {
 					$args[ $value ] = wc_clean( $_POST[ $value ] );
-				} else {
-					$args[ $value ] = '';
 				}
 			}
 
-			if ( isset( $args ) ) {
+			if ( ! empty( $args ) ) {
 				$this->save_dhl_label_items( $post_id, $args );
+
 				return $args;
 			}
 		}
