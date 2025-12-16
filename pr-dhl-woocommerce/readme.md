@@ -74,6 +74,7 @@ More detailed instructions on how to set up your store and configure it are cons
 * Fix: Hide DHL Postnummer from frontend address formats in Checkout Blocks and Store API.
 * Fix: Preferred Location/Neighbour selection when only one of the options is enabled in DHL Paket settings.
 * Fix: Preserve DHL label selections when running WooCommerce order actions.
+* Fix: Prevent fatal error in DHL Preferred Services on Checkout Blocks caused by missing sprintf import.
 * Tweak: Hide “Drop-off location or neighbor” option when a Packstation* or DHL Branch (Postfiliale) is selected.
 * Tweak: Set the REST API as the default selection in the setup wizard.
 
