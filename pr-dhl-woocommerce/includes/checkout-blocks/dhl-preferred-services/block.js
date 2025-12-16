@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from '@wordpress/element';
 import { TextControl, RadioControl, Spinner, Notice } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { CART_STORE_KEY } from '@woocommerce/block-data';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { debounce } from 'lodash';
 import axios from 'axios';
 
