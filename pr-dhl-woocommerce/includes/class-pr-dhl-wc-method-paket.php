@@ -93,6 +93,30 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 			return '<div id="dhlpaket_shipping_method_settings"><div class="dhlpaket_tab_menu"></div><div class="dhlpaket_tab_content">' . parent::get_admin_options_html() . '</div></div>';
 		}
 
+
+		/**
+		 * Internetmarke settings field keys.
+		 *
+		 * @return array
+		 */
+		protected function get_internetmarke_setting_keys() {
+			return array(
+				'internetmarke_api_user',
+				'internetmarke_api_password',
+				'internetmarke_portokasse_id',
+			);
+		}
+
+		/**
+		 * Get the dedicated option key for an Internetmarke field.
+		 *
+		 * @param string $key Field key.
+		 * @return string
+		 */
+		protected function get_internetmarke_option_key( $key ) {
+			return 'pr_dhl_internetmarke_' . $key;
+		}
+
 		/**
 		 * Initialize integration settings form fields.
 		 *
@@ -247,6 +271,35 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 						'<a href="' . esc_url( $log_path ) . '" target="_blank">',
 						'</a>'
 					),
+				),
+				'internetmarke_api_title'    => array(
+					'title'       => esc_html__( 'Internetmarke Account and API', 'dhl-for-woocommerce' ),
+					'type'        => 'title',
+					'description' => wp_kses(
+						__( 'Configure your Internetmarke access with your Portokasse account. For development and testing, use a developer Portokasse account. The first approval of the business application in Portokasse may be required before later token-based access works. If that approval has not happened yet, later real API methods may return HTTP 401.', 'dhl-for-woocommerce' ),
+						array()
+					),
+				),
+				'internetmarke_api_user'     => array(
+					'title'       => esc_html__( 'Username', 'dhl-for-woocommerce' ),
+					'type'        => 'text',
+					'description' => esc_html__( 'Your Internetmarke username for the Portokasse account.', 'dhl-for-woocommerce' ),
+					'desc_tip'    => true,
+					'default'     => '',
+				),
+				'internetmarke_api_password' => array(
+					'title'       => esc_html__( 'Password', 'dhl-for-woocommerce' ),
+					'type'        => 'password',
+					'description' => esc_html__( 'Your Internetmarke password for the Portokasse account.', 'dhl-for-woocommerce' ),
+					'desc_tip'    => true,
+					'default'     => '',
+				),
+				'internetmarke_portokasse_id' => array(
+					'title'       => esc_html__( 'Portokasse ID', 'dhl-for-woocommerce' ),
+					'type'        => 'text',
+					'description' => esc_html__( 'Enter the Portokasse ID that belongs to the Internetmarke account.', 'dhl-for-woocommerce' ),
+					'desc_tip'    => true,
+					'default'     => '',
 				),
 				'dhl_participation_title'    => array(
 					'title'       => esc_html__( 'DHL Products and Participation Number', 'dhl-for-woocommerce' ),
@@ -1064,6 +1117,48 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 		</tr>
 			<?php
 			return ob_get_clean();
+		}
+
+
+		/**
+		 * Get an option.
+		 *
+		 * @param string $key Option key.
+		 * @param mixed  $empty_value Value when empty.
+		 * @return mixed
+		 */
+		public function get_option( $key, $empty_value = null ) {
+			if ( in_array( $key, $this->get_internetmarke_setting_keys(), true ) ) {
+				return get_option( $this->get_internetmarke_option_key( $key ), $empty_value );
+			}
+
+			return parent::get_option( $key, $empty_value );
+		}
+
+		/**
+		 * Process admin options.
+		 *
+		 * @return bool
+		 */
+		public function process_admin_options() {
+			$result    = parent::process_admin_options();
+			$post_data = $this->get_post_data();
+
+			foreach ( $this->get_internetmarke_setting_keys() as $key ) {
+				$field_key  = $this->plugin_id . $this->id . '_' . $key;
+				$option_key = $this->get_internetmarke_option_key( $key );
+				$value      = isset( $post_data[ $field_key ] ) ? wc_clean( wp_unslash( $post_data[ $field_key ] ) ) : '';
+
+				update_option( $option_key, $value );
+
+				if ( isset( $this->settings[ $key ] ) ) {
+					unset( $this->settings[ $key ] );
+				}
+			}
+
+			update_option( $this->get_option_key(), $this->settings );
+
+			return $result;
 		}
 
 		public function init_instance_form_fields() {
