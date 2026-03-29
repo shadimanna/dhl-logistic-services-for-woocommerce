@@ -35,6 +35,26 @@ class Client extends API_Client {
 		return $response->body;
 	}
 
+	/**
+	 * Create a label order (POST /orders).
+	 *
+	 * The JSON_API_Driver automatically JSON-encodes the payload and decodes the response.
+	 *
+	 * @param  array $payload Order payload including positions, pageFormat, etc.
+	 * @return object         Decoded response body.
+	 * @throws Exception      On non-2xx HTTP status.
+	 */
+	public function create_label( array $payload ) {
+		$response = $this->post( 'orders', $payload );
+
+		$status = (int) $response->status;
+		if ( 200 !== $status && 201 !== $status ) {
+			throw new Exception( $this->extract_error_message( $response->body, $status, 'order' ) );
+		}
+
+		return $response->body;
+	}
+
 	protected function extract_error_message( $body, $status, $operation ) {
 		if ( is_string( $body ) ) {
 			$decoded = json_decode( $body );

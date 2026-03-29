@@ -473,21 +473,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 			}
 
 			try {
-				$im_api = new PR_DHL_API_Internetmarke();
-
-				// generate_label() will be implemented in the next step.
-				// Guard against the method not existing so we return a clean error
-				// instead of a PHP fatal — same defensive pattern used elsewhere in the plugin.
-				if ( ! method_exists( $im_api, 'generate_label' ) ) {
-					throw new Exception(
-						sprintf(
-							/* translators: %d is the resolved INTERNETMARKE product ID. */
-							esc_html__( 'Product ID %d resolved. Label generation will be connected in the next implementation step.', 'dhl-for-woocommerce' ),
-							$product_id
-						)
-					);
-				}
-
+				$im_api     = new PR_DHL_API_Internetmarke();
 				$label_info = $im_api->generate_label( $order_id, $product_id );
 
 				$this->save_label_tracking( $order_id, $label_info );
