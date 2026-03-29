@@ -57,10 +57,9 @@ class Auth implements API_Auth_Interface {
 		$full_url = URL_Utils::merge_url_and_route( $this->api_url, static::AUTH_ROUTE );
 		$body     = array_filter(
 			array(
-				'username'      => $this->username,
-				'password'      => $this->password,
-				'portokasseId'  => $this->portokasse_id,
-				'portokasse_id' => $this->portokasse_id,
+				'username'     => $this->username,
+				'password'     => $this->password,
+				'portokasseId' => $this->portokasse_id,
 			)
 		);
 
@@ -68,11 +67,8 @@ class Auth implements API_Auth_Interface {
 			Request::TYPE_POST,
 			$full_url,
 			array(),
-			http_build_query( $body, '', '&' ),
-			array(
-				'Accept'       => 'application/json',
-				'Content-Type' => 'application/x-www-form-urlencoded',
-			)
+			$body,
+			array( 'Accept' => 'application/json' )
 		);
 
 		$response = $this->driver->send( $request );

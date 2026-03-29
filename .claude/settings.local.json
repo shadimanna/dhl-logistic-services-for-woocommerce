@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/summo/.claude/projects/C--xampp-htdocs-progressus2024-wp-content-plugins-new/**)",
+      "Read(//c/Users/summo/.claude/projects/C--xampp-htdocs-progressus2024-wp-content-plugins-new/memory/**)"
+    ]
+  }
+}
