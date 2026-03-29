@@ -79,6 +79,13 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		public $product_editor = null;
 
 		/**
+		 * INTERNETMARKE order metabox handler.
+		 *
+		 * @var PR_DHL_WC_Order_Internetmarke
+		 */
+		protected $shipping_internetmarke_order = null;
+
+		/**
 		 * DHL Shipping DHL Parcel (Legacy) notice
 		 *
 		 * @var PR_DHL_WC_Notice
@@ -233,6 +240,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 			$this->get_pr_dhl_wc_product();
 			$this->get_pr_dhl_wc_order();
+			$this->get_pr_dhl_wc_order_internetmarke();
 		}
 
 		public function init_hooks() {
@@ -282,6 +290,22 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			}
 
 			return $this->shipping_dhl_order;
+		}
+
+		/**
+		 * Initialize the INTERNETMARKE order metabox handler.
+		 *
+		 * Runs independently of which DHL shipping method is active —
+		 * the INTERNETMARKE metabox is always available on order pages.
+		 *
+		 * @return PR_DHL_WC_Order_Internetmarke|null
+		 */
+		public function get_pr_dhl_wc_order_internetmarke() {
+			if ( ! isset( $this->shipping_internetmarke_order ) ) {
+				$this->shipping_internetmarke_order = new PR_DHL_WC_Order_Internetmarke();
+			}
+
+			return $this->shipping_internetmarke_order;
 		}
 
 		public function get_pr_dhl_wc_product() {
