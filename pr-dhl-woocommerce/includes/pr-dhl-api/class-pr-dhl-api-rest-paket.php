@@ -20,7 +20,7 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 	 *
 	 * @since [*next-version*]
 	 */
-	const API_URL_PRODUCTION = 'https://api.dhl.com/parcel/de/transportation/pickup/v3';
+	const API_URL_PRODUCTION = 'https://api-eu.dhl.com/parcel/de/transportation/pickup/v3';
 
 	/**
 	 * The URL to the sandbox API.
