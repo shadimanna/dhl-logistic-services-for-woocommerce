@@ -288,28 +288,28 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					'title'       => esc_html__( 'Internetmarke Account and API', 'dhl-for-woocommerce' ),
 					'type'        => 'title',
 					'description' => wp_kses(
-						__( 'Configure your Internetmarke access with your Portokasse account. For development and testing, use a developer Portokasse account. The first approval of the business application in Portokasse may be required before later token-based access works. If that approval has not happened yet, later real API methods may return HTTP 401.', 'dhl-for-woocommerce' ),
-						array()
+						__( 'Enter your Portokasse account credentials to enable Deutsche Post Internetmarke label generation. For development and testing, use a developer Portokasse — simulated payments are applied and generated stamps cannot be used for real postage. A HTTP 401 response can also occur until the business application has been approved inside the Portokasse account under My data &rarr; Business applications.', 'dhl-for-woocommerce' ),
+						array( 'rarr' => array() )
 					),
 				),
 				'internetmarke_api_user'     => array(
 					'title'       => esc_html__( 'Username', 'dhl-for-woocommerce' ),
 					'type'        => 'text',
-					'description' => esc_html__( 'Your Internetmarke username for the Portokasse account.', 'dhl-for-woocommerce' ),
+					'description' => esc_html__( 'Your Portokasse account username.', 'dhl-for-woocommerce' ),
 					'desc_tip'    => true,
 					'default'     => '',
 				),
 				'internetmarke_api_password' => array(
 					'title'       => esc_html__( 'Password', 'dhl-for-woocommerce' ),
 					'type'        => 'password',
-					'description' => esc_html__( 'Your Internetmarke password for the Portokasse account.', 'dhl-for-woocommerce' ),
+					'description' => esc_html__( 'Your Portokasse account password.', 'dhl-for-woocommerce' ),
 					'desc_tip'    => true,
 					'default'     => '',
 				),
 				'internetmarke_portokasse_id' => array(
-					'title'       => esc_html__( 'Portokasse ID', 'dhl-for-woocommerce' ),
+					'title'       => esc_html__( 'Portokasse ID (optional)', 'dhl-for-woocommerce' ),
 					'type'        => 'text',
-					'description' => esc_html__( 'Enter the Portokasse ID that belongs to the Internetmarke account.', 'dhl-for-woocommerce' ),
+					'description' => esc_html__( 'Optional. The Portokasse account ID, used to cross-check the account profile after authentication. Not required for token retrieval.', 'dhl-for-woocommerce' ),
 					'desc_tip'    => true,
 					'default'     => '',
 				),

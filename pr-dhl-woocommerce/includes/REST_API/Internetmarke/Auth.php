@@ -18,22 +18,25 @@ class Auth implements API_Auth_Interface {
 
 	protected $api_url;
 
+	protected $client_id;
+
+	protected $client_secret;
+
 	protected $username;
 
 	protected $password;
-
-	protected $portokasse_id;
 
 	protected $transient;
 
 	protected $token;
 
-	public function __construct( API_Driver_Interface $driver, $api_url, $username, $password, $portokasse_id, $transient ) {
+	public function __construct( API_Driver_Interface $driver, $api_url, $client_id, $client_secret, $username, $password, $transient ) {
 		$this->driver        = $driver;
 		$this->api_url       = $api_url;
+		$this->client_id     = $client_id;
+		$this->client_secret = $client_secret;
 		$this->username      = $username;
 		$this->password      = $password;
-		$this->portokasse_id = $portokasse_id;
 		$this->transient     = $transient;
 
 		$this->load_token();
@@ -55,12 +58,13 @@ class Auth implements API_Auth_Interface {
 
 	public function request_token() {
 		$full_url = URL_Utils::merge_url_and_route( $this->api_url, static::AUTH_ROUTE );
-		$body     = array_filter(
-			array(
-				'username'     => $this->username,
-				'password'     => $this->password,
-				'portokasseId' => $this->portokasse_id,
-			)
+
+		$body = array(
+			'client_id'     => $this->client_id,
+			'client_secret' => $this->client_secret,
+			'username'      => $this->username,
+			'password'      => $this->password,
+			'grant_type'    => 'client_credentials',
 		);
 
 		$request = new Request(
@@ -68,7 +72,10 @@ class Auth implements API_Auth_Interface {
 			$full_url,
 			array(),
 			$body,
-			array( 'Accept' => 'application/json' )
+			array(
+				'Content-Type' => 'application/x-www-form-urlencoded',
+				'Accept'       => 'application/json',
+			)
 		);
 
 		$response = $this->driver->send( $request );

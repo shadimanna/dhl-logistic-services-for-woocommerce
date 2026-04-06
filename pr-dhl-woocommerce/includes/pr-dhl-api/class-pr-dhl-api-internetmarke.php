@@ -21,13 +21,16 @@ class PR_DHL_API_Internetmarke {
 	protected $client;
 
 	public function __construct() {
-		$this->driver = new JSON_API_Driver( new WP_API_Driver() );
-		$this->auth   = new Auth(
-			$this->driver,
+		$raw_driver   = new WP_API_Driver();
+		$this->driver = new JSON_API_Driver( $raw_driver );
+
+		$this->auth = new Auth(
+			$raw_driver,
 			static::API_URL,
+			$this->get_app_client_id(),
+			$this->get_app_client_secret(),
 			$this->get_username(),
 			$this->get_password(),
-			$this->get_portokasse_id(),
 			static::ACCESS_TOKEN_TRANSIENT
 		);
 		$this->client = new Client( static::API_URL, $this->driver, $this->auth );
@@ -111,15 +114,23 @@ class PR_DHL_API_Internetmarke {
 	}
 
 	public function validate_configuration() {
-		if ( '' === $this->get_username() || '' === $this->get_password() || '' === $this->get_portokasse_id() ) {
-			throw new Exception( esc_html__( 'Please save the INTERNETMARKE username, password, and Portokasse ID before running this action.', 'dhl-for-woocommerce' ) );
+		if ( '' === $this->get_username() || '' === $this->get_password() ) {
+			throw new Exception( esc_html__( 'Please save the INTERNETMARKE Portokasse username and password before running this action.', 'dhl-for-woocommerce' ) );
 		}
+	}
+
+	protected function get_app_client_id() {
+		return defined( 'PR_DHL_GLOBAL_API' ) ? PR_DHL_GLOBAL_API : '';
+	}
+
+	protected function get_app_client_secret() {
+		return defined( 'PR_DHL_GLOBAL_SECRET' ) ? PR_DHL_GLOBAL_SECRET : '';
 	}
 
 	protected function get_settings() {
 		return array(
-			'internetmarke_api_user'     => get_option( 'pr_dhl_internetmarke_internetmarke_api_user', '' ),
-			'internetmarke_api_password' => get_option( 'pr_dhl_internetmarke_internetmarke_api_password', '' ),
+			'internetmarke_api_user'      => get_option( 'pr_dhl_internetmarke_internetmarke_api_user', '' ),
+			'internetmarke_api_password'  => get_option( 'pr_dhl_internetmarke_internetmarke_api_password', '' ),
 			'internetmarke_portokasse_id' => get_option( 'pr_dhl_internetmarke_internetmarke_portokasse_id', '' ),
 		);
 	}
