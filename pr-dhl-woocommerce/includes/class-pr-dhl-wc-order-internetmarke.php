@@ -36,16 +36,17 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 			// AJAX handlers — separate actions from Paket to avoid double-firing.
 			add_action( 'wp_ajax_wc_shipment_internetmarke_gen_label', array( $this, 'generate_label_ajax' ) );
 			add_action( 'wp_ajax_wc_shipment_internetmarke_delete_label', array( $this, 'delete_label_ajax' ) );
+
+			// Clean up local label PDF and order meta when an order is deleted.
+			add_action( 'woocommerce_before_delete_order', array( $this, 'cleanup_on_order_delete' ) );
+			add_action( 'before_delete_post', array( $this, 'cleanup_on_post_delete' ) );
 		}
-
-		// -------------------------------------------------------------------------
-		// Product and service data
-		// -------------------------------------------------------------------------
-
+        
 		/**
 		 * Base products shown in the dropdown.
-		 * Keys are the numeric product identifiers; values use original Deutsche Post naming.
-		 * Only approved yellow-highlighted rows from the spreadsheet are included.
+		 *
+		 * Derived from the Deutsche Post `ppl_v590_PARTNER` product list — yellow-highlighted
+		 * rows only, confirmed by task owner. The yellow subset covers:
 		 *
 		 * @return array
 		 */
@@ -173,9 +174,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 			return isset( $variants['none'] ) ? $variants['none'] : null;
 		}
 
-		// -------------------------------------------------------------------------
-		// Metabox registration
-		// -------------------------------------------------------------------------
 
 		/**
 		 * Register the INTERNETMARKE metabox on the order page.
@@ -407,9 +405,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 			wp_localize_script( 'wc-shipment-im-order-js', 'dhl_im_label_data', $im_label_data );
 		}
 
-		// -------------------------------------------------------------------------
-		// Save on order update (standard POST)
-		// -------------------------------------------------------------------------
 
 		/**
 		 * Persist selected product and services when the order is saved via the standard form.
@@ -508,10 +503,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 
 			wp_die();
 		}
-
-		// -------------------------------------------------------------------------
-		// AJAX: Delete label
-		// -------------------------------------------------------------------------
 
 		/**
 		 * AJAX handler: remove the stored INTERNETMARKE label tracking data.
@@ -635,6 +626,41 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 
 			$order->delete_meta_data( self::LABEL_TRACKING_META );
 			$order->save();
+		}
+
+		/**
+		 * Delete local label file and clear order meta when a HPOS order is deleted.
+		 *
+		 * @param int $order_id
+		 */
+		public function cleanup_on_order_delete( $order_id ) {
+			$this->delete_label_file( $order_id );
+		}
+
+		/**
+		 * Delete local label file and clear order meta when a legacy post-based order is deleted.
+		 *
+		 * @param int $post_id
+		 */
+		public function cleanup_on_post_delete( $post_id ) {
+			if ( 'shop_order' !== get_post_type( $post_id ) ) {
+				return;
+			}
+			$this->delete_label_file( $post_id );
+		}
+
+		/**
+		 * Remove the locally-stored label PDF for an order (if it exists).
+		 *
+		 * @param int $order_id
+		 */
+		protected function delete_label_file( $order_id ) {
+			$upload_dir = wp_upload_dir();
+			$file_path  = $upload_dir['basedir'] . '/woocommerce_dhl_label/dhl-im-label-' . (int) $order_id . '.pdf';
+
+			if ( file_exists( $file_path ) ) {
+				wp_delete_file( $file_path );
+			}
 		}
 	}
 

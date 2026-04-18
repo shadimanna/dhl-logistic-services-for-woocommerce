@@ -265,7 +265,7 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					'title'       => esc_html__( 'Internetmarke Account and API', 'dhl-for-woocommerce' ),
 					'type'        => 'title',
 					'description' => wp_kses(
-						__( 'Enter your Portokasse account credentials to enable Deutsche Post Internetmarke label generation. For development and testing, use a developer Portokasse — simulated payments are applied and generated stamps cannot be used for real postage. A HTTP 401 response can also occur until the business application has been approved inside the Portokasse account under My data &rarr; Business applications.', 'dhl-for-woocommerce' ),
+						__( 'Enter your Portokasse account credentials to enable Deutsche Post Internetmarke label generation. For development and testing, use a developer Portokasse — simulated payments are applied and generated stamps cannot be used for real postage. If you see authentication errors, confirm in your Portokasse account under My data &rarr; Business applications that the business application has been activated.', 'dhl-for-woocommerce' ),
 						array( 'rarr' => array() )
 					),
 				),
@@ -277,7 +277,7 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					'default'     => '',
 				),
 				'internetmarke_api_password' => array(
-					'title'       => esc_html__( 'Password', 'dhl-for-woocommerce' ),
+					'title'       => esc_html__( 'Portokasse Password', 'dhl-for-woocommerce' ),
 					'type'        => 'password',
 					'description' => esc_html__( 'Your Portokasse account password.', 'dhl-for-woocommerce' ),
 					'desc_tip'    => true,

@@ -176,7 +176,7 @@ class PR_DHL_API_Internetmarke {
 
 		if ( is_object( $result ) ) {
 			if ( ! empty( $result->link ) ) {
-				$label_url = (string) $result->link;
+				$label_url = $this->download_and_save_label( (string) $result->link, $order_id );
 			}
 			// trackId is returned per position for registered products (EINSCHREIBEN).
 			if ( ! empty( $result->positions ) && is_array( $result->positions ) ) {
@@ -225,6 +225,72 @@ class PR_DHL_API_Internetmarke {
 				),
 			),
 		);
+	}
+
+	/**
+	 * Download the label PDF from Deutsche Post's URL and save it locally.
+	 *
+	 * Deutsche Post returns a time-limited link (~24 h–7 days). Storing the remote URL
+	 * directly means the merchant's "Download Label" link will break after expiry. Instead
+	 * we download the PDF immediately and store it in the same woocommerce_dhl_label/
+	 * directory used by DHL Paket labels, so labels are accessible permanently.
+	 *
+	 * @param  string $remote_url URL returned in the API response link field.
+	 * @param  int    $order_id   WooCommerce order ID (used for the filename).
+	 * @return string             Local web-accessible URL to the saved PDF.
+	 * @throws Exception          On HTTP error or file-system failure.
+	 */
+	protected function download_and_save_label( $remote_url, $order_id ) {
+		PR_DHL()->dhl_label_folder_check();
+
+		$dir = PR_DHL()->get_dhl_label_folder_dir();
+		$web = PR_DHL()->get_dhl_label_folder_url();
+
+		if ( empty( $dir ) ) {
+			throw new Exception( esc_html__( 'Could not create the DHL label folder.', 'dhl-for-woocommerce' ) );
+		}
+
+		$filename  = 'dhl-im-label-' . (int) $order_id . '.pdf';
+		$file_path = $dir . $filename;
+		$file_url  = $web . $filename;
+
+		// validate_file() returns 2 for absolute paths on Windows — that is safe.
+		if ( validate_file( $file_path ) > 0 && validate_file( $file_path ) !== 2 ) {
+			throw new Exception( esc_html__( 'Invalid INTERNETMARKE label file path.', 'dhl-for-woocommerce' ) );
+		}
+
+		$response = wp_remote_get( $remote_url, array( 'timeout' => 30 ) );
+
+		if ( is_wp_error( $response ) ) {
+			throw new Exception( $response->get_error_message() );
+		}
+
+		$http_code = (int) wp_remote_retrieve_response_code( $response );
+		if ( 200 !== $http_code ) {
+			throw new Exception(
+				sprintf(
+					/* translators: %d: HTTP status code */
+					esc_html__( 'Could not download INTERNETMARKE label (HTTP %d).', 'dhl-for-woocommerce' ),
+					$http_code
+				)
+			);
+		}
+
+		$pdf = wp_remote_retrieve_body( $response );
+
+		if ( empty( $pdf ) ) {
+			throw new Exception( esc_html__( 'Empty response when downloading INTERNETMARKE label.', 'dhl-for-woocommerce' ) );
+		}
+
+		$written = file_put_contents( $file_path, $pdf ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+
+		if ( false === $written || 0 === $written ) {
+			throw new Exception( esc_html__( 'Could not save INTERNETMARKE label file.', 'dhl-for-woocommerce' ) );
+		}
+
+		$this->log( 'Label PDF saved locally: ' . $filename );
+
+		return $file_url;
 	}
 
 	/**
@@ -308,37 +374,111 @@ class PR_DHL_API_Internetmarke {
 	/**
 	 * Split a combined address line (e.g. "Musterstraße 12a") into street and house number.
 	 *
+	 * Uses the same token-based algorithm as Item_Info::set_address_2() — finds the last
+	 * purely-numeric token as the house number, falls back to the last token for alphanumeric
+	 * suffixes like "12a", "12-14", or "12b/3".
+	 *
 	 * @param  string $address_line
 	 * @return array { street: string, house_no: string }
 	 */
 	protected function split_street_and_house_no( $address_line ) {
 		$address_line = trim( (string) $address_line );
 
-		if ( preg_match( '/^(.+?)\s+(\d+\s*[a-zA-Z]?)$/', $address_line, $m ) ) {
-			return array( 'street' => trim( $m[1] ), 'house_no' => trim( $m[2] ) );
+		if ( '' === $address_line ) {
+			return array( 'street' => '', 'house_no' => '' );
 		}
 
-		return array( 'street' => $address_line, 'house_no' => '' );
+		$parts = explode( ' ', $address_line );
+
+		if ( count( $parts ) === 1 ) {
+			return array( 'street' => $address_line, 'house_no' => '' );
+		}
+
+		// Find the last purely-numeric token — that is the house number.
+		$number_index = false;
+		foreach ( $parts as $i => $part ) {
+			if ( is_numeric( $part ) ) {
+				$number_index = $i;
+			}
+		}
+
+		// No purely-numeric token: fall back to the last token (handles "12a", "12-14", "12b/3").
+		if ( false === $number_index ) {
+			$number_index = count( $parts ) - 1;
+		}
+
+		if ( 0 === $number_index ) {
+			// House number leads (e.g. "12 Musterstraße").
+			return array(
+				'street'   => implode( ' ', array_slice( $parts, 1 ) ),
+				'house_no' => $parts[0],
+			);
+		}
+
+		return array(
+			'street'   => implode( ' ', array_slice( $parts, 0, $number_index ) ),
+			'house_no' => implode( ' ', array_slice( $parts, $number_index ) ),
+		);
 	}
 
 	/**
 	 * Convert ISO 3166-1 alpha-2 to alpha-3 (required by INTERNETMARKE API).
+	 *
+	 * Complete mapping covering all UN member states and commonly-used territories.
 	 *
 	 * @param  string $iso2 Two-letter country code.
 	 * @return string       Three-letter country code, or original value if unknown.
 	 */
 	protected function country_iso2_to_iso3( $iso2 ) {
 		static $map = array(
-			'DE' => 'DEU', 'AT' => 'AUT', 'CH' => 'CHE', 'FR' => 'FRA', 'IT' => 'ITA',
-			'ES' => 'ESP', 'NL' => 'NLD', 'BE' => 'BEL', 'LU' => 'LUX', 'PL' => 'POL',
-			'CZ' => 'CZE', 'SK' => 'SVK', 'HU' => 'HUN', 'RO' => 'ROU', 'BG' => 'BGR',
-			'HR' => 'HRV', 'SI' => 'SVN', 'GR' => 'GRC', 'PT' => 'PRT', 'DK' => 'DNK',
-			'SE' => 'SWE', 'NO' => 'NOR', 'FI' => 'FIN', 'IE' => 'IRL', 'GB' => 'GBR',
-			'US' => 'USA', 'CA' => 'CAN', 'AU' => 'AUS', 'NZ' => 'NZL', 'JP' => 'JPN',
-			'CN' => 'CHN', 'IN' => 'IND', 'BR' => 'BRA', 'MX' => 'MEX', 'ZA' => 'ZAF',
-			'TR' => 'TUR', 'RU' => 'RUS', 'UA' => 'UKR', 'EE' => 'EST', 'LV' => 'LVA',
-			'LT' => 'LTU', 'RS' => 'SRB', 'BA' => 'BIH', 'IS' => 'ISL', 'LI' => 'LIE',
-			'MT' => 'MLT', 'CY' => 'CYP', 'AL' => 'ALB', 'ME' => 'MNE', 'MK' => 'MKD',
+			// Europe
+			'AD' => 'AND', 'AL' => 'ALB', 'AM' => 'ARM', 'AT' => 'AUT', 'AZ' => 'AZE',
+			'BA' => 'BIH', 'BE' => 'BEL', 'BG' => 'BGR', 'BY' => 'BLR', 'CH' => 'CHE',
+			'CY' => 'CYP', 'CZ' => 'CZE', 'DE' => 'DEU', 'DK' => 'DNK', 'EE' => 'EST',
+			'ES' => 'ESP', 'FI' => 'FIN', 'FR' => 'FRA', 'GB' => 'GBR', 'GE' => 'GEO',
+			'GR' => 'GRC', 'HR' => 'HRV', 'HU' => 'HUN', 'IE' => 'IRL', 'IS' => 'ISL',
+			'IT' => 'ITA', 'LI' => 'LIE', 'LT' => 'LTU', 'LU' => 'LUX', 'LV' => 'LVA',
+			'MC' => 'MCO', 'MD' => 'MDA', 'ME' => 'MNE', 'MK' => 'MKD', 'MT' => 'MLT',
+			'NL' => 'NLD', 'NO' => 'NOR', 'PL' => 'POL', 'PT' => 'PRT', 'RO' => 'ROU',
+			'RS' => 'SRB', 'RU' => 'RUS', 'SE' => 'SWE', 'SI' => 'SVN', 'SK' => 'SVK',
+			'SM' => 'SMR', 'TR' => 'TUR', 'UA' => 'UKR', 'VA' => 'VAT', 'XK' => 'XKX',
+			// Asia
+			'AE' => 'ARE', 'AF' => 'AFG', 'BD' => 'BGD', 'BH' => 'BHR', 'BN' => 'BRN',
+			'BT' => 'BTN', 'CN' => 'CHN', 'HK' => 'HKG', 'ID' => 'IDN', 'IL' => 'ISR',
+			'IN' => 'IND', 'IQ' => 'IRQ', 'IR' => 'IRN', 'JO' => 'JOR', 'JP' => 'JPN',
+			'KG' => 'KGZ', 'KH' => 'KHM', 'KP' => 'PRK', 'KR' => 'KOR', 'KW' => 'KWT',
+			'KZ' => 'KAZ', 'LA' => 'LAO', 'LB' => 'LBN', 'LK' => 'LKA', 'MM' => 'MMR',
+			'MN' => 'MNG', 'MO' => 'MAC', 'MV' => 'MDV', 'MY' => 'MYS', 'NP' => 'NPL',
+			'OM' => 'OMN', 'PH' => 'PHL', 'PK' => 'PAK', 'PS' => 'PSE', 'QA' => 'QAT',
+			'SA' => 'SAU', 'SG' => 'SGP', 'SY' => 'SYR', 'TH' => 'THA', 'TJ' => 'TJK',
+			'TL' => 'TLS', 'TM' => 'TKM', 'TW' => 'TWN', 'UZ' => 'UZB', 'VN' => 'VNM',
+			'YE' => 'YEM',
+			// North & Central America
+			'AG' => 'ATG', 'BB' => 'BRB', 'BS' => 'BHS', 'BZ' => 'BLZ', 'CA' => 'CAN',
+			'CR' => 'CRI', 'CU' => 'CUB', 'DM' => 'DMA', 'DO' => 'DOM', 'GD' => 'GRD',
+			'GT' => 'GTM', 'HN' => 'HND', 'HT' => 'HTI', 'JM' => 'JAM', 'KN' => 'KNA',
+			'LC' => 'LCA', 'MX' => 'MEX', 'NI' => 'NIC', 'PA' => 'PAN', 'PR' => 'PRI',
+			'SV' => 'SLV', 'TT' => 'TTO', 'US' => 'USA', 'VC' => 'VCT',
+			// South America
+			'AR' => 'ARG', 'BO' => 'BOL', 'BR' => 'BRA', 'CL' => 'CHL', 'CO' => 'COL',
+			'EC' => 'ECU', 'GY' => 'GUY', 'PE' => 'PER', 'PY' => 'PRY', 'SR' => 'SUR',
+			'UY' => 'URY', 'VE' => 'VEN',
+			// Africa
+			'AO' => 'AGO', 'BF' => 'BFA', 'BI' => 'BDI', 'BJ' => 'BEN', 'BW' => 'BWA',
+			'CD' => 'COD', 'CF' => 'CAF', 'CG' => 'COG', 'CI' => 'CIV', 'CM' => 'CMR',
+			'CV' => 'CPV', 'DJ' => 'DJI', 'DZ' => 'DZA', 'EG' => 'EGY', 'ER' => 'ERI',
+			'ET' => 'ETH', 'GA' => 'GAB', 'GH' => 'GHA', 'GM' => 'GMB', 'GN' => 'GIN',
+			'GQ' => 'GNQ', 'GW' => 'GNB', 'KE' => 'KEN', 'KM' => 'COM', 'LR' => 'LBR',
+			'LS' => 'LSO', 'LY' => 'LBY', 'MA' => 'MAR', 'MG' => 'MDG', 'ML' => 'MLI',
+			'MR' => 'MRT', 'MU' => 'MUS', 'MW' => 'MWI', 'MZ' => 'MOZ', 'NA' => 'NAM',
+			'NE' => 'NER', 'NG' => 'NGA', 'RW' => 'RWA', 'SC' => 'SYC', 'SD' => 'SDN',
+			'SL' => 'SLE', 'SN' => 'SEN', 'SO' => 'SOM', 'SS' => 'SSD', 'ST' => 'STP',
+			'SZ' => 'SWZ', 'TD' => 'TCD', 'TG' => 'TGO', 'TN' => 'TUN', 'TZ' => 'TZA',
+			'UG' => 'UGA', 'ZA' => 'ZAF', 'ZM' => 'ZMB', 'ZW' => 'ZWE',
+			// Oceania
+			'AU' => 'AUS', 'FJ' => 'FJI', 'FM' => 'FSM', 'KI' => 'KIR', 'MH' => 'MHL',
+			'NR' => 'NRU', 'NZ' => 'NZL', 'PG' => 'PNG', 'PW' => 'PLW', 'SB' => 'SLB',
+			'TO' => 'TON', 'TV' => 'TUV', 'VU' => 'VUT', 'WS' => 'WSM',
 		);
 
 		$iso2 = strtoupper( (string) $iso2 );
