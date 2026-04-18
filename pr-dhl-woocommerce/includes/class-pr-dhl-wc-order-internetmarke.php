@@ -184,6 +184,17 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 		 * @param WP_Post|WC_Order $post_or_order_object
 		 */
 		public function add_meta_box( $post_type, $post_or_order_object ) {
+			// Internetmarke is only available for German stores.
+			if ( 'DE' !== WC()->countries->get_base_country() ) {
+				return;
+			}
+
+			// Hide metabox until credentials are saved.
+			$settings = get_option( 'woocommerce_pr_dhl_paket_settings', array() );
+			if ( empty( $settings['internetmarke_api_user'] ) || empty( $settings['internetmarke_api_password'] ) ) {
+				return;
+			}
+
 			$order = $this->init_order_object( $post_or_order_object );
 
 			if ( ! is_a( $order, 'WC_Order' ) ) {
@@ -444,6 +455,11 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 		public function generate_label_ajax() {
 			check_ajax_referer( self::NONCE_ACTION, self::NONCE_FIELD );
 
+			if ( ! current_user_can( 'edit_shop_orders' ) ) {
+				wp_send_json( array( 'error' => esc_html__( 'You do not have permission to generate labels.', 'dhl-for-woocommerce' ) ) );
+				wp_die();
+			}
+
 			$order_id = isset( $_POST['order_id'] ) ? absint( $_POST['order_id'] ) : 0;
 
 			if ( ! $order_id ) {
@@ -503,6 +519,11 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 		 */
 		public function delete_label_ajax() {
 			check_ajax_referer( self::NONCE_ACTION, self::NONCE_FIELD );
+
+			if ( ! current_user_can( 'edit_shop_orders' ) ) {
+				wp_send_json( array( 'error' => esc_html__( 'You do not have permission to delete labels.', 'dhl-for-woocommerce' ) ) );
+				wp_die();
+			}
 
 			$order_id = isset( $_POST['order_id'] ) ? absint( $_POST['order_id'] ) : 0;
 

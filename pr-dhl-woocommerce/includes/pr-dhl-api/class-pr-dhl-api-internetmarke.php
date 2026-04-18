@@ -128,10 +128,11 @@ class PR_DHL_API_Internetmarke {
 	}
 
 	protected function get_settings() {
+		$paket = get_option( 'woocommerce_pr_dhl_paket_settings', array() );
 		return array(
-			'internetmarke_api_user'      => get_option( 'pr_dhl_internetmarke_internetmarke_api_user', '' ),
-			'internetmarke_api_password'  => get_option( 'pr_dhl_internetmarke_internetmarke_api_password', '' ),
-			'internetmarke_portokasse_id' => get_option( 'pr_dhl_internetmarke_internetmarke_portokasse_id', '' ),
+			'internetmarke_api_user'      => isset( $paket['internetmarke_api_user'] ) ? $paket['internetmarke_api_user'] : '',
+			'internetmarke_api_password'  => isset( $paket['internetmarke_api_password'] ) ? $paket['internetmarke_api_password'] : '',
+			'internetmarke_portokasse_id' => isset( $paket['internetmarke_portokasse_id'] ) ? $paket['internetmarke_portokasse_id'] : '',
 		);
 	}
 
@@ -190,9 +191,13 @@ class PR_DHL_API_Internetmarke {
 
 		$this->log( 'Label generated for order ' . $order_id . '.' );
 
-		return array(
-			'label_url'       => $label_url,
-			'tracking_number' => $tracking_number,
+		// Omit tracking_number when empty — most products don't return a trackId.
+		return array_filter(
+			array(
+				'label_url'       => $label_url,
+				'tracking_number' => $tracking_number,
+			),
+			'strlen'
 		);
 	}
 
@@ -205,7 +210,7 @@ class PR_DHL_API_Internetmarke {
 	 */
 	protected function build_label_payload( WC_Order $order, $product_id ) {
 		return array(
-			'pageFormat' => 'DNAxA4',
+			'pageFormat' => 2,
 			'positions'  => array(
 				array(
 					'productId'     => (int) $product_id,

@@ -94,19 +94,6 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 		}
 
 
-		/**
-		 * Internetmarke settings field keys.
-		 *
-		 * @return array
-		 */
-		protected function get_internetmarke_setting_keys() {
-			return array(
-				'internetmarke_api_user',
-				'internetmarke_api_password',
-				'internetmarke_portokasse_id',
-			);
-		}
-
 		protected function get_internetmarke_button_label( $action ) {
 			switch ( $action ) {
 				case 'health':
@@ -117,16 +104,6 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 				default:
 					return esc_html__( 'Test Connection', 'dhl-for-woocommerce' );
 			}
-		}
-
-		/**
-		 * Get the dedicated option key for an Internetmarke field.
-		 *
-		 * @param string $key Field key.
-		 * @return string
-		 */
-		protected function get_internetmarke_option_key( $key ) {
-			return 'pr_dhl_internetmarke_' . $key;
 		}
 
 		/**
@@ -1158,47 +1135,6 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 			return ob_get_clean();
 		}
 
-
-		/**
-		 * Get an option.
-		 *
-		 * @param string $key Option key.
-		 * @param mixed  $empty_value Value when empty.
-		 * @return mixed
-		 */
-		public function get_option( $key, $empty_value = null ) {
-			if ( in_array( $key, $this->get_internetmarke_setting_keys(), true ) ) {
-				return get_option( $this->get_internetmarke_option_key( $key ), $empty_value );
-			}
-
-			return parent::get_option( $key, $empty_value );
-		}
-
-		/**
-		 * Process admin options.
-		 *
-		 * @return bool
-		 */
-		public function process_admin_options() {
-			$result    = parent::process_admin_options();
-			$post_data = $this->get_post_data();
-
-			foreach ( $this->get_internetmarke_setting_keys() as $key ) {
-				$field_key  = $this->plugin_id . $this->id . '_' . $key;
-				$option_key = $this->get_internetmarke_option_key( $key );
-				$value      = isset( $post_data[ $field_key ] ) ? wc_clean( wp_unslash( $post_data[ $field_key ] ) ) : '';
-
-				update_option( $option_key, $value );
-
-				if ( isset( $this->settings[ $key ] ) ) {
-					unset( $this->settings[ $key ] );
-				}
-			}
-
-			update_option( $this->get_option_key(), $this->settings );
-
-			return $result;
-		}
 
 		public function init_instance_form_fields() {
 			$this->instance_form_fields = array(
