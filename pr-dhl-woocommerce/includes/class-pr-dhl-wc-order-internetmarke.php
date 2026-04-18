@@ -203,7 +203,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 
 			add_meta_box(
 				self::METABOX_ID,
-				esc_html__( 'INTERNETMARKE Label & Tracking', 'dhl-for-woocommerce' ),
+				esc_html__( 'INTERNETMARKE Label', 'dhl-for-woocommerce' ),
 				array( $this, 'meta_box' ),
 				$screen,
 				'side',

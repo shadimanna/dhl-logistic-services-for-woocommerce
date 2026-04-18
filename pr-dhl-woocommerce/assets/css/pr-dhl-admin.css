@@ -60,7 +60,8 @@ ul.wc_dhl_error{
 }
 
 #woocommerce-shipment-dhl-label,
-#woocommerce-dhl-dp-order {
+#woocommerce-dhl-dp-order,
+#woocommerce-shipment-internetmarke-label {
 	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(50%,#fc0),to(rgba(255,204,0,0)));
 	background-image: linear-gradient(#fc0 50%,rgba(255,204,0,0));
 	background-size: auto 36px;
@@ -77,14 +78,25 @@ ul.wc_dhl_error{
     height: 20px;
 }
 
-div#shipment-dhl-label-form > div:nth-of-type(even) {
+#woocommerce-shipment-internetmarke-label h2.hndle.ui-sortable-handle {
+    background: url(../img/dp-logo.svg);
+	background-size: auto 48px;
+	background-repeat: no-repeat;
+	background-position: left 14px center;
+	padding-left: 70px;
+}
+
+div#shipment-dhl-label-form > div:nth-of-type(even),
+div#shipment-im-label-form > div:nth-of-type(even) {
     background: #F9F9F9;
 }
- #woocommerce-shipment-dhl-label .inside {
+ #woocommerce-shipment-dhl-label .inside,
+ #woocommerce-shipment-internetmarke-label .inside {
     padding: 0;
     border-bottom: 5px solid #FFCC00;
 }
- #shipment-dhl-label-form > div {
+ #shipment-dhl-label-form > div,
+ #shipment-im-label-form > div {
     padding: 10px 15px;
 }
  #shipment-dhl-label-form > hr,
@@ -94,7 +106,10 @@ div#shipment-dhl-label-form > div:nth-of-type(even) {
 
 #shipment-dhl-label-form #dhl-label-button,
 #shipment-dhl-label-form #dhl-label-print,
-#shipment-dhl-label-form .wc_dhl_delete {
+#shipment-dhl-label-form .wc_dhl_delete,
+#shipment-im-label-form #im-label-button,
+#shipment-im-label-form #im-label-print,
+#shipment-im-label-form .wc_dhl_delete {
     margin: 0 15px 20px;
 }
 
@@ -463,3 +478,4 @@ body.woocommerce_page_wc-settings.pr_dhl_paket #dhlpaket_shipping_method_setting
 body.woocommerce_page_wc-settings.pr_dhl_paket .wc-shipping-zone-method-fields p.submit button.woocommerce-save-button {
 	margin-left:0px;
 }
+
