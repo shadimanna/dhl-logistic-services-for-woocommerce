@@ -93,19 +93,6 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 			return '<div id="dhlpaket_shipping_method_settings"><div class="dhlpaket_tab_menu"></div><div class="dhlpaket_tab_content">' . parent::get_admin_options_html() . '</div></div>';
 		}
 
-
-		protected function get_internetmarke_button_label( $action ) {
-			switch ( $action ) {
-				case 'health':
-					return esc_html__( 'Check API Health', 'dhl-for-woocommerce' );
-				case 'profile':
-					return esc_html__( 'Verify Account Profile', 'dhl-for-woocommerce' );
-				case 'connection':
-				default:
-					return esc_html__( 'Test Connection', 'dhl-for-woocommerce' );
-			}
-		}
-
 		/**
 		 * Initialize integration settings form fields.
 		 *
@@ -289,33 +276,6 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					'description' => esc_html__( 'Optional. The Portokasse account ID, used to cross-check the account profile after authentication. Not required for token retrieval.', 'dhl-for-woocommerce' ),
 					'desc_tip'    => true,
 					'default'     => '',
-				),
-				'internetmarke_test_connection_button' => array(
-					'title'             => $this->get_internetmarke_button_label( 'connection' ),
-					'type'              => 'button',
-					'custom_attributes' => array(
-						'onclick' => "dhlInternetmarkeAction('#woocommerce_pr_dhl_paket_internetmarke_test_connection_button', 'connection');",
-					),
-					'description'       => esc_html__( 'Test the saved INTERNETMARKE credentials and store a reusable bearer token for later requests.', 'dhl-for-woocommerce' ),
-					'desc_tip'          => false,
-				),
-				'internetmarke_health_check_button' => array(
-					'title'             => $this->get_internetmarke_button_label( 'health' ),
-					'type'              => 'button',
-					'custom_attributes' => array(
-						'onclick' => "dhlInternetmarkeAction('#woocommerce_pr_dhl_paket_internetmarke_health_check_button', 'health');",
-					),
-					'description'       => esc_html__( 'Run a lightweight INTERNETMARKE API health and version check.', 'dhl-for-woocommerce' ),
-					'desc_tip'          => false,
-				),
-				'internetmarke_profile_button' => array(
-					'title'             => $this->get_internetmarke_button_label( 'profile' ),
-					'type'              => 'button',
-					'custom_attributes' => array(
-						'onclick' => "dhlInternetmarkeAction('#woocommerce_pr_dhl_paket_internetmarke_profile_button', 'profile');",
-					),
-					'description'       => esc_html__( 'Fetch a minimal INTERNETMARKE account summary to verify that the saved Portokasse belongs to the authenticated user.', 'dhl-for-woocommerce' ),
-					'desc_tip'          => false,
 				),
 				'dhl_participation_title'    => array(
 					'title'       => esc_html__( 'DHL Products and Participation Number', 'dhl-for-woocommerce' ),

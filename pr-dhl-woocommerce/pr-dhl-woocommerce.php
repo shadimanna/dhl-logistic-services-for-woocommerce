@@ -254,7 +254,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			// Test connection
 			add_action( 'wp_ajax_test_dhl_connection', array( $this, 'test_dhl_connection_callback' ) );
 			add_action( 'wp_ajax_dhl_get_myaccount', array( $this, 'dhl_get_myaccount_callback' ) );
-			add_action( 'wp_ajax_pr_dhl_internetmarke_action', array( $this, 'internetmarke_action_callback' ) );
 
 			add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ) );
 
@@ -371,16 +370,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 					'loader_image'   => admin_url( 'images/loading.gif' ),
 					'test_con_nonce' => wp_create_nonce( 'pr-dhl-test-con' ),
 				);
-				$internetmarke_data = array(
-					'ajax_url'     => admin_url( 'admin-ajax.php' ),
-					'loader_image' => admin_url( 'images/loading.gif' ),
-					'nonce'        => wp_create_nonce( 'pr-dhl-internetmarke' ),
-					'labels'       => array(
-						'connection' => esc_html__( 'Test Connection', 'dhl-for-woocommerce' ),
-						'health'     => esc_html__( 'Check API Health', 'dhl-for-woocommerce' ),
-						'profile'    => esc_html__( 'Verify Account Profile', 'dhl-for-woocommerce' ),
-					),
-				);
 
 				if ( isset( $_GET['section'] ) && $_GET['section'] == 'pr_dhl_paket' ) {
 					wp_enqueue_script(
@@ -397,14 +386,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 					$this->myaccount_enqueue_scripts();
 
-					wp_enqueue_script(
-						'wc-shipment-dhl-internetmarke-js',
-						PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-internetmarke-settings.js',
-						array( 'jquery' ),
-						PR_DHL_VERSION,
-						true
-					);
-					wp_localize_script( 'wc-shipment-dhl-internetmarke-js', 'dhl_internetmarke_obj', $internetmarke_data );
 				}
 
 				wp_enqueue_script(
@@ -680,63 +661,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 						/* translators: %s is the error message returned when the connection fails */
 						'connection_error' => sprintf( esc_html__( 'Account Connection Failed: %s . Make sure to save the settings before testing the connection. ', 'dhl-for-woocommerce' ), $e->getMessage() ),
 						'button_txt'       => PR_DHL_BUTTON_MY_ACCOUNT,
-					)
-				);
-			}
-
-			wp_die();
-		}
-
-		public function internetmarke_action_callback() {
-			check_ajax_referer( 'pr-dhl-internetmarke', 'nonce' );
-
-			if ( ! current_user_can( 'manage_woocommerce' ) ) {
-				wp_send_json(
-					array(
-						'connection_error' => esc_html__( 'You are not allowed to run INTERNETMARKE admin actions.', 'dhl-for-woocommerce' ),
-					)
-				);
-			}
-
-			$operation    = isset( $_POST['internetmarke_action'] ) ? sanitize_key( wp_unslash( $_POST['internetmarke_action'] ) ) : '';
-			$button_label = isset( $_POST['button_label'] ) ? sanitize_text_field( wp_unslash( $_POST['button_label'] ) ) : esc_html__( 'Run action', 'dhl-for-woocommerce' );
-
-			try {
-				$internetmarke = new PR_DHL_API_Internetmarke();
-
-				switch ( $operation ) {
-					case 'connection':
-						$internetmarke->test_connection();
-						$message = esc_html__( 'INTERNETMARKE connection successful.', 'dhl-for-woocommerce' );
-						break;
-					case 'health':
-						$api_info = $internetmarke->check_health();
-						$version  = '';
-						if ( is_object( $api_info ) && ! empty( $api_info->version ) ) {
-							$version = ' ' . sprintf( esc_html__( '(version %s)', 'dhl-for-woocommerce' ), sanitize_text_field( $api_info->version ) );
-						}
-						$message = esc_html__( 'INTERNETMARKE API is reachable.', 'dhl-for-woocommerce' ) . $version;
-						break;
-					case 'profile':
-						$message = $internetmarke->get_profile_summary();
-						break;
-					default:
-						throw new Exception( esc_html__( 'Unknown INTERNETMARKE action.', 'dhl-for-woocommerce' ) );
-				}
-
-				wp_send_json(
-					array(
-						'connection_success' => $message,
-						'button_txt'         => $button_label,
-					)
-				);
-			} catch ( Exception $e ) {
-				$this->log_msg( '[INTERNETMARKE] ' . sanitize_text_field( $e->getMessage() ) );
-
-				wp_send_json(
-					array(
-						'connection_error' => sanitize_text_field( $e->getMessage() ),
-						'button_txt'       => $button_label,
 					)
 				);
 			}

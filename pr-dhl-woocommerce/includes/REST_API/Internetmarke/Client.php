@@ -15,26 +15,6 @@ class Client extends API_Client {
 		parent::__construct( $base_url, $driver, $auth );
 	}
 
-	public function get_api_info() {
-		$response = $this->get( '/' );
-
-		if ( 200 !== (int) $response->status ) {
-			throw new Exception( $this->extract_error_message( $response->body, $response->status, 'health' ) );
-		}
-
-		return $response->body;
-	}
-
-	public function get_profile() {
-		$response = $this->get( 'user/profile' );
-
-		if ( 200 !== (int) $response->status ) {
-			throw new Exception( $this->extract_error_message( $response->body, $response->status, 'profile' ) );
-		}
-
-		return $response->body;
-	}
-
 	/**
 	 * Create a label order (POST /orders).
 	 *
