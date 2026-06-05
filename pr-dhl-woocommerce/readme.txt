@@ -75,6 +75,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 3.9.8 =
+* Fix: Missing customs "shippingConditions" field causing label creation failure for DHL Europaket (V54EPAK) cross-border shipments.
+
 = 3.9.7 =
 * Fix: Errors appear when trying to save map settings.
 * Fix: Delivery options now correctly appear when shipping to Germany, even if the billing country is different.
