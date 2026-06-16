@@ -25,20 +25,18 @@ msgstr ""
 
 #. Plugin Name of the plugin
 #: pr-dhl-woocommerce.php
-#, fuzzy
 msgid "DHL Shipping Germany for WooCommerce"
-msgstr "DHL e-Commerce"
+msgstr "DHL Shipping Germany for WooCommerce"
 
 #. Plugin URI of the plugin
 #: pr-dhl-woocommerce.php
 msgid "https://github.com/shadimanna/dhl-logistic-services-for-woocommerce"
-msgstr ""
+msgstr "https://github.com/shadimanna/dhl-logistic-services-for-woocommerce"
 
 #. Description of the plugin
 #: pr-dhl-woocommerce.php
-#, fuzzy
 msgid "WooCommerce integration for DHL Paket and Deutsche Post International"
-msgstr "WooCommerce Integration DHL-Logistik-Dienstleistungen."
+msgstr "WooCommerce-Integration für DHL Paket und Deutsche Post International"
 
 #. Author of the plugin
 #: pr-dhl-woocommerce.php
@@ -47,15 +45,14 @@ msgstr "DHL"
 
 #. Author URI of the plugin
 #: pr-dhl-woocommerce.php
-#, fuzzy
 msgid "http://dhl.com/"
-msgstr "https://github.com/"
+msgstr "http://dhl.com/"
 
 #. translators: %s is the name of the service (e.g., DHL)
 #: includes/abstract-pr-dhl-wc-order.php:113
-#, fuzzy, php-format
+#, php-format
 msgid "%s Label & Tracking"
-msgstr "DHL-Label & Tracking"
+msgstr "%s Label & Sendungsverfolgung"
 
 #: includes/abstract-pr-dhl-wc-order.php:162
 msgid "Delete Label"
@@ -71,22 +68,19 @@ msgstr "DHL Label erzeugen"
 #: includes/abstract-pr-dhl-wc-order.php:370
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:696
 msgid "Download Label"
-msgstr ""
+msgstr "Label herunterladen"
 
 #: includes/abstract-pr-dhl-wc-order.php:199
-#, fuzzy
 msgid "Service"
-msgstr "Services"
+msgstr "Service"
 
 #: includes/abstract-pr-dhl-wc-order.php:203
-#, fuzzy
 msgid "Service selected:"
-msgstr "Ausgewähltes DHL Produkt:"
+msgstr "Ausgewählter Service:"
 
 #: includes/abstract-pr-dhl-wc-order.php:217
-#, fuzzy
 msgid "Weight"
-msgstr "Gewicht (%s)"
+msgstr "Gewicht"
 
 #. translators: %s is the weight unit (e.g., kg or lbs)
 #: includes/abstract-pr-dhl-wc-order.php:223
@@ -97,9 +91,8 @@ msgstr ""
 "Produkte:"
 
 #: includes/abstract-pr-dhl-wc-order.php:247
-#, fuzzy
 msgid "There are no DHL services available for the destination country!"
-msgstr "Für das Bestimmungsland gibt es keine DHL-Services!"
+msgstr "Für das Bestimmungsland sind keine DHL-Services verfügbar!"
 
 #: includes/abstract-pr-dhl-wc-order.php:369
 #: includes/abstract-pr-dhl-wc-order.php:399
@@ -113,13 +106,13 @@ msgstr ""
 
 #: includes/abstract-pr-dhl-wc-order.php:394
 msgid "There are no tracking number to delete."
-msgstr ""
+msgstr "Es sind keine Sendungsnummern zum Löschen vorhanden."
 
 #. translators: %s is the tracking link
 #: includes/abstract-pr-dhl-wc-order.php:439
-#, fuzzy, php-format
+#, php-format
 msgid "%s Tracking Number: {tracking-link}"
-msgstr "DHL Sendungsnnummer:  {tracking-link}"
+msgstr "%s Sendungsnummer: {tracking-link}"
 
 #. translators: %s is the return label number
 #: includes/abstract-pr-dhl-wc-order.php:461
@@ -127,75 +120,74 @@ msgstr "DHL Sendungsnnummer:  {tracking-link}"
 msgid ""
 "\n"
 " Return Label Number: %s"
-msgstr ""
+msgstr "\n Retourenlabel-Nummer: %s"
 
 #. translators: %s is the order number
 #: includes/abstract-pr-dhl-wc-order.php:1205
-#, fuzzy, php-format
+#, php-format
 msgid "Order #%s: DHL label created"
-msgstr "DHL-Label erstellt"
+msgstr "Bestellung #%s: DHL-Label erstellt"
 
 #. translators: %1$s is the order number, %2$s is the error message
 #: includes/abstract-pr-dhl-wc-order.php:1223
 #: includes/abstract-pr-dhl-wc-order.php:1381
 #, php-format
 msgid "Order #%1$s: %2$s"
-msgstr ""
+msgstr "Bestellung #%1$s: %2$s"
 
 #. translators: %1$s and %2$s are HTML tags for the download link
 #: includes/abstract-pr-dhl-wc-order.php:1291
 #, php-format
 msgid "Bulk DHL labels file created - %1$sdownload file%2$s"
-msgstr ""
+msgstr "Sammeldatei mit DHL-Labels erstellt – %1$sDatei herunterladen%2$s"
 
 #: includes/abstract-pr-dhl-wc-order.php:1298
 msgid "Could not create bulk DHL label file, download individually."
-msgstr ""
+msgstr "Sammeldatei der DHL-Labels konnte nicht erstellt werden, bitte einzeln herunterladen."
 
 #. translators: %s is the order number
 #: includes/abstract-pr-dhl-wc-order.php:1374
-#, fuzzy, php-format
+#, php-format
 msgid "Order #%s: DHL Label Deleted"
-msgstr "DHL-Label erstellt"
+msgstr "Bestellung #%s: DHL-Label gelöscht"
 
 #: includes/abstract-pr-dhl-wc-order.php:1424
 #: includes/abstract-pr-dhl-wc-order.php:1443
 msgid "There are no files to merge."
-msgstr ""
+msgstr "Es sind keine Dateien zum Zusammenführen vorhanden."
 
 #: includes/abstract-pr-dhl-wc-order.php:1430
 msgid "The first file is empty."
-msgstr ""
+msgstr "Die erste Datei ist leer."
 
 #: includes/abstract-pr-dhl-wc-order.php:1436
-#, fuzzy
 msgid "File format not supported."
-msgstr "Land nicht unterstützt"
+msgstr "Dateiformat wird nicht unterstützt."
 
 #: includes/abstract-pr-dhl-wc-order.php:1451
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:624
 msgid ""
 "Library conflict, could not merge PDF files. Please download PDF files "
 "individually."
-msgstr ""
+msgstr "Bibliothekskonflikt, PDF-Dateien konnten nicht zusammengeführt werden. Bitte laden Sie die PDF-Dateien einzeln herunter."
 
 #: includes/abstract-pr-dhl-wc-order.php:1464
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:639
 msgid "Not all the file formats are the same."
-msgstr ""
+msgstr "Nicht alle Dateiformate sind identisch."
 
 #: includes/abstract-pr-dhl-wc-order.php:1530
 msgid ""
 "There are currently no bulk DHL label file to download or the download link "
 "for the bulk DHL label file has already expired. Please try again."
-msgstr ""
+msgstr "Derzeit ist keine DHL-Sammeldatei zum Herunterladen vorhanden oder der Download-Link für die DHL-Sammeldatei ist bereits abgelaufen. Bitte versuchen Sie es erneut."
 
 #: includes/abstract-pr-dhl-wc-order.php:1553
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:1161
 msgid ""
 "Unable to download file. Label appears to be invalid or is missing. Please "
 "try again."
-msgstr ""
+msgstr "Datei kann nicht heruntergeladen werden. Das Label scheint ungültig zu sein oder fehlt. Bitte versuchen Sie es erneut."
 
 #: includes/abstract-pr-dhl-wc-product-editor.php:89
 #: includes/abstract-pr-dhl-wc-product.php:74
@@ -204,38 +196,31 @@ msgstr "- Länderauswahl -"
 
 #: includes/abstract-pr-dhl-wc-product-editor.php:112
 #: includes/abstract-pr-dhl-wc-product.php:93
-#, fuzzy
 msgid "HS Code"
-msgstr "Postleitzahl"
+msgstr "HS-Code"
 
 #: includes/abstract-pr-dhl-wc-product.php:28
 #: includes/abstract-pr-dhl-wc-product.php:107
 #: includes/class-pr-dhl-wc-product-editor-paket.php:23
-#, fuzzy
 msgid "Country of Manufacture (DHL)"
-msgstr "Herstellungsland"
+msgstr "Herstellungsland (DHL)"
 
 #: includes/abstract-pr-dhl-wc-product.php:29
 #: includes/abstract-pr-dhl-wc-product.php:120
 #: includes/class-pr-dhl-wc-product-editor-paket.php:24
-#, fuzzy
 msgid "Harmonized Tariff Schedule (DHL)"
-msgstr "Harmonized Tariff Schedule (DHL)"
+msgstr "Harmonisiertes Zolltarifschema (DHL)"
 
 #: includes/abstract-pr-dhl-wc-product.php:30
 #: includes/class-pr-dhl-wc-product-editor-paket.php:25
-#, fuzzy
 msgid ""
 "Harmonized Tariff Schedule is a number assigned to every possible commodity "
 "that can be imported or exported from any country."
-msgstr ""
-"Harmonisierte Tariff Schedule ist eine Nummer zugewiesen, um jede mögliche "
-"Ware, die nicht importiert oder aus einem beliebigen Land exportiert werden "
-"kann."
+msgstr "Das harmonisierte Zolltarifschema ist eine Nummer, die jeder Ware zugewiesen wird, die aus einem beliebigen Land importiert oder exportiert werden kann."
 
 #: includes/abstract-pr-dhl-wc-product.php:103
 msgid "- No change -"
-msgstr ""
+msgstr "- Keine Änderung -"
 
 #: includes/class-pr-dhl-extend-block-core.php:72
 #: includes/front-end/class-pr-dhl-front-end-paket.php:509
@@ -249,41 +234,31 @@ msgid "Please enter the preferred neighbor name and address."
 msgstr "Bitte vervollständigen Sie die Angaben zu ihrem Nachbarn."
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:15
-#, fuzzy
 msgid "Deutsche Post International"
-msgstr "DHL Paket International"
+msgstr "Deutsche Post International"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:19
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "To start creating Deutsche Post shipping labels and return back a tracking "
 "number to your customers, please fill in your user credentials as provided "
 "by Deutsche Post. Not yet a customer? Please get a quote %1$shere%2$s."
-msgstr ""
-"Um Versandetiketten zu erstellen und eine Tracking Nummer an Ihre Kunden "
-"zurückzugeben, tragen Sie bitte nachfolgend Ihre durch DHL bereitgestellten "
-"Kundendaten ein. Sie sind noch kein Geschäftskunde? Fordern Sie %shier%s ein "
-"Angebot an."
+msgstr "Um Versandlabels der Deutschen Post zu erstellen und eine Sendungsnummer an Ihre Kunden zurückzugeben, tragen Sie bitte Ihre von der Deutschen Post bereitgestellten Zugangsdaten ein. Sie sind noch kein Kunde? Fordern Sie %1$shier%2$s ein Angebot an."
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:70
-#, fuzzy
 msgid "Deutsche Post Products not displaying - "
-msgstr "DHL Produkte nicht angezeigt -"
+msgstr "Deutsche-Post-Produkte werden nicht angezeigt – "
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:77
 #: includes/class-pr-dhl-wc-method-paket.php:149
-#, fuzzy
 msgid "Account and API Settings"
-msgstr "API Einstellungen"
+msgstr "Konto- und API-Einstellungen"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:79
-#, fuzzy
 msgid ""
 "Please configure your account and API settings with Deutschepost "
 "International."
-msgstr ""
-"Bitte tragen Sie hier Ihre Zugangsdaten zum DHL Geschäftskundenportal ein, "
-"um die API Verbindung herzustellen."
+msgstr "Bitte konfigurieren Sie Ihre Konto- und API-Einstellungen für Deutsche Post International."
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:86
 #: includes/class-pr-dhl-wc-method-paket.php:187
@@ -292,67 +267,52 @@ msgid "Account Number (EKP)"
 msgstr "Kundennummer (EKP)"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:88
-#, fuzzy
 msgid ""
 "Your account number (9; 10 or 15 digits, numerical), also called \"EKP“. "
 "This will be provided by your local Deutsche Post sales organization."
-msgstr ""
-"Ihre DHL Kundennummer (10 Ziffern), auch EKP genannt. Diese wird von Ihrer "
-"lokalen DHL Vertriebsorganisation zu Verfügung gestellt."
+msgstr "Ihre Kundennummer (9, 10 oder 15 Ziffern, numerisch), auch „EKP“ genannt. Diese wird von Ihrer lokalen Deutsche-Post-Vertriebsorganisation bereitgestellt."
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:95
-#, fuzzy
 msgid "Contact Name"
-msgstr "Produktname"
+msgstr "Ansprechpartner"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:97
 msgid ""
 "Required for all customers. The name of the merchant, used as contact "
 "information on the Waybill."
-msgstr ""
+msgstr "Für alle Kunden erforderlich. Der Name des Händlers, der als Kontaktinformation auf dem Frachtbrief verwendet wird."
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:103
-#, fuzzy
 msgid "Contact Phone Number"
-msgstr "Telefonnummer eingeben."
+msgstr "Telefonnummer des Ansprechpartners"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:105
 msgid ""
 "Required for DHL Express customers. The phone number of the merchant, used "
 "as contact information on the Waybill."
-msgstr ""
+msgstr "Für DHL-Express-Kunden erforderlich. Die Telefonnummer des Händlers, die als Kontaktinformation auf dem Frachtbrief verwendet wird."
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:111
 msgid "Client Id"
 msgstr "Client-ID"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:113
-#, fuzzy
 msgid ""
 "The client ID (a 36 digits alphanumerical string made from 5 blocks) is "
 "required for authentication and is provided to you within your contract."
-msgstr ""
-"Die Client-ID (36 Ziffern alphanumerische Zeichenfolge aus 5 Blöcken "
-"hergestellt) ist erforderlich für die Authentifizierung und wird "
-"bereitgestellt, um Sie in Ihrem Vertrag."
+msgstr "Die Client-ID (eine alphanumerische Zeichenfolge aus 36 Zeichen in 5 Blöcken) ist für die Authentifizierung erforderlich und wird Ihnen mit Ihrem Vertrag bereitgestellt."
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:121
 msgid "Client Secret"
 msgstr "Client Secret"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:123
-#, fuzzy
 msgid ""
 "The client secret (also a 36 digits alphanumerical string made from 5 "
 "blocks) is required for authentication (together with the client ID) and "
 "creates the tokens needed to ensure secure access. It is part of your "
 "contract provided by your Deutsche Post sales partner."
-msgstr ""
-"Clientschlüssel (auch eine 36 5 Blocks alphanumerische Zeichenfolge aus "
-"Ziffern) wird benötigt für die Authentifizierung (zusammen mit der Client-"
-"ID) und schafft die Token benötigt, um sicheren Zugang zu gewährleisten. Es "
-"ist Teil Ihres Vertrages von Ihrem Vertriebspartner DHL zur Verfügung "
-"gestellt."
+msgstr "Das Client Secret (ebenfalls eine alphanumerische Zeichenfolge aus 36 Zeichen in 5 Blöcken) ist zusammen mit der Client-ID für die Authentifizierung erforderlich und erzeugt die Token, die für einen sicheren Zugriff benötigt werden. Es ist Teil Ihres Vertrags und wird von Ihrem Vertriebspartner der Deutschen Post bereitgestellt."
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:131
 #: includes/class-pr-dhl-wc-method-paket.php:208
@@ -365,29 +325,19 @@ msgid "Enable Sandbox Mode"
 msgstr "Sandbox-Modus aktivieren"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:135
-#, fuzzy
 msgid ""
 "Please, tick here if you want to test the plug-in installation against the "
 "Deutsche Post Sandbox Environment. Labels generated via Sandbox cannot be "
 "used for shipping and you need to enter your client ID and client secret for "
 "the Sandbox environment instead of the ones for production!"
-msgstr ""
-"Bitte hier kreuzen Sie an, wenn Sie die Plugin-Installation gegen die DHL-"
-"Sandbox-Umgebung testen möchten. Etiketten generiert per Sandbox können "
-"nicht für den Versand verwendet werden und müssen Sie Ihre Client-ID und den "
-"geheimen Clientschlüssel für die Sandbox-Umgebung anstelle der für die "
-"Produktion eingeben!"
+msgstr "Bitte aktivieren Sie dieses Kästchen, wenn Sie die Plugin-Installation gegen die Sandbox-Umgebung der Deutschen Post testen möchten. Über die Sandbox erzeugte Labels können nicht für den Versand verwendet werden und Sie müssen Ihre Client-ID und Ihr Client Secret für die Sandbox-Umgebung anstelle der Produktionsdaten eingeben!"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:147
-#, fuzzy
 msgid ""
 "Press the button for testing the connection against our Deutsche Post "
 "(depending on the selected environment this test is being done against the "
 "Sandbox or the Production Environment)."
-msgstr ""
-"Drücken Sie die Taste zum Testen der Verbindung gegen unsere DHL e-Commerce-"
-"Gateways je nach (der ausgewählten Umgebung, die diesen Test gegen die "
-"Sandbox getan wird) oder der Produktionsumgebung."
+msgstr "Klicken Sie auf die Schaltfläche, um die Verbindung zur Deutschen Post zu testen (abhängig von der ausgewählten Umgebung wird dieser Test gegen die Sandbox- oder die Produktionsumgebung durchgeführt)."
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:154
 #: includes/class-pr-dhl-wc-method-paket.php:240
@@ -400,20 +350,16 @@ msgid "Enable logging"
 msgstr "Logging aktivieren"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:160
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "A log file containing the communication to the Deutsche Post server will be "
 "maintained if this option is checked. This can be used in case of technical "
 "issues and can be found %1$shere%2$s."
-msgstr ""
-"Sobald diese Funktion angehakt ist, wird die Kommunikation zum DHL Server in "
-"einer Log File Datei bereitgehalten. Diese ist nützlich bei technischen "
-"Problemen und ist %shier%s zu finden."
+msgstr "Wenn diese Option aktiviert ist, wird eine Protokolldatei mit der Kommunikation zum Server der Deutschen Post geführt. Diese kann bei technischen Problemen verwendet werden und ist %1$shier%2$s zu finden."
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:169
-#, fuzzy
 msgid "Shipping"
-msgstr "Versandarten"
+msgstr "Versand"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:171
 msgid "Please configure your shipping parameters underneath."
@@ -425,15 +371,11 @@ msgid "International Default Service"
 msgstr "Internationaler Default Service"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:177
-#, fuzzy
 msgid ""
 "Please select your default Deutsche Post shipping service for cross-border "
 "shippments that you want to offer to your customers (you can always change "
 "this within each individual order afterwards)."
-msgstr ""
-"Bitte wählen Sie Ihren Standard DHL Paket Service für internationale "
-"Sendungen, die Sie Ihren Kunden anbieten wollen (dies können Sie in jedem "
-"einzelnen Auftrag nachträglich ändern)"
+msgstr "Bitte wählen Sie Ihren Standard-Versandservice der Deutschen Post für grenzüberschreitende Sendungen, den Sie Ihren Kunden anbieten möchten (Sie können dies nachträglich in jeder einzelnen Bestellung ändern)."
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:186
 #: includes/class-pr-dhl-wc-method-paket.php:469
@@ -457,13 +399,10 @@ msgid "Additional Weight (%s or %%)"
 msgstr "Zusätzliches Gewicht (%s or %%)"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:206
-#, fuzzy
 msgid ""
 "Add extra weight in addition to the products. Either an absolute amount or "
 "percentage (e.g. 10 for 10%)."
-msgstr ""
-"Zusätzliches Gewicht hinzufügen, entweder als aboluten oder prozentuallen "
-"Betrag (10 oder 10%)"
+msgstr "Fügen Sie zusätzlich zum Produktgewicht ein weiteres Gewicht hinzu. Entweder als absoluten Wert oder als Prozentsatz (z. B. 10 für 10 %)."
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:230
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:241
@@ -495,46 +434,39 @@ msgstr ""
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:248
 msgid "Deutsche Post Tracking Number: {tracking-link}"
-msgstr ""
+msgstr "Deutsche Post Sendungsnummer: {tracking-link}"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:254
-#, fuzzy
 msgid "Label options"
-msgstr "Format beschriften"
+msgstr "Label-Optionen"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:256
 msgid "Options for configuring your label preferences"
-msgstr ""
+msgstr "Optionen zur Konfiguration Ihrer Label-Einstellungen"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:259
-#, fuzzy
 msgid "Label Reference"
-msgstr "Zahlungsreferenz"
+msgstr "Label-Referenz"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:264
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:277
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "Use \"%1$s\" to send the order id as a reference and \"%2$s\" to send the "
 "customer email. This text is limited to 35 characters."
-msgstr ""
-"Benutzen Sie “%s“, um die Bestellnummer als Bank-Referenz zu senden. "
-"Benutzen Sie “%s”, um die Kunden-Email zu senden. Die Eingabe ist auf 35 "
-"Zeichen beschränkt."
+msgstr "Verwenden Sie „%1$s“, um die Bestellnummer als Referenz zu senden, und „%2$s“, um die Kunden-E-Mail zu senden. Dieser Text ist auf 35 Zeichen begrenzt."
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:272
-#, fuzzy
 msgid "Label Reference 2"
-msgstr "Zahlungsreferenz 2"
+msgstr "Label-Referenz 2"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:363
 msgid "Contact Phone Number required, please add in settings."
-msgstr ""
+msgstr "Telefonnummer des Ansprechpartners erforderlich, bitte in den Einstellungen ergänzen."
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:386
-#, fuzzy
 msgid "Could not reset connection: "
-msgstr "Verbindung prüfen"
+msgstr "Verbindung konnte nicht zurückgesetzt werden: "
 
 #: includes/class-pr-dhl-wc-method-paket.php:28
 #: includes/class-pr-dhl-wc-method-paket.php:1075
@@ -545,17 +477,13 @@ msgstr "DHL Paket"
 
 #. translators: %s: link to request a quote for becoming a DHL business customer
 #: includes/class-pr-dhl-wc-method-paket.php:31
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "Below you will find all functions for controlling, preparing and processing "
 "your shipment with DHL Paket. Prerequisite is a valid DHL business customer "
 "contract. If you are not yet a DHL business customer, you can request a "
 "quote %1$shere%2$s."
-msgstr ""
-"Im folgenden stehen Ihnen alle Funktionen zur Steuerung, Vorbereitung und "
-"Abwicklung Ihres Versandes mit DHL Paket zur Verfügung. Voraussetzung ist "
-"ein gültiger DHL Geschäftskundenvertrag. Wie Sie noch kein DHL "
-"Geschäftskunde sein sollten, können Sie %shier%s ein Angebot anfordern."
+msgstr "Nachfolgend finden Sie alle Funktionen zur Steuerung, Vorbereitung und Abwicklung Ihres Versands mit DHL Paket. Voraussetzung ist ein gültiger DHL-Geschäftskundenvertrag. Wenn Sie noch kein DHL-Geschäftskunde sind, können Sie %1$shier%2$s ein Angebot anfordern."
 
 #: includes/class-pr-dhl-wc-method-paket.php:105
 #: templates/checkout/dhl-preferred-services.php:128
@@ -581,9 +509,8 @@ msgid "Product Tags"
 msgstr "Produkt-Schlagwörter"
 
 #: includes/class-pr-dhl-wc-method-paket.php:127
-#, fuzzy
 msgid "DHL Products not displaying - "
-msgstr "DHL Produkte nicht angezeigt -"
+msgstr "DHL-Produkte werden nicht angezeigt – "
 
 #: includes/class-pr-dhl-wc-method-paket.php:134
 #, php-format
@@ -591,7 +518,7 @@ msgid ""
 "<p style=\"color: red;\">Your password will expire in less than 7 days, "
 "please go to your <a href=\"%s\" target=\"_blank\">business portal</a> and "
 "reset your password then click the \"Get Account Settings\" button below.</p>"
-msgstr ""
+msgstr "<p style=\"color: red;\">Ihr Passwort läuft in weniger als 7 Tagen ab. Bitte gehen Sie zu Ihrem <a href=\"%s\" target=\"_blank\">Geschäftskundenportal</a>, setzen Sie Ihr Passwort zurück und klicken Sie anschließend unten auf die Schaltfläche „Kontoeinstellungen abrufen“.</p>"
 
 #: includes/class-pr-dhl-wc-method-paket.php:140
 #, php-format
@@ -599,16 +526,13 @@ msgid ""
 "<p style=\"color: red;\">Your password will expire in less than 30 days, "
 "please go to your <a href=\"%s\" target=\"_blank\">business portal</a> and "
 "reset your password then click the \"Get Account Settings\" button below.</p>"
-msgstr ""
+msgstr "<p style=\"color: red;\">Ihr Passwort läuft in weniger als 30 Tagen ab. Bitte gehen Sie zu Ihrem <a href=\"%s\" target=\"_blank\">Geschäftskundenportal</a>, setzen Sie Ihr Passwort zurück und klicken Sie anschließend unten auf die Schaltfläche „Kontoeinstellungen abrufen“.</p>"
 
 #: includes/class-pr-dhl-wc-method-paket.php:151
-#, fuzzy
 msgid ""
 "Please configure your shipping parameters and your access towards the DHL "
 "Paket APIs by means of authentication."
-msgstr ""
-"Bitte tragen Sie hier Ihre Zugangsdaten zum DHL Geschäftskundenportal ein, "
-"um die API Verbindung herzustellen."
+msgstr "Bitte konfigurieren Sie Ihre Versandparameter und Ihren Zugang zu den DHL-Paket-APIs mittels Authentifizierung."
 
 #: includes/class-pr-dhl-wc-method-paket.php:154
 #: includes/class-pr-dhl-wc-wizard-paket.php:106
@@ -617,13 +541,11 @@ msgstr "Benutzername"
 
 #. Translators: %s is the URL for the DHL business customer portal.
 #: includes/class-pr-dhl-wc-method-paket.php:158
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "Your username for the DHL business customer portal. Please note the lower "
 "case and test your access data in advance at %1$shere%2$s."
-msgstr ""
-"Ihr Benutzername für das DHL Geschäftskunden Portal. Bitte beachten Sie die "
-"Kleinschreibung. Sie können Ihren Zugang %shier%s testen."
+msgstr "Ihr Benutzername für das DHL-Geschäftskundenportal. Bitte beachten Sie die Kleinschreibung und testen Sie Ihre Zugangsdaten vorab %1$shier%2$s."
 
 #: includes/class-pr-dhl-wc-method-paket.php:166
 #: includes/class-pr-dhl-wc-wizard-paket.php:109
@@ -632,22 +554,19 @@ msgstr "Passwort"
 
 #. Translators: %s is the URL for the DHL business customer portal.
 #: includes/class-pr-dhl-wc-method-paket.php:170
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "Your password for the DHL business customer portal. Please note the new "
 "assignment of the password to 3 (Standard User) or 12 (System User) months "
 "and test your access data in advance at %1$shere%2$s."
-msgstr ""
-"Ihr Passwort für das DHL Geschäftskundenportal. Bitte beachten Sie die "
-"Neuvergabe des Passworts nach 3 (Standard User) oder 12 (System User) "
-"Monaten und testen Sie vorab ihre Zugangsdaten %shier%s"
+msgstr "Ihr Passwort für das DHL-Geschäftskundenportal. Bitte beachten Sie die Neuvergabe des Passworts nach 3 (Standardnutzer) bzw. 12 (Systemnutzer) Monaten und testen Sie Ihre Zugangsdaten vorab %1$shier%2$s."
 
 #: includes/class-pr-dhl-wc-method-paket.php:183
 #: includes/class-pr-dhl-wc-method-paket.php:262
 msgid ""
 "Press the button to read your DHL Business Account settings into the DHL for "
 "WooCommerce plugin."
-msgstr ""
+msgstr "Klicken Sie auf die Schaltfläche, um die Einstellungen Ihres DHL-Geschäftskontos in das Plugin „DHL für WooCommerce“ zu übernehmen."
 
 #: includes/class-pr-dhl-wc-method-paket.php:189
 msgid ""
@@ -659,31 +578,23 @@ msgstr ""
 
 #: includes/class-pr-dhl-wc-method-paket.php:196
 msgid "API Protocol"
-msgstr ""
+msgstr "API-Protokoll"
 
 #: includes/class-pr-dhl-wc-method-paket.php:198
-#, fuzzy
 msgid "Select the API protocol to use for creating shipping labels."
-msgstr "Wählen Sie eines der Formate, das Label zu generieren."
+msgstr "Wählen Sie das API-Protokoll, das zum Erstellen von Versandlabels verwendet werden soll."
 
 #: includes/class-pr-dhl-wc-method-paket.php:212
-#, fuzzy
 msgid ""
 "Please, tick here if you want to test the plug-in installation against the "
 "DHL Sandbox Environment. Labels generated via Sandbox cannot be used for "
 "shipping and you need to enter your client ID and client secret for the "
 "Sandbox environment instead of the ones for production!"
-msgstr ""
-"Bitte hier kreuzen Sie an, wenn Sie die Plugin-Installation gegen die DHL-"
-"Sandbox-Umgebung testen möchten. Etiketten generiert per Sandbox können "
-"nicht für den Versand verwendet werden und müssen Sie Ihre Client-ID und den "
-"geheimen Clientschlüssel für die Sandbox-Umgebung anstelle der für die "
-"Produktion eingeben!"
+msgstr "Bitte aktivieren Sie dieses Kästchen, wenn Sie die Plugin-Installation gegen die DHL-Sandbox-Umgebung testen möchten. Über die Sandbox erzeugte Labels können nicht für den Versand verwendet werden und Sie müssen Ihre Client-ID und Ihr Client Secret für die Sandbox-Umgebung anstelle der Produktionsdaten eingeben!"
 
 #: includes/class-pr-dhl-wc-method-paket.php:216
-#, fuzzy
 msgid "Sandbox Username"
-msgstr "Benutzername"
+msgstr "Sandbox-Benutzername"
 
 #. Translators: %s is the URL for creating a DHL developer portal account.
 #: includes/class-pr-dhl-wc-method-paket.php:220
@@ -691,12 +602,11 @@ msgstr "Benutzername"
 msgid ""
 "Your sandbox username is the same as for the DHL developer portal. You can "
 "create an account %1$shere%2$s."
-msgstr ""
+msgstr "Ihr Sandbox-Benutzername ist derselbe wie für das DHL-Entwicklerportal. Sie können %1$shier%2$s ein Konto erstellen."
 
 #: includes/class-pr-dhl-wc-method-paket.php:228
-#, fuzzy
 msgid "Sandbox Password"
-msgstr "Sandbox-Modus"
+msgstr "Sandbox-Passwort"
 
 #. Translators: %s is the URL for creating a DHL developer portal account.
 #: includes/class-pr-dhl-wc-method-paket.php:232
@@ -704,19 +614,16 @@ msgstr "Sandbox-Modus"
 msgid ""
 "Your sandbox password is the same as for the DHL developer portal. You can "
 "create an account %1$shere%2$s."
-msgstr ""
+msgstr "Ihr Sandbox-Passwort ist dasselbe wie für das DHL-Entwicklerportal. Sie können %1$shier%2$s ein Konto erstellen."
 
 #. Translators: %s is the URL to the log file.
 #: includes/class-pr-dhl-wc-method-paket.php:246
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "A log file containing the communication to the DHL server will be maintained "
 "if this option is checked. This can be used in case of technical issues and "
 "can be found %1$shere%2$s."
-msgstr ""
-"Sobald diese Funktion angehakt ist, wird die Kommunikation zum DHL Server in "
-"einer Log File Datei bereitgehalten. Diese ist nützlich bei technischen "
-"Problemen und ist %shier%s zu finden."
+msgstr "Wenn diese Option aktiviert ist, wird eine Protokolldatei mit der Kommunikation zum DHL-Server geführt. Diese kann bei technischen Problemen verwendet werden und ist %1$shier%2$s zu finden."
 
 #: includes/class-pr-dhl-wc-method-paket.php:252
 msgid "DHL Products and Participation Number"
@@ -735,9 +642,8 @@ msgstr ""
 "Vertragsdaten (zum Beispiel 01)."
 
 #: includes/class-pr-dhl-wc-method-paket.php:310
-#, fuzzy
 msgid "DHL Retoure"
-msgstr "DHL e-Commerce"
+msgstr "DHL Retoure"
 
 #: includes/class-pr-dhl-wc-method-paket.php:316
 msgid "Shipping Label Settings"
@@ -745,15 +651,12 @@ msgstr "Versandlabel Einstellungen"
 
 #. translators: %1$s: link to upload logo; %2$s: closing tag for link
 #: includes/class-pr-dhl-wc-method-paket.php:319
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "Would you like to customize the DHL shipment notification? You can now add "
 "your online shop’s name and logo and we will display it in the DHL shipment "
 "notification. To upload your logo please use the following %1$slink%2$s."
-msgstr ""
-"Möchten Sie die DHL Paketankündigung individualisieren? Sie können ab sofort "
-"Ihr Logo und den gewünschten Shop-Namen in der Paketankündigung anzeigen "
-"lassen. Nutzen Sie dafür das folgende %sFormular%s."
+msgstr "Möchten Sie die DHL-Sendungsbenachrichtigung individualisieren? Sie können jetzt den Namen und das Logo Ihres Online-Shops hinzufügen, das wir in der DHL-Sendungsbenachrichtigung anzeigen. Um Ihr Logo hochzuladen, verwenden Sie bitte den folgenden %1$sLink%2$s."
 
 #: includes/class-pr-dhl-wc-method-paket.php:322
 msgid "Domestic Default Service"
@@ -780,9 +683,8 @@ msgstr ""
 "einzelnen Auftrag nachträglich ändern)"
 
 #: includes/class-pr-dhl-wc-method-paket.php:338
-#, fuzzy
 msgid "Send Customer Email"
-msgstr "Email eintragen."
+msgstr "Kunden-E-Mail senden"
 
 #: includes/class-pr-dhl-wc-method-paket.php:340
 msgid ""
@@ -824,24 +726,18 @@ msgstr ""
 "Bitte wählen Sie, ob die Kunden-Telefonnummer an DHL gesendet werden soll"
 
 #: includes/class-pr-dhl-wc-method-paket.php:361
-#, fuzzy
 msgid "Visual Age Check default"
-msgstr "Alterssichtprüfung:"
+msgstr "Standard für Alterssichtprüfung"
 
 #: includes/class-pr-dhl-wc-method-paket.php:364
-#, fuzzy
 msgid ""
 "Please, tick here if you want the \"Visual Age Check\" option to be checked "
 "in the \"Edit Order\" before printing a label."
-msgstr ""
-"Bestimmt, ob Versandetiketten nur erzeugt werden sollen, wenn die Adresse "
-"leitcodierbar ist. Für nicht.leitcodierbare Adressen berechnet DHL einen "
-"Zuschlag."
+msgstr "Bitte aktivieren Sie dieses Kästchen, wenn die Option „Alterssichtprüfung“ unter „Bestellung bearbeiten“ vor dem Druck eines Labels aktiviert sein soll."
 
 #: includes/class-pr-dhl-wc-method-paket.php:369
-#, fuzzy
 msgid "Additional Insurance default"
-msgstr "Transportversicherung:"
+msgstr "Standard für Transportversicherung"
 
 #: includes/class-pr-dhl-wc-method-paket.php:371
 #: includes/class-pr-dhl-wc-method-paket.php:379
@@ -859,133 +755,95 @@ msgid "Checked"
 msgstr "Auswählen"
 
 #: includes/class-pr-dhl-wc-method-paket.php:373
-#, fuzzy
 msgid ""
 "Please, tick here if you want the \"Additional Insurance\" option to be "
 "checked in the \"Edit Order\" before printing a label."
-msgstr ""
-"Bestimmt, ob Versandetiketten nur erzeugt werden sollen, wenn die Adresse "
-"leitcodierbar ist. Für nicht.leitcodierbare Adressen berechnet DHL einen "
-"Zuschlag."
+msgstr "Bitte aktivieren Sie dieses Kästchen, wenn die Option „Transportversicherung“ unter „Bestellung bearbeiten“ vor dem Druck eines Labels aktiviert sein soll."
 
 #: includes/class-pr-dhl-wc-method-paket.php:377
-#, fuzzy
 msgid "No Neighbor Delivery default"
-msgstr "Keine Nachbarschaftszustellung: "
+msgstr "Standard für keine Nachbarschaftszustellung"
 
 #: includes/class-pr-dhl-wc-method-paket.php:381
-#, fuzzy
 msgid ""
 "Please, tick here if you want the \"No Neighbor Delivery\" option to be "
 "checked in the \"Edit Order\" before printing a label."
-msgstr ""
-"Bestimmt, ob Versandetiketten nur erzeugt werden sollen, wenn die Adresse "
-"leitcodierbar ist. Für nicht.leitcodierbare Adressen berechnet DHL einen "
-"Zuschlag."
+msgstr "Bitte aktivieren Sie dieses Kästchen, wenn die Option „Keine Nachbarschaftszustellung“ unter „Bestellung bearbeiten“ vor dem Druck eines Labels aktiviert sein soll."
 
 #: includes/class-pr-dhl-wc-method-paket.php:385
-#, fuzzy
 msgid "Named Person Only default"
-msgstr "Persönliche Übergabe:"
+msgstr "Standard für persönliche Übergabe"
 
 #: includes/class-pr-dhl-wc-method-paket.php:389
-#, fuzzy
 msgid ""
 "Please, tick here if you want the \"Named Person Only\" option to be checked "
 "in the \"Edit Order\" before printing a label."
-msgstr ""
-"Bestimmt, ob Versandetiketten nur erzeugt werden sollen, wenn die Adresse "
-"leitcodierbar ist. Für nicht.leitcodierbare Adressen berechnet DHL einen "
-"Zuschlag."
+msgstr "Bitte aktivieren Sie dieses Kästchen, wenn die Option „Persönliche Übergabe“ unter „Bestellung bearbeiten“ vor dem Druck eines Labels aktiviert sein soll."
 
 #: includes/class-pr-dhl-wc-method-paket.php:393
-#, fuzzy
 msgid "Premium default"
-msgstr "Premium: "
+msgstr "Standard für Premium"
 
 #: includes/class-pr-dhl-wc-method-paket.php:397
-#, fuzzy
 msgid ""
 "Please, tick here if you want the \"Premium\" option to be checked in the "
 "\"Edit Order\" before printing a label."
-msgstr ""
-"Bestimmt, ob Versandetiketten nur erzeugt werden sollen, wenn die Adresse "
-"leitcodierbar ist. Für nicht.leitcodierbare Adressen berechnet DHL einen "
-"Zuschlag."
+msgstr "Bitte aktivieren Sie dieses Kästchen, wenn die Option „Premium“ unter „Bestellung bearbeiten“ vor dem Druck eines Labels aktiviert sein soll."
 
 #: includes/class-pr-dhl-wc-method-paket.php:401
-#, fuzzy
 msgid "Bulky Goods default"
-msgstr "Sperrgut: "
+msgstr "Standard für Sperrgut"
 
 #: includes/class-pr-dhl-wc-method-paket.php:405
-#, fuzzy
 msgid ""
 "Please, tick here if you want the \"Bulky Goods\" option to be checked in "
 "the \"Edit Order\" before printing a label."
-msgstr ""
-"Bestimmt, ob Versandetiketten nur erzeugt werden sollen, wenn die Adresse "
-"leitcodierbar ist. Für nicht.leitcodierbare Adressen berechnet DHL einen "
-"Zuschlag."
+msgstr "Bitte aktivieren Sie dieses Kästchen, wenn die Option „Sperrgut“ unter „Bestellung bearbeiten“ vor dem Druck eines Labels aktiviert sein soll."
 
 #: includes/class-pr-dhl-wc-method-paket.php:409
-#, fuzzy
 msgid "Ident Check default"
-msgstr "Ident-Check: "
+msgstr "Standard für Ident-Check"
 
 #: includes/class-pr-dhl-wc-method-paket.php:413
 #: includes/class-pr-dhl-wc-method-paket.php:430
-#, fuzzy
 msgid ""
 "Please, tick here if you want the \"Ident Check\" option to be checked in "
 "the \"Edit Order\" before printing a label."
-msgstr ""
-"Bestimmt, ob Versandetiketten nur erzeugt werden sollen, wenn die Adresse "
-"leitcodierbar ist. Für nicht.leitcodierbare Adressen berechnet DHL einen "
-"Zuschlag."
+msgstr "Bitte aktivieren Sie dieses Kästchen, wenn die Option „Ident-Check“ unter „Bestellung bearbeiten“ vor dem Druck eines Labels aktiviert sein soll."
 
 #: includes/class-pr-dhl-wc-method-paket.php:417
 msgid "Signed for by recipient default"
-msgstr ""
+msgstr "Standard für Empfängerunterschrift"
 
 #: includes/class-pr-dhl-wc-method-paket.php:421
-#, fuzzy
 msgid ""
 "Please, tick here if you want the \"Signed for by recipient\" option to be "
 "checked in the \"Edit Order\" before printing a label."
-msgstr ""
-"Bestimmt, ob Versandetiketten nur erzeugt werden sollen, wenn die Adresse "
-"leitcodierbar ist. Für nicht.leitcodierbare Adressen berechnet DHL einen "
-"Zuschlag."
+msgstr "Bitte aktivieren Sie dieses Kästchen, wenn die Option „Empfängerunterschrift“ unter „Bestellung bearbeiten“ vor dem Druck eines Labels aktiviert sein soll."
 
 #: includes/class-pr-dhl-wc-method-paket.php:425
-#, fuzzy
 msgid "Ident Check Age default"
-msgstr "Ident-Check: "
+msgstr "Standard für Ident-Check Alter"
 
 #: includes/class-pr-dhl-wc-method-paket.php:434
 msgid "Endorsement type"
-msgstr ""
+msgstr "Vorausverfügungstyp"
 
 #: includes/class-pr-dhl-wc-method-paket.php:438
 #: includes/class-pr-dhl-wc-order-paket.php:521
 msgid "Sending back to sender"
-msgstr ""
+msgstr "Rücksendung an Absender"
 
 #: includes/class-pr-dhl-wc-method-paket.php:439
 #: includes/class-pr-dhl-wc-order-paket.php:522
 msgid "Abandonment of parcel"
-msgstr ""
+msgstr "Preisgabe des Pakets"
 
 #: includes/class-pr-dhl-wc-method-paket.php:441
-#, fuzzy
 msgid ""
 "Please, tick here if you want the \"Endorsement value\" to be selected in "
 "the \"Edit Order\" before printing a label."
-msgstr ""
-"Bestimmt, ob Versandetiketten nur erzeugt werden sollen, wenn die Adresse "
-"leitcodierbar ist. Für nicht.leitcodierbare Adressen berechnet DHL einen "
-"Zuschlag."
+msgstr "Bitte aktivieren Sie dieses Kästchen, wenn der „Vorausverfügungswert“ unter „Bestellung bearbeiten“ vor dem Druck eines Labels ausgewählt sein soll."
 
 #: includes/class-pr-dhl-wc-method-paket.php:445
 msgid "Print Only If Codeable default"
@@ -1005,25 +863,20 @@ msgid "Parcel Outlet Routing default"
 msgstr "Filialrouting-Standardeinstellung"
 
 #: includes/class-pr-dhl-wc-method-paket.php:457
-#, fuzzy
 msgid ""
 "Please, tick here if you want the \"Parcel Outlet Routing\" option to be "
 "checked in the \"Edit Order\" before printing a label."
-msgstr ""
-"Bestimmt, ob Versandetiketten nur erzeugt werden sollen, wenn die Adresse "
-"leitcodierbar ist. Für nicht.leitcodierbare Adressen berechnet DHL einen "
-"Zuschlag."
+msgstr "Bitte aktivieren Sie dieses Kästchen, wenn die Option „Filialrouting“ unter „Bestellung bearbeiten“ vor dem Druck eines Labels aktiviert sein soll."
 
 #: includes/class-pr-dhl-wc-method-paket.php:461
-#, fuzzy
 msgid "GoGreen Plus default"
-msgstr "Premium: "
+msgstr "Standard für GoGreen Plus"
 
 #: includes/class-pr-dhl-wc-method-paket.php:465
 msgid ""
 "Check to request GoGreen Plus for every domestic shipment unless you turn it "
 "off per order."
-msgstr ""
+msgstr "Aktivieren, um GoGreen Plus für jede Inlandssendung anzufordern, sofern Sie es nicht pro Bestellung deaktivieren."
 
 #: includes/class-pr-dhl-wc-method-paket.php:486
 msgid ""
@@ -1038,20 +891,18 @@ msgid "Package Description"
 msgstr "Paket Beschreibung"
 
 #: includes/class-pr-dhl-wc-method-paket.php:495
-#, fuzzy
 msgid ""
 "Prefill the customs package description with one of the options for cross-"
 "border packages."
-msgstr "Vorausfüllen Sie die Paketbeschreibung mit eine der Optionen."
+msgstr "Befüllen Sie die Zollinhaltsbeschreibung für grenzüberschreitende Pakete mit einer der Optionen vor."
 
 #: includes/class-pr-dhl-wc-method-paket.php:502
 msgid "Label Format"
 msgstr "Format beschriften"
 
 #: includes/class-pr-dhl-wc-method-paket.php:504
-#, fuzzy
 msgid "Select one of the formats to generate the shipping label in."
-msgstr "Wählen Sie eines der Formate, das Label zu generieren."
+msgstr "Wählen Sie eines der Formate, in dem das Versandlabel erstellt werden soll."
 
 #: includes/class-pr-dhl-wc-method-paket.php:522
 msgid "Logo"
@@ -1066,33 +917,30 @@ msgid "The logo will be added from your DHL dashboard settings."
 msgstr "Es wird das Logo aus Ihren DHL Dashboard hinzugefügt"
 
 #: includes/class-pr-dhl-wc-method-paket.php:530
-#, fuzzy
 msgid "Shipper Reference"
-msgstr "Zahlungsreferenz"
+msgstr "Versender-Referenz"
 
 #: includes/class-pr-dhl-wc-method-paket.php:532
 msgid "Add shipper reference."
 msgstr "Versender-Referenz hinzufügen"
 
 #: includes/class-pr-dhl-wc-method-paket.php:546
-#, fuzzy
 msgid "Tracking Text"
-msgstr "Sendungsbenachrichtigung"
+msgstr "Text zur Sendungsverfolgung"
 
 #: includes/class-pr-dhl-wc-method-paket.php:548
 msgid ""
 "Set the custom text when adding the tracking number to the order notes or "
 "completed email. {tracking-link} is where the tracking number will be set."
-msgstr ""
+msgstr "Legen Sie den benutzerdefinierten Text fest, der beim Hinzufügen der Sendungsnummer zu den Bestellnotizen oder zur Abschluss-E-Mail verwendet wird. {tracking-link} ist die Stelle, an der die Sendungsnummer eingefügt wird."
 
 #: includes/class-pr-dhl-wc-method-paket.php:550
 msgid "DHL Tracking Number: {tracking-link}"
 msgstr "DHL Sendungsnnummer:  {tracking-link}"
 
 #: includes/class-pr-dhl-wc-method-paket.php:553
-#, fuzzy
 msgid "Tracking Email"
-msgstr "Sendungsbenachrichtigung"
+msgstr "E-Mail zur Sendungsverfolgung"
 
 #: includes/class-pr-dhl-wc-method-paket.php:555
 msgid "Add tracking text in completed email"
@@ -1105,21 +953,19 @@ msgstr ""
 
 #: includes/class-pr-dhl-wc-method-paket.php:562
 msgid "Tracking URL Language"
-msgstr ""
+msgstr "Sprache der Tracking-URL"
 
 #: includes/class-pr-dhl-wc-method-paket.php:564
-#, fuzzy
 msgid "Select the tracking link language."
-msgstr "Bitte stellen Sie Ihre Versandlabel Einstellungen ein."
+msgstr "Wählen Sie die Sprache des Tracking-Links."
 
 #: includes/class-pr-dhl-wc-method-paket.php:565
 msgid "Select language of the tracking link page."
-msgstr ""
+msgstr "Wählen Sie die Sprache der Tracking-Link-Seite."
 
 #: includes/class-pr-dhl-wc-method-paket.php:575
-#, fuzzy
 msgid "Create Label on Status"
-msgstr "DHL Label erzeugen"
+msgstr "Label bei Status erstellen"
 
 #: includes/class-pr-dhl-wc-method-paket.php:577
 msgid "Create label on specific status."
@@ -1154,31 +1000,26 @@ msgstr "Empfangsoptionen im Frontend."
 #: build/pr-dhl-closest-drop-point-frontend.js:1
 #: includes/checkout-blocks/dhl-closest-drop-point/block.js:126
 msgid "Closest Drop Point"
-msgstr ""
+msgstr "Nächstgelegener Abgabeort"
 
 #: includes/class-pr-dhl-wc-method-paket.php:608
 msgid "Enable Closest Drop Point"
-msgstr ""
+msgstr "Nächstgelegenen Abgabeort aktivieren"
 
 #: includes/class-pr-dhl-wc-method-paket.php:609
-#, fuzzy
 msgid ""
 "Enabling this will display a front-end option for the user to select "
 "delivery option (Home address or CDP delivery)."
-msgstr ""
-"Durch Aktivierung wird dem Kunden im Frontend die Option einer Wunschzeit "
-"Zustellung angezeigt."
+msgstr "Durch Aktivierung wird dem Kunden im Frontend die Option angezeigt, die Lieferart auszuwählen (Lieferung an die Heimatadresse oder an einen Abgabeort)."
 
 #: includes/class-pr-dhl-wc-method-paket.php:613
 #: includes/front-end/class-pr-dhl-front-end-paket.php:37
-#, fuzzy
 msgid "Delivery Day"
-msgstr "Lieferung verzollt"
+msgstr "Wunschtag"
 
 #: includes/class-pr-dhl-wc-method-paket.php:615
-#, fuzzy
 msgid "Enable Delivery Day"
-msgstr "Wunschzeit aktivieren"
+msgstr "Wunschtag aktivieren"
 
 #: includes/class-pr-dhl-wc-method-paket.php:616
 msgid ""
@@ -1189,9 +1030,8 @@ msgstr ""
 "Zustellung angezeigt."
 
 #: includes/class-pr-dhl-wc-method-paket.php:620
-#, fuzzy
 msgid "Delivery Day Price"
-msgstr "Lieferung verzollt"
+msgstr "Preis für Wunschtag"
 
 #: includes/class-pr-dhl-wc-method-paket.php:622
 msgid ""
@@ -1320,21 +1160,15 @@ msgstr ""
 "auf eine bereits ausgewählte Option deaktiviert diese wieder."
 
 #: includes/class-pr-dhl-wc-method-paket.php:693
-#, fuzzy
 msgid "COD Payment Gateways"
-msgstr "Ausschluss von Zahlungsmethoden"
+msgstr "Nachnahme-Zahlungsmethoden"
 
 #: includes/class-pr-dhl-wc-method-paket.php:696
-#, fuzzy
 msgid ""
 "Select the Payment Gateways to use with DHL COD services. You can press "
 "\"ctrl\" to select multiple options or click on a selected option to "
 "deselect it."
-msgstr ""
-"Wählen Sie die Bezahlmethoden, bei denen im Frontend die Wunschzustellung-"
-"Services und Standortsuche nicht buchbar werden sollen. Sie können durch "
-"halten der “Strg”-Taste mehrere Optionen gleichzeitig auswählen, ein Klick "
-"auf eine bereits ausgewählte Option deaktiviert diese wieder."
+msgstr "Wählen Sie die Zahlungsmethoden, die mit den DHL-Nachnahme-Services verwendet werden sollen. Halten Sie „Strg“ gedrückt, um mehrere Optionen auszuwählen, oder klicken Sie auf eine ausgewählte Option, um die Auswahl aufzuheben."
 
 #: includes/class-pr-dhl-wc-method-paket.php:702
 msgid "Location Finder"
@@ -1355,9 +1189,8 @@ msgstr ""
 #: includes/checkout-blocks/dhl-parcel-finder/block.js:101
 #: includes/checkout-blocks/dhl-parcel-finder/block.js:114
 #: includes/checkout-blocks/dhl-parcel-finder/block.js:368
-#, fuzzy
 msgid "Packstation"
-msgstr "Ort"
+msgstr "Packstation"
 
 #: includes/class-pr-dhl-wc-method-paket.php:709
 msgid "Enable Packstation"
@@ -1407,27 +1240,23 @@ msgstr ""
 
 #: includes/class-pr-dhl-wc-method-paket.php:728
 msgid "Map"
-msgstr ""
+msgstr "Karte"
 
 #: includes/class-pr-dhl-wc-method-paket.php:730
-#, fuzzy
 msgid "Enable Map"
-msgstr "Logging aktivieren"
+msgstr "Karte aktivieren"
 
 #: includes/class-pr-dhl-wc-method-paket.php:731
-#, fuzzy
 msgid "Enabling this will display the Map on the front-end."
-msgstr ""
-"Bei Aktivierung der Checkbox Postfiliale werden auf einer Google Karte im "
-"Frontend Postfilialen zum Direktversand angeboten."
+msgstr "Durch Aktivierung wird die Karte im Frontend angezeigt."
 
 #: includes/class-pr-dhl-wc-method-paket.php:735
 msgid "Map type"
-msgstr ""
+msgstr "Kartentyp"
 
 #: includes/class-pr-dhl-wc-method-paket.php:737
 msgid "Select the map type to show parcels shops."
-msgstr ""
+msgstr "Wählen Sie den Kartentyp, mit dem Paketshops angezeigt werden."
 
 #: includes/class-pr-dhl-wc-method-paket.php:744
 msgid "Limit Results"
@@ -1455,16 +1284,15 @@ msgstr ""
 "Schlüssel %2$shier%3$s"
 
 #: includes/class-pr-dhl-wc-method-paket.php:782
-#, fuzzy
 msgid "Shipper Address / Pickup Request Address"
-msgstr "Lieferadresse \"1\" ist leer!"
+msgstr "Absenderadresse / Abholauftragsadresse"
 
 #: includes/class-pr-dhl-wc-method-paket.php:784
 msgid ""
 "Enter Shipper Address. This address is also used for Pickup Requests.<br/"
 ">Note: For pickup requests to be accepted, this address must match a pickup "
 "address saved to your DHL Portal."
-msgstr ""
+msgstr "Geben Sie die Absenderadresse ein. Diese Adresse wird auch für Abholaufträge verwendet.<br/>Hinweis: Damit Abholaufträge akzeptiert werden, muss diese Adresse mit einer in Ihrem DHL-Portal gespeicherten Abholadresse übereinstimmen."
 
 #: includes/class-pr-dhl-wc-method-paket.php:787
 #: includes/class-pr-dhl-wc-method-paket.php:863
@@ -1570,19 +1398,14 @@ msgid "Enter Return Address below."
 msgstr "Geben Sie unten ihre Retouren-Adresse ein."
 
 #: includes/class-pr-dhl-wc-method-paket.php:855
-#, fuzzy
 msgid "Create Return Label default"
-msgstr "Retouren Label erzeugen: "
+msgstr "Standard für Retourenlabel erstellen"
 
 #: includes/class-pr-dhl-wc-method-paket.php:859
-#, fuzzy
 msgid ""
 "Please, tick here if you want the \"Create Return Label\" option to be "
 "checked in the \"Edit Order\" before printing a label."
-msgstr ""
-"Bestimmt, ob Versandetiketten nur erzeugt werden sollen, wenn die Adresse "
-"leitcodierbar ist. Für nicht.leitcodierbare Adressen berechnet DHL einen "
-"Zuschlag."
+msgstr "Bitte aktivieren Sie dieses Kästchen, wenn die Option „Retourenlabel erstellen“ unter „Bestellung bearbeiten“ vor dem Druck eines Labels aktiviert sein soll."
 
 #: includes/class-pr-dhl-wc-method-paket.php:865
 msgid "Enter Return Name."
@@ -1645,14 +1468,11 @@ msgstr "Zahlungsreferenz"
 #. translators: %1$s: order ID placeholder, %2$s: customer email placeholder
 #: includes/class-pr-dhl-wc-method-paket.php:952
 #: includes/class-pr-dhl-wc-method-paket.php:961
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "Use \"%1$s\" to send the order id as a bank reference and \"%2$s\" to send "
 "the customer email. This text is limited to 35 characters."
-msgstr ""
-"Benutzen Sie “%s“, um die Bestellnummer als Bank-Referenz zu senden. "
-"Benutzen Sie “%s”, um die Kunden-Email zu senden. Die Eingabe ist auf 35 "
-"Zeichen beschränkt."
+msgstr "Verwenden Sie „%1$s“, um die Bestellnummer als Bankreferenz zu senden, und „%2$s“, um die Kunden-E-Mail zu senden. Dieser Text ist auf 35 Zeichen begrenzt."
 
 #: includes/class-pr-dhl-wc-method-paket.php:957
 msgid "Payment Reference 2"
@@ -1660,42 +1480,40 @@ msgstr "Zahlungsreferenz 2"
 
 #: includes/class-pr-dhl-wc-method-paket.php:979
 msgid "Business Hours (for DHL Pickup Request)"
-msgstr ""
+msgstr "Geschäftszeiten (für DHL-Abholauftrag)"
 
 #: includes/class-pr-dhl-wc-method-paket.php:981
 msgid "The business hours available for DHL Pickup."
-msgstr ""
+msgstr "Die für die DHL-Abholung verfügbaren Geschäftszeiten."
 
 #: includes/class-pr-dhl-wc-method-paket.php:984
 msgid "From: "
-msgstr ""
+msgstr "Von: "
 
 #: includes/class-pr-dhl-wc-method-paket.php:989
 msgid "To: "
-msgstr ""
+msgstr "Bis: "
 
 #: includes/class-pr-dhl-wc-method-paket.php:994
 msgid "(Additional Business Hours) From: "
-msgstr ""
+msgstr "(Zusätzliche Geschäftszeiten) Von: "
 
 #: includes/class-pr-dhl-wc-method-paket.php:996
 #: includes/class-pr-dhl-wc-method-paket.php:1002
 msgid "Optional, if additional business hours are needed."
-msgstr ""
+msgstr "Optional, falls zusätzliche Geschäftszeiten benötigt werden."
 
 #: includes/class-pr-dhl-wc-method-paket.php:1000
-#, fuzzy
 msgid "(Additional Business Hours) To: "
-msgstr "Transportversicherung:"
+msgstr "(Zusätzliche Geschäftszeiten) Bis: "
 
 #: includes/class-pr-dhl-wc-method-paket.php:1072
 msgid "Method Title"
 msgstr "Name der Methode"
 
 #: includes/class-pr-dhl-wc-method-paket.php:1074
-#, fuzzy
 msgid "This controls the title which the user sees during checkout."
-msgstr "Der Titel, den der Benutzer während der Bezahlung sieht."
+msgstr "Dies steuert den Titel, den der Benutzer während des Bezahlvorgangs sieht."
 
 #: includes/class-pr-dhl-wc-method-paket.php:1094
 msgid "Pickup Account Number: "
@@ -1727,9 +1545,8 @@ msgid "In order to show %s on a map, you need to set a Google API Key first."
 msgstr "Sie benötigen %s,  einen Google Maps API Schlüssel."
 
 #: includes/class-pr-dhl-wc-notice-legacy-parcel.php:68
-#, fuzzy
 msgid "DHL Parcel for WooCommerce notice"
-msgstr "DHL e-Commerce"
+msgstr "Hinweis zu DHL Parcel für WooCommerce"
 
 #. translators: %1$s is the link to install the new plugin, %2$s is the closing HTML tag for the link
 #: includes/class-pr-dhl-wc-notice-legacy-parcel.php:72
@@ -1737,158 +1554,149 @@ msgstr "DHL e-Commerce"
 msgid ""
 "DHL Parcel services are no longer available in this plugin. To continue "
 "using Parcel services, please install the new plugin %1$shere%2$s."
-msgstr ""
+msgstr "DHL-Parcel-Services sind in diesem Plugin nicht mehr verfügbar. Um Parcel-Services weiterhin zu nutzen, installieren Sie bitte %1$shier%2$s das neue Plugin."
 
 #: includes/class-pr-dhl-wc-notice-legacy-parcel.php:81
 msgid "Click here to never show this again"
-msgstr ""
+msgstr "Klicken Sie hier, um dies nicht mehr anzuzeigen"
 
 #: includes/class-pr-dhl-wc-notice-soap-deprecation.php:58
 msgid "DHL SOAP API Support Will Be Removed Soon"
-msgstr ""
+msgstr "Die Unterstützung der DHL-SOAP-API wird bald entfernt"
 
 #: includes/class-pr-dhl-wc-notice-soap-deprecation.php:59
 msgid ""
 "DHL has officially deprecated their SOAP API, and it will be removed from "
 "this plugin in an upcoming release."
-msgstr ""
+msgstr "DHL hat seine SOAP-API offiziell eingestellt und sie wird in einer kommenden Version aus diesem Plugin entfernt."
 
 #: includes/class-pr-dhl-wc-notice-soap-deprecation.php:60
 msgid "What You Need to Do:"
-msgstr ""
+msgstr "Was Sie tun müssen:"
 
 #: includes/class-pr-dhl-wc-notice-soap-deprecation.php:62
-#, fuzzy
 msgid "Go to WooCommerce → Settings → Shipping → DHL."
-msgstr "WooCommerce DHL Versand"
+msgstr "Gehen Sie zu WooCommerce → Einstellungen → Versand → DHL."
 
 #: includes/class-pr-dhl-wc-notice-soap-deprecation.php:63
 msgid "Select REST API as the connection method."
-msgstr ""
+msgstr "Wählen Sie REST-API als Verbindungsmethode."
 
 #: includes/class-pr-dhl-wc-notice-soap-deprecation.php:64
 msgid "Enter your REST API credentials and save changes."
-msgstr ""
+msgstr "Geben Sie Ihre REST-API-Zugangsdaten ein und speichern Sie die Änderungen."
 
 #: includes/class-pr-dhl-wc-notice-soap-deprecation.php:67
 msgid "Need help?"
-msgstr ""
+msgstr "Brauchen Sie Hilfe?"
 
 #: includes/class-pr-dhl-wc-notice-soap-deprecation.php:69
 msgid "Read the setup guide →"
-msgstr ""
+msgstr "Zur Einrichtungsanleitung →"
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:112
 msgid "AWB Copy Count"
-msgstr ""
+msgstr "Anzahl AWB-Kopien"
 
 #. translators: %s is the name of the service (e.g., DHL Express, DHL Parcel)
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:176
-#, fuzzy, php-format
+#, php-format
 msgid "%s Waybill"
-msgstr "Bezeichnung löschen"
+msgstr "%s Frachtbrief"
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:214
-#, fuzzy
 msgid "Sender customs reference: "
-msgstr "Zahlungsreferenz"
+msgstr "Zoll-Referenz des Absenders: "
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:226
 msgid "Importer customs reference: "
-msgstr ""
+msgstr "Zoll-Referenz des Importeurs: "
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:243
 msgid "Contents Type:"
-msgstr ""
+msgstr "Inhaltstyp:"
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:325
 msgid ""
 "Finalizing an order cannot be undone, so make sure you have added all the "
 "desired items before continuing."
-msgstr ""
+msgstr "Das Abschließen einer Bestellung kann nicht rückgängig gemacht werden. Stellen Sie daher sicher, dass Sie alle gewünschten Artikel hinzugefügt haben, bevor Sie fortfahren."
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:401
 msgid "There are no items in your Waybill"
-msgstr ""
+msgstr "Es befinden sich keine Artikel in Ihrem Frachtbrief"
 
 #. translators: %s is the order number
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:408
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:496
 #, php-format
 msgid "Order #%d"
-msgstr ""
+msgstr "Bestellung #%d"
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:424
 msgid "Remove"
-msgstr ""
+msgstr "Entfernen"
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:443
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:519
 msgid "Item"
-msgstr ""
+msgstr "Artikel"
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:444
-#, fuzzy
 msgid "Actions"
-msgstr "Ort"
+msgstr "Aktionen"
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:452
 msgid "AWB Copy Count:"
-msgstr ""
+msgstr "Anzahl AWB-Kopien:"
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:464
 msgid "Add to Waybill"
-msgstr ""
+msgstr "Zum Frachtbrief hinzufügen"
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:468
 msgid "Finalize Waybill"
-msgstr ""
+msgstr "Frachtbrief abschließen"
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:472
 msgid "Please generate a label before adding the item to the Waybill"
-msgstr ""
+msgstr "Bitte erstellen Sie ein Label, bevor Sie den Artikel zum Frachtbrief hinzufügen"
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:520
 msgid "Barcode"
-msgstr ""
+msgstr "Barcode"
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:529
-#, fuzzy
 msgid "Download Waybill"
-msgstr "Bezeichnung löschen"
+msgstr "Frachtbrief herunterladen"
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:890
-#, fuzzy
 msgid "DHL Status"
-msgstr "DHL Paket"
+msgstr "DHL-Status"
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:891
-#, fuzzy
 msgid "DHL Tracking"
-msgstr "DHL-Label & Tracking"
+msgstr "DHL-Sendungsverfolgung"
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:966
-#, fuzzy
 msgid "Waybill created"
-msgstr "DHL-Label erstellt."
+msgstr "Frachtbrief erstellt"
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:969
 msgid "Added to waybill"
-msgstr ""
+msgstr "Zum Frachtbrief hinzugefügt"
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:972
-#, fuzzy
 msgid "Label created"
-msgstr "DHL-Label erstellt."
+msgstr "Label erstellt"
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:980
-#, fuzzy
 msgid "Create DHL Label"
-msgstr "DHL Label erzeugen"
+msgstr "DHL-Label erstellen"
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:981
 msgid "Finalize DHL Waybill"
-msgstr ""
+msgstr "DHL-Frachtbrief abschließen"
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:992
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:999
@@ -1896,45 +1704,39 @@ msgstr ""
 msgid ""
 "No orders selected for the DHL bulk action, please select orders before "
 "performing the DHL action."
-msgstr ""
+msgstr "Es wurden keine Bestellungen für die DHL-Sammelaktion ausgewählt. Bitte wählen Sie Bestellungen aus, bevor Sie die DHL-Aktion ausführen."
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:1010
-#, fuzzy
 msgid ""
 "One or more orders do not have a DHL item label created. Please ensure all "
 "DHL labels are created before adding them to the order."
-msgstr ""
-"Eine oder mehrere Aufträge müssen kein DHL-Label erstellt, Bitte stellen Sie "
-"sicher, dass alle DHL-Etiketten für jede Bestellung erstellt werden, bevor "
-"Sie ein Übergabe-Dokument erstellen."
+msgstr "Eine oder mehrere Bestellungen haben kein erstelltes DHL-Artikellabel. Bitte stellen Sie sicher, dass alle DHL-Labels erstellt wurden, bevor Sie sie zur Bestellung hinzufügen."
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:1021
 msgid "Copy count must not be empty."
-msgstr ""
+msgstr "Die Anzahl der Kopien darf nicht leer sein."
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:1025
-#, fuzzy
 msgid "Copy count must be numeric."
-msgstr "Die Postnummer muss aus Zahlen bestehen."
+msgstr "Die Anzahl der Kopien muss numerisch sein."
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:1028
 msgid "Copy count must not be more than 50."
-msgstr ""
+msgstr "Die Anzahl der Kopien darf nicht mehr als 50 betragen."
 
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:1105
-#, fuzzy
 msgid "download file"
-msgstr "Bezeichnung löschen"
+msgstr "Datei herunterladen"
 
 #. translators: %1$s is the order type (e.g., finalized or pending), %2$s is the date or other relevant detail
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:1110
-#, fuzzy, php-format
+#, php-format
 msgid "Finalized DHL Waybill for %1$s orders - %2$s"
-msgstr "DHL-Übergabe für %1$s Bestellung(en) erstellt. %2$s"
+msgstr "Abgeschlossener DHL-Frachtbrief für %1$s Bestellungen – %2$s"
 
 #: includes/class-pr-dhl-wc-order-paket.php:76
 msgid "COD"
-msgstr ""
+msgstr "Nachnahme"
 
 #: includes/class-pr-dhl-wc-order-paket.php:81
 msgid "COD Amount:"
@@ -1945,48 +1747,40 @@ msgid "Create return label: "
 msgstr "Retouren Label erzeugen: "
 
 #: includes/class-pr-dhl-wc-order-paket.php:112
-#, fuzzy
 msgid "Name:"
-msgstr "Name"
+msgstr "Name:"
 
 #: includes/class-pr-dhl-wc-order-paket.php:123
-#, fuzzy
 msgid "Company:"
-msgstr "Firma"
+msgstr "Firma:"
 
 #: includes/class-pr-dhl-wc-order-paket.php:134
-#, fuzzy
 msgid "Street Address:"
-msgstr "Straße"
+msgstr "Straße:"
 
 #: includes/class-pr-dhl-wc-order-paket.php:145
-#, fuzzy
 msgid "Street Address Number:"
-msgstr "Hausnummer"
+msgstr "Hausnummer:"
 
 #: includes/class-pr-dhl-wc-order-paket.php:156
-#, fuzzy
 msgid "City:"
-msgstr "Ort"
+msgstr "Ort:"
 
 #: includes/class-pr-dhl-wc-order-paket.php:167
-#, fuzzy
 msgid "State:"
-msgstr "Land"
+msgstr "Bundesland:"
 
 #: includes/class-pr-dhl-wc-order-paket.php:178
-#, fuzzy
 msgid "Postcode:"
-msgstr "PLZ"
+msgstr "PLZ:"
 
 #: includes/class-pr-dhl-wc-order-paket.php:189
 msgid "Phone:"
 msgstr "Telefon:"
 
 #: includes/class-pr-dhl-wc-order-paket.php:200
-#, fuzzy
 msgid "Email:"
-msgstr "E-Mail"
+msgstr "E-Mail:"
 
 #: includes/class-pr-dhl-wc-order-paket.php:227
 #: includes/pr-dhl-api/class-pr-dhl-api-paket.php:303
@@ -1994,14 +1788,12 @@ msgid "none"
 msgstr "keiner"
 
 #: includes/class-pr-dhl-wc-order-paket.php:230
-#, fuzzy
 msgid "Delivery Options"
-msgstr "Lieferung verzollt"
+msgstr "Lieferoptionen"
 
 #: includes/class-pr-dhl-wc-order-paket.php:235
-#, fuzzy
 msgid "Delivery Day:"
-msgstr "Lieferung verzollt"
+msgstr "Wunschtag:"
 
 #: includes/class-pr-dhl-wc-order-paket.php:248
 msgid "Preferred Location (80 characters max): "
@@ -2013,9 +1805,8 @@ msgstr "Nachbar (max. 80 Zeichen):"
 
 #: includes/class-pr-dhl-wc-order-paket.php:281
 #: includes/class-pr-dhl-wc-order-paket.php:509
-#, fuzzy
 msgid "Additional Services"
-msgstr "Transportversicherung:"
+msgstr "Zusatzleistungen"
 
 #: includes/class-pr-dhl-wc-order-paket.php:288
 msgid "Visual Age Check:"
@@ -2031,10 +1822,9 @@ msgstr "Persönliche Übergabe:"
 
 #: includes/class-pr-dhl-wc-order-paket.php:330
 msgid "Signed for by recipient: "
-msgstr ""
+msgstr "Empfängerunterschrift: "
 
 #: includes/class-pr-dhl-wc-order-paket.php:344
-#, fuzzy
 msgid "Ident-Check: "
 msgstr "Ident-Check: "
 
@@ -2059,40 +1849,37 @@ msgid "Parcel Outlet Routing - Email: "
 msgstr "Filialrouting-E-Mail:"
 
 #: includes/class-pr-dhl-wc-order-paket.php:434
-#, fuzzy
 msgid "GoGreen Plus:"
-msgstr "Ökologismus"
+msgstr "GoGreen Plus:"
 
 #: includes/class-pr-dhl-wc-order-paket.php:449
 msgid "Crossborder"
-msgstr ""
+msgstr "Grenzüberschreitend"
 
 #: includes/class-pr-dhl-wc-order-paket.php:457
-#, fuzzy
 msgid "Postal Delivered Duty Paid::"
-msgstr "Lieferung verzollt"
+msgstr "Postal Delivered Duty Paid::"
 
 #: includes/class-pr-dhl-wc-order-paket.php:471
 msgid "Duties:"
 msgstr "Aufgaben:"
 
 #: includes/class-pr-dhl-wc-order-paket.php:483
-#, fuzzy
 msgid "Invoice Number:"
-msgstr "Telefonnummer"
+msgstr "Rechnungsnummer:"
 
 #: includes/class-pr-dhl-wc-order-paket.php:494
 msgid "Movement Reference Number (MRN):"
-msgstr ""
+msgstr "Movement Reference Number (MRN):"
 
 #: includes/class-pr-dhl-wc-order-paket.php:517
 msgid "Endorsement:"
-msgstr ""
+msgstr "Vorausverfügung:"
 
 #: includes/class-pr-dhl-wc-order-paket.php:537
 #: includes/class-pr-dhl-wc-order-paket.php:595
 msgid "Closest drop-point delivery: "
-msgstr ""
+msgstr "Lieferung an nächstgelegenen Abgabeort: "
 
 #: includes/class-pr-dhl-wc-order-paket.php:547
 msgid "Email Notification:"
@@ -2111,9 +1898,8 @@ msgid "Bulky Goods: "
 msgstr "Sperrgut: "
 
 #: includes/class-pr-dhl-wc-order-paket.php:623
-#, fuzzy
 msgid "Multiple Packages"
-msgstr "Mehrere Pakete senden:"
+msgstr "Mehrere Pakete"
 
 #: includes/class-pr-dhl-wc-order-paket.php:628
 msgid "Send multiple packages: "
@@ -2128,103 +1914,98 @@ msgid "DHL Create Labels"
 msgstr "DHL Label erzeugen"
 
 #: includes/class-pr-dhl-wc-order-paket.php:998
-#, fuzzy
 msgid "DHL Delete Labels"
-msgstr "Label stornieren"
+msgstr "DHL-Labels löschen"
 
 #: includes/class-pr-dhl-wc-order-paket.php:999
 msgid "DHL Request Pickup"
-msgstr ""
+msgstr "DHL-Abholung beauftragen"
 
 #: includes/class-pr-dhl-wc-order-paket.php:1109
 msgid "DHL Label Created"
 msgstr "Retouren Label erzeugen"
 
 #: includes/class-pr-dhl-wc-order-paket.php:1110
-#, fuzzy
 msgid "DHL Tracking Number"
-msgstr "Sendungsbenachrichtigung"
+msgstr "DHL-Sendungsnummer"
 
 #. Translators: %s is the scheduled pickup date.
 #: includes/class-pr-dhl-wc-order-paket.php:1233
 #, php-format
 msgid "DHL pickup scheduled for %s"
-msgstr ""
+msgstr "DHL-Abholung geplant für %s"
 
 #. Translators: %s is a list of order numbers for which the DHL pickup request was created.
 #: includes/class-pr-dhl-wc-order-paket.php:1247
-#, fuzzy, php-format
+#, php-format
 msgid "DHL Pickup Request created for Order(s): %s "
-msgstr "DHL-Label erstellt"
+msgstr "DHL-Abholauftrag erstellt für Bestellung(en): %s "
 
 #: includes/class-pr-dhl-wc-order-paket.php:1257
 msgid "Error message detail is not exist!"
-msgstr ""
+msgstr "Es sind keine Details zur Fehlermeldung vorhanden!"
 
 #. Translators: %s is the error message returned from the DHL pickup request.
 #. Translators: %s is the error message returned from the DHL Pickup Request exception.
 #: includes/class-pr-dhl-wc-order-paket.php:1264
 #: includes/class-pr-dhl-wc-order-paket.php:1274
-#, fuzzy, php-format
+#, php-format
 msgid "DHL Pickup Request error: %s"
-msgstr "DHL-Label erstellt"
+msgstr "Fehler beim DHL-Abholauftrag: %s"
 
 #: includes/class-pr-dhl-wc-order-paket.php:1411
 msgid "Schedule a DHL Pickup Request."
-msgstr ""
+msgstr "Einen DHL-Abholauftrag planen."
 
 #: includes/class-pr-dhl-wc-order-paket.php:1412
 msgid ""
 "Your Shipper address and business hours from Settings will be used for the "
 "pickup."
-msgstr ""
+msgstr "Für die Abholung werden Ihre Absenderadresse und Ihre Geschäftszeiten aus den Einstellungen verwendet."
 
 #: includes/class-pr-dhl-wc-order-paket.php:1435
 msgid "Request Pickup: "
-msgstr ""
+msgstr "Abholung beauftragen: "
 
 #: includes/class-pr-dhl-wc-order-paket.php:1441
-#, fuzzy
 msgid "Pickup ASAP"
-msgstr "Adresse des Absenders"
+msgstr "Abholung schnellstmöglich"
 
 #: includes/class-pr-dhl-wc-order-paket.php:1442
-#, fuzzy
 msgid "Pickup Date"
-msgstr "Pick-up-Name"
+msgstr "Abholdatum"
 
 #: includes/class-pr-dhl-wc-order-paket.php:1452
-#, fuzzy
 msgid "Pickup Date: "
-msgstr "Pick-up-Name"
+msgstr "Abholdatum: "
 
 #: includes/class-pr-dhl-wc-order-paket.php:1466
 msgid "Submit"
-msgstr ""
+msgstr "Absenden"
 
 #: includes/class-pr-dhl-wc-product-deutsche-post.php:22
 #: includes/class-pr-dhl-wc-product-editor-deutsche-post.php:23
 msgid "Country of origin (Deutsche Post International)"
-msgstr ""
+msgstr "Ursprungsland (Deutsche Post International)"
 
 #: includes/class-pr-dhl-wc-product-deutsche-post.php:23
 #: includes/class-pr-dhl-wc-product-editor-deutsche-post.php:24
 msgid "Harmonized Tariff code (Deutsche Post International)"
-msgstr ""
+msgstr "Harmonisierter Zolltarifcode (Deutsche Post International)"
 
 #: includes/class-pr-dhl-wc-product-deutsche-post.php:24
 #: includes/class-pr-dhl-wc-product-editor-deutsche-post.php:25
 msgid ""
 "Optional information for non-EU shipments. Appears on CN22 (Deutsche Post "
 "International)."
-msgstr ""
+msgstr "Optionale Angabe für Sendungen außerhalb der EU. Erscheint auf der CN22 (Deutsche Post International)."
 
 #: includes/class-pr-dhl-wc-product-deutsche-post.php:28
 #: includes/class-pr-dhl-wc-product-editor-deutsche-post.php:22
 msgid ""
 "Country of origin of goods. Mandatory for all non-EU shipments. Appears on "
 "CN22 (Deutsche Post International)."
-msgstr ""
+msgstr "Ursprungsland der Waren. Für alle Sendungen außerhalb der EU verpflichtend. Erscheint auf der CN22 (Deutsche Post International)."
 
 #: includes/class-pr-dhl-wc-product-deutsche-post.php:38
 msgid "- select content indicator -"
@@ -2233,84 +2014,76 @@ msgstr "-Wählen Sie Inhaltsanzeige-"
 #: includes/class-pr-dhl-wc-product-deutsche-post.php:65
 #: includes/class-pr-dhl-wc-product-editor-deutsche-post.php:42
 msgid "Content description (Deutsche Post International)"
-msgstr ""
+msgstr "Inhaltsbeschreibung (Deutsche Post International)"
 
 #: includes/class-pr-dhl-wc-product-deutsche-post.php:66
 #: includes/class-pr-dhl-wc-product-editor-deutsche-post.php:44
 msgid ""
 "Description of goods (max 33 characters). Mandatory for all non-EU "
 "shipments. Appears on CN22 (Deutsche Post International)."
-msgstr ""
+msgstr "Warenbeschreibung (max. 33 Zeichen). Für alle Sendungen außerhalb der EU verpflichtend. Erscheint auf der CN22 (Deutsche Post International)."
 
 #: includes/class-pr-dhl-wc-product-editor-paket.php:22
 #: includes/class-pr-dhl-wc-product-paket.php:20
-#, fuzzy
 msgid "Country of Manufacture"
 msgstr "Herstellungsland"
 
 #: includes/class-pr-dhl-wc-product-editor-paket.php:42
 #: includes/class-pr-dhl-wc-product-paket.php:32
-#, fuzzy
 msgid "Cannot Transfer On Day Of Order (DHL)"
-msgstr "Am Tag der Bestellung (DHL) kann nicht übertragen werden."
+msgstr "Versand am Bestelltag nicht möglich (DHL)"
 
 #: includes/class-pr-dhl-wc-product-editor-paket.php:44
 #: includes/class-pr-dhl-wc-product-paket.php:33
-#, fuzzy
 msgid ""
 "This product cannot be transfered to DHL on the same day of the order.  "
 "Checking this disables preferred services on the checkout page."
-msgstr ""
-"Dieses Produkt ist nicht am selben Tag der Bestellung an DHL übertragbar.  "
-"Überprüfung dieser deaktiviert bevorzugten Dienste auf der Checkout-Seite."
+msgstr "Dieses Produkt kann nicht am selben Tag der Bestellung an DHL übergeben werden. Bei Aktivierung werden die Wunschservices auf der Checkout-Seite deaktiviert."
 
 #: includes/class-pr-dhl-wc-wizard-paket.php:39
 msgid ""
 "Welcome to DHL plugin! You're almost there, but we think this wizard might "
 "help you setup the plugin."
-msgstr ""
+msgstr "Willkommen beim DHL-Plugin! Sie sind fast am Ziel – dieser Assistent hilft Ihnen bei der Einrichtung des Plugins."
 
 #: includes/class-pr-dhl-wc-wizard-paket.php:40
 msgid "Run wizard"
-msgstr ""
+msgstr "Assistent starten"
 
 #: includes/class-pr-dhl-wc-wizard-paket.php:40
 msgid "dismiss"
-msgstr ""
+msgstr "verwerfen"
 
 #: includes/class-pr-dhl-wc-wizard-paket.php:70
 msgid "Quick Set Up"
-msgstr ""
+msgstr "Schnelleinrichtung"
 
 #: includes/class-pr-dhl-wc-wizard-paket.php:72
 msgid ""
 "Thank you for installing this plugin. We'll guide you through the set up and "
 "minimum required fields."
-msgstr ""
+msgstr "Vielen Dank für die Installation dieses Plugins. Wir führen Sie durch die Einrichtung und die mindestens erforderlichen Felder."
 
 #: includes/class-pr-dhl-wc-wizard-paket.php:76
 msgid "Begin Setup"
-msgstr ""
+msgstr "Einrichtung beginnen"
 
 #: includes/class-pr-dhl-wc-wizard-paket.php:83
-#, fuzzy
 msgid ""
 "Your DHL account number (10 digits - numerical), also called \"EKP\". This "
 "will be provided by your local DHL sales organization."
-msgstr ""
-"Ihre DHL Kundennummer (10 Ziffern), auch EKP genannt. Diese wird von Ihrer "
-"lokalen DHL Vertriebsorganisation zu Verfügung gestellt."
+msgstr "Ihre DHL-Kundennummer (10 Ziffern, numerisch), auch „EKP“ genannt. Diese wird von Ihrer lokalen DHL-Vertriebsorganisation bereitgestellt."
 
 #: includes/class-pr-dhl-wc-wizard-paket.php:86
 msgid "Enter your EKP"
-msgstr ""
+msgstr "Geben Sie Ihre EKP ein"
 
 #: includes/class-pr-dhl-wc-wizard-paket.php:89
 #: includes/class-pr-dhl-wc-wizard-paket.php:112
 #: includes/class-pr-dhl-wc-wizard-paket.php:131
 #: includes/class-pr-dhl-wc-wizard-paket.php:168
 msgid "Next"
-msgstr ""
+msgstr "Weiter"
 
 #: includes/class-pr-dhl-wc-wizard-paket.php:94
 msgid "API Settings"
@@ -2318,37 +2091,28 @@ msgstr "API Einstellungen"
 
 #. translators: %1$s & %2$s: link to DHL business portal
 #: includes/class-pr-dhl-wc-wizard-paket.php:99
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "Please configure your access to the DHL Paket APIs by means of "
 "authentication. Your username for the DHL business customer portal is "
 "required. Please note the lowercase letters and test your access data in "
 "advance at %1$shere%2$s."
-msgstr ""
-"Ihr Benutzername für das DHL Geschäftskunden Portal. Bitte beachten Sie die "
-"Kleinschreibung. Sie können Ihren Zugang %shier%s testen."
+msgstr "Bitte konfigurieren Sie Ihren Zugang zu den DHL-Paket-APIs mittels Authentifizierung. Ihr Benutzername für das DHL-Geschäftskundenportal ist erforderlich. Bitte beachten Sie die Kleinschreibung und testen Sie Ihre Zugangsdaten vorab %1$shier%2$s."
 
 #: includes/class-pr-dhl-wc-wizard-paket.php:117
-#, fuzzy
 msgid "Participation Number"
-msgstr "DHL Produkte und Teilnahmenummern"
+msgstr "Teilnahmenummer"
 
 #: includes/class-pr-dhl-wc-wizard-paket.php:119
-#, fuzzy
 msgid ""
 "The participation number consists of the last two characters of the "
 "respective accounting number, which you will find in your DHL contract data "
 "(for example, 01)."
-msgstr ""
-"Für jedes DHL Produkt, das Sie einsetzen wollen, tragen Sie hier bitte Ihre "
-"Teilnahmenummer ein. Die Teilnahmenummer besteht aus den letzten beiden "
-"Zeichen der jeweiligen Abrechnungsnummer. Diese finden Sie in Ihren "
-"Vertragsdaten (zum Beispiel 01)."
+msgstr "Die Teilnahmenummer besteht aus den letzten beiden Zeichen der jeweiligen Abrechnungsnummer, die Sie in Ihren DHL-Vertragsdaten finden (zum Beispiel 01)."
 
 #: includes/class-pr-dhl-wc-wizard-paket.php:122
-#, fuzzy
 msgid "Regular product"
-msgstr "Privat-/Firmenadresse"
+msgstr "Reguläres Produkt"
 
 #: includes/class-pr-dhl-wc-wizard-paket.php:136
 msgid "Shipper Address"
@@ -2356,7 +2120,7 @@ msgstr "Adresse des Absenders"
 
 #: includes/class-pr-dhl-wc-wizard-paket.php:138
 msgid "Enter Shipper Address. This address is also used for Pickup Requests."
-msgstr ""
+msgstr "Geben Sie die Absenderadresse ein. Diese Adresse wird auch für Abholaufträge verwendet."
 
 #: includes/class-pr-dhl-wc-wizard-paket.php:162
 msgid "Phone"
@@ -2364,17 +2128,17 @@ msgstr "Telefon"
 
 #: includes/class-pr-dhl-wc-wizard-paket.php:173
 msgid "All set"
-msgstr ""
+msgstr "Alles bereit"
 
 #: includes/class-pr-dhl-wc-wizard-paket.php:175
 msgid ""
 "You can find all additional settings under WooCommerce > Settings > Shipping "
 "> DHL Paket"
-msgstr ""
+msgstr "Alle weiteren Einstellungen finden Sie unter WooCommerce > Einstellungen > Versand > DHL Paket"
 
 #: includes/class-pr-dhl-wc-wizard-paket.php:181
 msgid "Finish Setup"
-msgstr ""
+msgstr "Einrichtung abschließen"
 
 #: includes/front-end/class-pr-dhl-front-end-paket.php:38
 msgid "Preferred Location or Neighbor"
@@ -2410,16 +2174,15 @@ msgstr "Nachbar(in)"
 #: templates/checkout/dhl-closest-drop-point.php:19
 #: build/pr-dhl-closest-drop-point-frontend.js:1
 #: includes/checkout-blocks/dhl-closest-drop-point/block.js:103
-#, fuzzy
 msgid "Delivery option"
-msgstr "Lieferung verzollt"
+msgstr "Lieferoption"
 
 #: includes/front-end/class-pr-dhl-front-end-paket.php:118
 #, php-format
 msgid ""
 "For deliveries to DHL Parcel Lockers you have to %1screate a DHL account%2s "
 "and get a Post Number."
-msgstr ""
+msgstr "Für Lieferungen an DHL-Packstationen müssen Sie %1sein DHL-Konto erstellen%2s und eine Postnummer erhalten."
 
 #: includes/front-end/class-pr-dhl-front-end-paket.php:228
 msgid "Opening Times"
@@ -2471,25 +2234,19 @@ msgid "Post Number "
 msgstr "Postnummer"
 
 #: includes/front-end/class-pr-dhl-front-end-paket.php:248
-#, fuzzy
 msgid ""
 "<span class=\"dhl-tooltip\" title=\"Indicate a preferred time, which suits "
 "you best for your parcel delivery by choosing one of the displayed time "
 "windows.\">?</span>"
-msgstr ""
-"Damit Sie besser planen können, haben Sie die Möglichkeit eine Wunschzeit "
-"für die Lieferung auszuwählen. Sie können eine der dargestellten Zeiten für "
-"die Lieferung auswählen."
+msgstr "<span class=\"dhl-tooltip\" title=\"Geben Sie eine Wunschzeit an, die Ihnen für die Zustellung Ihres Pakets am besten passt, indem Sie eines der angezeigten Zeitfenster auswählen.\">?</span>"
 
 #. Translators: %1$s is an opening HTML tag and %2$s is a closing HTML tag for styling the error message.
 #: includes/front-end/class-pr-dhl-front-end-paket.php:250
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "%1$sPlease insert an API Key to enable the display of locations in the "
 "frontend on a map.%2$s"
-msgstr ""
-"%sBitte geben Sie Ihren API Schlüssel an, damit die Packstationen auf der "
-"Karte angezeigt werden.%s"
+msgstr "%1$sBitte geben Sie einen API-Schlüssel an, um die Anzeige der Standorte im Frontend auf einer Karte zu aktivieren.%2$s"
 
 #: includes/front-end/class-pr-dhl-front-end-paket.php:251
 msgid "Please enter a postcode to search locations."
@@ -2500,9 +2257,8 @@ msgid "Ship to a different address or Packstation/Branch?"
 msgstr "Versand an eine abweichende Adresse oder an eine Packstation/Filiale?"
 
 #: includes/front-end/class-pr-dhl-front-end-paket.php:329
-#, fuzzy
 msgid "No shipping method enabled."
-msgstr "Versandarten"
+msgstr "Keine Versandart aktiviert."
 
 #: includes/front-end/class-pr-dhl-front-end-paket.php:364
 #: includes/front-end/class-pr-dhl-front-end-paket.php:370
@@ -2516,13 +2272,12 @@ msgstr "Für die ausgewählte Versandart nicht verfügbar."
 #: includes/front-end/class-pr-dhl-front-end-paket.php:476
 #: build/pr-dhl-preferred-services-frontend.js:1
 #: includes/checkout-blocks/dhl-preferred-services/block.js:218
-#, fuzzy
 msgid "DHL Delivery Day"
-msgstr "Lieferung verzollt"
+msgstr "DHL Wunschtag"
 
 #: includes/front-end/class-pr-dhl-front-end-paket.php:633
 msgid " / "
-msgstr ""
+msgstr " / "
 
 #: includes/front-end/class-pr-dhl-front-end-paket.php:639
 msgid "Search "
@@ -2543,14 +2298,13 @@ msgstr ""
 #: build/pr-dhl-parcel-finder-frontend.js:1
 #: includes/checkout-blocks/dhl-parcel-finder/block.js:271
 msgid "Regular Address"
-msgstr "Privat-/Firmenadresse"
+msgstr "Reguläre Adresse"
 
 #: includes/front-end/class-pr-dhl-front-end-paket.php:827
 #: build/pr-dhl-parcel-finder-frontend.js:1
 #: includes/checkout-blocks/dhl-parcel-finder/block.js:275
-#, fuzzy
 msgid "DHL Packstation"
-msgstr "DHL Paket International"
+msgstr "DHL Packstation"
 
 #: includes/front-end/class-pr-dhl-front-end-paket.php:831
 #: build/pr-dhl-parcel-finder-frontend.js:1
@@ -2584,9 +2338,8 @@ msgstr ""
 "informiert Sie DHL per E-Mail über die geplante Lieferung Ihrer Sendung."
 
 #: includes/front-end/class-pr-dhl-front-end-paket.php:997
-#, fuzzy
 msgid "\"DHL Locations\" cannot be used - "
-msgstr "DHL-Label-Datei kann nicht gespeichert werden!"
+msgstr "„DHL Locations“ können nicht verwendet werden – "
 
 #: includes/front-end/class-pr-dhl-front-end-paket.php:1005
 #: build/pr-dhl-parcel-finder-frontend.js:1
@@ -2634,7 +2387,7 @@ msgstr ""
 #: includes/pr-dhl-api/abstract-pr-dhl-api-rest.php:271
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-finder.php:144
 msgid "408 - Request Timeout"
-msgstr ""
+msgstr "408 – Zeitüberschreitung der Anfrage"
 
 #: includes/pr-dhl-api/abstract-pr-dhl-api-rest.php:208
 #: includes/pr-dhl-api/abstract-pr-dhl-api-rest.php:274
@@ -2650,43 +2403,42 @@ msgstr "503 - Wartungsarbeiten"
 
 #: includes/pr-dhl-api/abstract-pr-dhl-api-rest.php:215
 msgid "POST error or timeout occured. Please try again later."
-msgstr ""
+msgstr "Es ist ein POST-Fehler oder eine Zeitüberschreitung aufgetreten. Bitte versuchen Sie es später erneut."
 
 #: includes/pr-dhl-api/abstract-pr-dhl-api-rest.php:264
 msgid "Unknown Error!"
-msgstr ""
+msgstr "Unbekannter Fehler!"
 
 #: includes/pr-dhl-api/abstract-pr-dhl-api-rest.php:281
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-finder.php:154
 msgid "GET error or timeout occured. Please try again later."
-msgstr ""
+msgstr "Es ist ein GET-Fehler oder eine Zeitüberschreitung aufgetreten. Bitte versuchen Sie es später erneut."
 
 #. translators: %s is the required number of characters
 #: includes/pr-dhl-api/abstract-pr-dhl-api-rest.php:350
 #: includes/pr-dhl-api/abstract-pr-dhl-api-soap.php:141
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:565
-#, fuzzy, php-format
+#, php-format
 msgid "The value must be %s characters."
-msgstr "Der Wert muss %s Zeichen sein."
+msgstr "Der Wert muss %s Zeichen lang sein."
 
 #. translators: %1$s is the minimum number of characters, %2$s is the maximum number of characters
 #: includes/pr-dhl-api/abstract-pr-dhl-api-rest.php:353
 #: includes/pr-dhl-api/abstract-pr-dhl-api-soap.php:144
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:568
-#, fuzzy, php-format
+#, php-format
 msgid "The value must be between %1$s and %2$s characters."
-msgstr "Der Wert muss zwischen %s und %s Zeichen sein."
+msgstr "Der Wert muss zwischen %1$s und %2$s Zeichen lang sein."
 
 #: includes/pr-dhl-api/abstract-pr-dhl-api-rest.php:359
 #: includes/pr-dhl-api/abstract-pr-dhl-api-soap.php:150
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:574
-#, fuzzy
 msgid "The value must be a number"
-msgstr "Wert muss eine Zahl sein"
+msgstr "Der Wert muss eine Zahl sein"
 
 #: includes/pr-dhl-api/abstract-pr-dhl-api.php:36
 msgid "Parcel Finder not available"
-msgstr ""
+msgstr "Paketfinder nicht verfügbar"
 
 #: includes/pr-dhl-api/abstract-pr-dhl-api.php:66
 msgid "Delivery Duty Unpaid"
@@ -2697,158 +2449,134 @@ msgid "Delivery Duty Paid"
 msgstr "Lieferung verzollt"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-auth-rest.php:147
-#, fuzzy
 msgid "The \"Cliend Id\" or \"Client Secret\" is empty."
-msgstr "DHL, erreicht nicht die \"Datein Id\" oder \"Geheimen\" ist leer."
+msgstr "Die „Client-ID“ oder das „Client Secret“ ist leer."
 
 #: includes/pr-dhl-api/class-pr-dhl-api-auth-rest.php:174
-#, fuzzy
 msgid ""
 "Authentication failed: Please, check client ID and secret in the DHL "
 "shipping settings"
-msgstr ""
-"Authentifizierung fehlgeschlagen: Bitte überprüfen Sie die Client-ID und "
-"Geheimnis in der DHL Versand-Einstellungen"
+msgstr "Authentifizierung fehlgeschlagen: Bitte überprüfen Sie die Client-ID und das Secret in den DHL-Versandeinstellungen."
 
 #: includes/pr-dhl-api/class-pr-dhl-api-auth-soap.php:45
 msgid "The \"Username\" or \"Password\" is empty."
-msgstr ""
+msgstr "Der „Benutzername“ oder das „Passwort“ ist leer."
 
 #: includes/pr-dhl-api/class-pr-dhl-api-auth-soap.php:51
-#, fuzzy
 msgid ""
 "This plugin requires the <a href=\"http://php.net/manual/en/class.soapclient."
 "php\">SOAP</a> support on your server/hosting to function."
-msgstr ""
-"Dieses Plugin ist erforderlich, die <a href=\"http://php.net/manual/en/class."
-"soapclient.php\">Seife</a> auf Ihrem Server/hosting-Funktion unterstützen."
+msgstr "Dieses Plugin benötigt die <a href=\"http://php.net/manual/en/class.soapclient.php\">SOAP</a>-Unterstützung auf Ihrem Server/Hosting, um zu funktionieren."
 
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:296
-#, fuzzy
 msgid "Packet Standard"
-msgstr "GM-Paket Standard"
+msgstr "Packet Standard"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:297
-#, fuzzy
 msgid "Packet Priority"
-msgstr "GM Paket Priorität Manifest"
+msgstr "Packet Priority"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:298
-#, fuzzy
 msgid "Packet Plus"
-msgstr "DHL Paket Plus Rendite"
+msgstr "Packet Plus"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:299
 msgid "Packet Tracked"
-msgstr ""
+msgstr "Packet Tracked"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:365
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:120
-#, fuzzy
 msgid "DHL Label has no path!"
-msgstr "DHL-Label nicht erstellt"
+msgstr "Das DHL-Label hat keinen Pfad!"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:374
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:61
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:131
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:203
-#, fuzzy
 msgid "DHL Label could not be deleted!"
-msgstr "DHL-Label konnte nicht gelöscht werden!"
+msgstr "Das DHL-Label konnte nicht gelöscht werden!"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:525
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:99
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:152
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:276
-#, fuzzy
 msgid "Invalid file path!"
-msgstr "Ungültige Datei!"
+msgstr "Ungültiger Dateipfad!"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:531
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:159
-#, fuzzy
 msgid "DHL label file cannot be saved!"
-msgstr "DHL-Label-Datei kann nicht gespeichert werden!"
+msgstr "Die DHL-Label-Datei kann nicht gespeichert werden!"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:561
-#, fuzzy
 msgid "DHL AWB Label could not be deleted!"
-msgstr "DHL-Label konnte nicht gelöscht werden!"
+msgstr "Das DHL-AWB-Label konnte nicht gelöscht werden!"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:703
 msgid "Shipment AWB: "
-msgstr ""
+msgstr "Sendungs-AWB: "
 
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:724
-#, fuzzy
 msgid "Sale Goods"
-msgstr "Sperrgut: "
+msgstr "Verkaufsware"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:725
-#, fuzzy
 msgid "Return Goods"
-msgstr "Retouren-Adresse"
+msgstr "Rückware"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:726
 msgid "Gift"
-msgstr ""
+msgstr "Geschenk"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:727
 msgid "Commercial Sample"
-msgstr ""
+msgstr "Warenmuster"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:728
 msgid "Documents"
-msgstr ""
+msgstr "Dokumente"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:729
 msgid "Mixed Contents"
-msgstr ""
+msgstr "Gemischter Inhalt"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:730
 msgid "Others"
-msgstr ""
+msgstr "Sonstiges"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-factory.php:86
-#, fuzzy
 msgid "The DHL plugin is not supported in your store's \"Base Location\""
-msgstr "Das DHL-Plugin ist in Ihrem Geschäft\"Basis\" nicht unterstützt."
+msgstr "Das DHL-Plugin wird im „Standardstandort“ Ihres Shops nicht unterstützt"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-paket.php:163
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-paket.php:327
-#, fuzzy
 msgid "DHL Paket Connect"
-msgstr "DHL Paket verbinden"
+msgstr "DHL Paket Connect"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-paket.php:164
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-paket.php:328
-#, fuzzy
 msgid "DHL Europaket (B2B)"
 msgstr "DHL Europaket (B2B)"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-paket.php:165
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-paket.php:329
-#, fuzzy
 msgid "DHL Paket International"
 msgstr "DHL Paket International"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-paket.php:166
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-paket.php:330
-#, fuzzy
 msgid "DHL Warenpost International"
-msgstr "DHL Paket International"
+msgstr "DHL Warenpost International"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-paket.php:187
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-paket.php:306
-#, fuzzy
 msgid "DHL Paket PRIO"
-msgstr "DHL Paket"
+msgstr "DHL Paket PRIO"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-paket.php:188
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-paket.php:307
-#, fuzzy
 msgid "DHL Kleinpaket"
-msgstr "DHL Paket"
+msgstr "DHL Kleinpaket"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-paket.php:206
 msgid "sun"
@@ -2887,7 +2615,6 @@ msgid "Delivery Duty Paid (excl. VAT )"
 msgstr "Lieferung verzollt (exkl. MwSt.)"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-paket.php:314
-#, fuzzy
 msgid "Delivery Duty Paid (excl. Duties, taxes and VAT)"
 msgstr "Delivery Duty Paid (exkl. Zölle, Steuern und Mehrwertsteuer)"
 
@@ -2906,9 +2633,8 @@ msgstr "Mindestalter 18"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-finder.php:52
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-finder.php:60
-#, fuzzy
 msgid "Shipping \"City\" and \"Postcode\" are empty!"
-msgstr "Versand \"City\" ist leer!"
+msgstr "Versand-„Ort“ und -„PLZ“ sind leer!"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-finder.php:56
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:194
@@ -2919,63 +2645,52 @@ msgstr "Versand \"City\" ist leer!"
 #: includes/REST_API/Parcel_DE/Item_Info.php:589
 #: includes/REST_API/Parcel_DE/Item_Info.php:644
 #: includes/REST_API/Parcel_DE/Item_Info.php:690
-#, fuzzy
 msgid "Shipping \"Country\" is empty!"
-msgstr "Versand \"Country\" ist leer!"
+msgstr "Versand-„Land“ ist leer!"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-finder.php:76
-#, fuzzy
 msgid "No service type selected"
-msgstr "Ausgewähltes DHL Produkt:"
+msgstr "Kein Servicetyp ausgewählt"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:57
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:127
-#, fuzzy
 msgid "DHL Label file is not writable!"
-msgstr "DHL-Label-Datei kann nicht gespeichert werden!"
+msgstr "Die DHL-Label-Datei ist nicht beschreibbar!"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:106
-#, fuzzy
 msgid "DHL Label file cannot be saved!"
-msgstr "DHL-Label-Datei kann nicht gespeichert werden!"
+msgstr "Die DHL-Label-Datei kann nicht gespeichert werden!"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:119
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:265
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-finder.php:52
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:296
-#, fuzzy
 msgid "Please, provide the username in the DHL shipping settings"
-msgstr "Bitte geben Sie den Benutzernamen in der DHL Versand-Einstellungen"
+msgstr "Bitte geben Sie den Benutzernamen in den DHL-Versandeinstellungen an"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:123
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:269
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-finder.php:56
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:300
-#, fuzzy
 msgid ""
 "Please, provide the password for the username in the DHL shipping settings"
-msgstr ""
-"Bitte geben Sie das Kennwort für den Benutzernamen in den DHL-Versand-"
-"Einstellungen"
+msgstr "Bitte geben Sie das Passwort für den Benutzernamen in den DHL-Versandeinstellungen an"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:128
-#, fuzzy
 msgid "Please, provide a pickup account in the DHL shipping settings"
-msgstr "Bitte geben Sie eine pickup-Konto in der DHL Versand-Einstellungen"
+msgstr "Bitte geben Sie ein Abholkonto in den DHL-Versandeinstellungen an"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:132
-#, fuzzy
 msgid "Please, provide a distribution center in the DHL shipping settings"
-msgstr "Bitte geben Sie ein Verteilzentrum in der DHL Versand-Einstellungen"
+msgstr "Bitte geben Sie ein Verteilzentrum in den DHL-Versandeinstellungen an"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:154
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:307
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:338
 #: includes/REST_API/Deutsche_Post/Item_Info.php:117
 #: includes/REST_API/Parcel_DE/Item_Info.php:194
-#, fuzzy
 msgid "DHL \"Product\" is empty!"
-msgstr "DHL \"Produkt\" ist leer!"
+msgstr "DHL-„Produkt“ ist leer!"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:158
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:339
@@ -3010,9 +2725,8 @@ msgstr "Shop \"Währung\" ist leer!"
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:445
 #: includes/REST_API/Deutsche_Post/Item_Info.php:243
 #: includes/REST_API/Parcel_DE/Item_Info.php:561
-#, fuzzy
 msgid "Shipping \"Address 1\" is empty!"
-msgstr "Lieferadresse \"1\" ist leer!"
+msgstr "Versand-„Adresse 1“ ist leer!"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:190
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:404
@@ -3021,195 +2735,175 @@ msgstr "Lieferadresse \"1\" ist leer!"
 #: includes/REST_API/Parcel_DE/Item_Info.php:578
 #: includes/REST_API/Parcel_DE/Item_Info.php:641
 #: includes/REST_API/Parcel_DE/Item_Info.php:687
-#, fuzzy
 msgid "Shipping \"City\" is empty!"
-msgstr "Versand \"City\" ist leer!"
+msgstr "Versand-„Ort“ ist leer!"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-paket.php:389
 msgid "Your Shipper Address must match a Pickup address on your DHL Portal."
-msgstr ""
+msgstr "Ihre Absenderadresse muss mit einer Abholadresse in Ihrem DHL-Portal übereinstimmen."
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:274
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel.php:30
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:305
-#, fuzzy
 msgid "Please, provide an account in the DHL shipping settings"
-msgstr "Bitte geben Sie ein Konto in der DHL Versand-Einstellungen"
+msgstr "Bitte geben Sie ein Konto in den DHL-Versandeinstellungen an"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:278
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:309
-#, fuzzy
 msgid ""
 "Please, provide a participation number for the shipping method in the DHL "
 "shipping settings"
-msgstr ""
-"Bitte geben Sie das Kennwort für den Benutzernamen in den DHL-Versand-"
-"Einstellungen"
+msgstr "Bitte geben Sie eine Teilnahmenummer für die Versandart in den DHL-Versandeinstellungen an"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:282
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:313
-#, fuzzy
 msgid "Please, provide a shipper name in the DHL shipping settings"
-msgstr "Bitte geben Sie den Benutzernamen in der DHL Versand-Einstellungen"
+msgstr "Bitte geben Sie einen Absendernamen in den DHL-Versandeinstellungen an"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:286
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:317
-#, fuzzy
 msgid "Please, provide a shipper address in the DHL shipping settings"
-msgstr "Bitte geben Sie den Benutzernamen in der DHL Versand-Einstellungen"
+msgstr "Bitte geben Sie eine Absenderadresse in den DHL-Versandeinstellungen an"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:290
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:321
-#, fuzzy
 msgid "Please, provide a shipper address number in the DHL shipping settings"
-msgstr "Bitte geben Sie den Benutzernamen in der DHL Versand-Einstellungen"
+msgstr "Bitte geben Sie eine Absender-Hausnummer in den DHL-Versandeinstellungen an"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:294
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:325
-#, fuzzy
 msgid "Please, provide a shipper city in the DHL shipping settings"
-msgstr "Bitte geben Sie eine pickup-Konto in der DHL Versand-Einstellungen"
+msgstr "Bitte geben Sie einen Absenderort in den DHL-Versandeinstellungen an"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:298
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:329
-#, fuzzy
 msgid "Please, provide a shipper postcode in the DHL shipping settings"
-msgstr "Bitte geben Sie eine pickup-Konto in der DHL Versand-Einstellungen"
+msgstr "Bitte geben Sie eine Absender-PLZ in den DHL-Versandeinstellungen an"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:302
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:333
-#, fuzzy
 msgid "Please, provide a shipper reference in the DHL shipping settings"
-msgstr "Bitte geben Sie den Benutzernamen in der DHL Versand-Einstellungen"
+msgstr "Bitte geben Sie eine Absender-Referenz in den DHL-Versandeinstellungen an"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:314
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:346
 msgid "Returns are not supported by this DHL Service."
-msgstr ""
+msgstr "Retouren werden von diesem DHL-Service nicht unterstützt."
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:318
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:350
-#, fuzzy
 msgid "Please, provide a return name in the DHL shipping settings"
-msgstr "Bitte geben Sie den Benutzernamen in der DHL Versand-Einstellungen"
+msgstr "Bitte geben Sie einen Retouren-Namen in den DHL-Versandeinstellungen an"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:322
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:354
-#, fuzzy
 msgid "Please, provide a return address in the DHL shipping settings"
-msgstr "Bitte geben Sie den Benutzernamen in der DHL Versand-Einstellungen"
+msgstr "Bitte geben Sie eine Retouren-Adresse in den DHL-Versandeinstellungen an"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:326
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:358
-#, fuzzy
 msgid "Please, provide a return address number in the DHL shipping settings"
-msgstr "Bitte geben Sie den Benutzernamen in der DHL Versand-Einstellungen"
+msgstr "Bitte geben Sie eine Retouren-Hausnummer in den DHL-Versandeinstellungen an"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:330
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:362
-#, fuzzy
 msgid "Please, provide a return city in the DHL shipping settings"
-msgstr "Bitte geben Sie ein Konto in der DHL Versand-Einstellungen"
+msgstr "Bitte geben Sie einen Retouren-Ort in den DHL-Versandeinstellungen an"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:334
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:366
-#, fuzzy
 msgid "Please, provide a return postcode in the DHL shipping settings"
-msgstr "Bitte geben Sie ein Konto in der DHL Versand-Einstellungen"
+msgstr "Bitte geben Sie eine Retouren-PLZ in den DHL-Versandeinstellungen an"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:348
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:380
 msgid "First name and last name must be passed for \"Identity Check\"."
-msgstr ""
+msgstr "Für die „Identitätsprüfung“ müssen Vor- und Nachname angegeben werden."
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:352
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:384
 msgid ""
 "Either a \"Date of Birth\" or \"Minimum Age\" must be eneted for \"Ident-"
 "Check\"."
-msgstr ""
+msgstr "Für den „Ident-Check“ muss entweder ein „Geburtsdatum“ oder ein „Mindestalter“ angegeben werden."
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:370
 msgid " A package number is empty. Ensure all package details are filled in."
-msgstr ""
+msgstr " Eine Paketnummer ist leer. Stellen Sie sicher, dass alle Paketangaben ausgefüllt sind."
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:374
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:406
 #: includes/REST_API/Parcel_DE/Item_Info.php:288
 msgid "A package weight is empty. Ensure all package details are filled in."
-msgstr ""
+msgstr "Ein Paketgewicht ist leer. Stellen Sie sicher, dass alle Paketangaben ausgefüllt sind."
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:378
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:410
 #: includes/REST_API/Parcel_DE/Item_Info.php:297
 msgid "A package length is empty. Ensure all package details are filled in."
-msgstr ""
+msgstr "Eine Paketlänge ist leer. Stellen Sie sicher, dass alle Paketangaben ausgefüllt sind."
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:382
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:414
 #: includes/REST_API/Parcel_DE/Item_Info.php:306
 msgid "A package width is empty. Ensure all package details are filled in."
-msgstr ""
+msgstr "Eine Paketbreite ist leer. Stellen Sie sicher, dass alle Paketangaben ausgefüllt sind."
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:386
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:418
 #: includes/REST_API/Parcel_DE/Item_Info.php:315
 msgid "A package height is empty. Ensure all package details are filled in."
-msgstr ""
+msgstr "Eine Pakethöhe ist leer. Stellen Sie sicher, dass alle Paketangaben ausgefüllt sind."
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:422
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:454
 #: includes/REST_API/Parcel_DE/Item_Info.php:627
 msgid "Post Number is missing, it is mandatory for \"Packstation\" delivery."
-msgstr ""
+msgstr "Die Postnummer fehlt, sie ist für die Zustellung an eine „Packstation“ verpflichtend."
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:440
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:472
 #: includes/REST_API/Parcel_DE/Item_Info.php:1275
 msgid "Shipping street number is missing!"
-msgstr ""
+msgstr "Die Hausnummer der Lieferadresse fehlt!"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel.php:34
 msgid "Please, provide the receiver postnumber."
-msgstr ""
+msgstr "Bitte geben Sie die Postnummer des Empfängers an."
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel.php:38
-#, fuzzy
 msgid "Please, provide the shipment start date."
-msgstr "Bitte geben Sie ein Konto in der DHL Versand-Einstellungen"
+msgstr "Bitte geben Sie das Startdatum der Sendung an."
 
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:93
-#, fuzzy
 msgid "Contact Support"
-msgstr "Land nicht unterstützt"
+msgstr "Support kontaktieren"
 
 #. translators: %s is the status message describing the error
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:97
-#, fuzzy, php-format
+#, php-format
 msgid "Could not create label - %s"
-msgstr "Label - konnte nicht erstellt werden: %s"
+msgstr "Label konnte nicht erstellt werden – %s"
 
 #. translators: %s is the status message describing the error
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:176
-#, fuzzy, php-format
+#, php-format
 msgid "Could not delete label - %s"
-msgstr "Label - konnte nicht gelöscht werden: %s"
+msgstr "Label konnte nicht gelöscht werden – %s"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:283
-#, fuzzy
 msgid "File cannot be saved!"
-msgstr "DHL-Label-Datei kann nicht gespeichert werden!"
+msgstr "Die Datei kann nicht gespeichert werden!"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:402
 #: includes/REST_API/Parcel_DE/Item_Info.php:279
 msgid "A package number is empty. Ensure all package details are filled in."
-msgstr ""
+msgstr "Eine Paketnummer ist leer. Stellen Sie sicher, dass alle Paketangaben ausgefüllt sind."
 
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:715
 #: includes/REST_API/Parcel_DE/Item_Info.php:224
-#, fuzzy
 msgid "Could not create account number - no product number."
-msgstr "Kontonummer - keine Produktnummer konnte nicht erstellt werden."
+msgstr "Kontonummer konnte nicht erstellt werden – keine Produktnummer."
 
 #. Translators: %s is the error message from the API.
 #. Translators: %s is replaced with the error message returned from the API.
@@ -3221,234 +2915,208 @@ msgstr "Kontonummer - keine Produktnummer konnte nicht erstellt werden."
 #: includes/REST_API/Parcel_DE_MyAccount/Client.php:44
 #, php-format
 msgid "API error: %s"
-msgstr ""
+msgstr "API-Fehler: %s"
 
 #. Translators: %s is the error message from the API.
 #: includes/REST_API/Deutsche_Post/Client.php:183
 #, php-format
 msgid "Failed to get items from the API: %s"
-msgstr ""
+msgstr "Artikel konnten nicht von der API abgerufen werden: %s"
 
 #. Translators: %s is the error message from the API.
 #: includes/REST_API/Deutsche_Post/Client.php:284
-#, fuzzy, php-format
+#, php-format
 msgid "Failed to create order: %s"
-msgstr "Label - konnte nicht erstellt werden: %s"
+msgstr "Bestellung konnte nicht erstellt werden: %s"
 
 #: includes/REST_API/Deutsche_Post/Item_Info.php:131
 msgid "Order \"Service Level\" is invalid"
-msgstr ""
+msgstr "Das „Service-Level“ der Bestellung ist ungültig"
 
 #: includes/REST_API/Deutsche_Post/Item_Info.php:139
 #: includes/REST_API/Parcel_DE/Item_Info.php:236
-#, fuzzy
 msgid "The order \"Weight\" must be a number"
-msgstr "Wert muss eine Zahl sein"
+msgstr "Das „Gewicht“ der Bestellung muss eine Zahl sein"
 
 #: includes/REST_API/Deutsche_Post/Item_Info.php:153
 #: includes/REST_API/Parcel_DE/Item_Info.php:248
-#, fuzzy
 msgid "Shipment \"Value\" is empty!"
-msgstr "Versand \"City\" ist leer!"
+msgstr "Der „Wert“ der Sendung ist leer!"
 
 #: includes/REST_API/Deutsche_Post/Item_Info.php:156
 #: includes/REST_API/Parcel_DE/Item_Info.php:251
-#, fuzzy
 msgid "The order \"value\" must be a number"
-msgstr "Wert muss eine Zahl sein"
+msgstr "Der „Wert“ der Bestellung muss eine Zahl sein"
 
 #: includes/REST_API/Deutsche_Post/Item_Info.php:182
-#, fuzzy
 msgid "The importer customs reference \"value\" must be an alphanumeric"
-msgstr "Wert muss eine Zahl sein"
+msgstr "Der „Wert“ der Importeur-Zollreferenz muss alphanumerisch sein"
 
 #: includes/REST_API/Deutsche_Post/Item_Info.php:186
-#, fuzzy
 msgid ""
 "The importer customs reference \"value\" must be between 1 and 35 characters "
 "long"
-msgstr "Der Wert muss zwischen %s und %s Zeichen sein."
+msgstr "Der „Wert“ der Importeur-Zollreferenz muss zwischen 1 und 35 Zeichen lang sein"
 
 #: includes/REST_API/Deutsche_Post/Item_Info.php:198
-#, fuzzy
 msgid "The sender customs reference \"value\" must be an alphanumeric"
-msgstr "Wert muss eine Zahl sein"
+msgstr "Der „Wert“ der Absender-Zollreferenz muss alphanumerisch sein"
 
 #: includes/REST_API/Deutsche_Post/Item_Info.php:202
-#, fuzzy
 msgid ""
 "The sender customs reference \"value\" must be between 1 and 35 characters "
 "long"
-msgstr "Der Wert muss zwischen %s und %s Zeichen sein."
+msgstr "Der „Wert“ der Absender-Zollreferenz muss zwischen 1 und 35 Zeichen lang sein"
 
 #: includes/REST_API/Deutsche_Post/Item_Info.php:226
-#, fuzzy
 msgid "Recipient is empty!"
-msgstr "Versand \"City\" ist leer!"
+msgstr "Der Empfänger ist leer!"
 
 #: includes/REST_API/Deutsche_Post/Item_Info.php:287
-#, fuzzy
 msgid "Item HS Code must be between 4 and 20 characters long"
-msgstr "Der Wert muss zwischen %s und %s Zeichen sein."
+msgstr "Der HS-Code des Artikels muss zwischen 4 und 20 Zeichen lang sein"
 
 #. Translators: %s is replaced with the error details returned from the API.
 #: includes/REST_API/Paket/Client.php:81
 #, php-format
 msgid "Failed DHL Request Pickup1: %s"
-msgstr ""
+msgstr "DHL-Abholauftrag fehlgeschlagen1: %s"
 
 #. Translators: %s is replaced with the error details returned from the API.
 #: includes/REST_API/Paket/Client.php:107
 #, php-format
 msgid "Failed DHL Request Pickup: %s"
-msgstr ""
+msgstr "DHL-Abholauftrag fehlgeschlagen: %s"
 
 #: includes/REST_API/Paket/Pickup_Request_Info.php:165
 #: includes/REST_API/Parcel_DE/Item_Info.php:215
 msgid "Check your settings \"Account Number\" and \"Participation Number\"."
-msgstr ""
+msgstr "Überprüfen Sie Ihre Einstellungen „Kundennummer“ und „Teilnahmenummer“."
 
 #: includes/REST_API/Paket/Pickup_Request_Info.php:255
 #: includes/REST_API/Paket/Pickup_Request_Info.php:260
 #: includes/REST_API/Parcel_DE/Item_Info.php:418
 #: includes/REST_API/Parcel_DE/Item_Info.php:423
-#, fuzzy
 msgid "Shipper \"Address 1\" is empty!"
-msgstr "Lieferadresse \"1\" ist leer!"
+msgstr "Absender-„Adresse 1“ ist leer!"
 
 #: includes/REST_API/Paket/Pickup_Request_Info.php:273
 #: includes/REST_API/Parcel_DE/Item_Info.php:439
-#, fuzzy
 msgid "Shipper \"City\" is empty!"
-msgstr "Versand \"City\" ist leer!"
+msgstr "Absender-„Ort“ ist leer!"
 
 #: includes/REST_API/Paket/Pickup_Request_Info.php:277
 #: includes/REST_API/Parcel_DE/Item_Info.php:435
-#, fuzzy
 msgid "Shipper \"Postcode\" is empty!"
-msgstr "Versand \"City\" ist leer!"
+msgstr "Absender-„PLZ“ ist leer!"
 
 #: includes/REST_API/Paket/Pickup_Request_Info.php:285
 #: includes/REST_API/Parcel_DE/Item_Info.php:455
-#, fuzzy
 msgid "Shipper \"Country\" is empty!"
-msgstr "Versand \"Country\" ist leer!"
+msgstr "Absender-„Land“ ist leer!"
 
 #. Translators: %s is replaced with the error message returned from the API.
 #: includes/REST_API/Parcel_DE/Client.php:51
 #: includes/REST_API/Parcel_DE/Client.php:69
-#, fuzzy, php-format
+#, php-format
 msgid "Error creating label: %s"
-msgstr "Label - konnte nicht erstellt werden: %s"
+msgstr "Fehler beim Erstellen des Labels: %s"
 
 #. Translators: %s is replaced with the error message returned from the API.
 #: includes/REST_API/Parcel_DE/Client.php:589
-#, fuzzy, php-format
+#, php-format
 msgid "Error deleting label: %s"
-msgstr "Label - konnte nicht gelöscht werden: %s"
+msgstr "Fehler beim Löschen des Labels: %s"
 
 #: includes/REST_API/Parcel_DE/Item_Info.php:357
 msgid ""
 "Master Reference Number (MRN) must be a maximum of 18 alphanumeric "
 "characters."
-msgstr ""
+msgstr "Die Master Reference Number (MRN) darf maximal 18 alphanumerische Zeichen lang sein."
 
 #: includes/REST_API/Parcel_DE/Item_Info.php:376
 msgid ""
 "Master Reference Number (MRN) is required for shipments valued at €1000 or "
 "more."
-msgstr ""
+msgstr "Die Master Reference Number (MRN) ist für Sendungen mit einem Wert von 1.000 € oder mehr erforderlich."
 
 #: includes/REST_API/Parcel_DE/Item_Info.php:403
-#, fuzzy
 msgid "\"Account Name\" in settings is empty."
-msgstr "API Einstellungen"
+msgstr "Der „Kontoname“ in den Einstellungen ist leer."
 
 #: includes/REST_API/Parcel_DE/Item_Info.php:550
-#, fuzzy
 msgid "Recipient name is empty!"
-msgstr "Versand \"City\" ist leer!"
+msgstr "Der Empfängername ist leer!"
 
 #: includes/REST_API/Parcel_DE/Item_Info.php:575
 #: includes/REST_API/Parcel_DE/Item_Info.php:638
 #: includes/REST_API/Parcel_DE/Item_Info.php:684
-#, fuzzy
 msgid "Shipping \"Postcode\" is empty!"
-msgstr "Versand \"City\" ist leer!"
+msgstr "Versand-„PLZ“ ist leer!"
 
 #: includes/REST_API/Parcel_DE/Item_Info.php:620
-#, fuzzy
 msgid "Packstation name is empty!"
-msgstr "Ort"
+msgstr "Der Packstation-Name ist leer!"
 
 #: includes/REST_API/Parcel_DE/Item_Info.php:631
 #: includes/REST_API/Parcel_DE/Item_Info.php:677
-#, fuzzy
 msgid "Locker ID is missing, it is mandatory for \"Packstation\" delivery."
-msgstr "Die Angabe der Postnummer ist für Packstationen verpflichtend."
+msgstr "Die Locker-ID fehlt, sie ist für die Zustellung an eine „Packstation“ verpflichtend."
 
 #: includes/REST_API/Parcel_DE/Item_Info.php:666
-#, fuzzy
 msgid "Name is empty!"
-msgstr "Versand \"City\" ist leer!"
+msgstr "Der Name ist leer!"
 
 #: includes/REST_API/Parcel_DE/Item_Info.php:702
 msgid "Either post number or email is required for Postfiliale"
-msgstr ""
+msgstr "Für die Postfiliale ist entweder eine Postnummer oder eine E-Mail erforderlich"
 
 #: includes/REST_API/Parcel_DE/Item_Info.php:753
 msgid ""
 "HS code must be at-least 8 digits when an export declaration is required."
-msgstr ""
+msgstr "Der HS-Code muss mindestens 8 Stellen haben, wenn eine Ausfuhranmeldung erforderlich ist."
 
 #: includes/REST_API/Parcel_DE/Item_Info.php:757
 msgid "HS code must be at-least 6 digits for low-value exports (< €1 000)."
-msgstr ""
+msgstr "Der HS-Code muss für geringwertige Ausfuhren (< 1.000 €) mindestens 6 Stellen haben."
 
 #: includes/REST_API/Parcel_DE/Item_Info.php:763
 msgid "Item HS Code must has value to can use PDDP."
-msgstr ""
+msgstr "Der HS-Code des Artikels muss einen Wert haben, um PDDP verwenden zu können."
 
 #: includes/REST_API/Parcel_DE/Item_Info.php:771
-#, fuzzy
 msgid "Item HS Code must be between 4 and 11 characters long"
-msgstr "Der Wert muss zwischen %s und %s Zeichen sein."
+msgstr "Der HS-Code des Artikels muss zwischen 4 und 11 Zeichen lang sein"
 
 #. translators: %s is the name of the required argument
 #: includes/Utils/Args_Parser.php:58
 #, php-format
 msgid "Please specify a \"%s\" argument"
-msgstr ""
+msgstr "Bitte geben Sie ein „%s“-Argument an"
 
 #: pr-dhl-woocommerce.php:159
 msgid "Test Connection"
 msgstr "Verbindung prüfen"
 
 #: pr-dhl-woocommerce.php:160
-#, fuzzy
 msgid "Get Account Settings"
-msgstr "API Einstellungen"
+msgstr "Kontoeinstellungen abrufen"
 
 #: pr-dhl-woocommerce.php:183
-#, fuzzy
 msgid "Packstation "
-msgstr "Ort"
+msgstr "Packstation "
 
 #: pr-dhl-woocommerce.php:184 pr-dhl-woocommerce.php:185
 msgid "Postfiliale "
-msgstr ""
+msgstr "Postfiliale "
 
 #: pr-dhl-woocommerce.php:471
-#, fuzzy
 msgid ""
 "WooCommerce DHL Integration requires WooCommerce to be installed and "
 "activated!"
-msgstr ""
-"WooCommerce DHL Integration erfordert WooCommerce installiert und aktiviert "
-"sein!"
+msgstr "Die WooCommerce-DHL-Integration erfordert, dass WooCommerce installiert und aktiviert ist!"
 
 #: pr-dhl-woocommerce.php:583
-#, fuzzy
 msgid "Country not supported"
 msgstr "Land nicht unterstützt"
 
@@ -3458,56 +3126,51 @@ msgstr "Testverbindung ist erfolgreich!"
 
 #. translators: %s is the error message returned when the connection fails
 #: pr-dhl-woocommerce.php:603
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "Connection Failed: %s Make sure to save the settings before testing the "
 "connection. "
-msgstr ""
-"Verbindung fehlgeschlagen: %s achten Sie auf die Einstellungen zu speichern, "
-"bevor Sie die Verbindung testen. "
+msgstr "Verbindung fehlgeschlagen: %s Stellen Sie sicher, dass Sie die Einstellungen speichern, bevor Sie die Verbindung testen. "
 
 #: pr-dhl-woocommerce.php:622
-#, fuzzy
 msgid "Account Connected"
-msgstr "Konto Inhaber"
+msgstr "Konto verbunden"
 
 #. translators: %s is the error message returned when the connection fails
 #: pr-dhl-woocommerce.php:637
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "Account Connection Failed: %s . Make sure to save the settings before "
 "testing the connection. "
-msgstr ""
-"Verbindung fehlgeschlagen: %s achten Sie auf die Einstellungen zu speichern, "
-"bevor Sie die Verbindung testen. "
+msgstr "Kontoverbindung fehlgeschlagen: %s . Stellen Sie sicher, dass Sie die Einstellungen speichern, bevor Sie die Verbindung testen. "
 
 #: pr-dhl-woocommerce.php:985
 msgid ""
 "Your DHL account password will expire in less than 30 days, please head to "
 "DHL business portal and reset your password."
-msgstr ""
+msgstr "Ihr DHL-Kontopasswort läuft in weniger als 30 Tagen ab. Bitte gehen Sie zum DHL-Geschäftskundenportal und setzen Sie Ihr Passwort zurück."
 
 #: pr-dhl-woocommerce.php:987
 msgid ""
 "Your DHL account password will expire in less than 7 days, please head to "
 "DHL business portal and reset your password."
-msgstr ""
+msgstr "Ihr DHL-Kontopasswort läuft in weniger als 7 Tagen ab. Bitte gehen Sie zum DHL-Geschäftskundenportal und setzen Sie Ihr Passwort zurück."
 
 #. translators: %s is the warning message
 #: pr-dhl-woocommerce.php:992
 #, php-format
 msgid "Warning: %s"
-msgstr ""
+msgstr "Warnung: %s"
 
 #: pr-dhl-woocommerce.php:1017
 msgid "DHL checkout Blocks"
-msgstr ""
+msgstr "DHL-Checkout-Blöcke"
 
 #: templates/checkout/dhl-closest-drop-point.php:11
 #: build/pr-dhl-closest-drop-point-frontend.js:1
 #: includes/checkout-blocks/dhl-closest-drop-point/block.js:90
 msgid "Closest drop-off point"
-msgstr ""
+msgstr "Nächstgelegener Abgabeort"
 
 #: templates/checkout/dhl-closest-drop-point.php:15
 #: build/pr-dhl-closest-drop-point-frontend.js:1
@@ -3521,9 +3184,8 @@ msgstr ""
 #: templates/checkout/dhl-closest-drop-point.php:30
 #: build/pr-dhl-closest-drop-point-frontend.js:1
 #: includes/checkout-blocks/dhl-closest-drop-point/block.js:116
-#, fuzzy
 msgid "Home delivery"
-msgstr "Keine Nachbarschaftszustellung: "
+msgstr "Lieferung an Heimatadresse"
 
 #: templates/checkout/dhl-parcel-finder.php:19
 #: build/pr-dhl-parcel-finder-frontend.js:1
@@ -3552,15 +3214,11 @@ msgid "DHL Preferred Delivery. Delivered just as you wish."
 msgstr "lhr DHL Wunschzustellung. Gebracht wie gewünscht."
 
 #: templates/checkout/dhl-preferred-services.php:26
-#, fuzzy
 msgid ""
 "Thanks to the flexible recipient services of DHL Preferred Delivery, you "
 "decide when and where you want to receive your parcels.<br>Please choose "
 "your preferred delivery option."
-msgstr ""
-"Mit den Services von DHL Wunschzustellung entscheiden Sie, wann und wo Sie "
-"Ihre Pakete empfangen.\n"
-"Wählen Sie Ihre bevorzugte Lieferoption."
+msgstr "Dank der flexiblen Empfängerservices von DHL Wunschzustellung entscheiden Sie, wann und wo Sie Ihre Pakete empfangen möchten.<br>Bitte wählen Sie Ihre bevorzugte Lieferoption."
 
 #: templates/checkout/dhl-preferred-services.php:41
 #: build/pr-dhl-preferred-services-frontend.js:1
@@ -3661,119 +3319,99 @@ msgstr "Adresse, Postleitzahl, Ort des Nachbarn"
 
 #: build/index.js:1 build/pr-dhl-preferred-services.js:1
 #: includes/checkout-blocks/dhl-preferred-services/edit.js:35
-#, fuzzy
 msgid "DHL Block Options"
-msgstr "DHL Paket International"
+msgstr "DHL-Blockoptionen"
 
 #: build/index.js:1 build/pr-dhl-preferred-services.js:1
 #: includes/checkout-blocks/dhl-preferred-services/edit.js:52
-#, fuzzy
 msgid ""
 "Thanks to the ﬂexible recipient services of DHL Preferred Delivery, you "
 "decide when and where you want to receive your parcels."
-msgstr ""
-"Mit den Services von DHL Wunschzustellung entscheiden Sie, wann und wo Sie "
-"Ihre Pakete empfangen.\n"
-"Wählen Sie Ihre bevorzugte Lieferoption."
+msgstr "Dank der flexiblen Empfängerservices von DHL Wunschzustellung entscheiden Sie, wann und wo Sie Ihre Pakete empfangen möchten."
 
 #: build/index.js:1 build/pr-dhl-preferred-services.js:1
 #: includes/checkout-blocks/dhl-preferred-services/edit.js:60
-#, fuzzy
 msgid "Delivery day: Delivery at your preferred day "
-msgstr "Liefertag: Lieferung zum gewünschten Tag"
+msgstr "Wunschtag: Lieferung an Ihrem gewünschten Tag "
 
 #: build/index.js:1 build/pr-dhl-preferred-services.js:1
 #: includes/checkout-blocks/dhl-preferred-services/edit.js:93
-#, fuzzy
 msgid "Drop-off location: Delivery to your preferred drop-off location "
-msgstr "Lieferung an den gewünschten Ablageort"
+msgstr "Ablageort: Lieferung an Ihren gewünschten Ablageort "
 
 #: build/index.js:1 build/pr-dhl-preferred-services.js:1
 #: includes/checkout-blocks/dhl-preferred-services/edit.js:106
-#, fuzzy
 msgid "Neighbour: Delivery to a neighbour of your choice "
-msgstr "Nachbar: Lieferung an einen Nachbarn Ihrer Wahl"
+msgstr "Nachbar: Lieferung an einen Nachbarn Ihrer Wahl "
 
 #: build/pr-dhl-parcel-finder-frontend.js:1
 #: includes/checkout-blocks/dhl-parcel-finder/block.js:105
 #: includes/checkout-blocks/dhl-parcel-finder/block.js:110
-#, fuzzy
 msgid "Postfiliale"
 msgstr "Postfiliale"
 
 #: build/pr-dhl-parcel-finder-frontend.js:1
 #: includes/checkout-blocks/dhl-parcel-finder/block.js:210
-#, fuzzy
 msgid "The text \"Packstation\" must be included in the address."
-msgstr "Der text “%s” muss in der Adresse vorhanden sein."
+msgstr "Der Text „Packstation“ muss in der Adresse enthalten sein."
 
 #: build/pr-dhl-parcel-finder-frontend.js:1
 #: includes/checkout-blocks/dhl-parcel-finder/block.js:221
 #: includes/checkout-blocks/dhl-parcel-finder/block.js:230
-#, fuzzy
 msgid "The text \"Postfiliale\" must be included in the address."
-msgstr "Der text “%s” muss in der Adresse vorhanden sein."
+msgstr "Der Text „Postfiliale“ muss in der Adresse enthalten sein."
 
 #: build/pr-dhl-parcel-finder-frontend.js:1
 #: includes/checkout-blocks/dhl-parcel-finder/block.js:296
 msgid "For deliveries to DHL Parcel Lockers you have to"
-msgstr ""
+msgstr "Für Lieferungen an DHL-Packstationen müssen Sie"
 
 #: build/pr-dhl-parcel-finder-frontend.js:1
 #: includes/checkout-blocks/dhl-parcel-finder/block.js:298
-#, fuzzy
 msgid "create a DHL account"
-msgstr "DHL Label erzeugen"
+msgstr "ein DHL-Konto erstellen"
 
 #: build/pr-dhl-parcel-finder-frontend.js:1
 #: includes/checkout-blocks/dhl-parcel-finder/block.js:300
-#, fuzzy
 msgid "and get a Post Number."
-msgstr "Postnummer"
+msgstr "und eine Postnummer erhalten."
 
 #: build/pr-dhl-parcel-finder-frontend.js:1
 #: includes/checkout-blocks/dhl-parcel-finder/block.js:316
-#, fuzzy
 msgid "Search Packstation / Branch"
-msgstr "Ort"
+msgstr "Packstation / Filiale suchen"
 
 #: build/pr-dhl-parcel-finder-frontend.js:1
 #: includes/checkout-blocks/dhl-parcel-finder/block.js:461
-#, fuzzy
 msgid "Select a drop off points"
 msgstr "Wählen Sie eine Abgabestelle"
 
 #: build/pr-dhl-preferred-services-frontend.js:1
 #: includes/checkout-blocks/dhl-preferred-services/block.js:320
-#, fuzzy
 msgid ""
 "Thanks to the flexible recipient services of DHL Preferred Delivery, you "
 "decide when and where you want to receive your parcels. Please choose your "
 "preferred delivery option."
-msgstr ""
-"Mit den Services von DHL Wunschzustellung entscheiden Sie, wann und wo Sie "
-"Ihre Pakete empfangen.\n"
-"Wählen Sie Ihre bevorzugte Lieferoption."
+msgstr "Dank der flexiblen Empfängerservices von DHL Wunschzustellung entscheiden Sie, wann und wo Sie Ihre Pakete empfangen möchten. Bitte wählen Sie Ihre bevorzugte Lieferoption."
 
 #: build/pr-dhl-preferred-services-frontend.js:1
 #: includes/checkout-blocks/dhl-preferred-services/block.js:346
-#, fuzzy
 msgid "There is a surcharge for this service."
-msgstr "Für diesen Service fällt ein Aufpreis in Höhe von %s inkl. MwSt. an.*"
+msgstr "Für diesen Service fällt ein Aufpreis an."
 
 #: includes/checkout-blocks/dhl-closest-drop-point/block.json
 #: includes/checkout-blocks/dhl-parcel-finder/block.json
 #: includes/checkout-blocks/dhl-preferred-services/block.json
 msgctxt "block title"
 msgid "DHL Order Block"
-msgstr ""
+msgstr "DHL-Bestellblock"
 
 #: includes/checkout-blocks/dhl-closest-drop-point/block.json
 #: includes/checkout-blocks/dhl-parcel-finder/block.json
 #: includes/checkout-blocks/dhl-preferred-services/block.json
 msgctxt "block description"
 msgid "Adds DHL block to checkout."
-msgstr ""
+msgstr "Fügt den DHL-Block zum Checkout hinzu."
 
 #~ msgid "Label created."
 #~ msgstr "DHL-Label erstellt."
