@@ -77,6 +77,7 @@ More detailed instructions on how to set up your store and configure it are cons
 * Fix: Prevent fatal error in DHL Preferred Services on Checkout Blocks caused by missing sprintf import.
 * Tweak: Hide “Drop-off location or neighbor” option when a Packstation* or DHL Branch (Postfiliale) is selected.
 * Tweak: Set the REST API as the default selection in the setup wizard.
+* Tweak: Update missing German translations.
 
 = 3.9.6 =
 * Tweak: WordPress 6.9 compatibility.
