@@ -1,0 +1,15 @@
+{
+	"includes/checkout-blocks/index.js": ["build/index.js"],
+	"includes/checkout-blocks/dhl-preferred-services/index.js": ["build/index.js", "build/pr-dhl-preferred-services.js"],
+	"includes/checkout-blocks/dhl-preferred-services/edit.js": ["build/index.js", "build/pr-dhl-preferred-services.js"],
+	"includes/checkout-blocks/dhl-preferred-services/block.js": ["build/pr-dhl-preferred-services-frontend.js"],
+	"includes/checkout-blocks/dhl-preferred-services/frontend.js": ["build/pr-dhl-preferred-services-frontend.js"],
+	"includes/checkout-blocks/dhl-parcel-finder/index.js": ["build/index.js", "build/pr-dhl-parcel-finder.js"],
+	"includes/checkout-blocks/dhl-parcel-finder/edit.js": ["build/index.js", "build/pr-dhl-parcel-finder.js"],
+	"includes/checkout-blocks/dhl-parcel-finder/block.js": ["build/pr-dhl-parcel-finder-frontend.js"],
+	"includes/checkout-blocks/dhl-parcel-finder/frontend.js": ["build/pr-dhl-parcel-finder-frontend.js"],
+	"includes/checkout-blocks/dhl-closest-drop-point/index.js": ["build/index.js", "build/pr-dhl-closest-drop-point.js"],
+	"includes/checkout-blocks/dhl-closest-drop-point/edit.js": ["build/index.js", "build/pr-dhl-closest-drop-point.js"],
+	"includes/checkout-blocks/dhl-closest-drop-point/block.js": ["build/pr-dhl-closest-drop-point-frontend.js"],
+	"includes/checkout-blocks/dhl-closest-drop-point/frontend.js": ["build/pr-dhl-closest-drop-point-frontend.js"]
+}

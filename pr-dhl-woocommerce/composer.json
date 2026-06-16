@@ -13,8 +13,9 @@
     "archive": {
         "exclude": [
             "!/assets",
-            "!/languages",
+            "!/lang",
             "/node_modules",
+            "i18n-map.json",
             "bin",
             "tests",
             "LICENSE",
