@@ -50,7 +50,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 			// Prevent data being copied to subscriptions
 			if ( null !== $subs_version && version_compare( $subs_version, '2.5.0', '>=' ) ) {
-				add_filter( 'wcs_renewal_order_meta_query', array( $this, 'woocommerce_subscriptions_renewal_order_meta_query' ), 10 );
+				add_filter( 'wc_subscriptions_renewal_order_data', array( $this, 'woocommerce_subscriptions_renewal_order_data' ), 10 );
 			} else {
 				add_filter( 'woocommerce_subscriptions_renewal_order_meta_query', array( $this, 'woocommerce_subscriptions_renewal_order_meta_query' ), 10 );
 			}
@@ -1014,12 +1014,31 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		}
 
 		/**
-		 * Prevents data being copied to subscription renewals
+		 * Prevents data being copied to subscription renewals.
+		 *
+		 * Used for WooCommerce Subscriptions / subscriptions-core < 2.5.0, where the
+		 * woocommerce_subscriptions_renewal_order_meta_query filter passes a SQL meta_query string.
 		 */
 		public function woocommerce_subscriptions_renewal_order_meta_query( $order_meta_query ) {
 			$order_meta_query .= " AND `meta_key` NOT IN ( '_pr_shipment_dhl_label_tracking' )";
 
 			return $order_meta_query;
+		}
+
+		/**
+		 * Prevents the DHL tracking meta being copied to subscription renewals.
+		 *
+		 * Replacement for the SQL-based filter on WooCommerce Subscriptions / subscriptions-core
+		 * 2.5.0+, where the (non-deprecated) wc_subscriptions_renewal_order_data filter passes an
+		 * array of meta data keyed by meta_key instead of a SQL meta_query string.
+		 *
+		 * @param array $order_data Meta data to be copied to the renewal order, keyed by meta_key.
+		 * @return array
+		 */
+		public function woocommerce_subscriptions_renewal_order_data( $order_data ) {
+			unset( $order_data['_pr_shipment_dhl_label_tracking'] );
+
+			return $order_data;
 		}
 
 		/**
