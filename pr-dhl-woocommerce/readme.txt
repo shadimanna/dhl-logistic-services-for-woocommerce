@@ -75,10 +75,6 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
-= 3.9.8 =
-* Fix: Correct the DHL Paket pickup request production API endpoint.
-* Fix: Build the DHL Paket pickup billing number from each order's DHL product and participation number, and cancel the request with a clear message when a valid billing number cannot be determined.
-
 = 3.9.7 =
 * Fix: Errors appear when trying to save map settings.
 * Fix: Delivery options now correctly appear when shipping to Germany, even if the billing country is different.
