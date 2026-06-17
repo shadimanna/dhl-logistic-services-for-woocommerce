@@ -101,4 +101,23 @@ class API_Utils {
 
 		return false;
 	}
+
+	/**
+	 * Extracts the DHL billing-number procedure from a product code.
+	 *
+	 * DHL Paket product codes embed the procedure used in the billing number
+	 * (e.g. "V01PAK" -> "01"). The shipping-label and pickup billing numbers both
+	 * derive the procedure from this single helper so the two cannot drift apart.
+	 *
+	 * @param string $product_code The DHL product code (e.g. "V01PAK").
+	 *
+	 * @return string The procedure digits, or an empty string when none can be determined.
+	 */
+	public static function get_billing_number_procedure( $product_code ) {
+		if ( empty( $product_code ) || ! preg_match( '!\d+!', $product_code, $matches ) ) {
+			return '';
+		}
+
+		return $matches[0];
+	}
 }

@@ -216,10 +216,10 @@ class Item_Info {
 					}
 
 					// create account number
-					$product_number = preg_match( '!\d+!', $self->args['order_details']['dhl_product'], $matches );
+					$procedure = API_Utils::get_billing_number_procedure( $self->args['order_details']['dhl_product'] );
 
-					if ( $product_number ) {
-						return $self->args['dhl_settings']['account_num'] . $matches[0] . $self->args['dhl_settings']['participation'];
+					if ( '' !== $procedure ) {
+						return $self->args['dhl_settings']['account_num'] . $procedure . $self->args['dhl_settings']['participation'];
 					} else {
 						throw new Exception( esc_html__( 'Could not create account number - no product number.', 'dhl-for-woocommerce' ) );
 					}
