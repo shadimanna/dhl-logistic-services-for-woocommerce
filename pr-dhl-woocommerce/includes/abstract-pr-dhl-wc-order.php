@@ -817,7 +817,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 			$args['order_details']['dimUom'] = get_option( 'woocommerce_dimension_unit' );
 
-			if ( $this->is_cod_payment_method( $order_id ) ) {
+			if ( $this->is_cod_payment_method( $order_id ) && empty( $args['order_details']['cod_value'] ) ) {
 				$args['order_details']['cod_value'] = $order->get_total();
 			}
 
