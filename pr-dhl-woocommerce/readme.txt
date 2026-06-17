@@ -78,6 +78,7 @@ More detailed instructions on how to set up your store and configure it are cons
 = 3.9.8 =
 * Fix: DHL Checkout Blocks text is now translated on the frontend.
 * Fix: Update missing German translations.
+* Fix: Correct the DHL Paket pickup request production API endpoint.
 
 = 3.9.7 =
 * Fix: Errors appear when trying to save map settings.
