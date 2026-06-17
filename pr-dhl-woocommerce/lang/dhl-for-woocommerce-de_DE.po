@@ -8,7 +8,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2026-06-17T01:07:07+02:00\n"
-"PO-Revision-Date: 2026-06-17T11:23:28+00:00\n"
+"PO-Revision-Date: 2026-06-17T12:26:04+00:00\n"
 "Language: de_DE\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.5\n"
@@ -2770,10 +2770,6 @@ msgstr "Der HS-Code des Artikels muss einen Wert haben, um PDDP verwenden zu kö
 #: includes/REST_API/Parcel_DE/Item_Info.php:771
 msgid "Item HS Code must be between 4 and 11 characters long"
 msgstr "Der HS-Code des Artikels muss zwischen 4 und 11 Zeichen lang sein"
-
-#: includes/Services/LabelService.php:52
-msgid "Order not found"
-msgstr "Bestellung nicht gefunden"
 
 #. translators: %s is the name of the required argument
 #: includes/Utils/Args_Parser.php:58

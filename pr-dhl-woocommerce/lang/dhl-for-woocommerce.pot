@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-17T11:23:21+00:00\n"
+"POT-Creation-Date: 2026-06-17T12:25:56+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: dhl-for-woocommerce\n"
@@ -2761,10 +2761,6 @@ msgstr ""
 
 #: includes/REST_API/Parcel_DE/Item_Info.php:771
 msgid "Item HS Code must be between 4 and 11 characters long"
-msgstr ""
-
-#: includes/Services/LabelService.php:52
-msgid "Order not found"
 msgstr ""
 
 #. translators: %s is the name of the required argument
