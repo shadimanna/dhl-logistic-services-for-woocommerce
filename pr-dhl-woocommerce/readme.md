@@ -67,6 +67,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 3.9.8 =
+* Fix: DHL Checkout Blocks text is now translated on the frontend.
+
 = 3.9.7 =
 * Fix: Errors appear when trying to save map settings.
 * Fix: Delivery options now correctly appear when shipping to Germany, even if the billing country is different.
