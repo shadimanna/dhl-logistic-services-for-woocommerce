@@ -1025,7 +1025,8 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 				}
 			}
 
-			if ( ! empty( $shipping_dhl_postnum ) ) {
+			// Post Number only applies to Packstation / Postfiliale, not a Regular Address.
+			if ( ! empty( $shipping_dhl_postnum ) && in_array( $shipping_dhl_address_type, array( 'dhl_packstation', 'dhl_branch' ), true ) ) {
 
 				if ( ! is_numeric( $shipping_dhl_postnum ) ) {
 					wc_add_notice( esc_html__( 'Post Number must be a number.', 'dhl-for-woocommerce' ), 'error' );

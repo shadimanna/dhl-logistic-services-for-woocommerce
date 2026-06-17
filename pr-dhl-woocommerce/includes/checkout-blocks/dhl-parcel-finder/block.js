@@ -235,7 +235,8 @@ export const Block = ({checkoutExtensionData}) => {
             }
         }
 
-        if ( postNumber ) {
+        // Post Number only applies to Packstation / Postfiliale, not a Regular Address.
+        if ( postNumber && ( addressType === 'dhl_packstation' || addressType === 'dhl_branch' ) ) {
             if ( isNaN( parseInt( postNumber, 10 ) ) ) {
                 setValidationErrors({
                     [validationErrorId]: {
@@ -444,7 +445,13 @@ export const Block = ({checkoutExtensionData}) => {
                         className="wc-blocks-components-select__select"
                         value={addressType}
                         id="shipping_dhl_address_type"
-                        onChange={(value) => setAddressType(value)}
+                        onChange={(value) => {
+                            setAddressType(value);
+                            // Regular Address carries no Post Number; drop any stale value.
+                            if (value === 'normal' || value === '') {
+                                setPostNumber('');
+                            }
+                        }}
                         options={addressTypeOptions}
                     />
                 </>
