@@ -16,7 +16,7 @@
 		"env": "wp-env",
 		"makepot": "vendor/bin/wp i18n make-pot ./ lang/$npm_package_name.pot --exclude=node_modules,tests,docs,vendor",
 		"updatepo": "npm run makepot && vendor/bin/wp i18n update-po lang/$npm_package_name.pot lang/",
-		"makejson": "vendor/bin/wp i18n make-json lang/ lang/ --no-purge"
+		"makejson": "vendor/bin/wp i18n make-json lang/ lang/"
 	},
 	"dependencies": {
 		"@wordpress/icons": "^9.49.0",
