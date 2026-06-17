@@ -20,7 +20,7 @@
 	},
 	"dependencies": {
 		"@wordpress/icons": "^9.49.0",
-		"lodash": "^4.17.21"
+		"lodash": "^4.17.23"
 	},
 	"devDependencies": {
 		"@woocommerce/dependency-extraction-webpack-plugin": "^2.2.0",
