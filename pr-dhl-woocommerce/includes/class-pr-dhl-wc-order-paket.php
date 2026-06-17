@@ -20,7 +20,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 
 		protected $carrier = 'DHL Paket';
 
-		const DHL_PICKUP_PRODUCT = '08';
+		const DHL_PICKUP_PROCEDURE_DEFAULT = '01';
 
 		/**
 		 * Order label items.
@@ -897,23 +897,23 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			}
 
 			$args['dhl_settings']['shipper_country'] = PR_DHL()->get_base_country();
-			$participation   = '';
-			$product_key     = ! empty( $this->dhl_label_items['pr_dhl_product'] ) ? $this->dhl_label_items['pr_dhl_product'] : '';
-			if ( ! empty( $product_key ) ) {
-				$participation = $this->shipping_dhl_settings[ 'dhl_participation_' . $product_key ] ?? '';
+			$participation       = '';
+			$fallback_product_key = ! empty( $this->dhl_label_items['pr_dhl_product'] ) ? $this->dhl_label_items['pr_dhl_product'] : '';
+			if ( ! empty( $fallback_product_key ) ) {
+				$participation = $this->shipping_dhl_settings[ 'dhl_participation_' . $fallback_product_key ] ?? '';
 			}
 			if ( empty( $participation ) ) {
 				foreach ( $this->shipping_dhl_settings as $key => $value ) {
 					if ( strpos( $key, 'dhl_participation_' ) === 0 && $key !== 'dhl_participation_return' && ! empty( $value ) ) {
-						$product_key   = str_replace( 'dhl_participation_', '', $key );
-						$participation = $value;
+						$fallback_product_key = str_replace( 'dhl_participation_', '', $key );
+						$participation        = $value;
 						break;
 					}
 				}
 			}
-			preg_match( '/^V(\d+)/', $product_key, $proc_matches );
+			preg_match( '/^V(\d+)/', $fallback_product_key, $proc_matches );
 			$args['dhl_settings']['participation']      = $participation;
-			$args['dhl_settings']['pickup_product_num'] = ! empty( $proc_matches[1] ) ? $proc_matches[1] : '01';
+			$args['dhl_settings']['pickup_product_num'] = ! empty( $proc_matches[1] ) ? $proc_matches[1] : self::DHL_PICKUP_PROCEDURE_DEFAULT;
 
 			return $args;
 		}
@@ -1179,6 +1179,10 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			$args['dhl_pickup_business_hours'] = $pickup_business_hours;
 			// $args['dhl_pickup_transportation_type'] = $transportation_type; // Disabled, use bulky_goods to determine transportation type (see Pickup_Request_info.php)
 
+			// Pickup billing number is derived from the orders; the first order sets it for the batch.
+			$pickup_procedure     = null;
+			$pickup_participation = null;
+
 			$pickup_shipments = array();
 			foreach ( $order_ids as $order_id ) {
 				$order = wc_get_order( $order_id );
@@ -1201,21 +1205,23 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 				$order_procedure = ! empty( $order_proc_matches[1] ) ? $order_proc_matches[1] : '';
 
 				if ( ! empty( $order_procedure ) && ! empty( $order_participation ) ) {
-					$order_billing_num  = $args['dhl_settings']['account_num'] . $order_procedure . $order_participation;
-					$pickup_billing_num = $args['dhl_settings']['account_num'] . $args['dhl_settings']['pickup_product_num'] . $args['dhl_settings']['participation'];
-					if ( $order_billing_num !== $pickup_billing_num ) {
-						array_push(
-							$array_messages,
-							array(
-								'message' => sprintf(
+					if ( null === $pickup_procedure ) {
+						$pickup_procedure     = $order_procedure;
+						$pickup_participation = $order_participation;
+					} elseif ( $order_procedure !== $pickup_procedure || $order_participation !== $pickup_participation ) {
+						$order_billing_num  = $args['dhl_settings']['account_num'] . $order_procedure . $order_participation;
+						$pickup_billing_num = $args['dhl_settings']['account_num'] . $pickup_procedure . $pickup_participation;
+						$array_messages[]   = array(
+							'message' => esc_html(
+								sprintf(
 									/* translators: 1: order ID 2: order billing number 3: pickup billing number */
-									esc_html__( 'DHL Pickup request cancelled: order #%1$s uses billing number %2$s which does not match the pickup billing number %3$s. All selected orders must use the same DHL product and participation number.', 'dhl-for-woocommerce' ),
+									__( 'DHL pickup request cancelled: order #%1$s uses billing number %2$s, which does not match the rest of the batch (%3$s). Please split this pickup request so each batch only contains orders with the same DHL product and participation number.', 'dhl-for-woocommerce' ),
 									$order_id,
 									$order_billing_num,
 									$pickup_billing_num
-								),
-								'type' => 'error',
-							)
+								)
+							),
+							'type'    => 'error',
 						);
 						return $array_messages;
 					}
@@ -1240,6 +1246,12 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 					// 'tracking_number' => $tracking_number,  // Disabled, dont send shipmentNumber for a pickup Request
 					);
 				}
+			}
+
+			// Use the order-derived values; fall back to settings when no order resolved a product.
+			if ( null !== $pickup_procedure ) {
+				$args['dhl_settings']['pickup_product_num'] = $pickup_procedure;
+				$args['dhl_settings']['participation']      = $pickup_participation;
 			}
 
 			$args['dhl_pickup_shipments']      = $pickup_shipments;
