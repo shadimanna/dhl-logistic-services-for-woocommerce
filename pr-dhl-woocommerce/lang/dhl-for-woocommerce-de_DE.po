@@ -58,7 +58,7 @@ msgstr "Label löschen"
 #: includes/abstract-pr-dhl-wc-order.php:165
 #: includes/abstract-pr-dhl-wc-order.php:400
 msgid "Generate Label"
-msgstr "DHL Label erzeugen"
+msgstr "DHL-Label erzeugen"
 
 #: includes/abstract-pr-dhl-wc-order.php:173
 #: includes/abstract-pr-dhl-wc-order.php:178
@@ -326,7 +326,7 @@ msgstr "Konfigurieren Sie nachfolgend Ihre Versandparameter."
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:175
 #: includes/class-pr-dhl-wc-method-paket.php:330
 msgid "International Default Service"
-msgstr "Internationaler Default Service"
+msgstr "Internationaler Standard-Service"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:177
 msgid "Please select your default Deutsche Post shipping service for cross-border shippments that you want to offer to your customers (you can always change this within each individual order afterwards)."
@@ -554,7 +554,7 @@ msgstr "Möchten Sie die DHL-Sendungsbenachrichtigung individualisieren? Sie kö
 
 #: includes/class-pr-dhl-wc-method-paket.php:322
 msgid "Domestic Default Service"
-msgstr "Nationaler Default Service"
+msgstr "Nationaler Standard-Service"
 
 #: includes/class-pr-dhl-wc-method-paket.php:324
 msgid "Please select your default DHL Paket shipping service for domestic shippments that you want to offer to your customers (you can always change this within each individual order afterwards)"
@@ -635,11 +635,11 @@ msgstr "Bitte aktivieren Sie dieses Kästchen, wenn die Option „Keine Nachbars
 
 #: includes/class-pr-dhl-wc-method-paket.php:385
 msgid "Named Person Only default"
-msgstr "Standard für persönliche Übergabe"
+msgstr "Standard für Eigenhändige Übergabe"
 
 #: includes/class-pr-dhl-wc-method-paket.php:389
 msgid "Please, tick here if you want the \"Named Person Only\" option to be checked in the \"Edit Order\" before printing a label."
-msgstr "Bitte aktivieren Sie dieses Kästchen, wenn die Option „Persönliche Übergabe“ unter „Bestellung bearbeiten“ vor dem Druck eines Labels aktiviert sein soll."
+msgstr "Bitte aktivieren Sie dieses Kästchen, wenn die Option „Eigenhändige Übergabe“ unter „Bestellung bearbeiten“ vor dem Druck eines Labels aktiviert sein soll."
 
 #: includes/class-pr-dhl-wc-method-paket.php:393
 msgid "Premium default"
@@ -702,7 +702,7 @@ msgstr "Nur leitcodierbare Adressen zulassen"
 
 #: includes/class-pr-dhl-wc-method-paket.php:449
 msgid "Please, tick here if you want the \"Print Only If Codeable\" option to be checked in the \"Edit Order\" before printing a label."
-msgstr "Bestimmt, ob Versandetiketten nur erzeugt werden sollen, wenn die Adresse leitcodierbar ist. Für nicht leitcodierbare Adressen berechnet DHL einen Zuschlag."
+msgstr "Bitte aktivieren Sie dieses Kästchen, wenn die Option „Nur leitcodierbare Adressen zulassen“ unter „Bestellung bearbeiten“ vor dem Druck eines Labels aktiviert sein soll."
 
 #: includes/class-pr-dhl-wc-method-paket.php:453
 msgid "Parcel Outlet Routing default"
@@ -734,7 +734,7 @@ msgstr "Befüllen Sie die Zollinhaltsbeschreibung für grenzüberschreitende Pak
 
 #: includes/class-pr-dhl-wc-method-paket.php:502
 msgid "Label Format"
-msgstr "Format beschriften"
+msgstr "Label-Format"
 
 #: includes/class-pr-dhl-wc-method-paket.php:504
 msgid "Select one of the formats to generate the shipping label in."
@@ -920,7 +920,7 @@ msgstr "Ablageort aktivieren"
 
 #: includes/class-pr-dhl-wc-method-paket.php:665
 msgid "Enabling this will display a front-end option for the user to select their preferred location."
-msgstr "Durch Aktivierung wird dem Kunden im Frontend die Möglichkeit angezeigt, seinen Wunsch-Ablageort auszuwählen."
+msgstr "Durch Aktivierung wird dem Kunden im Frontend die Möglichkeit angezeigt, seinen Ablageort auszuwählen."
 
 #: includes/class-pr-dhl-wc-method-paket.php:669
 msgid "Preferred Neighbour"
@@ -1156,7 +1156,7 @@ msgstr "Retouren-Adresse"
 
 #: includes/class-pr-dhl-wc-method-paket.php:852
 msgid "Enter Return Address below."
-msgstr "Geben Sie unten ihre Retouren-Adresse ein."
+msgstr "Geben Sie unten Ihre Retouren-Adresse ein."
 
 #: includes/class-pr-dhl-wc-method-paket.php:855
 msgid "Create Return Label default"
@@ -1562,7 +1562,7 @@ msgstr "Keine Ablieferung beim Nachbarn: "
 
 #: includes/class-pr-dhl-wc-order-paket.php:319
 msgid "Named Person Only: "
-msgstr "Eigenhändig: "
+msgstr "Eigenhändige Übergabe: "
 
 #: includes/class-pr-dhl-wc-order-paket.php:330
 msgid "Signed for by recipient: "
@@ -1655,7 +1655,7 @@ msgstr "Anzahl Pakete:"
 
 #: includes/class-pr-dhl-wc-order-paket.php:997
 msgid "DHL Create Labels"
-msgstr "DHL Label erzeugen"
+msgstr "DHL-Label erzeugen"
 
 #: includes/class-pr-dhl-wc-order-paket.php:998
 msgid "DHL Delete Labels"
@@ -2887,7 +2887,7 @@ msgstr "Suche"
 #: includes/checkout-blocks/dhl-preferred-services/block.js:313
 #: includes/checkout-blocks/dhl-preferred-services/edit.js:44
 msgid "DHL Preferred Delivery. Delivered just as you wish."
-msgstr "Ihr DHL Wunschzustellung. Gebracht wie gewünscht."
+msgstr "DHL Wunschzustellung. Geliefert ganz nach Wunsch."
 
 #: templates/checkout/dhl-preferred-services.php:26
 msgid "Thanks to the flexible recipient services of DHL Preferred Delivery, you decide when and where you want to receive your parcels.<br>Please choose your preferred delivery option."
