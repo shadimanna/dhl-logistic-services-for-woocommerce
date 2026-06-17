@@ -326,7 +326,7 @@ msgstr "Konfigurieren Sie nachfolgend Ihre Versandparameter."
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:175
 #: includes/class-pr-dhl-wc-method-paket.php:330
 msgid "International Default Service"
-msgstr "Internationaler Standard-Service"
+msgstr "Internationaler Standard-Versandservice"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:177
 msgid "Please select your default Deutsche Post shipping service for cross-border shippments that you want to offer to your customers (you can always change this within each individual order afterwards)."
@@ -554,7 +554,7 @@ msgstr "Möchten Sie die DHL-Sendungsbenachrichtigung individualisieren? Sie kö
 
 #: includes/class-pr-dhl-wc-method-paket.php:322
 msgid "Domestic Default Service"
-msgstr "Nationaler Standard-Service"
+msgstr "Nationaler Standard-Versandservice"
 
 #: includes/class-pr-dhl-wc-method-paket.php:324
 msgid "Please select your default DHL Paket shipping service for domestic shippments that you want to offer to your customers (you can always change this within each individual order afterwards)"
@@ -912,7 +912,7 @@ msgstr "Samstag"
 
 #: includes/class-pr-dhl-wc-method-paket.php:662
 msgid "Preferred Location"
-msgstr "Ablageort:"
+msgstr "Ablageort"
 
 #: includes/class-pr-dhl-wc-method-paket.php:664
 msgid "Enable Preferred Location"
