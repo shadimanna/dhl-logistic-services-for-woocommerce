@@ -69,7 +69,7 @@ More detailed instructions on how to set up your store and configure it are cons
 
 = 3.9.8 =
 * Fix: DHL Checkout Blocks text is now translated on the frontend.
-* Fix: Stop the "wcs_renewal_order_meta_query is deprecated" notice logged on every WooCommerce Subscriptions renewal.
+* Fix: Stop the repeated "wcs_renewal_order_meta_query is deprecated" notice being logged on every WooCommerce Subscriptions renewal.
 
 = 3.9.7 =
 * Fix: Errors appear when trying to save map settings.
