@@ -53,7 +53,7 @@ msgstr "%s Label & Sendungsverfolgung"
 
 #: includes/abstract-pr-dhl-wc-order.php:162
 msgid "Delete Label"
-msgstr "Label stornieren"
+msgstr "Label löschen"
 
 #: includes/abstract-pr-dhl-wc-order.php:165
 #: includes/abstract-pr-dhl-wc-order.php:400
@@ -83,7 +83,7 @@ msgstr "Gewicht"
 #: includes/abstract-pr-dhl-wc-order.php:223
 #, php-format
 msgid "Estimated shipment weight (%s) based on items ordered: "
-msgstr "Voraussichtlichtes Gewicht (%s) der Sendung auf Basis der bestellten Produkte:"
+msgstr "Voraussichtliches Gewicht (%s) der Sendung auf Basis der bestellten Produkte: "
 
 #: includes/abstract-pr-dhl-wc-order.php:247
 msgid "There are no DHL services available for the destination country!"
@@ -93,7 +93,7 @@ msgstr "Für das Bestimmungsland sind keine DHL-Services verfügbar!"
 #: includes/abstract-pr-dhl-wc-order.php:399
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:695
 msgid "Your DHL label is ready to download, click the \"Download Label\" button above\""
-msgstr "Ihr DHL-Label ist bereit zum download, klicken oben auf die Schaltfläche \"Download-Label\""
+msgstr "Ihr DHL-Label steht zum Download bereit. Klicken Sie oben auf die Schaltfläche \"Label herunterladen\"."
 
 #: includes/abstract-pr-dhl-wc-order.php:394
 msgid "There are no tracking number to delete."
@@ -210,13 +210,13 @@ msgstr "- Keine Änderung -"
 #: includes/class-pr-dhl-extend-block-core.php:72
 #: includes/front-end/class-pr-dhl-front-end-paket.php:509
 msgid "Please enter the preferred location."
-msgstr "Bitte vervollständigen Sie die Angaben zu ihrem Ablageort."
+msgstr "Bitte vervollständigen Sie die Angaben zu Ihrem Ablageort."
 
 #: includes/class-pr-dhl-extend-block-core.php:81
 #: includes/class-pr-dhl-extend-block-core.php:101
 #: includes/front-end/class-pr-dhl-front-end-paket.php:514
 msgid "Please enter the preferred neighbor name and address."
-msgstr "Bitte vervollständigen Sie die Angaben zu ihrem Nachbarn."
+msgstr "Bitte vervollständigen Sie die Angaben zu Ihrem Wunschnachbarn."
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:15
 msgid "Deutsche Post International"
@@ -238,7 +238,7 @@ msgstr "Konto- und API-Einstellungen"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:79
 msgid "Please configure your account and API settings with Deutschepost International."
-msgstr "Bitte konfigurieren Sie Ihre Konto- und API-Einstellungen für Deutsche Post International."
+msgstr "Bitte konfigurieren Sie Ihre Konto- und API-Einstellungen bei Deutsche Post International."
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:86
 #: includes/class-pr-dhl-wc-method-paket.php:187
@@ -335,19 +335,19 @@ msgstr "Bitte wählen Sie Ihren Standard-Versandservice der Deutschen Post für 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:186
 #: includes/class-pr-dhl-wc-method-paket.php:469
 msgid "Additional Weight Type"
-msgstr "Variante des zusätzlichen Gewicht"
+msgstr "Art des zusätzlichen Gewichts"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:188
 #: includes/class-pr-dhl-wc-method-paket.php:471
 msgid "Select whether to add an absolute weight amount or percentage amount to the total product weight."
-msgstr "Bitte wählen Sie, ob ein absoluter Gewichtsbetrag oder ein prozentualler Gewichtsbetrag zum Produktgewicht hinzugefügt werden soll."
+msgstr "Bitte wählen Sie, ob ein absoluter oder ein prozentualer Gewichtsbetrag zum Produktgewicht hinzugefügt werden soll."
 
 #. Translators: %s represents the weight unit (e.g., kg, lbs, %).
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:202
 #: includes/class-pr-dhl-wc-method-paket.php:482
 #, php-format
 msgid "Additional Weight (%s or %%)"
-msgstr "Zusätzliches Gewicht (%s or %%)"
+msgstr "Zusätzliches Gewicht (%s oder %%)"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:206
 msgid "Add extra weight in addition to the products. Either an absolute amount or percentage (e.g. 10 for 10%)."
@@ -357,7 +357,7 @@ msgstr "Fügen Sie zusätzlich zum Produktgewicht ein weiteres Gewicht hinzu. En
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:241
 #: includes/class-pr-dhl-wc-method-paket.php:538
 msgid "Tracking Note"
-msgstr "Sendungsbenachrichtigung"
+msgstr "Tracking-Hinweis"
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:232
 #: includes/class-pr-dhl-wc-method-paket.php:540
@@ -367,11 +367,11 @@ msgstr "Nicht senden"
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:234
 #: includes/class-pr-dhl-wc-method-paket.php:542
 msgid "Please, tick here to not send an email to the customer when the tracking number is added to the order."
-msgstr "Durch Aktivierung wird dem Kunden keine Benachrichtungs-Email gesendet, wenn die Sendungsnummer der Bestellung hinzugefügt wird."
+msgstr "Durch Aktivierung wird dem Kunden keine Benachrichtigungs-E-Mail gesendet, wenn die Sendungsnummer der Bestellung hinzugefügt wird."
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:243
 msgid "Set the custom text when adding the tracking number to the order notes. {tracking-link} is where the tracking number will be set."
-msgstr "Eigenen Text hinzufügen für die DHL Sendungsverfolgung (in der Bestellnotiz und Bestellbestätigung)"
+msgstr "Legen Sie den benutzerdefinierten Text fest, der beim Hinzufügen der Sendungsnummer zur Bestellnotiz verwendet wird. {tracking-link} ist die Stelle, an der die Sendungsnummer eingefügt wird."
 
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:248
 msgid "Deutsche Post Tracking Number: {tracking-link}"
@@ -425,11 +425,11 @@ msgstr "Nachfolgend finden Sie alle Funktionen zur Steuerung, Vorbereitung und A
 #: build/pr-dhl-preferred-services-frontend.js:1
 #: includes/checkout-blocks/dhl-preferred-services/block.js:391
 msgid "None"
-msgstr "Keiner"
+msgstr "Keine"
 
 #: includes/class-pr-dhl-wc-method-paket.php:112
 msgid "- Select DHL Product -"
-msgstr "-Wählen Sie DHL-Produkt-"
+msgstr "- DHL-Produkt auswählen -"
 
 #: includes/class-pr-dhl-wc-method-paket.php:115
 msgid "Product Name"
@@ -490,7 +490,7 @@ msgstr "Klicken Sie auf die Schaltfläche, um die Einstellungen Ihres DHL-Gesch�
 
 #: includes/class-pr-dhl-wc-method-paket.php:189
 msgid "Your DHL account number (10 digits - numerical), also called \"EKP“. This will be provided by your local DHL sales organization."
-msgstr "Ihre DHL Kundennummer (10 Ziffern), auch EKP genannt. Diese wird von Ihrer lokalen DHL Vertriebsorganisation zu Verfügung gestellt."
+msgstr "Ihre DHL-Kundennummer (10 Ziffern), auch EKP genannt. Diese wird von Ihrer lokalen DHL-Vertriebsorganisation zur Verfügung gestellt."
 
 #: includes/class-pr-dhl-wc-method-paket.php:196
 msgid "API Protocol"
@@ -592,7 +592,7 @@ msgstr "Kunden-Telefonnummer senden"
 
 #: includes/class-pr-dhl-wc-method-paket.php:352
 msgid "Please select whether to send the customer's phone to DHL or not. \"Confirmed via terms & condition\" assumes confirmation via the website terms & conditions."
-msgstr "Bitte wählen Sie, ob die Kunden-Telefonnummer an DHL gesendet werden soll"
+msgstr "Bitte wählen Sie, ob die Kunden-Telefonnummer an DHL gesendet werden soll. „Bestätigung in AGB“ setzt die Zustimmung über die AGB der Website voraus."
 
 #: includes/class-pr-dhl-wc-method-paket.php:361
 msgid "Visual Age Check default"
@@ -702,7 +702,7 @@ msgstr "Nur leitcodierbare Adressen zulassen"
 
 #: includes/class-pr-dhl-wc-method-paket.php:449
 msgid "Please, tick here if you want the \"Print Only If Codeable\" option to be checked in the \"Edit Order\" before printing a label."
-msgstr "Bestimmt, ob Versandetiketten nur erzeugt werden sollen, wenn die Adresse leitcodierbar ist. Für nicht.leitcodierbare Adressen berechnet DHL einen Zuschlag."
+msgstr "Bestimmt, ob Versandetiketten nur erzeugt werden sollen, wenn die Adresse leitcodierbar ist. Für nicht leitcodierbare Adressen berechnet DHL einen Zuschlag."
 
 #: includes/class-pr-dhl-wc-method-paket.php:453
 msgid "Parcel Outlet Routing default"
@@ -722,7 +722,7 @@ msgstr "Aktivieren, um GoGreen Plus für jede Inlandssendung anzufordern, sofern
 
 #: includes/class-pr-dhl-wc-method-paket.php:486
 msgid "Add extra weight in addition to the products.  Either an absolute amount or percentage (e.g. 10 for 10%)."
-msgstr "Zusätzliches Gewicht hinzufügen, entweder als aboluten oder prozentuallen Betrag (10 oder 10%)"
+msgstr "Zusätzliches Gewicht hinzufügen, entweder als absoluten oder prozentualen Betrag (z. B. 10 oder 10%)."
 
 #: includes/class-pr-dhl-wc-method-paket.php:493
 msgid "Package Description"
@@ -750,7 +750,7 @@ msgstr "Logo hinzufügen"
 
 #: includes/class-pr-dhl-wc-method-paket.php:526
 msgid "The logo will be added from your DHL dashboard settings."
-msgstr "Es wird das Logo aus Ihren DHL Dashboard hinzugefügt"
+msgstr "Das Logo wird aus Ihren DHL Dashboard-Einstellungen hinzugefügt."
 
 #: includes/class-pr-dhl-wc-method-paket.php:530
 msgid "Shipper Reference"
@@ -770,7 +770,7 @@ msgstr "Legen Sie den benutzerdefinierten Text fest, der beim Hinzufügen der Se
 
 #: includes/class-pr-dhl-wc-method-paket.php:550
 msgid "DHL Tracking Number: {tracking-link}"
-msgstr "DHL Sendungsnnummer:  {tracking-link}"
+msgstr "DHL Sendungsnummer: {tracking-link}"
 
 #: includes/class-pr-dhl-wc-method-paket.php:553
 msgid "Tracking Email"
@@ -782,7 +782,7 @@ msgstr "Text zur Sendungsverfolgung in der Bestellbestätigung hinzufügen"
 
 #: includes/class-pr-dhl-wc-method-paket.php:556
 msgid "Please, tick here to add tracking text when completed email is sent."
-msgstr "Bitte anhaken, wenn text in der Bestellbestätigung hinzugefügt werden soll"
+msgstr "Bitte anhaken, wenn der Text zur Sendungsverfolgung in der Bestellbestätigung hinzugefügt werden soll."
 
 #: includes/class-pr-dhl-wc-method-paket.php:562
 msgid "Tracking URL Language"
@@ -806,7 +806,7 @@ msgstr "Label abhängig vom Status generieren."
 
 #: includes/class-pr-dhl-wc-method-paket.php:578
 msgid "Select the order status."
-msgstr "Bitte wahlen Sie den Bestellstatus."
+msgstr "Bitte wählen Sie den Bestellstatus."
 
 #: includes/class-pr-dhl-wc-method-paket.php:585
 msgid "Order Status"
@@ -818,7 +818,7 @@ msgstr "Auf Abgeschlossen setzen"
 
 #: includes/class-pr-dhl-wc-method-paket.php:588
 msgid "Please, tick here to change the order status when label is generated."
-msgstr "Bitte Häckchen setzen, wenn der Status geändert werden soll."
+msgstr "Bitte Häkchen setzen, um den Bestellstatus zu ändern, sobald das Label erstellt wurde."
 
 #: includes/class-pr-dhl-wc-method-paket.php:601
 msgid "Preferred Service"
@@ -826,7 +826,7 @@ msgstr "DHL Wunschzustellung"
 
 #: includes/class-pr-dhl-wc-method-paket.php:603
 msgid "Preferred service options."
-msgstr "Empfangsoptionen im Frontend."
+msgstr "Optionen der DHL Wunschzustellung."
 
 #: includes/class-pr-dhl-wc-method-paket.php:606
 #: templates/checkout/dhl-closest-drop-point.php:39
@@ -854,7 +854,7 @@ msgstr "Wunschtag aktivieren"
 
 #: includes/class-pr-dhl-wc-method-paket.php:616
 msgid "Enabling this will display a front-end option for the user to select their preferred day of delivery."
-msgstr "Durch Aktivierung wird dem Kunden im Frontend die Option einer Liefertag Zustellung angezeigt."
+msgstr "Durch Aktivierung wird dem Kunden im Frontend die Möglichkeit angezeigt, seinen Wunschtag für die Zustellung auszuwählen."
 
 #: includes/class-pr-dhl-wc-method-paket.php:620
 msgid "Delivery Day Price"
@@ -862,7 +862,7 @@ msgstr "Preis für Wunschtag"
 
 #: includes/class-pr-dhl-wc-method-paket.php:622
 msgid "Insert gross value as surcharge for the preferred day. Insert 0 to offer service for free."
-msgstr "Geben Sie hier einen Aufpreis als Bruttowert für den Service Liefertag an. Geben Sie 0 ein, um den Service konstenfrei anzubieten. Nutzen Sie . als Dezimalzeichen."
+msgstr "Geben Sie hier einen Aufpreis als Bruttowert für den Wunschtag an. Geben Sie 0 ein, um den Service kostenfrei anzubieten."
 
 #: includes/class-pr-dhl-wc-method-paket.php:628
 msgid "Cut Off Time"
@@ -870,7 +870,7 @@ msgstr "Cut-off Zeit"
 
 #: includes/class-pr-dhl-wc-method-paket.php:630
 msgid "The cut-off time is the latest possible order time up to which the minimum preferred day (day of order + 2 working days) can be guaranteed. As soon as the time is exceeded, the earliest preferred day displayed in the frontend will be shifted to one day later (day of order + 3 working days)."
-msgstr "Cut off time = Spätester Bestellzeitpunkt bis zu dem eine Sendung noch am selben Tag versandfertig gemacht und an DHL übergeben werden kann = frühester Liefertag (Bestelltag+2) eingehalten werden kann. Sobald diese Zeit überschritten ist, wird der im Front-End angezeigte frühstmögliche Liefertag um einen Tag nach hinten verschoben (Bestelltag+3)."
+msgstr "Cut off time = Spätester Bestellzeitpunkt bis zu dem eine Sendung noch am selben Tag versandfertig gemacht und an DHL übergeben werden kann = frühester Liefertag (Bestelltag+2) eingehalten werden kann. Sobald diese Zeit überschritten ist, wird der im Frontend angezeigte frühstmögliche Liefertag um einen Tag nach hinten verschoben (Bestelltag+3)."
 
 #: includes/class-pr-dhl-wc-method-paket.php:635
 msgid "Exclusion of transfer days"
@@ -920,19 +920,19 @@ msgstr "Ablageort aktivieren"
 
 #: includes/class-pr-dhl-wc-method-paket.php:665
 msgid "Enabling this will display a front-end option for the user to select their preferred location."
-msgstr "Durch Aktivierung wird dem Kunden im Frontend die Option einer Ablageort Zustellung angezeigt."
+msgstr "Durch Aktivierung wird dem Kunden im Frontend die Möglichkeit angezeigt, seinen Wunsch-Ablageort auszuwählen."
 
 #: includes/class-pr-dhl-wc-method-paket.php:669
 msgid "Preferred Neighbour"
-msgstr "Nachbar"
+msgstr "Wunschnachbar"
 
 #: includes/class-pr-dhl-wc-method-paket.php:671
 msgid "Enable Preferred Neighbour"
-msgstr "Nachbar aktivieren"
+msgstr "Wunschnachbar aktivieren"
 
 #: includes/class-pr-dhl-wc-method-paket.php:672
 msgid "Enabling this will display a front-end option for the user to select their preferred neighbour."
-msgstr "Durch Aktivierung wird dem Kunden im Frontend die Option gegeben, einen bevorzugten Nachbar anzugeben."
+msgstr "Durch Aktivierung wird dem Kunden im Frontend die Möglichkeit gegeben, einen Wunschnachbarn anzugeben."
 
 #: includes/class-pr-dhl-wc-method-paket.php:676
 msgid "Shipping Methods"
@@ -982,7 +982,7 @@ msgstr "Packstationen anzeigen"
 
 #: includes/class-pr-dhl-wc-method-paket.php:710
 msgid "Enabling this will display Packstation locations on Google Maps when searching for drop off locations on the front-end."
-msgstr "Bei Aktivierung der Checkbox Paketshop werden auf einer Google Karte im Frontend Paketshops zum Direktversand angeboten."
+msgstr "Bei Aktivierung werden auf einer Google-Karte im Frontend Packstationen zur Auswahl als Abgabeort angezeigt."
 
 #: includes/class-pr-dhl-wc-method-paket.php:714
 #: includes/class-pr-dhl-wc-method-paket.php:1163
@@ -995,7 +995,7 @@ msgstr "Paketshops anzeigen"
 
 #: includes/class-pr-dhl-wc-method-paket.php:717
 msgid "Enabling this will display Parcelshop locations on Google Maps when searching for drop off locations on the front-end."
-msgstr "Bei Aktivierung der Checkbox Postfiliale werden auf einer Google Karte im Frontend Postfilialen zum Direktversand angeboten."
+msgstr "Bei Aktivierung werden auf einer Google-Karte im Frontend Paketshops zur Auswahl als Abgabeort angezeigt."
 
 #: includes/class-pr-dhl-wc-method-paket.php:721
 #: includes/class-pr-dhl-wc-method-paket.php:1172
@@ -1045,7 +1045,7 @@ msgstr "API Schlüssel"
 #: includes/class-pr-dhl-wc-method-paket.php:761
 #, php-format
 msgid "The Google Maps API Key is necessary to display the DHL Locations on a Google map.%1$sGet a free Google Maps API key %2$shere%3$s."
-msgstr "Der Google Maps API Schlüssel ist erforderlich um DHL Standorte auf einer Google Karte anzuzeigen%1$sHole dir einen kostenlosen Google Maps API Schlüssel %2$shier%3$s"
+msgstr "Der Google Maps API-Schlüssel ist erforderlich, um DHL-Standorte auf einer Google-Karte anzuzeigen.%1$sHolen Sie sich %2$shier%3$s einen kostenlosen Google Maps API-Schlüssel."
 
 #: includes/class-pr-dhl-wc-method-paket.php:782
 msgid "Shipper Address / Pickup Request Address"
@@ -1106,17 +1106,17 @@ msgstr "Ort"
 
 #: includes/class-pr-dhl-wc-method-paket.php:817
 msgid "Enter Shipper City."
-msgstr "Geben Sie Absender Stadt."
+msgstr "Geben Sie den Ort des Absenders ein."
 
 #: includes/class-pr-dhl-wc-method-paket.php:822
 #: includes/class-pr-dhl-wc-method-paket.php:898
 #: includes/class-pr-dhl-wc-wizard-paket.php:156
 msgid "State"
-msgstr "Land"
+msgstr "Bundesland"
 
 #: includes/class-pr-dhl-wc-method-paket.php:824
 msgid "Enter Shipper County."
-msgstr "Absender-Land."
+msgstr "Absender-Bundesland."
 
 #: includes/class-pr-dhl-wc-method-paket.php:829
 #: includes/class-pr-dhl-wc-method-paket.php:905
@@ -1126,7 +1126,7 @@ msgstr "PLZ"
 
 #: includes/class-pr-dhl-wc-method-paket.php:831
 msgid "Enter Shipper Postcode."
-msgstr "Versender Postleitzahl eingeben."
+msgstr "Geben Sie die Absender-Postleitzahl ein."
 
 #: includes/class-pr-dhl-wc-method-paket.php:836
 #: includes/class-pr-dhl-wc-method-paket.php:912
@@ -1147,7 +1147,7 @@ msgstr "E-Mail"
 #: includes/class-pr-dhl-wc-method-paket.php:845
 #: includes/class-pr-dhl-wc-method-paket.php:921
 msgid "Enter Email."
-msgstr "Email eintragen."
+msgstr "E-Mail eintragen."
 
 #: includes/class-pr-dhl-wc-method-paket.php:850
 #: includes/class-pr-dhl-wc-order-paket.php:96
@@ -1188,7 +1188,7 @@ msgstr "Retouren-Ort eingeben."
 
 #: includes/class-pr-dhl-wc-method-paket.php:900
 msgid "Enter Return County."
-msgstr "Retouren-Land eingeben."
+msgstr "Retouren-Bundesland eingeben."
 
 #: includes/class-pr-dhl-wc-method-paket.php:907
 msgid "Enter Return Postcode."
@@ -1204,7 +1204,7 @@ msgstr "Geben Sie die Bankverbindung an, die zur Überweisung von Nachnahmebetr�
 
 #: includes/class-pr-dhl-wc-method-paket.php:931
 msgid "Account Owner"
-msgstr "Konto Inhaber"
+msgstr "Kontoinhaber"
 
 #: includes/class-pr-dhl-wc-method-paket.php:935
 msgid "Bank Name"
@@ -1272,11 +1272,11 @@ msgstr "Dies steuert den Titel, den der Benutzer während des Bezahlvorgangs sie
 
 #: includes/class-pr-dhl-wc-method-paket.php:1094
 msgid "Pickup Account Number: "
-msgstr "Pickup Kontonummer: "
+msgstr "Abholkonto-Nummer: "
 
 #: includes/class-pr-dhl-wc-method-paket.php:1116
 msgid "Distribution Center: "
-msgstr "Vertriebszentrum"
+msgstr "Verteilzentrum: "
 
 #: includes/class-pr-dhl-wc-method-paket.php:1181
 msgid "Google Maps"
@@ -1290,13 +1290,13 @@ msgstr "Um das Logo zu aktivieren, müssen Sie eine Versender-Referenz einrichte
 #: includes/class-pr-dhl-wc-method-paket.php:1238
 #, php-format
 msgid "In order to show %s, you need to set a Google API Key first."
-msgstr "Sie benötigen %s, einen Google Maps API Schlüssel."
+msgstr "Um %s anzuzeigen, müssen Sie zuerst einen Google-API-Schlüssel festlegen."
 
 #. translators: %s: type of location (e.g., DHL locations on a map)
 #: includes/class-pr-dhl-wc-method-paket.php:1241
 #, php-format
 msgid "In order to show %s on a map, you need to set a Google API Key first."
-msgstr "Sie benötigen %s,  einen Google Maps API Schlüssel."
+msgstr "Um %s auf einer Karte anzuzeigen, müssen Sie zuerst einen Google-API-Schlüssel festlegen."
 
 #: includes/class-pr-dhl-wc-notice-legacy-parcel.php:68
 msgid "DHL Parcel for WooCommerce notice"
@@ -1529,7 +1529,7 @@ msgstr "E-Mail:"
 #: includes/class-pr-dhl-wc-order-paket.php:227
 #: includes/pr-dhl-api/class-pr-dhl-api-paket.php:303
 msgid "none"
-msgstr "keiner"
+msgstr "keine"
 
 #: includes/class-pr-dhl-wc-order-paket.php:230
 msgid "Delivery Options"
@@ -1541,11 +1541,11 @@ msgstr "Wunschtag:"
 
 #: includes/class-pr-dhl-wc-order-paket.php:248
 msgid "Preferred Location (80 characters max): "
-msgstr "Ablageort (max. 80 Zeichen):"
+msgstr "Ablageort (max. 80 Zeichen): "
 
 #: includes/class-pr-dhl-wc-order-paket.php:266
 msgid "Preferred Neighbor (80 characters max): "
-msgstr "Nachbar (max. 80 Zeichen):"
+msgstr "Wunschnachbar (max. 80 Zeichen): "
 
 #: includes/class-pr-dhl-wc-order-paket.php:281
 #: includes/class-pr-dhl-wc-order-paket.php:509
@@ -1558,11 +1558,11 @@ msgstr "Alterssichtprüfung:"
 
 #: includes/class-pr-dhl-wc-order-paket.php:308
 msgid "No Neighbour Delivery: "
-msgstr "Keine Nachbarschaftszustellung: "
+msgstr "Keine Ablieferung beim Nachbarn: "
 
 #: includes/class-pr-dhl-wc-order-paket.php:319
 msgid "Named Person Only: "
-msgstr "Persönliche Übergabe:"
+msgstr "Eigenhändig: "
 
 #: includes/class-pr-dhl-wc-order-paket.php:330
 msgid "Signed for by recipient: "
@@ -1606,7 +1606,7 @@ msgstr "Postal Delivered Duty Paid::"
 
 #: includes/class-pr-dhl-wc-order-paket.php:471
 msgid "Duties:"
-msgstr "Aufgaben:"
+msgstr "Zölle:"
 
 #: includes/class-pr-dhl-wc-order-paket.php:483
 msgid "Invoice Number:"
@@ -1627,7 +1627,7 @@ msgstr "Lieferung an nächstgelegenen Abgabeort: "
 
 #: includes/class-pr-dhl-wc-order-paket.php:547
 msgid "Email Notification:"
-msgstr "Versandbestätigung: "
+msgstr "E-Mail-Benachrichtigung:"
 
 #: includes/class-pr-dhl-wc-order-paket.php:557
 msgid "Additional Insurance:"
@@ -1667,7 +1667,7 @@ msgstr "DHL-Abholung beauftragen"
 
 #: includes/class-pr-dhl-wc-order-paket.php:1109
 msgid "DHL Label Created"
-msgstr "Retouren Label erzeugen"
+msgstr "DHL-Label erstellt"
 
 #: includes/class-pr-dhl-wc-order-paket.php:1110
 msgid "DHL Tracking Number"
@@ -1747,7 +1747,7 @@ msgstr "Ursprungsland der Waren. Für alle Sendungen außerhalb der EU verpflich
 
 #: includes/class-pr-dhl-wc-product-deutsche-post.php:38
 msgid "- select content indicator -"
-msgstr "-Wählen Sie Inhaltsanzeige-"
+msgstr "- Inhaltsangabe auswählen -"
 
 #: includes/class-pr-dhl-wc-product-deutsche-post.php:65
 #: includes/class-pr-dhl-wc-product-editor-deutsche-post.php:42
@@ -1804,7 +1804,7 @@ msgstr "Ihre DHL-Kundennummer (10 Ziffern, numerisch), auch „EKP“ genannt. D
 
 #: includes/class-pr-dhl-wc-wizard-paket.php:86
 msgid "Enter your EKP"
-msgstr "Geben Sie Ihre EKP ein"
+msgstr "Geben Sie Ihre EKP-Nummer ein"
 
 #: includes/class-pr-dhl-wc-wizard-paket.php:89
 #: includes/class-pr-dhl-wc-wizard-paket.php:112
@@ -1815,7 +1815,7 @@ msgstr "Weiter"
 
 #: includes/class-pr-dhl-wc-wizard-paket.php:94
 msgid "API Settings"
-msgstr "API Einstellungen"
+msgstr "API-Einstellungen"
 
 #. translators: %1$s & %2$s: link to DHL business portal
 #: includes/class-pr-dhl-wc-wizard-paket.php:99
@@ -1865,15 +1865,15 @@ msgstr "Ablageort oder Nachbar"
 
 #: includes/front-end/class-pr-dhl-front-end-paket.php:39
 msgid "Preferred Location Address"
-msgstr "Ablageort Adresse"
+msgstr "Adresse des Ablageorts"
 
 #: includes/front-end/class-pr-dhl-front-end-paket.php:40
 msgid "Preferred Neighbor Name"
-msgstr "Nachbar Name"
+msgstr "Name des Wunschnachbarn"
 
 #: includes/front-end/class-pr-dhl-front-end-paket.php:41
 msgid "Preferred Neighbor Address"
-msgstr "Nachbar adresse"
+msgstr "Adresse des Wunschnachbarn"
 
 #: includes/front-end/class-pr-dhl-front-end-paket.php:45
 #: templates/checkout/dhl-preferred-services.php:142
@@ -1927,7 +1927,7 @@ msgstr "Parkplätze"
 
 #: includes/front-end/class-pr-dhl-front-end-paket.php:240
 msgid "Handicap Accessible"
-msgstr "behindertengerecht"
+msgstr "Barrierefrei"
 
 #: includes/front-end/class-pr-dhl-front-end-paket.php:244
 #: includes/front-end/class-pr-dhl-front-end-paket.php:628
@@ -1944,7 +1944,7 @@ msgstr "Auswählen"
 #: includes/front-end/class-pr-dhl-front-end-paket.php:246
 #: includes/front-end/class-pr-dhl-front-end-paket.php:835
 msgid "Select a drop-off point"
-msgstr "Wählen Sie eine Abgabestelle"
+msgstr "Wählen Sie einen Abgabeort"
 
 #: includes/front-end/class-pr-dhl-front-end-paket.php:247
 msgid "Post Number "
@@ -1975,7 +1975,7 @@ msgstr "Keine Versandart aktiviert."
 #: includes/front-end/class-pr-dhl-front-end-paket.php:364
 #: includes/front-end/class-pr-dhl-front-end-paket.php:370
 msgid "Payment gateway excluded."
-msgstr "Payment Gateway ausgeschlossen."
+msgstr "Zahlungsmethode ausgeschlossen."
 
 #: includes/front-end/class-pr-dhl-front-end-paket.php:378
 msgid "Not enabled for selected shipping method."
@@ -2058,7 +2058,7 @@ msgstr "Die Angabe der Postnummer ist für Packstationen verpflichtend."
 #: includes/front-end/class-pr-dhl-front-end-paket.php:1023
 #, php-format
 msgid "The text \"%s\" must be included in the address."
-msgstr "Der text “%s” muss in der Adresse vorhanden sein."
+msgstr "Der Text „%s“ muss in der Adresse vorhanden sein."
 
 #: includes/front-end/class-pr-dhl-front-end-paket.php:1031
 #: build/pr-dhl-parcel-finder-frontend.js:1
@@ -2082,7 +2082,7 @@ msgstr "400 - "
 #: includes/pr-dhl-api/abstract-pr-dhl-api-rest.php:268
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-finder.php:141
 msgid "401 - Unauthorized Access - Invalid token or Authentication Header parameter"
-msgstr "401 - Zugriffen - ungültiges Token oder Authentifizierungsheader-parameter"
+msgstr "401 - Nicht autorisierter Zugriff - ungültiges Token oder ungültiger Authentifizierungsheader-Parameter"
 
 #: includes/pr-dhl-api/abstract-pr-dhl-api-rest.php:205
 #: includes/pr-dhl-api/abstract-pr-dhl-api-rest.php:271
@@ -2094,13 +2094,13 @@ msgstr "408 – Zeitüberschreitung der Anfrage"
 #: includes/pr-dhl-api/abstract-pr-dhl-api-rest.php:274
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-finder.php:147
 msgid "429 - Too many requests in given amount of time"
-msgstr "429 - zu viele Anfragen im angegeben Zeitraum hinweg"
+msgstr "429 - Zu viele Anfragen im angegebenen Zeitraum"
 
 #: includes/pr-dhl-api/abstract-pr-dhl-api-rest.php:211
 #: includes/pr-dhl-api/abstract-pr-dhl-api-rest.php:277
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-finder.php:150
 msgid "503 - Service Unavailable"
-msgstr "503 - Wartungsarbeiten"
+msgstr "503 - Dienst nicht verfügbar"
 
 #: includes/pr-dhl-api/abstract-pr-dhl-api-rest.php:215
 msgid "POST error or timeout occured. Please try again later."
@@ -2313,7 +2313,7 @@ msgstr "Lieferung verzollt (exkl. MwSt.)"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-paket.php:314
 msgid "Delivery Duty Paid (excl. Duties, taxes and VAT)"
-msgstr "Delivery Duty Paid (exkl. Zölle, Steuern und Mehrwertsteuer)"
+msgstr "Lieferung verzollt (exkl. Zölle, Steuern und Mehrwertsteuer)"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-paket.php:323
 msgctxt "age context"
@@ -2392,13 +2392,13 @@ msgstr "DHL-„Produkt“ ist leer!"
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:339
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:371
 msgid "Shop \"Order ID\" is empty!"
-msgstr "Shop \"Order ID\" ist leer!"
+msgstr "Shop-„Bestellnummer“ ist leer!"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:162
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:343
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:375
 msgid "Shop \"Weight Units of Measure\" is empty!"
-msgstr "Shop \"Gewicht Maßeinheiten\" ist leer!"
+msgstr "Shop-„Gewichtseinheit“ ist leer!"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:166
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:392
@@ -2406,7 +2406,7 @@ msgstr "Shop \"Gewicht Maßeinheiten\" ist leer!"
 #: includes/REST_API/Deutsche_Post/Item_Info.php:136
 #: includes/REST_API/Parcel_DE/Item_Info.php:233
 msgid "Order \"Weight\" is empty!"
-msgstr "\"Gewicht\" ist leer!"
+msgstr "Bestell-„Gewicht“ ist leer!"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:181
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:400
@@ -2414,7 +2414,7 @@ msgstr "\"Gewicht\" ist leer!"
 #: includes/REST_API/Deutsche_Post/Item_Info.php:149
 #: includes/REST_API/Parcel_DE/Item_Info.php:244
 msgid "Shop \"Currency\" is empty!"
-msgstr "Shop \"Währung\" ist leer!"
+msgstr "Shop-„Währung“ ist leer!"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:186
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:413
@@ -2512,7 +2512,7 @@ msgstr "Bitte geben Sie eine Retouren-PLZ in den DHL-Versandeinstellungen an"
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:348
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:380
 msgid "First name and last name must be passed for \"Identity Check\"."
-msgstr "Für die „Identitätsprüfung“ müssen Vor- und Nachname angegeben werden."
+msgstr "Für den „Ident-Check“ müssen Vor- und Nachname angegeben werden."
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:352
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:384
@@ -2773,7 +2773,7 @@ msgstr "Der HS-Code des Artikels muss zwischen 4 und 11 Zeichen lang sein"
 
 #: includes/Services/LabelService.php:52
 msgid "Order not found"
-msgstr ""
+msgstr "Bestellung nicht gefunden"
 
 #. translators: %s is the name of the required argument
 #: includes/Utils/Args_Parser.php:58
@@ -2854,13 +2854,13 @@ msgstr "Nächstgelegener Abgabeort"
 #: build/pr-dhl-closest-drop-point-frontend.js:1
 #: includes/checkout-blocks/dhl-closest-drop-point/block.js:97
 msgid "Preferred delivery to a parcel shop/parcel locker close to the specified home address"
-msgstr "Bevorzugte Lieferung an Paketshop/Paketlocker in der Nähe der Haustüradresse"
+msgstr "Bevorzugte Lieferung an einen Paketshop/eine Packstation in der Nähe der angegebenen Wohnadresse"
 
 #: templates/checkout/dhl-closest-drop-point.php:30
 #: build/pr-dhl-closest-drop-point-frontend.js:1
 #: includes/checkout-blocks/dhl-closest-drop-point/block.js:116
 msgid "Home delivery"
-msgstr "Lieferung an Heimatadresse"
+msgstr "Lieferung an die Wohnadresse"
 
 #: templates/checkout/dhl-parcel-finder.php:19
 #: build/pr-dhl-parcel-finder-frontend.js:1
@@ -2887,7 +2887,7 @@ msgstr "Suche"
 #: includes/checkout-blocks/dhl-preferred-services/block.js:313
 #: includes/checkout-blocks/dhl-preferred-services/edit.js:44
 msgid "DHL Preferred Delivery. Delivered just as you wish."
-msgstr "lhr DHL Wunschzustellung. Gebracht wie gewünscht."
+msgstr "Ihr DHL Wunschzustellung. Gebracht wie gewünscht."
 
 #: templates/checkout/dhl-preferred-services.php:26
 msgid "Thanks to the flexible recipient services of DHL Preferred Delivery, you decide when and where you want to receive your parcels.<br>Please choose your preferred delivery option."
@@ -2897,7 +2897,7 @@ msgstr "Dank der flexiblen Empfängerservices von DHL Wunschzustellung entscheid
 #: build/pr-dhl-preferred-services-frontend.js:1
 #: includes/checkout-blocks/dhl-preferred-services/block.js:327
 msgid "Delivery day: Delivery at your preferred day"
-msgstr "Liefertag: Lieferung zum gewünschten Tag"
+msgstr "Wunschtag: Lieferung zum gewünschten Tag"
 
 #: templates/checkout/dhl-preferred-services.php:42
 #: build/pr-dhl-preferred-services-frontend.js:1
@@ -2917,7 +2917,7 @@ msgstr "Für diesen Service fällt ein Aufpreis in Höhe von %s inkl. MwSt. an.*
 #: build/pr-dhl-preferred-services-frontend.js:1
 #: includes/checkout-blocks/dhl-preferred-services/block.js:374
 msgid "Unfortunately, for the selected delivery address the service Delivery Day is not available"
-msgstr "Für Ihre Lieferadresse steht der Service Liefertag leider nicht zur Verfügung"
+msgstr "Für Ihre Lieferadresse steht der Service Wunschtag leider nicht zur Verfügung"
 
 #: templates/checkout/dhl-preferred-services.php:113
 #: build/index.js:1
@@ -2964,7 +2964,7 @@ msgstr "Bestimmen Sie eine Person in Ihrer unmittelbaren Nachbarschaft, bei der 
 #: includes/checkout-blocks/dhl-preferred-services/block.js:433
 #: includes/checkout-blocks/dhl-preferred-services/edit.js:112
 msgid "First name, last name of neighbour"
-msgstr "Nachname, Vorname des Nachbarn"
+msgstr "Vorname, Nachname des Nachbarn"
 
 #: templates/checkout/dhl-preferred-services.php:206
 #: build/index.js:1
@@ -3045,7 +3045,7 @@ msgstr "Packstation / Filiale suchen"
 #: build/pr-dhl-parcel-finder-frontend.js:1
 #: includes/checkout-blocks/dhl-parcel-finder/block.js:461
 msgid "Select a drop off points"
-msgstr "Wählen Sie eine Abgabestelle"
+msgstr "Wählen Sie einen Abgabeort"
 
 #: build/pr-dhl-preferred-services-frontend.js:1
 #: includes/checkout-blocks/dhl-preferred-services/block.js:320
