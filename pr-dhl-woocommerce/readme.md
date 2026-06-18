@@ -1,13 +1,13 @@
 === DHL Shipping Germany for WooCommerce ===
 Contributors: DHL, shadim, utzfu
 Tags: DPDHL, DHL, DHL eCommerce, DHL Paket Germany, Shipping
-Stable tag: 3.9.7
+Stable tag: 3.9.8
 Requires Plugins: woocommerce
 Requires PHP: 7.4
-Requires at least: 6.6
-Tested up to: 6.9
-WC requires at least: 10.1
-WC tested up to: 10.3
+Requires at least: 6.8
+Tested up to: 7.0
+WC requires at least: 10.7
+WC tested up to: 10.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -75,6 +75,7 @@ More detailed instructions on how to set up your store and configure it are cons
 * Fix: Cash on Delivery details now appear on DHL Paket labels created via the REST API.
 * Fix: Show a clear error when a Cash on Delivery label can't be created because the order isn't in Euro or bank details are missing.
 * Fix: Regular Address no longer shows a Post Number error at checkout.
+* Tweak: WordPress 7.0 and WooCommerce 10.9 compatibility.
 
 = 3.9.7 =
 * Fix: Errors appear when trying to save map settings.
