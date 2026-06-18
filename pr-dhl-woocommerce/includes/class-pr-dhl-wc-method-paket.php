@@ -277,6 +277,15 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					'desc_tip'    => true,
 					'default'     => '',
 				),
+				'internetmarke_test_connection_button' => array(
+					'title'             => esc_html__( 'Test Account Connection', 'dhl-for-woocommerce' ),
+					'type'              => 'button',
+					'custom_attributes' => array(
+						'onclick' => "dhlInternetmarkeTestConnection('#woocommerce_pr_dhl_paket_internetmarke_test_connection_button');",
+					),
+					'description'       => esc_html__( 'Saves the Internetmarke credentials above and tests the connection to Deutsche Post in one step.', 'dhl-for-woocommerce' ),
+					'desc_tip'          => false,
+				),
 				'dhl_participation_title'    => array(
 					'title'       => esc_html__( 'DHL Products and Participation Number', 'dhl-for-woocommerce' ),
 					'type'        => 'title',
