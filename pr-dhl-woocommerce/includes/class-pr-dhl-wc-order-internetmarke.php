@@ -497,7 +497,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 					)
 				);
 
-			} catch ( Exception $e ) {
+			} catch ( \Throwable $e ) {
 				wp_send_json( array( 'error' => $e->getMessage() ) );
 			}
 

@@ -16,20 +16,22 @@ class Client extends API_Client {
 	}
 
 	/**
-	 * Create a label order (POST /orders).
+	 * Checkout the shopping cart and retrieve the voucher PDF.
 	 *
-	 * The JSON_API_Driver automatically JSON-encodes the payload and decodes the response.
+	 * Endpoint verified against the live API: POST /app/shoppingcart/pdf?directCheckout=true
+	 * (the previous /orders path does not exist on this API). The JSON_API_Driver
+	 * JSON-encodes the payload and decodes the response.
 	 *
-	 * @param  array $payload Order payload including positions, pageFormat, etc.
-	 * @return object         Decoded response body.
+	 * @param  array $payload ShoppingCartPDFRequest payload (pageFormatId, positions, total).
+	 * @return object         Decoded CheckoutShoppingCartPDFResponse (link, shoppingCart, walletBalance).
 	 * @throws Exception      On non-2xx HTTP status.
 	 */
 	public function create_label( array $payload ) {
-		$response = $this->post( 'orders', $payload );
+		$response = $this->post( 'app/shoppingcart/pdf?directCheckout=true', $payload );
 
 		$status = (int) $response->status;
 		if ( 200 !== $status && 201 !== $status ) {
-			throw new Exception( $this->extract_error_message( $response->body, $status, 'order' ) );
+			throw new Exception( $this->extract_error_message( $response->body, $status, 'checkout' ) );
 		}
 
 		return $response->body;
@@ -40,6 +42,17 @@ class Client extends API_Client {
 			$decoded = json_decode( $body );
 		} else {
 			$decoded = $body;
+		}
+
+		// INTERNETMARKE errors carry a machine-readable `title` plus a `description`.
+		if ( ! empty( $decoded->title ) ) {
+			$friendly = $this->friendly_error( $decoded->title );
+			if ( '' !== $friendly ) {
+				return $friendly;
+			}
+
+			$description = ! empty( $decoded->description ) ? ' (' . sanitize_text_field( $decoded->description ) . ')' : '';
+			return sanitize_text_field( $decoded->title ) . $description;
 		}
 
 		if ( ! empty( $decoded->detail ) ) {
@@ -60,5 +73,20 @@ class Client extends API_Client {
 			sanitize_text_field( $operation ),
 			absint( $status )
 		);
+	}
+
+	/**
+	 * Map known INTERNETMARKE error titles to a human-readable message.
+	 *
+	 * @param  string $title The `title` field from the API error body.
+	 * @return string        A translated message, or '' if the title is unmapped.
+	 */
+	protected function friendly_error( $title ) {
+		switch ( $title ) {
+			case 'walletBalanceNotEnough':
+				return esc_html__( 'Not enough balance in your Portokasse to buy this label. Please top up your Portokasse account and try again.', 'dhl-for-woocommerce' );
+			default:
+				return '';
+		}
 	}
 }

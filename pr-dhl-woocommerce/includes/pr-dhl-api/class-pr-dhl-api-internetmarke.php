@@ -14,6 +14,23 @@ class PR_DHL_API_Internetmarke {
 
 	const ACCESS_TOKEN_TRANSIENT = 'pr_dhl_internetmarke_access_token';
 
+	/**
+	 * Polymorphic discriminators for the shopping-cart PDF checkout request.
+	 *
+	 * The request body and its positions are polymorphic: the root needs `type`
+	 * and each position needs `positionType`. Values verified against the
+	 * INTERNETMARKE OpenAPI spec and confirmed live (a correct body reaches the
+	 * payment step / walletBalanceNotEnough instead of InvalidTypeIdException).
+	 */
+	const REQUEST_TYPE  = 'AppShoppingCartPDFRequest';
+	const POSITION_TYPE = 'AppShoppingCartPDFPosition';
+
+	/**
+	 * Default print format id (plain A4). Available formats: GET /app/catalog?types=PAGE_FORMATS.
+	 * Should be made configurable in a follow-up.
+	 */
+	const PAGE_FORMAT_ID = 1;
+
 	protected $driver;
 
 	protected $auth;
@@ -108,11 +125,13 @@ class PR_DHL_API_Internetmarke {
 			if ( ! empty( $result->link ) ) {
 				$label_url = $this->download_and_save_label( (string) $result->link, $order_id );
 			}
-			// trackId is returned per position for registered products (EINSCHREIBEN).
-			if ( ! empty( $result->positions ) && is_array( $result->positions ) ) {
-				foreach ( $result->positions as $position ) {
-					if ( ! empty( $position->trackId ) ) {
-						$tracking_number = (string) $position->trackId;
+			// CheckoutShoppingCartPDFResponse returns vouchers under shoppingCart->voucherList;
+			// trackId is present per voucher for registered products (EINSCHREIBEN).
+			$vouchers = isset( $result->shoppingCart->voucherList ) ? $result->shoppingCart->voucherList : array();
+			if ( ! empty( $vouchers ) && is_array( $vouchers ) ) {
+				foreach ( $vouchers as $voucher ) {
+					if ( ! empty( $voucher->trackId ) ) {
+						$tracking_number = (string) $voucher->trackId;
 						break;
 					}
 				}
@@ -132,29 +151,80 @@ class PR_DHL_API_Internetmarke {
 	}
 
 	/**
-	 * Build the POST /orders payload.
+	 * Build the AppShoppingCartPDFRequest payload for POST /app/shoppingcart/pdf?directCheckout=true.
+	 *
+	 * Structure verified live against the API: a correct body reaches the payment
+	 * step (walletBalanceNotEnough on an unfunded dev Portokasse). `total` must equal
+	 * the voucher price in euro-cents, so it is looked up per product code.
 	 *
 	 * @param WC_Order $order
-	 * @param int      $product_id
+	 * @param int      $product_id Resolved INTERNETMARKE product code.
 	 * @return array
 	 */
 	protected function build_label_payload( WC_Order $order, $product_id ) {
 		return array(
-			'pageFormat' => 2,
-			'positions'  => array(
+			'type'               => self::REQUEST_TYPE,
+			'shopOrderId'        => (string) $order->get_id(),
+			'pageFormatId'       => self::PAGE_FORMAT_ID,
+			'total'              => $this->get_product_price_cents( $product_id ),
+			'createManifest'     => false,
+			'createShippingList' => '0',
+			'dpi'                => 'DPI300',
+			'positions'          => array(
 				array(
-					'productId'     => (int) $product_id,
-					'imageId'       => 0,
-					'x'             => 1,
-					'y'             => 1,
-					'pageNo'        => 1,
-					'duplexAddress' => array(
+					'positionType' => self::POSITION_TYPE,
+					'productCode'  => (int) $product_id,
+					'voucherLayout' => 'ADDRESS_ZONE',
+					'position'     => array(
+						'labelX' => 1,
+						'labelY' => 1,
+						'page'   => 1,
+					),
+					'address'      => array(
 						'sender'   => $this->get_sender_address(),
 						'receiver' => $this->get_recipient_address( $order ),
 					),
 				),
 			),
 		);
+	}
+
+	/**
+	 * Voucher price in euro-cents for a resolved INTERNETMARKE product code.
+	 *
+	 * Prices taken from the official Deutsche Post product price list (ppl_v590_PARTNER),
+	 * covering the approved product scope. `total` is validated by the API on checkout,
+	 * so these must stay in sync with the current PPL — ideally synced from the catalog
+	 * API in a follow-up rather than hard-coded.
+	 *
+	 * @param  int $product_id Resolved INTERNETMARKE product code.
+	 * @return int             Price in euro-cents.
+	 * @throws Exception       If no price is configured for the product.
+	 */
+	protected function get_product_price_cents( $product_id ) {
+		static $prices = array(
+			11    => 110,  21    => 180,  31    => 290,  41    => 510,  290   => 270,  331   => 355,
+			1012  => 345,  1017  => 375,  1018  => 595,
+			1022  => 415,  1027  => 445,  1028  => 665,
+			1032  => 525,  1037  => 555,  1038  => 775,
+			1042  => 745,  1047  => 775,  1048  => 995,
+			10011 => 180,  10051 => 330,  10071 => 650,  10091 => 1700,
+			11016 => 550,  11056 => 700,  11076 => 1020, 11096 => 2070,
+		);
+
+		$id = (int) $product_id;
+
+		if ( ! isset( $prices[ $id ] ) ) {
+			throw new Exception(
+				sprintf(
+					/* translators: %d: INTERNETMARKE product code. */
+					esc_html__( 'No price is configured for INTERNETMARKE product %d.', 'dhl-for-woocommerce' ),
+					$id
+				)
+			);
+		}
+
+		return $prices[ $id ];
 	}
 
 	/**
@@ -234,31 +304,20 @@ class PR_DHL_API_Internetmarke {
 		$name   = ! empty( $paket['dhl_shipper_name'] ) ? $paket['dhl_shipper_name'] : get_bloginfo( 'name' );
 		$street = ! empty( $paket['dhl_shipper_address'] ) ? $paket['dhl_shipper_address'] : '';
 		$house  = ! empty( $paket['dhl_shipper_address_no'] ) ? $paket['dhl_shipper_address_no'] : '';
-		$city   = ! empty( $paket['dhl_shipper_address_city'] ) ? $paket['dhl_shipper_address_city'] : '';
-		$zip    = ! empty( $paket['dhl_shipper_address_zip'] ) ? $paket['dhl_shipper_address_zip'] : '';
+		$city   = ! empty( $paket['dhl_shipper_address_city'] ) ? $paket['dhl_shipper_address_city'] : get_option( 'woocommerce_store_city', '' );
+		$zip    = ! empty( $paket['dhl_shipper_address_zip'] ) ? $paket['dhl_shipper_address_zip'] : get_option( 'woocommerce_store_postcode', '' );
 
-		// Fall back to WooCommerce store address if Paket shipper fields are absent.
-		if ( empty( $street ) ) {
-			$parts  = $this->split_street_and_house_no( get_option( 'woocommerce_store_address', '' ) );
-			$street = $parts['street'];
-			$house  = $parts['house_no'];
-		}
-
-		if ( empty( $zip ) ) {
-			$zip = get_option( 'woocommerce_store_postcode', '' );
-		}
-
-		if ( empty( $city ) ) {
-			$city = get_option( 'woocommerce_store_city', '' );
+		$line1 = trim( $street . ' ' . $house );
+		if ( '' === $line1 ) {
+			$line1 = get_option( 'woocommerce_store_address', '' );
 		}
 
 		$address = array(
-			'name'    => (string) $name,
-			'street'  => (string) $street,
-			'houseNo' => (string) $house,
-			'zip'     => (string) $zip,
-			'city'    => (string) $city,
-			'country' => 'DEU', // Sender is always in Germany for INTERNETMARKE.
+			'name'         => (string) $name,
+			'addressLine1' => (string) $line1,
+			'postalCode'   => (string) $zip,
+			'city'         => (string) $city,
+			'country'      => 'DEU', // Sender is always in Germany for INTERNETMARKE.
 		);
 
 		return array_filter( $address, 'strlen' );
@@ -277,8 +336,14 @@ class PR_DHL_API_Internetmarke {
 		$first_name = ! empty( $shipping['first_name'] ) ? $shipping['first_name'] : ( isset( $billing['first_name'] ) ? $billing['first_name'] : '' );
 		$last_name  = ! empty( $shipping['last_name'] ) ? $shipping['last_name'] : ( isset( $billing['last_name'] ) ? $billing['last_name'] : '' );
 		$company    = ! empty( $shipping['company'] ) ? $shipping['company'] : '';
-		// Use company as the name field when present; otherwise use full personal name.
-		$name       = ! empty( $company ) ? $company : trim( $first_name . ' ' . $last_name );
+		$name       = trim( $first_name . ' ' . $last_name );
+
+		// A person name goes in `name` and the company in `additionalName`; when only a
+		// company is given it becomes the name.
+		if ( '' === $name ) {
+			$name    = $company;
+			$company = '';
+		}
 
 		$address_1 = ! empty( $shipping['address_1'] ) ? $shipping['address_1'] : ( isset( $billing['address_1'] ) ? $billing['address_1'] : '' );
 		$address_2 = ! empty( $shipping['address_2'] ) ? $shipping['address_2'] : '';
@@ -286,69 +351,17 @@ class PR_DHL_API_Internetmarke {
 		$city      = ! empty( $shipping['city'] ) ? $shipping['city'] : ( isset( $billing['city'] ) ? $billing['city'] : '' );
 		$country   = ! empty( $shipping['country'] ) ? $shipping['country'] : ( isset( $billing['country'] ) ? $billing['country'] : 'DE' );
 
-		$parts = $this->split_street_and_house_no( $address_1 );
-
 		$address = array(
-			'name'       => $name,
-			'street'     => $parts['street'],
-			'houseNo'    => $parts['house_no'],
-			'additional' => $address_2,
-			'zip'        => $postcode,
-			'city'       => $city,
-			'country'    => $this->country_iso2_to_iso3( $country ),
+			'name'           => $name,
+			'additionalName' => $company,
+			'addressLine1'   => $address_1,
+			'addressLine2'   => $address_2,
+			'postalCode'     => $postcode,
+			'city'           => $city,
+			'country'        => $this->country_iso2_to_iso3( $country ),
 		);
 
 		return array_filter( $address, 'strlen' );
-	}
-
-	/**
-	 * Split a combined address line (e.g. "Musterstraße 12a") into street and house number.
-	 *
-	 * Uses the same token-based algorithm as Item_Info::set_address_2() — finds the last
-	 * purely-numeric token as the house number, falls back to the last token for alphanumeric
-	 * suffixes like "12a", "12-14", or "12b/3".
-	 *
-	 * @param  string $address_line
-	 * @return array { street: string, house_no: string }
-	 */
-	protected function split_street_and_house_no( $address_line ) {
-		$address_line = trim( (string) $address_line );
-
-		if ( '' === $address_line ) {
-			return array( 'street' => '', 'house_no' => '' );
-		}
-
-		$parts = explode( ' ', $address_line );
-
-		if ( count( $parts ) === 1 ) {
-			return array( 'street' => $address_line, 'house_no' => '' );
-		}
-
-		// Find the last purely-numeric token — that is the house number.
-		$number_index = false;
-		foreach ( $parts as $i => $part ) {
-			if ( is_numeric( $part ) ) {
-				$number_index = $i;
-			}
-		}
-
-		// No purely-numeric token: fall back to the last token (handles "12a", "12-14", "12b/3").
-		if ( false === $number_index ) {
-			$number_index = count( $parts ) - 1;
-		}
-
-		if ( 0 === $number_index ) {
-			// House number leads (e.g. "12 Musterstraße").
-			return array(
-				'street'   => implode( ' ', array_slice( $parts, 1 ) ),
-				'house_no' => $parts[0],
-			);
-		}
-
-		return array(
-			'street'   => implode( ' ', array_slice( $parts, 0, $number_index ) ),
-			'house_no' => implode( ' ', array_slice( $parts, $number_index ) ),
-		);
 	}
 
 	/**
