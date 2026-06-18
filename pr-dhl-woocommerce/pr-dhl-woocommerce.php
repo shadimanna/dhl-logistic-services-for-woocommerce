@@ -834,6 +834,17 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		}
 
 		/**
+		 * The checkout address type values that denote a DHL droppoint
+		 * (Packstation / Postfiliale). Single source of truth, shared with the
+		 * block checkout via prDhlGlobals.
+		 *
+		 * @return string[]
+		 */
+		public function get_droppoint_address_types() {
+			return array( 'dhl_packstation', 'dhl_branch' );
+		}
+
+		/**
 		 * Whether the selected checkout address type denotes a DHL droppoint
 		 * (Packstation or Postfiliale/Branch) — the only types a Post Number applies to.
 		 *
@@ -841,7 +852,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		 * @return bool
 		 */
 		public function is_droppoint_address_type( $address_type ) {
-			return in_array( $address_type, array( 'dhl_packstation', 'dhl_branch' ), true );
+			return in_array( $address_type, $this->get_droppoint_address_types(), true );
 		}
 
 		/**

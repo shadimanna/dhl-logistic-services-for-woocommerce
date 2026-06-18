@@ -5,6 +5,11 @@ import { __ } from '@wordpress/i18n';
 import axios from 'axios';
 import {debounce} from "lodash";
 
+// Droppoint address types come from PHP — PR_DHL()->get_droppoint_address_types() —
+// exposed via prDhlGlobals, so the set has a single source of truth shared with the server.
+const isDroppointAddressType = ( type ) =>
+    ( prDhlGlobals?.droppointAddressTypes || [] ).includes( type );
+
 export const Block = ({checkoutExtensionData}) => {
 
     const { setExtensionData } = checkoutExtensionData;
@@ -236,7 +241,7 @@ export const Block = ({checkoutExtensionData}) => {
         }
 
         // Post Number only applies to Packstation / Postfiliale, not a Regular Address.
-        if ( postNumber && ( addressType === 'dhl_packstation' || addressType === 'dhl_branch' ) ) {
+        if ( postNumber && isDroppointAddressType( addressType ) ) {
             if ( isNaN( parseInt( postNumber, 10 ) ) ) {
                 setValidationErrors({
                     [validationErrorId]: {
