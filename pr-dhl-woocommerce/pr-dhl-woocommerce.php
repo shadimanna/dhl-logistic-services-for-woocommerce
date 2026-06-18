@@ -845,6 +845,32 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		}
 
 		/**
+		 * Whether a shipping address denotes a DHL droppoint
+		 * (Packstation, Parcelshop, or Postfiliale).
+		 *
+		 * @param string $address Shipping address line to inspect.
+		 * @return bool
+		 */
+		public function is_droppoint_address( $address ) {
+			return $this->is_packstation( $address )
+				|| $this->is_parcelshop( $address )
+				|| $this->is_post_office( $address );
+		}
+
+		/**
+		 * Whether a delivery is a DHL droppoint by either its selected address type
+		 * or its shipping address — the only case a Post Number applies to.
+		 *
+		 * @param string $address_type Selected shipping address type value.
+		 * @param string $address      Shipping address line to inspect.
+		 * @return bool
+		 */
+		public function is_droppoint( $address_type, $address ) {
+			return $this->is_droppoint_address_type( $address_type )
+				|| $this->is_droppoint_address( $address );
+		}
+
+		/**
 		 * Installation functions
 		 *
 		 * Create temporary folder and files. DHL labels will be stored here as required

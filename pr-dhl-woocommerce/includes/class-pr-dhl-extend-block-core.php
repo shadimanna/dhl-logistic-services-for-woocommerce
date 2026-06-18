@@ -123,12 +123,7 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 			$shipping_postnum   = isset( $pr_dhl_request_data['postNumber'] ) ? sanitize_text_field( $pr_dhl_request_data['postNumber'] ) : '';
 			$shipping_address_1 = $order->get_shipping_address_1();
 
-			$is_droppoint = PR_DHL()->is_droppoint_address_type( $address_type )
-				|| PR_DHL()->is_packstation( $shipping_address_1 )
-				|| PR_DHL()->is_parcelshop( $shipping_address_1 )
-				|| PR_DHL()->is_post_office( $shipping_address_1 );
-
-			if ( $is_droppoint ) {
+			if ( PR_DHL()->is_droppoint( $address_type, $shipping_address_1 ) ) {
 				$order->update_meta_data( '_shipping_dhl_postnum', $shipping_postnum );
 			} else {
 				$order->delete_meta_data( '_shipping_dhl_postnum' );

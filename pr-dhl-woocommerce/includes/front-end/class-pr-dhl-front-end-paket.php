@@ -1062,23 +1062,16 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 			// candidate (the droppoint-address check below protects values the label still needs).
 			$address_type = isset( $posted['shipping_dhl_address_type'] ) ? $posted['shipping_dhl_address_type'] : '';
 
-			// Keep the Post Number for Packstation / Postfiliale deliveries.
-			if ( PR_DHL()->is_droppoint_address_type( $address_type ) ) {
-				return;
-			}
-
 			$order = wc_get_order( $order_id );
 
 			if ( ! $order ) {
 				return;
 			}
 
-			// The Post Number is consumed downstream based on the shipping address itself
-			// (Packstation / Parcelshop / Postfiliale). Keep it when the address is a droppoint,
-			// even if the address-type field says otherwise, so a value the label still needs is
-			// never dropped.
-			$address_1 = $order->get_shipping_address_1();
-			if ( PR_DHL()->is_packstation( $address_1 ) || PR_DHL()->is_parcelshop( $address_1 ) || PR_DHL()->is_post_office( $address_1 ) ) {
+			// Keep the Post Number for droppoints — by the selected address type or by the shipping
+			// address itself, which is how it is consumed downstream — so a value the label still
+			// needs is never dropped, even if the address-type field says otherwise.
+			if ( PR_DHL()->is_droppoint( $address_type, $order->get_shipping_address_1() ) ) {
 				return;
 			}
 
@@ -1089,11 +1082,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 		}
 
 		public function display_post_number( $address, $order ) {
-			$pos_ps = PR_DHL()->is_packstation( $address['address_1'] );
-			$pos_rs = PR_DHL()->is_parcelshop( $address['address_1'] );
-			$pos_po = PR_DHL()->is_post_office( $address['address_1'] );
-
-			if ( ( $pos_ps || $pos_rs || $pos_po ) &&
+			if ( PR_DHL()->is_droppoint_address( $address['address_1'] ) &&
 			( ! empty( $shipping_dhl_postnum = $order->get_meta( '_shipping_dhl_postnum' ) ) ) ) {
 				$address['dhl_postnum'] = $shipping_dhl_postnum;
 			}
