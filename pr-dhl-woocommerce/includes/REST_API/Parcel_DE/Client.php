@@ -215,8 +215,8 @@ class Client extends API_Client {
 								'value'    => $request_info->shipment['cod_value'],
 							),
 							'bankAccount'   => $bank_data,
-							'transferNote1' => $request_info->args['dhl_settings']['bank_ref'],
-							'transferNote2' => $request_info->args['dhl_settings']['bank_ref_2'],
+							'transferNote1' => $request_info->args['dhl_settings']['bank_ref'] ?? '',
+							'transferNote2' => $request_info->args['dhl_settings']['bank_ref_2'] ?? '',
 						);
 
 					}

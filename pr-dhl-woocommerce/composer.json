@@ -13,7 +13,7 @@
     "archive": {
         "exclude": [
             "!/assets",
-            "!/languages",
+            "!/lang",
             "/node_modules",
             "bin",
             "tests",

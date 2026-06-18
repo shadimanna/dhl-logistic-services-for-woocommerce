@@ -7,5 +7,6 @@
 /pr-dhl-woocommerce/node_modules
 /pr-dhl-woocommerce/.eslintcache
 /pr-dhl-woocommerce/build
+/pr-dhl-woocommerce/lang/*.json
 pr-dhl-woocommerce.zip
 dhl-for-woocommerce.zip
