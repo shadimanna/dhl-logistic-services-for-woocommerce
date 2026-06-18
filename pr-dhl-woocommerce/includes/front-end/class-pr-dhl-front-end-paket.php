@@ -1057,12 +1057,13 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 		 */
 		public function clear_post_number_for_regular_address( $order_id, $posted ) {
 
-			if ( ! isset( $posted['shipping_dhl_address_type'] ) ) {
-				return;
-			}
+			// An absent or empty address type means Regular Address — e.g. when shipping to the
+			// billing address, the shipping_* fields are not posted — so still treat it as a clear
+			// candidate (the droppoint-address check below protects values the label still needs).
+			$address_type = isset( $posted['shipping_dhl_address_type'] ) ? $posted['shipping_dhl_address_type'] : '';
 
 			// Keep the Post Number for Packstation / Postfiliale deliveries.
-			if ( PR_DHL()->is_droppoint_address_type( $posted['shipping_dhl_address_type'] ) ) {
+			if ( PR_DHL()->is_droppoint_address_type( $address_type ) ) {
 				return;
 			}
 
