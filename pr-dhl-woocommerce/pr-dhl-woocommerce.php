@@ -12,10 +12,10 @@
  * Version: 3.9.8
  * Requires Plugins: woocommerce
  * Requires PHP: 7.4
- * Requires at least: 6.6
- * Tested up to: 6.9
- * WC requires at least: 10.1
- * WC tested up to: 10.3
+ * Requires at least: 6.8
+ * Tested up to: 7.0
+ * WC requires at least: 10.7
+ * WC tested up to: 10.9
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
