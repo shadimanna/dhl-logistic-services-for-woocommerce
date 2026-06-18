@@ -90,8 +90,9 @@ body table, .woocommerce table.shop_table {
 
 tr.dhl-co-tr.dhl-co-tr-fist > td,
 .woocommerce #order_review table.shop_table tr.dhl-co-tr.dhl-co-tr-fist > td {
-  border-top: 1px solid #FFCC00;
-  padding: 0;
+    width: 100% !important;
+    border-top: 1px solid #FFCC00;
+    padding: 0;
 }
 
 ul.dhl-co-times {
@@ -242,6 +243,7 @@ a#dhl_parcel_finder {
   -webkit-box-shadow: 2px 2px  #dadae5;
   box-shadow: 2px 2px  #dadae5;
   color: inherit;
+  width: 100%;
 }
 
 a#dhl_parcel_finder:hover {
@@ -366,4 +368,14 @@ a#dhl_parcel_finder:hover {
 
 .shipping-dhl-drop-off-points .select2-selection {
   max-width: 90vw !important;
+}
+
+.shipping-dhl-address-type .select2-container,
+.shipping-dhl-drop-off-points .select2-container{
+    max-width: 100%;
+    width: 100%;
+}
+
+.select2-full-width + .select2-container {
+    width: 100% !important;
 }

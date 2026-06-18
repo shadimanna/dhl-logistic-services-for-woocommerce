@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from '@wordpress/element';
 import { TextControl, RadioControl, Spinner, Notice } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { CART_STORE_KEY } from '@woocommerce/block-data';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { debounce } from 'lodash';
 import axios from 'axios';
 
@@ -23,10 +23,32 @@ export const Block = ({ checkoutExtensionData }) => {
 
     const debounceTimer = useState(null);
 
+    const customerData = useSelect((select) => select(CART_STORE_KEY).getCustomerData(), []);
+    const shippingAddress = customerData ? customerData.shippingAddress : null;
+
+    const address1Lower = (shippingAddress?.address_1 || '').toLowerCase();
+
+    const PACKSTATION_RE = /\bpackstation\s+\d{3}\b/i;
+    const POSTFILIALE_RE = /\bpostfiliale\s+\d{3,5}\b/i;
+
+    const selectedIsPackstation = PACKSTATION_RE.test(address1Lower);
+    const selectedIsBranch = POSTFILIALE_RE.test(address1Lower);
+    const isLockerOrBranch = selectedIsPackstation || selectedIsBranch;
+
+    useEffect(() => {
+        if (isLockerOrBranch) {
+            setPreferredLocationNeighbor('none');
+            setPreferredLocation('');
+            setPreferredNeighborName('');
+            setPreferredNeighborAddress('');
+        }
+    }, [isLockerOrBranch]);
+
     // Determine availability of location and neighbor options
     const locationAvailable = dhlSettings?.preferred_location;
     const neighborAvailable = dhlSettings?.preferred_neighbour;
-    const showRadioControl = locationAvailable && neighborAvailable;
+    const allowLocationNeighborUI = !isLockerOrBranch;
+    const showRadioControl = allowLocationNeighborUI && locationAvailable && neighborAvailable;
 
     // Initialize preferredLocationNeighbor
     const initialPreferredLocationNeighbor = showRadioControl ? 'none' : locationAvailable ? 'location' : neighborAvailable ? 'neighbor' : 'none';
@@ -41,9 +63,6 @@ export const Block = ({ checkoutExtensionData }) => {
     const [preferredNeighborName, setPreferredNeighborName] = useState('');
     const [preferredNeighborAddress, setPreferredNeighborAddress] = useState('');
 
-    // Retrieve customer data
-    const customerData = useSelect((select) => select(CART_STORE_KEY).getCustomerData(), []);
-    const shippingAddress = customerData ? customerData.shippingAddress : null;
 
     // Retrieve selected shipping methods and payment method
     const cartData = useSelect((select) => select(CART_STORE_KEY).getCartData(), []);
@@ -233,8 +252,8 @@ export const Block = ({ checkoutExtensionData }) => {
     }, [preferredNeighborAddress]);
 
     // Handle visibility of drop-off location and neighbor fields based on settings and selection
-    const showDropOffLocation = (showRadioControl && preferredLocationNeighbor === 'location') || (!showRadioControl && locationAvailable);
-    const showNeighborFields = (showRadioControl && preferredLocationNeighbor === 'neighbor') || (!showRadioControl && neighborAvailable);
+    const showDropOffLocation = allowLocationNeighborUI && ((showRadioControl && preferredLocationNeighbor === 'location') || (!showRadioControl && locationAvailable));
+    const showNeighborFields = allowLocationNeighborUI && ((showRadioControl && preferredLocationNeighbor === 'neighbor') || (!showRadioControl && neighborAvailable));
 
     // Update the mapping of preferredDayOptions
     let preferredDayOptions = [];

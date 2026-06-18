@@ -215,8 +215,8 @@ class Client extends API_Client {
 								'value'    => $request_info->shipment['cod_value'],
 							),
 							'bankAccount'   => $bank_data,
-							'transferNote1' => $request_info->args['dhl_settings']['bank_ref'],
-							'transferNote2' => $request_info->args['dhl_settings']['bank_ref_2'],
+							'transferNote1' => $request_info->args['dhl_settings']['bank_ref'] ?? '',
+							'transferNote2' => $request_info->args['dhl_settings']['bank_ref_2'] ?? '',
 						);
 
 					}
@@ -296,6 +296,11 @@ class Client extends API_Client {
 				'value'    => $additional_fee + $shipping_fee,
 			),
 		);
+
+		if ( 'V54EPAK' === $request_info->shipment['product'] ) {
+			$duties                        = $request_info->args['order_details']['duties'] ?? '';
+			$customs['shippingConditions'] = ( empty( $duties ) || 'DDU' === $duties ) ? 'DAP' : $duties;
+		}
 
 		if ( ! empty( $request_info->shipment['mrn'] ) ) {
 			$customs['MRN'] = $request_info->shipment['mrn'];

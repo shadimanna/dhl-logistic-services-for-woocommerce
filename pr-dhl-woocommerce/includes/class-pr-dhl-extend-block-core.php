@@ -44,48 +44,92 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 		 * @return void
 		 */
 		public function save_dhl_checkout_fields( \WC_Order $order, \WP_REST_Request $request ) {
-			$pr_dhl_request_data = $request['extensions'][ $this->name ];
+			$pr_dhl_request_data = isset( $request['extensions'][ $this->name ] ) ? $request['extensions'][ $this->name ] : array();
 			$dhl_label_options   = array();
 			if ( ! empty( $pr_dhl_request_data['preferredDay'] ) ) {
 				$dhl_label_options['pr_dhl_preferred_day'] = wc_clean( $pr_dhl_request_data['preferredDay'] );
 			}
 
-			if ( ! empty( $pr_dhl_request_data['preferredLocationNeighbor'] ) ) {
-				$dhl_label_options['pr_dhl_preferred_location_neighbor'] = wc_clean( $pr_dhl_request_data['preferredLocationNeighbor'] );
+			$settings     = PR_DHL()->get_shipping_dhl_settings();
+			$has_location = ! empty( $settings['dhl_preferred_location'] ) && 'yes' === $settings['dhl_preferred_location'];
+			$has_neighbor = ! empty( $settings['dhl_preferred_neighbour'] ) && 'yes' === $settings['dhl_preferred_neighbour'];
+			$both_enabled = $has_location && $has_neighbor;
 
-				if ( $dhl_label_options['pr_dhl_preferred_location_neighbor'] == 'location' ) {
-					if ( ! empty( $pr_dhl_request_data['preferredLocation'] ) ) {
-						$dhl_label_options['pr_dhl_preferred_location'] = wc_clean( $pr_dhl_request_data['preferredLocation'] );
-					} else {
-						// Handle the error or throw an exception
+			$dropp_off_choice = isset( $pr_dhl_request_data['preferredLocationNeighbor'] )
+				? wc_clean( $pr_dhl_request_data['preferredLocationNeighbor'] )
+				: '';
+			$dropp_off_choice = in_array( $dropp_off_choice, array(
+				'none',
+				'location',
+				'neighbor'
+			), true ) ? $dropp_off_choice : '';
+
+			if ( $both_enabled ) {
+
+				if ( 'location' === $dropp_off_choice ) {
+					$loc = isset( $pr_dhl_request_data['preferredLocation'] ) ? trim( $pr_dhl_request_data['preferredLocation'] ) : '';
+					if ( '' === $loc ) {
 						throw new Exception( __( 'Please enter the preferred location.', 'dhl-for-woocommerce' ) );
 					}
-				}
+					$dhl_label_options['pr_dhl_preferred_location_neighbor'] = 'location';
+					$dhl_label_options['pr_dhl_preferred_location']          = wc_clean( $loc );
 
-				if ( $dhl_label_options['pr_dhl_preferred_location_neighbor'] == 'neighbor' ) {
-					if ( ! empty( $pr_dhl_request_data['preferredNeighborName'] ) && ! empty( $pr_dhl_request_data['preferredNeighborAddress'] ) ) {
-						$dhl_label_options['pr_dhl_preferred_neighbour_name']    = wc_clean( $pr_dhl_request_data['preferredNeighborName'] );
-						$dhl_label_options['pr_dhl_preferred_neighbour_address'] = wc_clean( $pr_dhl_request_data['preferredNeighborAddress'] );
-					} else {
+				} elseif ( 'neighbor' === $dropp_off_choice ) {
+					$nm  = isset( $pr_dhl_request_data['preferredNeighborName'] ) ? trim( $pr_dhl_request_data['preferredNeighborName'] ) : '';
+					$adr = isset( $pr_dhl_request_data['preferredNeighborAddress'] ) ? trim( $pr_dhl_request_data['preferredNeighborAddress'] ) : '';
+					if ( '' === $nm || '' === $adr ) {
 						throw new Exception( __( 'Please enter the preferred neighbor name and address.', 'dhl-for-woocommerce' ) );
 					}
+					$dhl_label_options['pr_dhl_preferred_location_neighbor'] = 'neighbor';
+					$dhl_label_options['pr_dhl_preferred_neighbour_name']    = wc_clean( $nm );
+					$dhl_label_options['pr_dhl_preferred_neighbour_address'] = wc_clean( $adr );
 				}
+
+			} else {
+
+				if ( $has_location ) {
+					$loc = isset( $pr_dhl_request_data['preferredLocation'] ) ? trim( $pr_dhl_request_data['preferredLocation'] ) : '';
+					if ( '' !== $loc ) {
+						$dhl_label_options['pr_dhl_preferred_location_neighbor'] = 'location';
+						$dhl_label_options['pr_dhl_preferred_location']          = wc_clean( $loc );
+					}
+				} elseif ( $has_neighbor ) {
+					$nm  = isset( $pr_dhl_request_data['preferredNeighborName'] ) ? trim( $pr_dhl_request_data['preferredNeighborName'] ) : '';
+					$adr = isset( $pr_dhl_request_data['preferredNeighborAddress'] ) ? trim( $pr_dhl_request_data['preferredNeighborAddress'] ) : '';
+					if ( '' !== $nm || '' !== $adr ) {
+						if ( '' === $nm || '' === $adr ) {
+							throw new Exception( __( 'Please enter the preferred neighbor name and address.', 'dhl-for-woocommerce' ) );
+						}
+						$dhl_label_options['pr_dhl_preferred_location_neighbor'] = 'neighbor';
+						$dhl_label_options['pr_dhl_preferred_neighbour_name']    = wc_clean( $nm );
+						$dhl_label_options['pr_dhl_preferred_neighbour_address'] = wc_clean( $adr );
+					}
+				}
+			}
+
+			if ( ! empty( $pr_dhl_request_data['closest_drop_point'] ) ) {
+				$dhl_label_options['pr_dhl_cdp_delivery'] = wc_clean( $pr_dhl_request_data['closest_drop_point'] );
 			}
 
 			if ( ! empty( $dhl_label_options ) ) {
 				PR_DHL()->get_pr_dhl_wc_order()->save_dhl_label_items( $order->get_id(), $dhl_label_options );
 			}
-			if ( ! empty( $pr_dhl_request_data['preferredDay'] ) ) {
-				$dhl_label_options['pr_dhl_preferred_day'] = wc_clean( $pr_dhl_request_data['preferredDay'] );
-			}
-			// Extract billing and shipping house numbers with sanitization
-			$shipping_postnum = sanitize_text_field( $pr_dhl_request_data['postNumber'] ) ;
+			
+			// The Post Number only applies to Packstation / Postfiliale deliveries. Persist it only
+			// when the address type or the shipping address itself is a droppoint; otherwise drop any
+			// stale value so a Regular Address never carries a Post Number to the DHL API. Mirrors the
+			// classic checkout's clear_post_number_for_regular_address().
+			$address_type       = isset( $pr_dhl_request_data['addressType'] ) ? wc_clean( $pr_dhl_request_data['addressType'] ) : '';
+			$shipping_postnum   = isset( $pr_dhl_request_data['postNumber'] ) ? sanitize_text_field( $pr_dhl_request_data['postNumber'] ) : '';
+			$shipping_address_1 = $order->get_shipping_address_1();
 
-			// Update billing and shipping house numbers
-			$order->update_meta_data( '_shipping_dhl_postnum', $shipping_postnum );
-			/**
-			 * Save the order to persist changes
-			 */
+			if ( PR_DHL()->is_droppoint( $address_type, $shipping_address_1 ) ) {
+				$order->update_meta_data( '_shipping_dhl_postnum', $shipping_postnum );
+			} else {
+				$order->delete_meta_data( '_shipping_dhl_postnum' );
+			}
+
+			// Save the order to persist changes.
 			$order->save();
 
 		}
@@ -114,9 +158,18 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 				$price = isset( $data['price'] ) ? floatval( $data['price'] ) : 0;
 				$label = isset( $data['label'] ) ? sanitize_text_field( $data['label'] ) : '';
 
-				// Store the fee amount and label in session
-				WC()->session->set( 'pr_dhl_preferred_day_fee', $price );
-				WC()->session->set( 'pr_dhl_preferred_day_label', $label );
+				if ( $price > 0 && $label !== '' ) {
+					// Store the fee amount and label in session
+					WC()->session->set( 'pr_dhl_preferred_day_fee', $price );
+					WC()->session->set( 'pr_dhl_preferred_day_label', $label );
+				} else {
+					WC()->session->__unset( 'pr_dhl_preferred_day_fee' );
+					WC()->session->__unset( 'pr_dhl_preferred_day_label' );
+				}
+			} else {
+
+				WC()->session->__unset( 'pr_dhl_preferred_day_fee' );
+				WC()->session->__unset( 'pr_dhl_preferred_day_label' );
 			}
 		}
 
@@ -129,7 +182,12 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 			if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
 				return;
 			}
+			if ( ! $cart->needs_shipping() ) {
+				WC()->session->__unset( 'pr_dhl_preferred_day_fee' );
+				WC()->session->__unset( 'pr_dhl_preferred_day_label' );
 
+				return;
+			}
 			// Get the fee amount and label from session
 			$fee_amount = WC()->session->get( 'pr_dhl_preferred_day_fee', 0 );
 			$fee_label  = WC()->session->get( 'pr_dhl_preferred_day_label', '' );

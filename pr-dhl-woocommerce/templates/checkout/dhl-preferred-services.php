@@ -16,19 +16,20 @@ try {
 </tr>
 
 <tr class="dhl-co-tr">
-	<th colspan="2"><?php echo esc_html_e( 'DHL Preferred Delivery. Delivered just as you wish.', 'dhl-for-woocommerce' ); ?><hr></th>
+	<th colspan="2"><?php esc_html_e( 'DHL Preferred Delivery. Delivered just as you wish.', 'dhl-for-woocommerce' ); ?><hr></th>
 </tr>
 
 <tr class="dhl-co-tr">
 	<td colspan="2">
-	<?php
-	echo esc_html_e(
-		'Thanks to the ﬂexible recipient services of DHL Preferred Delivery, you decide
-when and where you want to receive your parcels.<br>
-Please choose your preferred delivery option.',
-		'dhl-for-woocommerce'
-	);
-	?>
+		<?php
+		echo wp_kses(
+			__(
+				'Thanks to the flexible recipient services of DHL Preferred Delivery, you decide when and where you want to receive your parcels.<br>Please choose your preferred delivery option.',
+				'dhl-for-woocommerce'
+			),
+			array( 'br' => array() )
+		);
+		?>
 	</td>
 </tr>
 
@@ -64,7 +65,7 @@ if ( isset( $shipping_dhl_settings['dhl_preferred_day'] ) && $shipping_dhl_setti
 
 				$preferred_days = $preferred_day_time['preferred_day'];
 
-				if ( empty( $pr_dhl_preferred_day_selected ) && ! empty( $preferred_days ) ) {
+				if ( empty( $pr_dhl_preferred_day_selected ) ) {
 					$pr_dhl_preferred_day_selected = current( $preferred_days );
 				}
 

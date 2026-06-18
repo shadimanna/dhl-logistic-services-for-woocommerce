@@ -147,8 +147,6 @@ class PR_DHL_API_Auth_REST {
 			throw new Exception( esc_html__( 'The "Cliend Id" or "Client Secret" is empty.', 'dhl-for-woocommerce' ) );
 		}
 
-		PR_DHL()->log_msg( 'Authorize User - Client ID: ' . $this->client_id );
-
 		$wp_request_headers = array(
 			'Authorization' => 'Basic ' . base64_encode( $this->client_id . ':' . $this->client_secret ),
 		);

@@ -39,20 +39,23 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		}
 
 		public function init_hooks() {
-			add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ), 20 );
+			add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ), 20, 2 );
 			add_action( 'woocommerce_process_shop_order_meta', array( $this, 'save_meta_box' ), 0, 2 );
 
 			// Order page metabox actions
 			add_action( 'wp_ajax_wc_shipment_dhl_gen_label', array( $this, 'save_meta_box_ajax' ) );
 			add_action( 'wp_ajax_wc_shipment_dhl_delete_label', array( $this, 'delete_label_ajax' ) );
 
-			$subs_version = class_exists( 'WC_Subscriptions' ) && ! empty( WC_Subscriptions::$version ) ? WC_Subscriptions::$version : null;
-
-			// Prevent data being copied to subscriptions
-			if ( null !== $subs_version && version_compare( $subs_version, '2.5.0', '>=' ) ) {
-				add_filter( 'wcs_renewal_order_meta_query', array( $this, 'woocommerce_subscriptions_renewal_order_meta_query' ), 10 );
-			} else {
-				add_filter( 'woocommerce_subscriptions_renewal_order_meta_query', array( $this, 'woocommerce_subscriptions_renewal_order_meta_query' ), 10 );
+			// Prevent the DHL tracking number being copied from a subscription to its renewal and resubscribe orders.
+			// Detect the capability rather than a version number: the data copier (and the array-based
+			// wc_subscriptions_{type}_data filters) were introduced together in subscriptions-core 2.5.0.
+			if ( class_exists( 'WC_Subscriptions_Data_Copier' ) ) {
+				// subscriptions-core 2.5.0+: the data is passed as an array keyed by meta_key.
+				add_filter( 'wc_subscriptions_renewal_order_data', array( $this, 'remove_dhl_tracking_meta' ), 10 );
+				add_filter( 'wc_subscriptions_resubscribe_order_data', array( $this, 'remove_dhl_tracking_meta' ), 10 );
+			} elseif ( class_exists( 'WC_Subscriptions' ) ) {
+				// Older WooCommerce Subscriptions: the data is filtered as a SQL meta_query string.
+				add_filter( 'wcs_renewal_order_meta_query', array( $this, 'remove_dhl_tracking_meta_query' ), 10 );
 			}
 
 			// add bulk actions to the Orders screen table bulk action drop-downs
@@ -78,11 +81,34 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		}
 
 		/**
+         * Init order object for meta box.
+         *
+         * @param WP_POST|WC_Order $metabox_object Either WP_Post or WC_Order object.
+         */
+		public function init_order_object( $metabox_object ) {
+			if ( is_a( $metabox_object, 'WP_Post' ) ) {
+				return wc_get_order( $metabox_object->ID );
+			}
+
+			if ( is_a( $metabox_object, 'WC_Order' ) ) {
+				return $metabox_object;
+			}
+
+			return false;
+		}
+
+		/**
 		 * Add the meta box for shipment info on the order page
 		 *
 		 * @access public
 		 */
-		public function add_meta_box() {
+        public function add_meta_box( $post_type, $post_or_order_object ) {
+			$order = $this->init_order_object( $post_or_order_object );
+
+			if ( ! is_a( $order, 'WC_Order' ) || ! API_Utils::order_needs_shipping( $order ) ) {
+				return;
+			}
+
 			$screen = API_Utils::is_HPOS() ? wc_get_page_screen_id( 'shop-order' ) : 'shop_order';
 			add_meta_box(
 				'woocommerce-shipment-dhl-label',
@@ -101,7 +127,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		 * @access public
 		 */
 		public function meta_box( $post_or_order_object ) {
-			$order    = ( $post_or_order_object instanceof WC_Order ) ? $post_or_order_object : wc_get_order( $post_or_order_object );
+            $order    = $this->init_order_object( $post_or_order_object );
 			$order_id = $order->get_id();
 
 			// Get saved label input fields or set default values
@@ -236,30 +262,41 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 		public function save_meta_box( $post_id, $post = null ) {
 
-			// Do nothing if it's not an order.
-			$screen = get_current_screen();
+			$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 			if ( ! empty( $screen ) ) {
-				if ( 'shop_order' !== $screen->post_type ) {
+				if ( isset( $screen->post_type ) && 'shop_order' !== $screen->post_type ) {
 					return;
 				}
 			}
 
-			// loop through inputs within id 'shipment-dhl-label-form'
+			if ( empty( $_POST['pr_dhl_label_nonce'] ) ) {
+				return;
+			}
+
+			$nonce = sanitize_text_field( wp_unslash( $_POST['pr_dhl_label_nonce'] ) );
+
+			if ( ! wp_verify_nonce( $nonce, 'create-dhl-label' ) ) {
+				return;
+			}
+
 			$meta_box_ids = array( 'pr_dhl_product', 'pr_dhl_weight' );
 
 			$additional_meta_box_ids = $this->get_additional_meta_ids();
-			$meta_box_ids            = array_merge( $meta_box_ids, $additional_meta_box_ids );
-			foreach ( $meta_box_ids as $key => $value ) {
-				// Save value if it exists
+			if ( is_array( $additional_meta_box_ids ) && ! empty( $additional_meta_box_ids ) ) {
+				$meta_box_ids = array_merge( $meta_box_ids, $additional_meta_box_ids );
+			}
+
+			$args = array();
+
+			foreach ( $meta_box_ids as $value ) {
 				if ( isset( $_POST[ $value ] ) ) {
 					$args[ $value ] = wc_clean( $_POST[ $value ] );
-				} else {
-					$args[ $value ] = '';
 				}
 			}
 
-			if ( isset( $args ) ) {
+			if ( ! empty( $args ) ) {
 				$this->save_dhl_label_items( $post_id, $args );
+
 				return $args;
 			}
 		}
@@ -639,6 +676,11 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		 */
 		public function get_dhl_label_items( $order_id ) {
 			$order = wc_get_order( $order_id );
+
+			if ( ! is_a( $order, 'WC_Order' ) ) {
+				return array();
+			}
+			
 			return $order->get_meta( '_pr_shipment_dhl_label_items' );
 		}
 
@@ -775,7 +817,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 			$args['order_details']['dimUom'] = get_option( 'woocommerce_dimension_unit' );
 
-			if ( $this->is_cod_payment_method( $order_id ) ) {
+			if ( $this->is_cod_payment_method( $order_id ) && empty( $args['order_details']['cod_value'] ) ) {
 				$args['order_details']['cod_value'] = $order->get_total();
 			}
 
@@ -975,12 +1017,34 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		}
 
 		/**
-		 * Prevents data being copied to subscription renewals
+		 * Prevents the DHL tracking meta being copied to subscription renewals.
+		 *
+		 * Used on older WooCommerce Subscriptions (subscriptions-core < 2.5.0), where the
+		 * wcs_renewal_order_meta_query filter passes a SQL meta_query string.
+		 *
+		 * @param string $order_meta_query The SQL meta_query string used to copy meta to the renewal order.
+		 * @return string
 		 */
-		public function woocommerce_subscriptions_renewal_order_meta_query( $order_meta_query ) {
+		public function remove_dhl_tracking_meta_query( $order_meta_query ) {
 			$order_meta_query .= " AND `meta_key` NOT IN ( '_pr_shipment_dhl_label_tracking' )";
 
 			return $order_meta_query;
+		}
+
+		/**
+		 * Removes the DHL tracking meta from the data copied to subscription renewal and resubscribe orders.
+		 *
+		 * Used on WooCommerce Subscriptions / subscriptions-core 2.5.0+, where the
+		 * wc_subscriptions_renewal_order_data and wc_subscriptions_resubscribe_order_data filters pass
+		 * an array of meta data keyed by meta_key instead of the legacy SQL meta_query string.
+		 *
+		 * @param array $order_data Meta data to be copied to the new order, keyed by meta_key.
+		 * @return array
+		 */
+		public function remove_dhl_tracking_meta( $order_data ) {
+			unset( $order_data['_pr_shipment_dhl_label_tracking'] );
+
+			return $order_data;
 		}
 
 		/**

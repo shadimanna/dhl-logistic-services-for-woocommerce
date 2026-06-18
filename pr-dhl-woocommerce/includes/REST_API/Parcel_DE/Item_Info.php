@@ -4,6 +4,7 @@ namespace PR\DHL\REST_API\Parcel_DE;
 
 use Exception;
 use PR\DHL\Utils\Args_Parser;
+use PR\DHL\Utils\API_Utils;
 
 /**
  * A class that represents a Deutsche Post item, which corresponds to a WooCommerce order.
@@ -758,6 +759,10 @@ class Item_Info {
 					}
 
 					if ( empty( $code_length ) ) {
+						if ( ! in_array( $shipping_country, API_Utils::PDDP_supported_countries(), true ) && 'yes' === $self->args['order_details']['PDDP'] ) {
+							throw new Exception( esc_html__( 'Item HS Code must has value to can use PDDP.', 'dhl-for-woocommerce' ) );
+						}
+
 						return;
 					}
 
@@ -852,6 +857,40 @@ class Item_Info {
 			'additional_insurance'   => array(
 				'default' => '',
 				'rename'  => 'additionalInsurance',
+			),
+			'cod_value'              => array(
+				'default'  => '',
+				'rename'   => 'cashOnDelivery',
+				'validate' => function ( $value ) use ( $self ) {
+					// Only validate when Cash on Delivery is set for this order.
+					if ( empty( $value ) ) {
+						return;
+					}
+
+					$currency = $self->args['order_details']['currency'] ?? '';
+
+					// DHL requires the Cash on Delivery amount to be in Euro.
+					if ( 'EUR' !== $currency ) {
+						throw new Exception(
+							sprintf(
+								/* translators: %s: the order's currency code, e.g. "USD". */
+								esc_html__( 'Cash on Delivery is only available for orders in Euro (EUR). This order uses %s, so a Cash on Delivery label cannot be created.', 'dhl-for-woocommerce' ),
+								esc_html( $currency )
+							)
+						);
+					}
+
+					// DHL requires bank account details to transfer the collected Cash on Delivery amount.
+					$settings    = $self->args['dhl_settings'] ?? array();
+					$bank_holder = $settings['bank_holder'] ?? '';
+					$bank_iban   = $settings['bank_iban'] ?? '';
+
+					if ( empty( $bank_holder ) || empty( $bank_iban ) ) {
+						throw new Exception(
+							esc_html__( 'Cash on Delivery requires your bank account details. Please add the Account Owner and IBAN under the DHL "Bank Details" settings to create a Cash on Delivery label.', 'dhl-for-woocommerce' )
+						);
+					}
+				},
 			),
 			'bulky_goods'            => array(
 				'default' => '',

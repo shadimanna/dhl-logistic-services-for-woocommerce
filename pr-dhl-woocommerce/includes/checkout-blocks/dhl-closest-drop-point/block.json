@@ -1,0 +1,44 @@
+{
+  "apiVersion": 3,
+  "name": "pr-dhl/dhl-closest-drop-point",
+  "version": "1.0.0",
+  "title": "DHL Order Block",
+  "category": "woocommerce",
+  "description": "Adds DHL block to checkout.",
+  "supports": {
+    "html": false,
+    "align": true,
+    "multiple": false,
+    "reusable": false
+  },
+  "parent": [
+    "woocommerce/checkout-order-summary-block"
+  ],
+  "attributes": {
+    "lock": {
+      "type": "object",
+      "default": {
+        "remove": true,
+        "move": true
+      }
+    },
+    "mainTitle": {
+      "type": "string",
+      "default": "Closest drop-off point."
+    },
+    "infoText": {
+      "type": "string",
+      "default": "Preferred delivery to a parcel shop/parcel locker close to the specified home address."
+    },
+    "homeDeliveryLabel": {
+      "type": "string",
+      "default": "Home delivery"
+    },
+    "closestDropPointLabel": {
+      "type": "string",
+      "default": "Closest Drop Point"
+    }
+  },
+  "textdomain": "dhl-for-woocommerce",
+  "editorStyle": "file:../../../build/style-dhl-closest-drop-point.css"
+}

@@ -28,7 +28,7 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 			$this->method_title = esc_html__( 'DHL Paket', 'dhl-for-woocommerce' );
 
 			/* translators: %s: link to request a quote for becoming a DHL business customer */
-			$this->method_description = sprintf( esc_html__( 'Below you will find all functions for controlling, preparing and processing your shipment with DHL Paket. Prerequisite is a valid DHL business customer contract. If you are not yet a DHL business customer, you can request a quote %1$shere%2$s.', 'dhl-for-woocommerce' ), '<a href="https://www.dhl.de/dhl-kundewerden?source=woocommerce&cid=c_dhloka_de_woocommerce" target="_blank">', '</a>' );
+			$this->method_description = sprintf( esc_html__( 'Below you will find all functions for controlling, preparing and processing your shipment with DHL Paket. Prerequisite is a valid DHL business customer contract. If you are not yet a DHL business customer, you can request a quote %1$shere%2$s.', 'dhl-for-woocommerce' ), '<a href="https://www.dhl.de/en/geschaeftskunden/paket/kunde-werden/angebot-dhl-geschaeftskunden-online/onlinevertrag.html?source=woocommerce" target="_blank">', '</a>' );
 
 			$this->init();
 		}
@@ -501,7 +501,7 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 						'910-300-410'    => 'Laser printer 103 x 150 mm',
 						'910-300-300'    => 'Laser printer 105 x 148 mm',
 						'910-300-300-oZ' => 'Laser printer 105 x 148 mm (without additional labels)',
-						'100x70mm'       => '100 x 70 mm (only for Warenpost & Kleinpaket)',
+						'100x70mm'       => '100 x 70 mm (only for  Kleinpaket)',
 					),
 					'default'     => '910-300-700',
 					'class'       => 'wc-enhanced-select',
@@ -1205,6 +1205,18 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 
 			// Verify whether Google API key set
 			$google_maps_api_key = $_POST[ $this->plugin_id . $this->id . '_dhl_google_maps_api_key' ];
+
+			// If Open Street Map is selected no API key is necessary.
+			$map_type_key = $this->plugin_id . $this->id . '_dhl_map_type';
+			if ( isset( $_POST[ $map_type_key ] ) ) {
+				$map_type = wc_clean( wp_unslash( $_POST[ $map_type_key ] ) );
+			} else {
+				$map_type = $this->get_option( 'dhl_map_type', 'gmaps' );
+			}
+
+			if ( 'gmaps' !== $map_type ) {
+				return 'yes';
+			}
 
 			// If not return 'no'
 			if ( empty( $google_maps_api_key ) ) {

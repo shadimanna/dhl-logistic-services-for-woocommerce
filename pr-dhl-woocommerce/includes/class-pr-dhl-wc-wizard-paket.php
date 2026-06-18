@@ -121,7 +121,6 @@ if ( ! class_exists( 'PR_DHL_WC_Wizard_Paket' ) ) :
 								<div class="form-group">
 									<input type="text" name="dhl_participation_V01PAK" class="form-control required wizard-dhl-field" id="wizard_dhl_participation_V01PAK" placeholder="<?php esc_html_e( 'Regular product', 'dhl-for-woocommerce' ); ?>" />
 									<input type="hidden" name="dhl_participation_V01PRIO" class="form-control wizard-dhl-field participation-field" id="wizard_dhl_participation_V01PRIO" />
-									<input type="hidden" name="dhl_participation_V62WP" class="form-control wizard-dhl-field participation-field" id="wizard_dhl_participation_V62WP" />
 									<input type="hidden" name="dhl_participation_V55PAK" class="form-control wizard-dhl-field participation-field" id="wizard_dhl_participation_V55PAK" />
 									<input type="hidden" name="dhl_participation_V54EPAK" class="form-control wizard-dhl-field participation-field" id="wizard_dhl_participation_V54EPAK" />
 									<input type="hidden" name="dhl_participation_V53WPAK" class="form-control wizard-dhl-field participation-field" id="wizard_dhl_participation_V53WPAK" />
