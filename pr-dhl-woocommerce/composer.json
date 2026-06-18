@@ -8,8 +8,7 @@
         }
     },
     "require-dev": {
-        "wp-cli/i18n-command": "^2.6",
-        "phpunit/phpunit": "^9"
+        "wp-cli/i18n-command": "^2.6"
     },
     "archive": {
         "exclude": [
