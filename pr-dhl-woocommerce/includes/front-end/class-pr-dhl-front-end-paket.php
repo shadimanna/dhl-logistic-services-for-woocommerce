@@ -982,9 +982,9 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 				return;
 			}
 
-			$shipping_dhl_address_type = wc_clean( $_POST['shipping_dhl_address_type'] );
-			$shipping_address_1        = wc_clean( $_POST['shipping_address_1'] );
-			$shipping_dhl_postnum      = wc_clean( $_POST['shipping_dhl_postnum'] );
+			$shipping_dhl_address_type = wc_clean( wp_unslash( $_POST['shipping_dhl_address_type'] ?? '' ) );
+			$shipping_address_1        = wc_clean( wp_unslash( $_POST['shipping_address_1'] ?? '' ) );
+			$shipping_dhl_postnum      = wc_clean( wp_unslash( $_POST['shipping_dhl_postnum'] ?? '' ) );
 
 			$pos_ps = PR_DHL()->is_packstation( $shipping_address_1 );
 			$pos_rs = PR_DHL()->is_parcelshop( $shipping_address_1 );
