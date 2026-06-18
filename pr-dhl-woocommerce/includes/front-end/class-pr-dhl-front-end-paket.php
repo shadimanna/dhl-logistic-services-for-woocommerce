@@ -1045,10 +1045,12 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 		/**
 		 * Clear a stale DHL Post Number when a Regular Address is selected.
 		 *
-		 * The Post Number only applies to Packstation / Postfiliale deliveries. If a
-		 * customer entered one and then switched to a Regular Address, drop the value so
-		 * it is not persisted on the order or sent to the DHL API. Mirrors the Blocks
-		 * checkout, which clears the field client-side on the same switch.
+		 * The Post Number only applies to Packstation / Parcelshop / Postfiliale deliveries.
+		 * If a customer entered one and then switched to a Regular Address, drop the value so
+		 * it is not persisted on the order or sent to the DHL API. Mirrors the Blocks checkout,
+		 * which clears the field client-side on the same switch. The value is kept whenever
+		 * either the selected address type or the shipping address itself is a droppoint, since
+		 * that is how it is consumed downstream.
 		 *
 		 * @param int   $order_id Order ID.
 		 * @param array $posted   Sanitized posted checkout data.
@@ -1066,7 +1068,20 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 
 			$order = wc_get_order( $order_id );
 
-			if ( $order && ! empty( $order->get_meta( '_shipping_dhl_postnum' ) ) ) {
+			if ( ! $order ) {
+				return;
+			}
+
+			// The Post Number is consumed downstream based on the shipping address itself
+			// (Packstation / Parcelshop / Postfiliale). Keep it when the address is a droppoint,
+			// even if the address-type field says otherwise, so a value the label still needs is
+			// never dropped.
+			$address_1 = $order->get_shipping_address_1();
+			if ( PR_DHL()->is_packstation( $address_1 ) || PR_DHL()->is_parcelshop( $address_1 ) || PR_DHL()->is_post_office( $address_1 ) ) {
+				return;
+			}
+
+			if ( ! empty( $order->get_meta( '_shipping_dhl_postnum' ) ) ) {
 				$order->delete_meta_data( '_shipping_dhl_postnum' );
 				$order->save();
 			}
