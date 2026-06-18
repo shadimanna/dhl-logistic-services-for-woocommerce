@@ -8,7 +8,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2026-06-17T01:07:07+02:00\n"
-"PO-Revision-Date: 2026-06-17T12:26:04+00:00\n"
+"PO-Revision-Date: 2026-06-18T17:47:36+00:00\n"
 "Language: de_DE\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.5\n"
@@ -21,92 +21,92 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-0: *.min.js\n"
 
 #. Plugin Name of the plugin
-#: pr-dhl-woocommerce.php:3
+#: pr-dhl-woocommerce.php:5
 msgid "DHL Shipping Germany for WooCommerce"
 msgstr "DHL Shipping Germany for WooCommerce"
 
 #. Plugin URI of the plugin
-#: pr-dhl-woocommerce.php:4
+#: pr-dhl-woocommerce.php:7
 msgid "https://github.com/shadimanna/dhl-logistic-services-for-woocommerce"
 msgstr "https://github.com/shadimanna/dhl-logistic-services-for-woocommerce"
 
 #. Description of the plugin
-#: pr-dhl-woocommerce.php:5
+#: pr-dhl-woocommerce.php:9
 msgid "WooCommerce integration for DHL Paket and Deutsche Post International"
 msgstr "WooCommerce-Integration für DHL Paket und Deutsche Post International"
 
 #. Author of the plugin
-#: pr-dhl-woocommerce.php:6
+#: pr-dhl-woocommerce.php:11
 msgid "DHL"
 msgstr "DHL"
 
 #. Author URI of the plugin
-#: pr-dhl-woocommerce.php:7
+#: pr-dhl-woocommerce.php:13
 msgid "http://dhl.com/"
 msgstr "http://dhl.com/"
 
 #. translators: %s is the name of the service (e.g., DHL)
-#: includes/abstract-pr-dhl-wc-order.php:113
+#: includes/abstract-pr-dhl-wc-order.php:116
 #, php-format
 msgid "%s Label & Tracking"
 msgstr "%s Label & Sendungsverfolgung"
 
-#: includes/abstract-pr-dhl-wc-order.php:162
+#: includes/abstract-pr-dhl-wc-order.php:165
 msgid "Delete Label"
 msgstr "Label löschen"
 
-#: includes/abstract-pr-dhl-wc-order.php:165
-#: includes/abstract-pr-dhl-wc-order.php:400
+#: includes/abstract-pr-dhl-wc-order.php:168
+#: includes/abstract-pr-dhl-wc-order.php:403
 msgid "Generate Label"
 msgstr "DHL-Label erzeugen"
 
-#: includes/abstract-pr-dhl-wc-order.php:173
-#: includes/abstract-pr-dhl-wc-order.php:178
-#: includes/abstract-pr-dhl-wc-order.php:370
+#: includes/abstract-pr-dhl-wc-order.php:176
+#: includes/abstract-pr-dhl-wc-order.php:181
+#: includes/abstract-pr-dhl-wc-order.php:373
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:696
 msgid "Download Label"
 msgstr "Label herunterladen"
 
-#: includes/abstract-pr-dhl-wc-order.php:199
+#: includes/abstract-pr-dhl-wc-order.php:202
 msgid "Service"
 msgstr "Service"
 
-#: includes/abstract-pr-dhl-wc-order.php:203
+#: includes/abstract-pr-dhl-wc-order.php:206
 msgid "Service selected:"
 msgstr "Ausgewählter Service:"
 
-#: includes/abstract-pr-dhl-wc-order.php:217
+#: includes/abstract-pr-dhl-wc-order.php:220
 msgid "Weight"
 msgstr "Gewicht"
 
 #. translators: %s is the weight unit (e.g., kg or lbs)
-#: includes/abstract-pr-dhl-wc-order.php:223
+#: includes/abstract-pr-dhl-wc-order.php:226
 #, php-format
 msgid "Estimated shipment weight (%s) based on items ordered: "
 msgstr "Voraussichtliches Gewicht (%s) der Sendung auf Basis der bestellten Produkte: "
 
-#: includes/abstract-pr-dhl-wc-order.php:247
+#: includes/abstract-pr-dhl-wc-order.php:250
 msgid "There are no DHL services available for the destination country!"
 msgstr "Für das Bestimmungsland sind keine DHL-Services verfügbar!"
 
-#: includes/abstract-pr-dhl-wc-order.php:369
-#: includes/abstract-pr-dhl-wc-order.php:399
+#: includes/abstract-pr-dhl-wc-order.php:372
+#: includes/abstract-pr-dhl-wc-order.php:402
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:695
 msgid "Your DHL label is ready to download, click the \"Download Label\" button above\""
 msgstr "Ihr DHL-Label steht zum Download bereit. Klicken Sie oben auf die Schaltfläche \"Label herunterladen\"."
 
-#: includes/abstract-pr-dhl-wc-order.php:394
+#: includes/abstract-pr-dhl-wc-order.php:397
 msgid "There are no tracking number to delete."
 msgstr "Es sind keine Sendungsnummern zum Löschen vorhanden."
 
 #. translators: %s is the tracking link
-#: includes/abstract-pr-dhl-wc-order.php:439
+#: includes/abstract-pr-dhl-wc-order.php:442
 #, php-format
 msgid "%s Tracking Number: {tracking-link}"
 msgstr "%s Sendungsnummer: {tracking-link}"
 
 #. translators: %s is the return label number
-#: includes/abstract-pr-dhl-wc-order.php:461
+#: includes/abstract-pr-dhl-wc-order.php:464
 #, php-format
 msgid ""
 "\n"
@@ -116,62 +116,62 @@ msgstr ""
 " Retourenlabel-Nummer: %s"
 
 #. translators: %s is the order number
-#: includes/abstract-pr-dhl-wc-order.php:1205
+#: includes/abstract-pr-dhl-wc-order.php:1230
 #, php-format
 msgid "Order #%s: DHL label created"
 msgstr "Bestellung #%s: DHL-Label erstellt"
 
 #. translators: %1$s is the order number, %2$s is the error message
-#: includes/abstract-pr-dhl-wc-order.php:1223
-#: includes/abstract-pr-dhl-wc-order.php:1381
+#: includes/abstract-pr-dhl-wc-order.php:1248
+#: includes/abstract-pr-dhl-wc-order.php:1406
 #, php-format
 msgid "Order #%1$s: %2$s"
 msgstr "Bestellung #%1$s: %2$s"
 
 #. translators: %1$s and %2$s are HTML tags for the download link
-#: includes/abstract-pr-dhl-wc-order.php:1291
+#: includes/abstract-pr-dhl-wc-order.php:1316
 #, php-format
 msgid "Bulk DHL labels file created - %1$sdownload file%2$s"
 msgstr "Sammeldatei mit DHL-Labels erstellt – %1$sDatei herunterladen%2$s"
 
-#: includes/abstract-pr-dhl-wc-order.php:1298
+#: includes/abstract-pr-dhl-wc-order.php:1323
 msgid "Could not create bulk DHL label file, download individually."
 msgstr "Sammeldatei der DHL-Labels konnte nicht erstellt werden, bitte einzeln herunterladen."
 
 #. translators: %s is the order number
-#: includes/abstract-pr-dhl-wc-order.php:1374
+#: includes/abstract-pr-dhl-wc-order.php:1399
 #, php-format
 msgid "Order #%s: DHL Label Deleted"
 msgstr "Bestellung #%s: DHL-Label gelöscht"
 
-#: includes/abstract-pr-dhl-wc-order.php:1424
-#: includes/abstract-pr-dhl-wc-order.php:1443
+#: includes/abstract-pr-dhl-wc-order.php:1449
+#: includes/abstract-pr-dhl-wc-order.php:1468
 msgid "There are no files to merge."
 msgstr "Es sind keine Dateien zum Zusammenführen vorhanden."
 
-#: includes/abstract-pr-dhl-wc-order.php:1430
+#: includes/abstract-pr-dhl-wc-order.php:1455
 msgid "The first file is empty."
 msgstr "Die erste Datei ist leer."
 
-#: includes/abstract-pr-dhl-wc-order.php:1436
+#: includes/abstract-pr-dhl-wc-order.php:1461
 msgid "File format not supported."
 msgstr "Dateiformat wird nicht unterstützt."
 
-#: includes/abstract-pr-dhl-wc-order.php:1451
+#: includes/abstract-pr-dhl-wc-order.php:1476
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:624
 msgid "Library conflict, could not merge PDF files. Please download PDF files individually."
 msgstr "Bibliothekskonflikt, PDF-Dateien konnten nicht zusammengeführt werden. Bitte laden Sie die PDF-Dateien einzeln herunter."
 
-#: includes/abstract-pr-dhl-wc-order.php:1464
+#: includes/abstract-pr-dhl-wc-order.php:1489
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:639
 msgid "Not all the file formats are the same."
 msgstr "Nicht alle Dateiformate sind identisch."
 
-#: includes/abstract-pr-dhl-wc-order.php:1530
+#: includes/abstract-pr-dhl-wc-order.php:1555
 msgid "There are currently no bulk DHL label file to download or the download link for the bulk DHL label file has already expired. Please try again."
 msgstr "Derzeit ist keine DHL-Sammeldatei zum Herunterladen vorhanden oder der Download-Link für die DHL-Sammeldatei ist bereits abgelaufen. Bitte versuchen Sie es erneut."
 
-#: includes/abstract-pr-dhl-wc-order.php:1553
+#: includes/abstract-pr-dhl-wc-order.php:1578
 #: includes/class-pr-dhl-wc-order-deutsche-post.php:1161
 msgid "Unable to download file. Label appears to be invalid or is missing. Please try again."
 msgstr "Datei kann nicht heruntergeladen werden. Das Label scheint ungültig zu sein oder fehlt. Bitte versuchen Sie es erneut."
@@ -208,13 +208,13 @@ msgid "- No change -"
 msgstr "- Keine Änderung -"
 
 #: includes/class-pr-dhl-extend-block-core.php:72
-#: includes/front-end/class-pr-dhl-front-end-paket.php:509
+#: includes/front-end/class-pr-dhl-front-end-paket.php:510
 msgid "Please enter the preferred location."
 msgstr "Bitte vervollständigen Sie die Angaben zu Ihrem Ablageort."
 
 #: includes/class-pr-dhl-extend-block-core.php:81
 #: includes/class-pr-dhl-extend-block-core.php:101
-#: includes/front-end/class-pr-dhl-front-end-paket.php:514
+#: includes/front-end/class-pr-dhl-front-end-paket.php:515
 msgid "Please enter the preferred neighbor name and address."
 msgstr "Bitte vervollständigen Sie die Angaben zu Ihrem Wunschnachbarn."
 
@@ -877,7 +877,7 @@ msgid "Exclusion of transfer days"
 msgstr "Ausschluss von Übergabetagen"
 
 #: includes/class-pr-dhl-wc-method-paket.php:637
-#: includes/front-end/class-pr-dhl-front-end-paket.php:229
+#: includes/front-end/class-pr-dhl-front-end-paket.php:230
 msgid "Monday"
 msgstr "Montag"
 
@@ -886,27 +886,27 @@ msgid "Exclude days to transfer packages to DHL."
 msgstr "Hier die Tage ankreuzen, an denen Sie keine Pakete an DHL übergeben."
 
 #: includes/class-pr-dhl-wc-method-paket.php:643
-#: includes/front-end/class-pr-dhl-front-end-paket.php:230
+#: includes/front-end/class-pr-dhl-front-end-paket.php:231
 msgid "Tuesday"
 msgstr "Dienstag"
 
 #: includes/class-pr-dhl-wc-method-paket.php:647
-#: includes/front-end/class-pr-dhl-front-end-paket.php:231
+#: includes/front-end/class-pr-dhl-front-end-paket.php:232
 msgid "Wednesday"
 msgstr "Mittwoch"
 
 #: includes/class-pr-dhl-wc-method-paket.php:651
-#: includes/front-end/class-pr-dhl-front-end-paket.php:232
+#: includes/front-end/class-pr-dhl-front-end-paket.php:233
 msgid "Thursday"
 msgstr "Donnerstag"
 
 #: includes/class-pr-dhl-wc-method-paket.php:655
-#: includes/front-end/class-pr-dhl-front-end-paket.php:233
+#: includes/front-end/class-pr-dhl-front-end-paket.php:234
 msgid "Friday"
 msgstr "Freitag"
 
 #: includes/class-pr-dhl-wc-method-paket.php:659
-#: includes/front-end/class-pr-dhl-front-end-paket.php:234
+#: includes/front-end/class-pr-dhl-front-end-paket.php:235
 msgid "Saturday"
 msgstr "Samstag"
 
@@ -967,12 +967,12 @@ msgid "Please define the parameters for the display of dhl locations in the shop
 msgstr "Bitte konfigurieren Sie hier, was die Standortsuche im Frontend anzeigen soll."
 
 #: includes/class-pr-dhl-wc-method-paket.php:707
-#: includes/front-end/class-pr-dhl-front-end-paket.php:636
+#: includes/front-end/class-pr-dhl-front-end-paket.php:637
 #: templates/checkout/dhl-parcel-finder.php:34
 #: build/pr-dhl-parcel-finder-frontend.js:1
-#: includes/checkout-blocks/dhl-parcel-finder/block.js:101
-#: includes/checkout-blocks/dhl-parcel-finder/block.js:114
-#: includes/checkout-blocks/dhl-parcel-finder/block.js:368
+#: includes/checkout-blocks/dhl-parcel-finder/block.js:106
+#: includes/checkout-blocks/dhl-parcel-finder/block.js:119
+#: includes/checkout-blocks/dhl-parcel-finder/block.js:374
 msgid "Packstation"
 msgstr "Packstation"
 
@@ -1100,7 +1100,7 @@ msgstr "Absender-Hausnummer."
 #: includes/class-pr-dhl-wc-wizard-paket.php:153
 #: templates/checkout/dhl-parcel-finder.php:23
 #: build/pr-dhl-parcel-finder-frontend.js:1
-#: includes/checkout-blocks/dhl-parcel-finder/block.js:342
+#: includes/checkout-blocks/dhl-parcel-finder/block.js:348
 msgid "City"
 msgstr "Ort"
 
@@ -1896,179 +1896,179 @@ msgstr "Nachbar(in)"
 msgid "Delivery option"
 msgstr "Lieferoption"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:118
+#: includes/front-end/class-pr-dhl-front-end-paket.php:119
 #, php-format
 msgid "For deliveries to DHL Parcel Lockers you have to %1screate a DHL account%2s and get a Post Number."
 msgstr "Für Lieferungen an DHL-Packstationen müssen Sie %1sein DHL-Konto erstellen%2s und eine Postnummer erhalten."
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:228
+#: includes/front-end/class-pr-dhl-front-end-paket.php:229
 msgid "Opening Times"
 msgstr "Öffnungszeiten"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:235
+#: includes/front-end/class-pr-dhl-front-end-paket.php:236
 msgid "Sunday"
 msgstr "Sonntag"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:236
+#: includes/front-end/class-pr-dhl-front-end-paket.php:237
 msgid "Services"
 msgstr "Services"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:237
+#: includes/front-end/class-pr-dhl-front-end-paket.php:238
 msgid "Yes"
 msgstr "Ja"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:238
+#: includes/front-end/class-pr-dhl-front-end-paket.php:239
 msgid "No"
 msgstr "Nein"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:239
+#: includes/front-end/class-pr-dhl-front-end-paket.php:240
 msgid "Parking"
 msgstr "Parkplätze"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:240
+#: includes/front-end/class-pr-dhl-front-end-paket.php:241
 msgid "Handicap Accessible"
 msgstr "Barrierefrei"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:244
-#: includes/front-end/class-pr-dhl-front-end-paket.php:628
+#: includes/front-end/class-pr-dhl-front-end-paket.php:245
+#: includes/front-end/class-pr-dhl-front-end-paket.php:629
 #: templates/checkout/dhl-parcel-finder.php:40
 #: build/pr-dhl-parcel-finder-frontend.js:1
-#: includes/checkout-blocks/dhl-parcel-finder/block.js:388
+#: includes/checkout-blocks/dhl-parcel-finder/block.js:394
 msgid "Branch"
 msgstr "Filiale"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:245
+#: includes/front-end/class-pr-dhl-front-end-paket.php:246
 msgid "Select "
 msgstr "Auswählen"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:246
-#: includes/front-end/class-pr-dhl-front-end-paket.php:835
+#: includes/front-end/class-pr-dhl-front-end-paket.php:247
+#: includes/front-end/class-pr-dhl-front-end-paket.php:836
 msgid "Select a drop-off point"
 msgstr "Wählen Sie einen Abgabeort"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:247
+#: includes/front-end/class-pr-dhl-front-end-paket.php:248
 msgid "Post Number "
 msgstr "Postnummer"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:248
+#: includes/front-end/class-pr-dhl-front-end-paket.php:249
 msgid "<span class=\"dhl-tooltip\" title=\"Indicate a preferred time, which suits you best for your parcel delivery by choosing one of the displayed time windows.\">?</span>"
 msgstr "<span class=\"dhl-tooltip\" title=\"Geben Sie eine Wunschzeit an, die Ihnen für die Zustellung Ihres Pakets am besten passt, indem Sie eines der angezeigten Zeitfenster auswählen.\">?</span>"
 
 #. Translators: %1$s is an opening HTML tag and %2$s is a closing HTML tag for styling the error message.
-#: includes/front-end/class-pr-dhl-front-end-paket.php:250
+#: includes/front-end/class-pr-dhl-front-end-paket.php:251
 #, php-format
 msgid "%1$sPlease insert an API Key to enable the display of locations in the frontend on a map.%2$s"
 msgstr "%1$sBitte geben Sie einen API-Schlüssel an, um die Anzeige der Standorte im Frontend auf einer Karte zu aktivieren.%2$s"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:251
+#: includes/front-end/class-pr-dhl-front-end-paket.php:252
 msgid "Please enter a postcode to search locations."
 msgstr "Bitte geben Sie eine Postleitzahl ein, um nach Standorten zu suchen."
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:262
+#: includes/front-end/class-pr-dhl-front-end-paket.php:263
 msgid "Ship to a different address or Packstation/Branch?"
 msgstr "Versand an eine abweichende Adresse oder an eine Packstation/Filiale?"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:329
+#: includes/front-end/class-pr-dhl-front-end-paket.php:330
 msgid "No shipping method enabled."
 msgstr "Keine Versandart aktiviert."
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:364
-#: includes/front-end/class-pr-dhl-front-end-paket.php:370
+#: includes/front-end/class-pr-dhl-front-end-paket.php:365
+#: includes/front-end/class-pr-dhl-front-end-paket.php:371
 msgid "Payment gateway excluded."
 msgstr "Zahlungsmethode ausgeschlossen."
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:378
+#: includes/front-end/class-pr-dhl-front-end-paket.php:379
 msgid "Not enabled for selected shipping method."
 msgstr "Für die ausgewählte Versandart nicht verfügbar."
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:476
+#: includes/front-end/class-pr-dhl-front-end-paket.php:477
 #: build/pr-dhl-preferred-services-frontend.js:1
 #: includes/checkout-blocks/dhl-preferred-services/block.js:218
 msgid "DHL Delivery Day"
 msgstr "DHL Wunschtag"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:633
+#: includes/front-end/class-pr-dhl-front-end-paket.php:634
 msgid " / "
 msgstr " / "
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:639
+#: includes/front-end/class-pr-dhl-front-end-paket.php:640
 msgid "Search "
 msgstr "Suchen "
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:684
+#: includes/front-end/class-pr-dhl-front-end-paket.php:685
 msgid "No parcel shops found"
 msgstr "Kein Paketshop gefunden"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:725
+#: includes/front-end/class-pr-dhl-front-end-paket.php:726
 msgid "No Parcel Shops found. Ensure \"Packstation\" or Branch\" filter is checked "
 msgstr "Kein Standort gefunden. Stellen Sie sicher, dass der Filter für Packstation oder Filiale ausgewählt ist."
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:823
+#: includes/front-end/class-pr-dhl-front-end-paket.php:824
 #: build/pr-dhl-parcel-finder-frontend.js:1
-#: includes/checkout-blocks/dhl-parcel-finder/block.js:271
+#: includes/checkout-blocks/dhl-parcel-finder/block.js:277
 msgid "Regular Address"
 msgstr "Reguläre Adresse"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:827
+#: includes/front-end/class-pr-dhl-front-end-paket.php:828
 #: build/pr-dhl-parcel-finder-frontend.js:1
-#: includes/checkout-blocks/dhl-parcel-finder/block.js:275
+#: includes/checkout-blocks/dhl-parcel-finder/block.js:281
 msgid "DHL Packstation"
 msgstr "DHL Packstation"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:831
+#: includes/front-end/class-pr-dhl-front-end-paket.php:832
 #: build/pr-dhl-parcel-finder-frontend.js:1
-#: includes/checkout-blocks/dhl-parcel-finder/block.js:282
+#: includes/checkout-blocks/dhl-parcel-finder/block.js:288
 msgid "DHL Branch"
 msgstr "DHL Filiale"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:839
+#: includes/front-end/class-pr-dhl-front-end-paket.php:840
 #: build/pr-dhl-parcel-finder-frontend.js:1
-#: includes/checkout-blocks/dhl-parcel-finder/block.js:270
+#: includes/checkout-blocks/dhl-parcel-finder/block.js:276
 msgid "Address Type"
 msgstr "Adresstyp"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:850
-#: includes/front-end/class-pr-dhl-front-end-paket.php:900
+#: includes/front-end/class-pr-dhl-front-end-paket.php:851
+#: includes/front-end/class-pr-dhl-front-end-paket.php:901
 #: build/pr-dhl-parcel-finder-frontend.js:1
-#: includes/checkout-blocks/dhl-parcel-finder/block.js:477
+#: includes/checkout-blocks/dhl-parcel-finder/block.js:489
 msgid "Post Number"
 msgstr "Postnummer"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:858
+#: includes/front-end/class-pr-dhl-front-end-paket.php:859
 msgid "Drop off points"
 msgstr "Abgabeorte"
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:923
+#: includes/front-end/class-pr-dhl-front-end-paket.php:924
 msgid "Activate Shipment Notification. When activated DHL will inform you via email about the shipment status of your order."
 msgstr "Paketankündigung aktivieren. Mit der Aktivierung der Paketankündigung informiert Sie DHL per E-Mail über die geplante Lieferung Ihrer Sendung."
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:997
+#: includes/front-end/class-pr-dhl-front-end-paket.php:998
 msgid "\"DHL Locations\" cannot be used - "
 msgstr "„DHL Locations“ können nicht verwendet werden – "
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:1005
+#: includes/front-end/class-pr-dhl-front-end-paket.php:1006
 #: build/pr-dhl-parcel-finder-frontend.js:1
-#: includes/checkout-blocks/dhl-parcel-finder/block.js:200
+#: includes/checkout-blocks/dhl-parcel-finder/block.js:205
 msgid "Post Number is mandatory for a Packstation location."
 msgstr "Die Angabe der Postnummer ist für Packstationen verpflichtend."
 
 #. Translators: %s is the text that must be included in the address (e.g., a specific keyword or phrase).
-#: includes/front-end/class-pr-dhl-front-end-paket.php:1011
-#: includes/front-end/class-pr-dhl-front-end-paket.php:1017
-#: includes/front-end/class-pr-dhl-front-end-paket.php:1023
+#: includes/front-end/class-pr-dhl-front-end-paket.php:1012
+#: includes/front-end/class-pr-dhl-front-end-paket.php:1018
+#: includes/front-end/class-pr-dhl-front-end-paket.php:1024
 #, php-format
 msgid "The text \"%s\" must be included in the address."
 msgstr "Der Text „%s“ muss in der Adresse vorhanden sein."
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:1031
+#: includes/front-end/class-pr-dhl-front-end-paket.php:1033
 #: build/pr-dhl-parcel-finder-frontend.js:1
-#: includes/checkout-blocks/dhl-parcel-finder/block.js:242
+#: includes/checkout-blocks/dhl-parcel-finder/block.js:248
 msgid "Post Number must be a number."
 msgstr "Die Postnummer muss aus Zahlen bestehen."
 
-#: includes/front-end/class-pr-dhl-front-end-paket.php:1037
+#: includes/front-end/class-pr-dhl-front-end-paket.php:1039
 #: build/pr-dhl-parcel-finder-frontend.js:1
-#: includes/checkout-blocks/dhl-parcel-finder/block.js:252
+#: includes/checkout-blocks/dhl-parcel-finder/block.js:258
 msgid "The post number you entered is not valid. Please correct the number."
 msgstr "Die eingegebene Postnummer ist ungültig. Bitte korrigieren Sie die Postnummer."
 
@@ -2555,7 +2555,7 @@ msgstr "Die Postnummer fehlt, sie ist für die Zustellung an eine „Packstation
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:440
 #: includes/pr-dhl-api/class-pr-dhl-api-soap-label.php:472
-#: includes/REST_API/Parcel_DE/Item_Info.php:1275
+#: includes/REST_API/Parcel_DE/Item_Info.php:1309
 msgid "Shipping street number is missing!"
 msgstr "Die Hausnummer der Lieferadresse fehlt!"
 
@@ -2711,7 +2711,7 @@ msgid "Error creating label: %s"
 msgstr "Fehler beim Erstellen des Labels: %s"
 
 #. Translators: %s is replaced with the error message returned from the API.
-#: includes/REST_API/Parcel_DE/Client.php:589
+#: includes/REST_API/Parcel_DE/Client.php:594
 #, php-format
 msgid "Error deleting label: %s"
 msgstr "Fehler beim Löschen des Labels: %s"
@@ -2771,6 +2771,16 @@ msgstr "Der HS-Code des Artikels muss einen Wert haben, um PDDP verwenden zu kö
 msgid "Item HS Code must be between 4 and 11 characters long"
 msgstr "Der HS-Code des Artikels muss zwischen 4 und 11 Zeichen lang sein"
 
+#. translators: %s: the order's currency code, e.g. "USD".
+#: includes/REST_API/Parcel_DE/Item_Info.php:877
+#, php-format
+msgid "Cash on Delivery is only available for orders in Euro (EUR). This order uses %s, so a Cash on Delivery label cannot be created."
+msgstr "Nachnahme ist nur für Bestellungen in Euro (EUR) verfügbar. Diese Bestellung verwendet %s, daher kann kein Nachnahme-Label erstellt werden."
+
+#: includes/REST_API/Parcel_DE/Item_Info.php:890
+msgid "Cash on Delivery requires your bank account details. Please add the Account Owner and IBAN under the DHL \"Bank Details\" settings to create a Cash on Delivery label."
+msgstr "Für Nachnahme sind Ihre Bankverbindungsdaten erforderlich. Bitte hinterlegen Sie den Kontoinhaber und die IBAN in den DHL-Einstellungen unter „Bankverbindung“, um ein Nachnahme-Label zu erstellen."
+
 #. translators: %s is the name of the required argument
 #: includes/Utils/Args_Parser.php:58
 #, php-format
@@ -2822,21 +2832,21 @@ msgstr "Konto verbunden"
 msgid "Account Connection Failed: %s . Make sure to save the settings before testing the connection. "
 msgstr "Kontoverbindung fehlgeschlagen: %s . Stellen Sie sicher, dass Sie die Einstellungen speichern, bevor Sie die Verbindung testen. "
 
-#: pr-dhl-woocommerce.php:985
+#: pr-dhl-woocommerce.php:1033
 msgid "Your DHL account password will expire in less than 30 days, please head to DHL business portal and reset your password."
 msgstr "Ihr DHL-Kontopasswort läuft in weniger als 30 Tagen ab. Bitte gehen Sie zum DHL-Geschäftskundenportal und setzen Sie Ihr Passwort zurück."
 
-#: pr-dhl-woocommerce.php:987
+#: pr-dhl-woocommerce.php:1035
 msgid "Your DHL account password will expire in less than 7 days, please head to DHL business portal and reset your password."
 msgstr "Ihr DHL-Kontopasswort läuft in weniger als 7 Tagen ab. Bitte gehen Sie zum DHL-Geschäftskundenportal und setzen Sie Ihr Passwort zurück."
 
 #. translators: %s is the warning message
-#: pr-dhl-woocommerce.php:992
+#: pr-dhl-woocommerce.php:1040
 #, php-format
 msgid "Warning: %s"
 msgstr "Warnung: %s"
 
-#: pr-dhl-woocommerce.php:1017
+#: pr-dhl-woocommerce.php:1065
 msgid "DHL checkout Blocks"
 msgstr "DHL-Checkout-Blöcke"
 
@@ -2860,19 +2870,19 @@ msgstr "Lieferung an die Wohnadresse"
 
 #: templates/checkout/dhl-parcel-finder.php:19
 #: build/pr-dhl-parcel-finder-frontend.js:1
-#: includes/checkout-blocks/dhl-parcel-finder/block.js:332
+#: includes/checkout-blocks/dhl-parcel-finder/block.js:338
 msgid "Post Code"
 msgstr "Postleitzahl"
 
 #: templates/checkout/dhl-parcel-finder.php:28
 #: build/pr-dhl-parcel-finder-frontend.js:1
-#: includes/checkout-blocks/dhl-parcel-finder/block.js:352
+#: includes/checkout-blocks/dhl-parcel-finder/block.js:358
 msgid "Address"
 msgstr "Adresse"
 
 #: templates/checkout/dhl-parcel-finder.php:45
 #: build/pr-dhl-parcel-finder-frontend.js:1
-#: includes/checkout-blocks/dhl-parcel-finder/block.js:412
+#: includes/checkout-blocks/dhl-parcel-finder/block.js:418
 msgid "Search"
 msgstr "Suche"
 
@@ -3002,44 +3012,44 @@ msgid "Neighbour: Delivery to a neighbour of your choice "
 msgstr "Nachbar: Lieferung an einen Nachbarn Ihrer Wahl "
 
 #: build/pr-dhl-parcel-finder-frontend.js:1
-#: includes/checkout-blocks/dhl-parcel-finder/block.js:105
 #: includes/checkout-blocks/dhl-parcel-finder/block.js:110
+#: includes/checkout-blocks/dhl-parcel-finder/block.js:115
 msgid "Postfiliale"
 msgstr "Postfiliale"
 
 #: build/pr-dhl-parcel-finder-frontend.js:1
-#: includes/checkout-blocks/dhl-parcel-finder/block.js:210
+#: includes/checkout-blocks/dhl-parcel-finder/block.js:215
 msgid "The text \"Packstation\" must be included in the address."
 msgstr "Der Text „Packstation“ muss in der Adresse enthalten sein."
 
 #: build/pr-dhl-parcel-finder-frontend.js:1
-#: includes/checkout-blocks/dhl-parcel-finder/block.js:221
-#: includes/checkout-blocks/dhl-parcel-finder/block.js:230
+#: includes/checkout-blocks/dhl-parcel-finder/block.js:226
+#: includes/checkout-blocks/dhl-parcel-finder/block.js:235
 msgid "The text \"Postfiliale\" must be included in the address."
 msgstr "Der Text „Postfiliale“ muss in der Adresse enthalten sein."
 
 #: build/pr-dhl-parcel-finder-frontend.js:1
-#: includes/checkout-blocks/dhl-parcel-finder/block.js:296
+#: includes/checkout-blocks/dhl-parcel-finder/block.js:302
 msgid "For deliveries to DHL Parcel Lockers you have to"
 msgstr "Für Lieferungen an DHL-Packstationen müssen Sie"
 
 #: build/pr-dhl-parcel-finder-frontend.js:1
-#: includes/checkout-blocks/dhl-parcel-finder/block.js:298
+#: includes/checkout-blocks/dhl-parcel-finder/block.js:304
 msgid "create a DHL account"
 msgstr "ein DHL-Konto erstellen"
 
 #: build/pr-dhl-parcel-finder-frontend.js:1
-#: includes/checkout-blocks/dhl-parcel-finder/block.js:300
+#: includes/checkout-blocks/dhl-parcel-finder/block.js:306
 msgid "and get a Post Number."
 msgstr "und eine Postnummer erhalten."
 
 #: build/pr-dhl-parcel-finder-frontend.js:1
-#: includes/checkout-blocks/dhl-parcel-finder/block.js:316
+#: includes/checkout-blocks/dhl-parcel-finder/block.js:322
 msgid "Search Packstation / Branch"
 msgstr "Packstation / Filiale suchen"
 
 #: build/pr-dhl-parcel-finder-frontend.js:1
-#: includes/checkout-blocks/dhl-parcel-finder/block.js:461
+#: includes/checkout-blocks/dhl-parcel-finder/block.js:473
 msgid "Select a drop off points"
 msgstr "Wählen Sie einen Abgabeort"
 
