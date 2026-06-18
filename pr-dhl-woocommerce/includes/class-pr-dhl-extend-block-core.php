@@ -44,7 +44,7 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 		 * @return void
 		 */
 		public function save_dhl_checkout_fields( \WC_Order $order, \WP_REST_Request $request ) {
-			$pr_dhl_request_data = $request['extensions'][ $this->name ];
+			$pr_dhl_request_data = isset( $request['extensions'][ $this->name ] ) ? $request['extensions'][ $this->name ] : array();
 			$dhl_label_options   = array();
 			if ( ! empty( $pr_dhl_request_data['preferredDay'] ) ) {
 				$dhl_label_options['pr_dhl_preferred_day'] = wc_clean( $pr_dhl_request_data['preferredDay'] );
@@ -115,14 +115,26 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 				PR_DHL()->get_pr_dhl_wc_order()->save_dhl_label_items( $order->get_id(), $dhl_label_options );
 			}
 			
-			// Extract billing and shipping house numbers with sanitization
-			$shipping_postnum = sanitize_text_field( $pr_dhl_request_data['postNumber'] ) ;
+			// The Post Number only applies to Packstation / Postfiliale deliveries. Persist it only
+			// when the address type or the shipping address itself is a droppoint; otherwise drop any
+			// stale value so a Regular Address never carries a Post Number to the DHL API. Mirrors the
+			// classic checkout's clear_post_number_for_regular_address().
+			$address_type       = isset( $pr_dhl_request_data['addressType'] ) ? wc_clean( $pr_dhl_request_data['addressType'] ) : '';
+			$shipping_postnum   = isset( $pr_dhl_request_data['postNumber'] ) ? sanitize_text_field( $pr_dhl_request_data['postNumber'] ) : '';
+			$shipping_address_1 = $order->get_shipping_address_1();
 
-			// Update billing and shipping house numbers
-			$order->update_meta_data( '_shipping_dhl_postnum', $shipping_postnum );
-			/**
-			 * Save the order to persist changes
-			 */
+			$is_droppoint = PR_DHL()->is_droppoint_address_type( $address_type )
+				|| PR_DHL()->is_packstation( $shipping_address_1 )
+				|| PR_DHL()->is_parcelshop( $shipping_address_1 )
+				|| PR_DHL()->is_post_office( $shipping_address_1 );
+
+			if ( $is_droppoint ) {
+				$order->update_meta_data( '_shipping_dhl_postnum', $shipping_postnum );
+			} else {
+				$order->delete_meta_data( '_shipping_dhl_postnum' );
+			}
+
+			// Save the order to persist changes.
 			$order->save();
 
 		}
