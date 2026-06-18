@@ -834,6 +834,54 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		}
 
 		/**
+		 * The checkout address type values that denote a DHL droppoint
+		 * (Packstation / Postfiliale). Single source of truth, shared with the
+		 * block checkout via prDhlGlobals.
+		 *
+		 * @return string[]
+		 */
+		public function get_droppoint_address_types() {
+			return array( 'dhl_packstation', 'dhl_branch' );
+		}
+
+		/**
+		 * Whether the selected checkout address type denotes a DHL droppoint
+		 * (Packstation or Postfiliale/Branch) — the only types a Post Number applies to.
+		 *
+		 * @param string $address_type Selected shipping address type value.
+		 * @return bool
+		 */
+		public function is_droppoint_address_type( $address_type ) {
+			return in_array( $address_type, $this->get_droppoint_address_types(), true );
+		}
+
+		/**
+		 * Whether a shipping address denotes a DHL droppoint
+		 * (Packstation, Parcelshop, or Postfiliale).
+		 *
+		 * @param string $address Shipping address line to inspect.
+		 * @return bool
+		 */
+		public function is_droppoint_address( $address ) {
+			return $this->is_packstation( $address )
+				|| $this->is_parcelshop( $address )
+				|| $this->is_post_office( $address );
+		}
+
+		/**
+		 * Whether a delivery is a DHL droppoint by either its selected address type
+		 * or its shipping address — the only case a Post Number applies to.
+		 *
+		 * @param string $address_type Selected shipping address type value.
+		 * @param string $address      Shipping address line to inspect.
+		 * @return bool
+		 */
+		public function is_droppoint( $address_type, $address ) {
+			return $this->is_droppoint_address_type( $address_type )
+				|| $this->is_droppoint_address( $address );
+		}
+
+		/**
 		 * Installation functions
 		 *
 		 * Create temporary folder and files. DHL labels will be stored here as required

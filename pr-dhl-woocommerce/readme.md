@@ -73,6 +73,7 @@ More detailed instructions on how to set up your store and configure it are cons
 * Fix: WooCommerce Subscriptions compatibility — no longer logs the "wcs_renewal_order_meta_query is deprecated" notice on every subscription renewal.
 * Fix: Cash on Delivery details now appear on DHL Paket labels created via the REST API.
 * Fix: Show a clear error when a Cash on Delivery label can't be created because the order isn't in Euro or bank details are missing.
+* Fix: Regular Address no longer shows a Post Number error at checkout.
 
 = 3.9.7 =
 * Fix: Errors appear when trying to save map settings.
