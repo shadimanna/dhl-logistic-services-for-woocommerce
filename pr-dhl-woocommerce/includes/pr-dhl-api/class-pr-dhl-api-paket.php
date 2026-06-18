@@ -19,20 +19,10 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 
 	public function __construct( $country_code ) {
 		$this->country_code = $country_code;
-		$settings           = $this->get_settings();
 
-		try {
-			if ( API_Utils::is_new_merchant() || API_Utils::is_rest_api_enabled() ) {
-				$this->dhl_label = new PR_DHL_API_REST_Parcel_DE( $country_code );
-			} else {
-				$this->dhl_label = new PR_DHL_API_SOAP_Label();
-			}
-			// $this->dhl_finder = new PR_DHL_API_SOAP_Finder( );
-			$this->dhl_finder     = new PR_DHL_API_REST_Finder();
-			$this->dhl_my_account = new PR_DHL_API_REST_Parcel_DE_MyAccount();
-		} catch ( Exception $e ) {
-			throw $e;
-		}
+		$this->dhl_label      = new PR_DHL_API_REST_Parcel_DE( $country_code );
+		$this->dhl_finder     = new PR_DHL_API_REST_Finder();
+		$this->dhl_my_account = new PR_DHL_API_REST_Parcel_DE_MyAccount();
 	}
 
 	public function is_dhl_paket() {
@@ -42,17 +32,10 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 	protected function maybe_sandbox( $args ) {
 
 		if ( isset( $args['sandbox'] ) && ( $args['sandbox'] == 'yes' ) ) {
-			$sandbox_info = $this->sandbox_info();
-			$settings     = $this->get_settings();
-
-			$args['api_user'] = $sandbox_info['username'];
-			$args['api_pwd']  = $sandbox_info['pass'];
-
-			if ( API_Utils::is_new_merchant() || API_Utils::is_rest_api_enabled() ) {
-				$args['account_num'] = $sandbox_info['rest_api_account_no'];
-			} else {
-				$args['account_num'] = $sandbox_info['account_no'];
-			}
+			$sandbox_info        = $this->sandbox_info();
+			$args['api_user']    = $sandbox_info['username'];
+			$args['api_pwd']     = $sandbox_info['pass'];
+			$args['account_num'] = $sandbox_info['rest_api_account_no'];
 		}
 
 		return $args;
