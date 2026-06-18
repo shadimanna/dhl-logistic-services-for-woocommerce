@@ -86,6 +86,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 
 				add_filter( 'woocommerce_checkout_fields', array( $this, 'add_postnum_field' ), 101 );
 				add_action( 'woocommerce_checkout_process', array( $this, 'validate_post_number' ) );
+				add_action( 'woocommerce_checkout_order_processed', array( $this, 'clear_post_number_for_regular_address' ), 10, 2 );
 				// add_action( 'woocommerce_process_checkout_field_shipping_dhl_postnum_ps', array( $this, 'validate_post_number_required' ) );
 
 				add_filter( 'woocommerce_order_formatted_shipping_address', array( $this, 'display_post_number' ), 10, 2 );
@@ -1038,6 +1039,36 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 					wc_add_notice( esc_html__( 'The post number you entered is not valid. Please correct the number.', 'dhl-for-woocommerce' ), 'error' );
 					return;
 				}
+			}
+		}
+
+		/**
+		 * Clear a stale DHL Post Number when a Regular Address is selected.
+		 *
+		 * The Post Number only applies to Packstation / Postfiliale deliveries. If a
+		 * customer entered one and then switched to a Regular Address, drop the value so
+		 * it is not persisted on the order or sent to the DHL API. Mirrors the Blocks
+		 * checkout, which clears the field client-side on the same switch.
+		 *
+		 * @param int   $order_id Order ID.
+		 * @param array $posted   Sanitized posted checkout data.
+		 */
+		public function clear_post_number_for_regular_address( $order_id, $posted ) {
+
+			if ( ! isset( $posted['shipping_dhl_address_type'] ) ) {
+				return;
+			}
+
+			// Keep the Post Number for Packstation / Postfiliale deliveries.
+			if ( in_array( $posted['shipping_dhl_address_type'], array( 'dhl_packstation', 'dhl_branch' ), true ) ) {
+				return;
+			}
+
+			$order = wc_get_order( $order_id );
+
+			if ( $order && ! empty( $order->get_meta( '_shipping_dhl_postnum' ) ) ) {
+				$order->delete_meta_data( '_shipping_dhl_postnum' );
+				$order->save();
 			}
 		}
 
