@@ -297,6 +297,11 @@ class Client extends API_Client {
 			),
 		);
 
+		if ( 'V54EPAK' === $request_info->shipment['product'] ) {
+			$duties                        = $request_info->args['order_details']['duties'] ?? '';
+			$customs['shippingConditions'] = ( empty( $duties ) || 'DDU' === $duties ) ? 'DAP' : $duties;
+		}
+
 		if ( ! empty( $request_info->shipment['mrn'] ) ) {
 			$customs['MRN'] = $request_info->shipment['mrn'];
 		}

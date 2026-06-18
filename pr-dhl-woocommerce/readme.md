@@ -68,6 +68,7 @@ More detailed instructions on how to set up your store and configure it are cons
 == Changelog ==
 
 = 3.9.8 =
+* Fix: Missing customs "shippingConditions" field causing label creation failure for DHL Europaket (V54EPAK) cross-border shipments.
 * Fix: DHL Checkout Blocks text is now translated on the frontend.
 * Fix: Update missing German translations.
 * Fix: WooCommerce Subscriptions compatibility — no longer logs the "wcs_renewal_order_meta_query is deprecated" notice on every subscription renewal.
