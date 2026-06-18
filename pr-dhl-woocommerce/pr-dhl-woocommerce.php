@@ -834,6 +834,17 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		}
 
 		/**
+		 * Whether the selected checkout address type denotes a DHL droppoint
+		 * (Packstation or Postfiliale/Branch) — the only types a Post Number applies to.
+		 *
+		 * @param string $address_type Selected shipping address type value.
+		 * @return bool
+		 */
+		public function is_droppoint_address_type( $address_type ) {
+			return in_array( $address_type, array( 'dhl_packstation', 'dhl_branch' ), true );
+		}
+
+		/**
 		 * Installation functions
 		 *
 		 * Create temporary folder and files. DHL labels will be stored here as required

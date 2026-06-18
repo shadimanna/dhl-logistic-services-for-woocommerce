@@ -1027,7 +1027,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 			}
 
 			// Post Number only applies to Packstation / Postfiliale, not a Regular Address.
-			if ( ! empty( $shipping_dhl_postnum ) && in_array( $shipping_dhl_address_type, array( 'dhl_packstation', 'dhl_branch' ), true ) ) {
+			if ( ! empty( $shipping_dhl_postnum ) && PR_DHL()->is_droppoint_address_type( $shipping_dhl_address_type ) ) {
 
 				if ( ! is_numeric( $shipping_dhl_postnum ) ) {
 					wc_add_notice( esc_html__( 'Post Number must be a number.', 'dhl-for-woocommerce' ), 'error' );
@@ -1062,7 +1062,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 			}
 
 			// Keep the Post Number for Packstation / Postfiliale deliveries.
-			if ( in_array( $posted['shipping_dhl_address_type'], array( 'dhl_packstation', 'dhl_branch' ), true ) ) {
+			if ( PR_DHL()->is_droppoint_address_type( $posted['shipping_dhl_address_type'] ) ) {
 				return;
 			}
 
