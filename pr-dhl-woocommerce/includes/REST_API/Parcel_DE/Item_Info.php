@@ -858,6 +858,40 @@ class Item_Info {
 				'default' => '',
 				'rename'  => 'additionalInsurance',
 			),
+			'cod_value'              => array(
+				'default'  => '',
+				'rename'   => 'cashOnDelivery',
+				'validate' => function ( $value ) use ( $self ) {
+					// Only validate when Cash on Delivery is set for this order.
+					if ( empty( $value ) ) {
+						return;
+					}
+
+					$currency = $self->args['order_details']['currency'] ?? '';
+
+					// DHL requires the Cash on Delivery amount to be in Euro.
+					if ( 'EUR' !== $currency ) {
+						throw new Exception(
+							sprintf(
+								/* translators: %s: the order's currency code, e.g. "USD". */
+								esc_html__( 'Cash on Delivery is only available for orders in Euro (EUR). This order uses %s, so a Cash on Delivery label cannot be created.', 'dhl-for-woocommerce' ),
+								esc_html( $currency )
+							)
+						);
+					}
+
+					// DHL requires bank account details to transfer the collected Cash on Delivery amount.
+					$settings    = $self->args['dhl_settings'] ?? array();
+					$bank_holder = $settings['bank_holder'] ?? '';
+					$bank_iban   = $settings['bank_iban'] ?? '';
+
+					if ( empty( $bank_holder ) || empty( $bank_iban ) ) {
+						throw new Exception(
+							esc_html__( 'Cash on Delivery requires your bank account details. Please add the Account Owner and IBAN under the DHL "Bank Details" settings to create a Cash on Delivery label.', 'dhl-for-woocommerce' )
+						);
+					}
+				},
+			),
 			'bulky_goods'            => array(
 				'default' => '',
 				'rename'  => 'bulkyGoods',

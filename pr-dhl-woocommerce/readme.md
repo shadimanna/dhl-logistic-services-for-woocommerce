@@ -44,7 +44,7 @@ The following DHL services are no longer supported by this plugin:
 
 Based on your sender country and shipping preference, different access credentials for **DHL Paket, DHL Parcel NL and Deutsche Post International** are required for the configuration:
 
-**DHL Paket for Germany**: Log in with your business customer portal credentials. (not a customer yet? Click [here](https://www.dhl.de/dhl-kundewerden?source=woocommerce&cid=c_dhloka_de_woocommerce) for **DHL Paket**)
+**DHL Paket for Germany**: Log in with your business customer portal credentials. (not a customer yet? Click [here](https://www.dhl.de/en/geschaeftskunden/paket/kunde-werden/angebot-dhl-geschaeftskunden-online/onlinevertrag.html?source=woocommerce) for **DHL Paket**)
 
 **Deutsche Post International for Europe**: ask your sales contact for credentials for this plugin. (not a customer yet? Click [here](https://www.deutschepost.com/en/business-customers/contact/email.html)).
 
@@ -69,6 +69,10 @@ More detailed instructions on how to set up your store and configure it are cons
 
 = 3.9.8 =
 * Fix: DHL Checkout Blocks text is now translated on the frontend.
+* Fix: Update missing German translations.
+* Fix: WooCommerce Subscriptions compatibility — no longer logs the "wcs_renewal_order_meta_query is deprecated" notice on every subscription renewal.
+* Fix: Cash on Delivery details now appear on DHL Paket labels created via the REST API.
+* Fix: Show a clear error when a Cash on Delivery label can't be created because the order isn't in Euro or bank details are missing.
 * Fix: Regular Address no longer shows a Post Number error at checkout.
 
 = 3.9.7 =
