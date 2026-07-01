@@ -1,6 +1,7 @@
 <?php
 
 use PR\DHL\REST_API\Drivers\JSON_API_Driver;
+use PR\DHL\REST_API\Drivers\Logging_Driver;
 use PR\DHL\REST_API\Drivers\WP_API_Driver;
 use PR\DHL\REST_API\Internetmarke\Auth;
 use PR\DHL\REST_API\Internetmarke\Client;
@@ -38,11 +39,12 @@ class PR_DHL_API_Internetmarke {
 	protected $client;
 
 	public function __construct() {
-		$raw_driver   = new WP_API_Driver();
-		$this->driver = new JSON_API_Driver( $raw_driver );
+		$raw_driver     = new WP_API_Driver();
+		$logging_driver = new Logging_Driver( PR_DHL(), $raw_driver );
+		$this->driver   = new JSON_API_Driver( $logging_driver );
 
 		$this->auth = new Auth(
-			$raw_driver,
+			$logging_driver,
 			static::API_URL,
 			$this->get_app_client_id(),
 			$this->get_app_client_secret(),
@@ -262,11 +264,13 @@ class PR_DHL_API_Internetmarke {
 		$response = wp_remote_get( $remote_url, array( 'timeout' => 30 ) );
 
 		if ( is_wp_error( $response ) ) {
+			$this->log( 'Label PDF download error for order ' . $order_id . ': ' . $response->get_error_message() );
 			throw new Exception( $response->get_error_message() );
 		}
 
 		$http_code = (int) wp_remote_retrieve_response_code( $response );
 		if ( 200 !== $http_code ) {
+			$this->log( 'Label PDF download for order ' . $order_id . ' returned HTTP ' . $http_code . '.' );
 			throw new Exception(
 				sprintf(
 					/* translators: %d: HTTP status code */
@@ -288,7 +292,7 @@ class PR_DHL_API_Internetmarke {
 			throw new Exception( esc_html__( 'Could not save INTERNETMARKE label file.', 'dhl-for-woocommerce' ) );
 		}
 
-		$this->log( 'Label PDF saved locally: ' . $filename );
+		$this->log( 'Label PDF saved locally for order ' . $order_id . ': ' . $filename . ' (' . strlen( $pdf ) . ' bytes).' );
 
 		return $file_url;
 	}
