@@ -401,8 +401,8 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 							'ajax_url'     => admin_url( 'admin-ajax.php' ),
 							'loader_image' => admin_url( 'images/loading.gif' ),
 							'nonce'        => wp_create_nonce( 'pr-dhl-im-test-con' ),
-							'testing_txt'  => esc_html__( 'Testing Connection…', 'dhl-for-woocommerce' ),
-							'button_txt'   => esc_html__( 'Test Account Connection', 'dhl-for-woocommerce' ),
+							'testing_txt'  => esc_html__( 'Testing connection…', 'dhl-for-woocommerce' ),
+							'button_txt'   => esc_html__( 'Test account connection', 'dhl-for-woocommerce' ),
 						)
 					);
 				}
@@ -661,7 +661,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		public function test_dhl_internetmarke_connection_callback() {
 			check_ajax_referer( 'pr-dhl-im-test-con', 'im_test_con_nonce' );
 
-			$button_txt = esc_html__( 'Test Account Connection', 'dhl-for-woocommerce' );
+			$button_txt = esc_html__( 'Test account connection', 'dhl-for-woocommerce' );
 
 			if ( ! current_user_can( 'manage_woocommerce' ) ) {
 				wp_send_json(
@@ -670,10 +670,12 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 						'button_txt'       => $button_txt,
 					)
 				);
+				wp_die();
 			}
 
 			$username      = isset( $_POST['username'] ) ? sanitize_text_field( wp_unslash( $_POST['username'] ) ) : '';
-			$password      = isset( $_POST['password'] ) ? sanitize_text_field( wp_unslash( $_POST['password'] ) ) : '';
+			// Password is stored/transmitted as-is — sanitize_text_field would strip valid special characters. phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$password      = isset( $_POST['password'] ) ? wp_unslash( $_POST['password'] ) : '';
 			$portokasse_id = isset( $_POST['portokasse_id'] ) ? sanitize_text_field( wp_unslash( $_POST['portokasse_id'] ) ) : '';
 
 			// Persist into the Paket settings array — the same store the fields use on a normal save.
@@ -705,7 +707,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 				wp_send_json(
 					array(
 						/* translators: %s is the error message returned when the connection fails */
-						'connection_error' => sprintf( esc_html__( 'Connection Failed: %s', 'dhl-for-woocommerce' ), sanitize_text_field( $e->getMessage() ) ),
+						'connection_error' => sprintf( esc_html__( 'Connection failed: %s', 'dhl-for-woocommerce' ), sanitize_text_field( $e->getMessage() ) ),
 						'button_txt'       => $button_txt,
 					)
 				);
