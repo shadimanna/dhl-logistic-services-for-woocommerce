@@ -450,8 +450,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 		 * Follows the same error-handling pattern as PR_DHL_WC_Order::save_meta_box_ajax().
 		 */
 		public function generate_label_ajax() {
-			// Capture any stray output (PHP notices, wpdb DB-error prints) so it
-			// cannot corrupt the JSON body — see send_json_response().
 			ob_start();
 
 			check_ajax_referer( self::NONCE_ACTION, self::NONCE_FIELD );
@@ -517,7 +515,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 		 * Follows the same response pattern as PR_DHL_WC_Order::delete_label_ajax().
 		 */
 		public function delete_label_ajax() {
-			// Capture any stray output so it cannot corrupt the JSON body.
 			ob_start();
 
 			check_ajax_referer( self::NONCE_ACTION, self::NONCE_FIELD );
@@ -753,7 +750,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 				wp_die( esc_html__( 'Label file not found.', 'dhl-for-woocommerce' ), '', array( 'response' => 404 ) );
 			}
 
-			// Drop any captured stray output before streaming the binary.
 			while ( ob_get_level() > 0 ) {
 				ob_end_clean();
 			}
