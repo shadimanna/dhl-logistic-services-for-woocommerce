@@ -943,17 +943,24 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		public function set_account_details( $account_details, $dhl_obj ) {
 			$dhl_settings = $this->get_shipping_dhl_settings();
 
+			// Always clear the stored expiration flag and any previously scheduled events first.
+			// They are recomputed below from the current passwordValidUntil, so refreshing the
+			// account never leaves a stale/false warning behind - including when the response
+			// does not contain a passwordValidUntil value.
+			wp_clear_scheduled_hook( 'dhl_myaccount_pwd_expiration_month' );
+			wp_clear_scheduled_hook( 'dhl_myaccount_pwd_expiration_week' );
+
+			$dhl_obj->set_dhl_myaccount_pwd_expiration( '' );
+
 			if ( isset( $account_details->user->passwordValidUntil ) ) {
 				$dhl_settings['dhl_pwd_valid_until'] = strtotime( $account_details->user->passwordValidUntil );
 
 				$timestamp_month   = $dhl_settings['dhl_pwd_valid_until'] - 30 * 24 * 60 * 60;
 				$timestamp_week    = $dhl_settings['dhl_pwd_valid_until'] - 7 * 24 * 60 * 60;
-				$current_timestamp = current_time( 'timestamp' );
-
-				wp_clear_scheduled_hook( 'dhl_myaccount_pwd_expiration_month' );
-				wp_clear_scheduled_hook( 'dhl_myaccount_pwd_expiration_week' );
-
-				$dhl_obj->set_dhl_myaccount_pwd_expiration( '' );
+				// Use UTC "now" to match strtotime() above and the timestamp expected by
+				// wp_schedule_single_event(); current_time( 'timestamp' ) returns local time
+				// and would offset the comparison, showing the warning early.
+				$current_timestamp = time();
 
 				// If greater than a 30 days
 				if ( $timestamp_month > $current_timestamp ) {
