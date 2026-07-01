@@ -249,7 +249,7 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					),
 				),
 				'internetmarke_api_title'    => array(
-					'title'       => esc_html__( 'Internetmarke Account and API', 'dhl-for-woocommerce' ),
+					'title'       => esc_html__( 'Internetmarke account and API', 'dhl-for-woocommerce' ),
 					'type'        => 'title',
 					'description' => wp_kses(
 						__( 'Enter your Portokasse account credentials to enable Deutsche Post Internetmarke label generation. For development and testing, use a developer Portokasse — simulated payments are applied and generated stamps cannot be used for real postage. If you see authentication errors, confirm in your Portokasse account under My data &rarr; Business applications that the business application has been activated.', 'dhl-for-woocommerce' ),
@@ -264,7 +264,7 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					'default'     => '',
 				),
 				'internetmarke_api_password' => array(
-					'title'       => esc_html__( 'Portokasse Password', 'dhl-for-woocommerce' ),
+					'title'       => esc_html__( 'Portokasse password', 'dhl-for-woocommerce' ),
 					'type'        => 'password',
 					'description' => esc_html__( 'Your Portokasse account password.', 'dhl-for-woocommerce' ),
 					'desc_tip'    => true,
@@ -278,7 +278,7 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					'default'     => '',
 				),
 				'internetmarke_test_connection_button' => array(
-					'title'             => esc_html__( 'Test Account Connection', 'dhl-for-woocommerce' ),
+					'title'             => esc_html__( 'Test account connection', 'dhl-for-woocommerce' ),
 					'type'              => 'button',
 					'custom_attributes' => array(
 						'onclick' => "dhlInternetmarkeTestConnection('#woocommerce_pr_dhl_paket_internetmarke_test_connection_button');",
