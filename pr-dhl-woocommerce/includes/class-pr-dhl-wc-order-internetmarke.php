@@ -155,6 +155,13 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 				return null;
 			}
 
+			// Only honor services allowed for this product; client-side visibility is
+			// not authoritative, so a crafted request cannot force an invalid combination.
+			$allowed  = self::get_product_services_map();
+			$services = isset( $allowed[ $product_key ] )
+				? array_values( array_intersect( $services, $allowed[ $product_key ] ) )
+				: array();
+
 			$variants         = $map[ $product_key ];
 			$has_einwurf      = in_array( 'einschreiben_einwurf', $services, true );
 			$has_einschreiben = in_array( 'einschreiben', $services, true );
@@ -271,16 +278,16 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 			// Build button HTML in PHP — same pattern as Paket metabox — so the JS
 			// success handler can inject pre-translated strings without string literals in JS.
 			$main_button = '<button id="im-label-button" class="button button-primary">'
-				. esc_html__( 'Generate Label', 'dhl-for-woocommerce' )
+				. esc_html__( 'Generate label', 'dhl-for-woocommerce' )
 				. '</button>';
 
 			$label_url    = $has_label ? esc_url( $this->get_download_label_url( $order_id ) ) : '#';
 			$print_button = '<a href="' . $label_url . '" id="im-label-print" class="button button-primary" download target="_blank">'
-				. esc_html__( 'Download Label', 'dhl-for-woocommerce' )
+				. esc_html__( 'Download label', 'dhl-for-woocommerce' )
 				. '</a>';
 
 			$delete_label = '<span class="wc_dhl_delete"><a href="#" id="im-delete-label">'
-				. esc_html__( 'Delete Label', 'dhl-for-woocommerce' )
+				. esc_html__( 'Delete label', 'dhl-for-woocommerce' )
 				. '</a></span>';
 
 			// Data passed to JS — mirrors the pattern in pr-dhl.js / dhl_label_data.
@@ -338,7 +345,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 				<div class="shipment-dhl-row-container shipment-im-row-services" id="im-services-container">
 					<div class="shipment-dhl-icon-container">
 						<span class="shipment-dhl-icon shipment-dhl-icon-additional-services"></span>
-						<?php esc_html_e( 'Additional Services', 'dhl-for-woocommerce' ); ?>
+						<?php esc_html_e( 'Additional services', 'dhl-for-woocommerce' ); ?>
 					</div>
 
 					<?php foreach ( $service_labels as $service_key => $service_label ) : ?>
@@ -381,7 +388,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 					<?php if ( ! empty( $label_tracking['tracking_number'] ) ) : ?>
 						<p class="im-tracking-number">
 							<?php
-							echo esc_html__( 'Tracking Number:', 'dhl-for-woocommerce' ) . ' ';
+							echo esc_html__( 'Tracking number:', 'dhl-for-woocommerce' ) . ' ';
 							echo esc_html( $label_tracking['tracking_number'] );
 							?>
 						</p>
@@ -499,7 +506,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 					array(
 						'label_url'       => $label_url ? esc_url_raw( $label_url ) : '',
 						'tracking_number' => isset( $label_info['tracking_number'] ) ? esc_html( $label_info['tracking_number'] ) : '',
-						'download_msg'    => esc_html__( 'Your INTERNETMARKE label is ready. Click "Download Label" to save it.', 'dhl-for-woocommerce' ),
+						'download_msg'    => esc_html__( 'Your INTERNETMARKE label is ready. Click "Download label" to save it.', 'dhl-for-woocommerce' ),
 					)
 				);
 
@@ -535,7 +542,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 
 			$this->send_json_response(
 				array(
-					'button_txt' => esc_html__( 'Generate Label', 'dhl-for-woocommerce' ),
+					'button_txt' => esc_html__( 'Generate label', 'dhl-for-woocommerce' ),
 				)
 			);
 			wp_die();
