@@ -161,13 +161,10 @@ jQuery( function ( $ ) {
 
 				$( document ).trigger( 'pr_dhl_im_saved_label' );
 			} ).fail( function () {
-				// Always clear the overlay, even on HTTP error / timeout, so the
-				// metabox can never spin forever.
 				$form.unblock();
-				var msg = ( typeof dhl_im_order_data !== 'undefined' && dhl_im_order_data.ajax_error )
-					? dhl_im_order_data.ajax_error
-					: 'The label request failed. Please try again.';
-				$form.append( '<p class="wc_dhl_error">' + msg + '</p>' );
+				if ( typeof dhl_im_order_data !== 'undefined' && dhl_im_order_data.ajax_error ) {
+					$form.append( '<p class="wc_dhl_error">' + dhl_im_order_data.ajax_error + '</p>' );
+				}
 			} );
 		},
 
@@ -206,6 +203,11 @@ jQuery( function ( $ ) {
 
 				// Reload so the metabox reverts to its initial state — same as Paket delete flow.
 				window.location.reload();
+			} ).fail( function () {
+				$form.unblock();
+				if ( typeof dhl_im_order_data !== 'undefined' && dhl_im_order_data.ajax_error ) {
+					$form.append( '<p class="wc_dhl_error">' + dhl_im_order_data.ajax_error + '</p>' );
+				}
 			} );
 		},
 	};
