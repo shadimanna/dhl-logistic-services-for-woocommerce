@@ -28,7 +28,7 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 			$this->method_title = esc_html__( 'DHL Paket', 'dhl-for-woocommerce' );
 
 			/* translators: %s: link to request a quote for becoming a DHL business customer */
-			$this->method_description = sprintf( esc_html__( 'Below you will find all functions for controlling, preparing and processing your shipment with DHL Paket. Prerequisite is a valid DHL business customer contract. If you are not yet a DHL business customer, you can request a quote %1$shere%2$s.', 'dhl-for-woocommerce' ), '<a href="https://www.dhl.de/dhl-kundewerden?source=woocommerce&cid=c_dhloka_de_woocommerce" target="_blank">', '</a>' );
+			$this->method_description = sprintf( esc_html__( 'Below you will find all functions for controlling, preparing and processing your shipment with DHL Paket. Prerequisite is a valid DHL business customer contract. If you are not yet a DHL business customer, you can request a quote %1$shere%2$s.', 'dhl-for-woocommerce' ), '<a href="https://www.dhl.de/en/geschaeftskunden/paket/kunde-werden/angebot-dhl-geschaeftskunden-online/onlinevertrag.html?source=woocommerce" target="_blank">', '</a>' );
 
 			$this->init();
 		}

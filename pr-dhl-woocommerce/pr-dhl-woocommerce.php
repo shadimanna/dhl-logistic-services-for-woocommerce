@@ -9,13 +9,13 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: dhl-for-woocommerce
  * Domain Path: /lang
- * Version: 3.9.7
+ * Version: 3.9.8
  * Requires Plugins: woocommerce
  * Requires PHP: 7.4
- * Requires at least: 6.6
- * Tested up to: 6.9
- * WC requires at least: 10.1
- * WC tested up to: 10.3
+ * Requires at least: 6.8
+ * Tested up to: 7.0
+ * WC requires at least: 10.7
+ * WC tested up to: 10.9
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 	class PR_DHL_WC {
 
-		private $version = '3.9.7';
+		private $version = '3.9.8';
 
 		/**
 		 * Instance to call certain functions globally within the plugin
@@ -938,6 +938,54 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			} else {
 				return false;
 			}
+		}
+
+		/**
+		 * The checkout address type values that denote a DHL droppoint
+		 * (Packstation / Postfiliale). Single source of truth, shared with the
+		 * block checkout via prDhlGlobals.
+		 *
+		 * @return string[]
+		 */
+		public function get_droppoint_address_types() {
+			return array( 'dhl_packstation', 'dhl_branch' );
+		}
+
+		/**
+		 * Whether the selected checkout address type denotes a DHL droppoint
+		 * (Packstation or Postfiliale/Branch) — the only types a Post Number applies to.
+		 *
+		 * @param string $address_type Selected shipping address type value.
+		 * @return bool
+		 */
+		public function is_droppoint_address_type( $address_type ) {
+			return in_array( $address_type, $this->get_droppoint_address_types(), true );
+		}
+
+		/**
+		 * Whether a shipping address denotes a DHL droppoint
+		 * (Packstation, Parcelshop, or Postfiliale).
+		 *
+		 * @param string $address Shipping address line to inspect.
+		 * @return bool
+		 */
+		public function is_droppoint_address( $address ) {
+			return $this->is_packstation( $address )
+				|| $this->is_parcelshop( $address )
+				|| $this->is_post_office( $address );
+		}
+
+		/**
+		 * Whether a delivery is a DHL droppoint by either its selected address type
+		 * or its shipping address — the only case a Post Number applies to.
+		 *
+		 * @param string $address_type Selected shipping address type value.
+		 * @param string $address      Shipping address line to inspect.
+		 * @return bool
+		 */
+		public function is_droppoint( $address_type, $address ) {
+			return $this->is_droppoint_address_type( $address_type )
+				|| $this->is_droppoint_address( $address );
 		}
 
 		/**

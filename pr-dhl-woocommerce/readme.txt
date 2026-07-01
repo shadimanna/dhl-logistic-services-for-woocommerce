@@ -1,13 +1,13 @@
 === DHL Shipping Germany for WooCommerce ===
 Contributors: DHL, shadim, utzfu
 Tags: DPDHL, DHL, DHL eCommerce, DHL Paket Germany, Shipping
-Stable tag: 3.9.7
+Stable tag: 3.9.8
 Requires Plugins: woocommerce
 Requires PHP: 7.4
-Requires at least: 6.6
-Tested up to: 6.9
-WC requires at least: 10.1
-WC tested up to: 10.3
+Requires at least: 6.8
+Tested up to: 7.0
+WC requires at least: 10.7
+WC tested up to: 10.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,7 +44,7 @@ The following DHL services are no longer supported by this plugin:
 
 Based on your sender country and shipping preference, different access credentials for **DHL Paket, DHL Parcel NL and Deutsche Post International** are required for the configuration:
 
-**DHL Paket for Germany**: Log in with your business customer portal credentials. (not a customer yet? Click [here](https://www.dhl.de/dhl-kundewerden?source=woocommerce&cid=c_dhloka_de_woocommerce) for **DHL Paket**)
+**DHL Paket for Germany**: Log in with your business customer portal credentials. (not a customer yet? Click [here](https://www.dhl.de/en/geschaeftskunden/paket/kunde-werden/angebot-dhl-geschaeftskunden-online/onlinevertrag.html?source=woocommerce) for **DHL Paket**)
 
 **Deutsche Post International for Europe**: ask your sales contact for credentials for this plugin. (not a customer yet? Click [here](https://www.deutschepost.com/en/business-customers/contact/email.html)).
 
@@ -77,6 +77,14 @@ More detailed instructions on how to set up your store and configure it are cons
 
 = 3.9.8 =
 * Add: Deutsche Post Internetmarke — buy and print postage stamps for letters directly from a WooCommerce order.
+* Fix: Missing customs "shippingConditions" field causing label creation failure for DHL Europaket (V54EPAK) cross-border shipments.
+* Fix: DHL Checkout Blocks text is now translated on the frontend.
+* Fix: Update missing German translations.
+* Fix: WooCommerce Subscriptions compatibility — no longer logs the "wcs_renewal_order_meta_query is deprecated" notice on every subscription renewal.
+* Fix: Cash on Delivery details now appear on DHL Paket labels created via the REST API.
+* Fix: Show a clear error when a Cash on Delivery label can't be created because the order isn't in Euro or bank details are missing.
+* Fix: Regular Address no longer shows a Post Number error at checkout.
+* Tweak: WordPress 7.0 and WooCommerce 10.9 compatibility.
 
 = 3.9.7 =
 * Fix: Errors appear when trying to save map settings.

@@ -86,6 +86,7 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 
 				add_filter( 'woocommerce_checkout_fields', array( $this, 'add_postnum_field' ), 101 );
 				add_action( 'woocommerce_checkout_process', array( $this, 'validate_post_number' ) );
+				add_action( 'woocommerce_checkout_order_processed', array( $this, 'clear_post_number_for_regular_address' ), 10, 2 );
 				// add_action( 'woocommerce_process_checkout_field_shipping_dhl_postnum_ps', array( $this, 'validate_post_number_required' ) );
 
 				add_filter( 'woocommerce_order_formatted_shipping_address', array( $this, 'display_post_number' ), 10, 2 );
@@ -981,9 +982,9 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 				return;
 			}
 
-			$shipping_dhl_address_type = wc_clean( $_POST['shipping_dhl_address_type'] );
-			$shipping_address_1        = wc_clean( $_POST['shipping_address_1'] );
-			$shipping_dhl_postnum      = wc_clean( $_POST['shipping_dhl_postnum'] );
+			$shipping_dhl_address_type = wc_clean( wp_unslash( $_POST['shipping_dhl_address_type'] ?? '' ) );
+			$shipping_address_1        = wc_clean( wp_unslash( $_POST['shipping_address_1'] ?? '' ) );
+			$shipping_dhl_postnum      = wc_clean( wp_unslash( $_POST['shipping_dhl_postnum'] ?? '' ) );
 
 			$pos_ps = PR_DHL()->is_packstation( $shipping_address_1 );
 			$pos_rs = PR_DHL()->is_parcelshop( $shipping_address_1 );
@@ -1025,7 +1026,8 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 				}
 			}
 
-			if ( ! empty( $shipping_dhl_postnum ) ) {
+			// Post Number only applies to Packstation / Postfiliale, not a Regular Address.
+			if ( ! empty( $shipping_dhl_postnum ) && PR_DHL()->is_droppoint_address_type( $shipping_dhl_address_type ) ) {
 
 				if ( ! is_numeric( $shipping_dhl_postnum ) ) {
 					wc_add_notice( esc_html__( 'Post Number must be a number.', 'dhl-for-woocommerce' ), 'error' );
@@ -1040,12 +1042,47 @@ if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) :
 			}
 		}
 
-		public function display_post_number( $address, $order ) {
-			$pos_ps = PR_DHL()->is_packstation( $address['address_1'] );
-			$pos_rs = PR_DHL()->is_parcelshop( $address['address_1'] );
-			$pos_po = PR_DHL()->is_post_office( $address['address_1'] );
+		/**
+		 * Clear a stale DHL Post Number when a Regular Address is selected.
+		 *
+		 * The Post Number only applies to Packstation / Parcelshop / Postfiliale deliveries.
+		 * If a customer entered one and then switched to a Regular Address, drop the value so
+		 * it is not persisted on the order or sent to the DHL API. Mirrors the Blocks checkout,
+		 * which clears the field client-side on the same switch. The value is kept whenever
+		 * either the selected address type or the shipping address itself is a droppoint, since
+		 * that is how it is consumed downstream.
+		 *
+		 * @param int   $order_id Order ID.
+		 * @param array $posted   Sanitized posted checkout data.
+		 */
+		public function clear_post_number_for_regular_address( $order_id, $posted ) {
 
-			if ( ( $pos_ps || $pos_rs || $pos_po ) &&
+			// An absent or empty address type means Regular Address — e.g. when shipping to the
+			// billing address, the shipping_* fields are not posted — so still treat it as a clear
+			// candidate (the droppoint-address check below protects values the label still needs).
+			$address_type = isset( $posted['shipping_dhl_address_type'] ) ? $posted['shipping_dhl_address_type'] : '';
+
+			$order = wc_get_order( $order_id );
+
+			if ( ! $order ) {
+				return;
+			}
+
+			// Keep the Post Number for droppoints — by the selected address type or by the shipping
+			// address itself, which is how it is consumed downstream — so a value the label still
+			// needs is never dropped, even if the address-type field says otherwise.
+			if ( PR_DHL()->is_droppoint( $address_type, $order->get_shipping_address_1() ) ) {
+				return;
+			}
+
+			if ( ! empty( $order->get_meta( '_shipping_dhl_postnum' ) ) ) {
+				$order->delete_meta_data( '_shipping_dhl_postnum' );
+				$order->save();
+			}
+		}
+
+		public function display_post_number( $address, $order ) {
+			if ( PR_DHL()->is_droppoint_address( $address['address_1'] ) &&
 			( ! empty( $shipping_dhl_postnum = $order->get_meta( '_shipping_dhl_postnum' ) ) ) ) {
 				$address['dhl_postnum'] = $shipping_dhl_postnum;
 			}
