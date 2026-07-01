@@ -43,8 +43,10 @@ class PR_DHL_API_Internetmarke {
 		$logging_driver = new Logging_Driver( PR_DHL(), $raw_driver );
 		$this->driver   = new JSON_API_Driver( $logging_driver );
 
+		// Auth uses the non-logging driver so the token request body (which carries
+		// the Portokasse password and app secret) is never written to the log.
 		$this->auth = new Auth(
-			$logging_driver,
+			$raw_driver,
 			static::API_URL,
 			$this->get_app_client_id(),
 			$this->get_app_client_secret(),
@@ -138,6 +140,11 @@ class PR_DHL_API_Internetmarke {
 					}
 				}
 			}
+		}
+
+		if ( '' === $label_url ) {
+			$this->log( 'Label checkout for order ' . $order_id . ' returned no document link.' );
+			throw new Exception( esc_html__( 'The label was purchased but no document could be retrieved from INTERNETMARKE. Check your Portokasse before retrying to avoid a duplicate charge.', 'dhl-for-woocommerce' ) );
 		}
 
 		$this->log( 'Label generated for order ' . $order_id . '.' );
@@ -355,6 +362,17 @@ class PR_DHL_API_Internetmarke {
 		$city      = ! empty( $shipping['city'] ) ? $shipping['city'] : ( isset( $billing['city'] ) ? $billing['city'] : '' );
 		$country   = ! empty( $shipping['country'] ) ? $shipping['country'] : ( isset( $billing['country'] ) ? $billing['country'] : 'DE' );
 
+		$country_iso3 = $this->country_iso2_to_iso3( $country );
+		if ( 3 !== strlen( $country_iso3 ) ) {
+			throw new Exception(
+				sprintf(
+					/* translators: %s: two-letter destination country code. */
+					esc_html__( 'INTERNETMARKE does not support the destination country "%s".', 'dhl-for-woocommerce' ),
+					sanitize_text_field( (string) $country )
+				)
+			);
+		}
+
 		$address = array(
 			'name'           => $name,
 			'additionalName' => $company,
@@ -362,7 +380,7 @@ class PR_DHL_API_Internetmarke {
 			'addressLine2'   => $address_2,
 			'postalCode'     => $postcode,
 			'city'           => $city,
-			'country'        => $this->country_iso2_to_iso3( $country ),
+			'country'        => $country_iso3,
 		);
 
 		return array_filter( $address, 'strlen' );
