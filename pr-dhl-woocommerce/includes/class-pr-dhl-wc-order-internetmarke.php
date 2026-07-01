@@ -36,6 +36,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 			// AJAX handlers — separate actions from Paket to avoid double-firing.
 			add_action( 'wp_ajax_wc_shipment_internetmarke_gen_label', array( $this, 'generate_label_ajax' ) );
 			add_action( 'wp_ajax_wc_shipment_internetmarke_delete_label', array( $this, 'delete_label_ajax' ) );
+			add_action( 'wp_ajax_wc_shipment_internetmarke_download_label', array( $this, 'download_label_ajax' ) );
 
 			// Clean up local label PDF and order meta when an order is deleted.
 			add_action( 'woocommerce_before_delete_order', array( $this, 'cleanup_on_order_delete' ) );
@@ -273,7 +274,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 				. esc_html__( 'Generate Label', 'dhl-for-woocommerce' )
 				. '</button>';
 
-			$label_url    = ! empty( $label_tracking['label_url'] ) ? esc_url( $label_tracking['label_url'] ) : '#';
+			$label_url    = $has_label ? esc_url( $this->get_download_label_url( $order_id ) ) : '#';
 			$print_button = '<a href="' . $label_url . '" id="im-label-print" class="button button-primary" download target="_blank">'
 				. esc_html__( 'Download Label', 'dhl-for-woocommerce' )
 				. '</a>';
@@ -289,6 +290,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 				'order_id'     => $order_id,
 				'services_map' => $services_map,
 				'has_label'    => $has_label,
+				'ajax_error'   => esc_html__( 'The label request failed or timed out. Please check the order and try again.', 'dhl-for-woocommerce' ),
 			);
 
 			$im_label_data = array(
@@ -448,17 +450,21 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 		 * Follows the same error-handling pattern as PR_DHL_WC_Order::save_meta_box_ajax().
 		 */
 		public function generate_label_ajax() {
+			// Capture any stray output (PHP notices, wpdb DB-error prints) so it
+			// cannot corrupt the JSON body — see send_json_response().
+			ob_start();
+
 			check_ajax_referer( self::NONCE_ACTION, self::NONCE_FIELD );
 
 			if ( ! current_user_can( 'edit_shop_orders' ) ) {
-				wp_send_json( array( 'error' => esc_html__( 'You do not have permission to generate labels.', 'dhl-for-woocommerce' ) ) );
+				$this->send_json_response( array( 'error' => esc_html__( 'You do not have permission to generate labels.', 'dhl-for-woocommerce' ) ) );
 				wp_die();
 			}
 
 			$order_id = isset( $_POST['order_id'] ) ? absint( $_POST['order_id'] ) : 0;
 
 			if ( ! $order_id ) {
-				wp_send_json( array( 'error' => esc_html__( 'Invalid order ID.', 'dhl-for-woocommerce' ) ) );
+				$this->send_json_response( array( 'error' => esc_html__( 'Invalid order ID.', 'dhl-for-woocommerce' ) ) );
 				wp_die();
 			}
 
@@ -475,7 +481,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 			$product_id = self::resolve_product_id( $product_key, $services );
 
 			if ( null === $product_id ) {
-				wp_send_json(
+				$this->send_json_response(
 					array(
 						'error' => esc_html__( 'Invalid product / service combination. Please check your selection.', 'dhl-for-woocommerce' ),
 					)
@@ -489,16 +495,18 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 
 				$this->save_label_tracking( $order_id, $label_info );
 
-				wp_send_json(
+				$label_url = ! empty( $label_info['label_url'] ) ? $this->get_download_label_url( $order_id ) : '';
+
+				$this->send_json_response(
 					array(
-						'label_url'       => isset( $label_info['label_url'] ) ? esc_url( $label_info['label_url'] ) : '',
+						'label_url'       => $label_url ? esc_url_raw( $label_url ) : '',
 						'tracking_number' => isset( $label_info['tracking_number'] ) ? esc_html( $label_info['tracking_number'] ) : '',
 						'download_msg'    => esc_html__( 'Your INTERNETMARKE label is ready. Click "Download Label" to save it.', 'dhl-for-woocommerce' ),
 					)
 				);
 
 			} catch ( \Throwable $e ) {
-				wp_send_json( array( 'error' => $e->getMessage() ) );
+				$this->send_json_response( array( 'error' => $e->getMessage() ) );
 			}
 
 			wp_die();
@@ -509,28 +517,51 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 		 * Follows the same response pattern as PR_DHL_WC_Order::delete_label_ajax().
 		 */
 		public function delete_label_ajax() {
+			// Capture any stray output so it cannot corrupt the JSON body.
+			ob_start();
+
 			check_ajax_referer( self::NONCE_ACTION, self::NONCE_FIELD );
 
 			if ( ! current_user_can( 'edit_shop_orders' ) ) {
-				wp_send_json( array( 'error' => esc_html__( 'You do not have permission to delete labels.', 'dhl-for-woocommerce' ) ) );
+				$this->send_json_response( array( 'error' => esc_html__( 'You do not have permission to delete labels.', 'dhl-for-woocommerce' ) ) );
 				wp_die();
 			}
 
 			$order_id = isset( $_POST['order_id'] ) ? absint( $_POST['order_id'] ) : 0;
 
 			if ( ! $order_id ) {
-				wp_send_json( array( 'error' => esc_html__( 'Invalid order ID.', 'dhl-for-woocommerce' ) ) );
+				$this->send_json_response( array( 'error' => esc_html__( 'Invalid order ID.', 'dhl-for-woocommerce' ) ) );
 				wp_die();
 			}
 
 			$this->delete_label_tracking( $order_id );
 
-			wp_send_json(
+			$this->send_json_response(
 				array(
 					'button_txt' => esc_html__( 'Generate Label', 'dhl-for-woocommerce' ),
 				)
 			);
 			wp_die();
+		}
+
+		/**
+		 * Send a JSON AJAX response, discarding any stray output first.
+		 *
+		 * PHP notices/warnings, or wpdb database-error prints emitted when a site
+		 * runs with WP_DEBUG_DISPLAY enabled, would otherwise be written to the
+		 * response body before the JSON — breaking JSON parsing on the client and
+		 * making the label request appear to fail even though it succeeded. The
+		 * matching ob_start() at the top of each handler captures that output; here
+		 * we drop it so the body is always valid JSON, whatever the site's debug config.
+		 *
+		 * @param mixed $data Response payload passed straight to wp_send_json().
+		 */
+		protected function send_json_response( $data ) {
+			while ( ob_get_level() > 0 ) {
+				ob_end_clean();
+			}
+
+			wp_send_json( $data );
 		}
 
 		// -------------------------------------------------------------------------
@@ -655,12 +686,84 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 		 * @param int $order_id
 		 */
 		protected function delete_label_file( $order_id ) {
-			$upload_dir = wp_upload_dir();
-			$file_path  = $upload_dir['basedir'] . '/woocommerce_dhl_label/dhl-im-label-' . (int) $order_id . '.pdf';
+			$file_path = $this->get_label_file_path( $order_id );
 
 			if ( file_exists( $file_path ) ) {
 				wp_delete_file( $file_path );
 			}
+		}
+
+		/**
+		 * Absolute path to the locally-stored label PDF for an order.
+		 *
+		 * @param int $order_id
+		 * @return string
+		 */
+		protected function get_label_file_path( $order_id ) {
+			$upload_dir = wp_upload_dir();
+			return $upload_dir['basedir'] . '/woocommerce_dhl_label/dhl-im-label-' . (int) $order_id . '.pdf';
+		}
+
+		/**
+		 * Build a protected admin-ajax URL that streams the label PDF.
+		 *
+		 * The label folder is protected by `deny from all`, so the raw uploads URL
+		 * returns 403. Serving the file via readfile() through this endpoint bypasses
+		 * that — the same approach as the Paket download endpoint.
+		 *
+		 * @param int $order_id
+		 * @return string
+		 */
+		protected function get_download_label_url( $order_id ) {
+			return add_query_arg(
+				array(
+					'action'   => 'wc_shipment_internetmarke_download_label',
+					'order_id' => (int) $order_id,
+					'nonce'    => wp_create_nonce( 'download-internetmarke-label-' . (int) $order_id ),
+				),
+				admin_url( 'admin-ajax.php' )
+			);
+		}
+
+		/**
+		 * AJAX handler: stream the stored label PDF to an authorised user.
+		 *
+		 * Bypasses the label folder's `deny from all` protection by reading the file
+		 * server-side after verifying the nonce and capability.
+		 */
+		public function download_label_ajax() {
+			// Capture stray output so it cannot corrupt the PDF binary or send
+			// premature headers; discarded before the file is streamed below.
+			ob_start();
+
+			$order_id = isset( $_GET['order_id'] ) ? absint( $_GET['order_id'] ) : 0;
+			$nonce    = isset( $_GET['nonce'] ) ? sanitize_text_field( wp_unslash( $_GET['nonce'] ) ) : '';
+
+			if ( ! $order_id || ! wp_verify_nonce( $nonce, 'download-internetmarke-label-' . $order_id ) ) {
+				wp_die( esc_html__( 'Invalid or expired label download link.', 'dhl-for-woocommerce' ), '', array( 'response' => 403 ) );
+			}
+
+			if ( ! current_user_can( 'edit_shop_orders' ) ) {
+				wp_die( esc_html__( 'You do not have permission to download labels.', 'dhl-for-woocommerce' ), '', array( 'response' => 403 ) );
+			}
+
+			$file_path = $this->get_label_file_path( $order_id );
+
+			if ( ! file_exists( $file_path ) ) {
+				wp_die( esc_html__( 'Label file not found.', 'dhl-for-woocommerce' ), '', array( 'response' => 404 ) );
+			}
+
+			// Drop any captured stray output before streaming the binary.
+			while ( ob_get_level() > 0 ) {
+				ob_end_clean();
+			}
+
+			nocache_headers();
+			header( 'Content-Type: application/pdf' );
+			header( 'Content-Disposition: inline; filename="dhl-im-label-' . $order_id . '.pdf"' );
+			header( 'Content-Length: ' . filesize( $file_path ) );
+			readfile( $file_path ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+			exit;
 		}
 	}
 
