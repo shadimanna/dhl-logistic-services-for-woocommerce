@@ -748,6 +748,15 @@ class Item_Info {
 					$is_europaket     = 'V54EPAK' === $dhl_product;
 					$to_switzerland   = 'V53WPAK' === $dhl_product && 'CHE' === $shipping_country;
 
+					// US customs (HTSUS) requires a full 10-digit tariff code.
+					if ( 'USA' === $shipping_country ) {
+						if ( ! preg_match( '/^\d{10}$/', (string) $hs_code ) ) {
+							throw new Exception( esc_html__( 'HS code must be exactly 10 digits for shipments to the United States (HTSUS requirement). Enter the full 10-digit code in each product\'s Harmonized Tariff Schedule (DHL) field.', 'dhl-for-woocommerce' ) );
+						}
+
+						return;
+					}
+
 					if ( $is_europaket || $to_switzerland ) {
 						if ( $needs_ead && $code_length < 8 ) {
 							throw new Exception( esc_html__( 'HS code must be at-least 8 digits when an export declaration is required.', 'dhl-for-woocommerce' ) );
