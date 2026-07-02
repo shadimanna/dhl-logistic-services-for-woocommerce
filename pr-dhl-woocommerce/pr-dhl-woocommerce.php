@@ -953,25 +953,31 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			$dhl_obj->set_dhl_myaccount_pwd_expiration( '' );
 
 			if ( isset( $account_details->user->passwordValidUntil ) ) {
-				$dhl_settings['dhl_pwd_valid_until'] = strtotime( $account_details->user->passwordValidUntil );
+				$pwd_valid_until = strtotime( $account_details->user->passwordValidUntil );
 
-				$timestamp_month   = $dhl_settings['dhl_pwd_valid_until'] - 30 * 24 * 60 * 60;
-				$timestamp_week    = $dhl_settings['dhl_pwd_valid_until'] - 7 * 24 * 60 * 60;
-				// Use UTC "now" to match strtotime() above and the timestamp expected by
-				// wp_schedule_single_event(); current_time( 'timestamp' ) returns local time
-				// and would offset the comparison, showing the warning early.
-				$current_timestamp = time();
+				// Bail out on an unparseable date instead of treating it as epoch 0,
+				// which would otherwise fall through to the "less than 7 days" branch
+				// and raise a false expiration warning.
+				if ( false !== $pwd_valid_until ) {
+					$dhl_settings['dhl_pwd_valid_until'] = $pwd_valid_until;
+					$dhl_obj->set_dhl_myaccount_info( $dhl_settings );
 
-				// If greater than a 30 days
-				if ( $timestamp_month > $current_timestamp ) {
-					wp_schedule_single_event( $timestamp_month, 'dhl_myaccount_pwd_expiration_month' );
-					// Less than or equal to 30 days and greater than 7 days
-				} elseif ( $timestamp_week > $current_timestamp ) {
-					$this->dhl_myaccount_pwd_expiration_month_callback();
-					wp_schedule_single_event( $timestamp_week, 'dhl_myaccount_pwd_expiration_week' );
-					// Less than 7 days
-				} else {
-					$this->dhl_myaccount_pwd_expiration_week_callback();
+					// Compare against UTC time() to match strtotime() above and the
+					// timestamp expected by wp_schedule_single_event(); current_time(
+					// 'timestamp' ) returns local time and would show the warning early.
+					$state = self::get_pwd_expiration_state( $pwd_valid_until, time() );
+
+					if ( '' !== $state['flag'] ) {
+						$dhl_obj->set_dhl_myaccount_pwd_expiration( $state['flag'] );
+					}
+
+					if ( false !== $state['schedule_month'] ) {
+						wp_schedule_single_event( $state['schedule_month'], 'dhl_myaccount_pwd_expiration_month' );
+					}
+
+					if ( false !== $state['schedule_week'] ) {
+						wp_schedule_single_event( $state['schedule_week'], 'dhl_myaccount_pwd_expiration_week' );
+					}
 				}
 			}
 
@@ -999,6 +1005,49 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 				$dhl_obj->set_dhl_booking_text( $booking_text_array );
 				$dhl_obj->set_dhl_myaccount_info( $dhl_settings );
 			}
+		}
+
+		/**
+		 * Determines the password-expiration warning state for a given validity timestamp.
+		 *
+		 * Pure helper (no side effects) so the notice/scheduling boundaries can be unit tested.
+		 *
+		 * @param int|false $valid_until Unix timestamp (UTC) until which the password is valid, or false if unknown.
+		 * @param int       $now         Current Unix timestamp (UTC) to compare against.
+		 * @return array {
+		 *     @type string    $flag           Flag to store now: '' (none), '30days' or '7days'.
+		 *     @type int|false $schedule_month Timestamp to schedule the 30-day notice at, or false for none.
+		 *     @type int|false $schedule_week  Timestamp to schedule the 7-day notice at, or false for none.
+		 * }
+		 */
+		public static function get_pwd_expiration_state( $valid_until, $now ) {
+			$state = array(
+				'flag'           => '',
+				'schedule_month' => false,
+				'schedule_week'  => false,
+			);
+
+			if ( false === $valid_until ) {
+				return $state;
+			}
+
+			$timestamp_month = $valid_until - 30 * 24 * 60 * 60;
+			$timestamp_week  = $valid_until - 7 * 24 * 60 * 60;
+
+			if ( $timestamp_month > $now ) {
+				// More than 30 days left: schedule both future notices.
+				$state['schedule_month'] = $timestamp_month;
+				$state['schedule_week']  = $timestamp_week;
+			} elseif ( $timestamp_week > $now ) {
+				// Between 7 and 30 days left: show the 30-day notice now, schedule the 7-day notice.
+				$state['flag']          = '30days';
+				$state['schedule_week'] = $timestamp_week;
+			} else {
+				// Less than 7 days left.
+				$state['flag'] = '7days';
+			}
+
+			return $state;
 		}
 
 		public function dhl_myaccount_pwd_expiration_month_callback() {

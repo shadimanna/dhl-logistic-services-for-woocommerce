@@ -131,13 +131,13 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 			if ( $myaccount_pwd_expiration == '7days' ) {
 				/* Translators: %s is the URL for the business portal login. */
 				$password_expiration_message = sprintf(
-					esc_html__( '<p style="color: red;">Your password will expire in less than 7 days, please go to your <a href="%s" target="_blank">business portal</a> and reset your password then click the "Get Account Settings" button below.</p>', 'dhl-for-woocommerce' ),
+					wp_kses_post( __( '<p style="color: red;">Your password will expire in less than 7 days, please go to your <a href="%s" target="_blank">business portal</a> and reset your password then click the "Get Account Settings" button below.</p>', 'dhl-for-woocommerce' ) ),
 					esc_url( PR_DHL_PAKET_BUSSINESS_PORTAL_LOGIN )
 				);
 			} elseif ( $myaccount_pwd_expiration == '30days' ) {
 				/* Translators: %s is the URL for the business portal login. */
 				$password_expiration_message = sprintf(
-					esc_html__( '<p style="color: red;">Your password will expire in less than 30 days, please go to your <a href="%s" target="_blank">business portal</a> and reset your password then click the "Get Account Settings" button below.</p>', 'dhl-for-woocommerce' ),
+					wp_kses_post( __( '<p style="color: red;">Your password will expire in less than 30 days, please go to your <a href="%s" target="_blank">business portal</a> and reset your password then click the "Get Account Settings" button below.</p>', 'dhl-for-woocommerce' ) ),
 					esc_url( PR_DHL_PAKET_BUSSINESS_PORTAL_LOGIN )
 				);
 			} else {
