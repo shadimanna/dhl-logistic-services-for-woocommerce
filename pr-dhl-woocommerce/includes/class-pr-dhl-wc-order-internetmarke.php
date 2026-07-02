@@ -539,6 +539,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 			}
 
 			$this->delete_label_tracking( $order_id );
+			$this->delete_label_file( $order_id );
 
 			$this->send_json_response(
 				array(
