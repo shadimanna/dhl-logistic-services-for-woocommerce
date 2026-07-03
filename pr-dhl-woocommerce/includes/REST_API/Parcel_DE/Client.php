@@ -464,6 +464,11 @@ class Client extends API_Client {
 		// Print only if codeable.
 		$route .= '&printFormat=' . $item_info->shipment['printFormat'];
 
+		// Ask DHL to return the return label as its own file instead of combining it with the shipping label.
+		if ( isset( $item_info->args['dhl_settings']['split_return_label'] ) && 'yes' === $item_info->args['dhl_settings']['split_return_label'] ) {
+			$route .= '&combine=false';
+		}
+
 		return $route;
 	}
 

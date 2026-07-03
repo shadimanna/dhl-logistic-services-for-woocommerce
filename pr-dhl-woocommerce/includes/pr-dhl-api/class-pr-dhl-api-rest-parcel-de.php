@@ -122,6 +122,11 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 
 		$label_path = $label_info['label_path'];
 
+		// Remove the separate return label file too, if one was saved.
+		if ( ! empty( $label_info['return_label_path'] ) && file_exists( $label_info['return_label_path'] ) ) {
+			wp_delete_file( $label_info['return_label_path'] );
+		}
+
 		if ( file_exists( $label_path ) ) {
 			if ( ! is_writable( $label_path ) ) {
 				throw new Exception( esc_html__( 'DHL Label file is not writable!', 'dhl-for-woocommerce' ) );
@@ -203,11 +208,22 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 			$return_num = $item->returnShipmentNo;
 		}
 
+		// When "combine=false" is sent, DHL returns the return label as its own file. Save it separately.
+		$return_label_url  = '';
+		$return_label_path = '';
+		if ( isset( $item->returnLabel->b64 ) ) {
+			$return_file       = $this->save_data_file( $prefix . '-return', $order_id, $item->returnLabel->b64 );
+			$return_label_url  = $return_file['label_url'];
+			$return_label_path = $return_file['label_path'];
+		}
+
 		return array(
 			'label_url'           => $label_url,
 			'label_path'          => $label_path,
 			'tracking_number'     => $item->shipmentNo,
 			'return_label_number' => $return_num,
+			'return_label_url'    => $return_label_url,
+			'return_label_path'   => $return_label_path,
 		);
 	}
 
@@ -221,8 +237,9 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		$loader    = PR_DHL_Libraryloader::instance();
 		$pdfMerger = $loader->get_pdf_merger();
 
-		$shipmentNos = array();
-		$return_nums = array();
+		$shipmentNos         = array();
+		$return_nums         = array();
+		$return_label_files  = array();
 
 		if ( $pdfMerger ) {
 			foreach ( $items as $key => $item ) {
@@ -232,6 +249,10 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 
 				array_push( $shipmentNos, $file['tracking_number'] );
 				array_push( $return_nums, $file['return_label_number'] );
+
+				if ( ! empty( $file['return_label_path'] ) ) {
+					$return_label_files[] = $file['return_label_path'];
+				}
 			}
 
 			$filename   = 'dhl-' . $prefix . '-' . $order_id . '-multiple' . '.pdf';
@@ -242,11 +263,31 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 			throw new Exception( 'Failed to merge multiple files.' );
 		}
 
+		// Merge the separate return labels (combine=false) into a single return PDF.
+		$return_label_url  = '';
+		$return_label_path = '';
+		if ( ! empty( $return_label_files ) ) {
+			$return_merger = $loader->get_pdf_merger();
+
+			if ( $return_merger ) {
+				foreach ( $return_label_files as $return_file ) {
+					$return_merger->addPDF( $return_file );
+				}
+
+				$return_filename   = 'dhl-' . $prefix . '-' . $order_id . '-return-multiple' . '.pdf';
+				$return_label_url  = PR_DHL()->get_dhl_label_folder_url() . $return_filename;
+				$return_label_path = PR_DHL()->get_dhl_label_folder_dir() . $return_filename;
+				$return_merger->merge( 'file', $return_label_path );
+			}
+		}
+
 		return array(
 			'label_url'           => $label_url,
 			'label_path'          => $label_path,
 			'tracking_number'     => $shipmentNos,
 			'return_label_number' => $return_nums,
+			'return_label_url'    => $return_label_url,
+			'return_label_path'   => $return_label_path,
 		);
 	}
 
