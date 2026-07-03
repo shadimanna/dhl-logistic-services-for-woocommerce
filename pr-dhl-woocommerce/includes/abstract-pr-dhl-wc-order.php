@@ -442,6 +442,13 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 			return $this->generate_download_url( '/' . self::DHL_DOWNLOAD_ENDPOINT . '/' . $order_id );
 		}
 
+		/**
+		 * Builds the download URL for the separate return label, if one was saved.
+		 *
+		 * @param int $order_id The order ID.
+		 *
+		 * @return string The download URL, or an empty string when no separate return label exists.
+		 */
 		protected function get_download_return_label_url( $order_id ) {
 
 			if ( empty( $order_id ) ) {
