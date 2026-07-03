@@ -43,6 +43,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 
 			add_action( 'pr_shipping_dhl_label_created', array( $this, 'change_order_status' ), 10, 1 );
 			add_action( 'woocommerce_email_order_details', array( $this, 'add_tracking_info' ), 10, 4 );
+			add_filter( 'woocommerce_email_attachments', array( $this, 'attach_return_label_to_email' ), 10, 3 );
 			add_action( 'woocommerce_order_status_changed', array( $this, 'create_label_on_status_changed' ), 10, 4 );
 
 			// Add assets order list assets.
@@ -1059,6 +1060,42 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 					echo '<p>' . $tracking_note . '</p>';
 				}
 			}
+		}
+
+		/**
+		 * Attaches the separate return label PDF to the configured customer email.
+		 *
+		 * @param array  $attachments The current email attachments.
+		 * @param string $email_id    The WooCommerce email ID being sent.
+		 * @param mixed  $order       The object the email is about (a WC_Order for order emails).
+		 *
+		 * @return array The attachments, with the return label added when applicable.
+		 */
+		public function attach_return_label_to_email( $attachments, $email_id, $order ) {
+
+			if ( empty( $this->shipping_dhl_settings['dhl_email_return_label'] ) || 'yes' !== $this->shipping_dhl_settings['dhl_email_return_label'] ) {
+				return $attachments;
+			}
+
+			$target_email = ! empty( $this->shipping_dhl_settings['dhl_email_return_label_email'] )
+				? $this->shipping_dhl_settings['dhl_email_return_label_email']
+				: 'customer_completed_order';
+
+			if ( $email_id !== $target_email ) {
+				return $attachments;
+			}
+
+			if ( ! ( $order instanceof WC_Order ) ) {
+				return $attachments;
+			}
+
+			$label_tracking_info = $this->get_dhl_label_tracking( $order->get_id() );
+
+			if ( ! empty( $label_tracking_info['return_label_path'] ) && file_exists( $label_tracking_info['return_label_path'] ) ) {
+				$attachments[] = $label_tracking_info['return_label_path'];
+			}
+
+			return $attachments;
 		}
 
 		public function create_label_on_status_changed( $order_id, $status_from, $status_to, $order ) {
