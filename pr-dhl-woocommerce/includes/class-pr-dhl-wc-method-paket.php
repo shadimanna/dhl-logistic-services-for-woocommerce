@@ -312,6 +312,14 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					'placeholder'       => '',
 					'custom_attributes' => array( 'maxlength' => '2' ),
 				),
+				'dhl_split_return_label'            => array(
+					'title'       => esc_html__( 'Separate Return Label', 'dhl-for-woocommerce' ),
+					'type'        => 'checkbox',
+					'label'       => esc_html__( 'Save the return label as a separate PDF', 'dhl-for-woocommerce' ),
+					'default'     => 'no',
+					'description' => esc_html__( 'When enabled, the return label is saved as its own PDF file instead of being combined with the shipping label, so it can be downloaded on its own from the order.', 'dhl-for-woocommerce' ),
+					'desc_tip'    => true,
+				),
 				'dhl_general'                       => array(
 					'title'       => esc_html__( 'Shipping Label Settings', 'dhl-for-woocommerce' ),
 					'type'        => 'title',
