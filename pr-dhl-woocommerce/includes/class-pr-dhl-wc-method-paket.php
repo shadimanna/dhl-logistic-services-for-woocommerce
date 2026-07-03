@@ -535,7 +535,7 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					'desc_tip'    => true,
 				),
 				'dhl_email_return_label_email'      => array(
-					'title'       => esc_html__( 'Attach Return Label To', 'dhl-for-woocommerce' ),
+					'title'       => esc_html__( 'Attach Return Label To Email', 'dhl-for-woocommerce' ),
 					'type'        => 'select',
 					'description' => esc_html__( 'Choose which customer email the return label is attached to. The label must already be created when the email is sent, so "Completed order" is recommended.', 'dhl-for-woocommerce' ),
 					'desc_tip'    => true,
