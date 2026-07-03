@@ -184,7 +184,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 				// Only show when the return label was saved as its own file (setting enabled + label has a return part).
 				if ( ! empty( $label_tracking_info['return_label_path'] ) ) {
-					$return_label_button = '<a href="' . esc_url( $this->get_download_return_label_url( $order_id ) ) . '" id="dhl-return-label-print" class="button" download target="_blank">' . esc_html__( 'Download Return Label', 'dhl-for-woocommerce' ) . '</a>';
+					$return_label_button = '<a href="' . esc_url( $this->get_download_return_label_url( $order_id ) ) . '" id="dhl-return-label-print" class="button button-primary" download target="_blank">' . esc_html__( 'Download Return Label', 'dhl-for-woocommerce' ) . '</a>';
 				}
 			}
 
@@ -608,6 +608,11 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 			if ( isset( $tracking_items['label_path'] ) && validate_file( $tracking_items['label_path'] ) === 2 ) {
 				$tracking_items['label_path'] = wp_slash( $tracking_items['label_path'] );
+			}
+
+			// Protect the return label path's backslashes on Windows the same way as the label path.
+			if ( isset( $tracking_items['return_label_path'] ) && validate_file( $tracking_items['return_label_path'] ) === 2 ) {
+				$tracking_items['return_label_path'] = wp_slash( $tracking_items['return_label_path'] );
 			}
 
 			$order = wc_get_order( $order_id );
