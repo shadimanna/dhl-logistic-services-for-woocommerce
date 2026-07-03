@@ -167,6 +167,8 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 			$main_button = '<button id="dhl-label-button" class="button button-primary button-save-form">' . esc_html__( 'Generate Label', 'dhl-for-woocommerce' ) . '</button>';
 
+			$return_label_button = '';
+
 			// Get tracking info if it exists
 			$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
 			// Check whether the label has already been created or not
@@ -179,12 +181,18 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 				$is_disabled = 'disabled';
 
 				$print_button = '<a href="' . $this->get_download_label_url( $order_id ) . '" id="dhl-label-print" class="button button-primary" download target="_blank">' . esc_html__( 'Download Label', 'dhl-for-woocommerce' ) . '</a>';
+
+				// Only show when the return label was saved as its own file (setting enabled + label has a return part).
+				if ( ! empty( $label_tracking_info['return_label_path'] ) ) {
+					$return_label_button = '<a href="' . esc_url( $this->get_download_return_label_url( $order_id ) ) . '" id="dhl-return-label-print" class="button" download target="_blank">' . esc_html__( 'Download Return Label', 'dhl-for-woocommerce' ) . '</a>';
+				}
 			}
 
 			$dhl_label_data = array(
-				'main_button'  => $main_button,
-				'delete_label' => $delete_label,
-				'print_button' => $print_button,
+				'main_button'         => $main_button,
+				'delete_label'        => $delete_label,
+				'print_button'        => $print_button,
+				'return_label_button' => $return_label_button,
 			);
 
 			echo '<div id="shipment-dhl-label-form">';
@@ -240,6 +248,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 					echo $main_button;
 				} else {
 					echo $print_button;
+					echo $return_label_button;
 					echo $delete_label;
 				}
 
@@ -431,6 +440,25 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 			// Override URL with our solution's download label endpoint:
 			return $this->generate_download_url( '/' . self::DHL_DOWNLOAD_ENDPOINT . '/' . $order_id );
+		}
+
+		protected function get_download_return_label_url( $order_id ) {
+
+			if ( empty( $order_id ) ) {
+				return '';
+			}
+
+			$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
+			// Only build the URL when a separate return label file exists.
+			if ( empty( $label_tracking_info['return_label_path'] ) ) {
+				return '';
+			}
+
+			return add_query_arg(
+				'dhl_label_type',
+				'return',
+				$this->generate_download_url( '/' . self::DHL_DOWNLOAD_ENDPOINT . '/' . $order_id )
+			);
 		}
 
 		protected function get_tracking_note( $order_id ) {
@@ -1569,7 +1597,13 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 					return;
 				}
 
-				$label_path = $label_tracking_info['label_path'];
+				// Serve the separate return label when requested, otherwise the shipping label.
+				$label_type = isset( $_GET['dhl_label_type'] ) ? sanitize_key( wp_unslash( $_GET['dhl_label_type'] ) ) : '';
+				if ( 'return' === $label_type && ! empty( $label_tracking_info['return_label_path'] ) ) {
+					$label_path = $label_tracking_info['return_label_path'];
+				} else {
+					$label_path = $label_tracking_info['label_path'];
+				}
 
 				if ( false == $this->download_label( $label_path ) ) {
 					array_push(
