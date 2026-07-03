@@ -399,6 +399,10 @@ jQuery( function( $ ) {
 						$( '#dhl-label-button').remove();
 						$( '#shipment-dhl-label-form' ).append(dhl_label_data.print_button);
 						$( '#dhl-label-print').attr("href", response.label_url ); // update new url
+						// Show the separate return label button when the API returned one.
+						if ( response.return_label_url ) {
+							$( '#shipment-dhl-label-form' ).append('<a href="' + response.return_label_url + '" id="dhl-return-label-print" class="button button-primary" download target="_blank">' + dhl_label_data.return_label_text + '</a>');
+						}
 						$( '#shipment-dhl-label-form' ).append(dhl_label_data.delete_label);
 
 						if( response.tracking_note ) {

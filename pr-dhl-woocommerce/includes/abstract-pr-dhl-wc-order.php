@@ -193,6 +193,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 				'delete_label'        => $delete_label,
 				'print_button'        => $print_button,
 				'return_label_button' => $return_label_button,
+				'return_label_text'   => esc_html__( 'Download Return Label', 'dhl-for-woocommerce' ),
 			);
 
 			echo '<div id="shipment-dhl-label-form">';
@@ -381,6 +382,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 						'download_msg'       => esc_html__( 'Your DHL label is ready to download, click the "Download Label" button above"', 'dhl-for-woocommerce' ),
 						'button_txt'         => esc_html__( 'Download Label', 'dhl-for-woocommerce' ),
 						'label_url'          => $label_url,
+						'return_label_url'   => $this->get_download_return_label_url( $order_id ),
 						'tracking_note'      => $tracking_note,
 						'tracking_note_type' => $tracking_note_type,
 					)
