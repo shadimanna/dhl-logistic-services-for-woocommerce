@@ -94,8 +94,13 @@ div#shipment-dhl-label-form > div:nth-of-type(even) {
 
 #shipment-dhl-label-form #dhl-label-button,
 #shipment-dhl-label-form #dhl-label-print,
+#shipment-dhl-label-form .dhl-return-label-link,
 #shipment-dhl-label-form .wc_dhl_delete {
     margin: 0 15px 20px;
+}
+
+#shipment-dhl-label-form .dhl-return-label-link {
+    display: inline-block;
 }
 
 
