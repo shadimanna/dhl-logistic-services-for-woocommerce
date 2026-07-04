@@ -75,8 +75,10 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
-= 3.9.8 =
+= 4.0.0 =
 * Fix: False "DHL account password will expire in less than 30 days" warning after refreshing account settings.
+
+= 3.9.8 =
 * Fix: Missing customs "shippingConditions" field causing label creation failure for DHL Europaket (V54EPAK) cross-border shipments.
 * Fix: DHL Checkout Blocks text is now translated on the frontend.
 * Fix: Update missing German translations.
