@@ -27,7 +27,7 @@ if ( ! class_exists( 'PR_DHL_WC_Product' ) ) :
 
 			$this->manufacture_country_label = esc_html__( 'Country of Manufacture (DHL)', 'dhl-for-woocommerce' );
 			$this->hs_code_label             = esc_html__( 'Harmonized Tariff Schedule (DHL)', 'dhl-for-woocommerce' );
-			$this->hs_code_description       = esc_html__( 'Harmonized Tariff Schedule is a number assigned to every possible commodity that can be imported or exported from any country. For shipments to the United States, enter the full 10-digit HTSUS code — look it up at https://hts.usitc.gov/', 'dhl-for-woocommerce' );
+			$this->hs_code_description       = esc_html__( 'Harmonized Tariff Schedule is a number assigned to every possible commodity that can be imported or exported from any country.', 'dhl-for-woocommerce' );
 
 			// priority is '8' because WC Subscriptions hides fields in the shipping tabs which hide the DHL fields here
 			add_action( 'woocommerce_product_options_shipping', array( $this, 'additional_product_shipping_options' ), 8 );
@@ -93,6 +93,14 @@ if ( ! class_exists( 'PR_DHL_WC_Product' ) ) :
 					'placeholder' => esc_html__( 'HS Code', 'dhl-for-woocommerce' ),
 				)
 			);
+
+			echo '<p class="description" style="margin: -8px 12px 12px;">' . wp_kses_post(
+				sprintf(
+					/* translators: %s is a link to the US HTSUS lookup tool */
+					__( 'For shipments to the United States, enter the full 10-digit code — %s.', 'dhl-for-woocommerce' ),
+					'<a href="https://hts.usitc.gov/" target="_blank" rel="noopener noreferrer">' . esc_html__( 'look up the HTSUS code', 'dhl-for-woocommerce' ) . '</a>'
+				)
+			) . '</p>';
 
 			$this->additional_product_settings();
 		}
