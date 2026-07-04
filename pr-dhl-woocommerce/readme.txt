@@ -75,6 +75,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 4.0.0 =
+* Add: Require a full 10-digit HS code (HTSUS) for shipments to the United States, with a clear error shown before the label is created.
+
 = 3.9.8 =
 * Fix: Missing customs "shippingConditions" field causing label creation failure for DHL Europaket (V54EPAK) cross-border shipments.
 * Fix: DHL Checkout Blocks text is now translated on the frontend.
@@ -83,7 +86,6 @@ More detailed instructions on how to set up your store and configure it are cons
 * Fix: Cash on Delivery details now appear on DHL Paket labels created via the REST API.
 * Fix: Show a clear error when a Cash on Delivery label can't be created because the order isn't in Euro or bank details are missing.
 * Fix: Regular Address no longer shows a Post Number error at checkout.
-* Add: Require a full 10-digit HS code (HTSUS) for shipments to the United States, with a clear error shown before the label is created.
 * Tweak: WordPress 7.0 and WooCommerce 10.9 compatibility.
 
 = 3.9.7 =
