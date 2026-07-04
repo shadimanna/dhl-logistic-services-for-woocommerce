@@ -240,7 +240,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 
 		if ( isset( $settings['dhl_sandbox'] ) && ( $settings['dhl_sandbox'] == 'yes' ) ) {
 			$sandbox_info        = $this->sandbox_info();
-			$args['account_num'] = $sandbox_info['account_no'];
+			$args['account_num'] = $sandbox_info['rest_api_account_no'];
 		} else {
 			$args['account_num'] = $account_num;
 		}
