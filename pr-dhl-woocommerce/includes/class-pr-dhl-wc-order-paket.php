@@ -1081,7 +1081,12 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 				? $this->shipping_dhl_settings['dhl_email_return_label_email']
 				: 'customer_note';
 
-			if ( $email_id !== $target_email ) {
+			// Always deliver on the customer-note email that announces the return label
+			// (it is sent the moment the label is created, so the customer always gets it),
+			// plus the merchant-selected email when a different one is configured.
+			$target_emails = array_unique( array( 'customer_note', $target_email ) );
+
+			if ( ! in_array( $email_id, $target_emails, true ) ) {
 				return $attachments;
 			}
 
