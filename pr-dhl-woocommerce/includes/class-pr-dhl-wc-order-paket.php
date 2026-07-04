@@ -1079,7 +1079,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 
 			$target_email = ! empty( $this->shipping_dhl_settings['dhl_email_return_label_email'] )
 				? $this->shipping_dhl_settings['dhl_email_return_label_email']
-				: 'customer_completed_order';
+				: 'customer_note';
 
 			if ( $email_id !== $target_email ) {
 				return $attachments;

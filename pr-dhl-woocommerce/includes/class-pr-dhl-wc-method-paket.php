@@ -537,10 +537,11 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 				'dhl_email_return_label_email'      => array(
 					'title'       => esc_html__( 'Attach Return Label To Email', 'dhl-for-woocommerce' ),
 					'type'        => 'select',
-					'description' => esc_html__( 'Choose which customer email the return label is attached to. The label must already be created when the email is sent, so "Completed order" is recommended.', 'dhl-for-woocommerce' ),
+					'description' => esc_html__( 'Choose which customer email the return label is attached to. The label must already exist when the email is sent. "Order note" is recommended because it is sent the moment the label is created, so the customer always receives it; the order-status emails only carry the label if it was created before they were sent.', 'dhl-for-woocommerce' ),
 					'desc_tip'    => true,
-					'default'     => 'customer_completed_order',
+					'default'     => 'customer_note',
 					'options'     => array(
+						'customer_note'             => esc_html__( 'Order note (sent when the label is created) — recommended', 'dhl-for-woocommerce' ),
 						'customer_completed_order'  => esc_html__( 'Completed order', 'dhl-for-woocommerce' ),
 						'customer_processing_order' => esc_html__( 'Processing order', 'dhl-for-woocommerce' ),
 						'customer_invoice'          => esc_html__( 'Order details / invoice', 'dhl-for-woocommerce' ),
