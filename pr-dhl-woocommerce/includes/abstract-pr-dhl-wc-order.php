@@ -184,7 +184,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 				// Only show when the return label was saved as its own file (setting enabled + label has a return part).
 				if ( ! empty( $label_tracking_info['return_label_path'] ) ) {
-					$return_label_button = '<a href="' . esc_url( $this->get_download_return_label_url( $order_id ) ) . '" id="dhl-return-label-print" class="button button-primary" download target="_blank">' . esc_html__( 'Download Return Label', 'dhl-for-woocommerce' ) . '</a>';
+					$return_label_button = '<a href="' . esc_url( $this->get_download_return_label_url( $order_id ) ) . '" id="dhl-return-label-print" class="dhl-return-label-link" download target="_blank">' . esc_html__( 'Download Return Label', 'dhl-for-woocommerce' ) . '</a>';
 				}
 			}
 

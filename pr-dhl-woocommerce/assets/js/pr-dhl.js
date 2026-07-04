@@ -404,7 +404,7 @@ jQuery( function( $ ) {
 						// jQuery's #id selector only returns the first matching element.
 						$( "[id='dhl-return-label-print']" ).remove();
 						if ( response.return_label_url ) {
-							$( '#shipment-dhl-label-form' ).append('<a href="' + response.return_label_url + '" id="dhl-return-label-print" class="button button-primary" download target="_blank">' + dhl_label_data.return_label_text + '</a>');
+							$( '#shipment-dhl-label-form' ).append('<a href="' + response.return_label_url + '" id="dhl-return-label-print" class="dhl-return-label-link" download target="_blank">' + dhl_label_data.return_label_text + '</a>');
 						}
 						$( '#shipment-dhl-label-form' ).append(dhl_label_data.delete_label);
 
