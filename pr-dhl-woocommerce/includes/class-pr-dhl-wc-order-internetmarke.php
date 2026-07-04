@@ -27,7 +27,8 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 		}
 
 		public function init_hooks() {
-			// Register the metabox at priority 21 so it appears after the Paket metabox (priority 20).
+			// Register the metabox after the Paket metabox (priority 20); it is then
+			// force-pinned to the top of the side column via force_metabox_to_top().
 			add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ), 21, 2 );
 
 			// Save on standard order save.
@@ -215,8 +216,44 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 				array( $this, 'meta_box' ),
 				$screen,
 				'side',
-				'default'
+				'high'
 			);
+
+			// Pin the metabox to the very top of the side column, overriding any
+			// per-user drag order WordPress may have saved for this screen.
+			add_filter( 'get_user_option_meta-box-order_' . $screen, array( $this, 'force_metabox_to_top' ) );
+		}
+
+		/**
+		 * Force the INTERNETMARKE metabox to the top of the "side" column.
+		 *
+		 * WordPress stores each user's drag-and-drop metabox order and renders
+		 * boxes in that saved order regardless of the priority passed to
+		 * add_meta_box(). Filtering the saved order here keeps our metabox pinned
+		 * first in the side context on every load.
+		 *
+		 * @param  array|false $order Saved metabox order keyed by context.
+		 * @return array
+		 */
+		public function force_metabox_to_top( $order ) {
+			if ( ! is_array( $order ) ) {
+				$order = array();
+			}
+
+			// Make sure our box isn't lingering in another context.
+			foreach ( array( 'normal', 'advanced' ) as $context ) {
+				if ( ! empty( $order[ $context ] ) ) {
+					$ids             = array_diff( array_filter( explode( ',', $order[ $context ] ) ), array( self::METABOX_ID ) );
+					$order[ $context ] = implode( ',', $ids );
+				}
+			}
+
+			$side = isset( $order['side'] ) ? array_filter( explode( ',', $order['side'] ) ) : array();
+			$side = array_values( array_diff( $side, array( self::METABOX_ID ) ) );
+			array_unshift( $side, self::METABOX_ID );
+			$order['side'] = implode( ',', $side );
+
+			return $order;
 		}
 
 		/**
