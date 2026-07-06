@@ -115,8 +115,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			'ES' => array( '51', '52', '35', '38' ),
 		);
 
-		// These are all considered domestic by DHL
-		protected $us_territories = array( 'US', 'GU', 'AS', 'PR', 'UM', 'VI' );
 
 		/**
 		 * Construct the plugin.
@@ -834,9 +832,9 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			$is_domestic = false;
 
 			// If base is US territory
-			if ( in_array( $this->base_country_code, $this->us_territories ) ) {
+			if ( in_array( $this->base_country_code, API_Utils::us_territories(), true ) ) {
 				// ...and destination is US territory, then it is "domestic"
-				if ( in_array( $country_receiver, $this->us_territories ) ) {
+				if ( in_array( $country_receiver, API_Utils::us_territories(), true ) ) {
 					$is_domestic = true;
 				} else {
 					$is_domestic = false;

@@ -70,6 +70,17 @@ class API_Utils {
 	}
 
 	/**
+	 * US and its territories, as ISO 3166-1 alpha-2 codes.
+	 *
+	 * Used to treat shipments between the US mainland and its territories as domestic.
+	 *
+	 * @return array
+	 */
+	public static function us_territories() {
+		return array( 'US', 'GU', 'AS', 'PR', 'UM', 'VI' );
+	}
+
+	/**
 	 * Returns true if the order contains items that need shipping.
 	 *
 	 * @param \WC_Order $order Order object.
