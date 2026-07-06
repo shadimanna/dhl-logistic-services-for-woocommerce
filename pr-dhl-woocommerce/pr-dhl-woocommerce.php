@@ -832,9 +832,9 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			$is_domestic = false;
 
 			// If base is US territory
-			if ( in_array( $this->base_country_code, API_Utils::us_territories(), true ) ) {
+			if ( API_Utils::is_us_territory( $this->base_country_code ) ) {
 				// ...and destination is US territory, then it is "domestic"
-				if ( in_array( $country_receiver, API_Utils::us_territories(), true ) ) {
+				if ( API_Utils::is_us_territory( $country_receiver ) ) {
 					$is_domestic = true;
 				} else {
 					$is_domestic = false;

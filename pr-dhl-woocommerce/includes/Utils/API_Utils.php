@@ -70,14 +70,42 @@ class API_Utils {
 	}
 
 	/**
-	 * US and its territories, as ISO 3166-1 alpha-2 codes.
+	 * The US and its territories, as ISO 3166-1 alpha-2 codes.
 	 *
-	 * Used to treat shipments between the US mainland and its territories as domestic.
+	 * Covers the US mainland, Puerto Rico, Guam, US Virgin Islands, American Samoa
+	 * and the US Minor Outlying Islands.
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	public static function us_territories() {
 		return array( 'US', 'GU', 'AS', 'PR', 'UM', 'VI' );
+	}
+
+	/**
+	 * The US and its territories, as ISO 3166-1 alpha-3 codes.
+	 *
+	 * The alpha-3 counterpart of {@see self::us_territories()}, in the same order.
+	 *
+	 * @return string[]
+	 */
+	public static function us_territories_iso3() {
+		return array( 'USA', 'GUM', 'ASM', 'PRI', 'UMI', 'VIR' );
+	}
+
+	/**
+	 * Whether a country code refers to the US or one of its territories.
+	 *
+	 * Accepts either an ISO 3166-1 alpha-2 or alpha-3 code, so callers do not need to
+	 * know which form they hold.
+	 *
+	 * @param  string $country_code Country code in alpha-2 or alpha-3 form.
+	 * @return bool
+	 */
+	public static function is_us_territory( $country_code ) {
+		$country_code = strtoupper( trim( (string) $country_code ) );
+
+		return in_array( $country_code, self::us_territories(), true )
+			|| in_array( $country_code, self::us_territories_iso3(), true );
 	}
 
 	/**

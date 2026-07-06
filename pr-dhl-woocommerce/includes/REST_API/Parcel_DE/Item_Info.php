@@ -749,8 +749,7 @@ class Item_Info {
 					$to_switzerland   = 'V53WPAK' === $dhl_product && 'CHE' === $shipping_country;
 
 					// US customs (HTSUS) requires a full 10-digit tariff code; applies to the US mainland and its territories.
-					$us_customs_territories = array( 'USA', 'PRI', 'GUM', 'VIR', 'ASM' );
-					if ( in_array( $shipping_country, $us_customs_territories, true ) ) {
+					if ( API_Utils::is_us_territory( $shipping_country ) ) {
 						if ( ! preg_match( '/^\d{10}$/', (string) $hs_code ) ) {
 							throw new Exception( esc_html__( 'HS code must be exactly 10 digits for shipments to the United States (HTSUS requirement). Enter the full 10-digit code in each product\'s Harmonized Tariff Schedule (DHL) field.', 'dhl-for-woocommerce' ) );
 						}
