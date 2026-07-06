@@ -236,6 +236,44 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 						'</a>'
 					),
 				),
+				'internetmarke_api_title'    => array(
+					'title'       => esc_html__( 'Internetmarke account and API', 'dhl-for-woocommerce' ),
+					'type'        => 'title',
+					'description' => wp_kses(
+						__( 'Enter your Portokasse account credentials to enable Deutsche Post Internetmarke label generation. For development and testing, use a developer Portokasse — simulated payments are applied and generated stamps cannot be used for real postage. If you see authentication errors, confirm in your Portokasse account under My data &rarr; Business applications that the business application has been activated.', 'dhl-for-woocommerce' ),
+						array( 'rarr' => array() )
+					),
+				),
+				'internetmarke_api_user'     => array(
+					'title'       => esc_html__( 'Username', 'dhl-for-woocommerce' ),
+					'type'        => 'text',
+					'description' => esc_html__( 'Your Portokasse account username.', 'dhl-for-woocommerce' ),
+					'desc_tip'    => true,
+					'default'     => '',
+				),
+				'internetmarke_api_password' => array(
+					'title'       => esc_html__( 'Portokasse password', 'dhl-for-woocommerce' ),
+					'type'        => 'password',
+					'description' => esc_html__( 'Your Portokasse account password.', 'dhl-for-woocommerce' ),
+					'desc_tip'    => true,
+					'default'     => '',
+				),
+				'internetmarke_portokasse_id' => array(
+					'title'       => esc_html__( 'Portokasse ID (optional)', 'dhl-for-woocommerce' ),
+					'type'        => 'text',
+					'description' => esc_html__( 'Optional. The Portokasse account ID, used to cross-check the account profile after authentication. Not required for token retrieval.', 'dhl-for-woocommerce' ),
+					'desc_tip'    => true,
+					'default'     => '',
+				),
+				'internetmarke_test_connection_button' => array(
+					'title'             => esc_html__( 'Test account connection', 'dhl-for-woocommerce' ),
+					'type'              => 'button',
+					'custom_attributes' => array(
+						'onclick' => "dhlInternetmarkeTestConnection('#woocommerce_pr_dhl_paket_internetmarke_test_connection_button');",
+					),
+					'description'       => esc_html__( 'Saves the Internetmarke credentials above and tests the connection to Deutsche Post in one step.', 'dhl-for-woocommerce' ),
+					'desc_tip'          => false,
+				),
 				'dhl_participation_title'    => array(
 					'title'       => esc_html__( 'DHL Products and Participation Number', 'dhl-for-woocommerce' ),
 					'type'        => 'title',
@@ -1053,6 +1091,7 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 			<?php
 			return ob_get_clean();
 		}
+
 
 		public function init_instance_form_fields() {
 			$this->instance_form_fields = array(
