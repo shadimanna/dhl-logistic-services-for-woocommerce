@@ -36,17 +36,6 @@ class API_Utils {
 	}
 
 	/**
-	 * Check if rest api enabled.
-	 *
-	 * @return bool.
-	 */
-	public static function is_rest_api_enabled() {
-		$settings = get_option( 'woocommerce_pr_dhl_paket_settings', array() );
-
-		return isset( $settings['dhl_default_api'] ) && 'rest-api' === $settings['dhl_default_api'];
-	}
-
-	/**
 	 * Check if HPOS mode is enabled.
 	 *
 	 * @return bool.

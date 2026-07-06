@@ -67,6 +67,13 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 4.0.0 =
+* Add: Deutsche Post Internetmarke — buy and print postage stamps for letters directly from a WooCommerce order.
+* Fix: Correct the DHL Pickup v3 API endpoint so pickup requests no longer fail for all accounts.
+* Drop SOAP API support.
+* Add: One-time admin notice after the SOAP removal prompting stores that were on SOAP to confirm their REST API credentials.
+* Fix: False "DHL account password will expire in less than 30 days" warning after refreshing account settings.
+
 = 3.9.8 =
 * Fix: Missing customs "shippingConditions" field causing label creation failure for DHL Europaket (V54EPAK) cross-border shipments.
 * Fix: DHL Checkout Blocks text is now translated on the frontend.

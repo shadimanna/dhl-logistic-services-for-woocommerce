@@ -79,6 +79,13 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		public $product_editor = null;
 
 		/**
+		 * INTERNETMARKE order metabox handler.
+		 *
+		 * @var PR_DHL_WC_Order_Internetmarke
+		 */
+		protected $shipping_internetmarke_order = null;
+
+		/**
 		 * DHL Shipping DHL Parcel (Legacy) notice
 		 *
 		 * @var PR_DHL_WC_Notice
@@ -162,7 +169,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			// DHL Paket
 			$this->define( 'PR_DHL_CIG_USR', 'dhl_woocommerce_plugin_2_2' );
 			$this->define( 'PR_DHL_CIG_PWD', 'egOcb8buCPuqxFDf9fyOdWz6z7pKAQ' );
-			$this->define( 'PR_DHL_CIG_AUTH', 'https://cig.dhl.de/services/production/soap' );
+			$this->define( 'PR_DHL_CIG_AUTH', 'https://cig.dhl.de/services/production/rest' );
 
 			// DHL Global api.dhl.com
 			$this->define( 'PR_DHL_GLOBAL_URL', 'https://api.dhl.com' );
@@ -170,7 +177,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			$this->define( 'PR_DHL_GLOBAL_SECRET', '3128XM6J5XHt6knH' );
 
 			// To use Sandbox, define 'PR_DHL_SANDBOX' to be 'true' and set 'PR_DHL_CIG_USR_QA' and 'PR_DHL_CIG_PWD_QA' outside this plugin
-			$this->define( 'PR_DHL_CIG_AUTH_QA', 'https://cig.dhl.de/services/sandbox/soap' );
+			$this->define( 'PR_DHL_CIG_AUTH_QA', 'https://cig.dhl.de/services/sandbox/rest' );
 
 			$this->define( 'PR_DHL_PAKET_TRACKING_URL', 'https://www.dhl.de/de/privatkunden/dhl-sendungsverfolgung.html?piececode=' );
 			$this->define( 'PR_DHL_PAKET_TRACKING_URL_EN', 'https://www.dhl.de/en/privatkunden/dhl-sendungsverfolgung.html?piececode=' );
@@ -233,6 +240,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 			$this->get_pr_dhl_wc_product();
 			$this->get_pr_dhl_wc_order();
+			$this->get_pr_dhl_wc_order_internetmarke();
 		}
 
 		public function init_hooks() {
@@ -246,6 +254,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			// Test connection
 			add_action( 'wp_ajax_test_dhl_connection', array( $this, 'test_dhl_connection_callback' ) );
 			add_action( 'wp_ajax_dhl_get_myaccount', array( $this, 'dhl_get_myaccount_callback' ) );
+			add_action( 'wp_ajax_test_dhl_internetmarke_connection', array( $this, 'test_dhl_internetmarke_connection_callback' ) );
 
 			add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ) );
 
@@ -254,8 +263,8 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			add_action( 'admin_notices', array( $this, 'password_expiration_notice_callback' ) );
 			add_action( 'block_categories_all',array($this, 'register_pr_dhl_block_category'), 10, 2 );
 
-			// SOAP deprecation notice.
-			PR_DHL_WC_Notice_SOAP_Deprecation::init();
+			// One-time migration notice after the SOAP API removal.
+			PR_DHL_WC_Notice_SOAP_Removed::init();
 		}
 
 		public function get_pr_dhl_wc_order() {
@@ -281,6 +290,22 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			}
 
 			return $this->shipping_dhl_order;
+		}
+
+		/**
+		 * Initialize the INTERNETMARKE order metabox handler.
+		 *
+		 * Runs independently of which DHL shipping method is active —
+		 * the INTERNETMARKE metabox is always available on order pages.
+		 *
+		 * @return PR_DHL_WC_Order_Internetmarke|null
+		 */
+		public function get_pr_dhl_wc_order_internetmarke() {
+			if ( ! isset( $this->shipping_internetmarke_order ) ) {
+				$this->shipping_internetmarke_order = new PR_DHL_WC_Order_Internetmarke();
+			}
+
+			return $this->shipping_internetmarke_order;
 		}
 
 		public function get_pr_dhl_wc_product() {
@@ -354,13 +379,32 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 						array( 'jquery' ),
 						PR_DHL_VERSION
 					);
-					// wp_localize_script( 'wc-shipment-dhl-paket-settings-js', 'dhl_paket_settings_obj', PR_DHL_WC_Method_Paket::sandbox_info() );
 
 					if ( API_Utils::is_new_merchant() ) {
 						$this->wizard_enqueue_scripts();
 					}
 
 					$this->myaccount_enqueue_scripts();
+
+					wp_enqueue_script(
+						'wc-shipment-dhl-im-testcon-js',
+						PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-internetmarke-test-connection.js',
+						array( 'jquery' ),
+						PR_DHL_VERSION,
+						true
+					);
+					wp_localize_script(
+						'wc-shipment-dhl-im-testcon-js',
+						'dhl_im_test_con_obj',
+						array(
+							'ajax_url'     => admin_url( 'admin-ajax.php' ),
+							'loader_image' => admin_url( 'images/loading.gif' ),
+							'nonce'        => wp_create_nonce( 'pr-dhl-im-test-con' ),
+							'testing_txt'  => esc_html__( 'Testing connection…', 'dhl-for-woocommerce' ),
+							'button_txt'   => esc_html__( 'Test account connection', 'dhl-for-woocommerce' ),
+							'error_txt'    => esc_html__( 'The connection test failed or timed out. Please try again.', 'dhl-for-woocommerce' ),
+						)
+					);
 				}
 
 				wp_enqueue_script(
@@ -504,10 +548,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		 */
 		public function get_dhl_factory() {
 			$base_country_code = $this->get_base_country();
-			// $shipping_dhl_settings = $this->get_shipping_dhl_settings();
-			// $client_id = isset( $shipping_dhl_settings['dhl_api_key'] ) ? $shipping_dhl_settings['dhl_api_key'] : '';
-			// $client_secret = isset( $shipping_dhl_settings['dhl_api_secret'] ) ? $shipping_dhl_settings['dhl_api_secret'] : '';
-
 			try {
 				$dhl_obj = PR_DHL_API_Factory::make_dhl( $base_country_code );
 			} catch ( Exception $e ) {
@@ -526,10 +566,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 					$dhl_sandbox           = isset( $shipping_dhl_settings['dhl_sandbox'] ) ? $shipping_dhl_settings['dhl_sandbox'] : '';
 					if ( $dhl_sandbox == 'yes' || ( defined( 'PR_DHL_SANDBOX' ) && PR_DHL_SANDBOX ) ) {
 						$user = defined( 'PR_DHL_CIG_USR_QA' ) ? PR_DHL_CIG_USR_QA : '';
-						$user = ! empty( $shipping_dhl_settings['dhl_api_sandbox_user'] ) ? $shipping_dhl_settings['dhl_api_sandbox_user'] : $user;
-
 						$pass = defined( 'PR_DHL_CIG_PWD_QA' ) ? PR_DHL_CIG_PWD_QA : '';
-						$pass = ! empty( $shipping_dhl_settings['dhl_api_sandbox_pwd'] ) ? $shipping_dhl_settings['dhl_api_sandbox_pwd'] : $pass;
 
 						$api_cred['user']     = $user;
 						$api_cred['password'] = $pass;
@@ -602,6 +639,69 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 						/* translators: %s is the error message returned when the connection fails */
 						'connection_error' => sprintf( esc_html__( 'Connection Failed: %s Make sure to save the settings before testing the connection. ', 'dhl-for-woocommerce' ), $e->getMessage() ),
 						'button_txt'       => PR_DHL_BUTTON_TEST_CONNECTION,
+					)
+				);
+			}
+
+			wp_die();
+		}
+
+		/**
+		 * Save the Internetmarke credentials and test the connection in one action.
+		 *
+		 * @return void
+		 */
+		public function test_dhl_internetmarke_connection_callback() {
+			check_ajax_referer( 'pr-dhl-im-test-con', 'im_test_con_nonce' );
+
+			$button_txt = esc_html__( 'Test account connection', 'dhl-for-woocommerce' );
+
+			if ( ! current_user_can( 'manage_woocommerce' ) ) {
+				wp_send_json(
+					array(
+						'connection_error' => esc_html__( 'You are not allowed to test the Internetmarke connection.', 'dhl-for-woocommerce' ),
+						'button_txt'       => $button_txt,
+					)
+				);
+				wp_die();
+			}
+
+			$username      = isset( $_POST['username'] ) ? sanitize_text_field( wp_unslash( $_POST['username'] ) ) : '';
+			// Password is stored/transmitted as-is — sanitize_text_field would strip valid special characters. phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$password      = isset( $_POST['password'] ) ? wp_unslash( $_POST['password'] ) : '';
+			$portokasse_id = isset( $_POST['portokasse_id'] ) ? sanitize_text_field( wp_unslash( $_POST['portokasse_id'] ) ) : '';
+
+			// Persist into the Paket settings array — the same store the fields use on a normal save.
+			$settings = get_option( 'woocommerce_pr_dhl_paket_settings', array() );
+			if ( ! is_array( $settings ) ) {
+				$settings = array();
+			}
+			$settings['internetmarke_api_user']      = $username;
+			$settings['internetmarke_api_password']  = $password;
+			$settings['internetmarke_portokasse_id'] = $portokasse_id;
+			update_option( 'woocommerce_pr_dhl_paket_settings', $settings );
+
+			try {
+				$im_api = new PR_DHL_API_Internetmarke();
+				$im_api->test_connection();
+
+				$connection_msg = esc_html__( 'Internetmarke connection successful! Credentials saved.', 'dhl-for-woocommerce' );
+				$this->log_msg( '[INTERNETMARKE] ' . $connection_msg );
+
+				wp_send_json(
+					array(
+						'connection_success' => $connection_msg,
+						'button_txt'         => $button_txt,
+					)
+				);
+			} catch ( Exception $e ) {
+				$this->log_msg( '[INTERNETMARKE] ' . $e->getMessage() );
+
+				wp_send_json(
+					array(
+						/* translators: %s is the error message returned when the connection fails */
+						'connection_error' => sprintf( esc_html__( 'Connection failed: %s', 'dhl-for-woocommerce' ), sanitize_text_field( $e->getMessage() ) ),
+						'button_txt'       => $button_txt,
 					)
 				);
 			}
