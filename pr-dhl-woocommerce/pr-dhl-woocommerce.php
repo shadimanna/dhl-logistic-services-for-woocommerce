@@ -403,6 +403,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 							'nonce'        => wp_create_nonce( 'pr-dhl-im-test-con' ),
 							'testing_txt'  => esc_html__( 'Testing connection…', 'dhl-for-woocommerce' ),
 							'button_txt'   => esc_html__( 'Test account connection', 'dhl-for-woocommerce' ),
+							'error_txt'    => esc_html__( 'The connection test failed or timed out. Please try again.', 'dhl-for-woocommerce' ),
 						)
 					);
 				}

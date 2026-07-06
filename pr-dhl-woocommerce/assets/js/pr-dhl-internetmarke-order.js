@@ -108,6 +108,17 @@ jQuery( function ( $ ) {
 		},
 
 		/**
+		 * Append an error as text, never HTML, so a server-provided string cannot
+		 * inject markup into the metabox.
+		 */
+		show_error: function ( message ) {
+			if ( ! message ) {
+				return;
+			}
+			$( this.form ).append( $( '<p class="wc_dhl_error"/>' ).text( message ) );
+		},
+
+		/**
 		 * Collect form inputs and POST to the generate-label AJAX action.
 		 * Mirrors save_dhl_label() in pr-dhl.js.
 		 */
@@ -143,14 +154,17 @@ jQuery( function ( $ ) {
 			$.post( dhl_im_order_data.ajax_url, data, function ( response ) {
 				$form.unblock();
 
-				if ( response.error ) {
-					$form.append( '<p class="wc_dhl_error">' + response.error + '</p>' );
+				if ( ! response || response.error ) {
+					self.show_error( response ? response.error : dhl_im_order_data.ajax_error );
 					return;
 				}
 
-				// Disable all form inputs — same as Paket success flow.
+				// Success: clear the purchased-but-not-downloaded state and lock the form.
+				$form.find( '.im-pending-notice' ).remove();
 				$form.find( 'input, select, textarea' ).prop( 'disabled', true );
 				$( '#im-label-button' ).remove();
+				// Drop any Delete link already shown in the pending state so it isn't duplicated.
+				$form.find( '.wc_dhl_delete' ).remove();
 
 				// Inject pre-translated button HTML (built in PHP, same pattern as dhl_label_data).
 				if ( typeof dhl_im_label_data !== 'undefined' ) {
@@ -162,8 +176,8 @@ jQuery( function ( $ ) {
 				$( document ).trigger( 'pr_dhl_im_saved_label' );
 			} ).fail( function () {
 				$form.unblock();
-				if ( typeof dhl_im_order_data !== 'undefined' && dhl_im_order_data.ajax_error ) {
-					$form.append( '<p class="wc_dhl_error">' + dhl_im_order_data.ajax_error + '</p>' );
+				if ( typeof dhl_im_order_data !== 'undefined' ) {
+					self.show_error( dhl_im_order_data.ajax_error );
 				}
 			} );
 		},
@@ -196,8 +210,8 @@ jQuery( function ( $ ) {
 			$.post( dhl_im_order_data.ajax_url, data, function ( response ) {
 				$form.unblock();
 
-				if ( response.error ) {
-					$form.append( '<p class="wc_dhl_error">' + response.error + '</p>' );
+				if ( ! response || response.error ) {
+					self.show_error( response ? response.error : dhl_im_order_data.ajax_error );
 					return;
 				}
 
@@ -205,8 +219,8 @@ jQuery( function ( $ ) {
 				window.location.reload();
 			} ).fail( function () {
 				$form.unblock();
-				if ( typeof dhl_im_order_data !== 'undefined' && dhl_im_order_data.ajax_error ) {
-					$form.append( '<p class="wc_dhl_error">' + dhl_im_order_data.ajax_error + '</p>' );
+				if ( typeof dhl_im_order_data !== 'undefined' ) {
+					self.show_error( dhl_im_order_data.ajax_error );
 				}
 			} );
 		},

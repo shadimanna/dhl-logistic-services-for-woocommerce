@@ -28,15 +28,29 @@ function dhlInternetmarkeTestConnection( btn_id ) {
     portokasse_id:     $( '#woocommerce_pr_dhl_paket_internetmarke_portokasse_id' ).val()
   };
 
+  var genericError = dhl_im_test_con_obj.error_txt || 'Connection test failed. Please try again.';
+
   $.post( dhl_im_test_con_obj.ajax_url, data, function ( response ) {
     btn.attr( 'disabled', false );
-    btn.text( response.button_txt || original );
+    btn.text( ( response && response.button_txt ) || original );
     loaderContainer.remove();
 
-    var success = response.connection_success;
+    var success = response && response.connection_success;
     var cssClass = 'dhl_connection_' + ( success ? 'succeeded' : 'error' );
-    var text = success ? response.connection_success : response.connection_error;
+    // On a -1/0 body (nonce failure / not logged in) neither field is set, so fall
+    // back to a generic message instead of rendering an empty error span.
+    var text = success
+      ? response.connection_success
+      : ( ( response && response.connection_error ) || genericError );
 
     $( '<span/>', { 'class': cssClass, text: text } ).insertAfter( btn );
+  } ).fail( function () {
+    // On a timeout or HTTP error the success callback never runs. Without this the
+    // button stays disabled on the spinner forever, even though the credentials were
+    // already saved server-side.
+    btn.attr( 'disabled', false );
+    btn.text( original );
+    loaderContainer.remove();
+    $( '<span/>', { 'class': 'dhl_connection_error', text: genericError } ).insertAfter( btn );
   } );
 }
