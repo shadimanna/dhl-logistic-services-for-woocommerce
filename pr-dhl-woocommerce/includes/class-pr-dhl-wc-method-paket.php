@@ -128,18 +128,24 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 			}
 
 			$weight_units = get_option( 'woocommerce_weight_unit' );
+
+			$portal_link_open  = '<a href="' . esc_url( PR_DHL_PAKET_BUSSINESS_PORTAL_LOGIN ) . '" target="_blank">';
+			$portal_link_close = '</a>';
+
 			if ( $myaccount_pwd_expiration == '7days' ) {
-				/* Translators: %s is the URL for the business portal login. */
-				$password_expiration_message = sprintf(
-					esc_html__( '<p style="color: red;">Your password will expire in less than 7 days, please go to your <a href="%s" target="_blank">business portal</a> and reset your password then click the "Get Account Settings" button below.</p>', 'dhl-for-woocommerce' ),
-					esc_url( PR_DHL_PAKET_BUSSINESS_PORTAL_LOGIN )
-				);
+				$password_expiration_message = '<p style="color: red;">' . sprintf(
+					/* translators: %1$s: opening anchor tag to the DHL business portal, %2$s: closing anchor tag. */
+					esc_html__( 'Your password will expire in less than 7 days, please go to your %1$sbusiness portal%2$s and reset your password then click the "Get Account Settings" button below.', 'dhl-for-woocommerce' ),
+					$portal_link_open,
+					$portal_link_close
+				) . '</p>';
 			} elseif ( $myaccount_pwd_expiration == '30days' ) {
-				/* Translators: %s is the URL for the business portal login. */
-				$password_expiration_message = sprintf(
-					esc_html__( '<p style="color: red;">Your password will expire in less than 30 days, please go to your <a href="%s" target="_blank">business portal</a> and reset your password then click the "Get Account Settings" button below.</p>', 'dhl-for-woocommerce' ),
-					esc_url( PR_DHL_PAKET_BUSSINESS_PORTAL_LOGIN )
-				);
+				$password_expiration_message = '<p style="color: red;">' . sprintf(
+					/* translators: %1$s: opening anchor tag to the DHL business portal, %2$s: closing anchor tag. */
+					esc_html__( 'Your password will expire in less than 30 days, please go to your %1$sbusiness portal%2$s and reset your password then click the "Get Account Settings" button below.', 'dhl-for-woocommerce' ),
+					$portal_link_open,
+					$portal_link_close
+				) . '</p>';
 			} else {
 				$password_expiration_message = '';
 			}
