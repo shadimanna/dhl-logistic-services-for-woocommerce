@@ -169,7 +169,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			// DHL Paket
 			$this->define( 'PR_DHL_CIG_USR', 'dhl_woocommerce_plugin_2_2' );
 			$this->define( 'PR_DHL_CIG_PWD', 'egOcb8buCPuqxFDf9fyOdWz6z7pKAQ' );
-			$this->define( 'PR_DHL_CIG_AUTH', 'https://cig.dhl.de/services/production/soap' );
+			$this->define( 'PR_DHL_CIG_AUTH', 'https://cig.dhl.de/services/production/rest' );
 
 			// DHL Global api.dhl.com
 			$this->define( 'PR_DHL_GLOBAL_URL', 'https://api.dhl.com' );
@@ -177,7 +177,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			$this->define( 'PR_DHL_GLOBAL_SECRET', '3128XM6J5XHt6knH' );
 
 			// To use Sandbox, define 'PR_DHL_SANDBOX' to be 'true' and set 'PR_DHL_CIG_USR_QA' and 'PR_DHL_CIG_PWD_QA' outside this plugin
-			$this->define( 'PR_DHL_CIG_AUTH_QA', 'https://cig.dhl.de/services/sandbox/soap' );
+			$this->define( 'PR_DHL_CIG_AUTH_QA', 'https://cig.dhl.de/services/sandbox/rest' );
 
 			$this->define( 'PR_DHL_PAKET_TRACKING_URL', 'https://www.dhl.de/de/privatkunden/dhl-sendungsverfolgung.html?piececode=' );
 			$this->define( 'PR_DHL_PAKET_TRACKING_URL_EN', 'https://www.dhl.de/en/privatkunden/dhl-sendungsverfolgung.html?piececode=' );
@@ -263,8 +263,8 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			add_action( 'admin_notices', array( $this, 'password_expiration_notice_callback' ) );
 			add_action( 'block_categories_all',array($this, 'register_pr_dhl_block_category'), 10, 2 );
 
-			// SOAP deprecation notice.
-			PR_DHL_WC_Notice_SOAP_Deprecation::init();
+			// One-time migration notice after the SOAP API removal.
+			PR_DHL_WC_Notice_SOAP_Removed::init();
 		}
 
 		public function get_pr_dhl_wc_order() {
@@ -379,7 +379,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 						array( 'jquery' ),
 						PR_DHL_VERSION
 					);
-					// wp_localize_script( 'wc-shipment-dhl-paket-settings-js', 'dhl_paket_settings_obj', PR_DHL_WC_Method_Paket::sandbox_info() );
 
 					if ( API_Utils::is_new_merchant() ) {
 						$this->wizard_enqueue_scripts();
@@ -549,10 +548,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		 */
 		public function get_dhl_factory() {
 			$base_country_code = $this->get_base_country();
-			// $shipping_dhl_settings = $this->get_shipping_dhl_settings();
-			// $client_id = isset( $shipping_dhl_settings['dhl_api_key'] ) ? $shipping_dhl_settings['dhl_api_key'] : '';
-			// $client_secret = isset( $shipping_dhl_settings['dhl_api_secret'] ) ? $shipping_dhl_settings['dhl_api_secret'] : '';
-
 			try {
 				$dhl_obj = PR_DHL_API_Factory::make_dhl( $base_country_code );
 			} catch ( Exception $e ) {
@@ -571,10 +566,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 					$dhl_sandbox           = isset( $shipping_dhl_settings['dhl_sandbox'] ) ? $shipping_dhl_settings['dhl_sandbox'] : '';
 					if ( $dhl_sandbox == 'yes' || ( defined( 'PR_DHL_SANDBOX' ) && PR_DHL_SANDBOX ) ) {
 						$user = defined( 'PR_DHL_CIG_USR_QA' ) ? PR_DHL_CIG_USR_QA : '';
-						$user = ! empty( $shipping_dhl_settings['dhl_api_sandbox_user'] ) ? $shipping_dhl_settings['dhl_api_sandbox_user'] : $user;
-
 						$pass = defined( 'PR_DHL_CIG_PWD_QA' ) ? PR_DHL_CIG_PWD_QA : '';
-						$pass = ! empty( $shipping_dhl_settings['dhl_api_sandbox_pwd'] ) ? $shipping_dhl_settings['dhl_api_sandbox_pwd'] : $pass;
 
 						$api_cred['user']     = $user;
 						$api_cred['password'] = $pass;

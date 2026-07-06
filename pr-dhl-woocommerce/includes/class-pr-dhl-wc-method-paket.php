@@ -192,18 +192,6 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					'placeholder'       => '1234567890',
 					'custom_attributes' => array( 'maxlength' => '10' ),
 				),
-				'dhl_default_api'            => array(
-					'title'       => esc_html__( 'API Protocol', 'dhl-for-woocommerce' ),
-					'type'        => 'select',
-					'description' => esc_html__( 'Select the API protocol to use for creating shipping labels.', 'dhl-for-woocommerce' ),
-					'desc_tip'    => true,
-					'options'     => array(
-						'rest-api' => 'REST',
-						'soap'     => 'SOAP',
-					),
-					'class'       => 'wc-enhanced-select',
-					'default'     => API_Utils::is_new_merchant() ? 'rest-api' : 'soap',
-				),
 				'dhl_sandbox'                => array(
 					'title'       => esc_html__( 'Sandbox Mode', 'dhl-for-woocommerce' ),
 					'type'        => 'checkbox',
@@ -211,30 +199,6 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					'default'     => 'no',
 					'description' => esc_html__( 'Please, tick here if you want to test the plug-in installation against the DHL Sandbox Environment. Labels generated via Sandbox cannot be used for shipping and you need to enter your client ID and client secret for the Sandbox environment instead of the ones for production!', 'dhl-for-woocommerce' ),
 					'desc_tip'    => true,
-				),
-				'dhl_api_sandbox_user'       => array(
-					'title'       => esc_html__( 'Sandbox Username', 'dhl-for-woocommerce' ),
-					'type'        => 'text',
-					'description' => sprintf(
-					/* Translators: %s is the URL for creating a DHL developer portal account. */
-						esc_html__( 'Your sandbox username is the same as for the DHL developer portal. You can create an account %1$shere%2$s.', 'dhl-for-woocommerce' ),
-						'<a href="' . esc_url( PR_DHL_PAKET_DEVELOPER_PORTAL ) . '" target="_blank">',
-						'</a>'
-					),
-					'desc_tip'    => false,
-					'default'     => '',
-				),
-				'dhl_api_sandbox_pwd'        => array(
-					'title'       => esc_html__( 'Sandbox Password', 'dhl-for-woocommerce' ),
-					'type'        => 'password',
-					'description' => sprintf(
-					/* Translators: %s is the URL for creating a DHL developer portal account. */
-						esc_html__( 'Your sandbox password is the same as for the DHL developer portal. You can create an account %1$shere%2$s.', 'dhl-for-woocommerce' ),
-						'<a href="' . esc_url( PR_DHL_PAKET_DEVELOPER_PORTAL ) . '" target="_blank">',
-						'</a>'
-					),
-					'desc_tip'    => false,
-					'default'     => '',
 				),
 				'dhl_debug'                  => array(
 					'title'       => esc_html__( 'Debug Log', 'dhl-for-woocommerce' ),
