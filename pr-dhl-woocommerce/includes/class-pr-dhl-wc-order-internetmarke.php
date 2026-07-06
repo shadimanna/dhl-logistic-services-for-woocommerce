@@ -499,6 +499,10 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 				return;
 			}
 
+			if ( ! current_user_can( 'edit_shop_orders' ) ) {
+				return;
+			}
+
 			$args = array();
 
 			if ( isset( $_POST['pr_dhl_im_product'] ) ) {
@@ -525,7 +529,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 		 * Follows the same error-handling pattern as PR_DHL_WC_Order::save_meta_box_ajax().
 		 */
 		public function generate_label_ajax() {
-			ob_start();
+			$this->begin_output_capture();
 
 			check_ajax_referer( self::NONCE_ACTION, self::NONCE_FIELD );
 
@@ -621,7 +625,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 		 * Follows the same response pattern as PR_DHL_WC_Order::delete_label_ajax().
 		 */
 		public function delete_label_ajax() {
-			ob_start();
+			$this->begin_output_capture();
 
 			check_ajax_referer( self::NONCE_ACTION, self::NONCE_FIELD );
 
@@ -662,11 +666,35 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 		 * @param mixed $data Response payload passed straight to wp_send_json().
 		 */
 		protected function send_json_response( $data ) {
-			while ( ob_get_level() > 0 ) {
-				ob_end_clean();
-			}
+			$this->discard_captured_output();
 
 			wp_send_json( $data );
+		}
+
+		/**
+		 * Nested output-buffer level present when the current AJAX handler started.
+		 *
+		 * @var int
+		 */
+		protected $entry_ob_level = 0;
+
+		/**
+		 * Start capturing stray output, remembering the pre-existing buffer level so we
+		 * only ever discard our own buffers, never those owned by core or other plugins.
+		 */
+		protected function begin_output_capture() {
+			$this->entry_ob_level = ob_get_level();
+			ob_start();
+		}
+
+		/**
+		 * Discard only the buffers opened by this handler, leaving any buffer that existed
+		 * beforehand intact so we don't swallow output (or errors) captured elsewhere.
+		 */
+		protected function discard_captured_output() {
+			while ( ob_get_level() > $this->entry_ob_level ) {
+				ob_end_clean();
+			}
 		}
 
 		// -------------------------------------------------------------------------
@@ -819,7 +847,8 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 		}
 
 		/**
-		 * Delete local label file and clear order meta when a HPOS order is deleted.
+		 * Delete the local label PDF when a HPOS order is deleted. The order meta is
+		 * removed together with the order, so only the file needs cleaning up here.
 		 *
 		 * @param int $order_id
 		 */
@@ -828,7 +857,8 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 		}
 
 		/**
-		 * Delete local label file and clear order meta when a legacy post-based order is deleted.
+		 * Delete the local label PDF when a legacy post-based order is deleted. The order
+		 * meta is removed together with the post, so only the file needs cleaning up here.
 		 *
 		 * @param int $post_id
 		 */
@@ -893,7 +923,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 		public function download_label_ajax() {
 			// Capture stray output so it cannot corrupt the PDF binary or send
 			// premature headers; discarded before the file is streamed below.
-			ob_start();
+			$this->begin_output_capture();
 
 			$order_id = isset( $_GET['order_id'] ) ? absint( $_GET['order_id'] ) : 0;
 			$nonce    = isset( $_GET['nonce'] ) ? sanitize_text_field( wp_unslash( $_GET['nonce'] ) ) : '';
@@ -912,9 +942,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 				wp_die( esc_html__( 'Label file not found.', 'dhl-for-woocommerce' ), '', array( 'response' => 404 ) );
 			}
 
-			while ( ob_get_level() > 0 ) {
-				ob_end_clean();
-			}
+			$this->discard_captured_output();
 
 			nocache_headers();
 			header( 'Content-Type: application/pdf' );
