@@ -69,6 +69,7 @@ More detailed instructions on how to set up your store and configure it are cons
 
 = 4.0.0 =
 * Add: Deutsche Post Internetmarke — buy and print postage stamps for letters directly from a WooCommerce order.
+* Fix: Correct the DHL Pickup v3 API endpoint so pickup requests no longer fail for all accounts.
 
 = 3.9.8 =
 * Fix: Missing customs "shippingConditions" field causing label creation failure for DHL Europaket (V54EPAK) cross-border shipments.
