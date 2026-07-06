@@ -566,10 +566,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 					$dhl_sandbox           = isset( $shipping_dhl_settings['dhl_sandbox'] ) ? $shipping_dhl_settings['dhl_sandbox'] : '';
 					if ( $dhl_sandbox == 'yes' || ( defined( 'PR_DHL_SANDBOX' ) && PR_DHL_SANDBOX ) ) {
 						$user = defined( 'PR_DHL_CIG_USR_QA' ) ? PR_DHL_CIG_USR_QA : '';
-						$user = ! empty( $shipping_dhl_settings['dhl_api_sandbox_user'] ) ? $shipping_dhl_settings['dhl_api_sandbox_user'] : $user;
-
 						$pass = defined( 'PR_DHL_CIG_PWD_QA' ) ? PR_DHL_CIG_PWD_QA : '';
-						$pass = ! empty( $shipping_dhl_settings['dhl_api_sandbox_pwd'] ) ? $shipping_dhl_settings['dhl_api_sandbox_pwd'] : $pass;
 
 						$api_cred['user']     = $user;
 						$api_cred['password'] = $pass;

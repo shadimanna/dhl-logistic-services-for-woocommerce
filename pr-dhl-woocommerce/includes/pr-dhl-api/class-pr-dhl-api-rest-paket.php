@@ -196,10 +196,6 @@ class PR_DHL_API_REST_Paket extends PR_DHL_API {
 				'username' => $sandbox['username'],
 				'pass'     => $sandbox['pass'],
 			);
-			// return array(
-			// 'username' => $this->get_setting('dhl_api_sandbox_user'),
-			// 'pass' => $this->get_setting('dhl_api_sandbox_pwd'),
-			// );
 
 		} else {
 			return array(
