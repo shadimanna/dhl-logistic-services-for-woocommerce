@@ -263,6 +263,8 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			add_action( 'admin_notices', array( $this, 'password_expiration_notice_callback' ) );
 			add_action( 'block_categories_all',array($this, 'register_pr_dhl_block_category'), 10, 2 );
 
+			// One-time migration notice after the SOAP API removal.
+			PR_DHL_WC_Notice_SOAP_Removed::init();
 		}
 
 		public function get_pr_dhl_wc_order() {
