@@ -34,7 +34,45 @@ class Client extends API_Client {
 			throw new Exception( $this->extract_error_message( $response->body, $status, 'checkout' ) );
 		}
 
-		return $response->body;
+		return $this->decode_body( $response->body );
+	}
+
+	/**
+	 * Retrieve an already purchased shopping cart by its shop order ID.
+	 *
+	 * Documented read-only endpoint: GET /app/shoppingcart/{shopOrderId}. It returns
+	 * the same CheckoutShoppingCartPDFResponse as the checkout (including the PDF link)
+	 * WITHOUT charging the Portokasse again, so it is the safe way to recover a document
+	 * whose original link was lost or has expired after a successful purchase.
+	 *
+	 * @param  string $shop_order_id The shopOrderId sent during checkout.
+	 * @return object                Decoded CheckoutShoppingCartPDFResponse (link, shoppingCart, walletBallance).
+	 * @throws Exception             On non-2xx HTTP status.
+	 */
+	public function get_shopping_cart( $shop_order_id ) {
+		$response = $this->get( 'app/shoppingcart/' . rawurlencode( (string) $shop_order_id ) );
+
+		$status = (int) $response->status;
+		if ( 200 !== $status && 201 !== $status ) {
+			throw new Exception( $this->extract_error_message( $response->body, $status, 'retrieve' ) );
+		}
+
+		return $this->decode_body( $response->body );
+	}
+
+	/**
+	 * Decode a response body defensively.
+	 *
+	 * JSON_API_Driver only decodes when the Content-Type is exactly `application/json`.
+	 * The INTERNETMARKE gateway may return `application/json;charset=UTF-8`, which leaves
+	 * the body a raw JSON string — decode it here so callers always receive an object.
+	 * Mirrors the guard already used by Internetmarke\Auth::request_token().
+	 *
+	 * @param  string|object $body Raw or already-decoded response body.
+	 * @return object|null         Decoded object, or null when the body is not JSON.
+	 */
+	protected function decode_body( $body ) {
+		return is_object( $body ) ? $body : json_decode( (string) $body );
 	}
 
 	protected function extract_error_message( $body, $status, $operation ) {

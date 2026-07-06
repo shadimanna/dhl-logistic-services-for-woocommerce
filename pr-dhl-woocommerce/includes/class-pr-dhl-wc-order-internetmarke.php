@@ -19,6 +19,10 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 		const METABOX_ID        = 'woocommerce-shipment-internetmarke-label';
 		const LABEL_ITEMS_META  = '_pr_dhl_im_label_items';
 		const LABEL_TRACKING_META = '_pr_dhl_im_label_tracking';
+		// Records a completed purchase (shopOrderId + document link) the instant the
+		// wallet is charged, before the PDF is downloaded. A retry reads this to recover
+		// the document instead of buying a second stamp — the duplicate-charge guard.
+		const LABEL_VOUCHER_META = '_pr_dhl_im_label_voucher';
 		const NONCE_ACTION      = 'create-internetmarke-label';
 		const NONCE_FIELD       = 'pr_dhl_im_label_nonce';
 
@@ -288,7 +292,12 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 		 * @param WP_Post|WC_Order $post_or_order_object
 		 */
 		public function meta_box( $post_or_order_object ) {
-			$order    = $this->init_order_object( $post_or_order_object );
+			$order = $this->init_order_object( $post_or_order_object );
+
+			if ( ! is_a( $order, 'WC_Order' ) ) {
+				return;
+			}
+
 			$order_id = $order->get_id();
 
 			$label_items    = $this->get_label_items( $order_id );
@@ -302,8 +311,17 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 				? $label_items['pr_dhl_im_services']
 				: array();
 
-			$has_label   = ! empty( $label_tracking );
-			$is_disabled = $has_label ? 'disabled' : '';
+			$has_label = ! empty( $label_tracking );
+
+			// A stamp was already bought but its document was never downloaded (a failure
+			// after the charge). The main button then recovers the document instead of
+			// buying again, and its label reflects that so the merchant isn't afraid of a
+			// double charge.
+			$voucher     = $this->get_label_voucher( $order_id );
+			$is_pending  = ! $has_label && ! empty( $voucher['shop_order_id'] );
+			// Lock the selection once a stamp exists (bought or pending) — changing it can't
+			// alter what has already been paid for; deleting the label unlocks it again.
+			$is_disabled = ( $has_label || $is_pending ) ? 'disabled' : '';
 
 			$base_products = self::get_base_products();
 			$services_map  = self::get_product_services_map();
@@ -314,8 +332,11 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 
 			// Build button HTML in PHP — same pattern as Paket metabox — so the JS
 			// success handler can inject pre-translated strings without string literals in JS.
+			$main_button_label = $is_pending
+				? esc_html__( 'Retrieve document', 'dhl-for-woocommerce' )
+				: esc_html__( 'Generate label', 'dhl-for-woocommerce' );
 			$main_button = '<button id="im-label-button" class="button button-primary">'
-				. esc_html__( 'Generate label', 'dhl-for-woocommerce' )
+				. $main_button_label
 				. '</button>';
 
 			$label_url    = $has_label ? esc_url( $this->get_download_label_url( $order_id ) ) : '#';
@@ -433,7 +454,17 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 
 				<?php else : ?>
 
+					<?php if ( $is_pending ) : ?>
+						<p class="im-pending-notice">
+							<?php esc_html_e( 'A stamp was already purchased for this order but its document was not saved. Retrieving it will not charge you again.', 'dhl-for-woocommerce' ); ?>
+						</p>
+					<?php endif; ?>
+
 					<?php echo $main_button; // phpcs:ignore WordPress.Security.EscapeOutput ?>
+
+					<?php if ( $is_pending ) : ?>
+						<?php echo ' ' . $delete_label; // phpcs:ignore WordPress.Security.EscapeOutput ?>
+					<?php endif; ?>
 
 				<?php endif; ?>
 
@@ -532,23 +563,54 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 			}
 
 			try {
-				$im_api     = new PR_DHL_API_Internetmarke();
-				$label_info = $im_api->generate_label( $order_id, $product_id );
+				$im_api  = new PR_DHL_API_Internetmarke();
+				$voucher = $this->get_label_voucher( $order_id );
 
-				$this->save_label_tracking( $order_id, $label_info );
+				if ( empty( $voucher['shop_order_id'] ) ) {
+					// First attempt: buy the stamp (this debits the Portokasse wallet) and
+					// persist the voucher immediately, before downloading, so a later
+					// download failure can never trigger a second charge.
+					$voucher = $im_api->purchase_label( $order_id, $product_id );
+					$this->save_label_voucher( $order_id, $voucher );
+				} else {
+					// A charge is already recorded for this order. Never purchase again —
+					// recover the (possibly expired) document via the documented read-only
+					// GET endpoint, which returns a fresh link without charging.
+					$voucher = $im_api->retrieve_label( $voucher['shop_order_id'] );
+					$this->save_label_voucher( $order_id, $voucher );
+				}
 
-				$label_url = ! empty( $label_info['label_url'] ) ? $this->get_download_label_url( $order_id ) : '';
+				if ( empty( $voucher['remote_link'] ) ) {
+					throw new Exception( esc_html__( 'The stamp was purchased but INTERNETMARKE returned no document. Click "Retrieve document" to try again — you will not be charged twice.', 'dhl-for-woocommerce' ) );
+				}
+
+				// Download is retry-safe: the purchase is already persisted above.
+				$im_api->download_voucher( $voucher['remote_link'], $order_id );
+
+				$this->save_label_tracking(
+					$order_id,
+					array(
+						'label_url'       => $this->get_download_label_url( $order_id ),
+						'tracking_number' => isset( $voucher['tracking_number'] ) ? $voucher['tracking_number'] : '',
+					)
+				);
 
 				$this->send_json_response(
 					array(
-						'label_url'       => $label_url ? esc_url_raw( $label_url ) : '',
-						'tracking_number' => isset( $label_info['tracking_number'] ) ? esc_html( $label_info['tracking_number'] ) : '',
+						'label_url'       => esc_url_raw( $this->get_download_label_url( $order_id ) ),
+						'tracking_number' => isset( $voucher['tracking_number'] ) ? esc_html( $voucher['tracking_number'] ) : '',
 						'download_msg'    => esc_html__( 'Your INTERNETMARKE label is ready. Click "Download label" to save it.', 'dhl-for-woocommerce' ),
 					)
 				);
 
-			} catch ( \Throwable $e ) {
+			} catch ( Exception $e ) {
+				// Domain errors carry safe, translated, user-facing messages.
 				$this->send_json_response( array( 'error' => $e->getMessage() ) );
+			} catch ( \Throwable $e ) {
+				// Native PHP errors (TypeError, etc.) can leak internal detail — log the
+				// raw message and return a generic one.
+				PR_DHL()->log_msg( '[INTERNETMARKE] Unexpected error generating label for order ' . $order_id . ': ' . $e->getMessage() );
+				$this->send_json_response( array( 'error' => esc_html__( 'The label could not be generated because of an unexpected error. Please check the DHL logs and try again.', 'dhl-for-woocommerce' ) ) );
 			}
 
 			wp_die();
@@ -576,6 +638,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 			}
 
 			$this->delete_label_tracking( $order_id );
+			$this->delete_label_voucher( $order_id );
 			$this->delete_label_file( $order_id );
 
 			$this->send_json_response(
@@ -698,6 +761,60 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 			}
 
 			$order->delete_meta_data( self::LABEL_TRACKING_META );
+			$order->save();
+		}
+
+		/**
+		 * Retrieve the recorded purchase voucher (shopOrderId, document link, tracking).
+		 *
+		 * Present as soon as the wallet is charged, before the PDF is downloaded, so a
+		 * retry can recover the document instead of buying a second stamp.
+		 *
+		 * @param  int   $order_id
+		 * @return array { shop_order_id: string, remote_link: string, tracking_number: string }
+		 */
+		public function get_label_voucher( $order_id ) {
+			$order = wc_get_order( $order_id );
+
+			if ( ! is_a( $order, 'WC_Order' ) ) {
+				return array();
+			}
+
+			$voucher = $order->get_meta( self::LABEL_VOUCHER_META );
+
+			return is_array( $voucher ) ? $voucher : array();
+		}
+
+		/**
+		 * Record the purchase voucher the moment the stamp is bought.
+		 *
+		 * @param int   $order_id
+		 * @param array $voucher { shop_order_id, remote_link, tracking_number }
+		 */
+		public function save_label_voucher( $order_id, array $voucher ) {
+			$order = wc_get_order( $order_id );
+
+			if ( ! is_a( $order, 'WC_Order' ) ) {
+				return;
+			}
+
+			$order->update_meta_data( self::LABEL_VOUCHER_META, $voucher );
+			$order->save_meta_data();
+		}
+
+		/**
+		 * Remove the recorded purchase voucher (on delete, so a fresh purchase can start).
+		 *
+		 * @param int $order_id
+		 */
+		public function delete_label_voucher( $order_id ) {
+			$order = wc_get_order( $order_id );
+
+			if ( ! is_a( $order, 'WC_Order' ) ) {
+				return;
+			}
+
+			$order->delete_meta_data( self::LABEL_VOUCHER_META );
 			$order->save();
 		}
 

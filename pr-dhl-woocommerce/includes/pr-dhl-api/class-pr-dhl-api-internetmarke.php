@@ -103,16 +103,21 @@ class PR_DHL_API_Internetmarke {
 	}
 
 	/**
-	 * Generate an INTERNETMARKE label for a WooCommerce order.
+	 * Purchase an INTERNETMARKE stamp for a WooCommerce order.
 	 *
-	 * @param int $order_id   WooCommerce order ID.
-	 * @param int $product_id Resolved INTERNETMARKE product ID.
-	 * @return array { label_url: string, tracking_number: string }
-	 * @throws Exception
+	 * This performs ONLY the paid checkout (directCheckout=true debits the Portokasse
+	 * wallet). Downloading the document is a separate, retry-safe step so a download
+	 * failure can never force a second charge — the caller must persist the returned
+	 * voucher before calling download_voucher().
+	 *
+	 * @param  int $order_id   WooCommerce order ID (also sent as the shopOrderId).
+	 * @param  int $product_id Resolved INTERNETMARKE product ID.
+	 * @return array { shop_order_id: string, remote_link: string, tracking_number: string }
+	 * @throws Exception       Only when the checkout itself fails (no charge occurred).
 	 */
-	public function generate_label( $order_id, $product_id ) {
+	public function purchase_label( $order_id, $product_id ) {
 		$this->validate_configuration();
-		$this->log( 'Generating label for order ' . $order_id . ', product ID ' . $product_id . '.' );
+		$this->log( 'Purchasing label for order ' . $order_id . ', product ID ' . $product_id . '.' );
 
 		$order = wc_get_order( $order_id );
 		if ( ! is_a( $order, 'WC_Order' ) ) {
@@ -122,41 +127,66 @@ class PR_DHL_API_Internetmarke {
 		$payload = $this->build_label_payload( $order, $product_id );
 		$result  = $this->client->create_label( $payload );
 
-		$label_url       = '';
-		$tracking_number = '';
+		$this->log( 'Stamp purchased for order ' . $order_id . '.' );
+
+		return $this->extract_voucher( $result, (string) $order->get_id() );
+	}
+
+	/**
+	 * Re-fetch an already purchased stamp via GET /app/shoppingcart/{shopOrderId}.
+	 *
+	 * Documented read-only recovery path: it returns the same checkout response
+	 * (including a fresh document link) WITHOUT charging again. Used to recover the
+	 * PDF when a download failed after a successful purchase, or when the original
+	 * link expired.
+	 *
+	 * @param  string $shop_order_id The shopOrderId used at checkout (the WC order ID).
+	 * @return array  { shop_order_id: string, remote_link: string, tracking_number: string }
+	 * @throws Exception             When the cart cannot be retrieved.
+	 */
+	public function retrieve_label( $shop_order_id ) {
+		$this->validate_configuration();
+		$this->log( 'Retrieving purchased stamp for shop order ' . $shop_order_id . '.' );
+
+		$result = $this->client->get_shopping_cart( $shop_order_id );
+
+		return $this->extract_voucher( $result, (string) $shop_order_id );
+	}
+
+	/**
+	 * Extract the voucher fields (document link, tracking number) from a checkout
+	 * or cart-retrieval response.
+	 *
+	 * @param  object|null $result        Decoded CheckoutShoppingCartPDFResponse.
+	 * @param  string      $shop_order_id The shopOrderId this voucher belongs to.
+	 * @return array       { shop_order_id: string, remote_link: string, tracking_number: string }
+	 */
+	protected function extract_voucher( $result, $shop_order_id ) {
+		$voucher = array(
+			'shop_order_id'   => (string) $shop_order_id,
+			'remote_link'     => '',
+			'tracking_number' => '',
+		);
 
 		if ( is_object( $result ) ) {
 			if ( ! empty( $result->link ) ) {
-				$label_url = $this->download_and_save_label( (string) $result->link, $order_id );
+				$voucher['remote_link'] = (string) $result->link;
 			}
+
 			// CheckoutShoppingCartPDFResponse returns vouchers under shoppingCart->voucherList;
 			// trackId is present per voucher for registered products (EINSCHREIBEN).
 			$vouchers = isset( $result->shoppingCart->voucherList ) ? $result->shoppingCart->voucherList : array();
 			if ( ! empty( $vouchers ) && is_array( $vouchers ) ) {
-				foreach ( $vouchers as $voucher ) {
-					if ( ! empty( $voucher->trackId ) ) {
-						$tracking_number = (string) $voucher->trackId;
+				foreach ( $vouchers as $entry ) {
+					if ( ! empty( $entry->trackId ) ) {
+						$voucher['tracking_number'] = (string) $entry->trackId;
 						break;
 					}
 				}
 			}
 		}
 
-		if ( '' === $label_url ) {
-			$this->log( 'Label checkout for order ' . $order_id . ' returned no document link.' );
-			throw new Exception( esc_html__( 'The label was purchased but no document could be retrieved from INTERNETMARKE. Check your Portokasse before retrying to avoid a duplicate charge.', 'dhl-for-woocommerce' ) );
-		}
-
-		$this->log( 'Label generated for order ' . $order_id . '.' );
-
-		// Omit tracking_number when empty — most products don't return a trackId.
-		return array_filter(
-			array(
-				'label_url'       => $label_url,
-				'tracking_number' => $tracking_number,
-			),
-			'strlen'
-		);
+		return $voucher;
 	}
 
 	/**
@@ -237,19 +267,23 @@ class PR_DHL_API_Internetmarke {
 	}
 
 	/**
-	 * Download the label PDF from Deutsche Post's URL and save it locally.
+	 * Download the voucher PDF from Deutsche Post's URL and save it locally.
 	 *
-	 * Deutsche Post returns a time-limited link (~24 h–7 days). Storing the remote URL
-	 * directly means the merchant's "Download Label" link will break after expiry. Instead
-	 * we download the PDF immediately and store it in the same woocommerce_dhl_label/
-	 * directory used by DHL Paket labels, so labels are accessible permanently.
+	 * Deutsche Post returns a link that is not guaranteed to stay valid indefinitely,
+	 * so the merchant's "Download label" button must not depend on it. We download the
+	 * PDF immediately and store it in the same woocommerce_dhl_label/ directory used by
+	 * DHL Paket labels, so labels are accessible permanently. If a fresh link is needed
+	 * (e.g. the stored one expired), retrieve_label() re-fetches one without charging.
+	 *
+	 * Retry-safe: this never contacts the paid checkout endpoint, so calling it again
+	 * after a failure does not charge the Portokasse.
 	 *
 	 * @param  string $remote_url URL returned in the API response link field.
 	 * @param  int    $order_id   WooCommerce order ID (used for the filename).
 	 * @return string             Local web-accessible URL to the saved PDF.
 	 * @throws Exception          On HTTP error or file-system failure.
 	 */
-	protected function download_and_save_label( $remote_url, $order_id ) {
+	public function download_voucher( $remote_url, $order_id ) {
 		PR_DHL()->dhl_label_folder_check();
 
 		$dir = PR_DHL()->get_dhl_label_folder_dir();
