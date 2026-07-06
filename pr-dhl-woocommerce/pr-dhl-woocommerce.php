@@ -1031,8 +1031,8 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 				return $state;
 			}
 
-			$timestamp_month = $valid_until - 30 * 24 * 60 * 60;
-			$timestamp_week  = $valid_until - 7 * 24 * 60 * 60;
+			$timestamp_month = $valid_until - 30 * DAY_IN_SECONDS;
+			$timestamp_week  = $valid_until - 7 * DAY_IN_SECONDS;
 
 			if ( $timestamp_month > $now ) {
 				// More than 30 days left: schedule both future notices.
