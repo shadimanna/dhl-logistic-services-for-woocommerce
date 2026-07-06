@@ -439,14 +439,14 @@ msgstr ""
 msgid "DHL Products not displaying - "
 msgstr ""
 
-#: includes/class-pr-dhl-wc-method-paket.php:134
+#: includes/class-pr-dhl-wc-method-paket.php:138
 #, php-format
-msgid "<p style=\"color: red;\">Your password will expire in less than 7 days, please go to your <a href=\"%s\" target=\"_blank\">business portal</a> and reset your password then click the \"Get Account Settings\" button below.</p>"
+msgid "Your password will expire in less than 7 days, please go to your %1$sbusiness portal%2$s and reset your password then click the \"Get Account Settings\" button below."
 msgstr ""
 
-#: includes/class-pr-dhl-wc-method-paket.php:140
+#: includes/class-pr-dhl-wc-method-paket.php:145
 #, php-format
-msgid "<p style=\"color: red;\">Your password will expire in less than 30 days, please go to your <a href=\"%s\" target=\"_blank\">business portal</a> and reset your password then click the \"Get Account Settings\" button below.</p>"
+msgid "Your password will expire in less than 30 days, please go to your %1$sbusiness portal%2$s and reset your password then click the \"Get Account Settings\" button below."
 msgstr ""
 
 #: includes/class-pr-dhl-wc-method-paket.php:151

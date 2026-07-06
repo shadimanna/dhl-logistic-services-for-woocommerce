@@ -447,15 +447,15 @@ msgstr "Produkt-Schlagwörter"
 msgid "DHL Products not displaying - "
 msgstr "DHL-Produkte werden nicht angezeigt – "
 
-#: includes/class-pr-dhl-wc-method-paket.php:134
+#: includes/class-pr-dhl-wc-method-paket.php:138
 #, php-format
-msgid "<p style=\"color: red;\">Your password will expire in less than 7 days, please go to your <a href=\"%s\" target=\"_blank\">business portal</a> and reset your password then click the \"Get Account Settings\" button below.</p>"
-msgstr "<p style=\"color: red;\">Ihr Passwort läuft in weniger als 7 Tagen ab. Bitte gehen Sie zu Ihrem <a href=\"%s\" target=\"_blank\">Geschäftskundenportal</a>, setzen Sie Ihr Passwort zurück und klicken Sie anschließend unten auf die Schaltfläche „Kontoeinstellungen abrufen“.</p>"
+msgid "Your password will expire in less than 7 days, please go to your %1$sbusiness portal%2$s and reset your password then click the \"Get Account Settings\" button below."
+msgstr "Ihr Passwort läuft in weniger als 7 Tagen ab. Bitte gehen Sie zu Ihrem %1$sGeschäftskundenportal%2$s, setzen Sie Ihr Passwort zurück und klicken Sie anschließend unten auf die Schaltfläche „Kontoeinstellungen abrufen“."
 
-#: includes/class-pr-dhl-wc-method-paket.php:140
+#: includes/class-pr-dhl-wc-method-paket.php:145
 #, php-format
-msgid "<p style=\"color: red;\">Your password will expire in less than 30 days, please go to your <a href=\"%s\" target=\"_blank\">business portal</a> and reset your password then click the \"Get Account Settings\" button below.</p>"
-msgstr "<p style=\"color: red;\">Ihr Passwort läuft in weniger als 30 Tagen ab. Bitte gehen Sie zu Ihrem <a href=\"%s\" target=\"_blank\">Geschäftskundenportal</a>, setzen Sie Ihr Passwort zurück und klicken Sie anschließend unten auf die Schaltfläche „Kontoeinstellungen abrufen“.</p>"
+msgid "Your password will expire in less than 30 days, please go to your %1$sbusiness portal%2$s and reset your password then click the \"Get Account Settings\" button below."
+msgstr "Ihr Passwort läuft in weniger als 30 Tagen ab. Bitte gehen Sie zu Ihrem %1$sGeschäftskundenportal%2$s, setzen Sie Ihr Passwort zurück und klicken Sie anschließend unten auf die Schaltfläche „Kontoeinstellungen abrufen“."
 
 #: includes/class-pr-dhl-wc-method-paket.php:151
 msgid "Please configure your shipping parameters and your access towards the DHL Paket APIs by means of authentication."
