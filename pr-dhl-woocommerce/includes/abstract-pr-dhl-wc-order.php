@@ -167,6 +167,8 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 			$main_button = '<button id="dhl-label-button" class="button button-primary button-save-form">' . esc_html__( 'Generate Label', 'dhl-for-woocommerce' ) . '</button>';
 
+			$return_label_button = '';
+
 			// Get tracking info if it exists
 			$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
 			// Check whether the label has already been created or not
@@ -179,12 +181,19 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 				$is_disabled = 'disabled';
 
 				$print_button = '<a href="' . $this->get_download_label_url( $order_id ) . '" id="dhl-label-print" class="button button-primary" download target="_blank">' . esc_html__( 'Download Label', 'dhl-for-woocommerce' ) . '</a>';
+
+				// Only show when the return label was saved as its own file (setting enabled + label has a return part).
+				if ( ! empty( $label_tracking_info['return_label_path'] ) ) {
+					$return_label_button = '<a href="' . esc_url( $this->get_download_return_label_url( $order_id ) ) . '" id="dhl-return-label-print" class="dhl-return-label-link" download target="_blank">' . esc_html__( 'Download Return Label', 'dhl-for-woocommerce' ) . '</a>';
+				}
 			}
 
 			$dhl_label_data = array(
-				'main_button'  => $main_button,
-				'delete_label' => $delete_label,
-				'print_button' => $print_button,
+				'main_button'         => $main_button,
+				'delete_label'        => $delete_label,
+				'print_button'        => $print_button,
+				'return_label_button' => $return_label_button,
+				'return_label_text'   => esc_html__( 'Download Return Label', 'dhl-for-woocommerce' ),
 			);
 
 			echo '<div id="shipment-dhl-label-form">';
@@ -240,6 +249,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 					echo $main_button;
 				} else {
 					echo $print_button;
+					echo $return_label_button;
 					echo $delete_label;
 				}
 
@@ -372,6 +382,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 						'download_msg'       => esc_html__( 'Your DHL label is ready to download, click the "Download Label" button above"', 'dhl-for-woocommerce' ),
 						'button_txt'         => esc_html__( 'Download Label', 'dhl-for-woocommerce' ),
 						'label_url'          => $label_url,
+						'return_label_url'   => $this->get_download_return_label_url( $order_id ),
 						'tracking_note'      => $tracking_note,
 						'tracking_note_type' => $tracking_note_type,
 					)
@@ -431,6 +442,32 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 			// Override URL with our solution's download label endpoint:
 			return $this->generate_download_url( '/' . self::DHL_DOWNLOAD_ENDPOINT . '/' . $order_id );
+		}
+
+		/**
+		 * Builds the download URL for the separate return label, if one was saved.
+		 *
+		 * @param int $order_id The order ID.
+		 *
+		 * @return string The download URL, or an empty string when no separate return label exists.
+		 */
+		protected function get_download_return_label_url( $order_id ) {
+
+			if ( empty( $order_id ) ) {
+				return '';
+			}
+
+			$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
+			// Only build the URL when a separate return label file exists.
+			if ( empty( $label_tracking_info['return_label_path'] ) ) {
+				return '';
+			}
+
+			return add_query_arg(
+				'dhl_label_type',
+				'return',
+				$this->generate_download_url( '/' . self::DHL_DOWNLOAD_ENDPOINT . '/' . $order_id )
+			);
 		}
 
 		protected function get_tracking_note( $order_id ) {
@@ -573,6 +610,11 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 			if ( isset( $tracking_items['label_path'] ) && validate_file( $tracking_items['label_path'] ) === 2 ) {
 				$tracking_items['label_path'] = wp_slash( $tracking_items['label_path'] );
+			}
+
+			// Protect the return label path's backslashes on Windows the same way as the label path.
+			if ( isset( $tracking_items['return_label_path'] ) && validate_file( $tracking_items['return_label_path'] ) === 2 ) {
+				$tracking_items['return_label_path'] = wp_slash( $tracking_items['return_label_path'] );
 			}
 
 			$order = wc_get_order( $order_id );
@@ -1517,7 +1559,13 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 					return;
 				}
 
-				$label_path = $label_tracking_info['label_path'];
+				// Serve the separate return label when requested, otherwise the shipping label.
+				$label_type = isset( $_GET['dhl_label_type'] ) ? sanitize_key( wp_unslash( $_GET['dhl_label_type'] ) ) : '';
+				if ( 'return' === $label_type && ! empty( $label_tracking_info['return_label_path'] ) ) {
+					$label_path = $label_tracking_info['return_label_path'];
+				} else {
+					$label_path = $label_tracking_info['label_path'];
+				}
 
 				if ( false == $this->download_label( $label_path ) ) {
 					array_push(

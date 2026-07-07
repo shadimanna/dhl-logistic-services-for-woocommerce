@@ -399,6 +399,13 @@ jQuery( function( $ ) {
 						$( '#dhl-label-button').remove();
 						$( '#shipment-dhl-label-form' ).append(dhl_label_data.print_button);
 						$( '#dhl-label-print').attr("href", response.label_url ); // update new url
+						// Show the separate return label button when the API returned one.
+						// Match by attribute (not #id) so every duplicate is cleared, since
+						// jQuery's #id selector only returns the first matching element.
+						$( "[id='dhl-return-label-print']" ).remove();
+						if ( response.return_label_url ) {
+							$( '#shipment-dhl-label-form' ).append('<a href="' + response.return_label_url + '" id="dhl-return-label-print" class="dhl-return-label-link" download target="_blank">' + dhl_label_data.return_label_text + '</a>');
+						}
 						$( '#shipment-dhl-label-form' ).append(dhl_label_data.delete_label);
 
 						if( response.tracking_note ) {
@@ -483,7 +490,8 @@ jQuery( function( $ ) {
 						wc_shipment_dhl_label_items.enable_disable_duties();
 					});
 
-					$( '#dhl-label-print').remove();
+					$( "[id='dhl-label-print']" ).remove();
+					$( "[id='dhl-return-label-print']" ).remove();
 					$( '#shipment-dhl-label-form' ).append(dhl_label_data.main_button);
 
 					if( response.dhl_tracking_num ) {

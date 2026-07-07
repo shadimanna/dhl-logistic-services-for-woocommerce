@@ -106,11 +106,16 @@ div#shipment-im-label-form > div:nth-of-type(even) {
 
 #shipment-dhl-label-form #dhl-label-button,
 #shipment-dhl-label-form #dhl-label-print,
+#shipment-dhl-label-form .dhl-return-label-link,
 #shipment-dhl-label-form .wc_dhl_delete,
 #shipment-im-label-form #im-label-button,
 #shipment-im-label-form #im-label-print,
 #shipment-im-label-form .wc_dhl_delete {
     margin: 0 15px 20px;
+}
+
+#shipment-dhl-label-form .dhl-return-label-link {
+    display: inline-block;
 }
 
 
