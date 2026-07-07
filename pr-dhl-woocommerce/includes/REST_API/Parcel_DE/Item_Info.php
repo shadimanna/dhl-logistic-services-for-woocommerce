@@ -741,12 +741,25 @@ class Item_Info {
 				'rename'   => 'hsCode',
 				'default'  => '',
 				'validate' => function ( $hs_code ) use ( $self ) {
+					// HS/HTSUS codes are bare digits; merchants often paste them with the usual
+					// dotted grouping (6109.10.0012) or stray whitespace, so normalise once here
+					// and run every check below (and the sanitize step) on the digits.
+					$hs_code          = $self->normalize_hs_code( $hs_code );
 					$needs_ead        = $self->needs_export_declaration();
-					$code_length      = is_string( $hs_code ) ? strlen( $hs_code ) : 0;
+					$code_length      = strlen( $hs_code );
 					$dhl_product      = $self->args['order_details']['dhl_product'];
 					$shipping_country = $self->contactAddress['country'];
 					$is_europaket     = 'V54EPAK' === $dhl_product;
 					$to_switzerland   = 'V53WPAK' === $dhl_product && 'CHE' === $shipping_country;
+
+					// US customs (HTSUS) requires a full 10-digit tariff code; applies to the US mainland and its territories.
+					if ( API_Utils::is_us_territory( $shipping_country ) ) {
+						if ( ! preg_match( '/^\d{10}$/', $hs_code ) ) {
+							throw new Exception( esc_html__( 'HS code must be exactly 10 digits for shipments to the United States (HTSUS requirement). Enter the full 10-digit code in each product\'s Harmonized Tariff Schedule (DHL) field.', 'dhl-for-woocommerce' ) );
+						}
+
+						return;
+					}
 
 					if ( $is_europaket || $to_switzerland ) {
 						if ( $needs_ead && $code_length < 8 ) {
@@ -771,6 +784,10 @@ class Item_Info {
 							esc_html__( 'Item HS Code must be between 4 and 11 characters long', 'dhl-for-woocommerce' )
 						);
 					}
+				},
+				'sanitize' => function ( $hs_code ) use ( $self ) {
+					// Send the bare digits (drop the dotted grouping / whitespace merchants paste).
+					return $self->normalize_hs_code( $hs_code );
 				},
 			),
 			'qty'              => array(
@@ -1006,6 +1023,20 @@ class Item_Info {
 		}
 
 		return substr( $string, 0, ( $max - 1 ) );
+	}
+
+	/**
+	 * Normalise an HS/HTSUS code to its bare digits.
+	 *
+	 * Merchants often paste the HTSUS code with its grouping dots (e.g. 6109.10.0012)
+	 * or stray whitespace from the lookup tool; strip both so the code can be validated
+	 * and sent as the plain digit string the API expects.
+	 *
+	 * @param  string $hs_code
+	 * @return string
+	 */
+	protected function normalize_hs_code( $hs_code ) {
+		return preg_replace( '/[\s.]+/', '', (string) $hs_code );
 	}
 
 	/**

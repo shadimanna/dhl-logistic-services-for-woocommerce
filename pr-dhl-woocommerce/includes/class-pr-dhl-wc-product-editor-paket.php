@@ -22,7 +22,11 @@ if ( ! class_exists( 'PR_DHL_WC_Product_Paket_Editor' ) ) :
 			$this->manufacture_tooltip       = esc_html__( 'Country of Manufacture', 'dhl-for-woocommerce' );
 			$this->manufacture_country_label = esc_html__( 'Country of Manufacture (DHL)', 'dhl-for-woocommerce' );
 			$this->hs_code_label             = esc_html__( 'Harmonized Tariff Schedule (DHL)', 'dhl-for-woocommerce' );
-			$this->hs_code_description       = esc_html__( 'Harmonized Tariff Schedule is a number assigned to every possible commodity that can be imported or exported from any country.', 'dhl-for-woocommerce' );
+			$this->hs_code_description       = sprintf(
+				/* translators: %s is the HTSUS lookup tool URL */
+				esc_html__( 'Harmonized Tariff Schedule is a number assigned to every possible commodity that can be imported or exported from any country. For shipments to the United States, enter the full 10-digit HTSUS code — look it up at %s', 'dhl-for-woocommerce' ),
+				'https://hts.usitc.gov/'
+			);
 		}
 
 		/**
