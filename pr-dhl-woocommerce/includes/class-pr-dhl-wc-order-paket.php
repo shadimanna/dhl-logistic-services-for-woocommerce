@@ -1096,8 +1096,28 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 
 			$label_tracking_info = $this->get_dhl_label_tracking( $order->get_id() );
 
+			// No DHL label on this order, so there is nothing to attach and nothing to report.
+			if ( empty( $label_tracking_info ) ) {
+				return $attachments;
+			}
+
 			if ( ! empty( $label_tracking_info['return_label_path'] ) && file_exists( $label_tracking_info['return_label_path'] ) ) {
 				$attachments[] = $label_tracking_info['return_label_path'];
+			} else {
+				// The order has a DHL label and emailing the return label is enabled, but no separate
+				// return label file is available to attach: either "Separate Return Label" was off when
+				// the label was created, or the email fired before the label existed. Leave the email
+				// unchanged and record why, so this is distinguishable from a wrong email selection.
+				PR_DHL()->log_msg(
+					sprintf(
+						'Return label not attached to the "%1$s" email for order #%2$d: %3$s.',
+						$email_id,
+						$order->get_id(),
+						empty( $label_tracking_info['return_label_path'] )
+							? 'no separate return label was saved for this order'
+							: 'the return label file is missing'
+					)
+				);
 			}
 
 			return $attachments;
