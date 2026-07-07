@@ -68,7 +68,14 @@ More detailed instructions on how to set up your store and configure it are cons
 == Changelog ==
 
 = 4.0.0 =
-* Add: Option to download return label separately.
+* Drop SOAP API support.
+* Add: Deutsche Post Internetmarke — buy and print postage stamps for letters directly from a WooCommerce order.
+* Add: One-time admin notice after the SOAP removal prompting stores that were on SOAP to confirm their REST API credentials.
+* Add: Option to save the DHL return label as a separate PDF that can be downloaded on its own from the order.
+* Fix: Correct the DHL Pickup v3 API endpoint so pickup requests no longer fail for all accounts.
+* Fix: Require a full 10-digit HS code (HTSUS) for shipments to the United States, with a clear error shown before the label is created.
+* Fix: False "DHL account password will expire in less than 30 days" warning after refreshing account settings.
+* Fix: No longer logs an "Undefined array key PDDP" PHP warning during label creation.
 
 = 3.9.8 =
 * Fix: Missing customs "shippingConditions" field causing label creation failure for DHL Europaket (V54EPAK) cross-border shipments.

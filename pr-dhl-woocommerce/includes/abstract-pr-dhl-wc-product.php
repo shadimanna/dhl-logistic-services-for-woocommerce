@@ -94,6 +94,14 @@ if ( ! class_exists( 'PR_DHL_WC_Product' ) ) :
 				)
 			);
 
+			echo '<p class="description" style="margin: -8px 12px 12px;">' . wp_kses_post(
+				sprintf(
+					/* translators: %s is a link to the US HTSUS lookup tool */
+					__( 'For shipments to the United States, enter the full 10-digit code — %s.', 'dhl-for-woocommerce' ),
+					'<a href="https://hts.usitc.gov/" target="_blank" rel="noopener noreferrer">' . esc_html__( 'look up the HTSUS code', 'dhl-for-woocommerce' ) . '</a>'
+				)
+			) . '</p>';
+
 			$this->additional_product_settings();
 		}
 
