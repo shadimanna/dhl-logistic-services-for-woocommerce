@@ -8,6 +8,30 @@ jQuery( document ).ready( function () {
 
 			jQuery( '#woocommerce_pr_dhl_paket_dhl_display_google_maps' ).on( 'change', this.display_map_fields )
 			this.display_map_fields()
+
+			jQuery( '#woocommerce_pr_dhl_paket_dhl_split_return_label' ).on( 'change', this.display_return_label_email_fields )
+			jQuery( '#woocommerce_pr_dhl_paket_dhl_email_return_label' ).on( 'change', this.display_return_label_email_fields )
+			this.display_return_label_email_fields()
+		},
+
+		display_return_label_email_fields: function () {
+			var split_enabled = jQuery( '#woocommerce_pr_dhl_paket_dhl_split_return_label' ).is( ':checked' )
+			var email_checkbox = jQuery( '#woocommerce_pr_dhl_paket_dhl_email_return_label' )
+			var email_select_row = jQuery( '#woocommerce_pr_dhl_paket_dhl_email_return_label_email' ).closest( 'tr' )
+
+			// Emailing the return label needs the separate return label PDF, so it can
+			// only be enabled when "Save the return label as a separate PDF" is on.
+			if ( split_enabled ) {
+				email_checkbox.prop( 'disabled', false )
+			} else {
+				email_checkbox.prop( 'checked', false ).prop( 'disabled', true )
+			}
+
+			if ( email_checkbox.is( ':checked' ) ) {
+				email_select_row.show()
+			} else {
+				email_select_row.hide()
+			}
 		},
 
 
