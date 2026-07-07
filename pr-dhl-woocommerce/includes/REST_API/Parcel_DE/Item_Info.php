@@ -745,10 +745,25 @@ class Item_Info {
 					// dotted grouping (6109.10.0012) or stray whitespace, so normalise once here
 					// and run every check below (and the sanitize step) on the digits.
 					$hs_code          = $self->normalize_hs_code( $hs_code );
-					$needs_ead        = $self->needs_export_declaration();
 					$code_length      = strlen( $hs_code );
-					$dhl_product      = $self->args['order_details']['dhl_product'];
 					$shipping_country = $self->contactAddress['country'];
+
+					if ( empty( $code_length ) ) {
+						if ( 'yes' === ( $self->args['order_details']['PDDP'] ?? '' ) && ! in_array( $shipping_country, API_Utils::PDDP_supported_countries(), true ) ) {
+							throw new Exception( esc_html__( 'Item HS Code must has value to can use PDDP.', 'dhl-for-woocommerce' ) );
+						}
+
+						return;
+					}
+
+					if ( $code_length < 4 || $code_length > 11 ) {
+						throw new Exception(
+							esc_html__( 'Item HS Code must be between 4 and 11 characters long', 'dhl-for-woocommerce' )
+						);
+					}
+
+					$needs_ead        = $self->needs_export_declaration();
+					$dhl_product      = $self->args['order_details']['dhl_product'];
 					$is_europaket     = 'V54EPAK' === $dhl_product;
 					$to_switzerland   = 'V53WPAK' === $dhl_product && 'CHE' === $shipping_country;
 
@@ -769,20 +784,6 @@ class Item_Info {
 						if ( $code_length < 6 ) {
 							throw new Exception( esc_html__( 'HS code must be at-least 6 digits for low-value exports (< €1 000).', 'dhl-for-woocommerce' ) );
 						}
-					}
-
-					if ( empty( $code_length ) ) {
-						if ( ! in_array( $shipping_country, API_Utils::PDDP_supported_countries(), true ) && 'yes' === $self->args['order_details']['PDDP'] ) {
-							throw new Exception( esc_html__( 'Item HS Code must has value to can use PDDP.', 'dhl-for-woocommerce' ) );
-						}
-
-						return;
-					}
-
-					if ( $code_length < 4 || $code_length > 11 ) {
-						throw new Exception(
-							esc_html__( 'Item HS Code must be between 4 and 11 characters long', 'dhl-for-woocommerce' )
-						);
 					}
 				},
 				'sanitize' => function ( $hs_code ) use ( $self ) {
