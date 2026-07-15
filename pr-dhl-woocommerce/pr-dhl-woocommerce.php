@@ -982,22 +982,34 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		/**
 		 * Installation functions
 		 *
-		 * Create temporary folder and files. DHL labels will be stored here as required
-		 *
-		 * empty_pdf_task will delete them hourly
+		 * Create the folder where DHL labels are stored. Labels are kept in an unguessable,
+		 * per-site subfolder and further protected with an Apache `.htaccess` deny rule, so
+		 * they cannot be reached directly on web servers that ignore `.htaccess` (e.g. Nginx).
 		 */
 		public function create_dhl_label_folder() {
 			// Install files and folders for uploading files and prevent hotlinking
 			$upload_dir = wp_upload_dir();
+			$base       = $upload_dir['basedir'] . '/woocommerce_dhl_label';
+			$secret     = $base . '/' . $this->get_dhl_label_folder_key();
 
 			$files = array(
 				array(
-					'base'    => $upload_dir['basedir'] . '/woocommerce_dhl_label',
+					'base'    => $base,
 					'file'    => '.htaccess',
 					'content' => 'deny from all',
 				),
 				array(
-					'base'    => $upload_dir['basedir'] . '/woocommerce_dhl_label',
+					'base'    => $base,
+					'file'    => 'index.html',
+					'content' => '',
+				),
+				array(
+					'base'    => $secret,
+					'file'    => '.htaccess',
+					'content' => 'deny from all',
+				),
+				array(
+					'base'    => $secret,
 					'file'    => 'index.html',
 					'content' => '',
 				),
@@ -1013,17 +1025,107 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			}
 		}
 
+		/**
+		 * Returns the unguessable, per-site subfolder name used to store DHL labels.
+		 *
+		 * Generated once and stored in the options table so label URLs cannot be enumerated
+		 * from predictable order IDs.
+		 *
+		 * @return string
+		 */
+		private function get_dhl_label_folder_key() {
+			$key = get_option( 'pr_dhl_label_folder_key' );
+
+			if ( ! is_string( $key ) || '' === $key ) {
+				$key = wp_generate_password( 20, false );
+				update_option( 'pr_dhl_label_folder_key', $key, false );
+			}
+
+			return $key;
+		}
+
 		public function dhl_label_folder_check() {
 			$upload_dir = wp_upload_dir();
-			if ( ! file_exists( $upload_dir['basedir'] . '/woocommerce_dhl_label/.htaccess' ) ) {
+			$base       = $upload_dir['basedir'] . '/woocommerce_dhl_label';
+			$secret     = $base . '/' . $this->get_dhl_label_folder_key();
+
+			if ( ! file_exists( $base . '/.htaccess' ) || ! file_exists( $secret . '/.htaccess' ) ) {
 				$this->create_dhl_label_folder();
+			}
+
+			$this->maybe_migrate_dhl_labels();
+		}
+
+		/**
+		 * Moves any previously stored label files out of the public folder root into the
+		 * unguessable subfolder, so labels generated before this protection was added are no
+		 * longer reachable at a predictable uploads URL. Runs once per site.
+		 *
+		 * @return void
+		 */
+		private function maybe_migrate_dhl_labels() {
+			if ( get_option( 'pr_dhl_label_folder_migrated' ) ) {
+				return;
+			}
+
+			$upload_dir = wp_upload_dir();
+			$root       = trailingslashit( $upload_dir['basedir'] . '/woocommerce_dhl_label' );
+			$secret     = $this->get_dhl_label_folder_dir();
+
+			// Only migrate once the protected subfolder actually exists, so a file is never
+			// left behind at the public path while the one-shot flag is already set.
+			if ( '' === $secret || ! is_dir( $secret ) || ! is_dir( $root ) ) {
+				return;
+			}
+
+			$entries  = @scandir( $root );
+			$migrated = is_array( $entries );
+
+			if ( is_array( $entries ) ) {
+				foreach ( $entries as $entry ) {
+					if ( in_array( $entry, array( '.', '..', '.htaccess', 'index.html' ), true ) ) {
+						continue;
+					}
+
+					$source = $root . $entry;
+
+					// Only move label files; leave the protected subfolder itself in place.
+					if ( ! is_file( $source ) ) {
+						continue;
+					}
+
+					$destination = $secret . $entry;
+
+					// A protected copy already exists: drop the now-redundant public copy so it
+					// is not left exposed at the predictable path.
+					if ( file_exists( $destination ) ) {
+						wp_delete_file( $source );
+
+						if ( file_exists( $source ) ) {
+							$migrated = false;
+						}
+
+						continue;
+					}
+
+					if ( ! @rename( $source, $destination ) ) {
+						$migrated = false;
+					}
+				}
+			}
+
+			// Only mark migration complete when every file moved, so a transient failure
+			// retries on a later request instead of leaving labels exposed at the public path.
+			if ( $migrated ) {
+				update_option( 'pr_dhl_label_folder_migrated', 1 );
 			}
 		}
 
 		public function get_dhl_label_folder_dir() {
 			$upload_dir = wp_upload_dir();
-			if ( file_exists( $upload_dir['basedir'] . '/woocommerce_dhl_label/.htaccess' ) ) {
-				return $upload_dir['basedir'] . '/woocommerce_dhl_label/';
+			$secret     = '/woocommerce_dhl_label/' . $this->get_dhl_label_folder_key();
+			if ( file_exists( $upload_dir['basedir'] . $secret . '/.htaccess' ) ) {
+				return $upload_dir['basedir'] . $secret . '/';
 			}
 
 			return '';
@@ -1031,11 +1133,39 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 		public function get_dhl_label_folder_url() {
 			$upload_dir = wp_upload_dir();
-			if ( file_exists( $upload_dir['basedir'] . '/woocommerce_dhl_label/.htaccess' ) ) {
-				return $upload_dir['baseurl'] . '/woocommerce_dhl_label/';
+			$secret     = '/woocommerce_dhl_label/' . $this->get_dhl_label_folder_key();
+			if ( file_exists( $upload_dir['basedir'] . $secret . '/.htaccess' ) ) {
+				return $upload_dir['baseurl'] . $secret . '/';
 			}
 
 			return '';
+		}
+
+		/**
+		 * Resolves a stored label file path, falling back to the same file name inside the
+		 * current (protected) label folder when the stored path no longer exists, for example
+		 * after previously stored labels were migrated into the protected subfolder.
+		 *
+		 * Only the base file name is used for the fallback, so it cannot escape the label folder.
+		 *
+		 * @param string $file_path
+		 *
+		 * @return string
+		 */
+		public function resolve_label_file_path( $file_path ) {
+			if ( empty( $file_path ) || ! is_string( $file_path ) || file_exists( $file_path ) ) {
+				return $file_path;
+			}
+
+			$dir = $this->get_dhl_label_folder_dir();
+
+			if ( '' === $dir ) {
+				return $file_path;
+			}
+
+			$fallback = $dir . basename( $file_path );
+
+			return ( $fallback !== $file_path && file_exists( $fallback ) ) ? $fallback : $file_path;
 		}
 
 		public function set_account_details( $account_details, $dhl_obj ) {

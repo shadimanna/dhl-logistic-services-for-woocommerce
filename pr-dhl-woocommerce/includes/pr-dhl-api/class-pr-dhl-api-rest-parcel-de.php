@@ -120,11 +120,14 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 			throw new Exception( esc_html__( 'DHL Label has no path!', 'dhl-for-woocommerce' ) );
 		}
 
-		$label_path = $label_info['label_path'];
+		$label_path = PR_DHL()->resolve_label_file_path( $label_info['label_path'] );
 
 		// Remove the separate return label file too, if one was saved.
-		if ( ! empty( $label_info['return_label_path'] ) && file_exists( $label_info['return_label_path'] ) ) {
-			wp_delete_file( $label_info['return_label_path'] );
+		if ( ! empty( $label_info['return_label_path'] ) ) {
+			$return_label_path = PR_DHL()->resolve_label_file_path( $label_info['return_label_path'] );
+			if ( file_exists( $return_label_path ) ) {
+				wp_delete_file( $return_label_path );
+			}
 		}
 
 		if ( file_exists( $label_path ) ) {
