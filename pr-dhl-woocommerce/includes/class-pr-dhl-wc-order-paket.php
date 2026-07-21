@@ -1101,8 +1101,12 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 				return $attachments;
 			}
 
-			if ( ! empty( $label_tracking_info['return_label_path'] ) && file_exists( $label_tracking_info['return_label_path'] ) ) {
-				$attachments[] = $label_tracking_info['return_label_path'];
+			$return_label_path = ! empty( $label_tracking_info['return_label_path'] )
+				? PR_DHL()->resolve_label_file_path( $label_tracking_info['return_label_path'] )
+				: '';
+
+			if ( '' !== $return_label_path && file_exists( $return_label_path ) ) {
+				$attachments[] = $return_label_path;
 			} else {
 				// The order has a DHL label and emailing the return label is enabled, but no separate
 				// return label file is available to attach: either "Separate Return Label" was off when

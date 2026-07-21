@@ -889,8 +889,9 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Internetmarke' ) ) :
 		 * @return string
 		 */
 		protected function get_label_file_path( $order_id ) {
-			$upload_dir = wp_upload_dir();
-			return $upload_dir['basedir'] . '/woocommerce_dhl_label/dhl-im-label-' . (int) $order_id . '.pdf';
+			$dir = PR_DHL()->get_dhl_label_folder_dir();
+
+			return '' === $dir ? '' : $dir . 'dhl-im-label-' . (int) $order_id . '.pdf';
 		}
 
 		/**

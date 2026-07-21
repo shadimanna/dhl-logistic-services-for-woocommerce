@@ -51,6 +51,7 @@ class PR_DHL_API_REST_Label extends PR_DHL_API_REST implements PR_DHL_API_Label 
 	public function delete_dhl_label( $args ) {
 		$upload_path = wp_upload_dir();
 		$label_path  = str_replace( $upload_path['url'], $upload_path['path'], $args['label_url'] );
+		$label_path  = PR_DHL()->resolve_label_file_path( $label_path );
 
 		if ( file_exists( $label_path ) ) {
 			if ( ! is_writable( $label_path ) ) {

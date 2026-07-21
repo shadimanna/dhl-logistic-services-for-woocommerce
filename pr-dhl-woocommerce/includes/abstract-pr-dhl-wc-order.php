@@ -434,13 +434,9 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 				return '';
 			}
 
-			// If no 'label_path' isset but a 'label_url' is set them return it...
-			// ... this indicates an old download style label!
-			if ( ! isset( $label_tracking_info['label_path'] ) && isset( $label_tracking_info['label_url'] ) ) {
-				return $label_tracking_info['label_url'];
-			}
-
-			// Override URL with our solution's download label endpoint:
+			// Always serve through our download endpoint so the file is streamed from the
+			// protected folder after a capability check, including old "download style"
+			// labels that only stored a public 'label_url'.
 			return $this->generate_download_url( '/' . self::DHL_DOWNLOAD_ENDPOINT . '/' . $order_id );
 		}
 
@@ -1277,7 +1273,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 						}
 
 						if ( ! empty( $label_tracking_info['label_path'] ) ) {
-							array_push( $merge_files, $label_tracking_info['label_path'] );
+							array_push( $merge_files, PR_DHL()->resolve_label_file_path( $label_tracking_info['label_path'] ) );
 						}
 					} catch ( Exception $e ) {
 						$array_messages[] = array(
@@ -1563,8 +1559,13 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 				$label_type = isset( $_GET['dhl_label_type'] ) ? sanitize_key( wp_unslash( $_GET['dhl_label_type'] ) ) : '';
 				if ( 'return' === $label_type && ! empty( $label_tracking_info['return_label_path'] ) ) {
 					$label_path = $label_tracking_info['return_label_path'];
-				} else {
+				} elseif ( ! empty( $label_tracking_info['label_path'] ) ) {
 					$label_path = $label_tracking_info['label_path'];
+				} elseif ( ! empty( $label_tracking_info['label_url'] ) ) {
+					// Old "download style" labels stored only a public URL; resolve by file name.
+					$label_path = PR_DHL()->get_dhl_label_folder_dir() . basename( $label_tracking_info['label_url'] );
+				} else {
+					$label_path = '';
 				}
 
 				if ( false == $this->download_label( $label_path ) ) {
@@ -1617,6 +1618,8 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 	   * @return boolean|void
 	   */
 	  protected function download_label( $file_path ) {
+		  $file_path = PR_DHL()->resolve_label_file_path( $file_path );
+
 		  if ( ! empty( $file_path ) && is_string( $file_path ) && file_exists( $file_path ) ) {
 			  // Check if buffer exists, then flush any buffered output to prevent it from being included in the file's content
 			  if ( ob_get_contents() ) {

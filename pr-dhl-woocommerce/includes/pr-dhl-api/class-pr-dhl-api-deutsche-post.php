@@ -365,7 +365,7 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 			throw new Exception( esc_html__( 'DHL Label has no path!', 'dhl-for-woocommerce' ) );
 		}
 
-		$label_path = $label_info['label_path'];
+		$label_path = PR_DHL()->resolve_label_file_path( $label_info['label_path'] );
 
 		if ( file_exists( $label_path ) ) {
 			$res = wp_delete_file( $label_path );
