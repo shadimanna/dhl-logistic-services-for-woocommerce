@@ -75,6 +75,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 4.0.1 =
+* Fix: Restrict Deutsche Post waybill label downloads to users who can manage orders.
+
 = 4.0.0 =
 * Drop SOAP API support.
 * Add: Deutsche Post Internetmarke — buy and print postage stamps for letters directly from a WooCommerce order.
