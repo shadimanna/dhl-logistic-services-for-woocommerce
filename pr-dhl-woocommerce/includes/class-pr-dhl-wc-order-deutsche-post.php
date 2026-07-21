@@ -1146,6 +1146,11 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			return;
 		}
 
+		// Only users who can manage shop orders may download the waybill, matching the sibling label endpoint.
+		if ( ! current_user_can( 'edit_shop_orders' ) ) {
+			return;
+		}
+
 		$dhl_obj    = PR_DHL()->get_dhl_factory();
 		$label_path = $dhl_obj->get_dhl_order_label_file_info( $dhl_order_id )->path;
 
