@@ -8,7 +8,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2026-06-17T01:07:07+02:00\n"
-"PO-Revision-Date: 2026-07-07T19:16:54+00:00\n"
+"PO-Revision-Date: 2026-07-21T09:04:53+00:00\n"
 "Language: de_DE\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.5\n"
@@ -21,27 +21,27 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-0: *.min.js\n"
 
 #. Plugin Name of the plugin
-#: pr-dhl-woocommerce.php:5
+#: pr-dhl-woocommerce.php:3
 msgid "DHL Shipping Germany for WooCommerce"
 msgstr "DHL Shipping Germany for WooCommerce"
 
 #. Plugin URI of the plugin
-#: pr-dhl-woocommerce.php:7
+#: pr-dhl-woocommerce.php:4
 msgid "https://github.com/shadimanna/dhl-logistic-services-for-woocommerce"
 msgstr "https://github.com/shadimanna/dhl-logistic-services-for-woocommerce"
 
 #. Description of the plugin
-#: pr-dhl-woocommerce.php:9
+#: pr-dhl-woocommerce.php:5
 msgid "WooCommerce integration for DHL Paket and Deutsche Post International"
 msgstr "WooCommerce-Integration für DHL Paket und Deutsche Post International"
 
 #. Author of the plugin
-#: pr-dhl-woocommerce.php:11
+#: pr-dhl-woocommerce.php:6
 msgid "DHL"
 msgstr "DHL"
 
 #. Author URI of the plugin
-#: pr-dhl-woocommerce.php:13
+#: pr-dhl-woocommerce.php:7
 msgid "http://dhl.com/"
 msgstr "http://dhl.com/"
 
@@ -105,13 +105,13 @@ msgid "There are no tracking number to delete."
 msgstr "Es sind keine Sendungsnummern zum Löschen vorhanden."
 
 #. translators: %s is the tracking link
-#: includes/abstract-pr-dhl-wc-order.php:479
+#: includes/abstract-pr-dhl-wc-order.php:475
 #, php-format
 msgid "%s Tracking Number: {tracking-link}"
 msgstr "%s Sendungsnummer: {tracking-link}"
 
 #. translators: %s is the return label number
-#: includes/abstract-pr-dhl-wc-order.php:501
+#: includes/abstract-pr-dhl-wc-order.php:497
 #, php-format
 msgid ""
 "\n"
@@ -121,63 +121,63 @@ msgstr ""
 " Retourenlabel-Nummer: %s"
 
 #. translators: %s is the order number
-#: includes/abstract-pr-dhl-wc-order.php:1272
+#: includes/abstract-pr-dhl-wc-order.php:1268
 #, php-format
 msgid "Order #%s: DHL label created"
 msgstr "Bestellung #%s: DHL-Label erstellt"
 
 #. translators: %1$s is the order number, %2$s is the error message
-#: includes/abstract-pr-dhl-wc-order.php:1285
-#: includes/abstract-pr-dhl-wc-order.php:1396
+#: includes/abstract-pr-dhl-wc-order.php:1281
+#: includes/abstract-pr-dhl-wc-order.php:1392
 #, php-format
 msgid "Order #%1$s: %2$s"
 msgstr "Bestellung #%1$s: %2$s"
 
 #. translators: %1$s and %2$s are HTML tags for the download link
-#: includes/abstract-pr-dhl-wc-order.php:1308
+#: includes/abstract-pr-dhl-wc-order.php:1304
 #, php-format
 msgid "Bulk DHL labels file created - %1$sdownload file%2$s"
 msgstr "Sammeldatei mit DHL-Labels erstellt – %1$sDatei herunterladen%2$s"
 
-#: includes/abstract-pr-dhl-wc-order.php:1313
+#: includes/abstract-pr-dhl-wc-order.php:1309
 msgid "Could not create bulk DHL label file, download individually."
 msgstr "Sammeldatei der DHL-Labels konnte nicht erstellt werden, bitte einzeln herunterladen."
 
 #. translators: %s is the order number
-#: includes/abstract-pr-dhl-wc-order.php:1389
+#: includes/abstract-pr-dhl-wc-order.php:1385
 #, php-format
 msgid "Order #%s: DHL Label Deleted"
 msgstr "Bestellung #%s: DHL-Label gelöscht"
 
-#: includes/abstract-pr-dhl-wc-order.php:1439
-#: includes/abstract-pr-dhl-wc-order.php:1458
+#: includes/abstract-pr-dhl-wc-order.php:1435
+#: includes/abstract-pr-dhl-wc-order.php:1454
 msgid "There are no files to merge."
 msgstr "Es sind keine Dateien zum Zusammenführen vorhanden."
 
-#: includes/abstract-pr-dhl-wc-order.php:1445
+#: includes/abstract-pr-dhl-wc-order.php:1441
 msgid "The first file is empty."
 msgstr "Die erste Datei ist leer."
 
-#: includes/abstract-pr-dhl-wc-order.php:1451
+#: includes/abstract-pr-dhl-wc-order.php:1447
 msgid "File format not supported."
 msgstr "Dateiformat wird nicht unterstützt."
 
-#: includes/abstract-pr-dhl-wc-order.php:1466
+#: includes/abstract-pr-dhl-wc-order.php:1462
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:624
 msgid "Library conflict, could not merge PDF files. Please download PDF files individually."
 msgstr "Bibliothekskonflikt, PDF-Dateien konnten nicht zusammengeführt werden. Bitte laden Sie die PDF-Dateien einzeln herunter."
 
-#: includes/abstract-pr-dhl-wc-order.php:1479
+#: includes/abstract-pr-dhl-wc-order.php:1475
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:639
 msgid "Not all the file formats are the same."
 msgstr "Nicht alle Dateiformate sind identisch."
 
-#: includes/abstract-pr-dhl-wc-order.php:1545
+#: includes/abstract-pr-dhl-wc-order.php:1541
 msgid "There are currently no bulk DHL label file to download or the download link for the bulk DHL label file has already expired. Please try again."
 msgstr "Derzeit ist keine DHL-Sammeldatei zum Herunterladen vorhanden oder der Download-Link für die DHL-Sammeldatei ist bereits abgelaufen. Bitte versuchen Sie es erneut."
 
-#: includes/abstract-pr-dhl-wc-order.php:1574
-#: includes/class-pr-dhl-wc-order-deutsche-post.php:1161
+#: includes/abstract-pr-dhl-wc-order.php:1575
+#: includes/class-pr-dhl-wc-order-deutsche-post.php:1166
 msgid "Unable to download file. Label appears to be invalid or is missing. Please try again."
 msgstr "Datei kann nicht heruntergeladen werden. Das Label scheint ungültig zu sein oder fehlt. Bitte versuchen Sie es erneut."
 
@@ -1619,15 +1619,15 @@ msgstr ""
 msgid "You do not have permission to delete labels."
 msgstr ""
 
-#: includes/class-pr-dhl-wc-order-internetmarke.php:932
+#: includes/class-pr-dhl-wc-order-internetmarke.php:933
 msgid "Invalid or expired label download link."
 msgstr ""
 
-#: includes/class-pr-dhl-wc-order-internetmarke.php:936
+#: includes/class-pr-dhl-wc-order-internetmarke.php:937
 msgid "You do not have permission to download labels."
 msgstr ""
 
-#: includes/class-pr-dhl-wc-order-internetmarke.php:942
+#: includes/class-pr-dhl-wc-order-internetmarke.php:943
 msgid "Label file not found."
 msgstr ""
 
@@ -1818,63 +1818,63 @@ msgstr "DHL-Labels löschen"
 msgid "DHL Request Pickup"
 msgstr "DHL-Abholung beauftragen"
 
-#: includes/class-pr-dhl-wc-order-paket.php:1171
+#: includes/class-pr-dhl-wc-order-paket.php:1175
 msgid "DHL Label Created"
 msgstr "DHL-Label erstellt"
 
-#: includes/class-pr-dhl-wc-order-paket.php:1172
+#: includes/class-pr-dhl-wc-order-paket.php:1176
 msgid "DHL Tracking Number"
 msgstr "DHL-Sendungsnummer"
 
 #. Translators: %s is the scheduled pickup date.
-#: includes/class-pr-dhl-wc-order-paket.php:1295
+#: includes/class-pr-dhl-wc-order-paket.php:1299
 #, php-format
 msgid "DHL pickup scheduled for %s"
 msgstr "DHL-Abholung geplant für %s"
 
 #. Translators: %s is a list of order numbers for which the DHL pickup request was created.
-#: includes/class-pr-dhl-wc-order-paket.php:1309
+#: includes/class-pr-dhl-wc-order-paket.php:1313
 #, php-format
 msgid "DHL Pickup Request created for Order(s): %s "
 msgstr "DHL-Abholauftrag erstellt für Bestellung(en): %s "
 
-#: includes/class-pr-dhl-wc-order-paket.php:1319
+#: includes/class-pr-dhl-wc-order-paket.php:1323
 msgid "Error message detail is not exist!"
 msgstr "Es sind keine Details zur Fehlermeldung vorhanden!"
 
 #. Translators: %s is the error message returned from the DHL pickup request.
 #. Translators: %s is the error message returned from the DHL Pickup Request exception.
-#: includes/class-pr-dhl-wc-order-paket.php:1326
-#: includes/class-pr-dhl-wc-order-paket.php:1336
+#: includes/class-pr-dhl-wc-order-paket.php:1330
+#: includes/class-pr-dhl-wc-order-paket.php:1340
 #, php-format
 msgid "DHL Pickup Request error: %s"
 msgstr "Fehler beim DHL-Abholauftrag: %s"
 
-#: includes/class-pr-dhl-wc-order-paket.php:1473
+#: includes/class-pr-dhl-wc-order-paket.php:1477
 msgid "Schedule a DHL Pickup Request."
 msgstr "Einen DHL-Abholauftrag planen."
 
-#: includes/class-pr-dhl-wc-order-paket.php:1474
+#: includes/class-pr-dhl-wc-order-paket.php:1478
 msgid "Your Shipper address and business hours from Settings will be used for the pickup."
 msgstr "Für die Abholung werden Ihre Absenderadresse und Ihre Geschäftszeiten aus den Einstellungen verwendet."
 
-#: includes/class-pr-dhl-wc-order-paket.php:1497
+#: includes/class-pr-dhl-wc-order-paket.php:1501
 msgid "Request Pickup: "
 msgstr "Abholung beauftragen: "
 
-#: includes/class-pr-dhl-wc-order-paket.php:1503
+#: includes/class-pr-dhl-wc-order-paket.php:1507
 msgid "Pickup ASAP"
 msgstr "Abholung schnellstmöglich"
 
-#: includes/class-pr-dhl-wc-order-paket.php:1504
+#: includes/class-pr-dhl-wc-order-paket.php:1508
 msgid "Pickup Date"
 msgstr "Abholdatum"
 
-#: includes/class-pr-dhl-wc-order-paket.php:1514
+#: includes/class-pr-dhl-wc-order-paket.php:1518
 msgid "Pickup Date: "
 msgstr "Abholdatum: "
 
-#: includes/class-pr-dhl-wc-order-paket.php:1528
+#: includes/class-pr-dhl-wc-order-paket.php:1532
 msgid "Submit"
 msgstr "Absenden"
 
@@ -2276,20 +2276,20 @@ msgstr "Es ist ein GET-Fehler oder eine Zeitüberschreitung aufgetreten. Bitte v
 
 #. translators: %s is the required number of characters
 #: includes/pr-dhl-api/abstract-pr-dhl-api-rest.php:349
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:606
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:609
 #, php-format
 msgid "The value must be %s characters."
 msgstr "Der Wert muss %s Zeichen lang sein."
 
 #. translators: %1$s is the minimum number of characters, %2$s is the maximum number of characters
 #: includes/pr-dhl-api/abstract-pr-dhl-api-rest.php:352
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:609
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:612
 #, php-format
 msgid "The value must be between %1$s and %2$s characters."
 msgstr "Der Wert muss zwischen %1$s und %2$s Zeichen lang sein."
 
 #: includes/pr-dhl-api/abstract-pr-dhl-api-rest.php:358
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:615
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:618
 msgid "The value must be a number"
 msgstr "Der Wert muss eine Zahl sein"
 
@@ -2335,19 +2335,19 @@ msgid "DHL Label has no path!"
 msgstr "Das DHL-Label hat keinen Pfad!"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:374
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:61
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:136
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:62
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:139
 msgid "DHL Label could not be deleted!"
 msgstr "Das DHL-Label konnte nicht gelöscht werden!"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:525
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:99
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:157
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:100
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:160
 msgid "Invalid file path!"
 msgstr "Ungültiger Dateipfad!"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-deutsche-post.php:531
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:164
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:167
 msgid "DHL label file cannot be saved!"
 msgstr "Die DHL-Label-Datei kann nicht gespeichert werden!"
 
@@ -2521,8 +2521,8 @@ msgid "Shipping \"City\" and \"Postcode\" are empty!"
 msgstr "Versand-„Ort“ und -„PLZ“ sind leer!"
 
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-finder.php:53
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:194
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:449
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:195
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:452
 #: includes/REST_API/Deutsche_Post/Item_Info.php:258
 #: includes/REST_API/Parcel_DE/Item_Info.php:589
 #: includes/REST_API/Parcel_DE/Item_Info.php:644
@@ -2534,73 +2534,73 @@ msgstr "Versand-„Land“ ist leer!"
 msgid "No service type selected"
 msgstr "Kein Servicetyp ausgewählt"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:57
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:132
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:58
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:135
 msgid "DHL Label file is not writable!"
 msgstr "Die DHL-Label-Datei ist nicht beschreibbar!"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:106
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:107
 msgid "DHL Label file cannot be saved!"
 msgstr "Die DHL-Label-Datei kann nicht gespeichert werden!"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:119
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:306
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:120
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:309
 msgid "Please, provide the username in the DHL shipping settings"
 msgstr "Bitte geben Sie den Benutzernamen in den DHL-Versandeinstellungen an"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:123
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:310
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:124
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:313
 msgid "Please, provide the password for the username in the DHL shipping settings"
 msgstr "Bitte geben Sie das Passwort für den Benutzernamen in den DHL-Versandeinstellungen an"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:128
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:129
 msgid "Please, provide a pickup account in the DHL shipping settings"
 msgstr "Bitte geben Sie ein Abholkonto in den DHL-Versandeinstellungen an"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:132
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:133
 msgid "Please, provide a distribution center in the DHL shipping settings"
 msgstr "Bitte geben Sie ein Verteilzentrum in den DHL-Versandeinstellungen an"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:154
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:348
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:155
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:351
 #: includes/REST_API/Deutsche_Post/Item_Info.php:117
 #: includes/REST_API/Parcel_DE/Item_Info.php:194
 msgid "DHL \"Product\" is empty!"
 msgstr "DHL-„Produkt“ ist leer!"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:158
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:380
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:159
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:383
 msgid "Shop \"Order ID\" is empty!"
 msgstr "Shop-„Bestellnummer“ ist leer!"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:162
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:384
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:163
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:387
 msgid "Shop \"Weight Units of Measure\" is empty!"
 msgstr "Shop-„Gewichtseinheit“ ist leer!"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:166
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:433
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:167
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:436
 #: includes/REST_API/Deutsche_Post/Item_Info.php:136
 #: includes/REST_API/Parcel_DE/Item_Info.php:233
 msgid "Order \"Weight\" is empty!"
 msgstr "Bestell-„Gewicht“ ist leer!"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:181
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:441
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:182
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:444
 #: includes/REST_API/Deutsche_Post/Item_Info.php:149
 #: includes/REST_API/Parcel_DE/Item_Info.php:244
 msgid "Shop \"Currency\" is empty!"
 msgstr "Shop-„Währung“ ist leer!"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:186
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:454
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:187
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:457
 #: includes/REST_API/Deutsche_Post/Item_Info.php:243
 #: includes/REST_API/Parcel_DE/Item_Info.php:561
 msgid "Shipping \"Address 1\" is empty!"
 msgstr "Versand-„Adresse 1“ ist leer!"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:190
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:445
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-label.php:191
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:448
 #: includes/REST_API/Deutsche_Post/Item_Info.php:249
 #: includes/REST_API/Parcel_DE/Item_Info.php:578
 #: includes/REST_API/Parcel_DE/Item_Info.php:641
@@ -2612,101 +2612,101 @@ msgstr "Versand-„Ort“ ist leer!"
 msgid "Your Shipper Address must match a Pickup address on your DHL Portal."
 msgstr "Ihre Absenderadresse muss mit einer Abholadresse in Ihrem DHL-Portal übereinstimmen."
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:315
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:318
 #: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel.php:30
 msgid "Please, provide an account in the DHL shipping settings"
 msgstr "Bitte geben Sie ein Konto in den DHL-Versandeinstellungen an"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:319
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:322
 msgid "Please, provide a participation number for the shipping method in the DHL shipping settings"
 msgstr "Bitte geben Sie eine Teilnahmenummer für die Versandart in den DHL-Versandeinstellungen an"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:323
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:326
 msgid "Please, provide a shipper name in the DHL shipping settings"
 msgstr "Bitte geben Sie einen Absendernamen in den DHL-Versandeinstellungen an"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:327
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:330
 msgid "Please, provide a shipper address in the DHL shipping settings"
 msgstr "Bitte geben Sie eine Absenderadresse in den DHL-Versandeinstellungen an"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:331
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:334
 msgid "Please, provide a shipper address number in the DHL shipping settings"
 msgstr "Bitte geben Sie eine Absender-Hausnummer in den DHL-Versandeinstellungen an"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:335
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:338
 msgid "Please, provide a shipper city in the DHL shipping settings"
 msgstr "Bitte geben Sie einen Absenderort in den DHL-Versandeinstellungen an"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:339
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:342
 msgid "Please, provide a shipper postcode in the DHL shipping settings"
 msgstr "Bitte geben Sie eine Absender-PLZ in den DHL-Versandeinstellungen an"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:343
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:346
 msgid "Please, provide a shipper reference in the DHL shipping settings"
 msgstr "Bitte geben Sie eine Absender-Referenz in den DHL-Versandeinstellungen an"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:355
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:358
 msgid "Returns are not supported by this DHL Service."
 msgstr "Retouren werden von diesem DHL-Service nicht unterstützt."
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:359
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:362
 msgid "Please, provide a return name in the DHL shipping settings"
 msgstr "Bitte geben Sie einen Retouren-Namen in den DHL-Versandeinstellungen an"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:363
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:366
 msgid "Please, provide a return address in the DHL shipping settings"
 msgstr "Bitte geben Sie eine Retouren-Adresse in den DHL-Versandeinstellungen an"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:367
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:370
 msgid "Please, provide a return address number in the DHL shipping settings"
 msgstr "Bitte geben Sie eine Retouren-Hausnummer in den DHL-Versandeinstellungen an"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:371
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:374
 msgid "Please, provide a return city in the DHL shipping settings"
 msgstr "Bitte geben Sie einen Retouren-Ort in den DHL-Versandeinstellungen an"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:375
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:378
 msgid "Please, provide a return postcode in the DHL shipping settings"
 msgstr "Bitte geben Sie eine Retouren-PLZ in den DHL-Versandeinstellungen an"
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:389
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:392
 msgid "First name and last name must be passed for \"Identity Check\"."
 msgstr "Für den „Ident-Check“ müssen Vor- und Nachname angegeben werden."
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:393
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:396
 msgid "Either a \"Date of Birth\" or \"Minimum Age\" must be eneted for \"Ident-Check\"."
 msgstr "Für den „Ident-Check“ muss entweder ein „Geburtsdatum“ oder ein „Mindestalter“ angegeben werden."
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:411
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:414
 msgid " A package number is empty. Ensure all package details are filled in."
 msgstr " Eine Paketnummer ist leer. Stellen Sie sicher, dass alle Paketangaben ausgefüllt sind."
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:415
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:418
 #: includes/REST_API/Parcel_DE/Item_Info.php:288
 msgid "A package weight is empty. Ensure all package details are filled in."
 msgstr "Ein Paketgewicht ist leer. Stellen Sie sicher, dass alle Paketangaben ausgefüllt sind."
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:419
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:422
 #: includes/REST_API/Parcel_DE/Item_Info.php:297
 msgid "A package length is empty. Ensure all package details are filled in."
 msgstr "Eine Paketlänge ist leer. Stellen Sie sicher, dass alle Paketangaben ausgefüllt sind."
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:423
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:426
 #: includes/REST_API/Parcel_DE/Item_Info.php:306
 msgid "A package width is empty. Ensure all package details are filled in."
 msgstr "Eine Paketbreite ist leer. Stellen Sie sicher, dass alle Paketangaben ausgefüllt sind."
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:427
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:430
 #: includes/REST_API/Parcel_DE/Item_Info.php:315
 msgid "A package height is empty. Ensure all package details are filled in."
 msgstr "Eine Pakethöhe ist leer. Stellen Sie sicher, dass alle Paketangaben ausgefüllt sind."
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:463
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:466
 #: includes/REST_API/Parcel_DE/Item_Info.php:627
 msgid "Post Number is missing, it is mandatory for \"Packstation\" delivery."
 msgstr "Die Postnummer fehlt, sie ist für die Zustellung an eine „Packstation“ verpflichtend."
 
-#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:481
+#: includes/pr-dhl-api/class-pr-dhl-api-rest-parcel-de.php:484
 #: includes/REST_API/Parcel_DE/Item_Info.php:1341
 msgid "Shipping street number is missing!"
 msgstr "Die Hausnummer der Lieferadresse fehlt!"
@@ -3013,21 +3013,21 @@ msgstr "Konto verbunden"
 msgid "Account Connection Failed: %s . Make sure to save the settings before testing the connection. "
 msgstr "Kontoverbindung fehlgeschlagen: %s . Stellen Sie sicher, dass Sie die Einstellungen speichern, bevor Sie die Verbindung testen. "
 
-#: pr-dhl-woocommerce.php:1187
+#: pr-dhl-woocommerce.php:1317
 msgid "Your DHL account password will expire in less than 30 days, please head to DHL business portal and reset your password."
 msgstr "Ihr DHL-Kontopasswort läuft in weniger als 30 Tagen ab. Bitte gehen Sie zum DHL-Geschäftskundenportal und setzen Sie Ihr Passwort zurück."
 
-#: pr-dhl-woocommerce.php:1189
+#: pr-dhl-woocommerce.php:1319
 msgid "Your DHL account password will expire in less than 7 days, please head to DHL business portal and reset your password."
 msgstr "Ihr DHL-Kontopasswort läuft in weniger als 7 Tagen ab. Bitte gehen Sie zum DHL-Geschäftskundenportal und setzen Sie Ihr Passwort zurück."
 
 #. translators: %s is the warning message
-#: pr-dhl-woocommerce.php:1194
+#: pr-dhl-woocommerce.php:1324
 #, php-format
 msgid "Warning: %s"
 msgstr "Warnung: %s"
 
-#: pr-dhl-woocommerce.php:1219
+#: pr-dhl-woocommerce.php:1349
 msgid "DHL checkout Blocks"
 msgstr "DHL-Checkout-Blöcke"
 
