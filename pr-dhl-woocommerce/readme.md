@@ -70,6 +70,7 @@ More detailed instructions on how to set up your store and configure it are cons
 = 4.0.1 =
 * Fix: Restrict Deutsche Post waybill label downloads to users who can manage orders.
 * Fix: Store DHL shipping label files in a protected location so they can no longer be downloaded directly through their web address.
+* Fix: Create labels for orders whose street address is longer than 50 characters instead of failing; the extra text now moves to the additional address line.
 
 = 4.0.0 =
 * Drop SOAP API support.

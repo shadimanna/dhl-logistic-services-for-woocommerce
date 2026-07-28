@@ -144,6 +144,7 @@ class Item_Info {
 		$this->pos_po = PR_DHL()->is_post_office( $args['shipping_address']['address_1'] );
 
 		$this->set_address_2();
+		$this->split_address_street();
 		$this->parse_args();
 	}
 
@@ -557,8 +558,11 @@ class Item_Info {
 				'rename' => 'name2',
 			),
 			'address_1'          => array(
-				'rename' => 'addressStreet',
-				'error'  => esc_html__( 'Shipping "Address 1" is empty!', 'dhl-for-woocommerce' ),
+				'rename'   => 'addressStreet',
+				'error'    => esc_html__( 'Shipping "Address 1" is empty!', 'dhl-for-woocommerce' ),
+				'sanitize' => function ( $value ) use ( $self ) {
+					return $self->string_length_sanitization( $value, 50 );
+				},
 			),
 			'address_2'          => array(
 				'rename'   => 'addressHouse',
@@ -1373,5 +1377,55 @@ class Item_Info {
 				);
 			}
 		}
+	}
+
+	/**
+	 * Keep the consignee street within DHL Parcel DE's 50 character limit.
+	 *
+	 * DHL rejects the whole shipment with a 400 when addressStreet exceeds 50
+	 * characters, so split the street at the last word boundary that still fits
+	 * and move the overflow into the additional-address field (max 60) instead of
+	 * failing. The house number lives in address_2 by now, so it is left alone;
+	 * overflow is prepended to whatever set_address_2() already relocated into the
+	 * additional-address field.
+	 *
+	 * @return void.
+	 */
+	protected function split_address_street() {
+		if ( $this->pos_ps || $this->pos_rs || $this->pos_po ) {
+			return;
+		}
+
+		$max     = 50;
+		$address = $this->args['shipping_address']['address_1'] ?? '';
+
+		if ( strlen( $address ) <= $max ) {
+			return;
+		}
+
+		// Prefer the last space within the limit; fall back to a hard cut when a
+		// single token is already longer than the limit.
+		$boundary = strrpos( substr( $address, 0, $max + 1 ), ' ' );
+
+		if ( false !== $boundary && $boundary > 0 ) {
+			$street   = substr( $address, 0, $boundary );
+			$overflow = substr( $address, $boundary + 1 );
+		} else {
+			$street   = substr( $address, 0, $max );
+			$overflow = substr( $address, $max );
+		}
+
+		$this->args['shipping_address']['address_1'] = trim( $street );
+
+		$overflow = trim( $overflow );
+
+		if ( '' === $overflow ) {
+			return;
+		}
+
+		$additional = $this->args['shipping_address']['address_additional'] ?? '';
+		$additional = '' === $additional ? $overflow : $overflow . ' ' . $additional;
+
+		$this->args['shipping_address']['address_additional'] = $this->string_length_sanitization( $additional, 60 );
 	}
 }
