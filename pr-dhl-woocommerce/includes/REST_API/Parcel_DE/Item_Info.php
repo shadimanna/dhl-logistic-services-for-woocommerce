@@ -571,8 +571,11 @@ class Item_Info {
 				},
 			),
 			'address_additional' => array(
-				'rename'  => 'additionalAddressInformation1',
-				'default' => '',
+				'rename'   => 'additionalAddressInformation1',
+				'default'  => '',
+				'sanitize' => function ( $value ) use ( $self ) {
+					return $self->string_length_sanitization( $value, 60 );
+				},
 			),
 			'postcode'           => array(
 				'rename' => 'postalCode',
