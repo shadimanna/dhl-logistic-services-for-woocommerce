@@ -988,6 +988,11 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 					$new_item['product_id'] = intval( $item['variation_id'] );
 					$new_item['sku']        = empty( $product_sku ) ? strval( $item['variation_id'] ) : $product_sku;
 
+					// If value is empty due to a full discount, use the pre-discount subtotal before the base price.
+					if ( empty( $new_item['item_value'] ) && ! empty( $item['line_subtotal'] ) ) {
+						$new_item['item_value'] = ( $item['line_subtotal'] / $item['qty'] );
+					}
+
 					// If value is empty due to discounts, set variation price instead
 					if ( empty( $new_item['item_value'] ) ) {
 						$new_item['item_value'] = $product_variation->get_price();
@@ -1004,6 +1009,11 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 					// Ensure id is string and not int
 					$new_item['product_id'] = intval( $item['product_id'] );
 					$new_item['sku']        = empty( $product_sku ) ? strval( $item['product_id'] ) : $product_sku;
+
+					// If value is empty due to a full discount, use the pre-discount subtotal before the base price.
+					if ( empty( $new_item['item_value'] ) && ! empty( $item['line_subtotal'] ) ) {
+						$new_item['item_value'] = ( $item['line_subtotal'] / $item['qty'] );
+					}
 
 					// If value is empty due to discounts, set product price instead
 					if ( empty( $new_item['item_value'] ) ) {
