@@ -949,10 +949,17 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 					continue;
 				}
 
-				// Get 1 item value not total items, based on ordered items in case currency is different that set product price
-				$new_item['item_value'] = ( $item['line_total'] / $item['qty'] );
-				// Sum 'line_total' to get items total value w/ discounts!
-				$args['order_details']['items_value'] += $item['line_total'];
+				// Value per item (not total), based on the ordered line so currency and discounts are respected.
+				$line_value = (float) $item['line_total'];
+
+				// If the line is fully discounted, declare the pre-discount subtotal instead of 0.
+				if ( $line_value <= 0 ) {
+					$line_value = (float) $item['line_subtotal'];
+				}
+
+				$new_item['item_value'] = ( $line_value / $item['qty'] );
+				// Sum the same per-line value so the package's declared total matches the per-item values.
+				$args['order_details']['items_value'] += $line_value;
 
 				$product = wc_get_product( $item['product_id'] );
 
@@ -988,11 +995,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 					$new_item['product_id'] = intval( $item['variation_id'] );
 					$new_item['sku']        = empty( $product_sku ) ? strval( $item['variation_id'] ) : $product_sku;
 
-					// If value is empty due to a full discount, use the pre-discount subtotal before the base price.
-					if ( empty( $new_item['item_value'] ) && ! empty( $item['line_subtotal'] ) ) {
-						$new_item['item_value'] = ( $item['line_subtotal'] / $item['qty'] );
-					}
-
 					// If value is empty due to discounts, set variation price instead
 					if ( empty( $new_item['item_value'] ) ) {
 						$new_item['item_value'] = $product_variation->get_price();
@@ -1009,11 +1011,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 					// Ensure id is string and not int
 					$new_item['product_id'] = intval( $item['product_id'] );
 					$new_item['sku']        = empty( $product_sku ) ? strval( $item['product_id'] ) : $product_sku;
-
-					// If value is empty due to a full discount, use the pre-discount subtotal before the base price.
-					if ( empty( $new_item['item_value'] ) && ! empty( $item['line_subtotal'] ) ) {
-						$new_item['item_value'] = ( $item['line_subtotal'] / $item['qty'] );
-					}
 
 					// If value is empty due to discounts, set product price instead
 					if ( empty( $new_item['item_value'] ) ) {
