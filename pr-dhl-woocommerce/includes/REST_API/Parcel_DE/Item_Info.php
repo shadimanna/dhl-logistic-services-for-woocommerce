@@ -1325,13 +1325,15 @@ class Item_Info {
 
 		if ( ! empty( $this->args['shipping_address']['address_2'] ) ) {
 
-			// If address_2 greated than 10 chars, try to pass with additional address (does not show for DE)
-			if ( strlen( $this->args['shipping_address']['address_2'] ) > 10 ) {
-				$this->args['shipping_address']['address_additional'] = $this->args['shipping_address']['address_2'];
-				$this->args['shipping_address']['address_2']          = '';
+			// A house number never exceeds 10 chars, so a shorter address_2 is used as-is.
+			if ( strlen( $this->args['shipping_address']['address_2'] ) <= 10 ) {
+				return;
 			}
 
-			return;
+			// Too long to be a house number: keep it as additional info (does not show for DE)
+			// and fall through to recover the real house number from address_1 below.
+			$this->args['shipping_address']['address_additional'] = $this->args['shipping_address']['address_2'];
+			$this->args['shipping_address']['address_2']          = '';
 		}
 
 		$set_key = false;
