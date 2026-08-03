@@ -75,6 +75,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 4.1.0 =
+* Add: Support for DHL Paket's new recipient services — One-Time Code, Second Delivery Attempt, No Parcel Locker and Immediate Return.
+
 = 4.0.1 =
 * Fix: Restrict Deutsche Post waybill label downloads to users who can manage orders.
 * Fix: Store DHL shipping label files in a protected location so they can no longer be downloaded directly through their web address.
