@@ -25,6 +25,7 @@ class Client extends API_Client {
 		$route = $this->request_order_route();
 		$data  = $this->request_info_to_request_data( $items_info );
 
+		// Request-level params (print format, combine, encoding) come from shared settings, so the first item represents the whole batch.
 		$route    = $this->add_request_params( $route, $items_info[0] );
 		$response = $this->post( $route, $data );
 
