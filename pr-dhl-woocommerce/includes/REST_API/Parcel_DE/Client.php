@@ -42,9 +42,12 @@ class Client extends API_Client {
 				if ( 200 === $item->sstatus->statusCode ) {
 					$labels_data['items'][] = $item;
 				} else {
+					$order_id                = isset( $item->shipmentRefNo )
+						? (int) str_replace( apply_filters( 'pr_shipping_dhl_paket_label_ref_no_prefix', 'order_' ), '', $item->shipmentRefNo )
+						: '';
 					$error_message           = $this->generate_error_message( $this->get_item_error_message( $item ) );
 					$labels_data['errors'][] = array(
-						'order_id' => '',
+						'order_id' => $order_id,
 						'message'  => wp_kses_post(
 							sprintf(
 							// Translators: %s is replaced with the error message returned from the API.
