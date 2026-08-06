@@ -59,8 +59,8 @@ class Client extends API_Client {
 				}
 			}
 
-			$labels_data['warnings'] = $this->get_items_warnings( $labels_data['items'] );
-
+			// A 207 always carries at least one failed item, which get_dhl_label() rejects
+			// before any warning is surfaced, so weak warnings only matter on the 200 path.
 			return $labels_data;
 		}
 
@@ -520,11 +520,7 @@ class Client extends API_Client {
 	}
 
 	/**
-	 * Collects non-blocking (weak) validation warnings from successfully created labels.
-	 *
-	 * DHL returns these alongside a created label, for example when GoGreen Plus is booked
-	 * automatically through a standing order on the billing number. They must reach the
-	 * merchant even though the label itself was created without error.
+	 * Collect non-blocking (weak) validation warnings from successfully created labels.
 	 *
 	 * @param array $items Successfully created label items from the API response.
 	 *
@@ -554,7 +550,8 @@ class Client extends API_Client {
 			}
 		}
 
-		return $warnings;
+		// A standing-order warning repeats on every shipment of a multi-package order.
+		return array_values( array_unique( $warnings ) );
 	}
 
 	/**
