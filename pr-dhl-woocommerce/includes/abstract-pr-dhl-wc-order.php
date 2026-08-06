@@ -377,6 +377,10 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 				do_action( 'pr_shipping_dhl_label_created', $order_id );
 
+				$label_message = ! empty( $label_tracking_info['dhl_label_warnings'] )
+					? implode( ' ', $label_tracking_info['dhl_label_warnings'] )
+					: '';
+
 				wp_send_json(
 					array(
 						'download_msg'       => esc_html__( 'Your DHL label is ready to download, click the "Download Label" button above"', 'dhl-for-woocommerce' ),
@@ -385,6 +389,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 						'return_label_url'   => $this->get_download_return_label_url( $order_id ),
 						'tracking_note'      => $tracking_note,
 						'tracking_note_type' => $tracking_note_type,
+						'label_message'      => $label_message,
 					)
 				);
 
@@ -603,6 +608,9 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		 * @return void
 		 */
 		public function save_dhl_label_tracking( $order_id, $tracking_items ) {
+
+			// Per-request label warnings are surfaced in the UI response, not stored on the order.
+			unset( $tracking_items['dhl_label_warnings'] );
 
 			if ( isset( $tracking_items['label_path'] ) && validate_file( $tracking_items['label_path'] ) === 2 ) {
 				$tracking_items['label_path'] = wp_slash( $tracking_items['label_path'] );

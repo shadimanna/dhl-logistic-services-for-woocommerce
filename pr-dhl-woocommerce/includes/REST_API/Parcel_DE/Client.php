@@ -30,7 +30,10 @@ class Client extends API_Client {
 
 		// Return the response body on success
 		if ( 200 === $response->status ) {
-			return array( 'items' => $response->body->items );
+			return array(
+				'items'    => $response->body->items,
+				'warnings' => $this->get_items_warnings( $response->body->items ),
+			);
 		}
 
 		if ( 207 === $response->status ) {
@@ -55,6 +58,8 @@ class Client extends API_Client {
 					);
 				}
 			}
+
+			$labels_data['warnings'] = $this->get_items_warnings( $labels_data['items'] );
 
 			return $labels_data;
 		}
@@ -512,6 +517,44 @@ class Client extends API_Client {
 		}
 
 		return $this->generate_error_message( $multiple_errors_list );
+	}
+
+	/**
+	 * Collects non-blocking (weak) validation warnings from successfully created labels.
+	 *
+	 * DHL returns these alongside a created label, for example when GoGreen Plus is booked
+	 * automatically through a standing order on the billing number. They must reach the
+	 * merchant even though the label itself was created without error.
+	 *
+	 * @param array $items Successfully created label items from the API response.
+	 *
+	 * @return string[] Warning messages, empty when there are none.
+	 */
+	protected function get_items_warnings( $items ) {
+		$warnings = array();
+
+		foreach ( $items as $item ) {
+			if ( empty( $item->validationMessages ) || ! is_array( $item->validationMessages ) ) {
+				continue;
+			}
+
+			foreach ( $item->validationMessages as $message ) {
+				// Hard errors are reported on the failure path; only surface weak validations here.
+				$state = $message->validationState ?? '';
+				if ( in_array( $state, array( 'Error', 'Invalid' ), true ) ) {
+					continue;
+				}
+
+				if ( empty( $message->validationMessage ) ) {
+					continue;
+				}
+
+				$property   = isset( $message->property ) ? '( ' . $message->property . ' ) : ' : '';
+				$warnings[] = $property . $message->validationMessage;
+			}
+		}
+
+		return $warnings;
 	}
 
 	/**

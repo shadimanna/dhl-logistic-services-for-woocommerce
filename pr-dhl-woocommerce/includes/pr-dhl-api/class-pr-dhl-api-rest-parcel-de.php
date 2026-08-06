@@ -103,6 +103,10 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 			$label_tracking_info = $this->save_export_files( 'label', $args['order_details']['order_id'], $item_response['items'][0] );
 		}
 
+		if ( ! empty( $item_response['warnings'] ) ) {
+			$label_tracking_info['dhl_label_warnings'] = $item_response['warnings'];
+		}
+
 		return $label_tracking_info;
 	}
 
