@@ -364,18 +364,11 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 				// Gather args for DHL API call
 				$args = $this->get_label_args( $order_id );
 
-				// Allow third parties to modify the args to the DHL APIs
-				$args = apply_filters( 'pr_shipping_dhl_label_args', $args, $order_id );
+				$this->create_dhl_label( $order_id, $args );
 
-				$dhl_obj             = PR_DHL()->get_dhl_factory();
-				$label_tracking_info = $dhl_obj->get_dhl_label( $args );
-
-				$this->save_dhl_label_tracking( $order_id, $label_tracking_info );
 				$tracking_note      = $this->get_tracking_note( $order_id );
 				$tracking_note_type = $this->get_tracking_note_type();
 				$label_url          = $this->get_download_label_url( $order_id );
-
-				do_action( 'pr_shipping_dhl_label_created', $order_id );
 
 				wp_send_json(
 					array(
@@ -394,6 +387,33 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 			}
 
 			wp_die();
+		}
+
+		/**
+		 * Creates a DHL label for a single order and persists its tracking data.
+		 *
+		 * Shared by the single-order and bulk label flows: applies the label-args
+		 * filter, calls the DHL API, saves the returned tracking data and fires the
+		 * label-created hook.
+		 *
+		 * @param int   $order_id Order ID.
+		 * @param array $args     Label args already gathered via get_label_args().
+		 *
+		 * @return array The label tracking info returned by the DHL API.
+		 * @throws Exception If the DHL API fails to create the label.
+		 */
+		protected function create_dhl_label( $order_id, $args ) {
+			// Allow third parties to modify the args to the DHL APIs
+			$args = apply_filters( 'pr_shipping_dhl_label_args', $args, $order_id );
+
+			$dhl_obj             = PR_DHL()->get_dhl_factory();
+			$label_tracking_info = $dhl_obj->get_dhl_label( $args );
+
+			$this->save_dhl_label_tracking( $order_id, $label_tracking_info );
+
+			do_action( 'pr_shipping_dhl_label_created', $order_id );
+
+			return $label_tracking_info;
 		}
 
 		public function delete_label_ajax() {
@@ -1215,8 +1235,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 			if ( 'pr_dhl_create_labels' === $action ) {
 
-				$dhl_obj = PR_DHL()->get_dhl_factory();
-
 				foreach ( $order_ids as $order_id ) {
 					$order = wc_get_order( $order_id );
 
@@ -1248,13 +1266,9 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 							// Allow settings to override saved order data, ONLY for bulk action
 							$args = $this->get_bulk_settings_override( $args );
 
-							// Allow third parties to modify the args to the DHL APIs
-							$args = apply_filters( 'pr_shipping_dhl_label_args', $args, $order_id );
-
 							// API request.
-							$label_tracking_info = $dhl_obj->get_dhl_label( $args );
-							$this->save_dhl_label_tracking( $order_id, $label_tracking_info );
-							$tracking_note = $this->get_tracking_note( $order_id );
+							$label_tracking_info = $this->create_dhl_label( $order_id, $args );
+							$tracking_note       = $this->get_tracking_note( $order_id );
 
 							$tracking_note_type = $this->get_tracking_note_type();
 							$tracking_note_type = empty( $tracking_note_type ) ? 0 : 1;
@@ -1268,8 +1282,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 								'message' => sprintf( esc_html__( 'Order #%s: DHL label created', 'dhl-for-woocommerce' ), $order->get_order_number() ),
 								'type'    => 'success',
 							);
-
-							do_action( 'pr_shipping_dhl_label_created', $order_id );
 						}
 
 						if ( ! empty( $label_tracking_info['label_path'] ) ) {
