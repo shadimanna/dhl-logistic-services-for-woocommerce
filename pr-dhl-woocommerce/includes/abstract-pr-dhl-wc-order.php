@@ -519,12 +519,20 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		 * @return array Bulk-action feedback messages.
 		 */
 		protected function enqueue_bulk_label_jobs( $order_ids, $dhl_force_product = false, $is_force_product_dom = false ) {
-			// Only queue orders that do not already have a label.
+			// Queue only orders that have no label yet and no job already in flight, so re-running
+			// the bulk action (or a double-click) cannot enqueue a second job for the same order.
 			$pending_orders = array();
 			foreach ( $order_ids as $order_id ) {
-				if ( empty( $this->get_dhl_label_tracking( $order_id ) ) ) {
-					$pending_orders[] = $order_id;
+				if ( ! empty( $this->get_dhl_label_tracking( $order_id ) ) ) {
+					continue;
 				}
+
+				$job = $this->get_label_job_status( $order_id );
+				if ( self::JOB_PENDING === $job['status'] ) {
+					continue;
+				}
+
+				$pending_orders[] = $order_id;
 			}
 
 			if ( empty( $pending_orders ) ) {
