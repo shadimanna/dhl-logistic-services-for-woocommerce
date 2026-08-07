@@ -633,14 +633,30 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 			foreach ( $labels_result['labels'] as $label_tracking_info ) {
 				$order_id = $label_tracking_info['order_id'];
 
-				$this->save_created_dhl_label( $order_id, $label_tracking_info );
-				$this->set_label_job_status(
-					$order_id,
-					self::JOB_CREATED,
-					array(
-						'warnings' => isset( $label_tracking_info['dhl_label_warnings'] ) ? $label_tracking_info['dhl_label_warnings'] : array(),
-					)
-				);
+				// The label has already been purchased at DHL. Persist it, but never let a storage
+				// failure escape this callback: an uncaught error would make Action Scheduler retry
+				// the whole chunk and buy a second label for every order that was not yet saved.
+				try {
+					$this->save_created_dhl_label( $order_id, $label_tracking_info );
+					$this->set_label_job_status(
+						$order_id,
+						self::JOB_CREATED,
+						array(
+							'warnings' => isset( $label_tracking_info['dhl_label_warnings'] ) ? $label_tracking_info['dhl_label_warnings'] : array(),
+						)
+					);
+				} catch ( Exception $e ) {
+					// Flag the purchased-but-unsaved case distinctly so a later retry does not
+					// blindly buy a duplicate for a label that already exists at DHL.
+					$this->record_async_label_failure(
+						$order_id,
+						sprintf(
+							/* translators: %s is the storage error message */
+							esc_html__( 'DHL created the label but it could not be saved (%s). A label may already exist at DHL — verify before retrying.', 'dhl-for-woocommerce' ),
+							$e->getMessage()
+						)
+					);
+				}
 
 				$handled[ $order_id ] = true;
 			}
