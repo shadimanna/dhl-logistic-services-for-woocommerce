@@ -56,7 +56,10 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 	 */
 	public function get_dhl_labels( $multiple_orders_args ) {
 		$items_info = array();
-		$labels     = array();
+		$labels     = array(
+			'labels' => array(),
+			'errors' => array(),
+		);
 		$uom        = get_option( 'woocommerce_weight_unit' );
 
 		foreach ( $multiple_orders_args as $args ) {
@@ -72,22 +75,42 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 			}
 		}
 
-		// Create the item and get the barcode
-		if ( ! empty( $items_info ) ) {
-			$items = $this->dhl_label->api_client->create_items( $items_info );
-			foreach ( $items['items'] as $item ) {
-				$order_id = (int) str_replace( apply_filters( 'pr_shipping_dhl_paket_label_ref_no_prefix', 'order_' ), '', $item->shipmentRefNo );
-				if ( isset( $item->label->b64 ) ) {
-					$file               = $this->dhl_label->save_data_file( 'label', $order_id, $item->label->b64 );
-					$labels['labels'][] = array(
-						'order_id'        => $order_id,
-						'label_path'      => $file['label_path'],
-						'tracking_number' => $item->shipmentNo,
-						'tracking_status' => '',
-					);
-				}
-			}
+		if ( empty( $items_info ) ) {
+			return $labels;
+		}
 
+		// Every shipment is created in a single API request.
+		$items = $this->dhl_label->api_client->create_items( $items_info );
+
+		// A multi-package order returns several shipments under the same order reference.
+		$items_by_order = array();
+		foreach ( $items['items'] as $item ) {
+			$order_id                      = (int) str_replace( apply_filters( 'pr_shipping_dhl_paket_label_ref_no_prefix', 'order_' ), '', $item->shipmentRefNo );
+			$items_by_order[ $order_id ][] = $item;
+		}
+
+		// Reuse the single-label save routines so return labels and customs documents are handled identically.
+		foreach ( $items_by_order as $order_id => $order_items ) {
+			try {
+				if ( count( $order_items ) > 1 ) {
+					$label_tracking_info = $this->dhl_label->save_multiple_shipments( 'label', $order_id, $order_items );
+				} else {
+					$label_tracking_info = $this->dhl_label->save_export_files( 'label', $order_id, $order_items[0] );
+				}
+
+				$label_tracking_info['order_id']        = $order_id;
+				$label_tracking_info['tracking_status'] = '';
+
+				$labels['labels'][] = $label_tracking_info;
+			} catch ( Exception $e ) {
+				$labels['errors'][] = array(
+					'order_id' => $order_id,
+					'message'  => $e->getMessage(),
+				);
+			}
+		}
+
+		if ( ! empty( $items['errors'] ) ) {
 			foreach ( $items['errors'] as $error ) {
 				$labels['errors'][] = array(
 					'order_id' => $error['order_id'],

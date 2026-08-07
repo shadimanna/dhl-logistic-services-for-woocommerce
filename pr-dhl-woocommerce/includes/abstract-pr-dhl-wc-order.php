@@ -19,9 +19,10 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 		const DHL_DOWNLOAD_ENDPOINT = 'dhl_download_label';
 
-		// Action Scheduler hook and group used for background label creation.
-		const ACTION_CREATE_LABEL = 'pr_dhl_create_label_async';
-		const ACTION_GROUP        = 'pr-dhl-labels';
+		// Action Scheduler hooks and group used for background label creation.
+		const ACTION_CREATE_LABEL        = 'pr_dhl_create_label_async';
+		const ACTION_CREATE_LABELS_BATCH = 'pr_dhl_create_labels_batch_async';
+		const ACTION_GROUP               = 'pr-dhl-labels';
 
 		// Per-order background label job state.
 		const JOB_STATUS_META = '_pr_dhl_label_job';
@@ -56,8 +57,9 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 			add_action( 'wp_ajax_wc_shipment_dhl_gen_label', array( $this, 'save_meta_box_ajax' ) );
 			add_action( 'wp_ajax_wc_shipment_dhl_delete_label', array( $this, 'delete_label_ajax' ) );
 
-			// Background (Action Scheduler) label-creation callback.
+			// Background (Action Scheduler) label-creation callbacks.
 			add_action( self::ACTION_CREATE_LABEL, array( $this, 'create_label_async' ), 10, 1 );
+			add_action( self::ACTION_CREATE_LABELS_BATCH, array( $this, 'create_labels_batch_async' ), 10, 3 );
 
 			// Prevent the DHL tracking number being copied from a subscription to its renewal and resubscribe orders.
 			// Detect the capability rather than a version number: the data copier (and the array-based
@@ -502,19 +504,183 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 					)
 				);
 			} catch ( Exception $e ) {
-				$this->set_label_job_status( $order_id, self::JOB_FAILED, array( 'message' => $e->getMessage() ) );
+				$this->record_async_label_failure( $order_id, $e->getMessage() );
+			}
+		}
 
-				$order = wc_get_order( $order_id );
-
-				if ( $order instanceof WC_Order ) {
-					$order->add_order_note(
-						sprintf(
-							/* translators: %s is the error message returned by the DHL API */
-							esc_html__( 'DHL label could not be created: %s', 'dhl-for-woocommerce' ),
-							$e->getMessage()
-						)
-					);
+		/**
+		 * Splits a bulk selection into background label-creation jobs, one Action Scheduler
+		 * action per chunk, each of which creates its chunk in a single batched request.
+		 *
+		 * @param array $order_ids            Selected order IDs.
+		 * @param mixed $dhl_force_product    Forced DHL product for the whole batch, or false.
+		 * @param bool  $is_force_product_dom Whether the forced product is domestic.
+		 *
+		 * @return array Bulk-action feedback messages.
+		 */
+		protected function enqueue_bulk_label_jobs( $order_ids, $dhl_force_product = false, $is_force_product_dom = false ) {
+			// Only queue orders that do not already have a label.
+			$pending_orders = array();
+			foreach ( $order_ids as $order_id ) {
+				if ( empty( $this->get_dhl_label_tracking( $order_id ) ) ) {
+					$pending_orders[] = $order_id;
 				}
+			}
+
+			if ( empty( $pending_orders ) ) {
+				return array(
+					array(
+						'message' => esc_html__( 'The selected orders already have DHL labels.', 'dhl-for-woocommerce' ),
+						'type'    => 'warning',
+					),
+				);
+			}
+
+			$chunk_size = max( 1, (int) apply_filters( 'pr_dhl_bulk_label_chunk_size', 10 ) );
+
+			foreach ( array_chunk( $pending_orders, $chunk_size ) as $chunk ) {
+				as_enqueue_async_action(
+					self::ACTION_CREATE_LABELS_BATCH,
+					array( $chunk, $dhl_force_product, $is_force_product_dom ),
+					self::ACTION_GROUP
+				);
+			}
+
+			foreach ( $pending_orders as $order_id ) {
+				$this->set_label_job_status( $order_id, self::JOB_PENDING );
+			}
+
+			return array(
+				array(
+					'message' => sprintf(
+						/* translators: %d is the number of orders queued */
+						esc_html( _n( '%d order queued for background DHL label creation.', '%d orders queued for background DHL label creation.', count( $pending_orders ), 'dhl-for-woocommerce' ) ),
+						count( $pending_orders )
+					),
+					'type'    => 'success',
+				),
+			);
+		}
+
+		/**
+		 * Action Scheduler callback: create labels for a chunk of orders in one batched request.
+		 *
+		 * Orders that already have a label are skipped before the request is built, so a retried
+		 * job never buys a second label for an order whose label was already saved.
+		 *
+		 * @param array $order_ids            Order IDs in this chunk.
+		 * @param mixed $dhl_force_product    Forced DHL product for the whole batch, or false.
+		 * @param bool  $is_force_product_dom Whether the forced product is domestic.
+		 *
+		 * @return void
+		 */
+		public function create_labels_batch_async( $order_ids, $dhl_force_product = false, $is_force_product_dom = false ) {
+			$dhl_obj = PR_DHL()->get_dhl_factory();
+
+			if ( ! method_exists( $dhl_obj, 'get_dhl_labels' ) ) {
+				return;
+			}
+
+			$batch_args = array();
+
+			foreach ( (array) $order_ids as $order_id ) {
+				// Idempotency: never recreate a label that already exists (covers job retries).
+				if ( ! empty( $this->get_dhl_label_tracking( $order_id ) ) ) {
+					$this->set_label_job_status( $order_id, self::JOB_CREATED );
+					continue;
+				}
+
+				try {
+					$this->save_default_dhl_label_items( $order_id );
+
+					$args = $this->get_label_args( $order_id );
+
+					if ( $dhl_force_product ) {
+						if ( $is_force_product_dom && $this->is_shipping_domestic( $order_id ) ) {
+							$args['order_details']['dhl_product'] = $dhl_force_product;
+						}
+
+						if ( ! $is_force_product_dom && ! $this->is_shipping_domestic( $order_id ) ) {
+							$args['order_details']['dhl_product'] = $dhl_force_product;
+						}
+					}
+
+					$args = $this->get_bulk_settings_override( $args );
+					$args = apply_filters( 'pr_shipping_dhl_label_args', $args, $order_id );
+
+					$batch_args[ $order_id ] = $args;
+				} catch ( Exception $e ) {
+					$this->record_async_label_failure( $order_id, $e->getMessage() );
+				}
+			}
+
+			if ( empty( $batch_args ) ) {
+				return;
+			}
+
+			try {
+				$labels_result = $dhl_obj->get_dhl_labels( array_values( $batch_args ) );
+			} catch ( Exception $e ) {
+				foreach ( array_keys( $batch_args ) as $order_id ) {
+					$this->record_async_label_failure( $order_id, $e->getMessage() );
+				}
+
+				return;
+			}
+
+			$handled = array();
+
+			foreach ( $labels_result['labels'] as $label_tracking_info ) {
+				$order_id = $label_tracking_info['order_id'];
+
+				$this->save_created_dhl_label( $order_id, $label_tracking_info );
+				$this->set_label_job_status(
+					$order_id,
+					self::JOB_CREATED,
+					array(
+						'warnings' => isset( $label_tracking_info['dhl_label_warnings'] ) ? $label_tracking_info['dhl_label_warnings'] : array(),
+					)
+				);
+
+				$handled[ $order_id ] = true;
+			}
+
+			foreach ( $labels_result['errors'] as $error ) {
+				if ( ! empty( $error['order_id'] ) ) {
+					$this->record_async_label_failure( $error['order_id'], $error['message'] );
+					$handled[ $error['order_id'] ] = true;
+				}
+			}
+
+			// Any queued order the API neither created nor reported is a failure, so nothing is left pending.
+			foreach ( array_keys( $batch_args ) as $order_id ) {
+				if ( empty( $handled[ $order_id ] ) ) {
+					$this->record_async_label_failure( $order_id, esc_html__( 'DHL did not return a label for this order.', 'dhl-for-woocommerce' ) );
+				}
+			}
+		}
+
+		/**
+		 * Records a failed background label creation on the order: job state plus an order note.
+		 *
+		 * @param int    $order_id Order ID.
+		 * @param string $message  Failure reason.
+		 *
+		 * @return void
+		 */
+		protected function record_async_label_failure( $order_id, $message ) {
+			$this->set_label_job_status( $order_id, self::JOB_FAILED, array( 'message' => $message ) );
+
+			$order = wc_get_order( $order_id );
+
+			if ( $order instanceof WC_Order ) {
+				$order->add_order_note(
+					sprintf(
+						/* translators: %s is the error message returned by the DHL API */
+						esc_html__( 'DHL label could not be created: %s', 'dhl-for-woocommerce' ),
+						$message
+					)
+				);
 			}
 		}
 
@@ -1389,9 +1555,20 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 			$label_count    = 0;
 			$merge_files    = array();
 			$array_messages = array();
-			$orders_args    = array();
 
 			if ( 'pr_dhl_create_labels' === $action ) {
+
+				$dhl_obj = PR_DHL()->get_dhl_factory();
+
+				// APIs exposing get_dhl_labels() create every selected order in a single request.
+				$use_batch = method_exists( $dhl_obj, 'get_dhl_labels' );
+
+				// Move bulk creation into background jobs when batching and Action Scheduler are both available.
+				if ( $use_batch && $this->is_action_scheduler_available() ) {
+					return $this->enqueue_bulk_label_jobs( $order_ids, $dhl_force_product, $is_force_product_dom );
+				}
+
+				$batch_args = array();
 
 				foreach ( $order_ids as $order_id ) {
 					$order = wc_get_order( $order_id );
@@ -1401,8 +1578,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 						if ( empty( $label_tracking_info = $this->get_dhl_label_tracking( $order_id ) ) ) {
 
 							$this->save_default_dhl_label_items( $order_id );
-
-							// $dhl_label_items = $this->get_dhl_label_items( $order_id );
 
 							// Gather args for DHL API call
 							$args = $this->get_label_args( $order_id );
@@ -1424,33 +1599,95 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 							// Allow settings to override saved order data, ONLY for bulk action
 							$args = $this->get_bulk_settings_override( $args );
 
+							// Allow third parties to modify the args to the DHL APIs
+							$args = apply_filters( 'pr_shipping_dhl_label_args', $args, $order_id );
+
+							// Defer to a single batched request when the API supports it.
+							if ( $use_batch ) {
+								$batch_args[ $order_id ] = $args;
+								continue;
+							}
+
 							// API request.
-							$label_tracking_info = $this->create_dhl_label( $order_id, $args );
-							$tracking_note       = $this->get_tracking_note( $order_id );
-
-							$tracking_note_type = $this->get_tracking_note_type();
-							$tracking_note_type = empty( $tracking_note_type ) ? 0 : 1;
-
-							$order->add_order_note( $tracking_note, $tracking_note_type, true );
-
+							$label_tracking_info = $dhl_obj->get_dhl_label( $args );
+							$array_messages[]    = $this->save_created_dhl_label( $order_id, $label_tracking_info );
 							++$label_count;
-
-							$array_messages[] = array(
-								/* translators: %s is the order number */
-								'message' => sprintf( esc_html__( 'Order #%s: DHL label created', 'dhl-for-woocommerce' ), $order->get_order_number() ),
-								'type'    => 'success',
-							);
 						}
 
 						if ( ! empty( $label_tracking_info['label_path'] ) ) {
 							array_push( $merge_files, PR_DHL()->resolve_label_file_path( $label_tracking_info['label_path'] ) );
 						}
 					} catch ( Exception $e ) {
+						$order_number = $order ? $order->get_order_number() : $order_id;
 						$array_messages[] = array(
 							/* translators: %1$s is the order number, %2$s is the error message */
-							'message' => sprintf( esc_html__( 'Order #%1$s: %2$s', 'dhl-for-woocommerce' ), esc_html( $order->get_order_number() ), $e->getMessage() ),
+							'message' => sprintf( esc_html__( 'Order #%1$s: %2$s', 'dhl-for-woocommerce' ), esc_html( $order_number ), $e->getMessage() ),
 							'type'    => 'error',
 						);
+					}
+				}
+
+				// Create every deferred order in one API request, then map the results back per order.
+				if ( $use_batch && ! empty( $batch_args ) ) {
+					$handled_orders = array();
+
+					try {
+						$labels_result = $dhl_obj->get_dhl_labels( array_values( $batch_args ) );
+					} catch ( Exception $e ) {
+						$labels_result = array(
+							'labels' => array(),
+							'errors' => array(),
+						);
+
+						// A failure of the whole request applies to every queued order.
+						foreach ( array_keys( $batch_args ) as $failed_order_id ) {
+							$failed_order     = wc_get_order( $failed_order_id );
+							$order_number     = $failed_order ? $failed_order->get_order_number() : $failed_order_id;
+							$array_messages[] = array(
+								/* translators: %1$s is the order number, %2$s is the error message */
+								'message' => sprintf( esc_html__( 'Order #%1$s: %2$s', 'dhl-for-woocommerce' ), esc_html( $order_number ), $e->getMessage() ),
+								'type'    => 'error',
+							);
+							$handled_orders[ $failed_order_id ] = true;
+						}
+					}
+
+					foreach ( $labels_result['labels'] as $label_tracking_info ) {
+						$array_messages[] = $this->save_created_dhl_label( $label_tracking_info['order_id'], $label_tracking_info );
+						++$label_count;
+
+						if ( ! empty( $label_tracking_info['label_path'] ) ) {
+							array_push( $merge_files, PR_DHL()->resolve_label_file_path( $label_tracking_info['label_path'] ) );
+						}
+
+						$handled_orders[ $label_tracking_info['order_id'] ] = true;
+					}
+
+					foreach ( $labels_result['errors'] as $error ) {
+						$failed_order = wc_get_order( $error['order_id'] );
+						$order_number = $failed_order ? $failed_order->get_order_number() : $error['order_id'];
+						$array_messages[] = array(
+							/* translators: %1$s is the order number, %2$s is the error message */
+							'message' => wp_kses_post( sprintf( __( 'Order #%1$s: %2$s', 'dhl-for-woocommerce' ), $order_number, $error['message'] ) ),
+							'type'    => 'error',
+						);
+
+						if ( ! empty( $error['order_id'] ) ) {
+							$handled_orders[ $error['order_id'] ] = true;
+						}
+					}
+
+					// Surface any queued order the API neither created nor reported, so nothing fails silently.
+					foreach ( array_keys( $batch_args ) as $order_id ) {
+						if ( empty( $handled_orders[ $order_id ] ) ) {
+							$order            = wc_get_order( $order_id );
+							$order_number     = $order ? $order->get_order_number() : $order_id;
+							$array_messages[] = array(
+								/* translators: %s is the order number */
+								'message' => sprintf( esc_html__( 'Order #%s: DHL label could not be created.', 'dhl-for-woocommerce' ), esc_html( $order_number ) ),
+								'type'    => 'error',
+							);
+						}
 					}
 				}
 				try {
@@ -1491,6 +1728,39 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 			}
 
 			return $array_messages;
+		}
+
+		/**
+		 * Persist a freshly created DHL label: store its tracking data, add the order note
+		 * and fire the label-created action.
+		 *
+		 * @param int   $order_id            The WooCommerce order ID.
+		 * @param array $label_tracking_info The tracking data returned by the DHL API.
+		 *
+		 * @return array The success message entry for the bulk action feedback.
+		 */
+		protected function save_created_dhl_label( $order_id, $label_tracking_info ) {
+			$this->save_dhl_label_tracking( $order_id, $label_tracking_info );
+
+			$order = wc_get_order( $order_id );
+
+			if ( $order ) {
+				$tracking_note      = $this->get_tracking_note( $order_id );
+				$tracking_note_type = $this->get_tracking_note_type();
+				$tracking_note_type = empty( $tracking_note_type ) ? 0 : 1;
+
+				$order->add_order_note( $tracking_note, $tracking_note_type, true );
+			}
+
+			do_action( 'pr_shipping_dhl_label_created', $order_id );
+
+			$order_number = $order ? $order->get_order_number() : $order_id;
+
+			return array(
+				/* translators: %s is the order number */
+				'message' => sprintf( esc_html__( 'Order #%s: DHL label created', 'dhl-for-woocommerce' ), $order_number ),
+				'type'    => 'success',
+			);
 		}
 
 		/**
