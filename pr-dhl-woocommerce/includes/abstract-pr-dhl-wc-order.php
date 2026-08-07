@@ -23,6 +23,12 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		const ACTION_CREATE_LABEL = 'pr_dhl_create_label_async';
 		const ACTION_GROUP        = 'pr-dhl-labels';
 
+		// Per-order background label job state.
+		const JOB_STATUS_META = '_pr_dhl_label_job';
+		const JOB_PENDING     = 'pending';
+		const JOB_CREATED     = 'created';
+		const JOB_FAILED      = 'failed';
+
 		protected $shipping_dhl_settings = array();
 
 		protected $service = 'DHL';
@@ -457,6 +463,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 			}
 
 			as_enqueue_async_action( self::ACTION_CREATE_LABEL, array( $order_id ), self::ACTION_GROUP );
+			$this->set_label_job_status( $order_id, self::JOB_PENDING );
 
 			return true;
 		}
@@ -475,6 +482,8 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		public function create_label_async( $order_id ) {
 			// Skip if a label has already been created for this order.
 			if ( ! empty( $this->get_dhl_label_tracking( $order_id ) ) ) {
+				$this->set_label_job_status( $order_id, self::JOB_CREATED );
+
 				return;
 			}
 
@@ -483,8 +492,18 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 				$args = $this->get_label_args( $order_id );
 
-				$this->create_dhl_label( $order_id, $args );
+				$label_tracking_info = $this->create_dhl_label( $order_id, $args );
+
+				$this->set_label_job_status(
+					$order_id,
+					self::JOB_CREATED,
+					array(
+						'warnings' => isset( $label_tracking_info['dhl_label_warnings'] ) ? $label_tracking_info['dhl_label_warnings'] : array(),
+					)
+				);
 			} catch ( Exception $e ) {
+				$this->set_label_job_status( $order_id, self::JOB_FAILED, array( 'message' => $e->getMessage() ) );
+
 				$order = wc_get_order( $order_id );
 
 				if ( $order instanceof WC_Order ) {
@@ -497,6 +516,62 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 					);
 				}
 			}
+		}
+
+		/**
+		 * Records the background label job state for an order.
+		 *
+		 * @param int    $order_id Order ID.
+		 * @param string $status   One of self::JOB_PENDING, self::JOB_CREATED, self::JOB_FAILED.
+		 * @param array  $context  Optional 'message' (failure reason) and 'warnings' (string[]).
+		 *
+		 * @return void
+		 */
+		public function set_label_job_status( $order_id, $status, $context = array() ) {
+			$order = wc_get_order( $order_id );
+
+			if ( ! $order instanceof WC_Order ) {
+				return;
+			}
+
+			$order->update_meta_data(
+				self::JOB_STATUS_META,
+				array(
+					'status'   => $status,
+					'message'  => isset( $context['message'] ) ? $context['message'] : '',
+					'warnings' => isset( $context['warnings'] ) ? (array) $context['warnings'] : array(),
+				)
+			);
+			$order->save_meta_data();
+		}
+
+		/**
+		 * Returns the background label job state for an order.
+		 *
+		 * @param int $order_id Order ID.
+		 *
+		 * @return array{status: string, message: string, warnings: array} Empty status when no job has run.
+		 */
+		public function get_label_job_status( $order_id ) {
+			$default = array(
+				'status'   => '',
+				'message'  => '',
+				'warnings' => array(),
+			);
+
+			$order = wc_get_order( $order_id );
+
+			if ( ! $order instanceof WC_Order ) {
+				return $default;
+			}
+
+			$status = $order->get_meta( self::JOB_STATUS_META );
+
+			if ( ! is_array( $status ) ) {
+				return $default;
+			}
+
+			return wp_parse_args( $status, $default );
 		}
 
 		public function delete_label_ajax() {
