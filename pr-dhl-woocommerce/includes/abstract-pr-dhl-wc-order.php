@@ -19,6 +19,10 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 		const DHL_DOWNLOAD_ENDPOINT = 'dhl_download_label';
 
+		// Action Scheduler hook and group used for background label creation.
+		const ACTION_CREATE_LABEL = 'pr_dhl_create_label_async';
+		const ACTION_GROUP        = 'pr-dhl-labels';
+
 		protected $shipping_dhl_settings = array();
 
 		protected $service = 'DHL';
@@ -45,6 +49,9 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 			// Order page metabox actions
 			add_action( 'wp_ajax_wc_shipment_dhl_gen_label', array( $this, 'save_meta_box_ajax' ) );
 			add_action( 'wp_ajax_wc_shipment_dhl_delete_label', array( $this, 'delete_label_ajax' ) );
+
+			// Background (Action Scheduler) label-creation callback.
+			add_action( self::ACTION_CREATE_LABEL, array( $this, 'create_label_async' ), 10, 1 );
 
 			// Prevent the DHL tracking number being copied from a subscription to its renewal and resubscribe orders.
 			// Detect the capability rather than a version number: the data copier (and the array-based
@@ -414,6 +421,82 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 			do_action( 'pr_shipping_dhl_label_created', $order_id );
 
 			return $label_tracking_info;
+		}
+
+		/**
+		 * Whether WooCommerce Action Scheduler is available for background jobs.
+		 *
+		 * @return bool
+		 */
+		public function is_action_scheduler_available() {
+			return function_exists( 'as_enqueue_async_action' ) && function_exists( 'as_has_scheduled_action' );
+		}
+
+		/**
+		 * Queues background label creation for a single order.
+		 *
+		 * Runs the work in an Action Scheduler job when available, otherwise falls
+		 * back to synchronous execution so the label is still created. A second job
+		 * is not queued while one is already pending for the same order.
+		 *
+		 * @param int $order_id Order ID.
+		 *
+		 * @return bool True if a background job was queued, false if it ran synchronously or was already queued.
+		 */
+		public function schedule_label_creation( $order_id ) {
+			if ( ! $this->is_action_scheduler_available() ) {
+				// Graceful fallback: create the label in the current request.
+				$this->create_label_async( $order_id );
+
+				return false;
+			}
+
+			// Do not queue a second job while one is already pending for this order.
+			if ( as_has_scheduled_action( self::ACTION_CREATE_LABEL, array( $order_id ), self::ACTION_GROUP ) ) {
+				return false;
+			}
+
+			as_enqueue_async_action( self::ACTION_CREATE_LABEL, array( $order_id ), self::ACTION_GROUP );
+
+			return true;
+		}
+
+		/**
+		 * Action Scheduler callback: create a DHL label for one order in the background.
+		 *
+		 * Rebuilds the label args from the stored order data rather than relying on a
+		 * serialized job payload, skips orders that already have a label, and records
+		 * any failure as an order note so it is never silently lost.
+		 *
+		 * @param int $order_id Order ID.
+		 *
+		 * @return void
+		 */
+		public function create_label_async( $order_id ) {
+			// Skip if a label has already been created for this order.
+			if ( ! empty( $this->get_dhl_label_tracking( $order_id ) ) ) {
+				return;
+			}
+
+			try {
+				$this->save_default_dhl_label_items( $order_id );
+
+				$args = $this->get_label_args( $order_id );
+
+				$this->create_dhl_label( $order_id, $args );
+			} catch ( Exception $e ) {
+				$order = wc_get_order( $order_id );
+
+				if ( $order instanceof WC_Order ) {
+					$order->add_order_note(
+						sprintf(
+							/* translators: %s is the error message returned by the DHL API */
+							esc_html__( 'DHL label could not be created: %s', 'dhl-for-woocommerce' ),
+							$e->getMessage()
+						)
+					);
+				}
+			}
 		}
 
 		public function delete_label_ajax() {
