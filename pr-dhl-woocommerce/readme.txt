@@ -76,8 +76,8 @@ More detailed instructions on how to set up your store and configure it are cons
 == Changelog ==
 
 = 4.1.0 =
-* Add: Bulk DHL label creation now runs in the background via WooCommerce Action Scheduler, removing request timeouts on large selections; each order shows its queued, created or failed status.
-* Add: "DHL Retry Failed Labels" and "DHL Download Labels" bulk actions — retry orders whose label failed and download every created label as one merged PDF.
+* Add: Bulk DHL label creation now runs in the background via WooCommerce Action Scheduler, removing request timeouts on large selections, with a live progress bar on the Orders screen showing created, failed and in-progress counts.
+* Add: When the background batch finishes, download every created label as one merged PDF or retry the failed orders directly from the progress bar (also available as the "DHL Download Labels" and "DHL Retry Failed Labels" bulk actions).
 * Fix: Automatic label creation on an order status change no longer blocks the customer's checkout request and now records any failure as an order note instead of failing silently.
 * Fix: Bulk label creation no longer times out on large batches — all selected orders are now created in a single DHL API request.
 
