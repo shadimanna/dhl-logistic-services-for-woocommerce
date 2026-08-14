@@ -87,8 +87,19 @@
 				if ( j ) {
 					$li.append( document.createTextNode( ', ' ) );
 				}
-				$( '<a/>', { href: f.edit_url, target: '_blank', rel: 'noopener' } ).text( '#' + f.number ).appendTo( $li );
+				var $ref = $( '<a/>', { target: '_blank', rel: 'noopener' } ).text( '#' + f.number );
+				if ( f.edit_url ) {
+					$ref.attr( 'href', f.edit_url );
+				}
+				$ref.appendTo( $li );
 			} );
+
+			// Per-group guidance: is this a "just Retry" transient error or a "fix the order first" one?
+			var hint = items[ 0 ].category === 'transient' ? i18n.catTransient
+				: ( items[ 0 ].category === 'action' ? i18n.catAction : '' );
+			if ( hint ) {
+				$( '<em/>' ).css( { display: 'block', opacity: 0.8 } ).text( hint ).appendTo( $li );
+			}
 
 			$li.appendTo( $list );
 		} );

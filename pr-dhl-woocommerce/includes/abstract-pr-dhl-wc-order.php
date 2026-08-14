@@ -886,13 +886,26 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		 * @return string
 		 */
 		protected function humanize_label_error( $message ) {
-			// Connection-level failures (timeouts, DNS, refused, SSL) are almost always transient network
-			// issues rather than bad order data, so point the merchant at Retry instead of a raw cURL string.
-			if ( preg_match( '/cURL error (7|28|35|56)|timed out|timeout|could not resolve host|failed to connect|ssl connection/i', $message ) ) {
+			// Connection-level failures are almost always transient network issues rather than bad order
+			// data, so point the merchant at Retry instead of leaving them with a raw cURL string.
+			if ( $this->is_transient_label_error( $message ) ) {
 				return $message . ' ' . esc_html__( '(The DHL API could not be reached — usually a temporary network issue; use Retry.)', 'dhl-for-woocommerce' );
 			}
 
 			return $message;
+		}
+
+		/**
+		 * Whether a failure message looks like a transient connectivity problem (timeout, DNS, refused,
+		 * SSL) — i.e. a plain Retry will probably clear it — versus a data/validation error that needs the
+		 * order fixed first.
+		 *
+		 * @param string $message Failure message.
+		 *
+		 * @return bool
+		 */
+		protected function is_transient_label_error( $message ) {
+			return (bool) preg_match( '/cURL error (7|28|35|56)|timed out|timeout|could not resolve host|failed to connect|ssl connection/i', $message );
 		}
 
 		/**
@@ -2290,6 +2303,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 							'number'    => (string) $order_id,
 							'message'   => __( 'The order no longer exists.', 'dhl-for-woocommerce' ),
 							'purchased' => false,
+							'category'  => 'action',
 							'edit_url'  => '',
 						);
 					}
@@ -2322,11 +2336,22 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 					// Cap the detail list so a huge failing batch cannot bloat the polled payload.
 					if ( count( $failures ) < 100 ) {
+						$failure_message = '' !== $job['message'] ? $job['message'] : __( 'DHL label creation failed.', 'dhl-for-woocommerce' );
+
+						if ( ! empty( $job['purchased'] ) ) {
+							$category = 'purchased';
+						} elseif ( $this->is_transient_label_error( $failure_message ) ) {
+							$category = 'transient';
+						} else {
+							$category = 'action';
+						}
+
 						$failures[] = array(
 							'order_id'  => $order_id,
 							'number'    => (string) $order->get_order_number(),
-							'message'   => '' !== $job['message'] ? $job['message'] : __( 'DHL label creation failed.', 'dhl-for-woocommerce' ),
+							'message'   => $failure_message,
 							'purchased' => ! empty( $job['purchased'] ),
+							'category'  => $category,
 							'edit_url'  => $this->get_order_edit_url( $order_id ),
 						);
 					}
@@ -2514,6 +2539,8 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 						'doneErrors' => esc_html__( 'DHL label creation finished — some orders failed.', 'dhl-for-woocommerce' ),
 						'stalled'    => esc_html__( 'DHL labels are still queued but nothing is processing yet — your site may not be running background tasks. Check WooCommerce → Status → Scheduled Actions, or reload later.', 'dhl-for-woocommerce' ),
 						'failTitle'  => esc_html__( 'Orders that could not be created:', 'dhl-for-woocommerce' ),
+						'catTransient' => esc_html__( 'Temporary connection problem — Retry should clear these.', 'dhl-for-woocommerce' ),
+						'catAction'    => esc_html__( 'Retry alone will not help — open the order, fix the issue, then Retry.', 'dhl-for-woocommerce' ),
 						'purchased'  => esc_html__( 'Some orders may already have a label at DHL — open them and verify before retrying. Retry does not re-create these.', 'dhl-for-woocommerce' ),
 						'error'      => esc_html__( 'Something went wrong. Please reload the page.', 'dhl-for-woocommerce' ),
 					),
