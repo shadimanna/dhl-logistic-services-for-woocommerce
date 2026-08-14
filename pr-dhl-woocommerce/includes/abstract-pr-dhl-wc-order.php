@@ -2076,20 +2076,42 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 				return null;
 			}
 
-			$created = 0;
-			$failed  = 0;
-			$pending = 0;
+			$created   = 0;
+			$failed    = 0;
+			$pending   = 0;
+			$purchased = 0;
+			$failures  = array();
 
 			// The background callbacks always record a terminal JOB_CREATED / JOB_FAILED for every queued
 			// order, so the stored job status is authoritative here — no need for a second per-order load
 			// of the label tracking meta.
 			foreach ( $batch['ids'] as $order_id ) {
-				$status = $this->get_label_job_status( $order_id )['status'];
+				$job    = $this->get_label_job_status( $order_id );
+				$status = $job['status'];
 
 				if ( self::JOB_CREATED === $status ) {
 					++$created;
 				} elseif ( self::JOB_FAILED === $status ) {
 					++$failed;
+
+					// A label bought at DHL but not saved locally must not be retried (it would double-buy);
+					// it is surfaced separately so the merchant can verify it by hand.
+					if ( ! empty( $job['purchased'] ) ) {
+						++$purchased;
+					}
+
+					// Cap the detail list so a huge failing batch cannot bloat the polled payload; the
+					// counts above still cover every order.
+					if ( count( $failures ) < 100 ) {
+						$order      = wc_get_order( $order_id );
+						$failures[] = array(
+							'order_id'  => $order_id,
+							'number'    => $order ? (string) $order->get_order_number() : (string) $order_id,
+							'message'   => '' !== $job['message'] ? $job['message'] : __( 'DHL label creation failed.', 'dhl-for-woocommerce' ),
+							'purchased' => ! empty( $job['purchased'] ),
+							'edit_url'  => $this->get_order_edit_url( $order_id ),
+						);
+					}
 				} else {
 					++$pending;
 				}
@@ -2111,11 +2133,29 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 				'created'      => $created,
 				'failed'       => $failed,
 				'pending'      => $pending,
+				'purchased'    => $purchased,
 				'done'         => $done,
 				'stalled'      => $stalled,
 				'has_failed'   => $failed > 0,
+				'retryable'    => ( $failed - $purchased ) > 0,
 				'can_download' => $created > 0,
+				'failures'     => $failures,
 			);
+		}
+
+		/**
+		 * Admin edit-screen URL for an order, on both HPOS and the legacy post table.
+		 *
+		 * @param int $order_id Order ID.
+		 *
+		 * @return string
+		 */
+		protected function get_order_edit_url( $order_id ) {
+			if ( API_Utils::is_HPOS() ) {
+				return admin_url( 'admin.php?page=wc-orders&action=edit&id=' . absint( $order_id ) );
+			}
+
+			return admin_url( 'post.php?post=' . absint( $order_id ) . '&action=edit' );
 		}
 
 		/**
@@ -2248,6 +2288,8 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 						'doneOk'     => esc_html__( 'All DHL labels created.', 'dhl-for-woocommerce' ),
 						'doneErrors' => esc_html__( 'DHL label creation finished — some orders failed.', 'dhl-for-woocommerce' ),
 						'stalled'    => esc_html__( 'DHL labels are still queued but nothing is processing yet — your site may not be running background tasks. Check WooCommerce → Status → Scheduled Actions, or reload later.', 'dhl-for-woocommerce' ),
+						'failTitle'  => esc_html__( 'Orders that could not be created:', 'dhl-for-woocommerce' ),
+						'purchased'  => esc_html__( 'Some orders may already have a label at DHL — open them and verify before retrying. Retry does not re-create these.', 'dhl-for-woocommerce' ),
 						'error'      => esc_html__( 'Something went wrong. Please reload the page.', 'dhl-for-woocommerce' ),
 					),
 				)
@@ -2269,6 +2311,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 				<p class="pr-dhl-label-batch__title"><strong></strong></p>
 				<div class="pr-dhl-label-batch__bar"><span class="pr-dhl-label-batch__fill"></span></div>
 				<p class="pr-dhl-label-batch__status"></p>
+				<div class="pr-dhl-label-batch__details"></div>
 				<p class="pr-dhl-label-batch__actions" style="display:none;">
 					<a href="#" class="button button-primary pr-dhl-label-batch__download"><?php echo esc_html__( 'Download all labels', 'dhl-for-woocommerce' ); ?></a>
 					<a href="#" class="button pr-dhl-label-batch__retry"><?php echo esc_html__( 'Retry failed', 'dhl-for-woocommerce' ); ?></a>
