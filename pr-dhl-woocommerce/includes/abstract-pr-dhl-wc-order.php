@@ -540,7 +540,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 			if ( empty( $pending_orders ) ) {
 				return array(
 					array(
-						'message' => esc_html__( 'The selected orders already have DHL labels.', 'dhl-for-woocommerce' ),
+						'message' => esc_html__( 'No orders needed queuing — the selected orders already have a DHL label or a background job in progress.', 'dhl-for-woocommerce' ),
 						'type'    => 'warning',
 					),
 				);
@@ -598,7 +598,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 			if ( empty( $pending_orders ) ) {
 				return array(
 					array(
-						'message' => esc_html__( 'The selected orders already have DHL labels.', 'dhl-for-woocommerce' ),
+						'message' => esc_html__( 'No orders needed queuing — the selected orders already have a DHL label or a background job in progress.', 'dhl-for-woocommerce' ),
 						'type'    => 'warning',
 					),
 				);
@@ -708,7 +708,8 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 							/* translators: %s is the storage error message */
 							esc_html__( 'DHL created the label but it could not be saved (%s). A label may already exist at DHL — verify before retrying.', 'dhl-for-woocommerce' ),
 							$e->getMessage()
-						)
+						),
+						array( 'purchased' => true )
 					);
 				}
 
@@ -735,11 +736,14 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		 *
 		 * @param int    $order_id Order ID.
 		 * @param string $message  Failure reason.
+		 * @param array  $context  Optional extra job-state context, e.g. 'purchased' => true when the label
+		 *                         was bought at DHL but could not be saved locally.
 		 *
 		 * @return void
 		 */
-		protected function record_async_label_failure( $order_id, $message ) {
-			$this->set_label_job_status( $order_id, self::JOB_FAILED, array( 'message' => $message ) );
+		protected function record_async_label_failure( $order_id, $message, $context = array() ) {
+			$context['message'] = $message;
+			$this->set_label_job_status( $order_id, self::JOB_FAILED, $context );
 
 			$order = wc_get_order( $order_id );
 
@@ -759,7 +763,8 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		 *
 		 * @param int    $order_id Order ID.
 		 * @param string $status   One of self::JOB_PENDING, self::JOB_CREATED, self::JOB_FAILED.
-		 * @param array  $context  Optional 'message' (failure reason) and 'warnings' (string[]).
+		 * @param array  $context  Optional 'message' (failure reason), 'warnings' (string[]) and
+		 *                         'purchased' (bool: the label was bought at DHL but could not be saved).
 		 *
 		 * @return void
 		 */
@@ -773,9 +778,10 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 			$order->update_meta_data(
 				self::JOB_STATUS_META,
 				array(
-					'status'   => $status,
-					'message'  => isset( $context['message'] ) ? $context['message'] : '',
-					'warnings' => isset( $context['warnings'] ) ? (array) $context['warnings'] : array(),
+					'status'    => $status,
+					'message'   => isset( $context['message'] ) ? $context['message'] : '',
+					'warnings'  => isset( $context['warnings'] ) ? (array) $context['warnings'] : array(),
+					'purchased' => ! empty( $context['purchased'] ),
 				)
 			);
 			$order->save_meta_data();
@@ -786,13 +792,14 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		 *
 		 * @param int $order_id Order ID.
 		 *
-		 * @return array{status: string, message: string, warnings: array} Empty status when no job has run.
+		 * @return array{status: string, message: string, warnings: array, purchased: bool} Empty status when no job has run.
 		 */
 		public function get_label_job_status( $order_id ) {
 			$default = array(
-				'status'   => '',
-				'message'  => '',
-				'warnings' => array(),
+				'status'    => '',
+				'message'   => '',
+				'warnings'  => array(),
+				'purchased' => false,
 			);
 
 			$order = wc_get_order( $order_id );
@@ -840,7 +847,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 			if ( self::JOB_FAILED === $job['status'] ) {
 				$message = '' !== $job['message']
 					? $job['message']
-					: esc_html__( 'The DHL label could not be created.', 'dhl-for-woocommerce' );
+					: __( 'The DHL label could not be created.', 'dhl-for-woocommerce' );
 
 				return '<p class="wc_dhl_error wc_dhl_label_job wc_dhl_label_job--failed">'
 					. sprintf(
@@ -1808,39 +1815,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 						}
 					}
 				}
-				try {
-					$file_bulk = $this->merge_label_files( $merge_files );
-
-					if ( file_exists( $file_bulk['file_bulk_path'] ) ) {
-						// We're saving the bulk file path temporarily and access it later during the download process.
-						// This information expires in 3 minutes (180 seconds), just enough for the user to see the
-						// displayed link and click it if he or she wishes to download the bulk labels
-						set_transient(
-							'_dhl_bulk_download_labels_file_' . get_current_user_id(),
-							$file_bulk['file_bulk_path'],
-							180
-						);
-
-						// Construct URL pointing to the download label endpoint (with bulk param):
-						$bulk_download_label_url = $this->generate_download_url( '/' . self::DHL_DOWNLOAD_ENDPOINT . '/bulk' );
-
-						$array_messages[] = array(
-							/* translators: %1$s and %2$s are HTML tags for the download link */
-							'message' => wp_kses_post( sprintf( __( 'Bulk DHL labels file created - %1$sdownload file%2$s', 'dhl-for-woocommerce' ), '<a href="' . esc_url( $bulk_download_label_url ) . '" download>', '</a>' ) ),
-							'type'    => 'success',
-						);
-					} else {
-						$array_messages[] = array(
-							'message' => esc_html__( 'Could not create bulk DHL label file, download individually.', 'dhl-for-woocommerce' ),
-							'type'    => 'error',
-						);
-					}
-				} catch ( Exception $e ) {
-					$array_messages[] = array(
-						'message' => wp_kses_post( $e->getMessage() ),
-						'type'    => 'error',
-					);
-				}
+				$array_messages = array_merge( $array_messages, $this->build_merged_label_message( $merge_files ) );
 			} elseif ( 'pr_dhl_retry_failed_labels' === $action ) {
 				$array_messages = $this->retry_failed_label_jobs( $order_ids );
 			} elseif ( 'pr_dhl_download_labels' === $action ) {
@@ -1862,28 +1837,55 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		 * @return array Bulk-action feedback messages.
 		 */
 		protected function retry_failed_label_jobs( $order_ids ) {
-			$failed_orders = array();
+			$failed_orders    = array();
+			$purchased_orders = array();
 
 			foreach ( $order_ids as $order_id ) {
 				if ( ! empty( $this->get_dhl_label_tracking( $order_id ) ) ) {
 					continue;
 				}
 
-				if ( self::JOB_FAILED === $this->get_label_job_status( $order_id )['status'] ) {
-					$failed_orders[] = $order_id;
+				$job = $this->get_label_job_status( $order_id );
+
+				if ( self::JOB_FAILED !== $job['status'] ) {
+					continue;
 				}
+
+				// A label that was bought at DHL but failed to save must not be re-created blindly:
+				// retrying would purchase a second label. Leave it for manual verification.
+				if ( ! empty( $job['purchased'] ) ) {
+					$purchased_orders[] = $order_id;
+					continue;
+				}
+
+				$failed_orders[] = $order_id;
 			}
 
-			if ( empty( $failed_orders ) ) {
-				return array(
-					array(
-						'message' => esc_html__( 'No failed DHL label jobs were found in the selected orders.', 'dhl-for-woocommerce' ),
-						'type'    => 'warning',
+			$array_messages = array();
+
+			if ( ! empty( $purchased_orders ) ) {
+				$array_messages[] = array(
+					'message' => sprintf(
+						/* translators: %d is the number of orders skipped */
+						esc_html( _n( '%d order was not retried because a label may already exist at DHL — verify it before retrying.', '%d orders were not retried because a label may already exist at DHL — verify them before retrying.', count( $purchased_orders ), 'dhl-for-woocommerce' ) ),
+						count( $purchased_orders )
 					),
+					'type'    => 'warning',
 				);
 			}
 
-			return $this->process_bulk_actions( 'pr_dhl_create_labels', $failed_orders );
+			if ( empty( $failed_orders ) ) {
+				if ( empty( $array_messages ) ) {
+					$array_messages[] = array(
+						'message' => esc_html__( 'No failed DHL label jobs were found in the selected orders.', 'dhl-for-woocommerce' ),
+						'type'    => 'warning',
+					);
+				}
+
+				return $array_messages;
+			}
+
+			return array_merge( $array_messages, $this->process_bulk_actions( 'pr_dhl_create_labels', $failed_orders ) );
 		}
 
 		/**
@@ -1915,6 +1917,19 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 				);
 			}
 
+			return $this->build_merged_label_message( $merge_files );
+		}
+
+		/**
+		 * Merges the given label files into one PDF, stashes its path in a short-lived per-user transient
+		 * and returns the download-link (or error) message. Shared by the synchronous bulk-create fallback
+		 * and the "Download DHL Labels" bulk action so the transient key, TTL and copy live in one place.
+		 *
+		 * @param array $merge_files Absolute paths of the label files to merge.
+		 *
+		 * @return array Bulk-action feedback messages.
+		 */
+		protected function build_merged_label_message( $merge_files ) {
 			try {
 				$file_bulk = $this->merge_label_files( $merge_files );
 
@@ -1927,6 +1942,8 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 					);
 				}
 
+				// Stash the merged file path for the download endpoint. Expires in 3 minutes: long enough
+				// for the user to see the link and click it.
 				set_transient(
 					'_dhl_bulk_download_labels_file_' . get_current_user_id(),
 					$file_bulk['file_bulk_path'],
