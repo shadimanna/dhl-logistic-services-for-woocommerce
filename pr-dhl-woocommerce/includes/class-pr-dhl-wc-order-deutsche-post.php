@@ -970,8 +970,10 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
 	public function get_bulk_actions() {
 		return array(
-			'pr_dhl_create_labels' => esc_html__( 'Create DHL Label', 'dhl-for-woocommerce' ),
-			'pr_dhl_create_orders' => esc_html__( 'Finalize DHL Waybill', 'dhl-for-woocommerce' ),
+			'pr_dhl_create_labels'       => esc_html__( 'Create DHL Label', 'dhl-for-woocommerce' ),
+			'pr_dhl_retry_failed_labels' => esc_html__( 'Retry Failed DHL Labels', 'dhl-for-woocommerce' ),
+			'pr_dhl_download_labels'     => esc_html__( 'Download DHL Labels', 'dhl-for-woocommerce' ),
+			'pr_dhl_create_orders'       => esc_html__( 'Finalize DHL Waybill', 'dhl-for-woocommerce' ),
 		);
 	}
 
