@@ -499,13 +499,39 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 				return;
 			}
 
+			// An order deleted between queuing and running would otherwise fatal deep in get_label_args();
+			// record it and move on instead.
+			if ( ! wc_get_order( $order_id ) instanceof WC_Order ) {
+				$this->set_label_job_status( $order_id, self::JOB_FAILED, array( 'message' => esc_html__( 'The order no longer exists.', 'dhl-for-woocommerce' ) ) );
+
+				return;
+			}
+
+			// Build the request. A failure here is before any purchase, so the order is safe to retry.
 			try {
 				$this->save_default_dhl_label_items( $order_id );
-
 				$args = $this->get_label_args( $order_id );
+				$args = apply_filters( 'pr_shipping_dhl_label_args', $args, $order_id );
+			} catch ( Throwable $e ) {
+				$this->record_async_label_failure( $order_id, $e->getMessage() );
 
-				$label_tracking_info = $this->create_dhl_label( $order_id, $args );
+				return;
+			}
 
+			// Purchase the label. Still safe to retry if this throws — nothing was bought.
+			try {
+				$label_tracking_info = PR_DHL()->get_dhl_factory()->get_dhl_label( $args );
+			} catch ( Throwable $e ) {
+				$this->record_async_label_failure( $order_id, $e->getMessage() );
+
+				return;
+			}
+
+			// The label is now bought at DHL. A storage failure past this point must NOT be blindly
+			// retried (that would buy a second label), so flag it purchased — matching the batch path.
+			try {
+				$this->save_dhl_label_tracking( $order_id, $label_tracking_info );
+				do_action( 'pr_shipping_dhl_label_created', $order_id );
 				$this->set_label_job_status(
 					$order_id,
 					self::JOB_CREATED,
@@ -513,8 +539,16 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 						'warnings' => isset( $label_tracking_info['dhl_label_warnings'] ) ? $label_tracking_info['dhl_label_warnings'] : array(),
 					)
 				);
-			} catch ( Exception $e ) {
-				$this->record_async_label_failure( $order_id, $e->getMessage() );
+			} catch ( Throwable $e ) {
+				$this->record_async_label_failure(
+					$order_id,
+					sprintf(
+						/* translators: %s is the storage error message */
+						esc_html__( 'DHL created the label but it could not be saved (%s). A label may already exist at DHL — verify before retrying.', 'dhl-for-woocommerce' ),
+						$e->getMessage()
+					),
+					array( 'purchased' => true )
+				);
 			}
 		}
 
@@ -675,7 +709,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 					$args = apply_filters( 'pr_shipping_dhl_label_args', $args, $order_id );
 
 					$batch_args[ $order_id ] = $args;
-				} catch ( Exception $e ) {
+				} catch ( Throwable $e ) {
 					$this->record_async_label_failure( $order_id, $e->getMessage() );
 				}
 			}
@@ -686,7 +720,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 			try {
 				$labels_result = $dhl_obj->get_dhl_labels( array_values( $batch_args ) );
-			} catch ( Exception $e ) {
+			} catch ( Throwable $e ) {
 				foreach ( array_keys( $batch_args ) as $order_id ) {
 					$this->record_async_label_failure( $order_id, $e->getMessage() );
 				}
@@ -711,7 +745,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 							'warnings' => isset( $label_tracking_info['dhl_label_warnings'] ) ? $label_tracking_info['dhl_label_warnings'] : array(),
 						)
 					);
-				} catch ( Exception $e ) {
+				} catch ( Throwable $e ) {
 					// Flag the purchased-but-unsaved case distinctly so a later retry does not
 					// blindly buy a duplicate for a label that already exists at DHL.
 					$this->record_async_label_failure(
