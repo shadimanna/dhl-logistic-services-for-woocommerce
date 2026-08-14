@@ -1224,7 +1224,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			}
 
 			if ( self::JOB_FAILED === $job['status'] ) {
-				$title = '' !== $job['message'] ? $job['message'] : esc_html__( 'DHL label creation failed.', 'dhl-for-woocommerce' );
+				$title = '' !== $job['message'] ? $job['message'] : __( 'DHL label creation failed.', 'dhl-for-woocommerce' );
 
 				return '<span class="dashicons dashicons-warning" title="' . esc_attr( $title ) . '"></span>';
 			}
