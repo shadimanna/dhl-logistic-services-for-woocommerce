@@ -72,6 +72,7 @@ More detailed instructions on how to set up your store and configure it are cons
 * Add: When the background batch finishes, the progress bar lists why each order failed (with links to those orders), lets you download every created label as one merged PDF, and retries the failed orders (also available as the "DHL Download Labels" and "DHL Retry Failed Labels" bulk actions).
 * Fix: Automatic label creation on an order status change no longer blocks the customer's checkout request and now records any failure as an order note instead of failing silently.
 * Fix: Bulk label creation no longer times out on large batches — all selected orders are now created in a single DHL API request.
+* Tweak: Label failures caused by a network or timeout problem now say so and suggest retrying, and the DHL API request timeout can be adjusted with the pr_dhl_api_request_timeout filter.
 
 = 4.0.1 =
 * Fix: Restrict Deutsche Post waybill label downloads to users who can manage orders.
