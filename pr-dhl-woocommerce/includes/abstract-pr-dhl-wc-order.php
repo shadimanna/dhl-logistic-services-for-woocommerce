@@ -61,6 +61,14 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 			add_action( self::ACTION_CREATE_LABEL, array( $this, 'create_label_async' ), 10, 1 );
 			add_action( self::ACTION_CREATE_LABELS_BATCH, array( $this, 'create_labels_batch_async' ), 10, 3 );
 
+			// Live progress UI for background bulk-label jobs on the Orders screen, and its AJAX endpoints.
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_label_batch_assets' ) );
+			add_action( 'admin_notices', array( $this, 'render_label_batch_progress' ) );
+			add_action( 'wp_ajax_pr_dhl_label_batch_progress', array( $this, 'ajax_label_batch_progress' ) );
+			add_action( 'wp_ajax_pr_dhl_label_batch_download', array( $this, 'ajax_label_batch_download' ) );
+			add_action( 'wp_ajax_pr_dhl_label_batch_retry', array( $this, 'ajax_label_batch_retry' ) );
+			add_action( 'wp_ajax_pr_dhl_label_batch_dismiss', array( $this, 'ajax_label_batch_dismiss' ) );
+
 			// Prevent the DHL tracking number being copied from a subscription to its renewal and resubscribe orders.
 			// Detect the capability rather than a version number: the data copier (and the array-based
 			// wc_subscriptions_{type}_data filters) were introduced together in subscriptions-core 2.5.0.
@@ -560,6 +568,8 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 				$this->set_label_job_status( $order_id, self::JOB_PENDING );
 			}
 
+			$this->start_label_batch( $pending_orders );
+
 			return array(
 				array(
 					'message' => sprintf(
@@ -603,6 +613,8 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 					),
 				);
 			}
+
+			$this->start_label_batch( $pending_orders );
 
 			return array(
 				array(
@@ -1553,14 +1565,25 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		/**
 		 * Bulk functions
 		 */
-		public function add_order_bulk_actions() {
+		/**
+		 * Whether the current admin request is the WooCommerce Orders list screen (HPOS or legacy).
+		 *
+		 * @return bool
+		 */
+		protected function is_orders_list_screen() {
 			global $typenow, $pagenow, $current_screen;
 
-			$is_orders_list = API_Utils::is_HPOS()
-				? ( wc_get_page_screen_id( 'shop-order' ) === $current_screen->id && 'admin.php' === $pagenow )
-				: ( 'shop_order' === $typenow && 'edit.php' === $pagenow );
+			if ( API_Utils::is_HPOS() ) {
+				return isset( $current_screen->id )
+					&& wc_get_page_screen_id( 'shop-order' ) === $current_screen->id
+					&& 'admin.php' === $pagenow;
+			}
 
-			if ( ! $is_orders_list ) {
+			return 'shop_order' === $typenow && 'edit.php' === $pagenow;
+		}
+
+		public function add_order_bulk_actions() {
+			if ( ! $this->is_orders_list_screen() ) {
 				return;
 			}
 
@@ -1931,26 +1954,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		 */
 		protected function build_merged_label_message( $merge_files ) {
 			try {
-				$file_bulk = $this->merge_label_files( $merge_files );
-
-				if ( ! file_exists( $file_bulk['file_bulk_path'] ) ) {
-					return array(
-						array(
-							'message' => esc_html__( 'Could not create bulk DHL label file, download individually.', 'dhl-for-woocommerce' ),
-							'type'    => 'error',
-						),
-					);
-				}
-
-				// Stash the merged file path for the download endpoint. Expires in 3 minutes: long enough
-				// for the user to see the link and click it.
-				set_transient(
-					'_dhl_bulk_download_labels_file_' . get_current_user_id(),
-					$file_bulk['file_bulk_path'],
-					180
-				);
-
-				$bulk_download_label_url = $this->generate_download_url( '/' . self::DHL_DOWNLOAD_ENDPOINT . '/bulk' );
+				$bulk_download_label_url = $this->prepare_merged_label_download_url( $merge_files );
 
 				return array(
 					array(
@@ -1967,6 +1971,316 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 					),
 				);
 			}
+		}
+
+		/**
+		 * Merges the given label files into one PDF, stashes its path in a short-lived per-user transient
+		 * and returns the URL of the bulk-download endpoint that serves it.
+		 *
+		 * @param array $merge_files Absolute paths of the label files to merge.
+		 *
+		 * @return string The bulk-download URL.
+		 * @throws Exception If the files cannot be merged or the merged file is missing.
+		 */
+		protected function prepare_merged_label_download_url( $merge_files ) {
+			$file_bulk = $this->merge_label_files( $merge_files );
+
+			if ( ! file_exists( $file_bulk['file_bulk_path'] ) ) {
+				throw new Exception( esc_html__( 'Could not create bulk DHL label file, download individually.', 'dhl-for-woocommerce' ) );
+			}
+
+			// Stash the merged file path for the download endpoint. Expires in 3 minutes: long enough
+			// for the user to see the link and click it.
+			set_transient(
+				'_dhl_bulk_download_labels_file_' . get_current_user_id(),
+				$file_bulk['file_bulk_path'],
+				180
+			);
+
+			return $this->generate_download_url( '/' . self::DHL_DOWNLOAD_ENDPOINT . '/bulk' );
+		}
+
+		/**
+		 * Transient key holding the current user's in-flight bulk-label batch (the set of order IDs the
+		 * Orders-screen progress UI polls). Keyed per user so concurrent admins don't see each other's runs.
+		 *
+		 * @return string
+		 */
+		protected function label_batch_key() {
+			return 'pr_dhl_label_batch_' . get_current_user_id();
+		}
+
+		/**
+		 * Starts, or extends, the current user's tracked bulk-label batch. Order IDs from a batch that is
+		 * still running are merged in, so queuing a second selection before the first finishes keeps both
+		 * visible in the same progress bar rather than losing the earlier one.
+		 *
+		 * @param array $order_ids Order IDs just queued.
+		 *
+		 * @return void
+		 */
+		protected function start_label_batch( $order_ids ) {
+			$order_ids = array_map( 'intval', (array) $order_ids );
+
+			// Carry over only orders from a previous batch that are still in flight. A batch left
+			// undismissed after it finished must not bleed its already-created orders into this run
+			// (which would re-count them and re-merge their PDFs on "Download all").
+			$existing = $this->get_label_batch();
+			if ( ! empty( $existing['ids'] ) ) {
+				foreach ( $existing['ids'] as $existing_id ) {
+					if ( self::JOB_PENDING === $this->get_label_job_status( $existing_id )['status'] ) {
+						$order_ids[] = $existing_id;
+					}
+				}
+				$order_ids = array_values( array_unique( $order_ids ) );
+			}
+
+			set_transient( $this->label_batch_key(), array( 'ids' => $order_ids, 'ts' => time() ), DAY_IN_SECONDS );
+		}
+
+		/**
+		 * Returns the current user's tracked bulk-label batch.
+		 *
+		 * @return array Empty array when none is tracked, otherwise array{ids: int[]}.
+		 */
+		protected function get_label_batch() {
+			$batch = get_transient( $this->label_batch_key() );
+
+			if ( ! is_array( $batch ) || empty( $batch['ids'] ) ) {
+				return array();
+			}
+
+			$batch['ids'] = array_map( 'intval', (array) $batch['ids'] );
+
+			return $batch;
+		}
+
+		/**
+		 * Stops tracking the current user's bulk-label batch.
+		 *
+		 * @return void
+		 */
+		protected function clear_label_batch() {
+			delete_transient( $this->label_batch_key() );
+		}
+
+		/**
+		 * Aggregates the per-order job state of the tracked batch for the progress UI.
+		 *
+		 * @return array|null Null when no batch is tracked.
+		 */
+		public function get_label_batch_progress() {
+			$batch = $this->get_label_batch();
+
+			if ( empty( $batch['ids'] ) ) {
+				return null;
+			}
+
+			$created = 0;
+			$failed  = 0;
+			$pending = 0;
+
+			// The background callbacks always record a terminal JOB_CREATED / JOB_FAILED for every queued
+			// order, so the stored job status is authoritative here — no need for a second per-order load
+			// of the label tracking meta.
+			foreach ( $batch['ids'] as $order_id ) {
+				$status = $this->get_label_job_status( $order_id )['status'];
+
+				if ( self::JOB_CREATED === $status ) {
+					++$created;
+				} elseif ( self::JOB_FAILED === $status ) {
+					++$failed;
+				} else {
+					++$pending;
+				}
+			}
+
+			$done       = 0 === $pending;
+			$started_at = isset( $batch['ts'] ) ? (int) $batch['ts'] : 0;
+
+			// If a grace period passes with nothing processed at all, the Action Scheduler queue is
+			// almost certainly not running (no cron / no queue runner). Surface that instead of spinning
+			// forever, so the merchant can act rather than wait indefinitely.
+			$stalled = ! $done
+				&& 0 === ( $created + $failed )
+				&& $started_at > 0
+				&& ( time() - $started_at ) > 120;
+
+			return array(
+				'total'        => count( $batch['ids'] ),
+				'created'      => $created,
+				'failed'       => $failed,
+				'pending'      => $pending,
+				'done'         => $done,
+				'stalled'      => $stalled,
+				'has_failed'   => $failed > 0,
+				'can_download' => $created > 0,
+			);
+		}
+
+		/**
+		 * Shared guard for the batch AJAX endpoints: verifies the nonce and the order-management capability,
+		 * ending the request with a JSON error when either fails.
+		 *
+		 * @return void
+		 */
+		protected function verify_label_batch_request() {
+			check_ajax_referer( 'pr-dhl-label-batch', 'nonce' );
+
+			if ( ! current_user_can( 'edit_shop_orders' ) ) {
+				wp_send_json_error( array( 'message' => esc_html__( 'You are not allowed to manage DHL labels.', 'dhl-for-woocommerce' ) ), 403 );
+			}
+		}
+
+		/**
+		 * AJAX: return the aggregated progress of the current user's bulk-label batch.
+		 *
+		 * @return void
+		 */
+		public function ajax_label_batch_progress() {
+			$this->verify_label_batch_request();
+
+			$progress = $this->get_label_batch_progress();
+
+			if ( null === $progress ) {
+				wp_send_json_success( array( 'active' => false ) );
+			}
+
+			$progress['active'] = true;
+			wp_send_json_success( $progress );
+		}
+
+		/**
+		 * AJAX: merge the labels created so far in the batch into one PDF and return its download URL.
+		 *
+		 * @return void
+		 */
+		public function ajax_label_batch_download() {
+			$this->verify_label_batch_request();
+
+			$batch = $this->get_label_batch();
+
+			if ( empty( $batch['ids'] ) ) {
+				wp_send_json_error( array( 'message' => esc_html__( 'No DHL label batch is in progress.', 'dhl-for-woocommerce' ) ) );
+			}
+
+			$merge_files = array();
+
+			foreach ( $batch['ids'] as $order_id ) {
+				$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
+
+				if ( ! empty( $label_tracking_info['label_path'] ) ) {
+					$merge_files[] = PR_DHL()->resolve_label_file_path( $label_tracking_info['label_path'] );
+				}
+			}
+
+			if ( empty( $merge_files ) ) {
+				wp_send_json_error( array( 'message' => esc_html__( 'There are no created DHL labels to download yet.', 'dhl-for-woocommerce' ) ) );
+			}
+
+			try {
+				wp_send_json_success( array( 'url' => $this->prepare_merged_label_download_url( $merge_files ) ) );
+			} catch ( Exception $e ) {
+				wp_send_json_error( array( 'message' => $e->getMessage() ) );
+			}
+		}
+
+		/**
+		 * AJAX: re-queue the failed orders in the batch (the shared retry path skips any label bought
+		 * at DHL but not saved locally, so a retry never double-charges).
+		 *
+		 * @return void
+		 */
+		public function ajax_label_batch_retry() {
+			$this->verify_label_batch_request();
+
+			$batch = $this->get_label_batch();
+
+			if ( empty( $batch['ids'] ) ) {
+				wp_send_json_error( array( 'message' => esc_html__( 'No DHL label batch is in progress.', 'dhl-for-woocommerce' ) ) );
+			}
+
+			$this->retry_failed_label_jobs( $batch['ids'] );
+
+			wp_send_json_success();
+		}
+
+		/**
+		 * AJAX: stop tracking the batch once the user dismisses the progress panel.
+		 *
+		 * @return void
+		 */
+		public function ajax_label_batch_dismiss() {
+			$this->verify_label_batch_request();
+			$this->clear_label_batch();
+			wp_send_json_success();
+		}
+
+		/**
+		 * Enqueues the Orders-screen progress-bar script when the current user has a batch in flight.
+		 *
+		 * @return void
+		 */
+		public function enqueue_label_batch_assets() {
+			if ( ! $this->is_orders_list_screen() || empty( $this->get_label_batch() ) ) {
+				return;
+			}
+
+			wp_enqueue_script(
+				'pr-dhl-label-batch',
+				PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-bulk-progress.js',
+				array( 'jquery' ),
+				PR_DHL_VERSION,
+				true
+			);
+
+			wp_localize_script(
+				'pr-dhl-label-batch',
+				'prDhlLabelBatch',
+				array(
+					'ajaxUrl'  => admin_url( 'admin-ajax.php' ),
+					'nonce'    => wp_create_nonce( 'pr-dhl-label-batch' ),
+					'interval' => 5000,
+					'i18n'     => array(
+						'creating'   => esc_html__( 'Creating DHL labels in the background…', 'dhl-for-woocommerce' ),
+						/* translators: %1$d created, %2$d failed, %3$d still in progress */
+						'status'     => esc_html__( '%1$d created, %2$d failed, %3$d still in progress', 'dhl-for-woocommerce' ),
+						'doneOk'     => esc_html__( 'All DHL labels created.', 'dhl-for-woocommerce' ),
+						'doneErrors' => esc_html__( 'DHL label creation finished — some orders failed.', 'dhl-for-woocommerce' ),
+						'stalled'    => esc_html__( 'DHL labels are still queued but nothing is processing yet — your site may not be running background tasks. Check WooCommerce → Status → Scheduled Actions, or reload later.', 'dhl-for-woocommerce' ),
+						'error'      => esc_html__( 'Something went wrong. Please reload the page.', 'dhl-for-woocommerce' ),
+					),
+				)
+			);
+		}
+
+		/**
+		 * Renders the (initially hidden) progress panel on the Orders screen; the enqueued script fills and
+		 * updates it by polling ajax_label_batch_progress().
+		 *
+		 * @return void
+		 */
+		public function render_label_batch_progress() {
+			if ( ! $this->is_orders_list_screen() || empty( $this->get_label_batch() ) ) {
+				return;
+			}
+			?>
+			<div id="pr-dhl-label-batch" class="notice notice-info pr-dhl-label-batch" style="display:none;">
+				<p class="pr-dhl-label-batch__title"><strong></strong></p>
+				<div class="pr-dhl-label-batch__bar"><span class="pr-dhl-label-batch__fill"></span></div>
+				<p class="pr-dhl-label-batch__status"></p>
+				<p class="pr-dhl-label-batch__actions" style="display:none;">
+					<a href="#" class="button button-primary pr-dhl-label-batch__download"><?php echo esc_html__( 'Download all labels', 'dhl-for-woocommerce' ); ?></a>
+					<a href="#" class="button pr-dhl-label-batch__retry"><?php echo esc_html__( 'Retry failed', 'dhl-for-woocommerce' ); ?></a>
+					<a href="#" class="button-link pr-dhl-label-batch__dismiss"><?php echo esc_html__( 'Dismiss', 'dhl-for-woocommerce' ); ?></a>
+				</p>
+			</div>
+			<style>
+				.pr-dhl-label-batch__bar{height:14px;max-width:480px;margin:8px 0;background:#e2e4e7;border-radius:7px;overflow:hidden}
+				.pr-dhl-label-batch__fill{display:block;height:100%;width:0;background:#d40511;transition:width .4s ease}
+				.pr-dhl-label-batch__actions .button{margin-right:6px}
+			</style>
+			<?php
 		}
 
 		/**
