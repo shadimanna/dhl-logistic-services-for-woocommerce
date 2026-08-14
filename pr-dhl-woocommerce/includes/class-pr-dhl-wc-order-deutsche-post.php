@@ -680,15 +680,8 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 			// Gather args for DHL API call
 			$args = $this->get_label_args( $order_id );
 
-			// Allow third parties to modify the args to the DHL APIs
-			$args       = apply_filters( 'pr_shipping_dhl_label_args', $args, $order_id );
-			$dhl_obj    = PR_DHL()->get_dhl_factory();
-			$label_info = $dhl_obj->get_dhl_label( $args );
-
-			$this->save_dhl_label_tracking( $order_id, $label_info );
+			$this->create_dhl_label( $order_id, $args );
 			$label_url = $this->get_download_label_url( $order_id );
-
-			do_action( 'pr_shipping_dhl_label_created', $order_id );
 
 			wp_send_json(
 				array(
@@ -977,8 +970,10 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 
 	public function get_bulk_actions() {
 		return array(
-			'pr_dhl_create_labels' => esc_html__( 'Create DHL Label', 'dhl-for-woocommerce' ),
-			'pr_dhl_create_orders' => esc_html__( 'Finalize DHL Waybill', 'dhl-for-woocommerce' ),
+			'pr_dhl_create_labels'       => esc_html__( 'Create DHL Label', 'dhl-for-woocommerce' ),
+			'pr_dhl_retry_failed_labels' => esc_html__( 'Retry Failed DHL Labels', 'dhl-for-woocommerce' ),
+			'pr_dhl_download_labels'     => esc_html__( 'Download DHL Labels', 'dhl-for-woocommerce' ),
+			'pr_dhl_create_orders'       => esc_html__( 'Finalize DHL Waybill', 'dhl-for-woocommerce' ),
 		);
 	}
 

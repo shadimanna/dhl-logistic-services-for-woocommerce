@@ -75,6 +75,11 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 4.1.0 =
+* Add: Bulk DHL label creation now runs in the background, so large selections no longer time out. A live progress bar on the Orders screen shows created, failed and in-progress counts, explains why any order failed, and lets you download all labels as one PDF or retry the failed ones.
+* Fix: Automatic label creation on an order status change no longer runs during the customer's checkout request, and records any failure as an order note instead of failing silently.
+* Tweak: The DHL API request timeout can now be adjusted with the pr_dhl_api_request_timeout filter.
+
 = 4.0.1 =
 * Fix: Restrict Deutsche Post waybill label downloads to users who can manage orders.
 * Fix: Store DHL shipping label files in a protected location so they can no longer be downloaded directly through their web address.

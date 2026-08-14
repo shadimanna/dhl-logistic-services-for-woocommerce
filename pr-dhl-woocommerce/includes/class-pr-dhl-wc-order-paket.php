@@ -995,9 +995,11 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			$shop_manager_actions = array();
 
 			$shop_manager_actions = array(
-				'pr_dhl_create_labels'  => esc_html__( 'DHL Create Labels', 'dhl-for-woocommerce' ),
-				'pr_dhl_delete_labels'  => esc_html__( 'DHL Delete Labels', 'dhl-for-woocommerce' ),
-				'pr_dhl_request_pickup' => esc_html__( 'DHL Request Pickup', 'dhl-for-woocommerce' ),
+				'pr_dhl_create_labels'       => esc_html__( 'DHL Create Labels', 'dhl-for-woocommerce' ),
+				'pr_dhl_retry_failed_labels' => esc_html__( 'DHL Retry Failed Labels', 'dhl-for-woocommerce' ),
+				'pr_dhl_download_labels'     => esc_html__( 'DHL Download Labels', 'dhl-for-woocommerce' ),
+				'pr_dhl_delete_labels'       => esc_html__( 'DHL Delete Labels', 'dhl-for-woocommerce' ),
+				'pr_dhl_request_pickup'      => esc_html__( 'DHL Request Pickup', 'dhl-for-woocommerce' ),
 			);
 
 			return $shop_manager_actions;
@@ -1129,10 +1131,19 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 
 		public function create_label_on_status_changed( $order_id, $status_from, $status_to, $order ) {
 
-			$status_setting = str_replace( 'wc-', '', $this->shipping_dhl_settings['dhl_create_label_on_status'] );
-			if ( $status_setting == $status_to ) {
-				$this->process_bulk_actions( 'pr_dhl_create_labels', array( $order_id ) );
+			if ( empty( $this->shipping_dhl_settings['dhl_create_label_on_status'] ) ) {
+				return;
 			}
+
+			$status_setting = str_replace( 'wc-', '', $this->shipping_dhl_settings['dhl_create_label_on_status'] );
+			if ( $status_setting !== $status_to ) {
+				return;
+			}
+
+			// Queue the label in the background instead of calling the DHL API inline during the status
+			// change (which, on the checkout-driven transition, blocks the customer's request and swallows
+			// any error). schedule_label_creation() records the outcome as an order note either way.
+			$this->schedule_label_creation( $order_id );
 		}
 
 		protected function get_tracking_link( $order_id ) {
@@ -1202,11 +1213,23 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 		private function get_print_status( $order_id ) {
 			$label_tracking_info = $this->get_dhl_label_tracking( $order_id );
 
-			if ( empty( $label_tracking_info ) ) {
-				return '<strong>&ndash;</strong>';
-			} else {
+			if ( ! empty( $label_tracking_info ) ) {
 				return '<span class="dashicons dashicons-yes"></span>';
 			}
+
+			$job = $this->get_label_job_status( $order_id );
+
+			if ( self::JOB_PENDING === $job['status'] ) {
+				return '<span class="dashicons dashicons-clock" title="' . esc_attr__( 'DHL label creation queued in the background.', 'dhl-for-woocommerce' ) . '"></span>';
+			}
+
+			if ( self::JOB_FAILED === $job['status'] ) {
+				$title = '' !== $job['message'] ? $job['message'] : __( 'DHL label creation failed.', 'dhl-for-woocommerce' );
+
+				return '<span class="dashicons dashicons-warning" title="' . esc_attr( $title ) . '"></span>';
+			}
+
+			return '<strong>&ndash;</strong>';
 		}
 
 

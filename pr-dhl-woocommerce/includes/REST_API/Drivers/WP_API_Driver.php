@@ -37,14 +37,14 @@ class WP_API_Driver implements API_Driver_Interface {
 				'body'       => $request->body,
 				'headers'    => $request->headers,
 				'cookies'    => $request->cookies,
-				'timeout'    => self::WP_REQUEST_TIMEOUT,
+				'timeout'    => (int) apply_filters( 'pr_dhl_api_request_timeout', self::WP_REQUEST_TIMEOUT ),
 				'user-agent' => 'WooCommerce/' . WC_VERSION . ' (WordPress/' . get_bloginfo( 'version' ) . ') DHL-plug-in/' . PR_DHL_VERSION,
 			)
 		);
 
 		// Check if an error occurred
 		if ( is_wp_error( $response ) ) {
-			throw new RuntimeException( esc_html__( $response->get_error_message(), 'dhl-for-woocommerce' ) );
+			throw new RuntimeException( esc_html( $response->get_error_message() ) );
 		}
 
 		// Retrieve the headers from the response
