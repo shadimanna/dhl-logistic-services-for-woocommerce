@@ -744,6 +744,24 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		}
 
 		/**
+		 * Appends a plain-language hint to connection/timeout failures so a transient network problem
+		 * reads as "reachability, use Retry" rather than a raw cURL string. Other errors pass through.
+		 *
+		 * @param string $message Raw failure message.
+		 *
+		 * @return string
+		 */
+		protected function humanize_label_error( $message ) {
+			// Connection-level failures (timeouts, DNS, refused, SSL) are almost always transient network
+			// issues rather than bad order data, so point the merchant at Retry instead of a raw cURL string.
+			if ( preg_match( '/cURL error (7|28|35|56)|timed out|timeout|could not resolve host|failed to connect|ssl connection/i', $message ) ) {
+				return $message . ' ' . esc_html__( '(The DHL API could not be reached — usually a temporary network issue; use Retry.)', 'dhl-for-woocommerce' );
+			}
+
+			return $message;
+		}
+
+		/**
 		 * Records a failed background label creation on the order: job state plus an order note.
 		 *
 		 * @param int    $order_id Order ID.
@@ -754,6 +772,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		 * @return void
 		 */
 		protected function record_async_label_failure( $order_id, $message, $context = array() ) {
+			$message            = $this->humanize_label_error( $message );
 			$context['message'] = $message;
 			$this->set_label_job_status( $order_id, self::JOB_FAILED, $context );
 
