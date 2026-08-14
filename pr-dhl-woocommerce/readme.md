@@ -73,6 +73,7 @@ More detailed instructions on how to set up your store and configure it are cons
 * Fix: Automatic label creation on an order status change no longer blocks the customer's checkout request and now records any failure as an order note instead of failing silently.
 * Fix: Bulk label creation no longer times out on large batches — all selected orders are now created in a single DHL API request.
 * Tweak: Label failures caused by a network or timeout problem now say so and suggest retrying, and the DHL API request timeout can be adjusted with the pr_dhl_api_request_timeout filter.
+* Tweak: Background bulk-label processing is more resilient — progress survives a cache clear, a per-order lock stops concurrent jobs buying a label twice, deleted orders no longer stall a batch, and a stuck queue is detected and reported.
 
 = 4.0.1 =
 * Fix: Restrict Deutsche Post waybill label downloads to users who can manage orders.
