@@ -18,6 +18,7 @@
 	var $title   = $panel.find( '.pr-dhl-label-batch__title strong' );
 	var $fill    = $panel.find( '.pr-dhl-label-batch__fill' );
 	var $status  = $panel.find( '.pr-dhl-label-batch__status' );
+	var $details = $panel.find( '.pr-dhl-label-batch__details' );
 	var $actions = $panel.find( '.pr-dhl-label-batch__actions' );
 	var $download = $panel.find( '.pr-dhl-label-batch__download' );
 	var $retry   = $panel.find( '.pr-dhl-label-batch__retry' );
@@ -46,6 +47,57 @@
 		timer = window.setInterval( poll, cfg.interval || 5000 );
 	}
 
+	function renderFailures( data ) {
+		$details.empty();
+
+		var failures = data.failures || [];
+		if ( ! failures.length ) {
+			return;
+		}
+
+		// Flag that some failed orders may already have a label at DHL and must not be blindly retried.
+		var anyPurchased = false;
+
+		// Group identical failure messages so a systematic cause (e.g. one bad setting) reads as
+		// "10× <reason>" rather than ten separate lines.
+		var groups = {};
+		var order = [];
+		$.each( failures, function ( i, f ) {
+			if ( f.purchased ) {
+				anyPurchased = true;
+			}
+			if ( ! groups[ f.message ] ) {
+				groups[ f.message ] = [];
+				order.push( f.message );
+			}
+			groups[ f.message ].push( f );
+		} );
+
+		$( '<p/>' ).css( 'margin', '4px 0 2px' ).append( $( '<strong/>' ).text( i18n.failTitle ) ).appendTo( $details );
+
+		var $list = $( '<ul/>' ).css( { margin: '0 0 4px 18px', 'list-style': 'disc' } ).appendTo( $details );
+
+		$.each( order, function ( i, message ) {
+			var items = groups[ message ];
+			var $li = $( '<li/>' );
+			$( '<strong/>' ).text( items.length + '× ' ).appendTo( $li );
+			$li.append( document.createTextNode( message + ' — ' ) );
+
+			$.each( items, function ( j, f ) {
+				if ( j ) {
+					$li.append( document.createTextNode( ', ' ) );
+				}
+				$( '<a/>', { href: f.edit_url, target: '_blank', rel: 'noopener' } ).text( '#' + f.number ).appendTo( $li );
+			} );
+
+			$li.appendTo( $list );
+		} );
+
+		if ( anyPurchased ) {
+			$( '<p/>' ).css( { margin: '4px 0', color: '#8a6d00' } ).text( i18n.purchased ).appendTo( $details );
+		}
+	}
+
 	function render( data ) {
 		if ( ! data || ! data.active ) {
 			stop();
@@ -59,13 +111,14 @@
 		var pct = data.total ? Math.round( ( handled / data.total ) * 100 ) : 0;
 		$fill.css( 'width', pct + '%' );
 		$status.text( format( i18n.status, data.created, data.failed, data.pending ) );
+		renderFailures( data );
 
 		if ( data.stalled ) {
 			stop();
 			$title.text( i18n.stalled );
 			$panel.removeClass( 'notice-info' ).addClass( 'notice-warning' );
 			$download.toggle( !! data.can_download );
-			$retry.toggle( !! data.has_failed );
+			$retry.toggle( !! data.retryable );
 			$actions.show();
 			return;
 		}
@@ -80,7 +133,7 @@
 		$title.text( data.has_failed ? i18n.doneErrors : i18n.doneOk );
 		$panel.removeClass( 'notice-info' ).addClass( data.has_failed ? 'notice-warning' : 'notice-success' );
 		$download.toggle( !! data.can_download );
-		$retry.toggle( !! data.has_failed );
+		$retry.toggle( !! data.retryable );
 		$actions.show();
 	}
 
