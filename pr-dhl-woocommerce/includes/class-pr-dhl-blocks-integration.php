@@ -273,7 +273,7 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 			'DHL_ENGLISH_REGISTRATION_LINK' => DHL_ENGLISH_REGISTRATION_LINK,
 			'DHL_GERMAN_REGISTRATION_LINK'  => DHL_GERMAN_REGISTRATION_LINK,
 			'locale'                        => get_locale(),
-			'valid_countries'               => array( 'SE', 'FI', 'BE', 'AT', 'FR' ),
+			'valid_countries'               => array( 'SE', 'FI', 'BE', 'AT', 'FR', 'IT' ),
 			'droppointAddressTypes'         => PR_DHL()->get_droppoint_address_types(),
 		);
 
