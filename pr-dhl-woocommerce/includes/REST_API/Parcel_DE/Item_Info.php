@@ -144,6 +144,7 @@ class Item_Info {
 		$this->pos_po = PR_DHL()->is_post_office( $args['shipping_address']['address_1'] );
 
 		$this->set_address_2();
+		$this->split_address_street();
 		$this->parse_args();
 	}
 
@@ -557,8 +558,11 @@ class Item_Info {
 				'rename' => 'name2',
 			),
 			'address_1'          => array(
-				'rename' => 'addressStreet',
-				'error'  => esc_html__( 'Shipping "Address 1" is empty!', 'dhl-for-woocommerce' ),
+				'rename'   => 'addressStreet',
+				'error'    => esc_html__( 'Shipping "Address 1" is empty!', 'dhl-for-woocommerce' ),
+				'sanitize' => function ( $value ) use ( $self ) {
+					return $self->string_length_sanitization( $value, 50 );
+				},
 			),
 			'address_2'          => array(
 				'rename'   => 'addressHouse',
@@ -567,8 +571,11 @@ class Item_Info {
 				},
 			),
 			'address_additional' => array(
-				'rename'  => 'additionalAddressInformation1',
-				'default' => '',
+				'rename'   => 'additionalAddressInformation1',
+				'default'  => '',
+				'sanitize' => function ( $value ) use ( $self ) {
+					return $self->string_length_sanitization( $value, 60 );
+				},
 			),
 			'postcode'           => array(
 				'rename' => 'postalCode',
@@ -1019,11 +1026,14 @@ class Item_Info {
 	protected function string_length_sanitization( $string, $max ) {
 		$max = intval( $max );
 
-		if ( strlen( $string ) <= $max ) {
+		// DHL counts these limits in characters, not bytes. Use mb_* so a UTF-8
+		// street with umlauts (ä/ö/ü/ß are 2 bytes each) is measured and cut by
+		// character count and never sliced through a multibyte codepoint.
+		if ( mb_strlen( $string, 'UTF-8' ) <= $max ) {
 			return $string;
 		}
 
-		return substr( $string, 0, ( $max - 1 ) );
+		return mb_substr( $string, 0, $max, 'UTF-8' );
 	}
 
 	/**
@@ -1318,13 +1328,15 @@ class Item_Info {
 
 		if ( ! empty( $this->args['shipping_address']['address_2'] ) ) {
 
-			// If address_2 greated than 10 chars, try to pass with additional address (does not show for DE)
-			if ( strlen( $this->args['shipping_address']['address_2'] ) > 10 ) {
-				$this->args['shipping_address']['address_additional'] = $this->args['shipping_address']['address_2'];
-				$this->args['shipping_address']['address_2']          = '';
+			// A house number never exceeds 10 chars, so a shorter address_2 is used as-is.
+			if ( strlen( $this->args['shipping_address']['address_2'] ) <= 10 ) {
+				return;
 			}
 
-			return;
+			// Too long to be a house number: keep it as additional info (does not show for DE)
+			// and fall through to recover the real house number from address_1 below.
+			$this->args['shipping_address']['address_additional'] = $this->args['shipping_address']['address_2'];
+			$this->args['shipping_address']['address_2']          = '';
 		}
 
 		$set_key = false;
@@ -1373,5 +1385,58 @@ class Item_Info {
 				);
 			}
 		}
+	}
+
+	/**
+	 * Keep the consignee street within DHL Parcel DE's 50 character limit.
+	 *
+	 * DHL rejects the whole shipment with a 400 when addressStreet exceeds 50
+	 * characters, so split the street at the last word boundary that still fits
+	 * and move the overflow into the additional-address field (max 60) instead of
+	 * failing. The house number lives in address_2 by now, so it is left alone;
+	 * overflow is prepended to whatever set_address_2() already relocated into the
+	 * additional-address field.
+	 *
+	 * @return void.
+	 */
+	protected function split_address_street() {
+		if ( $this->pos_ps || $this->pos_rs || $this->pos_po ) {
+			return;
+		}
+
+		$max     = 50;
+		$address = $this->args['shipping_address']['address_1'] ?? '';
+
+		// DHL's 50-char limit is counted in characters, not bytes. Use mb_* so a
+		// German street with umlauts (ä ö ü ß are 2 bytes each in UTF-8) is not
+		// split prematurely, and a hard cut never chops a multi-byte codepoint.
+		if ( mb_strlen( $address, 'UTF-8' ) <= $max ) {
+			return;
+		}
+
+		// Prefer the last space within the limit; fall back to a hard cut when a
+		// single token is already longer than the limit.
+		$boundary = mb_strrpos( mb_substr( $address, 0, $max + 1, 'UTF-8' ), ' ', 0, 'UTF-8' );
+
+		if ( false !== $boundary && $boundary > 0 ) {
+			$street   = mb_substr( $address, 0, $boundary, 'UTF-8' );
+			$overflow = mb_substr( $address, $boundary + 1, null, 'UTF-8' );
+		} else {
+			$street   = mb_substr( $address, 0, $max, 'UTF-8' );
+			$overflow = mb_substr( $address, $max, null, 'UTF-8' );
+		}
+
+		$this->args['shipping_address']['address_1'] = trim( $street );
+
+		$overflow = trim( $overflow );
+
+		if ( '' === $overflow ) {
+			return;
+		}
+
+		$additional = $this->args['shipping_address']['address_additional'] ?? '';
+		$additional = '' === $additional ? $overflow : $overflow . ' ' . $additional;
+
+		$this->args['shipping_address']['address_additional'] = $this->string_length_sanitization( $additional, 60 );
 	}
 }

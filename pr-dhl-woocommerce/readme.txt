@@ -83,6 +83,7 @@ More detailed instructions on how to set up your store and configure it are cons
 * Fix: Restrict Deutsche Post waybill label downloads to users who can manage orders.
 * Fix: Store DHL shipping label files in a protected location so they can no longer be downloaded directly through their web address.
 * Fix: Declare the full pre-discount goods value on the CN22 customs declaration so coupons and discounts no longer lower it or cause the label to fail.
+* Fix: Create labels for orders whose street address is longer than 50 characters instead of failing; the extra text now moves to the additional address line.
 
 = 4.0.0 =
 * Drop SOAP API support.
