@@ -69,6 +69,7 @@ More detailed instructions on how to set up your store and configure it are cons
 
 = 4.1.0 =
 * Add: Support for DHL Paket's new recipient services — One-Time Code, Second Delivery Attempt, No Parcel Locker and Immediate Return.
+* Add: Closest drop-point delivery (CDP) service for Italy.
 * Add: Show DHL warnings returned together with a successfully created label, such as when GoGreen Plus is added automatically through a standing order on the account.
 * Fix: Bulk label creation no longer times out on large batches — all selected orders are now created in a single DHL API request.
 
