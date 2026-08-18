@@ -14,6 +14,15 @@ ul.wc_dhl_error{
 	padding-left:20px;
 }
 
+.wc_dhl_label_message {
+	margin-top: 8px;
+	padding: 8px 10px;
+	color: #8a6d3b;
+	background: #fcf8e3;
+	border: 1px solid #faebcc;
+	border-radius: 3px;
+}
+
 .dhl_connection_succeeded {
 	color: #008000;
 	margin-left: 10px;

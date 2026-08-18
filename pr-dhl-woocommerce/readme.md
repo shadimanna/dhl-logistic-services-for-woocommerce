@@ -68,6 +68,7 @@ More detailed instructions on how to set up your store and configure it are cons
 == Changelog ==
 
 = 4.1.0 =
+* Add: Show DHL warnings returned together with a successfully created label, such as when GoGreen Plus is added automatically through a standing order on the account.
 * Fix: Bulk label creation no longer times out on large batches — all selected orders are now created in a single DHL API request.
 
 = 4.0.1 =
