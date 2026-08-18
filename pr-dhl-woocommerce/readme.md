@@ -68,11 +68,16 @@ More detailed instructions on how to set up your store and configure it are cons
 == Changelog ==
 
 = 4.1.0 =
+* Add: Support for DHL Paket's new recipient services — One-Time Code, Second Delivery Attempt, No Parcel Locker and Immediate Return.
 * Add: Closest drop-point delivery (CDP) service for Italy.
+* Add: Show DHL warnings returned together with a successfully created label, such as when GoGreen Plus is added automatically through a standing order on the account.
+* Fix: Bulk label creation no longer times out on large batches — all selected orders are now created in a single DHL API request.
 
 = 4.0.1 =
 * Fix: Restrict Deutsche Post waybill label downloads to users who can manage orders.
 * Fix: Store DHL shipping label files in a protected location so they can no longer be downloaded directly through their web address.
+* Fix: Declare the full pre-discount goods value on the CN22 customs declaration so coupons and discounts no longer lower it or cause the label to fail.
+* Fix: Create labels for orders whose street address is longer than 50 characters instead of failing; the extra text now moves to the additional address line.
 
 = 4.0.0 =
 * Drop SOAP API support.
