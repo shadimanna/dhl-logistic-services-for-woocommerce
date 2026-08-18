@@ -25,12 +25,16 @@ class Client extends API_Client {
 		$route = $this->request_order_route();
 		$data  = $this->request_info_to_request_data( $items_info );
 
+		// Request-level params (print format, combine, encoding) come from shared settings, so the first item represents the whole batch.
 		$route    = $this->add_request_params( $route, $items_info[0] );
 		$response = $this->post( $route, $data );
 
 		// Return the response body on success
 		if ( 200 === $response->status ) {
-			return array( 'items' => $response->body->items );
+			return array(
+				'items'    => $response->body->items,
+				'warnings' => $this->get_items_warnings( $response->body->items ),
+			);
 		}
 
 		if ( 207 === $response->status ) {
@@ -42,9 +46,12 @@ class Client extends API_Client {
 				if ( 200 === $item->sstatus->statusCode ) {
 					$labels_data['items'][] = $item;
 				} else {
+					$order_id                = isset( $item->shipmentRefNo )
+						? (int) str_replace( apply_filters( 'pr_shipping_dhl_paket_label_ref_no_prefix', 'order_' ), '', $item->shipmentRefNo )
+						: '';
 					$error_message           = $this->generate_error_message( $this->get_item_error_message( $item ) );
 					$labels_data['errors'][] = array(
-						'order_id' => '',
+						'order_id' => $order_id,
 						'message'  => wp_kses_post(
 							sprintf(
 							// Translators: %s is replaced with the error message returned from the API.
@@ -56,6 +63,8 @@ class Client extends API_Client {
 				}
 			}
 
+			// A 207 always carries at least one failed item, which get_dhl_label() rejects
+			// before any warning is surfaced, so weak warnings only matter on the 200 path.
 			return $labels_data;
 		}
 
@@ -512,6 +521,43 @@ class Client extends API_Client {
 		}
 
 		return $this->generate_error_message( $multiple_errors_list );
+	}
+
+	/**
+	 * Collect non-blocking (weak) validation warnings from successfully created labels.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param array $items Successfully created label items from the API response.
+	 *
+	 * @return string[] Warning messages, empty when there are none.
+	 */
+	protected function get_items_warnings( $items ) {
+		$warnings = array();
+
+		foreach ( $items as $item ) {
+			if ( empty( $item->validationMessages ) || ! is_array( $item->validationMessages ) ) {
+				continue;
+			}
+
+			foreach ( $item->validationMessages as $message ) {
+				// Hard errors are reported on the failure path; only surface weak validations here.
+				$state = $message->validationState ?? '';
+				if ( in_array( $state, array( 'Error', 'Invalid' ), true ) ) {
+					continue;
+				}
+
+				if ( empty( $message->validationMessage ) ) {
+					continue;
+				}
+
+				$property   = isset( $message->property ) ? '( ' . $message->property . ' ) : ' : '';
+				$warnings[] = $property . $message->validationMessage;
+			}
+		}
+
+		// A standing-order warning repeats on every shipment of a multi-package order.
+		return array_values( array_unique( $warnings ) );
 	}
 
 	/**
