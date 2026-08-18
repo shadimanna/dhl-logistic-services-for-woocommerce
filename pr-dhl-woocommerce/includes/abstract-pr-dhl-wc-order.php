@@ -949,10 +949,14 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 					continue;
 				}
 
-				// Get 1 item value not total items, based on ordered items in case currency is different that set product price
-				$new_item['item_value'] = ( $item['line_total'] / $item['qty'] );
-				// Sum 'line_total' to get items total value w/ discounts!
-				$args['order_details']['items_value'] += $item['line_total'];
+				// Customs declares the pre-discount goods value: DHL ignores coupons and vouchers
+				// for customs, and a discounted (or 0) value is rejected. Use the line subtotal
+				// (before coupons) rather than the charged line total.
+				$line_value = (float) $item['line_subtotal'];
+
+				$new_item['item_value'] = ( $line_value / $item['qty'] );
+				// Sum the same per-line value so the package's declared total matches the per-item values.
+				$args['order_details']['items_value'] += $line_value;
 
 				$product = wc_get_product( $item['product_id'] );
 
