@@ -964,6 +964,35 @@ class Item_Info {
 				'default' => '',
 				'rename'  => 'signedForByRecipient',
 			),
+			'one_time_code'          => array(
+				'default'  => '',
+				'rename'   => 'oneTimeCode',
+				'validate' => function ( $value ) use ( $self ) {
+					// Only validate when One-Time Code is selected for this order.
+					if ( empty( $value ) || 'no' === $value ) {
+						return;
+					}
+
+					// DHL requires the recipient's email address to send the One-Time Code.
+					if ( empty( $self->contactAddress['email'] ) ) {
+						throw new Exception(
+							esc_html__( 'One-Time Code requires the recipient\'s email address. Please add an email address to the order\'s shipping or billing details to create this label.', 'dhl-for-woocommerce' )
+						);
+					}
+				},
+			),
+			'second_delivery_attempt' => array(
+				'default' => '',
+				'rename'  => 'secondDeliveryAttempt',
+			),
+			'no_packstation'         => array(
+				'default' => '',
+				'rename'  => 'noPackstation',
+			),
+			'immediate_return'       => array(
+				'default' => '',
+				'rename'  => 'immediateReturn',
+			),
 		);
 	}
 

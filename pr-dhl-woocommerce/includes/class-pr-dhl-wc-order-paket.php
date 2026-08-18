@@ -336,6 +336,50 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 						)
 					);
 
+					woocommerce_wp_checkbox(
+						array(
+							'id'                => 'pr_dhl_one_time_code',
+							'label'             => esc_html__( 'One-Time Code: ', 'dhl-for-woocommerce' ),
+							'placeholder'       => '',
+							'description'       => esc_html__( 'Requires the recipient\'s email address.', 'dhl-for-woocommerce' ),
+							'value'             => $dhl_label_items['pr_dhl_one_time_code'] ?? ( $this->shipping_dhl_settings['dhl_default_one_time_code'] ?? 'no' ),
+							'custom_attributes' => array( $is_disabled => $is_disabled ),
+						)
+					);
+
+					woocommerce_wp_checkbox(
+						array(
+							'id'                => 'pr_dhl_second_delivery_attempt',
+							'label'             => esc_html__( 'Second Delivery Attempt: ', 'dhl-for-woocommerce' ),
+							'placeholder'       => '',
+							'description'       => '',
+							'value'             => $dhl_label_items['pr_dhl_second_delivery_attempt'] ?? ( $this->shipping_dhl_settings['dhl_default_second_delivery_attempt'] ?? 'no' ),
+							'custom_attributes' => array( $is_disabled => $is_disabled ),
+						)
+					);
+
+					woocommerce_wp_checkbox(
+						array(
+							'id'                => 'pr_dhl_no_packstation',
+							'label'             => esc_html__( 'No Parcel Locker: ', 'dhl-for-woocommerce' ),
+							'placeholder'       => '',
+							'description'       => '',
+							'value'             => $dhl_label_items['pr_dhl_no_packstation'] ?? ( $this->shipping_dhl_settings['dhl_default_no_packstation'] ?? 'no' ),
+							'custom_attributes' => array( $is_disabled => $is_disabled ),
+						)
+					);
+
+					woocommerce_wp_checkbox(
+						array(
+							'id'                => 'pr_dhl_immediate_return',
+							'label'             => esc_html__( 'Immediate Return: ', 'dhl-for-woocommerce' ),
+							'placeholder'       => '',
+							'description'       => '',
+							'value'             => $dhl_label_items['pr_dhl_immediate_return'] ?? ( $this->shipping_dhl_settings['dhl_default_immediate_return'] ?? 'no' ),
+							'custom_attributes' => array( $is_disabled => $is_disabled ),
+						)
+					);
+
 					$this->crossborder_and_domestic_fields( $dhl_label_items, $is_disabled );
 
 					echo '<hr/>';
@@ -711,6 +755,10 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 				'pr_dhl_personally',
 				'pr_dhl_no_neighbor',
 				'pr_dhl_named_person',
+				'pr_dhl_one_time_code',
+				'pr_dhl_second_delivery_attempt',
+				'pr_dhl_no_packstation',
+				'pr_dhl_immediate_return',
 				'pr_dhl_premium',
 				'pr_dhl_bulky_goods',
 				'pr_dhl_is_codeable',
@@ -932,6 +980,10 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 						'pr_dhl_additional_insurance',
 						'pr_dhl_no_neighbor',
 						'pr_dhl_named_person',
+						'pr_dhl_one_time_code',
+						'pr_dhl_second_delivery_attempt',
+						'pr_dhl_no_packstation',
+						'pr_dhl_immediate_return',
 						'pr_dhl_premium',
 						'pr_dhl_bulky_goods',
 						'pr_dhl_identcheck',
