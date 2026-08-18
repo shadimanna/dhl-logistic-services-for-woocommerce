@@ -522,6 +522,8 @@ class Client extends API_Client {
 	/**
 	 * Collect non-blocking (weak) validation warnings from successfully created labels.
 	 *
+	 * @since [*next-version*]
+	 *
 	 * @param array $items Successfully created label items from the API response.
 	 *
 	 * @return string[] Warning messages, empty when there are none.
