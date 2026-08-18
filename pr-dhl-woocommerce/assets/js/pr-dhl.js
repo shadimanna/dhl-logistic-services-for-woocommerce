@@ -408,6 +408,12 @@ jQuery( function( $ ) {
 						}
 						$( '#shipment-dhl-label-form' ).append(dhl_label_data.delete_label);
 
+						// Surface any non-blocking DHL warning returned alongside the created label.
+						$( '.wc_dhl_label_message' ).remove();
+						if ( response.label_message ) {
+							$( '#shipment-dhl-label-form' ).append( $('<p class="wc_dhl_label_message"></p>').text( response.label_message ) );
+						}
+
 						if( response.tracking_note ) {
 
 							$( '#woocommerce-order-notes' ).block({
