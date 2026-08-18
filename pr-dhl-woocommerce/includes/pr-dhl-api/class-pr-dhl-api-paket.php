@@ -47,7 +47,12 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 	}
 
 	/**
-	 * Create multiple labels in 1 API call.
+	 * Create multiple labels, batched into as few API calls as the endpoint allows.
+	 *
+	 * The DHL Parcel DE order endpoint accepts only a limited number of shipments
+	 * per request, so a large bulk selection is chunked and each chunk is created
+	 * in its own request. A chunk that fails as a whole fails only its own orders,
+	 * never the entire selection.
 	 *
 	 * @param array[] $multiple_orders_args Set of orders args.
 	 *
@@ -55,67 +60,91 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 	 * @throws Exception
 	 */
 	public function get_dhl_labels( $multiple_orders_args ) {
-		$items_info = array();
-		$labels     = array(
+		$labels = array(
 			'labels' => array(),
 			'errors' => array(),
 		);
-		$uom        = get_option( 'woocommerce_weight_unit' );
+		$uom    = get_option( 'woocommerce_weight_unit' );
 
-		foreach ( $multiple_orders_args as $args ) {
-			$args['dhl_settings'] = $this->maybe_sandbox( $args['dhl_settings'] );
-			try {
-				$this->dhl_label->set_arguments( $args );
-				$items_info[] = new Item_Info( $args, $uom );
-			} catch ( Exception $e ) {
-				$labels['errors'][] = array(
-					'order_id' => $args['order_details']['order_id'],
-					'message'  => $e->getMessage(),
-				);
-			}
-		}
+		/**
+		 * Maximum number of shipments sent to the DHL Parcel DE order endpoint per
+		 * request. Keep this at or below DHL's documented per-request cap.
+		 *
+		 * @param int $batch_size Shipments per request.
+		 */
+		$batch_size = (int) apply_filters( 'pr_shipping_dhl_paket_label_batch_size', 30 );
+		$batches    = array_chunk( $multiple_orders_args, max( 1, $batch_size ) );
 
-		if ( empty( $items_info ) ) {
-			return $labels;
-		}
+		foreach ( $batches as $batch ) {
+			$items_info = array();
 
-		// Every shipment is created in a single API request.
-		$items = $this->dhl_label->api_client->create_items( $items_info );
-
-		// A multi-package order returns several shipments under the same order reference.
-		$items_by_order = array();
-		foreach ( $items['items'] as $item ) {
-			$order_id                      = (int) str_replace( apply_filters( 'pr_shipping_dhl_paket_label_ref_no_prefix', 'order_' ), '', $item->shipmentRefNo );
-			$items_by_order[ $order_id ][] = $item;
-		}
-
-		// Reuse the single-label save routines so return labels and customs documents are handled identically.
-		foreach ( $items_by_order as $order_id => $order_items ) {
-			try {
-				if ( count( $order_items ) > 1 ) {
-					$label_tracking_info = $this->dhl_label->save_multiple_shipments( 'label', $order_id, $order_items );
-				} else {
-					$label_tracking_info = $this->dhl_label->save_export_files( 'label', $order_id, $order_items[0] );
+			foreach ( $batch as $args ) {
+				$args['dhl_settings'] = $this->maybe_sandbox( $args['dhl_settings'] );
+				try {
+					$this->dhl_label->set_arguments( $args );
+					$items_info[] = new Item_Info( $args, $uom );
+				} catch ( Exception $e ) {
+					$labels['errors'][] = array(
+						'order_id' => $args['order_details']['order_id'],
+						'message'  => $e->getMessage(),
+					);
 				}
-
-				$label_tracking_info['order_id']        = $order_id;
-				$label_tracking_info['tracking_status'] = '';
-
-				$labels['labels'][] = $label_tracking_info;
-			} catch ( Exception $e ) {
-				$labels['errors'][] = array(
-					'order_id' => $order_id,
-					'message'  => $e->getMessage(),
-				);
 			}
-		}
 
-		if ( ! empty( $items['errors'] ) ) {
-			foreach ( $items['errors'] as $error ) {
-				$labels['errors'][] = array(
-					'order_id' => $error['order_id'],
-					'message'  => $error['message'],
-				);
+			if ( empty( $items_info ) ) {
+				continue;
+			}
+
+			try {
+				// Every shipment in this chunk is created in a single API request.
+				$items = $this->dhl_label->api_client->create_items( $items_info );
+			} catch ( Exception $e ) {
+				// A whole-chunk failure applies only to this chunk's orders, so the
+				// remaining chunks are still attempted.
+				foreach ( $items_info as $item_info ) {
+					$labels['errors'][] = array(
+						'order_id' => $item_info->args['order_details']['order_id'],
+						'message'  => $e->getMessage(),
+					);
+				}
+				continue;
+			}
+
+			// A multi-package order returns several shipments under the same order reference.
+			$items_by_order = array();
+			foreach ( $items['items'] as $item ) {
+				$order_id                      = (int) str_replace( apply_filters( 'pr_shipping_dhl_paket_label_ref_no_prefix', 'order_' ), '', $item->shipmentRefNo );
+				$items_by_order[ $order_id ][] = $item;
+			}
+
+			// Reuse the single-label save routines so return labels and customs documents are handled identically.
+			foreach ( $items_by_order as $order_id => $order_items ) {
+				try {
+					if ( count( $order_items ) > 1 ) {
+						$label_tracking_info = $this->dhl_label->save_multiple_shipments( 'label', $order_id, $order_items );
+					} else {
+						$label_tracking_info = $this->dhl_label->save_export_files( 'label', $order_id, $order_items[0] );
+					}
+
+					$label_tracking_info['order_id']        = $order_id;
+					$label_tracking_info['tracking_status'] = '';
+
+					$labels['labels'][] = $label_tracking_info;
+				} catch ( Exception $e ) {
+					$labels['errors'][] = array(
+						'order_id' => $order_id,
+						'message'  => $e->getMessage(),
+					);
+				}
+			}
+
+			if ( ! empty( $items['errors'] ) ) {
+				foreach ( $items['errors'] as $error ) {
+					$labels['errors'][] = array(
+						'order_id' => $error['order_id'],
+						'message'  => $error['message'],
+					);
+				}
 			}
 		}
 
