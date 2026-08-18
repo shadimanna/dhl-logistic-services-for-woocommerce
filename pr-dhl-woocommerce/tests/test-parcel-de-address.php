@@ -93,6 +93,39 @@ namespace {
 	$r = pr_dhl_run_address( array( 'address_1' => '20 Charles-de-Gaulle-Str', 'address_2' => '', 'country' => 'DE' ) );
 	pr_dhl_assert( 'Leading house number extracted', $r['address_2'], '20' );
 
+	/**
+	 * Invoke the protected string_length_sanitization() in isolation via reflection.
+	 *
+	 * @param string $value The value to sanitize.
+	 * @param int    $max   The character limit.
+	 * @return string The sanitized value.
+	 */
+	function pr_dhl_string_length_sanitization( $value, $max ) {
+		$ref    = new \ReflectionClass( Item_Info::class );
+		$item   = $ref->newInstanceWithoutConstructor();
+		$method = $ref->getMethod( 'string_length_sanitization' );
+		$method->setAccessible( true );
+
+		return $method->invoke( $item, $value, $max );
+	}
+
+	// DHL limits are counted in characters, not bytes. German streets with umlauts
+	// (ä/ö/ü/ß = 2 bytes each in UTF-8) can be <= 50 characters but > 50 bytes; a
+	// byte-based cut would slice a multibyte codepoint and produce invalid UTF-8.
+
+	// 40 umlaut chars = 80 bytes: <= 50 chars, so it must be returned untouched.
+	$umlaut_ok = str_repeat( 'ä', 40 );
+	pr_dhl_assert( 'Umlaut street precondition: <= 50 chars but > 50 bytes', mb_strlen( $umlaut_ok, 'UTF-8' ) <= 50 && strlen( $umlaut_ok ) > 50, true );
+	$sanitized = pr_dhl_string_length_sanitization( $umlaut_ok, 50 );
+	pr_dhl_assert( 'Umlaut street within limit is not truncated', $sanitized, $umlaut_ok );
+	pr_dhl_assert( 'Umlaut street within limit stays valid UTF-8', mb_check_encoding( $sanitized, 'UTF-8' ), true );
+
+	// 60 umlaut chars: must be cut to exactly 50 characters, still valid UTF-8.
+	$umlaut_long = str_repeat( 'ö', 60 );
+	$sanitized   = pr_dhl_string_length_sanitization( $umlaut_long, 50 );
+	pr_dhl_assert( 'Over-limit umlaut street cut to exactly 50 chars', mb_strlen( $sanitized, 'UTF-8' ), 50 );
+	pr_dhl_assert( 'Over-limit umlaut street stays valid UTF-8 (no mid-codepoint cut)', mb_check_encoding( $sanitized, 'UTF-8' ), true );
+
 	echo $failures ? "\n{$failures} failure(s)\n" : "\nAll tests passed\n";
 	exit( $failures ? 1 : 0 );
 }

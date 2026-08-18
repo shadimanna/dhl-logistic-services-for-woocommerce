@@ -1026,11 +1026,14 @@ class Item_Info {
 	protected function string_length_sanitization( $string, $max ) {
 		$max = intval( $max );
 
-		if ( strlen( $string ) <= $max ) {
+		// DHL counts these limits in characters, not bytes. Use mb_* so a UTF-8
+		// street with umlauts (ä/ö/ü/ß are 2 bytes each) is measured and cut by
+		// character count and never sliced through a multibyte codepoint.
+		if ( mb_strlen( $string, 'UTF-8' ) <= $max ) {
 			return $string;
 		}
 
-		return substr( $string, 0, ( $max - 1 ) );
+		return mb_substr( $string, 0, $max, 'UTF-8' );
 	}
 
 	/**
