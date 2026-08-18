@@ -1404,20 +1404,23 @@ class Item_Info {
 		$max     = 50;
 		$address = $this->args['shipping_address']['address_1'] ?? '';
 
-		if ( strlen( $address ) <= $max ) {
+		// DHL's 50-char limit is counted in characters, not bytes. Use mb_* so a
+		// German street with umlauts (ä ö ü ß are 2 bytes each in UTF-8) is not
+		// split prematurely, and a hard cut never chops a multi-byte codepoint.
+		if ( mb_strlen( $address, 'UTF-8' ) <= $max ) {
 			return;
 		}
 
 		// Prefer the last space within the limit; fall back to a hard cut when a
 		// single token is already longer than the limit.
-		$boundary = strrpos( substr( $address, 0, $max + 1 ), ' ' );
+		$boundary = mb_strrpos( mb_substr( $address, 0, $max + 1, 'UTF-8' ), ' ', 0, 'UTF-8' );
 
 		if ( false !== $boundary && $boundary > 0 ) {
-			$street   = substr( $address, 0, $boundary );
-			$overflow = substr( $address, $boundary + 1 );
+			$street   = mb_substr( $address, 0, $boundary, 'UTF-8' );
+			$overflow = mb_substr( $address, $boundary + 1, null, 'UTF-8' );
 		} else {
-			$street   = substr( $address, 0, $max );
-			$overflow = substr( $address, $max );
+			$street   = mb_substr( $address, 0, $max, 'UTF-8' );
+			$overflow = mb_substr( $address, $max, null, 'UTF-8' );
 		}
 
 		$this->args['shipping_address']['address_1'] = trim( $street );
