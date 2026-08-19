@@ -1,7 +1,7 @@
 === DHL Shipping Germany for WooCommerce ===
 Contributors: shadim, raphaelmakowski
 Tags: DPDHL, DHL, DHL eCommerce, DHL Paket Germany, Shipping
-Stable tag: 4.0.2
+Stable tag: 4.1.0
 Requires Plugins: woocommerce
 Requires PHP: 7.4
 Requires at least: 6.8
@@ -75,7 +75,7 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
-= 4.0.2 =
+= 4.1.0 =
 * Add: Support for DHL Paket's new recipient services — One-Time Code, Second Delivery Attempt, No Parcel Locker and Immediate Return.
 * Add: Closest drop-point delivery (CDP) service for Italy.
 * Add: Show DHL warnings returned together with a successfully created label, such as when GoGreen Plus is added automatically through a standing order on the account.
