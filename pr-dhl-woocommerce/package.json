@@ -1,6 +1,6 @@
 {
 	"name": "dhl-for-woocommerce",
-	"version": "4.0.2",
+	"version": "4.1.0",
 	"author": "DHL",
 	"license": "GPL-2.0-or-later",
 	"main": "build/index.js",
