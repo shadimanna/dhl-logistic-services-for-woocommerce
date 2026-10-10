@@ -1023,6 +1023,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 						'pr_dhl_premium',
 						'pr_dhl_bulky_goods',
 						'pr_dhl_endorsement',
+						'pr_dhl_paperless_customs',
 					);
 
 				}
