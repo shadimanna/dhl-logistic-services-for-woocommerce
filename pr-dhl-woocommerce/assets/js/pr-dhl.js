@@ -604,3 +604,19 @@ jQuery( function( $ ) {
 	wc_shipment_dhl_label_items.init();
 
 } );
+
+// PDDP and Paperless Customs are mutually exclusive.
+( function ( $ ) {
+	$( function () {
+		var $pddp = $( '#pr_dhl_PDDP' );
+		var $pl   = $( '#pr_dhl_paperless_customs' );
+		if ( ! $pddp.length || ! $pl.length ) { return; }
+		function sync() {
+			$pl.prop( 'disabled', $pddp.is( ':checked' ) );
+			$pddp.prop( 'disabled', $pl.is( ':checked' ) );
+		}
+		$pddp.on( 'change', sync );
+		$pl.on( 'change', sync );
+		sync();
+	} );
+} )( jQuery );
