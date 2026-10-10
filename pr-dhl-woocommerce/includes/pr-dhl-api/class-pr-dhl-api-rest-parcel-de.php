@@ -69,6 +69,96 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	}
 
 	/**
+	 * Upload a customs document (commercial invoice PDF) for Paperless Customs.
+	 *
+	 * @param string $pdf_bytes Raw PDF content.
+	 * @param string $filename  Document filename (<= 60 chars).
+	 * @param string $reference Optional user-defined reference.
+	 * @return string The DHL batchId (UUID).
+	 * @throws Exception On failure.
+	 */
+	public function upload_customs_documents( $pdf_bytes, $filename, $reference = '' ) {
+		$boundary = wp_generate_password( 24, false );
+		$eol      = "\r\n";
+
+		$body  = '--' . $boundary . $eol;
+		$body .= 'Content-Disposition: form-data; name="documents[0].documentType"' . $eol . $eol;
+		$body .= 'Invoice' . $eol;
+
+		if ( '' !== $reference ) {
+			$body .= '--' . $boundary . $eol;
+			$body .= 'Content-Disposition: form-data; name="documents[0].userDefinedReference"' . $eol . $eol;
+			$body .= substr( $reference, 0, 60 ) . $eol;
+		}
+
+		$body .= '--' . $boundary . $eol;
+		$body .= 'Content-Disposition: form-data; name="documents[0].data"; filename="' . $filename . '"' . $eol;
+		$body .= 'Content-Type: application/pdf' . $eol . $eol;
+		$body .= $pdf_bytes . $eol;
+		$body .= '--' . $boundary . '--' . $eol;
+
+		$url     = \PR\DHL\REST_API\URL_Utils::merge_url_and_route( $this->get_api_url(), $this->request_customs_documents_route() );
+		$request = new \PR\DHL\REST_API\Request( \PR\DHL\REST_API\Request::TYPE_POST, $url, array(), $body );
+		$request->headers['Content-Type']   = 'multipart/form-data; boundary=' . $boundary;
+		$request->headers['Content-Length'] = strlen( $body );
+		$request->headers['Accept']         = 'application/json';
+
+		// Reuse the same Basic + dhl-api-key auth as every other call.
+		$request = $this->api_auth->authorize( $request );
+
+		// Send via the RAW WP driver (NOT the JSON decorator, which would re-encode the body).
+		$driver   = new \PR\DHL\REST_API\Drivers\WP_API_Driver();
+		$response = $this->upload_with_retry( $driver, $request );
+
+		$code = (int) $response->status;
+		$body = json_decode( $response->body );
+
+		if ( 201 === $code && isset( $body->batchId ) ) {
+			return $body->batchId;
+		}
+
+		throw new Exception(
+			esc_html(
+				sprintf(
+					/* translators: %d HTTP status */
+					__( 'Paperless Customs upload failed (HTTP %d).', 'dhl-for-woocommerce' ),
+					$code
+				)
+			)
+		);
+	}
+
+	/**
+	 * Send the upload, retrying once on HTTP 429 with a short backoff.
+	 *
+	 * @param \PR\DHL\REST_API\Drivers\WP_API_Driver $driver
+	 * @param \PR\DHL\REST_API\Request               $request
+	 * @return \PR\DHL\REST_API\Response
+	 */
+	protected function upload_with_retry( $driver, $request ) {
+		$max_attempts = (int) apply_filters( 'pr_dhl_paperless_upload_max_attempts', 2 );
+
+		for ( $attempt = 1; $attempt <= $max_attempts; $attempt++ ) {
+			$response = $driver->send( $request );
+			if ( 429 !== (int) $response->status || $attempt === $max_attempts ) {
+				return $response;
+			}
+			sleep( (int) apply_filters( 'pr_dhl_paperless_upload_backoff_seconds', 2 ) );
+		}
+
+		return $response;
+	}
+
+	/**
+	 * Route for the customs-documents upload endpoint.
+	 *
+	 * @return string
+	 */
+	protected function request_customs_documents_route() {
+		return 'v2/customs-documents';
+	}
+
+	/**
 	 * Get label.
 	 *
 	 * @param $args
