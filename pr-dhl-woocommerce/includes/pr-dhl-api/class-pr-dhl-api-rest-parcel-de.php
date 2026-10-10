@@ -167,7 +167,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 
 			// Pass-through in services_mappimng() turns this into services.paperlessCustoms = "<uuid>".
 			$item_info->services['paperlessCustoms'] = $batch_id;
-		} catch ( \Exception $e ) {
+		} catch ( \Throwable $e ) {
 			$this->paperless_fallback_note( $order_id, $e->getMessage() );
 		}
 	}
