@@ -508,6 +508,22 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 						);
 					}
 
+					// Paperless Customs (DHL Paket International to Switzerland).
+					if ( $this->is_paperless_customs_required( $order ) ) {
+						$paperless_value = $dhl_label_items['pr_dhl_paperless_customs']
+							?? ( 'yes' === ( $this->shipping_dhl_settings['dhl_default_paperless_customs'] ?? 'no' ) ? 'yes' : '' );
+						woocommerce_wp_checkbox(
+							array(
+								'id'                => 'pr_dhl_paperless_customs',
+								'label'             => esc_html__( 'Paperless Customs:', 'dhl-for-woocommerce' ),
+								'description'       => esc_html__( 'Upload the commercial invoice digitally instead of attaching it to the parcel.', 'dhl-for-woocommerce' ),
+								'desc_tip'          => true,
+								'value'             => esc_attr( $paperless_value ),
+								'custom_attributes' => array( $is_disabled => $is_disabled ),
+							)
+						);
+					}
+
 					// Duties drop down.
 					$duties_opt = $dhl_obj->get_dhl_duties();
 					woocommerce_wp_select(
@@ -743,6 +759,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 				'pr_dhl_signature_service',
 				'pr_dhl_endorsement',
 				'pr_dhl_PDDP',
+				'pr_dhl_paperless_customs',
 				'pr_dhl_cdp_delivery',
 				'pr_dhl_cod_value',
 				'pr_dhl_preferred_day',
@@ -900,7 +917,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			// Get settings
 			// $this->shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
 
-			$setting_ids = array( 'dhl_api_user', 'dhl_api_pwd', 'dhl_sandbox', 'dhl_add_logo', 'dhl_desc_default', 'dhl_shipper_reference', 'dhl_account_num', 'dhl_shipper_name', 'dhl_shipper_company', 'dhl_shipper_address', 'dhl_shipper_address_no', 'dhl_shipper_address_city', 'dhl_shipper_address_state', 'dhl_shipper_address_zip', 'dhl_shipper_phone', 'dhl_shipper_email', 'dhl_shipper_reference', 'dhl_bank_holder', 'dhl_bank_name', 'dhl_bank_iban', 'dhl_bank_bic', 'dhl_bank_ref', 'dhl_bank_ref_2', 'dhl_participation_return', 'dhl_split_return_label', 'dhl_email_notification', 'dhl_phone_notification' );
+			$setting_ids = array( 'dhl_api_user', 'dhl_api_pwd', 'dhl_sandbox', 'dhl_add_logo', 'dhl_desc_default', 'dhl_shipper_reference', 'dhl_account_num', 'dhl_shipper_name', 'dhl_shipper_company', 'dhl_shipper_address', 'dhl_shipper_address_no', 'dhl_shipper_address_city', 'dhl_shipper_address_state', 'dhl_shipper_address_zip', 'dhl_shipper_phone', 'dhl_shipper_email', 'dhl_shipper_reference', 'dhl_bank_holder', 'dhl_bank_name', 'dhl_bank_iban', 'dhl_bank_bic', 'dhl_bank_ref', 'dhl_bank_ref_2', 'dhl_participation_return', 'dhl_split_return_label', 'dhl_email_notification', 'dhl_phone_notification', 'dhl_paperless_signature', 'dhl_paperless_logo' );
 
 			foreach ( $setting_ids as $value ) {
 				$api_key = str_replace( 'dhl_', '', $value );
@@ -1587,6 +1604,19 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			?>
 		</div>
 			<?php
+		}
+
+		/**
+		 * Whether the Paperless Customs checkbox should show for this order.
+		 *
+		 * @param WC_Order $order
+		 * @return bool
+		 */
+		public function is_paperless_customs_required( $order ) {
+			$country = $order->get_shipping_country();
+			$product = $this->get_dhl_label_items( $order->get_id() )['pr_dhl_product'] ?? $this->get_default_dhl_product( $order->get_id() );
+
+			return \PR\DHL\Utils\API_Utils::is_paperless_customs_eligible( $country, $product, false );
 		}
 
 		protected function is_PDDP_required( $order ) {
