@@ -83,6 +83,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 				try {
 					$this->dhl_label->set_arguments( $args );
 					$items_info[] = new Item_Info( $args, $uom );
+					$this->dhl_label->maybe_apply_paperless_customs( end( $items_info ), $args );
 				} catch ( Exception $e ) {
 					$labels['errors'][] = array(
 						'order_id' => $args['order_details']['order_id'],
