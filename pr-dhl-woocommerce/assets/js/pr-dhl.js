@@ -617,6 +617,7 @@ jQuery( function( $ ) {
 		}
 		$pddp.on( 'change', sync );
 		$pl.on( 'change', sync );
+		$( document ).on( 'change', '#pr_dhl_product', function () { setTimeout( sync, 0 ); } );
 		sync();
 	} );
 } )( jQuery );
