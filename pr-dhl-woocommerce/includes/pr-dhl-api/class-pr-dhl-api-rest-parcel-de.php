@@ -129,6 +129,72 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	}
 
 	/**
+	 * If eligible, generate + upload the commercial invoice and attach the batchId.
+	 *
+	 * On any failure, logs, adds an order note, and returns without attaching —
+	 * the label is still created with physical customs docs. Never throws.
+	 *
+	 * @param Item_Info $item_info
+	 * @param array     $args
+	 * @return void
+	 */
+	public function maybe_apply_paperless_customs( Item_Info $item_info, array $args ) {
+		$enabled = ( ( $args['order_details']['paperless_customs'] ?? '' ) === 'yes' );
+		if ( ! $enabled ) {
+			return;
+		}
+
+		$country = $args['shipping_address']['country'] ?? '';
+		$product = $item_info->shipment['product'] ?? '';
+		$pddp    = ( ( $args['order_details']['PDDP'] ?? '' ) === 'yes' );
+
+		if ( ! \PR\DHL\Utils\API_Utils::is_paperless_customs_eligible( $country, $product, $pddp ) ) {
+			return;
+		}
+
+		$order_id = $args['order_details']['order_id'] ?? 0;
+		$settings = $args['dhl_settings'] ?? array();
+
+		if ( empty( $settings['paperless_signature'] ) ) {
+			$this->paperless_fallback_note( $order_id, __( 'no signature image is configured', 'dhl-for-woocommerce' ) );
+			return;
+		}
+
+		try {
+			$pdf      = ( new \PR\DHL\REST_API\Parcel_DE\Commercial_Invoice_PDF() )->generate( $item_info, $settings );
+			$filename = 'invoice-' . $order_id . '.pdf';
+			$batch_id = $this->upload_customs_documents( $pdf, $filename, (string) $order_id );
+
+			// Pass-through in services_mappimng() turns this into services.paperlessCustoms = "<uuid>".
+			$item_info->services['paperlessCustoms'] = $batch_id;
+		} catch ( \Exception $e ) {
+			$this->paperless_fallback_note( $order_id, $e->getMessage() );
+		}
+	}
+
+	/**
+	 * Record a Paperless Customs fallback on the order.
+	 *
+	 * @param int    $order_id
+	 * @param string $reason
+	 * @return void
+	 */
+	protected function paperless_fallback_note( $order_id, $reason ) {
+		if ( $order_id && function_exists( 'wc_get_order' ) ) {
+			$order = wc_get_order( $order_id );
+			if ( $order ) {
+				$order->add_order_note(
+					sprintf(
+						/* translators: %s reason */
+						__( 'Paperless Customs skipped (%s) — attach physical customs documents to the parcel.', 'dhl-for-woocommerce' ),
+						$reason
+					)
+				);
+			}
+		}
+	}
+
+	/**
 	 * Send the upload, retrying once on HTTP 429 with a short backoff.
 	 *
 	 * @param \PR\DHL\REST_API\Drivers\WP_API_Driver $driver
@@ -174,6 +240,8 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		} catch ( Exception $e ) {
 			throw $e;
 		}
+
+		$this->maybe_apply_paperless_customs( $item_info, $args );
 
 		// Create the item and get the barcode
 		$item_response = $this->api_client->create_items( array( $item_info ) );
