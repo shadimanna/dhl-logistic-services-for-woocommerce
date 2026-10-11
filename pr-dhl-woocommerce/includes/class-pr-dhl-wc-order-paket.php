@@ -511,7 +511,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 					// Paperless Customs (DHL Paket International to Switzerland).
 					if ( $this->is_paperless_customs_required( $order ) ) {
 						$paperless_value = $dhl_label_items['pr_dhl_paperless_customs']
-							?? ( 'yes' === ( $this->shipping_dhl_settings['dhl_default_paperless_customs'] ?? 'no' ) ? 'yes' : '' );
+							?? ( 'yes' === ( $this->shipping_dhl_settings['dhl_default_paperless_customs'] ?? 'yes' ) ? 'yes' : '' );
 						woocommerce_wp_checkbox(
 							array(
 								'id'                => 'pr_dhl_paperless_customs',
@@ -1610,8 +1610,10 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 		/**
 		 * Whether the Paperless Customs checkbox should show for this order.
 		 *
-		 * @param WC_Order $order
-		 * @return bool
+		 * @since [*next-version*]
+		 *
+		 * @param WC_Order $order The order being rendered.
+		 * @return bool True if Paperless Customs applies to this order.
 		 */
 		public function is_paperless_customs_required( $order ) {
 			$country = $order->get_shipping_country();

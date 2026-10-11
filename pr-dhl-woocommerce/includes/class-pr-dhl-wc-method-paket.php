@@ -20,6 +20,13 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 	class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 		/**
+		 * Whether a dhl_media field was rendered and the picker script must be printed.
+		 *
+		 * @var bool
+		 */
+		private static $media_script_needed = false;
+
+		/**
 		 * Init and hook in the integration.
 		 */
 		public function __construct( $instance_id = 0 ) {
@@ -44,6 +51,8 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 			add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'process_admin_options' ) );
 
 			add_filter( 'woocommerce_settings_api_form_fields_' . $this->id, array( $this, 'after_init_set_field_options' ) );
+
+			add_action( 'admin_print_footer_scripts', array( $this, 'print_media_field_script' ) );
 
 			if ( API_Utils::is_new_merchant() ) {
 				new PR_DHL_WC_Wizard_Paket();
@@ -90,6 +99,8 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 		 * @inheritdoc
 		 */
 		public function get_admin_options_html() {
+			wp_enqueue_media();
+
 			$notice = '';
 			if ( 'yes' === $this->get_option( 'dhl_default_paperless_customs', 'yes' ) && ! $this->get_option( 'dhl_paperless_signature' ) ) {
 				$notice = $this->get_message(
@@ -525,7 +536,7 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					'title'       => esc_html__( 'Paperless Customs signature image', 'dhl-for-woocommerce' ),
 					'type'        => 'dhl_media',
 					'default'     => '',
-					'description' => esc_html__( 'Signature image stamped on the generated commercial invoice. Required for Paperless Customs.', 'dhl-for-woocommerce' ),
+					'description' => esc_html__( 'Signature image stamped on the generated commercial invoice. Required for Paperless Customs.', 'dhl-for-woocommerce' ) . ' ' . esc_html__( 'The image is stored in the WordPress Media Library and is publicly accessible, so avoid a sensitive personal signature if that is a concern.', 'dhl-for-woocommerce' ),
 					'desc_tip'    => true,
 				),
 				'dhl_paperless_logo'                => array(
@@ -1108,9 +1119,11 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 		/**
 		 * Render a media-upload settings field (stores an attachment ID).
 		 *
+		 * @since [*next-version*]
+		 *
 		 * @param string $key  Field key.
 		 * @param array  $data Field data.
-		 * @return string
+		 * @return string The field row HTML.
 		 */
 		public function generate_dhl_media_html( $key, $data ) {
 			$field_key = $this->get_field_key( $key );
@@ -1122,8 +1135,6 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 			$data      = wp_parse_args( $data, $defaults );
 			$value     = $this->get_option( $key );
 			$image_src = $value ? wp_get_attachment_image_url( (int) $value, 'medium' ) : '';
-
-			wp_enqueue_media();
 
 			ob_start();
 			?>
@@ -1139,34 +1150,74 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 						<button type="button" class="button dhl-media-remove" style="<?php echo $image_src ? '' : 'display:none;'; ?>"><?php esc_html_e( 'Remove', 'dhl-for-woocommerce' ); ?></button>
 						<p class="description"><?php echo wp_kses_post( $data['description'] ); ?></p>
 					</div>
-					<script>
-					( function ( $ ) {
-						$( function () {
-							var $wrap = $( '#<?php echo esc_js( $field_key ); ?>' ).closest( '.dhl-media-field' );
-							$wrap.on( 'click', '.dhl-media-upload', function ( e ) {
-								e.preventDefault();
-								var frame = wp.media( { multiple: false, library: { type: 'image' } } );
-								frame.on( 'select', function () {
-									var att = frame.state().get( 'selection' ).first().toJSON();
-									$wrap.find( 'input[type=hidden]' ).val( att.id );
-									$wrap.find( '.dhl-media-preview' ).attr( 'src', att.url ).show();
-									$wrap.find( '.dhl-media-remove' ).show();
-								} );
-								frame.open();
-							} );
-							$wrap.on( 'click', '.dhl-media-remove', function ( e ) {
-								e.preventDefault();
-								$wrap.find( 'input[type=hidden]' ).val( '' );
-								$wrap.find( '.dhl-media-preview' ).hide();
-								$( this ).hide();
-							} );
-						} );
-					} )( jQuery );
-					</script>
 				</td>
 			</tr>
 			<?php
+			self::$media_script_needed = true;
+
 			return ob_get_clean();
+		}
+
+		/**
+		 * Validate a media settings field: only a PNG/JPEG image attachment ID is accepted.
+		 *
+		 * @since [*next-version*]
+		 *
+		 * @param string $key   Field key.
+		 * @param mixed  $value Posted value (attachment ID), or null if not posted.
+		 * @return string Attachment ID as a string, or an empty string if invalid.
+		 */
+		public function validate_dhl_media_field( $key, $value ) {
+			$id = absint( $value );
+
+			if ( ! $id || ! wp_attachment_is_image( $id ) ) {
+				return '';
+			}
+
+			if ( ! in_array( get_post_mime_type( $id ), array( 'image/png', 'image/jpeg' ), true ) ) {
+				return '';
+			}
+
+			return (string) $id;
+		}
+
+		/**
+		 * Print the media-picker script once, for all dhl_media fields on the page.
+		 *
+		 * @since [*next-version*]
+		 *
+		 * @return void
+		 */
+		public function print_media_field_script() {
+			if ( ! self::$media_script_needed ) {
+				return;
+			}
+			self::$media_script_needed = false;
+			?>
+			<script>
+			( function ( $ ) {
+				$( document ).on( 'click', '.dhl-media-field .dhl-media-upload', function ( e ) {
+					e.preventDefault();
+					var $wrap = $( this ).closest( '.dhl-media-field' );
+					var frame = wp.media( { multiple: false, library: { type: 'image' } } );
+					frame.on( 'select', function () {
+						var att = frame.state().get( 'selection' ).first().toJSON();
+						$wrap.find( 'input[type=hidden]' ).val( att.id );
+						$wrap.find( '.dhl-media-preview' ).attr( 'src', att.url ).show();
+						$wrap.find( '.dhl-media-remove' ).show();
+					} );
+					frame.open();
+				} );
+				$( document ).on( 'click', '.dhl-media-field .dhl-media-remove', function ( e ) {
+					e.preventDefault();
+					var $wrap = $( this ).closest( '.dhl-media-field' );
+					$wrap.find( 'input[type=hidden]' ).val( '' );
+					$wrap.find( '.dhl-media-preview' ).hide();
+					$( this ).hide();
+				} );
+			} )( jQuery );
+			</script>
+			<?php
 		}
 
 		// Set specific field options after initialization

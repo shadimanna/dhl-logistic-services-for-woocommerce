@@ -64,6 +64,8 @@ if( !class_exists( 'PR_DHL_Libraryloader' ) ){
         /**
          * Ensure the bundled TCPDF library is loaded.
          *
+         * @since [*next-version*]
+         *
          * @return bool True if the TCPDF class is available.
          */
         public function get_tcpdf()
