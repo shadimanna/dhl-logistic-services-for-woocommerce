@@ -8,11 +8,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Generates a commercial-invoice PDF for Paperless Customs, using the bundled TCPDF.
+ *
+ * @since [*next-version*]
  */
 class Commercial_Invoice_PDF {
 
 	/**
 	 * Build the commercial-invoice PDF.
+	 *
+	 * @since [*next-version*]
 	 *
 	 * @param Item_Info $item_info The shipment info (shipper, consignee, items, currency).
 	 * @param array     $settings  Plugin settings incl. 'paperless_signature' and 'paperless_logo' attachment IDs.
@@ -24,7 +28,7 @@ class Commercial_Invoice_PDF {
 		$tcpdf  = $loader->get_tcpdf();
 
 		if ( ! $tcpdf ) {
-			throw new \Exception( 'TCPDF library unavailable for commercial invoice generation.' );
+			throw new \Exception( esc_html__( 'TCPDF library unavailable for commercial invoice generation.', 'dhl-for-woocommerce' ) );
 		}
 
 		$pdf = new \TCPDF( 'P', 'mm', 'A4', true, 'UTF-8' );
@@ -67,13 +71,15 @@ class Commercial_Invoice_PDF {
 		$currency = $item_info->args['order_details']['currency'] ?? '';
 		$grand    = 0.0;
 		foreach ( $item_info->items as $item ) {
-			$qty   = (float) $item['packagedQuantity'];
-			$unit  = (float) $item['itemValue']['amount'];
-			$total = $qty * $unit;
+			$qty    = (float) ( $item['packagedQuantity'] ?? 0 );
+			$unit   = (float) ( $item['itemValue']['amount'] ?? 0 );
+			$total  = $qty * $unit;
 			$grand += $total;
-			$pdf->Cell( 70, 6, $item['itemDescription'], 1 );
-			$pdf->Cell( 22, 6, $item['hsCode'], 1 );
-			$pdf->Cell( 20, 6, $item['countryOfOrigin'], 1 );
+			$desc   = (string) ( $item['itemDescription'] ?? '' );
+			$desc   = mb_strimwidth( $desc, 0, 60, '…', 'UTF-8' );
+			$pdf->Cell( 70, 6, $desc, 1 );
+			$pdf->Cell( 22, 6, (string) ( $item['hsCode'] ?? '' ), 1 );
+			$pdf->Cell( 20, 6, (string) ( $item['countryOfOrigin'] ?? '' ), 1 );
 			$pdf->Cell( 15, 6, (string) $qty, 1, 0, 'R' );
 			$pdf->Cell( 28, 6, number_format( $unit, 2 ), 1, 0, 'R' );
 			$pdf->Cell( 25, 6, number_format( $total, 2 ), 1, 1, 'R' );
@@ -87,7 +93,9 @@ class Commercial_Invoice_PDF {
 		// Reason for export + declaration.
 		$pdf->SetFont( 'helvetica', '', 9 );
 		$pdf->MultiCell( 0, 5, 'Reason for export: ' . apply_filters( 'pr_shipping_dhl_paket_label_shipment_export_type', 'COMMERCIAL_GOODS' ), 0, 'L' );
-		$pdf->Ln( 6 );
+		$pdf->Ln( 2 );
+		$pdf->MultiCell( 0, 5, 'I declare the above information to be true and correct.', 0, 'L' );
+		$pdf->Ln( 4 );
 
 		// Signature.
 		$sig_path = $this->attachment_path( $settings['paperless_signature'] ?? '' );
@@ -104,8 +112,10 @@ class Commercial_Invoice_PDF {
 	/**
 	 * Format a party address block for the invoice.
 	 *
-	 * @param array $party
-	 * @return string
+	 * @since [*next-version*]
+	 *
+	 * @param array $party Party data (name, street, house, postal code, city, country).
+	 * @return string Newline-separated address block with empty lines removed.
 	 */
 	protected function format_party( array $party ) {
 		$lines = array(
@@ -119,17 +129,28 @@ class Commercial_Invoice_PDF {
 	}
 
 	/**
-	 * Resolve an attachment ID to a readable local file path.
+	 * Resolve an attachment ID to a readable local PNG/JPEG file path.
 	 *
-	 * @param int|string $attachment_id
-	 * @return string Empty string if not resolvable.
+	 * @since [*next-version*]
+	 *
+	 * @param int|string $attachment_id Media library attachment ID.
+	 * @return string Local file path, or empty string if not a usable PNG/JPEG image.
 	 */
 	protected function attachment_path( $attachment_id ) {
 		if ( empty( $attachment_id ) ) {
 			return '';
 		}
 
-		$path = get_attached_file( (int) $attachment_id );
+		$attachment_id = (int) $attachment_id;
+		if ( ! wp_attachment_is_image( $attachment_id ) ) {
+			return '';
+		}
+
+		if ( ! in_array( get_post_mime_type( $attachment_id ), array( 'image/png', 'image/jpeg' ), true ) ) {
+			return '';
+		}
+
+		$path = get_attached_file( $attachment_id );
 
 		return ( $path && file_exists( $path ) ) ? $path : '';
 	}
