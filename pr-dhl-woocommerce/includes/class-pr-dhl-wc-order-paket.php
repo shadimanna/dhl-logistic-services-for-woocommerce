@@ -509,19 +509,24 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 					}
 
 					// Paperless Customs (DHL Paket International to Switzerland).
+					// Rendered for any eligible-country order; JS shows it only when the product is V53WPAK.
 					if ( $this->is_paperless_customs_required( $order ) ) {
-						$paperless_value = $dhl_label_items['pr_dhl_paperless_customs']
-							?? ( 'yes' === ( $this->shipping_dhl_settings['dhl_default_paperless_customs'] ?? 'yes' ) ? 'yes' : '' );
+						$paperless_default = empty( $this->shipping_dhl_settings['dhl_default_paperless_customs'] ) ? 'yes' : $this->shipping_dhl_settings['dhl_default_paperless_customs'];
+						$paperless_value   = $dhl_label_items['pr_dhl_paperless_customs'] ?? ( 'yes' === $paperless_default ? 'yes' : '' );
+						$paperless_product = $dhl_label_items['pr_dhl_product'] ?? $this->get_default_dhl_product( $order_id );
+						$paperless_hidden  = 'V53WPAK' !== $paperless_product ? ' style="display:none;"' : '';
+						echo '<div id="pr_dhl_paperless_customs_field"' . $paperless_hidden . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						woocommerce_wp_checkbox(
 							array(
 								'id'                => 'pr_dhl_paperless_customs',
 								'label'             => esc_html__( 'Paperless Customs:', 'dhl-for-woocommerce' ),
 								'description'       => esc_html__( 'Upload the commercial invoice digitally instead of attaching it to the parcel.', 'dhl-for-woocommerce' ),
 								'desc_tip'          => true,
-								'value'             => esc_attr( $paperless_value ),
+								'value'             => $paperless_value,
 								'custom_attributes' => array( $is_disabled => $is_disabled ),
 							)
 						);
+						echo '</div>';
 					}
 
 					// Duties drop down.
@@ -1038,6 +1043,12 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 							$this->dhl_label_items[ $default_id ] = isset( $this->shipping_dhl_settings[ 'dhl_' . $id_name ] ) ? $this->shipping_dhl_settings[ 'dhl_' . $id_name ] : '';
 						}
 					}
+				}
+
+				// Paperless Customs: an empty/missing setting means the field's declared default ('yes').
+				if ( in_array( 'pr_dhl_paperless_customs', $settings_default_ids, true ) && empty( $this->dhl_label_items['pr_dhl_paperless_customs'] )
+					&& empty( $this->shipping_dhl_settings['dhl_default_paperless_customs'] ) ) {
+					$this->dhl_label_items['pr_dhl_paperless_customs'] = 'yes';
 				}
 
 				$this->save_dhl_label_items( $order_id, $this->dhl_label_items );
@@ -1616,10 +1627,8 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 		 * @return bool True if Paperless Customs applies to this order.
 		 */
 		public function is_paperless_customs_required( $order ) {
-			$country = $order->get_shipping_country();
-			$product = $this->get_dhl_label_items( $order->get_id() )['pr_dhl_product'] ?? $this->get_default_dhl_product( $order->get_id() );
-
-			return \PR\DHL\Utils\API_Utils::is_paperless_customs_eligible( $country, $product, false );
+			// Country check only; the product is toggled client-side and enforced server-side.
+			return \PR\DHL\Utils\API_Utils::is_paperless_customs_eligible( $order->get_shipping_country(), 'V53WPAK', false );
 		}
 
 		protected function is_PDDP_required( $order ) {
