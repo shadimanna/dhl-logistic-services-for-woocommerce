@@ -1163,7 +1163,7 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 		public function validate_dhl_media_field( $key, $value ) {
 			$id = (int) $value;
 
-			if ( $id <= 0 || ! wp_attachment_is_image( $id ) || 'inherit' !== get_post_status( $id ) ) {
+			if ( $id <= 0 || ! wp_attachment_is_image( $id ) || 'attachment' !== get_post_type( $id ) ) {
 				return '';
 			}
 

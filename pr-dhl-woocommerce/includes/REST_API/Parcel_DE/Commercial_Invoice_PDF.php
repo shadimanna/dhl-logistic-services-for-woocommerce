@@ -180,7 +180,7 @@ class Commercial_Invoice_PDF {
 			return '';
 		}
 
-		if ( 'inherit' !== get_post_status( $attachment_id ) ) {
+		if ( 'attachment' !== get_post_type( $attachment_id ) ) {
 			return '';
 		}
 
