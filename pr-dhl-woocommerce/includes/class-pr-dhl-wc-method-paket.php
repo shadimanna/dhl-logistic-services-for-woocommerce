@@ -45,6 +45,8 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 
 			add_filter( 'woocommerce_settings_api_form_fields_' . $this->id, array( $this, 'after_init_set_field_options' ) );
 
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_media_field_assets' ) );
+
 			if ( API_Utils::is_new_merchant() ) {
 				new PR_DHL_WC_Wizard_Paket();
 			}
@@ -90,7 +92,19 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 		 * @inheritdoc
 		 */
 		public function get_admin_options_html() {
-			return '<div id="dhlpaket_shipping_method_settings"><div class="dhlpaket_tab_menu"></div><div class="dhlpaket_tab_content">' . parent::get_admin_options_html() . '</div></div>';
+			$notice            = '';
+			$default_paperless = $this->get_option( 'dhl_default_paperless_customs', 'yes' );
+			if ( '' === $default_paperless ) {
+				$default_paperless = 'yes';
+			}
+			if ( 'yes' === $default_paperless && ! $this->get_option( 'dhl_paperless_signature' ) ) {
+				$notice = $this->get_message(
+					esc_html__( 'Paperless Customs is on by default but no signature image is set — labels will fall back to physical customs documents until you add one.', 'dhl-for-woocommerce' ),
+					'notice notice-warning'
+				);
+			}
+
+			return $notice . '<div id="dhlpaket_shipping_method_settings"><div class="dhlpaket_tab_menu"></div><div class="dhlpaket_tab_content">' . parent::get_admin_options_html() . '</div></div>';
 		}
 
 		/**
@@ -503,6 +517,28 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					'label'       => esc_html__( 'Checked', 'dhl-for-woocommerce' ),
 					'default'     => 'no',
 					'description' => esc_html__( 'Check to request GoGreen Plus for every domestic shipment unless you turn it off per order.', 'dhl-for-woocommerce' ),
+					'desc_tip'    => true,
+				),
+				'dhl_default_paperless_customs'     => array(
+					'title'       => esc_html__( 'Paperless Customs default', 'dhl-for-woocommerce' ),
+					'type'        => 'checkbox',
+					'label'       => esc_html__( 'Checked', 'dhl-for-woocommerce' ),
+					'default'     => 'yes',
+					'description' => esc_html__( 'Default state of the per-order Paperless Customs checkbox (DHL Paket International to Switzerland).', 'dhl-for-woocommerce' ),
+					'desc_tip'    => true,
+				),
+				'dhl_paperless_signature'           => array(
+					'title'       => esc_html__( 'Paperless Customs signature image', 'dhl-for-woocommerce' ),
+					'type'        => 'dhl_media',
+					'default'     => '',
+					'description' => esc_html__( 'Signature image stamped on the generated commercial invoice. Required for Paperless Customs.', 'dhl-for-woocommerce' ) . ' ' . esc_html__( 'The image is stored in the WordPress Media Library and is publicly accessible, so avoid a sensitive personal signature if that is a concern.', 'dhl-for-woocommerce' ),
+					'desc_tip'    => true,
+				),
+				'dhl_paperless_logo'                => array(
+					'title'       => esc_html__( 'Paperless Customs company logo (optional)', 'dhl-for-woocommerce' ),
+					'type'        => 'dhl_media',
+					'default'     => '',
+					'description' => esc_html__( 'Optional company logo for the generated commercial invoice.', 'dhl-for-woocommerce' ),
 					'desc_tip'    => true,
 				),
 				'dhl_add_weight_type'              => array(
@@ -1073,6 +1109,125 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					'default'     => '',
 				),
 			);
+		}
+
+		/**
+		 * Render a media-upload settings field (stores an attachment ID).
+		 *
+		 * @since [*next-version*]
+		 *
+		 * @param string $key  Field key.
+		 * @param array  $data Field data.
+		 * @return string The field row HTML.
+		 */
+		public function generate_dhl_media_html( $key, $data ) {
+			$field_key = $this->get_field_key( $key );
+			$defaults  = array(
+				'title'       => '',
+				'description' => '',
+				'desc_tip'    => false,
+			);
+			$data      = wp_parse_args( $data, $defaults );
+			$value     = $this->get_option( $key );
+			$image_src = $value ? wp_get_attachment_image_url( (int) $value, 'medium' ) : '';
+
+			ob_start();
+			?>
+			<tr valign="top">
+				<th scope="row" class="titledesc">
+					<label for="<?php echo esc_attr( $field_key ); ?>_button"><?php echo wp_kses_post( $data['title'] ); ?> <?php echo $this->get_tooltip_html( $data ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></label>
+				</th>
+				<td class="forminp">
+					<div class="dhl-media-field">
+						<img src="<?php echo esc_url( $image_src ); ?>" class="dhl-media-preview<?php echo $image_src ? '' : ' hidden'; ?>" alt="" />
+						<input type="hidden" id="<?php echo esc_attr( $field_key ); ?>" name="<?php echo esc_attr( $field_key ); ?>" value="<?php echo esc_attr( $value ); ?>" />
+						<button type="button" id="<?php echo esc_attr( $field_key ); ?>_button" class="button dhl-media-upload"><?php esc_html_e( 'Select image', 'dhl-for-woocommerce' ); ?></button>
+						<button type="button" class="button dhl-media-remove<?php echo $image_src ? '' : ' hidden'; ?>"><?php esc_html_e( 'Remove', 'dhl-for-woocommerce' ); ?></button>
+						<p class="description"><?php echo wp_kses_post( $data['description'] ); ?></p>
+					</div>
+				</td>
+			</tr>
+			<?php
+			return ob_get_clean();
+		}
+
+		/**
+		 * Validate a media settings field: only a PNG/JPEG image attachment ID is accepted.
+		 *
+		 * @since [*next-version*]
+		 *
+		 * @param string $key   Field key.
+		 * @param mixed  $value Posted value (attachment ID), or null if not posted.
+		 * @return string Attachment ID as a string, or an empty string if invalid.
+		 */
+		public function validate_dhl_media_field( $key, $value ) {
+			$id = (int) $value;
+
+			if ( $id <= 0 || ! wp_attachment_is_image( $id ) || 'attachment' !== get_post_type( $id ) ) {
+				return '';
+			}
+
+			if ( ! in_array( get_post_mime_type( $id ), array( 'image/png', 'image/jpeg' ), true ) ) {
+				return '';
+			}
+
+			return (string) $id;
+		}
+
+		/**
+		 * Enqueue the media picker assets, only on this shipping method's settings screen.
+		 *
+		 * @since [*next-version*]
+		 *
+		 * @return void
+		 */
+		public function enqueue_media_field_assets() {
+			$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+			if ( ! $screen || 'woocommerce_page_wc-settings' !== $screen->id ) {
+				return;
+			}
+
+			// phpcs:disable WordPress.Security.NonceVerification.Recommended
+			$tab     = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : '';
+			$section = isset( $_GET['section'] ) ? sanitize_key( wp_unslash( $_GET['section'] ) ) : '';
+			// phpcs:enable WordPress.Security.NonceVerification.Recommended
+			if ( 'shipping' !== $tab || $this->id !== $section ) {
+				return;
+			}
+
+			wp_enqueue_media();
+
+			wp_register_style( 'dhl-paket-media-field', false, array(), '1.0' );
+			wp_enqueue_style( 'dhl-paket-media-field' );
+			wp_add_inline_style( 'dhl-paket-media-field', '.dhl-media-field .hidden{display:none;}.dhl-media-field .dhl-media-preview{max-width:200px;}' );
+
+			$script = <<<'JS'
+( function ( $ ) {
+	$( document ).on( 'click', '.dhl-media-field .dhl-media-upload', function ( e ) {
+		e.preventDefault();
+		var $wrap = $( this ).closest( '.dhl-media-field' );
+		var frame = wp.media( { multiple: false, library: { type: 'image' } } );
+		frame.on( 'select', function () {
+			var att = frame.state().get( 'selection' ).first().toJSON();
+			$wrap.find( 'input[type=hidden]' ).val( att.id );
+			$wrap.find( '.dhl-media-preview' ).attr( 'src', att.url ).removeClass( 'hidden' );
+			$wrap.find( '.dhl-media-remove' ).removeClass( 'hidden' );
+		} );
+		frame.open();
+	} );
+	$( document ).on( 'click', '.dhl-media-field .dhl-media-remove', function ( e ) {
+		e.preventDefault();
+		var $wrap = $( this ).closest( '.dhl-media-field' );
+		$wrap.find( 'input[type=hidden]' ).val( '' );
+		$wrap.find( '.dhl-media-preview' ).addClass( 'hidden' );
+		$( this ).addClass( 'hidden' );
+	} );
+} )( jQuery );
+JS;
+
+			wp_register_script( 'dhl-paket-media-field', false, array( 'jquery', 'media-editor' ), '1.0', true );
+			wp_enqueue_script( 'dhl-paket-media-field' );
+			wp_add_inline_script( 'dhl-paket-media-field', $script );
 		}
 
 		// Set specific field options after initialization

@@ -604,3 +604,44 @@ jQuery( function( $ ) {
 	wc_shipment_dhl_label_items.init();
 
 } );
+
+// PDDP / Paperless Customs: mutual exclusion and product-based visibility.
+( function ( $ ) {
+	$( function () {
+		var $pddp  = $( '#pr_dhl_PDDP' );
+		var $pl    = $( '#pr_dhl_paperless_customs' );
+		var $field = $( '#pr_dhl_paperless_customs_field' );
+
+		// Boxes already disabled at render are locked by the server (label exists); never touch them.
+		var pddpLocked = $pddp.prop( 'disabled' );
+		var plLocked   = $pl.prop( 'disabled' );
+
+		function sync() {
+			if ( $field.length ) {
+				$field.toggle( 'V53WPAK' === $( '#pr_dhl_product' ).val() );
+			}
+			if ( ! $pddp.length || ! $pl.length ) { return; }
+
+			// PDDP wins if both end up checked.
+			if ( $pddp.is( ':checked' ) ) {
+				$pl.prop( 'checked', false );
+			} else if ( $pl.is( ':checked' ) && ! pddpLocked ) {
+				$pddp.prop( 'checked', false );
+			}
+			if ( ! plLocked ) {
+				$pl.prop( 'disabled', $pddp.is( ':checked' ) );
+			}
+			if ( ! pddpLocked ) {
+				$pddp.prop( 'disabled', $pl.is( ':checked' ) );
+			}
+		}
+
+		if ( ! $pddp.length && ! $pl.length ) { return; }
+
+		$pddp.on( 'change', sync );
+		$pl.on( 'change', sync );
+		// Defer so the other #pr_dhl_product handlers finish updating the form first.
+		$( document ).on( 'change', '#pr_dhl_product', function () { setTimeout( sync, 0 ); } );
+		sync();
+	} );
+} )( jQuery );

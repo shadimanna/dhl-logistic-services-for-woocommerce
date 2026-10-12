@@ -83,6 +83,7 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 				try {
 					$this->dhl_label->set_arguments( $args );
 					$items_info[] = new Item_Info( $args, $uom );
+					$this->dhl_label->maybe_apply_paperless_customs( end( $items_info ), $args );
 				} catch ( Exception $e ) {
 					$labels['errors'][] = array(
 						'order_id' => $args['order_details']['order_id'],
@@ -95,24 +96,14 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 				continue;
 			}
 
-			try {
-				// Every shipment in this chunk is created in a single API request.
-				$items = $this->dhl_label->api_client->create_items( $items_info );
-			} catch ( Exception $e ) {
-				// A whole-chunk failure applies only to this chunk's orders, so the
-				// remaining chunks are still attempted.
-				foreach ( $items_info as $item_info ) {
-					$labels['errors'][] = array(
-						'order_id' => $item_info->args['order_details']['order_id'],
-						'message'  => $e->getMessage(),
-					);
-				}
+			$items = $this->create_chunk_items( $items_info, $labels );
+			if ( null === $items ) {
 				continue;
 			}
 
 			// A multi-package order returns several shipments under the same order reference.
 			$items_by_order = array();
-			foreach ( $items['items'] as $item ) {
+			foreach ( $items['items'] ?? array() as $item ) {
 				$order_id                      = (int) str_replace( apply_filters( 'pr_shipping_dhl_paket_label_ref_no_prefix', 'order_' ), '', $item->shipmentRefNo );
 				$items_by_order[ $order_id ][] = $item;
 			}
@@ -149,6 +140,112 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		}
 
 		return $labels;
+	}
+
+	/**
+	 * Create one chunk of shipments in a single request, retrying once without Paperless Customs
+	 * for the items DHL rejected because of it.
+	 *
+	 * @param Item_Info[] $items_info The chunk's items.
+	 * @param array       $labels     Result set; per-order errors are appended.
+	 *
+	 * @return array|null The create_items() response, or null when the whole chunk failed.
+	 */
+	protected function create_chunk_items( array $items_info, array &$labels ) {
+		$has_paperless = false;
+		foreach ( $items_info as $item_info ) {
+			if ( ! empty( $item_info->services['paperlessCustoms'] ) ) {
+				$has_paperless = true;
+				break;
+			}
+		}
+
+		try {
+			$items = $this->dhl_label->api_client->create_items( $items_info );
+		} catch ( Exception $e ) {
+			if ( $has_paperless && $this->dhl_label->is_paperless_error( $e->getMessage() ) ) {
+				PR_DHL()->log_msg( 'Paperless Customs chunk rejected, retrying without it: ' . $e->getMessage() );
+				foreach ( $items_info as $item_info ) {
+					if ( ! empty( $item_info->services['paperlessCustoms'] ) ) {
+						$this->dhl_label->strip_paperless_customs( $item_info );
+					}
+				}
+				try {
+					return $this->dhl_label->api_client->create_items( $items_info );
+				} catch ( Exception $retry_e ) {
+					$e = $retry_e;
+				}
+			}
+
+			// A whole-chunk failure applies only to this chunk's orders, so the
+			// remaining chunks are still attempted.
+			foreach ( $items_info as $item_info ) {
+				$labels['errors'][] = array(
+					'order_id' => $item_info->args['order_details']['order_id'],
+					'message'  => $e->getMessage(),
+				);
+			}
+			return null;
+		}
+
+		if ( ! $has_paperless || empty( $items['errors'] ) ) {
+			return $items;
+		}
+
+		// Partial (207) failure: retry only the orders whose error mentions Paperless Customs.
+		$retry_ids = array();
+		$kept      = array();
+		foreach ( $items['errors'] as $error ) {
+			if ( $this->dhl_label->is_paperless_error( $error['message'] ?? '' ) ) {
+				$retry_ids[ (int) $error['order_id'] ] = true;
+			} else {
+				$kept[] = $error;
+			}
+		}
+
+		$retry_items = array();
+		foreach ( $items_info as $item_info ) {
+			$order_id = (int) ( $item_info->args['order_details']['order_id'] ?? 0 );
+			if ( ! isset( $retry_ids[ $order_id ] ) ) {
+				continue;
+			}
+			if ( ! empty( $item_info->services['paperlessCustoms'] ) ) {
+				$this->dhl_label->strip_paperless_customs( $item_info );
+				$retry_items[] = $item_info;
+			} else {
+				// Paperless-looking error but no paperless service on this item: report it unchanged.
+				foreach ( $items['errors'] as $error ) {
+					if ( (int) $error['order_id'] === $order_id ) {
+						$kept[] = $error;
+					}
+				}
+			}
+		}
+
+		$items['errors'] = $kept;
+		if ( empty( $retry_items ) ) {
+			return $items;
+		}
+
+		try {
+			$retry = $this->dhl_label->api_client->create_items( $retry_items );
+		} catch ( Exception $e ) {
+			foreach ( $retry_items as $item_info ) {
+				$items['errors'][] = array(
+					'order_id' => $item_info->args['order_details']['order_id'],
+					'message'  => $e->getMessage(),
+				);
+			}
+			return $items;
+		}
+
+		$items['items']  = array_merge( $items['items'] ?? array(), $retry['items'] ?? array() );
+		$items['errors'] = array_merge( $items['errors'], $retry['errors'] ?? array() );
+		if ( ! empty( $retry['warnings'] ) ) {
+			$items['warnings'] = array_merge( $items['warnings'] ?? array(), $retry['warnings'] );
+		}
+
+		return $items;
 	}
 
 	public function delete_dhl_label( $args ) {
