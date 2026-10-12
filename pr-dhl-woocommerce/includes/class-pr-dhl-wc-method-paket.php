@@ -20,13 +20,6 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 	class PR_DHL_WC_Method_Paket extends WC_Shipping_Method {
 
 		/**
-		 * Whether a dhl_media field was rendered and the picker script must be printed.
-		 *
-		 * @var bool
-		 */
-		private static $media_script_needed = false;
-
-		/**
 		 * Init and hook in the integration.
 		 */
 		public function __construct( $instance_id = 0 ) {
@@ -52,7 +45,7 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 
 			add_filter( 'woocommerce_settings_api_form_fields_' . $this->id, array( $this, 'after_init_set_field_options' ) );
 
-			add_action( 'admin_print_footer_scripts', array( $this, 'print_media_field_script' ) );
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_media_field_assets' ) );
 
 			if ( API_Utils::is_new_merchant() ) {
 				new PR_DHL_WC_Wizard_Paket();
@@ -99,10 +92,12 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 		 * @inheritdoc
 		 */
 		public function get_admin_options_html() {
-			wp_enqueue_media();
-
-			$notice = '';
-			if ( 'yes' === $this->get_option( 'dhl_default_paperless_customs', 'yes' ) && ! $this->get_option( 'dhl_paperless_signature' ) ) {
+			$notice            = '';
+			$default_paperless = $this->get_option( 'dhl_default_paperless_customs', 'yes' );
+			if ( '' === $default_paperless ) {
+				$default_paperless = 'yes';
+			}
+			if ( 'yes' === $default_paperless && ! $this->get_option( 'dhl_paperless_signature' ) ) {
 				$notice = $this->get_message(
 					esc_html__( 'Paperless Customs is on by default but no signature image is set — labels will fall back to physical customs documents until you add one.', 'dhl-for-woocommerce' ),
 					'notice notice-warning'
@@ -1140,21 +1135,19 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 			?>
 			<tr valign="top">
 				<th scope="row" class="titledesc">
-					<label for="<?php echo esc_attr( $field_key ); ?>"><?php echo wp_kses_post( $data['title'] ); ?> <?php echo $this->get_tooltip_html( $data ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></label>
+					<label for="<?php echo esc_attr( $field_key ); ?>_button"><?php echo wp_kses_post( $data['title'] ); ?> <?php echo $this->get_tooltip_html( $data ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></label>
 				</th>
 				<td class="forminp">
 					<div class="dhl-media-field">
-						<img src="<?php echo esc_url( $image_src ); ?>" class="dhl-media-preview" style="max-width:200px;<?php echo $image_src ? '' : 'display:none;'; ?>" />
+						<img src="<?php echo esc_url( $image_src ); ?>" class="dhl-media-preview<?php echo $image_src ? '' : ' hidden'; ?>" alt="" />
 						<input type="hidden" id="<?php echo esc_attr( $field_key ); ?>" name="<?php echo esc_attr( $field_key ); ?>" value="<?php echo esc_attr( $value ); ?>" />
-						<button type="button" class="button dhl-media-upload"><?php esc_html_e( 'Select image', 'dhl-for-woocommerce' ); ?></button>
-						<button type="button" class="button dhl-media-remove" style="<?php echo $image_src ? '' : 'display:none;'; ?>"><?php esc_html_e( 'Remove', 'dhl-for-woocommerce' ); ?></button>
+						<button type="button" id="<?php echo esc_attr( $field_key ); ?>_button" class="button dhl-media-upload"><?php esc_html_e( 'Select image', 'dhl-for-woocommerce' ); ?></button>
+						<button type="button" class="button dhl-media-remove<?php echo $image_src ? '' : ' hidden'; ?>"><?php esc_html_e( 'Remove', 'dhl-for-woocommerce' ); ?></button>
 						<p class="description"><?php echo wp_kses_post( $data['description'] ); ?></p>
 					</div>
 				</td>
 			</tr>
 			<?php
-			self::$media_script_needed = true;
-
 			return ob_get_clean();
 		}
 
@@ -1168,9 +1161,9 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 		 * @return string Attachment ID as a string, or an empty string if invalid.
 		 */
 		public function validate_dhl_media_field( $key, $value ) {
-			$id = absint( $value );
+			$id = (int) $value;
 
-			if ( ! $id || ! wp_attachment_is_image( $id ) ) {
+			if ( $id <= 0 || ! wp_attachment_is_image( $id ) || 'inherit' !== get_post_status( $id ) ) {
 				return '';
 			}
 
@@ -1182,42 +1175,59 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 		}
 
 		/**
-		 * Print the media-picker script once, for all dhl_media fields on the page.
+		 * Enqueue the media picker assets, only on this shipping method's settings screen.
 		 *
 		 * @since [*next-version*]
 		 *
 		 * @return void
 		 */
-		public function print_media_field_script() {
-			if ( ! self::$media_script_needed ) {
+		public function enqueue_media_field_assets() {
+			$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+			if ( ! $screen || 'woocommerce_page_wc-settings' !== $screen->id ) {
 				return;
 			}
-			self::$media_script_needed = false;
-			?>
-			<script>
-			( function ( $ ) {
-				$( document ).on( 'click', '.dhl-media-field .dhl-media-upload', function ( e ) {
-					e.preventDefault();
-					var $wrap = $( this ).closest( '.dhl-media-field' );
-					var frame = wp.media( { multiple: false, library: { type: 'image' } } );
-					frame.on( 'select', function () {
-						var att = frame.state().get( 'selection' ).first().toJSON();
-						$wrap.find( 'input[type=hidden]' ).val( att.id );
-						$wrap.find( '.dhl-media-preview' ).attr( 'src', att.url ).show();
-						$wrap.find( '.dhl-media-remove' ).show();
-					} );
-					frame.open();
-				} );
-				$( document ).on( 'click', '.dhl-media-field .dhl-media-remove', function ( e ) {
-					e.preventDefault();
-					var $wrap = $( this ).closest( '.dhl-media-field' );
-					$wrap.find( 'input[type=hidden]' ).val( '' );
-					$wrap.find( '.dhl-media-preview' ).hide();
-					$( this ).hide();
-				} );
-			} )( jQuery );
-			</script>
-			<?php
+
+			// phpcs:disable WordPress.Security.NonceVerification.Recommended
+			$tab     = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : '';
+			$section = isset( $_GET['section'] ) ? sanitize_key( wp_unslash( $_GET['section'] ) ) : '';
+			// phpcs:enable WordPress.Security.NonceVerification.Recommended
+			if ( 'shipping' !== $tab || $this->id !== $section ) {
+				return;
+			}
+
+			wp_enqueue_media();
+
+			wp_register_style( 'dhl-paket-media-field', false, array(), '1.0' );
+			wp_enqueue_style( 'dhl-paket-media-field' );
+			wp_add_inline_style( 'dhl-paket-media-field', '.dhl-media-field .hidden{display:none;}.dhl-media-field .dhl-media-preview{max-width:200px;}' );
+
+			$script = <<<'JS'
+( function ( $ ) {
+	$( document ).on( 'click', '.dhl-media-field .dhl-media-upload', function ( e ) {
+		e.preventDefault();
+		var $wrap = $( this ).closest( '.dhl-media-field' );
+		var frame = wp.media( { multiple: false, library: { type: 'image' } } );
+		frame.on( 'select', function () {
+			var att = frame.state().get( 'selection' ).first().toJSON();
+			$wrap.find( 'input[type=hidden]' ).val( att.id );
+			$wrap.find( '.dhl-media-preview' ).attr( 'src', att.url ).removeClass( 'hidden' );
+			$wrap.find( '.dhl-media-remove' ).removeClass( 'hidden' );
+		} );
+		frame.open();
+	} );
+	$( document ).on( 'click', '.dhl-media-field .dhl-media-remove', function ( e ) {
+		e.preventDefault();
+		var $wrap = $( this ).closest( '.dhl-media-field' );
+		$wrap.find( 'input[type=hidden]' ).val( '' );
+		$wrap.find( '.dhl-media-preview' ).addClass( 'hidden' );
+		$( this ).addClass( 'hidden' );
+	} );
+} )( jQuery );
+JS;
+
+			wp_register_script( 'dhl-paket-media-field', false, array( 'jquery', 'media-editor' ), '1.0', true );
+			wp_enqueue_script( 'dhl-paket-media-field' );
+			wp_add_inline_script( 'dhl-paket-media-field', $script );
 		}
 
 		// Set specific field options after initialization
