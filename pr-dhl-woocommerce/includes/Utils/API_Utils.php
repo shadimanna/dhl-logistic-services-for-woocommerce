@@ -74,9 +74,18 @@ class API_Utils {
 	 *
 	 * Starts with Switzerland only; extend via the filter to add more later.
 	 *
+	 * @since [*next-version*]
+	 *
 	 * @return string[] ISO 3166-1 alpha-2 codes.
 	 */
 	public static function paperless_supported_countries() {
+		/**
+		 * Filters the countries where Paperless Customs is available.
+		 *
+		 * @since [*next-version*]
+		 *
+		 * @param string[] $countries ISO 3166-1 alpha-2 country codes.
+		 */
 		return apply_filters( 'pr_dhl_paperless_supported_countries', array( 'CH' ) );
 	}
 
@@ -85,6 +94,8 @@ class API_Utils {
 	 *
 	 * Eligible only for DHL Paket International (V53WPAK) to a supported country,
 	 * and never together with PDDP (DHL: the two are mutually exclusive).
+	 *
+	 * @since [*next-version*]
 	 *
 	 * @param string $country_iso2 Destination country, ISO 3166-1 alpha-2.
 	 * @param string $product      DHL product code.
