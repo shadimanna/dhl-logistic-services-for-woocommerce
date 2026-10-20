@@ -1,0 +1,13 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/pr-dhl-woocommerce"
+    schedule:
+      interval: "weekly"
+    # Security updates only: no routine version-bump PRs.
+    open-pull-requests-limit: 0
+    groups:
+      npm-security:
+        applies-to: security-updates
+        patterns:
+          - "*"
