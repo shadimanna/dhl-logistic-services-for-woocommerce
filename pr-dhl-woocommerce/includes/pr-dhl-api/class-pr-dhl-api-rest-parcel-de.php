@@ -269,7 +269,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	 * @return bool
 	 */
 	public function is_paperless_error( $text ) {
-		return (bool) preg_match( '/paperless|batch|customs-document/i', (string) $text );
+		return (bool) preg_match( '/paperless|batch[ _-]?id|customs[ _-]?document/i', (string) $text );
 	}
 
 	/**
@@ -354,7 +354,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		 *
 		 * @param int $max_attempts Maximum attempts, including the first. Default 2.
 		 */
-		$max_attempts = (int) apply_filters( 'pr_dhl_paperless_upload_max_attempts', 2 );
+		$max_attempts = max( 1, (int) apply_filters( 'pr_dhl_paperless_upload_max_attempts', 2 ) );
 
 		for ( $attempt = 1; $attempt <= $max_attempts; $attempt++ ) {
 			$response = $this->send_upload( $driver, $request );
