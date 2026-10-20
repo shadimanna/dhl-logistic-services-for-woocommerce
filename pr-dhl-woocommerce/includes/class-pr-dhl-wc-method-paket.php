@@ -45,8 +45,6 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 
 			add_filter( 'woocommerce_settings_api_form_fields_' . $this->id, array( $this, 'after_init_set_field_options' ) );
 
-			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_media_field_assets' ) );
-
 			if ( API_Utils::is_new_merchant() ) {
 				new PR_DHL_WC_Wizard_Paket();
 			}
@@ -1172,62 +1170,6 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 			}
 
 			return (string) $id;
-		}
-
-		/**
-		 * Enqueue the media picker assets, only on this shipping method's settings screen.
-		 *
-		 * @since [*next-version*]
-		 *
-		 * @return void
-		 */
-		public function enqueue_media_field_assets() {
-			$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-			if ( ! $screen || 'woocommerce_page_wc-settings' !== $screen->id ) {
-				return;
-			}
-
-			// phpcs:disable WordPress.Security.NonceVerification.Recommended
-			$tab     = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : '';
-			$section = isset( $_GET['section'] ) ? sanitize_key( wp_unslash( $_GET['section'] ) ) : '';
-			// phpcs:enable WordPress.Security.NonceVerification.Recommended
-			if ( 'shipping' !== $tab || $this->id !== $section ) {
-				return;
-			}
-
-			wp_enqueue_media();
-
-			wp_register_style( 'dhl-paket-media-field', false, array(), '1.0' );
-			wp_enqueue_style( 'dhl-paket-media-field' );
-			wp_add_inline_style( 'dhl-paket-media-field', '.dhl-media-field .hidden{display:none;}.dhl-media-field .dhl-media-preview{max-width:200px;}' );
-
-			$script = <<<'JS'
-( function ( $ ) {
-	$( document ).on( 'click', '.dhl-media-field .dhl-media-upload', function ( e ) {
-		e.preventDefault();
-		var $wrap = $( this ).closest( '.dhl-media-field' );
-		var frame = wp.media( { multiple: false, library: { type: 'image' } } );
-		frame.on( 'select', function () {
-			var att = frame.state().get( 'selection' ).first().toJSON();
-			$wrap.find( 'input[type=hidden]' ).val( att.id );
-			$wrap.find( '.dhl-media-preview' ).attr( 'src', att.url ).removeClass( 'hidden' );
-			$wrap.find( '.dhl-media-remove' ).removeClass( 'hidden' );
-		} );
-		frame.open();
-	} );
-	$( document ).on( 'click', '.dhl-media-field .dhl-media-remove', function ( e ) {
-		e.preventDefault();
-		var $wrap = $( this ).closest( '.dhl-media-field' );
-		$wrap.find( 'input[type=hidden]' ).val( '' );
-		$wrap.find( '.dhl-media-preview' ).addClass( 'hidden' );
-		$( this ).addClass( 'hidden' );
-	} );
-} )( jQuery );
-JS;
-
-			wp_register_script( 'dhl-paket-media-field', false, array( 'jquery', 'media-editor' ), '1.0', true );
-			wp_enqueue_script( 'dhl-paket-media-field' );
-			wp_add_inline_script( 'dhl-paket-media-field', $script );
 		}
 
 		// Set specific field options after initialization

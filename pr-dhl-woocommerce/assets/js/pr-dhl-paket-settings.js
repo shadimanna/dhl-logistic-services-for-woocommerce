@@ -181,3 +181,30 @@ function DHLPaketMenuBuilder() {
 
 	jQuery( document.body ).trigger( 'dhlpaket:init_settings_menu' )
 }
+
+// Paperless Customs: media picker for the signature / logo image fields.
+// The hidden input change event lets WooCommerce enable the Save changes button.
+( function ( $ ) {
+	$( document ).on( 'click', '.dhl-media-field .dhl-media-upload', function ( e ) {
+		e.preventDefault();
+		if ( typeof wp === 'undefined' || ! wp.media ) {
+			return;
+		}
+		var $wrap = $( this ).closest( '.dhl-media-field' );
+		var frame = wp.media( { multiple: false, library: { type: 'image' } } );
+		frame.on( 'select', function () {
+			var att = frame.state().get( 'selection' ).first().toJSON();
+			$wrap.find( 'input[type=hidden]' ).val( att.id ).trigger( 'change' );
+			$wrap.find( '.dhl-media-preview' ).attr( 'src', att.url ).removeClass( 'hidden' );
+			$wrap.find( '.dhl-media-remove' ).removeClass( 'hidden' );
+		} );
+		frame.open();
+	} );
+	$( document ).on( 'click', '.dhl-media-field .dhl-media-remove', function ( e ) {
+		e.preventDefault();
+		var $wrap = $( this ).closest( '.dhl-media-field' );
+		$wrap.find( 'input[type=hidden]' ).val( '' ).trigger( 'change' );
+		$wrap.find( '.dhl-media-preview' ).addClass( 'hidden' );
+		$( this ).addClass( 'hidden' );
+	} );
+} )( jQuery );
