@@ -1,7 +1,7 @@
 === DHL Shipping Germany for WooCommerce ===
 Contributors: DHL, shadim, utzfu
 Tags: DPDHL, DHL, DHL eCommerce, DHL Paket Germany, Shipping
-Stable tag: 4.1.0
+Stable tag: 4.1.1
 Requires Plugins: woocommerce
 Requires PHP: 7.4
 Requires at least: 6.8
@@ -66,6 +66,9 @@ More detailed instructions on how to set up your store and configure it are cons
 * A “Google Maps API Key” is required if you wish to display DHL locations on a map for your customers.
 
 == Changelog ==
+
+= 4.1.1 =
+* Tweak: WordPress 7.1 and WooCommerce 11.1 compatibility.
 
 = 4.1.0 =
 * Add: Support for DHL Paket's new recipient services — One-Time Code, Second Delivery Attempt, No Parcel Locker and Immediate Return.
