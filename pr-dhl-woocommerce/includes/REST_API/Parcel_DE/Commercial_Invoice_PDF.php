@@ -76,10 +76,16 @@ class Commercial_Invoice_PDF {
 		$pdf->Ln( 2 );
 
 		$pdf->SetFont( self::FONT, '', 10 );
-		$party_y = $pdf->GetY();
-		$pdf->MultiCell( 90, 5, $this->format_party( $item_info->shipper ), 0, 'L', false, 0 );
-		$pdf->MultiCell( 90, 5, $this->format_party( $item_info->contactAddress ), 0, 'L', false, 1 );
-		$pdf->SetY( max( $pdf->GetY(), $party_y + 5 ) );
+		$party_y       = $pdf->GetY();
+		$shipper_text  = $this->format_party( $item_info->shipper );
+		$consignee_txt = $this->format_party( $item_info->contactAddress );
+
+		// Advance past the taller of the two side-by-side address blocks so nothing overlaps.
+		$party_lines = max( $pdf->getNumLines( $shipper_text, 90 ), $pdf->getNumLines( $consignee_txt, 90 ) );
+
+		$pdf->MultiCell( 90, 5, $shipper_text, 0, 'L', false, 0 );
+		$pdf->MultiCell( 90, 5, $consignee_txt, 0, 'L', false, 1 );
+		$pdf->SetY( $party_y + ( 5 * $party_lines ) );
 		$pdf->Ln( 2 );
 
 		$invoice_no = $item_info->args['order_details']['invoice_num'] ?? '';
@@ -121,7 +127,7 @@ class Commercial_Invoice_PDF {
 
 		// Grand total of goods only; shipping is passed to DHL separately (postalCharges).
 		$pdf->SetFont( self::FONT, 'B', 9 );
-		$pdf->Cell( 147, 6, 'Total (' . $currency . ')', 1, 0, 'R' );
+		$pdf->Cell( 155, 6, 'Total (' . $currency . ')', 1, 0, 'R' );
 		$pdf->Cell( 25, 6, number_format( $grand, 2 ), 1, 1, 'R' );
 		$pdf->Ln( 8 );
 
