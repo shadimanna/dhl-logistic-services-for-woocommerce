@@ -493,3 +493,13 @@ body.woocommerce_page_wc-settings.pr_dhl_paket .wc-shipping-zone-method-fields p
 	margin-left:0px;
 }
 
+
+
+/* Paperless Customs media picker */
+.dhl-media-field .hidden {
+	display: none;
+}
+
+.dhl-media-field .dhl-media-preview {
+	max-width: 200px;
+}
