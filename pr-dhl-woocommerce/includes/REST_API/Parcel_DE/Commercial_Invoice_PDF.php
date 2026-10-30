@@ -56,7 +56,14 @@ class Commercial_Invoice_PDF {
 			}
 		}
 
-		$pdf = new \TCPDF( 'P', 'mm', 'A4', true, 'UTF-8' );
+		// The bundled TCPDF config makes Error() die(); throw instead so the caller can fall back to a normal label.
+		$pdf = new class( 'P', 'mm', 'A4', true, 'UTF-8' ) extends \TCPDF {
+			// phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid -- Overrides TCPDF::Error().
+			public function Error( $msg ) {
+				$this->_destroy( true );
+				throw new \Exception( 'TCPDF ERROR: ' . $msg ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			}
+		};
 		$pdf->SetCreator( 'DHL for WooCommerce' );
 		$pdf->SetMargins( 15, 15, 15 );
 		$pdf->setPrintHeader( false );

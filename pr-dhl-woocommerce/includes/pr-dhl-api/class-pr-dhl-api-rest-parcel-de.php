@@ -185,7 +185,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 
 			if ( ! \PR\DHL\Utils\API_Utils::is_paperless_customs_eligible( $country, $product, $pddp ) ) {
 				// Only note the PDDP conflict; other ineligible cases are silent.
-				if ( $pddp && 'CH' === $country && 'V53WPAK' === $product ) {
+				if ( $pddp && 'V53WPAK' === $product && in_array( $country, \PR\DHL\Utils\API_Utils::paperless_supported_countries(), true ) ) {
 					$this->paperless_fallback_note( $order_id, __( 'Paperless Customs skipped: Prepaid Duties (PDDP) is enabled and cannot be combined with Paperless Customs. Attach physical customs documents to the parcel.', 'dhl-for-woocommerce' ) );
 				}
 				return;

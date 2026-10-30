@@ -503,7 +503,10 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 								'placeholder'       => '',
 								'description'       => '',
 								'value'             => esc_attr( $PDDP_value ),
-								'custom_attributes' => array( $is_disabled => $is_disabled ),
+								'custom_attributes' => array(
+									$is_disabled  => $is_disabled,
+									'data-locked' => $is_disabled ? 'yes' : 'no',
+								),
 							)
 						);
 					}
@@ -523,7 +526,10 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 								'description'       => esc_html__( 'Upload the commercial invoice digitally instead of attaching it to the parcel.', 'dhl-for-woocommerce' ),
 								'desc_tip'          => true,
 								'value'             => $paperless_value,
-								'custom_attributes' => array( $is_disabled => $is_disabled ),
+								'custom_attributes' => array(
+									$is_disabled  => $is_disabled,
+									'data-locked' => $is_disabled ? 'yes' : 'no',
+								),
 							)
 						);
 						echo '</div>';

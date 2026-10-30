@@ -95,7 +95,7 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 			if ( '' === $default_paperless ) {
 				$default_paperless = 'yes';
 			}
-			if ( 'yes' === $default_paperless && ! $this->get_option( 'dhl_paperless_signature' ) ) {
+			if ( 'yes' === $default_paperless && ! $this->get_option( 'dhl_paperless_signature' ) && $this->ships_to_paperless_country() ) {
 				$notice = $this->get_message(
 					esc_html__( 'Paperless Customs is on by default but no signature image is set — labels will fall back to physical customs documents until you add one.', 'dhl-for-woocommerce' ),
 					'notice notice-warning'
@@ -103,6 +103,17 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 			}
 
 			return $notice . '<div id="dhlpaket_shipping_method_settings"><div class="dhlpaket_tab_menu"></div><div class="dhlpaket_tab_content">' . parent::get_admin_options_html() . '</div></div>';
+		}
+
+		/**
+		 * Whether the store ships to at least one Paperless Customs country.
+		 *
+		 * @return bool
+		 */
+		protected function ships_to_paperless_country() {
+			$shipping_countries = array_keys( WC()->countries->get_shipping_countries() );
+
+			return (bool) array_intersect( API_Utils::paperless_supported_countries(), $shipping_countries );
 		}
 
 		/**

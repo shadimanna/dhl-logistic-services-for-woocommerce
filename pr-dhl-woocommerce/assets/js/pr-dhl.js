@@ -612,9 +612,9 @@ jQuery( function( $ ) {
 		var $pl    = $( '#pr_dhl_paperless_customs' );
 		var $field = $( '#pr_dhl_paperless_customs_field' );
 
-		// Boxes already disabled at render are locked by the server (label exists); never touch them.
-		var pddpLocked = $pddp.prop( 'disabled' );
-		var plLocked   = $pl.prop( 'disabled' );
+		// Boxes locked by the server (label exists); never touch them.
+		var pddpLocked = 'yes' === $pddp.attr( 'data-locked' );
+		var plLocked   = 'yes' === $pl.attr( 'data-locked' );
 
 		function sync() {
 			if ( $field.length ) {
@@ -632,7 +632,7 @@ jQuery( function( $ ) {
 				$pl.prop( 'disabled', $pddp.is( ':checked' ) );
 			}
 			if ( ! pddpLocked ) {
-				$pddp.prop( 'disabled', $pl.is( ':checked' ) );
+				$pddp.prop( 'disabled', $pl.is( ':checked' ) || 'V53WPAK' !== $( '#pr_dhl_product' ).val() );
 			}
 		}
 
