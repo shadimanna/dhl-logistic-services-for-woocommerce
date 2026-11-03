@@ -644,7 +644,8 @@ jQuery( function( $ ) {
 		$( document ).on( 'change', '#pr_dhl_product', function () { setTimeout( sync, 0 ); } );
 		$( document ).on( 'pr_dhl_deleted_label', function () {
 			pddpLocked = plLocked = false;
-			sync();
+			// Defer so the delete handler's deferred re-enable of the form runs first.
+			setTimeout( sync, 0 );
 		} );
 		sync();
 	} );
