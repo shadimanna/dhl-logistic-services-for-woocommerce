@@ -23,6 +23,13 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	const API_URL_SANDBOX = 'https://api-sandbox.dhl.com/parcel/de/shipping/';
 
 	/**
+	 * Order meta key holding the Paperless Customs batchId of the current label.
+	 *
+	 * @since [*next-version*]
+	 */
+	const PAPERLESS_BATCH_META_KEY = '_pr_dhl_paperless_customs_batch_id';
+
+	/**
 	 * The API driver instance.
 	 *
 	 * @var API_Driver_Interface
@@ -261,6 +268,49 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	}
 
 	/**
+	 * Record on the order whether its newly created label went out with Paperless Customs.
+	 *
+	 * On success the batchId is stored as order meta and noted on the order; otherwise any
+	 * batchId left from an earlier label is removed. Fallbacks are noted where they happen.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param int       $order_id  The order ID.
+	 * @param Item_Info $item_info The shipment item info the label was created from.
+	 * @return void
+	 */
+	public function record_paperless_customs_result( $order_id, Item_Info $item_info ) {
+		try {
+			$order = $order_id ? wc_get_order( $order_id ) : false;
+			if ( ! $order ) {
+				return;
+			}
+
+			$batch_id = $item_info->services['paperlessCustoms'] ?? '';
+
+			if ( '' === $batch_id ) {
+				if ( '' !== (string) $order->get_meta( self::PAPERLESS_BATCH_META_KEY ) ) {
+					$order->delete_meta_data( self::PAPERLESS_BATCH_META_KEY );
+					$order->save();
+				}
+				return;
+			}
+
+			$order->update_meta_data( self::PAPERLESS_BATCH_META_KEY, $batch_id );
+			$order->save();
+			$order->add_order_note(
+				sprintf(
+					/* translators: %s: DHL customs documents batch ID */
+					__( 'Paperless Customs applied: the commercial invoice was sent to DHL digitally (batch ID: %s). No physical customs documents are needed on the parcel.', 'dhl-for-woocommerce' ),
+					$batch_id
+				)
+			);
+		} catch ( \Throwable $e ) {
+			PR_DHL()->log_msg( 'Paperless Customs result could not be recorded: ' . $e->getMessage() );
+		}
+	}
+
+	/**
 	 * Whether an error text refers to Paperless Customs (the service, batch or customs document).
 	 *
 	 * @since [*next-version*]
@@ -476,6 +526,8 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		} else {
 			$label_tracking_info = $this->save_export_files( 'label', $args['order_details']['order_id'], $item_response['items'][0] );
 		}
+
+		$this->record_paperless_customs_result( $args['order_details']['order_id'], $item_info );
 
 		if ( ! empty( $item_response['warnings'] ) ) {
 			$label_tracking_info['dhl_label_warnings'] = $item_response['warnings'];

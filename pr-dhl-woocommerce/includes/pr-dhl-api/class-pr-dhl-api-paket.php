@@ -76,14 +76,18 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		$batches    = array_chunk( $multiple_orders_args, max( 1, $batch_size ) );
 
 		foreach ( $batches as $batch ) {
-			$items_info = array();
+			$items_info    = array();
+			$info_by_order = array();
 
 			foreach ( $batch as $args ) {
 				$args['dhl_settings'] = $this->maybe_sandbox( $args['dhl_settings'] );
 				try {
 					$this->dhl_label->set_arguments( $args );
-					$items_info[] = new Item_Info( $args, $uom );
-					$this->dhl_label->maybe_apply_paperless_customs( end( $items_info ), $args );
+					$item_info    = new Item_Info( $args, $uom );
+					$items_info[] = $item_info;
+					$this->dhl_label->maybe_apply_paperless_customs( $item_info, $args );
+
+					$info_by_order[ (int) $args['order_details']['order_id'] ] = $item_info;
 				} catch ( Exception $e ) {
 					$labels['errors'][] = array(
 						'order_id' => $args['order_details']['order_id'],
@@ -115,6 +119,10 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 						$label_tracking_info = $this->dhl_label->save_multiple_shipments( 'label', $order_id, $order_items );
 					} else {
 						$label_tracking_info = $this->dhl_label->save_export_files( 'label', $order_id, $order_items[0] );
+					}
+
+					if ( isset( $info_by_order[ $order_id ] ) ) {
+						$this->dhl_label->record_paperless_customs_result( $order_id, $info_by_order[ $order_id ] );
 					}
 
 					$label_tracking_info['order_id']        = $order_id;
