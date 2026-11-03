@@ -76,16 +76,20 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 		$batches    = array_chunk( $multiple_orders_args, max( 1, $batch_size ) );
 
 		foreach ( $batches as $batch ) {
-			$items_info    = array();
-			$info_by_order = array();
+			$items_info      = array();
+			$info_by_order   = array();
+			$paperless_queue = array();
 
 			foreach ( $batch as $args ) {
 				$args['dhl_settings'] = $this->maybe_sandbox( $args['dhl_settings'] );
 				try {
 					$this->dhl_label->set_arguments( $args );
-					$item_info    = new Item_Info( $args, $uom );
-					$items_info[] = $item_info;
-					$this->dhl_label->maybe_apply_paperless_customs( $item_info, $args );
+					$item_info         = new Item_Info( $args, $uom );
+					$items_info[]      = $item_info;
+					$paperless_queue[] = array(
+						'item_info' => $item_info,
+						'args'      => $args,
+					);
 
 					$info_by_order[ (int) $args['order_details']['order_id'] ] = $item_info;
 				} catch ( Exception $e ) {
@@ -99,6 +103,8 @@ class PR_DHL_API_Paket extends PR_DHL_API {
 			if ( empty( $items_info ) ) {
 				continue;
 			}
+
+			$this->dhl_label->apply_paperless_customs_bulk( $paperless_queue );
 
 			$items = $this->create_chunk_items( $items_info, $labels );
 			if ( null === $items ) {
