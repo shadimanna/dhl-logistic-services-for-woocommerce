@@ -642,6 +642,10 @@ jQuery( function( $ ) {
 		$pl.on( 'change', sync );
 		// Defer so the other #pr_dhl_product handlers finish updating the form first.
 		$( document ).on( 'change', '#pr_dhl_product', function () { setTimeout( sync, 0 ); } );
+		$( document ).on( 'pr_dhl_deleted_label', function () {
+			pddpLocked = plLocked = false;
+			sync();
+		} );
 		sync();
 	} );
 } )( jQuery );
