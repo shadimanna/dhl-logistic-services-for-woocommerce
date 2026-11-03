@@ -84,7 +84,7 @@ class Commercial_Invoice_PDF {
 
 		$pdf->SetFont( self::FONT, '', 10 );
 		$party_y       = $pdf->GetY();
-		$shipper_text  = $this->format_party( $item_info->shipper );
+		$shipper_text  = $this->format_party( $item_info->shipper ) . $this->format_shipper_ids( $settings );
 		$consignee_txt = $this->format_party( $item_info->contactAddress );
 
 		// Advance past the taller of the two side-by-side address blocks so nothing overlaps.
@@ -96,21 +96,23 @@ class Commercial_Invoice_PDF {
 		$pdf->Ln( 2 );
 
 		$invoice_no = $item_info->args['order_details']['invoice_num'] ?? '';
-		$pdf->Cell( 0, 5, 'Invoice No: ' . $invoice_no . '   Date: ' . wp_date( 'Y-m-d' ), 0, 1 );
+		$currency   = $item_info->args['order_details']['currency'] ?? '';
+		$pdf->Cell( 0, 5, 'Invoice No: ' . $invoice_no . '   Date: ' . wp_date( 'Y-m-d' ) . '   Currency: ' . $currency, 0, 1 );
 		$pdf->Ln( 2 );
 
 		// Line items table header.
 		$pdf->SetFont( self::FONT, 'B', 9 );
-		$pdf->Cell( 70, 6, 'Description', 1 );
-		$pdf->Cell( 22, 6, 'HS code', 1 );
-		$pdf->Cell( 20, 6, 'Origin', 1 );
-		$pdf->Cell( 15, 6, 'Qty', 1, 0, 'R' );
-		$pdf->Cell( 28, 6, 'Unit value', 1, 0, 'R' );
-		$pdf->Cell( 25, 6, 'Total', 1, 1, 'R' );
+		$pdf->Cell( 58, 6, 'Description', 1 );
+		$pdf->Cell( 20, 6, 'HS code', 1 );
+		$pdf->Cell( 16, 6, 'Origin', 1 );
+		$pdf->Cell( 12, 6, 'Qty', 1, 0, 'R' );
+		$pdf->Cell( 22, 6, 'Net wt (kg)', 1, 0, 'R' );
+		$pdf->Cell( 26, 6, 'Unit value', 1, 0, 'R' );
+		$pdf->Cell( 26, 6, 'Total', 1, 1, 'R' );
 
 		$pdf->SetFont( self::FONT, '', 9 );
-		$currency = $item_info->args['order_details']['currency'] ?? '';
-		$grand    = 0.0;
+		$goods      = 0.0;
+		$net_weight = 0.0;
 		foreach ( $item_info->items as $item ) {
 			$qty  = (float) ( $item['packagedQuantity'] ?? 0 );
 			$unit = (float) ( $item['itemValue']['amount'] ?? 0 );
@@ -121,22 +123,38 @@ class Commercial_Invoice_PDF {
 			} else {
 				$total = $qty * $unit;
 			}
-			$grand += $total;
+			$goods += $total;
 
-			$desc = wp_html_excerpt( (string) ( $item['itemDescription'] ?? '' ), 60, '…' );
-			$pdf->Cell( 70, 6, $desc, 1 );
-			$pdf->Cell( 22, 6, (string) ( $item['hsCode'] ?? '' ), 1 );
-			$pdf->Cell( 20, 6, (string) ( $item['countryOfOrigin'] ?? '' ), 1 );
-			$pdf->Cell( 15, 6, (string) $qty, 1, 0, 'R' );
-			$pdf->Cell( 28, 6, number_format( $unit, 2 ), 1, 0, 'R' );
-			$pdf->Cell( 25, 6, number_format( $total, 2 ), 1, 1, 'R' );
+			// DHL's itemWeight is the net weight of one single item.
+			$line_weight = $qty * $this->weight_in_kg( $item['itemWeight']['value'] ?? 0, $item_info->weightUom );
+			$net_weight += $line_weight;
+
+			$desc = wp_html_excerpt( (string) ( $item['itemDescription'] ?? '' ), 48, '…' );
+			$pdf->Cell( 58, 6, $desc, 1 );
+			$pdf->Cell( 20, 6, (string) ( $item['hsCode'] ?? '' ), 1 );
+			$pdf->Cell( 16, 6, (string) ( $item['countryOfOrigin'] ?? '' ), 1 );
+			$pdf->Cell( 12, 6, (string) $qty, 1, 0, 'R' );
+			$pdf->Cell( 22, 6, number_format( $line_weight, 3 ), 1, 0, 'R' );
+			$pdf->Cell( 26, 6, number_format( $unit, 2 ), 1, 0, 'R' );
+			$pdf->Cell( 26, 6, number_format( $total, 2 ), 1, 1, 'R' );
 		}
 
-		// Grand total of goods only; shipping is passed to DHL separately (postalCharges).
+		// Same value as the customs postalCharges, which DHL requires to match the invoice.
+		$shipping = $this->shipping_charges( $item_info );
+
+		$pdf->Cell( 154, 6, 'Goods subtotal (' . $currency . ')', 1, 0, 'R' );
+		$pdf->Cell( 26, 6, number_format( $goods, 2 ), 1, 1, 'R' );
+		$pdf->Cell( 154, 6, 'Shipping charges (' . $currency . ')', 1, 0, 'R' );
+		$pdf->Cell( 26, 6, number_format( $shipping, 2 ), 1, 1, 'R' );
 		$pdf->SetFont( self::FONT, 'B', 9 );
-		$pdf->Cell( 155, 6, 'Total (' . $currency . ')', 1, 0, 'R' );
-		$pdf->Cell( 25, 6, number_format( $grand, 2 ), 1, 1, 'R' );
-		$pdf->Ln( 8 );
+		$pdf->Cell( 154, 6, 'Total (' . $currency . ')', 1, 0, 'R' );
+		$pdf->Cell( 26, 6, number_format( $goods + $shipping, 2 ), 1, 1, 'R' );
+		$pdf->Ln( 3 );
+
+		$pdf->SetFont( self::FONT, '', 9 );
+		$gross_weight = $this->weight_in_kg( $item_info->shipment['weight'] ?? 0, $item_info->weightUom );
+		$pdf->Cell( 0, 5, 'Total net weight: ' . number_format( $net_weight, 3 ) . ' kg   Total gross weight: ' . number_format( $gross_weight, 3 ) . ' kg', 0, 1 );
+		$pdf->Ln( 5 );
 
 		// Reason for export + declaration (English intentionally, for customs).
 		$pdf->SetFont( self::FONT, '', 9 );
@@ -173,6 +191,60 @@ class Commercial_Invoice_PDF {
 		);
 
 		return implode( "\n", array_filter( $lines ) );
+	}
+
+	/**
+	 * Format the shipper's optional EORI and VAT numbers as extra address lines.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param array $settings Plugin settings incl. optional 'paperless_eori' and 'paperless_vat'.
+	 * @return string Lines prefixed with a newline, or an empty string when neither is set.
+	 */
+	protected function format_shipper_ids( array $settings ) {
+		$lines = '';
+		$eori  = trim( (string) ( $settings['paperless_eori'] ?? '' ) );
+		$vat   = trim( (string) ( $settings['paperless_vat'] ?? '' ) );
+
+		if ( '' !== $eori ) {
+			$lines .= "\nEORI: " . $eori;
+		}
+		if ( '' !== $vat ) {
+			$lines .= "\nVAT No: " . $vat;
+		}
+
+		return $lines;
+	}
+
+	/**
+	 * Shipping charges for the invoice, computed exactly like the customs postalCharges.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param Item_Info $item_info The shipment info.
+	 * @return float Shipping fee plus additional fees.
+	 */
+	protected function shipping_charges( Item_Info $item_info ) {
+		$details = $item_info->args['order_details'] ?? array();
+
+		return floatval( $details['additional_fee'] ?? 0 ) + floatval( $details['shipping_fee'] ?? 0 );
+	}
+
+	/**
+	 * Convert a weight from Item_Info to kilograms.
+	 *
+	 * Item_Info keeps weights in kg when the store unit is kg, and in grams otherwise.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param float|string $weight     The weight as stored in Item_Info.
+	 * @param string       $weight_uom The store weight unit Item_Info was built with.
+	 * @return float Weight in kilograms.
+	 */
+	protected function weight_in_kg( $weight, $weight_uom ) {
+		$weight = (float) $weight;
+
+		return 'kg' === $weight_uom ? $weight : $weight / 1000;
 	}
 
 	/**

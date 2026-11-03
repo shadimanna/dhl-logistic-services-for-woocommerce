@@ -550,6 +550,20 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 					'description' => esc_html__( 'Optional company logo for the generated commercial invoice.', 'dhl-for-woocommerce' ),
 					'desc_tip'    => true,
 				),
+				'dhl_paperless_eori'                => array(
+					'title'       => esc_html__( 'Paperless Customs EORI number (optional)', 'dhl-for-woocommerce' ),
+					'type'        => 'text',
+					'default'     => '',
+					'description' => esc_html__( 'Your EORI number, printed on the generated commercial invoice when filled.', 'dhl-for-woocommerce' ),
+					'desc_tip'    => true,
+				),
+				'dhl_paperless_vat'                 => array(
+					'title'       => esc_html__( 'Paperless Customs VAT number (optional)', 'dhl-for-woocommerce' ),
+					'type'        => 'text',
+					'default'     => '',
+					'description' => esc_html__( 'Your VAT identification number, printed on the generated commercial invoice when filled.', 'dhl-for-woocommerce' ),
+					'desc_tip'    => true,
+				),
 				'dhl_add_weight_type'              => array(
 					'title'       => esc_html__( 'Additional Weight Type', 'dhl-for-woocommerce' ),
 					'type'        => 'select',
