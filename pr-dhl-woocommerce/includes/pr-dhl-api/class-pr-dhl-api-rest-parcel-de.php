@@ -169,9 +169,11 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		$code = (int) $response->status;
 		$body = json_decode( $response->body );
 
+		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- DHL API response field.
 		if ( 201 === $code && isset( $body->batchId ) ) {
 			return $body->batchId;
 		}
+		// phpcs:enable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 
 		$detail = '';
 		if ( is_object( $body ) ) {
@@ -326,15 +328,19 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 			return $results;
 		}
 
-		$responses = \WpOrg\Requests\Requests::request_multiple(
-			$requests,
-			array(
-				'timeout'         => \PR\DHL\REST_API\Drivers\WP_API_Driver::WP_REQUEST_TIMEOUT,
-				'connect_timeout' => \PR\DHL\REST_API\Drivers\WP_API_Driver::WP_REQUEST_TIMEOUT,
-				'verify'          => ABSPATH . WPINC . '/certificates/ca-bundle.crt',
-				'useragent'       => 'WooCommerce/' . WC_VERSION . ' (WordPress/' . get_bloginfo( 'version' ) . ') DHL-plug-in/' . PR_DHL_VERSION,
-			)
+		$options = array(
+			'timeout'         => \PR\DHL\REST_API\Drivers\WP_API_Driver::WP_REQUEST_TIMEOUT,
+			'connect_timeout' => \PR\DHL\REST_API\Drivers\WP_API_Driver::WP_REQUEST_TIMEOUT,
+			'verify'          => ABSPATH . WPINC . '/certificates/ca-bundle.crt',
+			'useragent'       => 'WooCommerce/' . WC_VERSION . ' (WordPress/' . get_bloginfo( 'version' ) . ') DHL-plug-in/' . PR_DHL_VERSION,
 		);
+
+		$proxy = $this->get_requests_proxy( reset( $requests )['url'] );
+		if ( null !== $proxy ) {
+			$options['proxy'] = $proxy;
+		}
+
+		$responses = \WpOrg\Requests\Requests::request_multiple( $requests, $options );
 
 		foreach ( $requests as $key => $unused ) {
 			$raw = $responses[ $key ] ?? null;
@@ -361,6 +367,35 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		}
 
 		return $results;
+	}
+
+	/**
+	 * Build the Requests 'proxy' option from the WordPress proxy settings (WP_PROXY_* constants).
+	 *
+	 * Mirrors WP_Http so the parallel uploads use the same proxy as wp_remote_request().
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $url The URL the requests are sent to.
+	 * @return array|null The proxy option, or null when no proxy applies to this URL.
+	 */
+	protected function get_requests_proxy( $url ) {
+		if ( ! class_exists( 'WP_HTTP_Proxy' ) ) {
+			require_once ABSPATH . WPINC . '/class-wp-http-proxy.php';
+		}
+
+		$proxy = new \WP_HTTP_Proxy();
+		if ( ! $proxy->is_enabled() || ! $proxy->send_through_proxy( $url ) ) {
+			return null;
+		}
+
+		$option = array( $proxy->host() . ':' . $proxy->port() );
+		if ( $proxy->use_authentication() ) {
+			$option[] = $proxy->username();
+			$option[] = $proxy->password();
+		}
+
+		return $option;
 	}
 
 	/**
