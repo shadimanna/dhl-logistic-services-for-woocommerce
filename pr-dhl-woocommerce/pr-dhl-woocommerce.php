@@ -41,6 +41,11 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 	class PR_DHL_WC {
 
+		/**
+		 * Plugin version.
+		 *
+		 * @var string
+		 */
 		private $version = '4.1.1';
 
 		/**

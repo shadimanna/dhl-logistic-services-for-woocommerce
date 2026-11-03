@@ -1,4 +1,9 @@
 <?php
+/**
+ * Commercial invoice PDF for DHL Paperless Customs.
+ *
+ * @package PR_DHL
+ */
 
 namespace PR\DHL\REST_API\Parcel_DE;
 
@@ -58,8 +63,14 @@ class Commercial_Invoice_PDF {
 
 		// The bundled TCPDF config makes Error() die(); throw instead so the caller can fall back to a normal label.
 		$pdf = new class( 'P', 'mm', 'A4', true, 'UTF-8' ) extends \TCPDF {
-			// phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid -- Overrides TCPDF::Error().
-			public function Error( $msg ) {
+			/**
+			 * Throw instead of die() on a TCPDF error.
+			 *
+			 * @param string $msg The TCPDF error message.
+			 * @return void
+			 * @throws \Exception Always.
+			 */
+			public function Error( $msg ) { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid -- Overrides TCPDF::Error().
 				$this->_destroy( true );
 				throw new \Exception( 'TCPDF ERROR: ' . $msg ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 			}
@@ -85,7 +96,7 @@ class Commercial_Invoice_PDF {
 		$pdf->SetFont( self::FONT, '', 10 );
 		$party_y       = $pdf->GetY();
 		$shipper_text  = $this->format_party( $item_info->shipper ) . $this->format_shipper_ids( $settings );
-		$consignee_txt = $this->format_party( $item_info->contactAddress );
+		$consignee_txt = $this->format_party( $item_info->contactAddress ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- Item_Info property name.
 
 		// Advance past the taller of the two side-by-side address blocks so nothing overlaps.
 		$party_lines = max( $pdf->getNumLines( $shipper_text, 90 ), $pdf->getNumLines( $consignee_txt, 90 ) );
@@ -126,7 +137,7 @@ class Commercial_Invoice_PDF {
 			$goods += $total;
 
 			// DHL's itemWeight is the net weight of one single item.
-			$line_weight = $qty * $this->weight_in_kg( $item['itemWeight']['value'] ?? 0, $item_info->weightUom );
+			$line_weight = $qty * $this->weight_in_kg( $item['itemWeight']['value'] ?? 0, $item_info->weightUom ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- Item_Info property name.
 			$net_weight += $line_weight;
 
 			$desc = wp_html_excerpt( (string) ( $item['itemDescription'] ?? '' ), 48, '…' );
@@ -152,7 +163,7 @@ class Commercial_Invoice_PDF {
 		$pdf->Ln( 3 );
 
 		$pdf->SetFont( self::FONT, '', 9 );
-		$gross_weight = $this->weight_in_kg( $item_info->shipment['weight'] ?? 0, $item_info->weightUom );
+		$gross_weight = $this->weight_in_kg( $item_info->shipment['weight'] ?? 0, $item_info->weightUom ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- Item_Info property name.
 		$pdf->Cell( 0, 5, 'Total net weight: ' . number_format( $net_weight, 3 ) . ' kg   Total gross weight: ' . number_format( $gross_weight, 3 ) . ' kg', 0, 1 );
 		$pdf->Ln( 5 );
 
