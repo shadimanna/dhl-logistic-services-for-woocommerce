@@ -948,6 +948,11 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 				}
 			}
 
+			// Bulk and status-change labels never render the order screen, which is where the invoice number gets its default.
+			if ( empty( $args['order_details']['invoice_num'] ) ) {
+				$args['order_details']['invoice_num'] = (string) $order_id;
+			}
+
 			// if ( $this->is_crossborder_shipment( $order_id ) ) {
 			// $dhl_label_items['pr_dhl_description'] = $this->get_package_description( $order_id );
 			// $args['order_details']['description'] = $dhl_label_items['pr_dhl_description'];
