@@ -789,6 +789,28 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 		}
 
 		/**
+		 * Delete the label tracking data together with the Paperless Customs batchId of that label.
+		 *
+		 * @since [*next-version*]
+		 *
+		 * @param int $order_id The order ID.
+		 * @return void
+		 */
+		public function delete_dhl_label_tracking( $order_id ) {
+			parent::delete_dhl_label_tracking( $order_id );
+
+			if ( ! class_exists( 'PR_DHL_API_REST_Parcel_DE' ) ) {
+				return;
+			}
+
+			$order = wc_get_order( $order_id );
+			if ( $order && '' !== (string) $order->get_meta( PR_DHL_API_REST_Parcel_DE::PAPERLESS_BATCH_META_KEY ) ) {
+				$order->delete_meta_data( PR_DHL_API_REST_Parcel_DE::PAPERLESS_BATCH_META_KEY );
+				$order->save();
+			}
+		}
+
+		/**
 		 * Order Tracking Save
 		 *
 		 * Function for saving tracking items
