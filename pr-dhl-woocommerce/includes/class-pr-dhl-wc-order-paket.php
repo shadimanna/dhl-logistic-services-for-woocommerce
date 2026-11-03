@@ -532,6 +532,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 								),
 							)
 						);
+						echo '<input type="hidden" name="pr_dhl_paperless_customs_rendered" value="1"' . ( $is_disabled ? ' disabled="disabled"' : '' ) . ' />'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						echo '</div>';
 					}
 
@@ -760,6 +761,33 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			echo '</div>'; // END -- Multiple Packages
 			// echo '<hr style="clear:both;">';
 		}
+
+		/**
+		 * Save the label meta box, keeping an unticked Paperless Customs box as an explicit opt-out.
+		 *
+		 * A native form submit ("Update") omits unticked checkboxes, so without this the
+		 * default ('yes') would come back on reload and be used by bulk label creation.
+		 *
+		 * @since [*next-version*]
+		 *
+		 * @param int          $post_id The order ID.
+		 * @param WP_Post|null $post    The post object, if any.
+		 * @return array|void The saved label items, or nothing when nothing was saved.
+		 */
+		public function save_meta_box( $post_id, $post = null ) {
+			$args = parent::save_meta_box( $post_id, $post );
+
+			// The parent only returns data after verifying the nonce.
+			// phpcs:disable WordPress.Security.NonceVerification.Missing
+			if ( is_array( $args ) && ! empty( $_POST['pr_dhl_paperless_customs_rendered'] ) && ! isset( $_POST['pr_dhl_paperless_customs'] ) ) {
+				$args['pr_dhl_paperless_customs'] = 'no';
+				$this->save_dhl_label_items( $post_id, array( 'pr_dhl_paperless_customs' => 'no' ) );
+			}
+			// phpcs:enable WordPress.Security.NonceVerification.Missing
+
+			return $args;
+		}
+
 		/**
 		 * Order Tracking Save
 		 *
