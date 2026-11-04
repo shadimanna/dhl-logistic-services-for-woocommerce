@@ -129,7 +129,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		// Send via the RAW WP driver (NOT the JSON decorator, which would re-encode the body).
 		$driver = new \PR\DHL\REST_API\Drivers\WP_API_Driver();
 
-		return $this->parse_customs_documents_response( $this->upload_with_retry( $driver, $request ) );
+		return $this->parse_customs_documents_response( $this->upload_with_retry( $driver, $request ), $reference );
 	}
 
 	/**
@@ -182,17 +182,18 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @param \PR\DHL\REST_API\Response $response The upload response.
+	 * @param \PR\DHL\REST_API\Response $response  The upload response.
+	 * @param string                    $reference The upload's reference (the order ID), for the log.
 	 * @return string The DHL batchId (UUID).
 	 * @throws Exception When the upload was not accepted.
 	 */
-	protected function parse_customs_documents_response( $response ) {
+	protected function parse_customs_documents_response( $response, $reference = '' ) {
 		$code = (int) $response->status;
 		$body = json_decode( $response->body );
 
 		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- DHL API response field.
 		if ( 201 === $code && isset( $body->batchId ) ) {
-			PR_DHL()->log_msg( 'Paperless Customs upload accepted (HTTP 201): batchId ' . $body->batchId );
+			PR_DHL()->log_msg( sprintf( 'Paperless Customs upload accepted (HTTP 201, reference "%s"): batchId %s', $reference, $body->batchId ) );
 			return $body->batchId;
 		}
 		// phpcs:enable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
@@ -400,14 +401,14 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 			}
 
 			try {
-				$results[ $key ] = $this->parse_customs_documents_response( $response );
+				$results[ $key ] = $this->parse_customs_documents_response( $response, (string) $jobs[ $key ]['order_id'] );
 			} catch ( \Throwable $e ) {
 				$results[ $key ] = $e;
 			}
 		}
 
 		if ( ! empty( $limited ) ) {
-			$this->retry_rate_limited_uploads( $limited, $sent, $results );
+			$this->retry_rate_limited_uploads( $limited, $sent, $jobs, $results );
 		}
 
 		return $results;
@@ -424,10 +425,11 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	 *
 	 * @param \PR\DHL\REST_API\Response[] $limited The 429 responses, keyed like the jobs.
 	 * @param \PR\DHL\REST_API\Request[]  $sent    The upload requests, keyed like the jobs.
+	 * @param array                       $jobs    The prepared jobs, for each upload's order ID.
 	 * @param array                       $results Per key: the batchId or the failure; filled in here.
 	 * @return void
 	 */
-	protected function retry_rate_limited_uploads( array $limited, array $sent, array &$results ) {
+	protected function retry_rate_limited_uploads( array $limited, array $sent, array $jobs, array &$results ) {
 		$this->paperless_rate_limited     = true;
 		$this->paperless_rate_limit_hits += count( $limited );
 
@@ -462,7 +464,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 
 		foreach ( $limited as $key => $response ) {
 			try {
-				$results[ $key ] = $this->parse_customs_documents_response( $response );
+				$results[ $key ] = $this->parse_customs_documents_response( $response, (string) $jobs[ $key ]['order_id'] );
 			} catch ( \Throwable $e ) {
 				$results[ $key ] = $e;
 			}
