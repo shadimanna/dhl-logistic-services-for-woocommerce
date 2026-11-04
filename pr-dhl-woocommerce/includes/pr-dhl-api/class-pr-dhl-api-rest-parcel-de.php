@@ -70,6 +70,15 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	protected $paperless_unavailable = false;
 
 	/**
+	 * Number of parallel Paperless Customs uploads that DHL rate limited (HTTP 429) in this request.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @var int
+	 */
+	protected $paperless_rate_limit_hits = 0;
+
+	/**
 	 * Constructor.
 	 *
 	 * @throws Exception If an error occurred while creating the API driver, auth or client.
@@ -277,10 +286,19 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 			 */
 			$concurrency = max( 1, (int) apply_filters( 'pr_dhl_paperless_upload_concurrency', 10 ) );
 
-			foreach ( array_chunk( $jobs, $concurrency, true ) as $group ) {
+			while ( ! empty( $jobs ) ) {
+				$group = array_slice( $jobs, 0, $concurrency, true );
+				$jobs  = array_slice( $jobs, $concurrency, null, true );
+				$hits  = $this->paperless_rate_limit_hits;
+
 				$results = $this->upload_customs_documents_parallel( $group );
 				foreach ( $group as $key => $job ) {
 					$this->attach_paperless_batch( $job['item_info'], $job['order_id'], $results[ $key ] ?? new Exception( 'No upload response.' ) );
+				}
+
+				// DHL rate limited this group, so send the next ones in smaller bursts.
+				if ( $this->paperless_rate_limit_hits > $hits ) {
+					$concurrency = max( 1, intdiv( $concurrency, 2 ) );
 				}
 			}
 		} catch ( \Throwable $e ) {
@@ -291,8 +309,9 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	/**
 	 * Upload several invoices at once with the WordPress Requests library.
 	 *
-	 * A rate-limited (429) upload is retried on its own through the sequential backoff path.
-	 * Connectivity errors and 5xx responses trip the circuit breaker, as in send_upload().
+	 * Rate-limited (429) uploads are re-sent together after one shared wait, see
+	 * retry_rate_limited_uploads(). Connectivity errors and 5xx responses trip the
+	 * circuit breaker, as in send_upload().
 	 *
 	 * @since [*next-version*]
 	 *
@@ -341,6 +360,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		}
 
 		$responses = \WpOrg\Requests\Requests::request_multiple( $requests, $options );
+		$limited   = array();
 
 		foreach ( $requests as $key => $unused ) {
 			$raw = $responses[ $key ] ?? null;
@@ -351,22 +371,86 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 				continue;
 			}
 
-			$response = new \PR\DHL\REST_API\Response( $sent[ $key ], $raw->status_code, $raw->body );
+			$headers  = $raw->headers instanceof \Traversable ? iterator_to_array( $raw->headers ) : array();
+			$response = new \PR\DHL\REST_API\Response( $sent[ $key ], $raw->status_code, $raw->body, $headers );
+
+			if ( 429 === (int) $response->status ) {
+				$limited[ $key ] = $response;
+				continue;
+			}
+
+			if ( (int) $response->status >= 500 ) {
+				$this->paperless_unavailable = true;
+			}
 
 			try {
-				if ( 429 === (int) $response->status ) {
-					$response = $this->upload_with_retry( new \PR\DHL\REST_API\Drivers\WP_API_Driver(), $sent[ $key ] );
-				} elseif ( (int) $response->status >= 500 ) {
-					$this->paperless_unavailable = true;
-				}
-
 				$results[ $key ] = $this->parse_customs_documents_response( $response );
 			} catch ( \Throwable $e ) {
 				$results[ $key ] = $e;
 			}
 		}
 
+		if ( ! empty( $limited ) ) {
+			$this->retry_rate_limited_uploads( $limited, $sent, $results );
+		}
+
 		return $results;
+	}
+
+	/**
+	 * Re-send the rate-limited uploads of a parallel group once, after a single shared wait.
+	 *
+	 * The wait is the longest Retry-After of the group (or the default backoff). A Retry-After
+	 * above the cap, or a max-attempts filter of 1, fails the uploads without retrying. Once a
+	 * re-send is rate limited again, the rest of the group fails without being sent.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param \PR\DHL\REST_API\Response[] $limited The 429 responses, keyed like the jobs.
+	 * @param \PR\DHL\REST_API\Request[]  $sent    The upload requests, keyed like the jobs.
+	 * @param array                       $results Per key: the batchId or the failure; filled in here.
+	 * @return void
+	 */
+	protected function retry_rate_limited_uploads( array $limited, array $sent, array &$results ) {
+		$this->paperless_rate_limited     = true;
+		$this->paperless_rate_limit_hits += count( $limited );
+
+		$wait = 0;
+		foreach ( $limited as $response ) {
+			$response_wait = $this->rate_limit_wait( $response );
+			if ( null === $response_wait ) {
+				$wait = null;
+				break;
+			}
+			$wait = max( $wait, $response_wait );
+		}
+
+		if ( null !== $wait && $this->upload_max_attempts() > 1 ) {
+			sleep( $wait );
+
+			$driver        = new \PR\DHL\REST_API\Drivers\WP_API_Driver();
+			$still_limited = false;
+			foreach ( $limited as $key => $response ) {
+				if ( $still_limited || $this->paperless_unavailable ) {
+					continue;
+				}
+				try {
+					$limited[ $key ] = $this->send_upload( $driver, $sent[ $key ] );
+					$still_limited   = 429 === (int) $limited[ $key ]->status;
+				} catch ( \Throwable $e ) {
+					$results[ $key ] = $e;
+					unset( $limited[ $key ] );
+				}
+			}
+		}
+
+		foreach ( $limited as $key => $response ) {
+			try {
+				$results[ $key ] = $this->parse_customs_documents_response( $response );
+			} catch ( \Throwable $e ) {
+				$results[ $key ] = $e;
+			}
+		}
 	}
 
 	/**
@@ -639,14 +723,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 			return $this->send_upload( $driver, $request );
 		}
 
-		/**
-		 * Filters the maximum number of Paperless Customs upload attempts.
-		 *
-		 * @since [*next-version*]
-		 *
-		 * @param int $max_attempts Maximum attempts, including the first. Default 2.
-		 */
-		$max_attempts = max( 1, (int) apply_filters( 'pr_dhl_paperless_upload_max_attempts', 2 ) );
+		$max_attempts = $this->upload_max_attempts();
 
 		for ( $attempt = 1; $attempt <= $max_attempts; $attempt++ ) {
 			$response = $this->send_upload( $driver, $request );
@@ -660,40 +737,75 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 				return $response;
 			}
 
-			/**
-			 * Filters the seconds to wait before retrying a rate-limited Paperless Customs upload.
-			 *
-			 * @since [*next-version*]
-			 *
-			 * @param int $seconds Backoff in seconds. Default 2.
-			 */
-			$backoff = (int) apply_filters( 'pr_dhl_paperless_upload_backoff_seconds', 2 );
-
-			/**
-			 * Filters the longest Retry-After (seconds) that is honored; a longer one skips the retry.
-			 *
-			 * @since [*next-version*]
-			 *
-			 * @param int $cap Hard cap in seconds. Default 10.
-			 */
-			$cap = (int) apply_filters( 'pr_dhl_paperless_upload_retry_after_cap', 10 );
-
-			if ( is_array( $response->headers ) ) {
-				foreach ( $response->headers as $name => $value ) {
-					if ( 'retry-after' === strtolower( (string) $name ) && is_numeric( $value ) ) {
-						if ( (int) $value > $cap ) {
-							return $response;
-						}
-						$backoff = (int) $value;
-						break;
-					}
-				}
+			$wait = $this->rate_limit_wait( $response );
+			if ( null === $wait ) {
+				return $response;
 			}
 
-			sleep( max( 0, min( $backoff, $cap ) ) );
+			sleep( $wait );
 		}
 
 		return $response;
+	}
+
+	/**
+	 * Maximum number of attempts for one Paperless Customs upload.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return int At least 1.
+	 */
+	protected function upload_max_attempts() {
+		/**
+		 * Filters the maximum number of Paperless Customs upload attempts.
+		 *
+		 * @since [*next-version*]
+		 *
+		 * @param int $max_attempts Maximum attempts, including the first. Default 2.
+		 */
+		return max( 1, (int) apply_filters( 'pr_dhl_paperless_upload_max_attempts', 2 ) );
+	}
+
+	/**
+	 * Seconds to wait before re-sending a rate-limited (429) upload.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param \PR\DHL\REST_API\Response $response The 429 response.
+	 * @return int|null Seconds to wait, or null when its Retry-After exceeds the cap (no retry).
+	 */
+	protected function rate_limit_wait( $response ) {
+		/**
+		 * Filters the seconds to wait before retrying a rate-limited Paperless Customs upload.
+		 *
+		 * @since [*next-version*]
+		 *
+		 * @param int $seconds Backoff in seconds. Default 2.
+		 */
+		$backoff = (int) apply_filters( 'pr_dhl_paperless_upload_backoff_seconds', 2 );
+
+		/**
+		 * Filters the longest Retry-After (seconds) that is honored; a longer one skips the retry.
+		 *
+		 * @since [*next-version*]
+		 *
+		 * @param int $cap Hard cap in seconds. Default 10.
+		 */
+		$cap = (int) apply_filters( 'pr_dhl_paperless_upload_retry_after_cap', 10 );
+
+		if ( is_array( $response->headers ) ) {
+			foreach ( $response->headers as $name => $value ) {
+				if ( 'retry-after' === strtolower( (string) $name ) && is_numeric( $value ) ) {
+					if ( (int) $value > $cap ) {
+						return null;
+					}
+					$backoff = (int) $value;
+					break;
+				}
+			}
+		}
+
+		return max( 0, min( $backoff, $cap ) );
 	}
 
 	/**
