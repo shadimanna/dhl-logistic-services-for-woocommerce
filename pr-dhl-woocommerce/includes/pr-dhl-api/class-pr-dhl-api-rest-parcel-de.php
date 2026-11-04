@@ -359,6 +359,9 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 			$options['proxy'] = $proxy;
 		}
 
+		// This bypasses wp_remote_request(), so the WordPress HTTP filters (http_request_args,
+		// pre_http_request, https_ssl_verify, http_api_debug) and tools hooked into them, such
+		// as Query Monitor, do not see these uploads. Only the proxy settings are mirrored above.
 		$responses = \WpOrg\Requests\Requests::request_multiple( $requests, $options );
 		$limited   = array();
 
