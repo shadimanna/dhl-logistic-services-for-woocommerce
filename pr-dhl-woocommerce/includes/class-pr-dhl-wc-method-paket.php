@@ -1193,7 +1193,23 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 		 * @return string Attachment ID as a string, or an empty string if invalid.
 		 */
 		public function validate_dhl_media_field( $key, $value ) {
-			return $this->is_usable_paperless_image( $value ) ? (string) (int) $value : '';
+			if ( $this->is_usable_paperless_image( $value ) ) {
+				return (string) (int) $value;
+			}
+
+			// Say why a selected image was dropped, instead of silently saving an empty field.
+			if ( ! empty( $value ) && class_exists( 'WC_Admin_Settings' ) ) {
+				$fields = $this->get_form_fields();
+				WC_Admin_Settings::add_error(
+					sprintf(
+						/* translators: %s: settings field title, e.g. "Paperless Customs signature image". */
+						esc_html__( '%s was not saved: choose a PNG or JPEG image from the Media Library.', 'dhl-for-woocommerce' ),
+						wp_strip_all_tags( $fields[ $key ]['title'] ?? $key )
+					)
+				);
+			}
+
+			return '';
 		}
 
 		/**

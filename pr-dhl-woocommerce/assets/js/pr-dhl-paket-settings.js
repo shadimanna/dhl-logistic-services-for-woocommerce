@@ -191,7 +191,8 @@ function DHLPaketMenuBuilder() {
 			return;
 		}
 		var $wrap = $( this ).closest( '.dhl-media-field' );
-		var frame = wp.media( { multiple: false, library: { type: 'image' } } );
+		// Only PNG and JPEG can be stamped on the invoice; other types are rejected on save.
+		var frame = wp.media( { multiple: false, library: { type: [ 'image/png', 'image/jpeg' ] } } );
 		frame.on( 'select', function () {
 			var att = frame.state().get( 'selection' ).first().toJSON();
 			$wrap.find( 'input[type=hidden]' ).val( att.id ).trigger( 'change' );
