@@ -161,6 +161,9 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		$request->headers['Content-Type']   = 'multipart/form-data; boundary=' . $boundary;
 		$request->headers['Accept']         = 'application/json';
 
+		// The PDF itself is not logged: it holds customer data and can be up to 1 MB.
+		PR_DHL()->log_msg( sprintf( 'Paperless Customs upload request: POST %s (%s, %d bytes, reference "%s")', $url, $filename, strlen( $pdf_bytes ), $reference ) );
+
 		// Reuse the same Basic + dhl-api-key auth as every other call.
 		return $this->api_auth->authorize( $request );
 	}
@@ -180,6 +183,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 
 		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- DHL API response field.
 		if ( 201 === $code && isset( $body->batchId ) ) {
+			PR_DHL()->log_msg( 'Paperless Customs upload accepted (HTTP 201): batchId ' . $body->batchId );
 			return $body->batchId;
 		}
 		// phpcs:enable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
@@ -584,6 +588,9 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	 * @return void
 	 */
 	protected function paperless_fallback_note( $order_id, $note ) {
+		// Log every fallback reason too, so support can see it without opening each order.
+		PR_DHL()->log_msg( sprintf( 'Paperless Customs fallback for order #%s: %s', $order_id, $note ) );
+
 		try {
 			if ( $order_id && function_exists( 'wc_get_order' ) ) {
 				$order = wc_get_order( $order_id );
