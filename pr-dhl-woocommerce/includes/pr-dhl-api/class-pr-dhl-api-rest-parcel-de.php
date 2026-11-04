@@ -79,6 +79,15 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	protected $paperless_rate_limit_hits = 0;
 
 	/**
+	 * Items whose Paperless Customs service was removed after DHL rejected it, keyed by object ID.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @var bool[]
+	 */
+	protected $paperless_rejected = array();
+
+	/**
 	 * Constructor.
 	 *
 	 * @throws Exception If an error occurred while creating the API driver, auth or client.
@@ -607,7 +616,8 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	 * Record on the order whether its newly created label went out with Paperless Customs.
 	 *
 	 * On success the batchId is stored as order meta and noted on the order; otherwise any
-	 * batchId left from an earlier label is removed. Fallbacks are noted where they happen.
+	 * batchId left from an earlier label is removed. Fallbacks are noted where they happen,
+	 * except a DHL rejection of the service, which is only noted here once the label exists.
 	 *
 	 * @since [*next-version*]
 	 *
@@ -625,6 +635,14 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 			$batch_id = $item_info->services['paperlessCustoms'] ?? '';
 
 			if ( '' === $batch_id ) {
+				if ( isset( $this->paperless_rejected[ spl_object_id( $item_info ) ] ) ) {
+					unset( $this->paperless_rejected[ spl_object_id( $item_info ) ] );
+					$this->paperless_fallback_note(
+						$order_id,
+						__( 'Paperless Customs skipped: DHL rejected the order with Paperless Customs, so the label was created without it. Attach physical customs documents to the parcel.', 'dhl-for-woocommerce' )
+					);
+				}
+
 				if ( '' !== (string) $order->get_meta( self::PAPERLESS_BATCH_META_KEY ) ) {
 					$order->delete_meta_data( self::PAPERLESS_BATCH_META_KEY );
 					$order->save();
@@ -659,7 +677,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	}
 
 	/**
-	 * Remove the Paperless Customs service from an item and note it on the order.
+	 * Remove the Paperless Customs service from an item after DHL rejected it.
 	 *
 	 * @since [*next-version*]
 	 *
@@ -668,10 +686,9 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	 */
 	public function strip_paperless_customs( Item_Info $item_info ) {
 		unset( $item_info->services['paperlessCustoms'] );
-		$this->paperless_fallback_note(
-			$item_info->args['order_details']['order_id'] ?? 0,
-			__( 'Paperless Customs skipped: DHL rejected the order with Paperless Customs, so the label was created without it. Attach physical customs documents to the parcel.', 'dhl-for-woocommerce' )
-		);
+
+		// The note is added by record_paperless_customs_result(), once the retried label exists.
+		$this->paperless_rejected[ spl_object_id( $item_info ) ] = true;
 	}
 
 	/**
