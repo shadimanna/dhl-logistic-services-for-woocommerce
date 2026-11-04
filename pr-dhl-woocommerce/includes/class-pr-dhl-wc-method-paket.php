@@ -95,11 +95,20 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 			if ( '' === $default_paperless ) {
 				$default_paperless = 'yes';
 			}
-			if ( 'yes' === $default_paperless && ! $this->get_option( 'dhl_paperless_signature' ) && $this->ships_to_paperless_country() ) {
-				$notice = $this->get_message(
-					esc_html__( 'Paperless Customs is on by default but no signature image is set — labels will fall back to physical customs documents until you add one.', 'dhl-for-woocommerce' ),
-					'notice notice-warning'
-				);
+			$signature = $this->get_option( 'dhl_paperless_signature' );
+			if ( 'yes' === $default_paperless && $this->ships_to_paperless_country() ) {
+				if ( ! $signature ) {
+					$notice = $this->get_message(
+						esc_html__( 'Paperless Customs is on by default but no signature image is set — labels will fall back to physical customs documents until you add one.', 'dhl-for-woocommerce' ),
+						'notice notice-warning'
+					);
+				} elseif ( ! $this->is_usable_paperless_image( $signature ) ) {
+					// The saved ID can outlive its image, e.g. when it was deleted from the Media Library.
+					$notice = $this->get_message(
+						esc_html__( 'The Paperless Customs signature image can no longer be loaded (it may have been deleted from the Media Library) — labels will fall back to physical customs documents until you select a new one.', 'dhl-for-woocommerce' ),
+						'notice notice-warning'
+					);
+				}
 			}
 
 			return $notice . '<div id="dhlpaket_shipping_method_settings"><div class="dhlpaket_tab_menu"></div><div class="dhlpaket_tab_content">' . parent::get_admin_options_html() . '</div></div>';
@@ -1184,17 +1193,31 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 		 * @return string Attachment ID as a string, or an empty string if invalid.
 		 */
 		public function validate_dhl_media_field( $key, $value ) {
-			$id = (int) $value;
+			return $this->is_usable_paperless_image( $value ) ? (string) (int) $value : '';
+		}
+
+		/**
+		 * Whether an attachment ID points to an existing PNG/JPEG image the invoice can use.
+		 *
+		 * @since [*next-version*]
+		 *
+		 * @param mixed $attachment_id Attachment ID.
+		 * @return bool
+		 */
+		protected function is_usable_paperless_image( $attachment_id ) {
+			$id = (int) $attachment_id;
 
 			if ( $id <= 0 || ! wp_attachment_is_image( $id ) || 'attachment' !== get_post_type( $id ) ) {
-				return '';
+				return false;
 			}
 
 			if ( ! in_array( get_post_mime_type( $id ), array( 'image/png', 'image/jpeg' ), true ) ) {
-				return '';
+				return false;
 			}
 
-			return (string) $id;
+			$path = get_attached_file( $id );
+
+			return $path && file_exists( $path );
 		}
 
 		// Set specific field options after initialization
