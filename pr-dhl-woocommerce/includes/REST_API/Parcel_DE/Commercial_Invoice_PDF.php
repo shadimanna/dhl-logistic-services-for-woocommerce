@@ -117,7 +117,7 @@ class Commercial_Invoice_PDF {
 		$pdf->Cell( 20, 6, 'HS code', 1 );
 		$pdf->Cell( 16, 6, 'Origin', 1 );
 		$pdf->Cell( 12, 6, 'Qty', 1, 0, 'R' );
-		$pdf->Cell( 22, 6, 'Net wt (kg)', 1, 0, 'R' );
+		$pdf->Cell( 22, 6, 'Net wt (kg)', 1, 0, 'R', false, '', 1 );
 		$pdf->Cell( 26, 6, 'Unit value', 1, 0, 'R' );
 		$pdf->Cell( 26, 6, 'Total', 1, 1, 'R' );
 
@@ -141,8 +141,9 @@ class Commercial_Invoice_PDF {
 			$net_weight += $line_weight;
 
 			$desc = wp_html_excerpt( (string) ( $item['itemDescription'] ?? '' ), 48, '…' );
-			$pdf->Cell( 58, 6, $desc, 1 );
-			$pdf->Cell( 20, 6, (string) ( $item['hsCode'] ?? '' ), 1 );
+			// Stretch 1 shrinks text that is wider than its cell instead of letting it spill into the next column.
+			$pdf->Cell( 58, 6, $desc, 1, 0, '', false, '', 1 );
+			$pdf->Cell( 20, 6, (string) ( $item['hsCode'] ?? '' ), 1, 0, '', false, '', 1 );
 			$pdf->Cell( 16, 6, (string) ( $item['countryOfOrigin'] ?? '' ), 1 );
 			$pdf->Cell( 12, 6, (string) $qty, 1, 0, 'R' );
 			$pdf->Cell( 22, 6, number_format( $line_weight, 3 ), 1, 0, 'R' );
