@@ -190,12 +190,14 @@ class Commercial_Invoice_PDF {
 	 *
 	 * @since [*next-version*]
 	 *
-	 * @param array $party Party data (name, street, house, postal code, city, country).
+	 * @param array $party Party data (name, company, street, house, postal code, city, country).
 	 * @return string Newline-separated address block with empty lines removed.
 	 */
 	protected function format_party( array $party ) {
 		$lines = array(
 			$party['name1'] ?? ( $party['name'] ?? '' ),
+			// Company (Item_Info maps the consignee's company to name2); matters for B2B imports.
+			$party['name2'] ?? '',
 			trim( ( $party['addressStreet'] ?? '' ) . ' ' . ( $party['addressHouse'] ?? '' ) ),
 			trim( ( $party['postalCode'] ?? '' ) . ' ' . ( $party['city'] ?? '' ) ),
 			$party['country'] ?? '',
