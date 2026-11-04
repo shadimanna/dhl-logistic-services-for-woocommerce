@@ -496,12 +496,15 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 					// PDDP
 					if ( $this->is_PDDP_required( $order ) ) {
 						$PDDP_value = $dhl_label_items['pr_dhl_PDDP'] ?? '';
+						// Explain why PDDP is greyed out while Paperless Customs is checked.
+						$pddp_tip = $this->is_paperless_customs_required( $order ) ? esc_html__( 'Cannot be combined with Paperless Customs. Uncheck Paperless Customs to use PDDP.', 'dhl-for-woocommerce' ) : '';
 						woocommerce_wp_checkbox(
 							array(
 								'id'                => 'pr_dhl_PDDP',
 								'label'             => esc_html__( 'Postal Delivered Duty Paid::', 'dhl-for-woocommerce' ),
 								'placeholder'       => '',
-								'description'       => '',
+								'description'       => $pddp_tip,
+								'desc_tip'          => '' !== $pddp_tip,
 								'value'             => esc_attr( $PDDP_value ),
 								'custom_attributes' => array(
 									$is_disabled  => $is_disabled,
@@ -523,7 +526,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 							array(
 								'id'                => 'pr_dhl_paperless_customs',
 								'label'             => esc_html__( 'Paperless Customs:', 'dhl-for-woocommerce' ),
-								'description'       => esc_html__( 'Upload the commercial invoice digitally instead of attaching it to the parcel.', 'dhl-for-woocommerce' ),
+								'description'       => esc_html__( 'Upload the commercial invoice digitally instead of attaching it to the parcel. Cannot be combined with Postal Delivered Duty Paid (PDDP).', 'dhl-for-woocommerce' ),
 								'desc_tip'          => true,
 								'value'             => $paperless_value,
 								'custom_attributes' => array(

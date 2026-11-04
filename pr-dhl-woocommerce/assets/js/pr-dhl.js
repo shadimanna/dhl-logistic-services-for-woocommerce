@@ -612,7 +612,7 @@ jQuery( function( $ ) {
 		var $pl    = $( '#pr_dhl_paperless_customs' );
 		var $field = $( '#pr_dhl_paperless_customs_field' );
 
-		// Boxes locked by the server (label exists); never touch them.
+		// Boxes locked by the server (label exists): keep them disabled and never change their value.
 		var pddpLocked = 'yes' === $pddp.attr( 'data-locked' );
 		var plLocked   = 'yes' === $pl.attr( 'data-locked' );
 
@@ -628,12 +628,9 @@ jQuery( function( $ ) {
 			} else if ( $pl.is( ':checked' ) && ! pddpLocked ) {
 				$pddp.prop( 'checked', false );
 			}
-			if ( ! plLocked ) {
-				$pl.prop( 'disabled', $pddp.is( ':checked' ) );
-			}
-			if ( ! pddpLocked ) {
-				$pddp.prop( 'disabled', $pl.is( ':checked' ) || 'V53WPAK' !== $( '#pr_dhl_product' ).val() );
-			}
+			// A locked box stays disabled: enable_disable_paket_international_fields() re-enables PDDP for V53WPAK even when a label exists.
+			$pl.prop( 'disabled', plLocked || $pddp.is( ':checked' ) );
+			$pddp.prop( 'disabled', pddpLocked || $pl.is( ':checked' ) || 'V53WPAK' !== $( '#pr_dhl_product' ).val() );
 		}
 
 		if ( ! $pddp.length && ! $pl.length ) { return; }
