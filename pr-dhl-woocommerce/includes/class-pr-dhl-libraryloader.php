@@ -61,21 +61,21 @@ if( !class_exists( 'PR_DHL_Libraryloader' ) ){
             return new PDFMerger();
         }
 
-		/**
-		 * Ensure the bundled TCPDF library is loaded.
-		 *
-		 * @since [*next-version*]
-		 *
-		 * @return bool True if the TCPDF class is available.
-		 */
-		public function get_tcpdf() {
-			if ( ! class_exists( 'TCPDF', false ) ) {
-				$path = $this->include_path . 'PDFMerger' . DIRECTORY_SEPARATOR . 'tcpdf' . DIRECTORY_SEPARATOR . 'tcpdf.php';
-				$this->include_file( $path );
-			}
+        /**
+         * Ensure the bundled TCPDF library is loaded.
+         *
+         * @since [*next-version*]
+         *
+         * @return bool True if the TCPDF class is available.
+         */
+        public function get_tcpdf() {
+            if ( ! class_exists( 'TCPDF', false ) ) {
+                $path = $this->include_path . 'PDFMerger' . DIRECTORY_SEPARATOR . 'tcpdf' . DIRECTORY_SEPARATOR . 'tcpdf.php';
+                $this->include_file( $path );
+            }
 
-			return class_exists( 'TCPDF', false );
-		}
+            return class_exists( 'TCPDF', false );
+        }
 
         /**
          * Include a file if it exists.
