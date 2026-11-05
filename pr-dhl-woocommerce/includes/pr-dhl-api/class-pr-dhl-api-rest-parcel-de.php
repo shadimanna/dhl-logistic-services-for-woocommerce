@@ -3,6 +3,7 @@
 use PR\DHL\REST_API\Parcel_DE\Auth;
 use PR\DHL\REST_API\Parcel_DE\Client;
 use PR\DHL\REST_API\Parcel_DE\Item_Info;
+use PR\DHL\REST_API\Parcel_DE\Unknown_Shipment_Exception;
 use PR\DHL\REST_API\Interfaces\API_Auth_Interface;
 use PR\DHL\REST_API\Interfaces\API_Driver_Interface;
 
@@ -111,36 +112,44 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	}
 
 	/**
-	 * Delete label.
+	 * Cancel the shipment at DHL and remove its local label files.
 	 *
-	 * @param $label_info.
+	 * A shipment DHL no longer knows (already cancelled or never created) counts as cancelled.
+	 * Once the shipment is cancelled, a missing or undeletable label file is only logged.
 	 *
-	 * @throws Exception.
+	 * @param array $label_info The order's label tracking info, with a single tracking number.
+	 *
+	 * @throws Exception When DHL could not cancel the shipment.
 	 */
 	public function delete_dhl_label( $label_info ) {
-		$this->api_client->delete_item( $label_info['tracking_number'] );
-
-		if ( ! isset( $label_info['label_path'] ) ) {
-			throw new Exception( esc_html__( 'DHL Label has no path!', 'dhl-for-woocommerce' ) );
+		try {
+			$this->api_client->delete_item( $label_info['tracking_number'] );
+		} catch ( Unknown_Shipment_Exception $e ) {
+			PR_DHL()->log_msg( sprintf( 'DHL does not know shipment %s (already cancelled or never created), removing the local label: %s', $label_info['tracking_number'], wp_strip_all_tags( $e->getMessage() ) ) );
 		}
 
-		$label_path = PR_DHL()->resolve_label_file_path( $label_info['label_path'] );
+		$this->delete_label_file( $label_info['label_path'] ?? '' );
+		$this->delete_label_file( $label_info['return_label_path'] ?? '' );
+	}
 
-		// Remove the separate return label file too, if one was saved.
-		if ( ! empty( $label_info['return_label_path'] ) ) {
-			$return_label_path = PR_DHL()->resolve_label_file_path( $label_info['return_label_path'] );
-			if ( file_exists( $return_label_path ) ) {
-				wp_delete_file( $return_label_path );
-			}
+	/**
+	 * Delete a stored label file, logging instead of failing when it cannot be removed.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $path The stored label path; empty when there is no file.
+	 *
+	 * @return void
+	 */
+	protected function delete_label_file( $path ) {
+		if ( empty( $path ) ) {
+			return;
 		}
 
-		if ( file_exists( $label_path ) ) {
-			if ( ! is_writable( $label_path ) ) {
-				throw new Exception( esc_html__( 'DHL Label file is not writable!', 'dhl-for-woocommerce' ) );
-			}
-			wp_delete_file( $label_path );
-		} else {
-			throw new Exception( esc_html__( 'DHL Label could not be deleted!', 'dhl-for-woocommerce' ) );
+		$file = PR_DHL()->resolve_label_file_path( $path );
+
+		if ( file_exists( $file ) && ! wp_delete_file( $file ) ) {
+			PR_DHL()->log_msg( sprintf( 'DHL label file could not be deleted: %s', $file ) );
 		}
 	}
 

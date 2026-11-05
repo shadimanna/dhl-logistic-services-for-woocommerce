@@ -312,11 +312,15 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		}
 
 		/**
-		 * Delete label in process
+		 * Delete the order's label at DHL, then remove the local label record.
+		 *
+		 * The local record is kept when DHL fails to cancel a shipment, so the label stays
+		 * visible and the merchant can retry instead of creating a duplicate.
 		 *
 		 * @param Int $order_id ID of the order object.
 		 *
-		 * @return String.
+		 * @return String The (first) deleted tracking number, or an empty string when the order has none.
+		 * @throws Exception When DHL could not cancel a shipment.
 		 */
 		public function processing_delete_label( $order_id ) {
 			$args = $this->delete_label_args( $order_id );
@@ -328,9 +332,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 			$dhl_obj = PR_DHL()->get_dhl_factory();
 
-			// Delete meta data first in case there is an error with the API call.
-			$this->delete_dhl_label_tracking( $order_id );
-
 			if ( is_array( $args['tracking_number'] ) ) {
 				foreach ( $args['tracking_number'] as $tracking_number ) {
 					$del_label_args                    = $args;
@@ -340,6 +341,8 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 			} else {
 				$dhl_obj->delete_dhl_label( $args );
 			}
+
+			$this->delete_dhl_label_tracking( $order_id );
 
 			$tracking_number_to_delete_note = is_array( $args['tracking_number'] ) ? $args['tracking_number'][0] : $args['tracking_number'];
 

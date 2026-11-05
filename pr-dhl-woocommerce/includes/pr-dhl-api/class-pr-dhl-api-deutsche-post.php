@@ -361,18 +361,14 @@ class PR_DHL_API_Deutsche_Post extends PR_DHL_API {
 	 * @since [*next-version*]
 	 */
 	public function delete_dhl_label( $label_info ) {
-		if ( ! isset( $label_info['label_path'] ) ) {
-			throw new Exception( esc_html__( 'DHL Label has no path!', 'dhl-for-woocommerce' ) );
+		if ( empty( $label_info['label_path'] ) ) {
+			return;
 		}
 
 		$label_path = PR_DHL()->resolve_label_file_path( $label_info['label_path'] );
 
-		if ( file_exists( $label_path ) ) {
-			$res = wp_delete_file( $label_path );
-
-			if ( ! $res ) {
-				throw new Exception( esc_html__( 'DHL Label could not be deleted!', 'dhl-for-woocommerce' ) );
-			}
+		if ( file_exists( $label_path ) && ! wp_delete_file( $label_path ) ) {
+			PR_DHL()->log_msg( sprintf( 'DHL label file could not be deleted: %s', $label_path ) );
 		}
 	}
 

@@ -501,8 +501,8 @@ class Client extends API_Client {
 	protected function get_response_error_message( Response $response ) {
 		$multiple_errors_list = array();
 
-		if ( ! is_array( $response->body->items ) ) {
-			return $response->body->detail;
+		if ( ! isset( $response->body->items ) || ! is_array( $response->body->items ) ) {
+			return $response->body->detail ?? '';
 		}
 
 		foreach ( $response->body->items as $item ) {
@@ -621,7 +621,8 @@ class Client extends API_Client {
 	 *
 	 * @return \stdClass The response.
 	 *
-	 * @throws Exception.
+	 * @throws Unknown_Shipment_Exception When DHL does not know the shipment (already cancelled or never created).
+	 * @throws Exception On any other error.
 	 */
 	public function delete_item( $shipment_number ) {
 		// Compute the route to the API endpoint
@@ -636,16 +637,42 @@ class Client extends API_Client {
 		}
 
 		// Otherwise throw an exception using the response's error messages
-		$message = $this->get_response_error_message( $response );
-
-		throw new Exception(
-			wp_kses_post(
-				sprintf(
-					// Translators: %s is replaced with the error message returned from the API.
-					__( 'Error deleting label: %s', 'dhl-for-woocommerce' ),
-					$message
-				)
-			)
+		$message = sprintf(
+			// Translators: %s is replaced with the error message returned from the API.
+			__( 'Error deleting label: %s', 'dhl-for-woocommerce' ),
+			$this->get_response_error_message( $response )
 		);
+
+		if ( $this->is_unknown_shipment_response( $response ) ) {
+			throw new Unknown_Shipment_Exception( wp_kses_post( $message ) );
+		}
+
+		throw new Exception( wp_kses_post( $message ) );
+	}
+
+	/**
+	 * Whether a failed cancellation response says DHL does not know any of the requested shipments.
+	 *
+	 * DHL answers HTTP 400 with an item status title of UNKNOWN_SHIPMENT_NUMBER both for a shipment
+	 * that was already cancelled and for one that never existed.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param Response $response The cancellation response.
+	 *
+	 * @return bool
+	 */
+	protected function is_unknown_shipment_response( Response $response ) {
+		if ( 400 !== (int) $response->status || empty( $response->body->items ) || ! is_array( $response->body->items ) ) {
+			return false;
+		}
+
+		foreach ( $response->body->items as $item ) {
+			if ( 'UNKNOWN_SHIPMENT_NUMBER' !== ( $item->sstatus->title ?? '' ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 }
