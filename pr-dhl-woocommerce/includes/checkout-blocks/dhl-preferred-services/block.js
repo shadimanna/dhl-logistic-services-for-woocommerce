@@ -208,11 +208,9 @@ export const Block = ({ checkoutExtensionData }) => {
         };
 
         if (preferredDay && preferredDay !== '0' && preferredDayCost > 0) {
-            if (!preferredDayFeeApplied) {
-                // Add the fee
-                updateCartFee(preferredDayCost, __('DHL Delivery Day', 'dhl-for-woocommerce'));
-                setPreferredDayFeeApplied(true);
-            }
+            // Sent on every pick: the selection can be cleared server side while this page stays open.
+            updateCartFee(preferredDayCost, __('DHL Delivery Day', 'dhl-for-woocommerce'));
+            setPreferredDayFeeApplied(true);
         } else {
             // "none" always clears: the session can hold a fee this block did not add.
             if (preferredDayFeeApplied || preferredDay === '0') {

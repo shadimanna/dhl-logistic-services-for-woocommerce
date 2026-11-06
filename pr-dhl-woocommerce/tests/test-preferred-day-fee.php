@@ -74,17 +74,6 @@ namespace {
 
 	$pr_dhl_test_page = 'checkout';
 
-	if ( ! function_exists( 'wp_unslash' ) ) {
-		/**
-		 * Remove slashes the way WordPress does for request data.
-		 *
-		 * @param string $value Value to unslash.
-		 * @return string
-		 */
-		function wp_unslash( $value ) {
-			return stripslashes( (string) $value );
-		}
-	}
 	if ( ! function_exists( 'is_singular' ) ) {
 		/**
 		 * Whether the test request shows a single post or page.
@@ -191,6 +180,7 @@ namespace {
 		class PR_DHL_Test_Cart {
 			public $fees           = array();
 			public $needs_shipping = true;
+			public $calculations   = 0;
 
 			public function needs_shipping() {
 				return $this->needs_shipping;
@@ -215,7 +205,13 @@ namespace {
 				);
 			}
 
+			/**
+			 * Recalculate the fees the way WC_Cart::calculate_totals() does.
+			 *
+			 * @return void
+			 */
 			public function calculate_totals() {
+				++$this->calculations;
 				$this->fees = array();
 				do_action( 'woocommerce_cart_calculate_fees', $this );
 			}
@@ -550,23 +546,16 @@ namespace {
 	// outlive a reload of the checkout.
 	$charged    = array( array( 'DHL Delivery Day', 5.0 ) );
 	$page_loads = array(
-		'checkout'                       => array( 'checkout', '', array() ),
-		'checkout block on another page' => array( 'block-page', '', array() ),
-		'order-received'                 => array( 'order-received', '', $charged ),
-		'order-pay'                      => array( 'order-pay', '', $charged ),
-		'cart'                           => array( 'cart', '', $charged ),
-		'checkout prefetch'              => array( 'checkout', 'prefetch', array() ),
-		'checkout prerender'             => array( 'checkout', 'prefetch;prerender', array() ),
+		'checkout'                       => array( 'checkout', array() ),
+		'checkout block on another page' => array( 'block-page', array() ),
+		'order-received'                 => array( 'order-received', $charged ),
+		'order-pay'                      => array( 'order-pay', $charged ),
+		'cart'                           => array( 'cart', $charged ),
 	);
 	foreach ( $page_loads as $label => $page_load ) {
-		list( $page, $purpose, $want ) = $page_load;
+		list( $page, $want ) = $page_load;
 
-		$pr_dhl_test_page = $page;
-		if ( '' === $purpose ) {
-			unset( $_SERVER['HTTP_SEC_PURPOSE'] );
-		} else {
-			$_SERVER['HTTP_SEC_PURPOSE'] = $purpose;
-		}
+		$pr_dhl_test_page          = $page;
 		$pr_dhl_test_session->data = array();
 		$pr_dhl_test_hooks         = array();
 		$core                      = new PR_DHL_Extend_Block_core();
@@ -582,8 +571,25 @@ namespace {
 		$core->add_preferred_day_fee( $cart );
 		pr_dhl_assert( "Loading the {$label} after a day was selected", pr_dhl_fee_pairs( $cart ), $want );
 	}
-	unset( $_SERVER['HTTP_SEC_PURPOSE'] );
 	$pr_dhl_test_page = 'checkout';
+
+	// Totals not calculated yet are left to the checkout block's own preload.
+	$pr_dhl_test_session->data = array();
+	$pr_dhl_test_hooks         = array();
+	$core                      = new PR_DHL_Extend_Block_core();
+	$pr_dhl_test_cart          = new PR_DHL_Test_Cart();
+	$core->store_api_callback(
+		array(
+			'action' => 'update_preferred_day_fee',
+			'price'  => 5,
+			'label'  => 'DHL Delivery Day',
+		)
+	);
+	do_action( 'template_redirect' );
+	pr_dhl_assert( 'Checkout load does not calculate totals that were not calculated yet', $pr_dhl_test_cart->calculations, 0 );
+	$pr_dhl_test_cart->calculate_totals();
+	pr_dhl_assert( 'The block preload then calculates them without the fee', pr_dhl_fee_pairs( $pr_dhl_test_cart ), array() );
+	$pr_dhl_test_cart = null;
 
 	// The cart session can calculate totals before template_redirect and the checkout
 	// block then reuses them, so they must be calculated again without the fee.

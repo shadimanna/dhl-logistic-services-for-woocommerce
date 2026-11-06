@@ -220,12 +220,7 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 		}
 
 		/**
-		 * Forget the preferred day selection when the checkout page loads.
-		 *
-		 * The block always starts with no day selected, so a selection kept from an
-		 * earlier visit would charge the fee for a day the shopper no longer sees.
-		 * The checkout block reuses totals calculated earlier in the request, so they
-		 * are calculated again without the fee.
+		 * Forget the preferred day selection when the checkout page loads, since the block starts with no day selected.
 		 *
 		 * @return void
 		 */
