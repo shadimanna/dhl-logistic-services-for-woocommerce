@@ -733,6 +733,36 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			echo '</div>'; // END -- Multiple Packages
 			// echo '<hr style="clear:both;">';
 		}
+
+		/**
+		 * IDs of the service checkboxes in the DHL meta box that are saved as 'yes' or 'no'.
+		 *
+		 * @since [*next-version*]
+		 *
+		 * @return string[]
+		 */
+		protected function get_checkbox_meta_ids() {
+			return array(
+				'pr_dhl_return_address_enabled',
+				'pr_dhl_no_neighbor',
+				'pr_dhl_named_person',
+				'pr_dhl_signature_service',
+				'pr_dhl_one_time_code',
+				'pr_dhl_second_delivery_attempt',
+				'pr_dhl_no_packstation',
+				'pr_dhl_immediate_return',
+				'pr_dhl_identcheck',
+				'pr_dhl_is_codeable',
+				'pr_dhl_routing',
+				'pr_dhl_go_green_plus',
+				'pr_dhl_PDDP',
+				'pr_dhl_additional_insurance',
+				'pr_dhl_premium',
+				'pr_dhl_bulky_goods',
+				'pr_dhl_multi_packages_enabled',
+			);
+		}
+
 		/**
 		 * Order Tracking Save
 		 *
