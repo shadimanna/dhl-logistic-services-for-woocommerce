@@ -27,6 +27,7 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 				'save_dhl_checkout_fields'
 			], 10, 2 );
 
+			add_action( 'woocommerce_store_api_checkout_update_order_meta', array( $this, 'remove_unpaid_preferred_day' ) );
 
 			// Register the update callback when WooCommerce Blocks is loaded
 			add_action( 'init', [ $this, 'register_store_api_callback' ] );
@@ -138,6 +139,31 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 			// Save the order to persist changes.
 			$order->save();
 
+		}
+
+		/**
+		 * Removes the saved preferred day from a checkout order that no longer carries its fee.
+		 *
+		 * WooCommerce re-syncs a draft, pending or failed order from the cart when the
+		 * checkout loads or is placed again, and save_dhl_label_items() merges into the saved
+		 * items, so a day saved by an attempt that had the fee would otherwise stay after the
+		 * fee is gone. A day the order still pays for is kept.
+		 *
+		 * @param \WC_Order $order The order the checkout re-synced from the cart.
+		 *
+		 * @return void
+		 */
+		public function remove_unpaid_preferred_day( \WC_Order $order ) {
+			$label_items = $order->get_meta( '_pr_shipment_dhl_label_items' );
+
+			if ( ! is_array( $label_items ) || ! array_key_exists( 'pr_dhl_preferred_day', $label_items ) || $this->order_paid_preferred_day_fee( $order ) ) {
+				return;
+			}
+
+			unset( $label_items['pr_dhl_preferred_day'] );
+			$order->update_meta_data( '_pr_shipment_dhl_label_items', $label_items );
+			// Save now: save_dhl_label_items() loads the order again from the database.
+			$order->save_meta_data();
 		}
 
 		/**
