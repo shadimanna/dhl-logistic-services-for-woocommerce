@@ -249,14 +249,12 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 				echo $additional_fields_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Markup built by the WooCommerce field functions.
 
 				// Browsers do not post unticked checkboxes, so tell save_meta_box() which ones were on screen.
-				if ( empty( $label_tracking_info ) ) {
-					woocommerce_wp_hidden_input(
-						array(
-							'id'    => 'pr_dhl_shown_checkboxes',
-							'value' => implode( ',', $this->get_shown_checkbox_ids( $additional_fields_html ) ),
-						)
-					);
-				}
+				woocommerce_wp_hidden_input(
+					array(
+						'id'    => 'pr_dhl_shown_checkboxes',
+						'value' => implode( ',', $this->get_shown_checkbox_ids( $additional_fields_html ) ),
+					)
+				);
 
 				// A label has been generated already, allow to delete
 				if ( empty( $label_tracking_info ) ) {
@@ -295,7 +293,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		}
 
 		/**
-		 * IDs of the service checkboxes rendered as editable in the given meta box markup.
+		 * IDs of the service checkboxes rendered in the given meta box markup.
 		 *
 		 * @since [*next-version*]
 		 *
@@ -307,7 +305,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 			$shown = array();
 
 			foreach ( $this->get_checkbox_meta_ids() as $id ) {
-				if ( preg_match( '/<input[^>]*\bname="' . preg_quote( $id, '/' ) . '"[^>]*>/', $html, $input ) && false === strpos( $input[0], 'disabled' ) ) {
+				if ( false !== strpos( $html, 'name="' . $id . '"' ) ) {
 					$shown[] = $id;
 				}
 			}
