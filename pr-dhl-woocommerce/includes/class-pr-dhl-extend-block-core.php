@@ -34,6 +34,10 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 			// Register fee calculation
 			add_action( 'woocommerce_cart_calculate_fees', [ $this, 'add_preferred_day_fee' ] );
 
+			// Placing an order empties the cart; the selection must not carry over to
+			// the next cart in the same session.
+			add_action( 'woocommerce_cart_emptied', [ $this, 'clear_preferred_day_selection' ] );
+
 
 		}
 
@@ -46,7 +50,9 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 		public function save_dhl_checkout_fields( \WC_Order $order, \WP_REST_Request $request ) {
 			$pr_dhl_request_data = isset( $request['extensions'][ $this->name ] ) ? $request['extensions'][ $this->name ] : array();
 			$dhl_label_options   = array();
-			if ( ! empty( $pr_dhl_request_data['preferredDay'] ) ) {
+			// Only keep the preferred day when the order actually carries its fee, so a
+			// request that skipped the cart fee cannot book the paid service for free.
+			if ( ! empty( $pr_dhl_request_data['preferredDay'] ) && $this->order_paid_preferred_day_fee( $order ) ) {
 				$dhl_label_options['pr_dhl_preferred_day'] = wc_clean( $pr_dhl_request_data['preferredDay'] );
 			}
 
@@ -154,23 +160,80 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 		 * @param array $data Data sent from the client.
 		 */
 		public function store_api_callback( $data ) {
-			if ( isset( $data['action'] ) && 'update_preferred_day_fee' === $data['action'] ) {
-				$price = isset( $data['price'] ) ? floatval( $data['price'] ) : 0;
-				$label = isset( $data['label'] ) ? sanitize_text_field( $data['label'] ) : '';
+			// Earlier versions stored the price and label the client sent. Those keys are
+			// no longer read; clear them so a session from before the upgrade cannot
+			// carry a client-chosen amount over.
+			WC()->session->__unset( 'pr_dhl_preferred_day_fee' );
+			WC()->session->__unset( 'pr_dhl_preferred_day_label' );
 
-				if ( $price > 0 && $label !== '' ) {
-					// Store the fee amount and label in session
-					WC()->session->set( 'pr_dhl_preferred_day_fee', $price );
-					WC()->session->set( 'pr_dhl_preferred_day_label', $label );
-				} else {
-					WC()->session->__unset( 'pr_dhl_preferred_day_fee' );
-					WC()->session->__unset( 'pr_dhl_preferred_day_label' );
-				}
+			// The client only says whether a day is selected: the block sends the price
+			// when a day is picked and 0 when it is cleared. The amount charged comes
+			// from the merchant setting in add_preferred_day_fee().
+			$selected = isset( $data['action'], $data['price'] ) && 'update_preferred_day_fee' === $data['action'] && (float) $data['price'] > 0;
+
+			if ( $selected ) {
+				WC()->session->set( 'pr_dhl_preferred_day_selected', true );
 			} else {
-
-				WC()->session->__unset( 'pr_dhl_preferred_day_fee' );
-				WC()->session->__unset( 'pr_dhl_preferred_day_label' );
+				WC()->session->__unset( 'pr_dhl_preferred_day_selected' );
 			}
+		}
+
+		/**
+		 * Forget the preferred day selection recorded in the session.
+		 */
+		public function clear_preferred_day_selection() {
+			WC()->session->__unset( 'pr_dhl_preferred_day_selected' );
+		}
+
+		/**
+		 * The fee label, shared with the classic checkout and the order fee check.
+		 *
+		 * @return string
+		 */
+		protected function get_preferred_day_fee_label() {
+			return esc_html__( 'DHL Delivery Day', 'dhl-for-woocommerce' );
+		}
+
+		/**
+		 * The preferred day fee the merchant configured.
+		 *
+		 * @return float Zero when the setting is empty.
+		 */
+		protected function get_preferred_day_cost() {
+			$settings = PR_DHL()->get_shipping_dhl_settings();
+
+			if ( empty( $settings['dhl_preferred_day_cost'] ) ) {
+				return 0.0;
+			}
+
+			return (float) wc_format_decimal( $settings['dhl_preferred_day_cost'] );
+		}
+
+		/**
+		 * Whether the order carries the configured preferred day fee.
+		 *
+		 * @param \WC_Order $order The order being placed.
+		 * @return bool True when the service is free or the fee line is on the order.
+		 */
+		protected function order_paid_preferred_day_fee( \WC_Order $order ) {
+			// Compare at the store's price decimals: the fee line may keep more digits
+			// than the shop displays, or fewer than the setting has.
+			$decimals = wc_get_price_decimals();
+			$cost     = round( $this->get_preferred_day_cost(), $decimals );
+
+			if ( $cost <= 0 ) {
+				return true;
+			}
+
+			$label = $this->get_preferred_day_fee_label();
+
+			foreach ( $order->get_fees() as $fee ) {
+				if ( $fee->get_name() === $label && round( (float) $fee->get_total(), $decimals ) >= $cost ) {
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		/**
@@ -183,14 +246,14 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 				return;
 			}
 			if ( ! $cart->needs_shipping() ) {
-				WC()->session->__unset( 'pr_dhl_preferred_day_fee' );
-				WC()->session->__unset( 'pr_dhl_preferred_day_label' );
+				WC()->session->__unset( 'pr_dhl_preferred_day_selected' );
 
 				return;
 			}
-			// Get the fee amount and label from session
-			$fee_amount = WC()->session->get( 'pr_dhl_preferred_day_fee', 0 );
-			$fee_label  = WC()->session->get( 'pr_dhl_preferred_day_label', '' );
+			// The session only records that a day was selected; the amount comes from
+			// the setting and the label is the one the classic checkout uses.
+			$fee_amount = WC()->session->get( 'pr_dhl_preferred_day_selected' ) ? $this->get_preferred_day_cost() : 0;
+			$fee_label  = $this->get_preferred_day_fee_label();
 
 			// Remove existing DHL fees if they exist
 			$new_fees = array();
@@ -201,7 +264,7 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 			}
 			$cart->fees_api()->set_fees( $new_fees );
 
-			if ( $fee_amount > 0 && ! empty( $fee_label ) ) {
+			if ( $fee_amount > 0 ) {
 				// Add the fee to the cart
 				$cart->add_fee( $fee_label, $fee_amount, true, '' );
 			}
