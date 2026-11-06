@@ -1332,7 +1332,8 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			// Initialize endpoints and core functionality.
 			$extend_store->init();
 
-			if ( class_exists( 'PR_DHL_Blocks_Integration' ) ) {
+			// WooCommerce 11.1+ skips block integration setup on AJAX requests, so the block's AJAX actions are registered here.
+			if ( wp_doing_ajax() && class_exists( 'PR_DHL_Blocks_Integration' ) ) {
 				( new PR_DHL_Blocks_Integration() )->register_ajax_actions();
 			}
 

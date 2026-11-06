@@ -207,9 +207,6 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 
 	/**
 	 * Registers the AJAX actions the preferred services block calls.
-	 *
-	 * The plugin calls this on every request instead of from initialize(): since 11.1,
-	 * WooCommerce no longer sets up block integrations on AJAX requests.
 	 */
 	public function register_ajax_actions() {
 		add_action( 'wp_ajax_pr_dhl_set_checkout_post_data', array( $this, 'handle_set_checkout_post_data' ) );
