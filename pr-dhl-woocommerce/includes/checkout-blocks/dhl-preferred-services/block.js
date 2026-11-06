@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from '@wordpress/element';
 import { TextControl, RadioControl, Spinner, Notice } from '@wordpress/components';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { CART_STORE_KEY } from '@woocommerce/block-data';
 import { __, sprintf } from '@wordpress/i18n';
 import { debounce } from 'lodash';
@@ -13,8 +13,6 @@ export const Block = ({ checkoutExtensionData }) => {
     const imgUrl = prDhlGlobals.pluginUrl + "/assets/img/dhl-official.png";
     const dhlSettings = prDhlGlobals.dhlSettings;
     const [displayPreferred, setDisplayPreferred] = useState(true);
-
-    const { updateCustomerData } = useDispatch(CART_STORE_KEY);
 
     // Debounce for reducing the number of updates to the extension data
     const debouncedSetExtensionData = useCallback(debounce((namespace, key, value) => {
@@ -185,9 +183,6 @@ export const Block = ({ checkoutExtensionData }) => {
     useEffect(() => {
         setExtensionData('pr-dhl', 'preferredDay', preferredDay);
         debouncedSetExtensionData('pr-dhl', 'preferredDay', preferredDay);
-
-        // Update customer data to refresh the checkout
-        updateCustomerData();
 
         // Handle adding/removing the preferred day fee
         const preferredDayCost = parseFloat(dhlSettings?.preferred_day_cost || 0);
