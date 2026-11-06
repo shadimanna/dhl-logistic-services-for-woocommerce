@@ -39,7 +39,7 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 			// the next cart in the same session.
 			add_action( 'woocommerce_cart_emptied', [ $this, 'clear_preferred_day_selection' ] );
 
-
+			add_action( 'template_redirect', array( $this, 'clear_preferred_day_selection_on_checkout_load' ) );
 		}
 
 
@@ -217,6 +217,25 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 		 */
 		public function clear_preferred_day_selection() {
 			WC()->session->__unset( 'pr_dhl_preferred_day_selected' );
+		}
+
+		/**
+		 * Forget the preferred day selection when the checkout page loads, since the block starts with no day selected.
+		 *
+		 * @return void
+		 */
+		public function clear_preferred_day_selection_on_checkout_load() {
+			$is_checkout_page = is_checkout() || ( is_singular() && has_block( 'woocommerce/checkout' ) );
+
+			if ( ! $is_checkout_page || is_wc_endpoint_url() || ! isset( WC()->session ) || ! WC()->session->get( 'pr_dhl_preferred_day_selected' ) ) {
+				return;
+			}
+
+			$this->clear_preferred_day_selection();
+
+			if ( isset( WC()->cart ) && did_action( 'woocommerce_after_calculate_totals' ) ) {
+				WC()->cart->calculate_totals();
+			}
 		}
 
 		/**

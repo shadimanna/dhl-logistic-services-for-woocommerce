@@ -30,7 +30,6 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 	 */
 	public function initialize() {
 		$this->register_scripts_and_styles();
-		$this->register_ajax_actions();
 		$this->localize_scripts();
 	}
 
@@ -207,9 +206,9 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 	}
 
 	/**
-	 * Registers AJAX actions.
+	 * Registers the AJAX actions the preferred services block calls.
 	 */
-	private function register_ajax_actions() {
+	public function register_ajax_actions() {
 		add_action( 'wp_ajax_pr_dhl_set_checkout_post_data', array( $this, 'handle_set_checkout_post_data' ) );
 		add_action( 'wp_ajax_nopriv_pr_dhl_set_checkout_post_data', array( $this, 'handle_set_checkout_post_data' ) );
 		add_action( 'wp_ajax_pr_dhl_get_preferred_days', array( $this, 'handle_get_preferred_days' ) );
