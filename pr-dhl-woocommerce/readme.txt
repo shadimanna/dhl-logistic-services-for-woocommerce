@@ -75,6 +75,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 4.1.2 =
+* Fix: Align the checkboxes of the new recipient services in the order DHL box.
+
 = 4.1.1 =
 * Tweak: WordPress 7.1 and WooCommerce 11.1 compatibility.
 
