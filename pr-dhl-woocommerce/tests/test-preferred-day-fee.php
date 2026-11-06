@@ -180,6 +180,10 @@ namespace {
 			public $shipping_address_1 = 'Teststrasse 1';
 			private $changed           = array();
 
+			public function __clone() {
+				$this->changed = array();
+			}
+
 			public function get_id() {
 				return $this->id;
 			}
@@ -255,18 +259,36 @@ namespace {
 	}
 
 	/**
-	 * Stand-in for PR_DHL_WC_Order_Paket::save_dhl_label_items(): like the real one it
-	 * loads the order again, merges into the saved items and saves, so it never sees
-	 * meta that is still unsaved on the order object the Store API passes around.
+	 * Load an order the way wc_get_order() does: a new object that holds what is
+	 * saved, with no pending changes, and saves into the same storage.
+	 */
+	if ( ! function_exists( 'wc_get_order' ) ) {
+		function wc_get_order( $order_id ) {
+			global $pr_dhl_test_orders;
+			if ( ! isset( $pr_dhl_test_orders[ $order_id ] ) ) {
+				return false;
+			}
+			$stored       = $pr_dhl_test_orders[ $order_id ];
+			$loaded       = clone $stored;
+			$loaded->saved = &$stored->saved;
+			$loaded->meta = $stored->saved;
+			return $loaded;
+		}
+	}
+
+	/**
+	 * Stand-in for PR_DHL_WC_Order::save_dhl_label_items(), with the same steps: load
+	 * the order again, merge into the saved items, save. It never sees meta that is
+	 * still unsaved on the order object the Store API passes around.
 	 */
 	if ( ! class_exists( 'PR_DHL_Test_Label_Store' ) ) {
 		class PR_DHL_Test_Label_Store {
 			public function save_dhl_label_items( $order_id, $items ) {
-				global $pr_dhl_test_orders;
-				$order = $pr_dhl_test_orders[ $order_id ];
-				$saved = isset( $order->saved['_pr_shipment_dhl_label_items'] ) ? $order->saved['_pr_shipment_dhl_label_items'] : '';
+				$order = wc_get_order( $order_id );
+				$saved = $order->get_meta( '_pr_shipment_dhl_label_items' );
 
-				$order->saved['_pr_shipment_dhl_label_items'] = is_array( $saved ) ? array_merge( $saved, $items ) : $items;
+				$order->update_meta_data( '_pr_shipment_dhl_label_items', is_array( $saved ) ? array_merge( $saved, $items ) : $items );
+				$order->save();
 			}
 		}
 	}
@@ -515,10 +537,13 @@ namespace {
 	 * @param WC_Order    $order         Order as an earlier attempt saved it, if any.
 	 * @param string|null $preferred_day extensions.pr-dhl.preferredDay, null to send no DHL data.
 	 * @param bool        $from_cart     False for the pay-for-order route.
+	 * @param bool        $new_process   False when an earlier call in the same PHP process,
+	 *                                   such as a Store API batch, left this order object
+	 *                                   in memory instead of loading it again.
 	 * @return string|null The preferred day saved on the order.
 	 */
-	function pr_dhl_place_order( WC_Order $order, $preferred_day, $from_cart = true ) {
-		pr_dhl_start_request( $order );
+	function pr_dhl_place_order( WC_Order $order, $preferred_day, $from_cart = true, $new_process = true ) {
+		pr_dhl_start_request( $order, $new_process );
 
 		$extensions = null === $preferred_day ? array() : array( 'pr-dhl' => array( 'preferredDay' => $preferred_day ) );
 		$request    = new WP_REST_Request( array( 'extensions' => $extensions ) );
@@ -547,18 +572,22 @@ namespace {
 	}
 
 	/**
-	 * Start a Store API request: register the class hooks and load the order as saved.
+	 * Start a Store API request: register the class hooks and, in a new PHP process,
+	 * load the order as saved.
 	 *
-	 * @param WC_Order $order The order the request works on.
+	 * @param WC_Order $order       The order the request works on.
+	 * @param bool     $new_process Whether the order object is loaded again.
 	 */
-	function pr_dhl_start_request( WC_Order $order ) {
+	function pr_dhl_start_request( WC_Order $order, $new_process = true ) {
 		global $pr_dhl_test_hooks, $pr_dhl_test_orders;
 
 		$pr_dhl_test_hooks = array();
 		new \PR_DHL_Extend_Block_core();
 
 		$pr_dhl_test_orders[ $order->get_id() ] = $order;
-		$order->meta                            = $order->saved;
+		if ( $new_process ) {
+			$order->meta = $order->saved;
+		}
 	}
 
 	/**
@@ -615,6 +644,12 @@ namespace {
 	pr_dhl_assert( 'Retry with the fee saves the day again', pr_dhl_place_order( pr_dhl_test_order( $with_fee, $first_attempt ), '2026-11-10' ), '2026-11-10' );
 	pr_dhl_assert( 'Retry with the fee and another day saves the new day', pr_dhl_place_order( pr_dhl_test_order( $with_fee, $first_attempt ), '2026-11-12' ), '2026-11-12' );
 	pr_dhl_assert( 'Retry with the fee but no day in the request keeps the paid day', pr_dhl_place_order( pr_dhl_test_order( $with_fee, $first_attempt ), '' ), '2026-11-10' );
+
+	// A Store API batch runs both attempts in one PHP process, so the checkout keeps the
+	// order object of the failed attempt, which never loaded the items saved through
+	// save_dhl_label_items().
+	pr_dhl_assert( 'Retry in the same batch request without the fee drops the saved day', pr_dhl_place_order( pr_dhl_test_order( array(), $first_attempt ), '2026-11-10', true, false ), null );
+	pr_dhl_assert( 'Retry in the same batch request with the fee saves the day', pr_dhl_place_order( pr_dhl_test_order( $with_fee, $first_attempt ), '2026-11-12', true, false ), '2026-11-12' );
 
 	// Loading the checkout, for example after a declined card or when coming back from
 	// a payment page, re-syncs the order from the cart before it is paid.
