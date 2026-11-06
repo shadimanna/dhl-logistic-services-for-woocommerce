@@ -149,21 +149,29 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 		 * items, so a day saved by an attempt that had the fee would otherwise stay after the
 		 * fee is gone. A day the order still pays for is kept.
 		 *
+		 * The items are read and saved through a freshly loaded order, as
+		 * save_dhl_label_items() saves them: in a Store API batch request the checkout can
+		 * pass the order object of an earlier attempt that never loaded them.
+		 *
 		 * @param \WC_Order $order The order the checkout re-synced from the cart.
 		 *
 		 * @return void
 		 */
 		public function remove_unpaid_preferred_day( \WC_Order $order ) {
-			$label_items = $order->get_meta( '_pr_shipment_dhl_label_items' );
+			if ( $this->order_paid_preferred_day_fee( $order ) ) {
+				return;
+			}
 
-			if ( ! is_array( $label_items ) || ! array_key_exists( 'pr_dhl_preferred_day', $label_items ) || $this->order_paid_preferred_day_fee( $order ) ) {
+			$saved_order = wc_get_order( $order->get_id() );
+			$label_items = $saved_order ? $saved_order->get_meta( '_pr_shipment_dhl_label_items' ) : '';
+
+			if ( ! is_array( $label_items ) || ! array_key_exists( 'pr_dhl_preferred_day', $label_items ) ) {
 				return;
 			}
 
 			unset( $label_items['pr_dhl_preferred_day'] );
-			$order->update_meta_data( '_pr_shipment_dhl_label_items', $label_items );
-			// Save now: save_dhl_label_items() loads the order again from the database.
-			$order->save_meta_data();
+			$saved_order->update_meta_data( '_pr_shipment_dhl_label_items', $label_items );
+			$saved_order->save_meta_data();
 		}
 
 		/**
