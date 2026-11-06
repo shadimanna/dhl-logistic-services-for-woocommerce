@@ -326,6 +326,11 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 		foreach ( $settings_keys as $key ) {
 			$value = $dhl_settings[ $key ] ?? false;
 
+			// The cost is saved in the shop's number format, such as "1,20" with a decimal comma.
+			if ( 'dhl_preferred_day_cost' === $key && is_string( $value ) ) {
+				$value = wc_format_decimal( $value );
+			}
+
 			if ( 'yes' === $value ) {
 				$value = true;
 			} elseif ( ! is_numeric( $value ) ) {
