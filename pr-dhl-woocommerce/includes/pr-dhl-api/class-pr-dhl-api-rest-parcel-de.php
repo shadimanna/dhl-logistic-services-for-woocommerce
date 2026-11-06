@@ -23,6 +23,13 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	const API_URL_SANDBOX = 'https://api-sandbox.dhl.com/parcel/de/shipping/';
 
 	/**
+	 * Order meta key holding the Paperless Customs batchId of the current label.
+	 *
+	 * @since [*next-version*]
+	 */
+	const PAPERLESS_BATCH_META_KEY = '_pr_dhl_paperless_customs_batch_id';
+
+	/**
 	 * The API driver instance.
 	 *
 	 * @var API_Driver_Interface
@@ -42,6 +49,43 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	 * @var Client
 	 */
 	public $api_client;
+
+	/**
+	 * Whether a Paperless Customs upload has already been rate limited (HTTP 429) in this request.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @var bool
+	 */
+	protected $paperless_rate_limited = false;
+
+	/**
+	 * Whether DHL was unreachable (connection error, timeout or 5xx) for a Paperless Customs
+	 * upload in this request. Once set, later orders skip the upload.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @var bool
+	 */
+	protected $paperless_unavailable = false;
+
+	/**
+	 * Number of parallel Paperless Customs uploads that DHL rate limited (HTTP 429) in this request.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @var int
+	 */
+	protected $paperless_rate_limit_hits = 0;
+
+	/**
+	 * Items whose Paperless Customs service was removed after DHL rejected it, keyed by object ID.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @var bool[]
+	 */
+	protected $paperless_rejected = array();
 
 	/**
 	 * Constructor.
@@ -69,6 +113,767 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	}
 
 	/**
+	 * Upload a customs document (commercial invoice PDF) for Paperless Customs.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $pdf_bytes Raw PDF content.
+	 * @param string $filename  Document filename (<= 60 chars).
+	 * @param string $reference Optional user-defined reference.
+	 * @return string The DHL batchId (UUID).
+	 * @throws Exception On failure.
+	 */
+	public function upload_customs_documents( $pdf_bytes, $filename, $reference = '' ) {
+		$request = $this->build_customs_documents_request( $pdf_bytes, $filename, $reference );
+
+		// Send via the RAW WP driver (NOT the JSON decorator, which would re-encode the body).
+		$driver = new \PR\DHL\REST_API\Drivers\WP_API_Driver();
+
+		return $this->parse_customs_documents_response( $this->upload_with_retry( $driver, $request ), $reference );
+	}
+
+	/**
+	 * Build the authorized multipart request that uploads one commercial invoice.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $pdf_bytes Raw PDF content.
+	 * @param string $filename  Document filename (<= 60 chars).
+	 * @param string $reference Optional user-defined reference.
+	 * @return \PR\DHL\REST_API\Request The authorized request.
+	 */
+	protected function build_customs_documents_request( $pdf_bytes, $filename, $reference = '' ) {
+		$filename  = sanitize_file_name( $filename );
+		$reference = preg_replace( '/[\r\n]+/', ' ', (string) $reference );
+
+		$boundary = wp_generate_password( 24, false );
+		$eol      = "\r\n";
+
+		$body  = '--' . $boundary . $eol;
+		$body .= 'Content-Disposition: form-data; name="documents[0].documentType"' . $eol . $eol;
+		$body .= 'Invoice' . $eol;
+
+		if ( '' !== $reference ) {
+			$body .= '--' . $boundary . $eol;
+			$body .= 'Content-Disposition: form-data; name="documents[0].userDefinedReference"' . $eol . $eol;
+			$body .= substr( $reference, 0, 60 ) . $eol;
+		}
+
+		$body .= '--' . $boundary . $eol;
+		$body .= 'Content-Disposition: form-data; name="documents[0].data"; filename="' . $filename . '"' . $eol;
+		$body .= 'Content-Type: application/pdf' . $eol . $eol;
+		$body .= $pdf_bytes . $eol;
+		$body .= '--' . $boundary . '--' . $eol;
+
+		$url     = \PR\DHL\REST_API\URL_Utils::merge_url_and_route( $this->get_api_url(), $this->request_customs_documents_route() );
+		$request = new \PR\DHL\REST_API\Request( \PR\DHL\REST_API\Request::TYPE_POST, $url, array(), $body );
+		$request->headers['Content-Type']   = 'multipart/form-data; boundary=' . $boundary;
+		$request->headers['Accept']         = 'application/json';
+
+		// The PDF itself is not logged: it holds customer data and can be up to 1 MB.
+		PR_DHL()->log_msg( sprintf( 'Paperless Customs upload request: POST %s (%s, %d bytes, reference "%s")', $url, $filename, strlen( $pdf_bytes ), $reference ) );
+
+		// Reuse the same Basic + dhl-api-key auth as every other call.
+		return $this->api_auth->authorize( $request );
+	}
+
+	/**
+	 * Read the batchId from a customs-documents upload response.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param \PR\DHL\REST_API\Response $response  The upload response.
+	 * @param string                    $reference The upload's reference (the order ID), for the log.
+	 * @return string The DHL batchId (UUID).
+	 * @throws Exception When the upload was not accepted.
+	 */
+	protected function parse_customs_documents_response( $response, $reference = '' ) {
+		$code = (int) $response->status;
+		$body = json_decode( $response->body );
+
+		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- DHL API response field.
+		if ( 201 === $code && isset( $body->batchId ) ) {
+			PR_DHL()->log_msg( sprintf( 'Paperless Customs upload accepted (HTTP 201, reference "%s"): batchId %s', $reference, $body->batchId ) );
+			return $body->batchId;
+		}
+		// phpcs:enable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+
+		$detail = '';
+		if ( is_object( $body ) ) {
+			$detail = (string) ( $body->detail ?? ( $body->title ?? '' ) );
+		}
+
+		$message = sprintf(
+			/* translators: %d: HTTP status code. */
+			__( 'Paperless Customs upload failed (HTTP %d).', 'dhl-for-woocommerce' ),
+			$code
+		);
+		if ( '' !== $detail ) {
+			$message .= ' ' . $detail;
+		}
+
+		PR_DHL()->log_msg( $message );
+
+		throw new Exception( esc_html( $message ) );
+	}
+
+	/**
+	 * If eligible, generate + upload the commercial invoice and attach the batchId.
+	 *
+	 * On any failure, logs, adds an order note, and returns without attaching,
+	 * the label is still created with physical customs docs. Never throws.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param Item_Info $item_info The shipment item info; its services are modified in place.
+	 * @param array     $args      The label arguments for the order.
+	 * @return void
+	 */
+	public function maybe_apply_paperless_customs( Item_Info $item_info, array $args ) {
+		try {
+			$job = $this->prepare_paperless_customs( $item_info, $args );
+			if ( null === $job ) {
+				return;
+			}
+
+			try {
+				$result = $this->upload_customs_documents( $job['pdf'], $job['filename'], (string) $job['order_id'] );
+			} catch ( \Throwable $e ) {
+				$result = $e;
+			}
+
+			$this->attach_paperless_batch( $item_info, $job['order_id'], $result );
+		} catch ( \Throwable $e ) {
+			// Never let Paperless Customs abort label creation (or a bulk run).
+			PR_DHL()->log_msg( 'Paperless Customs unexpected failure: ' . $e->getMessage() );
+		}
+	}
+
+	/**
+	 * Apply Paperless Customs to every shipment of a bulk batch, uploading the invoices in parallel.
+	 *
+	 * Each order falls back to a normal label with an order note on its own, exactly like
+	 * the single-label path. Never throws.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param array $entries List of array( 'item_info' => Item_Info, 'args' => array ) per shipment.
+	 * @return void
+	 */
+	public function apply_paperless_customs_bulk( array $entries ) {
+		try {
+			$jobs = array();
+			foreach ( $entries as $key => $entry ) {
+				try {
+					$job = $this->prepare_paperless_customs( $entry['item_info'], $entry['args'] );
+					if ( null !== $job ) {
+						$job['item_info'] = $entry['item_info'];
+						$jobs[ $key ]     = $job;
+					}
+				} catch ( \Throwable $e ) {
+					PR_DHL()->log_msg( 'Paperless Customs unexpected failure: ' . $e->getMessage() );
+				}
+			}
+
+			if ( empty( $jobs ) ) {
+				return;
+			}
+
+			if ( 1 === count( $jobs ) || ! class_exists( '\WpOrg\Requests\Requests' ) ) {
+				foreach ( $jobs as $job ) {
+					try {
+						$result = $this->upload_customs_documents( $job['pdf'], $job['filename'], (string) $job['order_id'] );
+					} catch ( \Throwable $e ) {
+						$result = $e;
+					}
+					$this->attach_paperless_batch( $job['item_info'], $job['order_id'], $result );
+				}
+				return;
+			}
+
+			/**
+			 * Filters how many Paperless Customs invoice uploads run at the same time in a bulk run.
+			 *
+			 * @since [*next-version*]
+			 *
+			 * @param int $concurrency Parallel uploads per group. Default 10.
+			 */
+			$concurrency = max( 1, (int) apply_filters( 'pr_dhl_paperless_upload_concurrency', 10 ) );
+
+			while ( ! empty( $jobs ) ) {
+				$group = array_slice( $jobs, 0, $concurrency, true );
+				$jobs  = array_slice( $jobs, $concurrency, null, true );
+				$hits  = $this->paperless_rate_limit_hits;
+
+				$results = $this->upload_customs_documents_parallel( $group );
+				foreach ( $group as $key => $job ) {
+					$this->attach_paperless_batch( $job['item_info'], $job['order_id'], $results[ $key ] ?? new Exception( 'No upload response.' ) );
+				}
+
+				// DHL rate limited this group, so send the next ones in smaller bursts.
+				if ( $this->paperless_rate_limit_hits > $hits ) {
+					$concurrency = max( 1, intdiv( $concurrency, 2 ) );
+				}
+			}
+		} catch ( \Throwable $e ) {
+			PR_DHL()->log_msg( 'Paperless Customs unexpected failure: ' . $e->getMessage() );
+		}
+	}
+
+	/**
+	 * Upload several invoices at once with the WordPress Requests library.
+	 *
+	 * Rate-limited (429) uploads are re-sent together after one shared wait, see
+	 * retry_rate_limited_uploads(). Connectivity errors and 5xx responses trip the
+	 * circuit breaker, as in send_upload().
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param array $jobs Prepared jobs keyed by entry, each with 'pdf', 'filename' and 'order_id'.
+	 * @return array Per key: the batchId string, or the Throwable describing the failure.
+	 */
+	protected function upload_customs_documents_parallel( array $jobs ) {
+		$results  = array();
+		$requests = array();
+		$sent     = array();
+
+		foreach ( $jobs as $key => $job ) {
+			if ( $this->paperless_unavailable ) {
+				$results[ $key ] = new Exception( 'The DHL customs service was unavailable.' );
+				continue;
+			}
+
+			try {
+				$request          = $this->build_customs_documents_request( $job['pdf'], $job['filename'], (string) $job['order_id'] );
+				$sent[ $key ]     = $request;
+				$requests[ $key ] = array(
+					'url'     => $request->url,
+					'headers' => $request->headers,
+					'data'    => $request->body,
+					'type'    => \WpOrg\Requests\Requests::POST,
+				);
+			} catch ( \Throwable $e ) {
+				$results[ $key ] = $e;
+			}
+		}
+
+		if ( empty( $requests ) ) {
+			return $results;
+		}
+
+		$options = array(
+			'timeout'         => \PR\DHL\REST_API\Drivers\WP_API_Driver::WP_REQUEST_TIMEOUT,
+			'connect_timeout' => \PR\DHL\REST_API\Drivers\WP_API_Driver::WP_REQUEST_TIMEOUT,
+			'verify'          => ABSPATH . WPINC . '/certificates/ca-bundle.crt',
+			'useragent'       => 'WooCommerce/' . WC_VERSION . ' (WordPress/' . get_bloginfo( 'version' ) . ') DHL-plug-in/' . PR_DHL_VERSION,
+		);
+
+		$proxy = $this->get_requests_proxy( reset( $requests )['url'] );
+		if ( null !== $proxy ) {
+			$options['proxy'] = $proxy;
+		}
+
+		// This bypasses wp_remote_request(), so the WordPress HTTP filters (http_request_args,
+		// pre_http_request, https_ssl_verify, http_api_debug) and tools hooked into them, such
+		// as Query Monitor, do not see these uploads. Only the proxy settings are mirrored above.
+		$responses = \WpOrg\Requests\Requests::request_multiple( $requests, $options );
+		$limited   = array();
+
+		foreach ( $requests as $key => $unused ) {
+			$raw = $responses[ $key ] ?? null;
+
+			if ( ! $raw instanceof \WpOrg\Requests\Response ) {
+				$this->paperless_unavailable = true;
+				$results[ $key ]             = new Exception( $raw instanceof \Throwable ? $raw->getMessage() : 'No upload response.' );
+				continue;
+			}
+
+			$headers  = $raw->headers instanceof \Traversable ? iterator_to_array( $raw->headers ) : array();
+			$response = new \PR\DHL\REST_API\Response( $sent[ $key ], $raw->status_code, $raw->body, $headers );
+
+			if ( 429 === (int) $response->status ) {
+				$limited[ $key ] = $response;
+				continue;
+			}
+
+			if ( (int) $response->status >= 500 ) {
+				$this->paperless_unavailable = true;
+			}
+
+			try {
+				$results[ $key ] = $this->parse_customs_documents_response( $response, (string) $jobs[ $key ]['order_id'] );
+			} catch ( \Throwable $e ) {
+				$results[ $key ] = $e;
+			}
+		}
+
+		if ( ! empty( $limited ) ) {
+			$this->retry_rate_limited_uploads( $limited, $sent, $jobs, $results );
+		}
+
+		return $results;
+	}
+
+	/**
+	 * Re-send the rate-limited uploads of a parallel group once, after a single shared wait.
+	 *
+	 * The wait is the longest Retry-After of the group (or the default backoff). A Retry-After
+	 * above the cap, or a max-attempts filter of 1, fails the uploads without retrying. Once a
+	 * re-send is rate limited again, the rest of the group fails without being sent.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param \PR\DHL\REST_API\Response[] $limited The 429 responses, keyed like the jobs.
+	 * @param \PR\DHL\REST_API\Request[]  $sent    The upload requests, keyed like the jobs.
+	 * @param array                       $jobs    The prepared jobs, for each upload's order ID.
+	 * @param array                       $results Per key: the batchId or the failure; filled in here.
+	 * @return void
+	 */
+	protected function retry_rate_limited_uploads( array $limited, array $sent, array $jobs, array &$results ) {
+		$this->paperless_rate_limited     = true;
+		$this->paperless_rate_limit_hits += count( $limited );
+
+		$wait = 0;
+		foreach ( $limited as $response ) {
+			$response_wait = $this->rate_limit_wait( $response );
+			if ( null === $response_wait ) {
+				$wait = null;
+				break;
+			}
+			$wait = max( $wait, $response_wait );
+		}
+
+		if ( null !== $wait && $this->upload_max_attempts() > 1 ) {
+			sleep( $wait );
+
+			$driver        = new \PR\DHL\REST_API\Drivers\WP_API_Driver();
+			$still_limited = false;
+			foreach ( $limited as $key => $response ) {
+				if ( $still_limited || $this->paperless_unavailable ) {
+					continue;
+				}
+				try {
+					$limited[ $key ] = $this->send_upload( $driver, $sent[ $key ] );
+					$still_limited   = 429 === (int) $limited[ $key ]->status;
+				} catch ( \Throwable $e ) {
+					$results[ $key ] = $e;
+					unset( $limited[ $key ] );
+				}
+			}
+		}
+
+		foreach ( $limited as $key => $response ) {
+			try {
+				$results[ $key ] = $this->parse_customs_documents_response( $response, (string) $jobs[ $key ]['order_id'] );
+			} catch ( \Throwable $e ) {
+				$results[ $key ] = $e;
+			}
+		}
+	}
+
+	/**
+	 * Build the Requests 'proxy' option from the WordPress proxy settings (WP_PROXY_* constants).
+	 *
+	 * Mirrors WP_Http so the parallel uploads use the same proxy as wp_remote_request().
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $url The URL the requests are sent to.
+	 * @return array|null The proxy option, or null when no proxy applies to this URL.
+	 */
+	protected function get_requests_proxy( $url ) {
+		if ( ! class_exists( 'WP_HTTP_Proxy' ) ) {
+			require_once ABSPATH . WPINC . '/class-wp-http-proxy.php';
+		}
+
+		$proxy = new \WP_HTTP_Proxy();
+		if ( ! $proxy->is_enabled() || ! $proxy->send_through_proxy( $url ) ) {
+			return null;
+		}
+
+		$option = array( $proxy->host() . ':' . $proxy->port() );
+		if ( $proxy->use_authentication() ) {
+			$option[] = $proxy->username();
+			$option[] = $proxy->password();
+		}
+
+		return $option;
+	}
+
+	/**
+	 * Attach an uploaded batchId to the shipment, or note the fallback on the order.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param Item_Info         $item_info The shipment item info; its services are modified in place.
+	 * @param int               $order_id  The order ID.
+	 * @param string|\Throwable $result    The batchId, or the upload failure.
+	 * @return void
+	 */
+	protected function attach_paperless_batch( Item_Info $item_info, $order_id, $result ) {
+		if ( is_string( $result ) && '' !== $result ) {
+			// Pass-through in services_mappimng() turns this into services.paperlessCustoms = "<uuid>".
+			$item_info->services['paperlessCustoms'] = $result;
+			return;
+		}
+
+		PR_DHL()->log_msg( 'Paperless Customs invoice upload failed: ' . ( $result instanceof \Throwable ? $result->getMessage() : 'empty batchId' ) );
+		$this->paperless_fallback_note( $order_id, __( 'Paperless Customs skipped: the invoice upload to DHL failed. Attach physical customs documents to the parcel.', 'dhl-for-woocommerce' ) );
+	}
+
+	/**
+	 * Check eligibility and build the commercial invoice for one shipment.
+	 *
+	 * Skipped cases are noted on the order here, so callers only handle the upload.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param Item_Info $item_info The shipment item info.
+	 * @param array     $args      The label arguments for the order.
+	 * @return array|null array( 'pdf', 'filename', 'order_id' ) when an upload is due, otherwise null.
+	 */
+	protected function prepare_paperless_customs( Item_Info $item_info, array $args ) {
+		$enabled = ( 'yes' === ( $args['order_details']['paperless_customs'] ?? '' ) );
+		if ( ! $enabled ) {
+			return null;
+		}
+
+		$country  = $args['shipping_address']['country'] ?? '';
+		$product  = $item_info->shipment['product'] ?? '';
+		$pddp     = ( 'yes' === ( $args['order_details']['PDDP'] ?? '' ) );
+		$order_id = $args['order_details']['order_id'] ?? 0;
+
+		if ( ! \PR\DHL\Utils\API_Utils::is_paperless_customs_eligible( $country, $product, $pddp ) ) {
+			// Only note the PDDP conflict; other ineligible cases are silent.
+			if ( $pddp && 'V53WPAK' === $product && in_array( $country, \PR\DHL\Utils\API_Utils::paperless_supported_countries(), true ) ) {
+				$this->paperless_fallback_note( $order_id, __( 'Paperless Customs skipped: Prepaid Duties (PDDP) is enabled and cannot be combined with Paperless Customs. Attach physical customs documents to the parcel.', 'dhl-for-woocommerce' ) );
+			}
+			return null;
+		}
+
+		if ( $this->paperless_unavailable ) {
+			$this->paperless_fallback_note( $order_id, __( 'Paperless Customs skipped: the DHL customs service was unavailable. Attach physical customs documents to the parcel.', 'dhl-for-woocommerce' ) );
+			return null;
+		}
+
+		$settings = $args['dhl_settings'] ?? array();
+
+		if ( empty( $settings['paperless_signature'] ) ) {
+			$this->paperless_fallback_note( $order_id, __( 'Paperless Customs skipped: no signature image is configured. Attach physical customs documents to the parcel.', 'dhl-for-woocommerce' ) );
+			return null;
+		}
+
+		if ( 'yes' === ( $args['order_details']['multi_packages_enabled'] ?? '' ) ) {
+			$this->paperless_fallback_note( $order_id, __( 'Paperless Customs skipped: it is not supported for multi-package shipments. Attach physical customs documents to the parcel.', 'dhl-for-woocommerce' ) );
+			return null;
+		}
+
+		try {
+			$pdf = ( new \PR\DHL\REST_API\Parcel_DE\Commercial_Invoice_PDF() )->generate( $item_info, $settings );
+		} catch ( \Throwable $e ) {
+			PR_DHL()->log_msg( 'Paperless Customs invoice generation failed: ' . $e->getMessage() );
+			$this->paperless_fallback_note( $order_id, __( 'Paperless Customs skipped: the commercial invoice could not be generated. Attach physical customs documents to the parcel.', 'dhl-for-woocommerce' ) );
+			return null;
+		}
+
+		if ( strlen( $pdf ) > 1000000 ) {
+			PR_DHL()->log_msg( 'Paperless Customs invoice exceeds 1 MB: ' . strlen( $pdf ) . ' bytes' );
+			$this->paperless_fallback_note( $order_id, __( 'Paperless Customs skipped: the generated invoice exceeds the 1 MB limit of DHL. Reduce the signature or logo image size and attach physical customs documents to the parcel.', 'dhl-for-woocommerce' ) );
+			return null;
+		}
+
+		return array(
+			'pdf'      => $pdf,
+			'filename' => 'invoice-' . $order_id . '.pdf',
+			'order_id' => $order_id,
+		);
+	}
+
+	/**
+	 * Record a Paperless Customs fallback on the order.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param int    $order_id The order ID.
+	 * @param string $note     Complete, translated sentence explaining the fallback.
+	 * @return void
+	 */
+	protected function paperless_fallback_note( $order_id, $note ) {
+		// Log every fallback reason too, so support can see it without opening each order.
+		PR_DHL()->log_msg( sprintf( 'Paperless Customs fallback for order #%s: %s', $order_id, $note ) );
+
+		try {
+			if ( $order_id && function_exists( 'wc_get_order' ) ) {
+				$order = wc_get_order( $order_id );
+				if ( $order ) {
+					$order->add_order_note( $note );
+				}
+			}
+		} catch ( \Throwable $e ) {
+			PR_DHL()->log_msg( 'Paperless Customs fallback note failed: ' . $e->getMessage() );
+		}
+	}
+
+	/**
+	 * Record on the order whether its newly created label went out with Paperless Customs.
+	 *
+	 * On success the batchId is stored as order meta and noted on the order; otherwise any
+	 * batchId left from an earlier label is removed. Fallbacks are noted where they happen,
+	 * except a DHL rejection of the service, which is only noted here once the label exists.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param int       $order_id  The order ID.
+	 * @param Item_Info $item_info The shipment item info the label was created from.
+	 * @return void
+	 */
+	public function record_paperless_customs_result( $order_id, Item_Info $item_info ) {
+		try {
+			$order = $order_id ? wc_get_order( $order_id ) : false;
+			if ( ! $order ) {
+				return;
+			}
+
+			$batch_id = $item_info->services['paperlessCustoms'] ?? '';
+
+			if ( '' === $batch_id ) {
+				if ( isset( $this->paperless_rejected[ spl_object_id( $item_info ) ] ) ) {
+					unset( $this->paperless_rejected[ spl_object_id( $item_info ) ] );
+					$this->paperless_fallback_note(
+						$order_id,
+						__( 'Paperless Customs skipped: DHL rejected the order with Paperless Customs, so the label was created without it. Attach physical customs documents to the parcel.', 'dhl-for-woocommerce' )
+					);
+				}
+
+				if ( '' !== (string) $order->get_meta( self::PAPERLESS_BATCH_META_KEY ) ) {
+					$order->delete_meta_data( self::PAPERLESS_BATCH_META_KEY );
+					$order->save();
+				}
+				return;
+			}
+
+			$order->update_meta_data( self::PAPERLESS_BATCH_META_KEY, $batch_id );
+			$order->save();
+			$order->add_order_note(
+				sprintf(
+					/* translators: %s: DHL customs documents batch ID */
+					__( 'Paperless Customs applied: the commercial invoice was sent to DHL digitally (batch ID: %s). No physical customs documents are needed on the parcel.', 'dhl-for-woocommerce' ),
+					$batch_id
+				)
+			);
+		} catch ( \Throwable $e ) {
+			PR_DHL()->log_msg( 'Paperless Customs result could not be recorded: ' . $e->getMessage() );
+		}
+	}
+
+	/**
+	 * Whether an error text refers to Paperless Customs (the service, batch or customs document).
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $text Error message(s).
+	 * @return bool
+	 */
+	public function is_paperless_error( $text ) {
+		return (bool) preg_match( '/paperless|batch[ _-]?id|customs[ _-]?document/i', (string) $text );
+	}
+
+	/**
+	 * Remove the Paperless Customs service from an item after DHL rejected it.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param Item_Info $item_info The shipment item info.
+	 * @return void
+	 */
+	public function strip_paperless_customs( Item_Info $item_info ) {
+		unset( $item_info->services['paperlessCustoms'] );
+
+		// The note is added by record_paperless_customs_result(), once the retried label exists.
+		$this->paperless_rejected[ spl_object_id( $item_info ) ] = true;
+	}
+
+	/**
+	 * Create the label items; if DHL fails because of Paperless Customs, retry once without it.
+	 *
+	 * Unrelated failures (auth, timeout, 5xx) are returned or thrown unchanged.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param Item_Info $item_info The shipment item info.
+	 * @return array The create_items() response.
+	 * @throws Exception On a failure that is not Paperless Customs related, or when the retry fails.
+	 */
+	private function create_label_items_with_paperless_fallback( Item_Info $item_info ) {
+		$has_paperless = ! empty( $item_info->services['paperlessCustoms'] );
+
+		try {
+			$response = $this->api_client->create_items( array( $item_info ) );
+		} catch ( Exception $e ) {
+			if ( ! $has_paperless || ! $this->is_paperless_error( $e->getMessage() ) ) {
+				throw $e;
+			}
+			PR_DHL()->log_msg( 'Paperless Customs order rejected, retrying without it: ' . $e->getMessage() );
+			$this->strip_paperless_customs( $item_info );
+			return $this->api_client->create_items( array( $item_info ) );
+		}
+
+		if ( $has_paperless && ! empty( $response['errors'] ) ) {
+			$text = '';
+			foreach ( $response['errors'] as $error ) {
+				$text .= ' ' . ( $error['message'] ?? '' );
+			}
+			if ( $this->is_paperless_error( $text ) ) {
+				PR_DHL()->log_msg( 'Paperless Customs order rejected (207), retrying without it: ' . $text );
+				$this->strip_paperless_customs( $item_info );
+				return $this->api_client->create_items( array( $item_info ) );
+			}
+		}
+
+		return $response;
+	}
+
+	/**
+	 * Send the upload, retrying on HTTP 429 with a short backoff.
+	 *
+	 * Connectivity errors and 5xx responses trip the circuit breaker so that later
+	 * uploads in the same request are skipped. Once a 429 has been seen, later uploads
+	 * make a single attempt without sleeping, so bulk runs cannot accumulate backoff.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param \PR\DHL\REST_API\Drivers\WP_API_Driver $driver  The raw HTTP driver.
+	 * @param \PR\DHL\REST_API\Request               $request The authorized upload request.
+	 * @return \PR\DHL\REST_API\Response The last response received.
+	 * @throws \RuntimeException On a connectivity error.
+	 */
+	protected function upload_with_retry( $driver, $request ) {
+		if ( $this->paperless_rate_limited ) {
+			return $this->send_upload( $driver, $request );
+		}
+
+		$max_attempts = $this->upload_max_attempts();
+
+		for ( $attempt = 1; $attempt <= $max_attempts; $attempt++ ) {
+			$response = $this->send_upload( $driver, $request );
+			if ( 429 !== (int) $response->status ) {
+				return $response;
+			}
+
+			$this->paperless_rate_limited = true;
+
+			if ( $attempt === $max_attempts ) {
+				return $response;
+			}
+
+			$wait = $this->rate_limit_wait( $response );
+			if ( null === $wait ) {
+				return $response;
+			}
+
+			sleep( $wait );
+		}
+
+		return $response;
+	}
+
+	/**
+	 * Maximum number of attempts for one Paperless Customs upload.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return int At least 1.
+	 */
+	protected function upload_max_attempts() {
+		/**
+		 * Filters the maximum number of Paperless Customs upload attempts.
+		 *
+		 * @since [*next-version*]
+		 *
+		 * @param int $max_attempts Maximum attempts, including the first. Default 2.
+		 */
+		return max( 1, (int) apply_filters( 'pr_dhl_paperless_upload_max_attempts', 2 ) );
+	}
+
+	/**
+	 * Seconds to wait before re-sending a rate-limited (429) upload.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param \PR\DHL\REST_API\Response $response The 429 response.
+	 * @return int|null Seconds to wait, or null when its Retry-After exceeds the cap (no retry).
+	 */
+	protected function rate_limit_wait( $response ) {
+		/**
+		 * Filters the seconds to wait before retrying a rate-limited Paperless Customs upload.
+		 *
+		 * @since [*next-version*]
+		 *
+		 * @param int $seconds Backoff in seconds. Default 2.
+		 */
+		$backoff = (int) apply_filters( 'pr_dhl_paperless_upload_backoff_seconds', 2 );
+
+		/**
+		 * Filters the longest Retry-After (seconds) that is honored; a longer one skips the retry.
+		 *
+		 * @since [*next-version*]
+		 *
+		 * @param int $cap Hard cap in seconds. Default 10.
+		 */
+		$cap = (int) apply_filters( 'pr_dhl_paperless_upload_retry_after_cap', 10 );
+
+		if ( is_array( $response->headers ) ) {
+			foreach ( $response->headers as $name => $value ) {
+				if ( 'retry-after' === strtolower( (string) $name ) && is_numeric( $value ) ) {
+					if ( (int) $value > $cap ) {
+						return null;
+					}
+					$backoff = (int) $value;
+					break;
+				}
+			}
+		}
+
+		return max( 0, min( $backoff, $cap ) );
+	}
+
+	/**
+	 * Send one upload request and trip the circuit breaker on connectivity errors and 5xx.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param \PR\DHL\REST_API\Drivers\WP_API_Driver $driver  The raw HTTP driver.
+	 * @param \PR\DHL\REST_API\Request               $request The authorized upload request.
+	 * @return \PR\DHL\REST_API\Response
+	 * @throws \RuntimeException On a connectivity error.
+	 */
+	private function send_upload( $driver, $request ) {
+		try {
+			$response = $driver->send( $request );
+		} catch ( \RuntimeException $e ) {
+			$this->paperless_unavailable = true;
+			throw $e;
+		}
+
+		if ( (int) $response->status >= 500 ) {
+			$this->paperless_unavailable = true;
+		}
+
+		return $response;
+	}
+
+	/**
+	 * Route for the customs-documents upload endpoint.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return string The route, relative to the API base URL.
+	 */
+	protected function request_customs_documents_route() {
+		return 'v2/customs-documents';
+	}
+
+	/**
 	 * Get label.
 	 *
 	 * @param $args
@@ -85,8 +890,10 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 			throw $e;
 		}
 
-		// Create the item and get the barcode
-		$item_response = $this->api_client->create_items( array( $item_info ) );
+		$this->maybe_apply_paperless_customs( $item_info, $args );
+
+		// Create the item and get the barcode, retrying once without Paperless Customs if it caused the failure.
+		$item_response = $this->create_label_items_with_paperless_fallback( $item_info );
 
 		if ( ! empty( $item_response['errors'] ) ) {
 			$message = '';
@@ -102,6 +909,8 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		} else {
 			$label_tracking_info = $this->save_export_files( 'label', $args['order_details']['order_id'], $item_response['items'][0] );
 		}
+
+		$this->record_paperless_customs_result( $args['order_details']['order_id'], $item_info );
 
 		if ( ! empty( $item_response['warnings'] ) ) {
 			$label_tracking_info['dhl_label_warnings'] = $item_response['warnings'];

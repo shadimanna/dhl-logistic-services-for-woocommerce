@@ -41,6 +41,11 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 
 	class PR_DHL_WC {
 
+		/**
+		 * Plugin version.
+		 *
+		 * @var string
+		 */
 		private $version = '4.1.1';
 
 		/**
@@ -371,6 +376,9 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 				);
 
 				if ( isset( $_GET['section'] ) && $_GET['section'] == 'pr_dhl_paket' ) {
+					// Media library for the Paperless Customs signature / logo pickers.
+					wp_enqueue_media();
+
 					wp_enqueue_script(
 						'wc-shipment-dhl-paket-settings-js',
 						PR_DHL_PLUGIN_DIR_URL . '/assets/js/pr-dhl-paket-settings.js',

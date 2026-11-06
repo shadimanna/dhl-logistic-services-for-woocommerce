@@ -157,6 +157,9 @@ class Logging_Driver implements API_Driver_Interface {
 				if ( isset( $item['label']['b64'] ) ) {
 					$data['items'][ $item_key ]['label']['b64'] = '[Base64 PDF data removed from log]';
 				}
+				if ( isset( $item['customsDoc']['b64'] ) ) {
+					$data['items'][ $item_key ]['customsDoc']['b64'] = '[Base64 PDF data removed from log]';
+				}
 			}
 		}
 

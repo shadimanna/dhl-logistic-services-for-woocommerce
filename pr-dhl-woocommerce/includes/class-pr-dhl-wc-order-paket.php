@@ -496,16 +496,47 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 					// PDDP
 					if ( $this->is_PDDP_required( $order ) ) {
 						$PDDP_value = $dhl_label_items['pr_dhl_PDDP'] ?? '';
+						// Explain why PDDP is greyed out while Paperless Customs is checked.
+						$pddp_tip = $this->is_paperless_customs_required( $order ) ? esc_html__( 'Cannot be combined with Paperless Customs. Uncheck Paperless Customs to use PDDP.', 'dhl-for-woocommerce' ) : '';
 						woocommerce_wp_checkbox(
 							array(
 								'id'                => 'pr_dhl_PDDP',
 								'label'             => esc_html__( 'Postal Delivered Duty Paid::', 'dhl-for-woocommerce' ),
 								'placeholder'       => '',
-								'description'       => '',
+								'description'       => $pddp_tip,
+								'desc_tip'          => '' !== $pddp_tip,
 								'value'             => esc_attr( $PDDP_value ),
-								'custom_attributes' => array( $is_disabled => $is_disabled ),
+								'custom_attributes' => array(
+									$is_disabled  => $is_disabled,
+									'data-locked' => $is_disabled ? 'yes' : 'no',
+								),
 							)
 						);
+					}
+
+					// Paperless Customs (DHL Paket International to Switzerland).
+					// Rendered for any eligible-country order; JS shows it only when the product is V53WPAK.
+					if ( $this->is_paperless_customs_required( $order ) ) {
+						$paperless_default = empty( $this->shipping_dhl_settings['dhl_default_paperless_customs'] ) ? 'yes' : $this->shipping_dhl_settings['dhl_default_paperless_customs'];
+						$paperless_value   = $dhl_label_items['pr_dhl_paperless_customs'] ?? ( 'yes' === $paperless_default ? 'yes' : '' );
+						$paperless_product = $dhl_label_items['pr_dhl_product'] ?? $this->get_default_dhl_product( $order_id );
+						$paperless_hidden  = 'V53WPAK' !== $paperless_product ? ' style="display:none;"' : '';
+						echo '<div id="pr_dhl_paperless_customs_field"' . $paperless_hidden . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						woocommerce_wp_checkbox(
+							array(
+								'id'                => 'pr_dhl_paperless_customs',
+								'label'             => esc_html__( 'Paperless Customs:', 'dhl-for-woocommerce' ),
+								'description'       => esc_html__( 'Upload the commercial invoice digitally instead of attaching it to the parcel. Cannot be combined with Postal Delivered Duty Paid (PDDP).', 'dhl-for-woocommerce' ),
+								'desc_tip'          => true,
+								'value'             => $paperless_value,
+								'custom_attributes' => array(
+									$is_disabled  => $is_disabled,
+									'data-locked' => $is_disabled ? 'yes' : 'no',
+								),
+							)
+						);
+						echo '<input type="hidden" name="pr_dhl_paperless_customs_rendered" value="1"' . ( $is_disabled ? ' disabled="disabled"' : '' ) . ' />'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						echo '</div>';
 					}
 
 					// Duties drop down.
@@ -733,6 +764,55 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			echo '</div>'; // END -- Multiple Packages
 			// echo '<hr style="clear:both;">';
 		}
+
+		/**
+		 * Save the label meta box, keeping an unticked Paperless Customs box as an explicit opt-out.
+		 *
+		 * A native form submit ("Update") omits unticked checkboxes, so without this the
+		 * default ('yes') would come back on reload and be used by bulk label creation.
+		 *
+		 * @since [*next-version*]
+		 *
+		 * @param int          $post_id The order ID.
+		 * @param WP_Post|null $post    The post object, if any.
+		 * @return array|void The saved label items, or nothing when nothing was saved.
+		 */
+		public function save_meta_box( $post_id, $post = null ) {
+			$args = parent::save_meta_box( $post_id, $post );
+
+			// The parent only returns data after verifying the nonce.
+			// phpcs:disable WordPress.Security.NonceVerification.Missing
+			if ( is_array( $args ) && ! empty( $_POST['pr_dhl_paperless_customs_rendered'] ) && ! isset( $_POST['pr_dhl_paperless_customs'] ) ) {
+				$args['pr_dhl_paperless_customs'] = 'no';
+				$this->save_dhl_label_items( $post_id, array( 'pr_dhl_paperless_customs' => 'no' ) );
+			}
+			// phpcs:enable WordPress.Security.NonceVerification.Missing
+
+			return $args;
+		}
+
+		/**
+		 * Delete the label tracking data together with the Paperless Customs batchId of that label.
+		 *
+		 * @since [*next-version*]
+		 *
+		 * @param int $order_id The order ID.
+		 * @return void
+		 */
+		public function delete_dhl_label_tracking( $order_id ) {
+			parent::delete_dhl_label_tracking( $order_id );
+
+			if ( ! class_exists( 'PR_DHL_API_REST_Parcel_DE' ) ) {
+				return;
+			}
+
+			$order = wc_get_order( $order_id );
+			if ( $order && '' !== (string) $order->get_meta( PR_DHL_API_REST_Parcel_DE::PAPERLESS_BATCH_META_KEY ) ) {
+				$order->delete_meta_data( PR_DHL_API_REST_Parcel_DE::PAPERLESS_BATCH_META_KEY );
+				$order->save();
+			}
+		}
+
 		/**
 		 * Order Tracking Save
 		 *
@@ -743,6 +823,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 				'pr_dhl_signature_service',
 				'pr_dhl_endorsement',
 				'pr_dhl_PDDP',
+				'pr_dhl_paperless_customs',
 				'pr_dhl_cdp_delivery',
 				'pr_dhl_cod_value',
 				'pr_dhl_preferred_day',
@@ -892,6 +973,11 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 				}
 			}
 
+			// Bulk and status-change labels never render the order screen, which is where the invoice number gets its default.
+			if ( empty( $args['order_details']['invoice_num'] ) ) {
+				$args['order_details']['invoice_num'] = (string) $order_id;
+			}
+
 			// if ( $this->is_crossborder_shipment( $order_id ) ) {
 			// $dhl_label_items['pr_dhl_description'] = $this->get_package_description( $order_id );
 			// $args['order_details']['description'] = $dhl_label_items['pr_dhl_description'];
@@ -900,7 +986,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			// Get settings
 			// $this->shipping_dhl_settings = PR_DHL()->get_shipping_dhl_settings();
 
-			$setting_ids = array( 'dhl_api_user', 'dhl_api_pwd', 'dhl_sandbox', 'dhl_add_logo', 'dhl_desc_default', 'dhl_shipper_reference', 'dhl_account_num', 'dhl_shipper_name', 'dhl_shipper_company', 'dhl_shipper_address', 'dhl_shipper_address_no', 'dhl_shipper_address_city', 'dhl_shipper_address_state', 'dhl_shipper_address_zip', 'dhl_shipper_phone', 'dhl_shipper_email', 'dhl_shipper_reference', 'dhl_bank_holder', 'dhl_bank_name', 'dhl_bank_iban', 'dhl_bank_bic', 'dhl_bank_ref', 'dhl_bank_ref_2', 'dhl_participation_return', 'dhl_split_return_label', 'dhl_email_notification', 'dhl_phone_notification' );
+			$setting_ids = array( 'dhl_api_user', 'dhl_api_pwd', 'dhl_sandbox', 'dhl_add_logo', 'dhl_desc_default', 'dhl_shipper_reference', 'dhl_account_num', 'dhl_shipper_name', 'dhl_shipper_company', 'dhl_shipper_address', 'dhl_shipper_address_no', 'dhl_shipper_address_city', 'dhl_shipper_address_state', 'dhl_shipper_address_zip', 'dhl_shipper_phone', 'dhl_shipper_email', 'dhl_shipper_reference', 'dhl_bank_holder', 'dhl_bank_name', 'dhl_bank_iban', 'dhl_bank_bic', 'dhl_bank_ref', 'dhl_bank_ref_2', 'dhl_participation_return', 'dhl_split_return_label', 'dhl_email_notification', 'dhl_phone_notification', 'dhl_paperless_signature', 'dhl_paperless_logo', 'dhl_paperless_eori', 'dhl_paperless_vat' );
 
 			foreach ( $setting_ids as $value ) {
 				$api_key = str_replace( 'dhl_', '', $value );
@@ -1006,6 +1092,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 						'pr_dhl_premium',
 						'pr_dhl_bulky_goods',
 						'pr_dhl_endorsement',
+						'pr_dhl_paperless_customs',
 					);
 
 				}
@@ -1020,6 +1107,12 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 							$this->dhl_label_items[ $default_id ] = isset( $this->shipping_dhl_settings[ 'dhl_' . $id_name ] ) ? $this->shipping_dhl_settings[ 'dhl_' . $id_name ] : '';
 						}
 					}
+				}
+
+				// Paperless Customs: an empty/missing setting means the field's declared default ('yes').
+				if ( in_array( 'pr_dhl_paperless_customs', $settings_default_ids, true ) && empty( $this->dhl_label_items['pr_dhl_paperless_customs'] )
+					&& empty( $this->shipping_dhl_settings['dhl_default_paperless_customs'] ) ) {
+					$this->dhl_label_items['pr_dhl_paperless_customs'] = 'yes';
 				}
 
 				$this->save_dhl_label_items( $order_id, $this->dhl_label_items );
@@ -1587,6 +1680,19 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 			?>
 		</div>
 			<?php
+		}
+
+		/**
+		 * Whether the Paperless Customs checkbox should show for this order.
+		 *
+		 * @since [*next-version*]
+		 *
+		 * @param WC_Order $order The order being rendered.
+		 * @return bool True if Paperless Customs applies to this order.
+		 */
+		public function is_paperless_customs_required( $order ) {
+			// Country check only; the product is toggled client-side and enforced server-side.
+			return \PR\DHL\Utils\API_Utils::is_paperless_customs_eligible( $order->get_shipping_country(), 'V53WPAK', false );
 		}
 
 		protected function is_PDDP_required( $order ) {
