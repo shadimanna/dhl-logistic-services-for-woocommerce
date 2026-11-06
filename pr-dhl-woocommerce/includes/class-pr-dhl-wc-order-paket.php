@@ -823,7 +823,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order_Paket' ) ) :
 				'pr_dhl_additional_insurance',
 				'pr_dhl_premium',
 				'pr_dhl_bulky_goods',
-				'pr_dhl_multi_packages_enabled',
 			);
 		}
 
