@@ -214,8 +214,8 @@ export const Block = ({ checkoutExtensionData }) => {
                 setPreferredDayFeeApplied(true);
             }
         } else {
-            if (preferredDayFeeApplied) {
-                // Remove the fee
+            // "none" always clears: the session can hold a fee this block did not add.
+            if (preferredDayFeeApplied || preferredDay === '0') {
                 updateCartFee(0, '');
                 setPreferredDayFeeApplied(false);
             }

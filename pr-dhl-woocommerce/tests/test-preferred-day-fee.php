@@ -71,6 +71,80 @@ namespace {
 			return is_scalar( $value ) ? trim( (string) $value ) : $value;
 		}
 	}
+
+	$pr_dhl_test_page = 'checkout';
+
+	if ( ! function_exists( 'wp_unslash' ) ) {
+		/**
+		 * Remove slashes the way WordPress does for request data.
+		 *
+		 * @param string $value Value to unslash.
+		 * @return string
+		 */
+		function wp_unslash( $value ) {
+			return stripslashes( (string) $value );
+		}
+	}
+	if ( ! function_exists( 'is_singular' ) ) {
+		/**
+		 * Whether the test request shows a single post or page.
+		 *
+		 * @return bool
+		 */
+		function is_singular() {
+			global $pr_dhl_test_page;
+			return 'cart' !== $pr_dhl_test_page;
+		}
+	}
+	if ( ! function_exists( 'has_block' ) ) {
+		/**
+		 * Whether the test page contains the given block.
+		 *
+		 * @param string $block_name Block name.
+		 * @return bool
+		 */
+		function has_block( $block_name ) {
+			global $pr_dhl_test_page;
+			return 'woocommerce/checkout' === $block_name && 'block-page' === $pr_dhl_test_page;
+		}
+	}
+	if ( ! function_exists( 'is_checkout' ) ) {
+		/**
+		 * Whether the test request is a checkout page, endpoints included.
+		 *
+		 * @return bool
+		 */
+		function is_checkout() {
+			global $pr_dhl_test_page;
+			return in_array( $pr_dhl_test_page, array( 'checkout', 'order-received', 'order-pay' ), true );
+		}
+	}
+	if ( ! function_exists( 'is_wc_endpoint_url' ) ) {
+		/**
+		 * Whether the test request is a WooCommerce endpoint such as order-received.
+		 *
+		 * @param string|false $endpoint Endpoint to check, unused here.
+		 * @return bool
+		 */
+		function is_wc_endpoint_url( $endpoint = false ) {
+			global $pr_dhl_test_page;
+			return in_array( $pr_dhl_test_page, array( 'order-received', 'order-pay' ), true );
+		}
+	}
+	$pr_dhl_test_done_actions = array();
+
+	if ( ! function_exists( 'did_action' ) ) {
+		/**
+		 * How often the test marked an action as fired.
+		 *
+		 * @param string $hook Action name.
+		 * @return int
+		 */
+		function did_action( $hook ) {
+			global $pr_dhl_test_done_actions;
+			return isset( $pr_dhl_test_done_actions[ $hook ] ) ? $pr_dhl_test_done_actions[ $hook ] : 0;
+		}
+	}
 	if ( ! function_exists( '__' ) ) {
 		function __( $text, $domain = null ) {
 			return $text;
@@ -139,6 +213,11 @@ namespace {
 					'name'   => $name,
 					'amount' => $amount,
 				);
+			}
+
+			public function calculate_totals() {
+				$this->fees = array();
+				do_action( 'woocommerce_cart_calculate_fees', $this );
 			}
 		}
 	}
@@ -316,11 +395,15 @@ namespace {
 	$pr_dhl_test_session  = new PR_DHL_Test_Session();
 	$pr_dhl_test_settings = array( 'dhl_preferred_day_cost' => '5' );
 	$pr_dhl_test_orders   = array();
+	$pr_dhl_test_cart     = null;
 
 	if ( ! function_exists( 'WC' ) ) {
 		function WC() {
-			global $pr_dhl_test_session;
-			return (object) array( 'session' => $pr_dhl_test_session );
+			global $pr_dhl_test_session, $pr_dhl_test_cart;
+			return (object) array(
+				'session' => $pr_dhl_test_session,
+				'cart'    => $pr_dhl_test_cart,
+			);
 		}
 	}
 
@@ -462,6 +545,65 @@ namespace {
 	$cart = new PR_DHL_Test_Cart();
 	$core->add_preferred_day_fee( $cart );
 	pr_dhl_assert( 'Selection is dropped when the cart is emptied', pr_dhl_fee_pairs( $cart ), array() );
+
+	// The block starts with no day selected on every page load, so the fee must not
+	// outlive a reload of the checkout.
+	$charged    = array( array( 'DHL Delivery Day', 5.0 ) );
+	$page_loads = array(
+		'checkout'                       => array( 'checkout', '', array() ),
+		'checkout block on another page' => array( 'block-page', '', array() ),
+		'order-received'                 => array( 'order-received', '', $charged ),
+		'order-pay'                      => array( 'order-pay', '', $charged ),
+		'cart'                           => array( 'cart', '', $charged ),
+		'checkout prefetch'              => array( 'checkout', 'prefetch', array() ),
+		'checkout prerender'             => array( 'checkout', 'prefetch;prerender', array() ),
+	);
+	foreach ( $page_loads as $label => $page_load ) {
+		list( $page, $purpose, $want ) = $page_load;
+
+		$pr_dhl_test_page = $page;
+		if ( '' === $purpose ) {
+			unset( $_SERVER['HTTP_SEC_PURPOSE'] );
+		} else {
+			$_SERVER['HTTP_SEC_PURPOSE'] = $purpose;
+		}
+		$pr_dhl_test_session->data = array();
+		$pr_dhl_test_hooks         = array();
+		$core                      = new PR_DHL_Extend_Block_core();
+		$core->store_api_callback(
+			array(
+				'action' => 'update_preferred_day_fee',
+				'price'  => 5,
+				'label'  => 'DHL Delivery Day',
+			)
+		);
+		do_action( 'template_redirect' );
+		$cart = new PR_DHL_Test_Cart();
+		$core->add_preferred_day_fee( $cart );
+		pr_dhl_assert( "Loading the {$label} after a day was selected", pr_dhl_fee_pairs( $cart ), $want );
+	}
+	unset( $_SERVER['HTTP_SEC_PURPOSE'] );
+	$pr_dhl_test_page = 'checkout';
+
+	// The cart session can calculate totals before template_redirect and the checkout
+	// block then reuses them, so they must be calculated again without the fee.
+	$pr_dhl_test_session->data = array();
+	$pr_dhl_test_hooks         = array();
+	$core                      = new PR_DHL_Extend_Block_core();
+	$pr_dhl_test_cart          = new PR_DHL_Test_Cart();
+	$core->store_api_callback(
+		array(
+			'action' => 'update_preferred_day_fee',
+			'price'  => 5,
+			'label'  => 'DHL Delivery Day',
+		)
+	);
+	$pr_dhl_test_cart->calculate_totals();
+	$pr_dhl_test_done_actions['woocommerce_after_calculate_totals'] = 1;
+	do_action( 'template_redirect' );
+	pr_dhl_assert( 'Totals calculated before the checkout loads drop the fee', pr_dhl_fee_pairs( $pr_dhl_test_cart ), array() );
+	$pr_dhl_test_done_actions = array();
+	$pr_dhl_test_cart         = null;
 
 	// An existing DHL fee is replaced, other fees are kept.
 	$pr_dhl_test_session->data = array();

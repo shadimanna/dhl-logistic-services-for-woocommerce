@@ -69,6 +69,7 @@ More detailed instructions on how to set up your store and configure it are cons
 
 = 4.1.2 =
 * Fix: The DHL delivery day, drop-off location and neighbour options show again in the block checkout on WooCommerce 11.1 and later.
+* Fix: Reloading the block checkout no longer keeps charging the DHL delivery day fee when no day is selected.
 
 = 4.1.1 =
 * Tweak: WordPress 7.1 and WooCommerce 11.1 compatibility.
