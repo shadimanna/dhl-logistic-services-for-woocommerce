@@ -502,7 +502,7 @@ class Client extends API_Client {
 		$multiple_errors_list = array();
 
 		if ( ! isset( $response->body->items ) || ! is_array( $response->body->items ) ) {
-			return $response->body->detail ?? '';
+			return $response->body->detail ?? $response->body->title ?? sprintf( 'HTTP %d', $response->status );
 		}
 
 		foreach ( $response->body->items as $item ) {
@@ -653,16 +653,14 @@ class Client extends API_Client {
 	/**
 	 * Whether a failed cancellation response says DHL does not know any of the requested shipments.
 	 *
-	 * DHL answers HTTP 400 with an item status title of UNKNOWN_SHIPMENT_NUMBER both for a shipment
-	 * that was already cancelled and for one that never existed.
-	 *
 	 * @since [*next-version*]
 	 *
 	 * @param Response $response The cancellation response.
 	 *
 	 * @return bool
 	 */
-	protected function is_unknown_shipment_response( Response $response ) {
+	private function is_unknown_shipment_response( Response $response ) {
+		// DHL answers 400 with UNKNOWN_SHIPMENT_NUMBER both for an already cancelled shipment and for one that never existed.
 		if ( 400 !== (int) $response->status || empty( $response->body->items ) || ! is_array( $response->body->items ) ) {
 			return false;
 		}

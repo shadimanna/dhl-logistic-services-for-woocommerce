@@ -114,9 +114,6 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	/**
 	 * Cancel the shipment at DHL and remove its local label files.
 	 *
-	 * A shipment DHL no longer knows (already cancelled or never created) counts as cancelled.
-	 * Once the shipment is cancelled, a missing or undeletable label file is only logged.
-	 *
 	 * @param array $label_info The order's label tracking info, with a single tracking number.
 	 *
 	 * @throws Exception When DHL could not cancel the shipment.
@@ -125,11 +122,28 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 		try {
 			$this->api_client->delete_item( $label_info['tracking_number'] );
 		} catch ( Unknown_Shipment_Exception $e ) {
+			// The sandbox does not know live shipments, so a live label must stay until it is deleted in live mode.
+			if ( 'no' === ( $label_info['label_sandbox'] ?? '' ) && $this->is_sandbox() ) {
+				throw new Exception( esc_html__( 'This label was created with your live DHL account. Turn off sandbox mode in the DHL settings to delete it.', 'dhl-for-woocommerce' ) );
+			}
+
+			// Already cancelled or never created, so it counts as cancelled.
 			PR_DHL()->log_msg( sprintf( 'DHL does not know shipment %s (already cancelled or never created), removing the local label: %s', $label_info['tracking_number'], wp_strip_all_tags( $e->getMessage() ) ) );
 		}
 
 		$this->delete_label_file( $label_info['label_path'] ?? '' );
 		$this->delete_label_file( $label_info['return_label_path'] ?? '' );
+	}
+
+	/**
+	 * Whether the plugin is set to use the DHL sandbox.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return bool
+	 */
+	private function is_sandbox() {
+		return filter_var( $this->get_setting( 'dhl_sandbox' ), FILTER_VALIDATE_BOOLEAN );
 	}
 
 	/**
@@ -141,7 +155,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 	 *
 	 * @return void
 	 */
-	protected function delete_label_file( $path ) {
+	private function delete_label_file( $path ) {
 		if ( empty( $path ) ) {
 			return;
 		}
@@ -237,6 +251,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 			'label_url'           => $label_url,
 			'label_path'          => $label_path,
 			'tracking_number'     => $item->shipmentNo,
+			'label_sandbox'       => $this->is_sandbox() ? 'yes' : 'no',
 			'return_label_number' => $return_num,
 			'return_label_url'    => $return_label_url,
 			'return_label_path'   => $return_label_path,
@@ -301,6 +316,7 @@ class PR_DHL_API_REST_Parcel_DE extends PR_DHL_API_REST_Paket {
 			'label_url'           => $label_url,
 			'label_path'          => $label_path,
 			'tracking_number'     => $shipmentNos,
+			'label_sandbox'       => $this->is_sandbox() ? 'yes' : 'no',
 			'return_label_number' => $return_nums,
 			'return_label_url'    => $return_label_url,
 			'return_label_path'   => $return_label_path,

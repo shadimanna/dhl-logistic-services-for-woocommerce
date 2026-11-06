@@ -314,9 +314,6 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		/**
 		 * Delete the order's label at DHL, then remove the local label record.
 		 *
-		 * The local record is kept when DHL fails to cancel a shipment, so the label stays
-		 * visible and the merchant can retry instead of creating a duplicate.
-		 *
 		 * @param Int $order_id ID of the order object.
 		 *
 		 * @return String The (first) deleted tracking number, or an empty string when the order has none.
@@ -332,16 +329,22 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 			$dhl_obj = PR_DHL()->get_dhl_factory();
 
-			if ( is_array( $args['tracking_number'] ) ) {
-				foreach ( $args['tracking_number'] as $tracking_number ) {
-					$del_label_args                    = $args;
-					$del_label_args['tracking_number'] = $tracking_number;
-					$dhl_obj->delete_dhl_label( $del_label_args );
+			$tracking_numbers = array_values( (array) $args['tracking_number'] );
+			$last_index       = count( $tracking_numbers ) - 1;
+
+			foreach ( $tracking_numbers as $index => $tracking_number ) {
+				$del_label_args                    = $args;
+				$del_label_args['tracking_number'] = $tracking_number;
+
+				// All packages share one label file, so it is only removed with the last package, once the others are cancelled.
+				if ( $index < $last_index ) {
+					unset( $del_label_args['label_path'], $del_label_args['return_label_path'] );
 				}
-			} else {
-				$dhl_obj->delete_dhl_label( $args );
+
+				$dhl_obj->delete_dhl_label( $del_label_args );
 			}
 
+			// Only now, so a failed cancellation keeps the label on the order for a retry instead of a duplicate.
 			$this->delete_dhl_label_tracking( $order_id );
 
 			$tracking_number_to_delete_note = is_array( $args['tracking_number'] ) ? $args['tracking_number'][0] : $args['tracking_number'];
