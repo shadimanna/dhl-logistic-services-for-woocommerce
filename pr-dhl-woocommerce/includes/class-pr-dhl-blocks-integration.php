@@ -392,8 +392,14 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 			wp_die();
 		}
 
-		// Retrieve post_data from WooCommerce session
-		$order_data = WC()->session->get( 'pr_dhl_checkout_post_data' );
+		// Use the posted address when present: reading it back from the session races concurrent Store API requests.
+		if ( isset( $_POST['data'] ) && is_array( $_POST['data'] ) ) {
+			$order_data = array_map( 'sanitize_text_field', wp_unslash( $_POST['data'] ) );
+			WC()->session->set( 'pr_dhl_checkout_post_data', $order_data );
+		} else {
+			$order_data = WC()->session->get( 'pr_dhl_checkout_post_data' );
+		}
+
 		if ( empty( $order_data ) || ! is_array( $order_data ) ) {
 			wp_send_json_error( array( 'message' => 'No checkout data found.' ), 400 );
 			wp_die();

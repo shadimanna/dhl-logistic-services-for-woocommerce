@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from '@wordpress/element';
+import { useEffect, useState, useCallback, useRef } from '@wordpress/element';
 import { TextControl, RadioControl, Spinner, Notice } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { CART_STORE_KEY } from '@woocommerce/block-data';
@@ -19,7 +19,8 @@ export const Block = ({ checkoutExtensionData }) => {
         setExtensionData(namespace, key, value);
     }, 500), [setExtensionData]);
 
-    const debounceTimer = useState(null);
+    const debounceTimer = useRef(null);
+    const latestRequest = useRef(0);
 
     const customerData = useSelect((select) => select(CART_STORE_KEY).getCustomerData(), []);
     const shippingAddress = customerData ? customerData.shippingAddress : null;
@@ -83,6 +84,7 @@ export const Block = ({ checkoutExtensionData }) => {
             !shippingAddress.city ||
             !shippingAddress.postcode
         ) {
+            latestRequest.current++;
             setDisplayPreferred(false);
             setLoading(false);
             return;
@@ -105,40 +107,7 @@ export const Block = ({ checkoutExtensionData }) => {
                     payment_method: selectedPaymentMethod,
                 };
 
-                const formData = new URLSearchParams();
-                formData.append('action', 'pr_dhl_set_checkout_post_data');
-                formData.append('nonce', prDhlGlobals.nonce);
-
-                // Append each data field
-                Object.keys(data).forEach((key) => {
-                    if (Array.isArray(data[key])) {
-                        data[key].forEach((item, index) => {
-                            formData.append(`data[${key}][${index}]`, item);
-                        });
-                    } else {
-                        formData.append(`data[${key}]`, data[key]);
-                    }
-                });
-
-                // Send the data via AJAX
-                axios.post(prDhlGlobals.ajax_url, formData, {
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                })
-                    .then(response => {
-                        if (response.data.success) {
-                            // Fetch the preferredDays
-                            fetchPreferredDays();
-                        } else {
-                            setDisplayPreferred(false);
-                            setLoading(false);
-                        }
-                    })
-                    .catch(error => {
-                        setDisplayPreferred(false);
-                        setLoading(false);
-                    });
+                fetchPreferredDays(data);
             }
 
         }, 750);
@@ -147,7 +116,8 @@ export const Block = ({ checkoutExtensionData }) => {
 
     }, [shippingAddress, selectedShippingMethods, selectedPaymentMethod]);
 
-    const fetchPreferredDays = () => {
+    const fetchPreferredDays = (data) => {
+        const requestId = ++latestRequest.current;
         setLoading(true);
         setError('');
 
@@ -155,24 +125,39 @@ export const Block = ({ checkoutExtensionData }) => {
         formData.append('action', 'pr_dhl_get_preferred_days');
         formData.append('nonce', prDhlGlobals.nonce);
 
+        Object.keys(data).forEach((key) => {
+            if (Array.isArray(data[key])) {
+                data[key].forEach((item, index) => {
+                    formData.append(`data[${key}][${index}]`, item);
+                });
+            } else {
+                formData.append(`data[${key}]`, data[key]);
+            }
+        });
+
         axios.post(prDhlGlobals.ajax_url, formData, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
         })
             .then(response => {
+                if (requestId !== latestRequest.current) {
+                    return;
+                }
 
                 if (response.data.success) {
-
                     setPreferredDays(response.data.data.preferredDays);
                     setDisplayPreferred(true);
-                    setLoading(false);
                 } else {
                     setDisplayPreferred(false);
-                    setLoading(false);
                 }
+                setLoading(false);
             })
             .catch(error => {
+                if (requestId !== latestRequest.current) {
+                    return;
+                }
+
                 setDisplayPreferred(false);
                 setError('Error fetching preferred days.');
                 setLoading(false);
