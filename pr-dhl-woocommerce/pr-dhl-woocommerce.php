@@ -772,9 +772,7 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 		}
 
 		/**
-		 * Formerly returned an image tag for a barcode rendered by lib/barcode.php.
-		 *
-		 * The script and its bundled font were removed, so no barcode is rendered anymore.
+		 * Deprecated barcode helper; the barcode script and its bundled font were removed.
 		 *
 		 * @deprecated 4.1.2
 		 *
