@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, useRef } from '@wordpress/element';
 import { TextControl, RadioControl, Spinner, Notice } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { CART_STORE_KEY } from '@woocommerce/block-data';
+import { formatPrice, getCurrency } from '@woocommerce/price-format';
 import { __, sprintf } from '@wordpress/i18n';
 import { debounce } from 'lodash';
 import axios from 'axios';
@@ -317,7 +318,7 @@ export const Block = ({ checkoutExtensionData }) => {
                         <>
                             {sprintf(
                                 __('There is a surcharge of %s incl. VAT for this service.*', 'dhl-for-woocommerce'),
-                                wcPrice(parseFloat(dhlSettings.preferred_day_cost))
+                                formatShopPrice(parseFloat(dhlSettings.preferred_day_cost))
                             )}
                         </>
                     ) : (
@@ -430,24 +431,17 @@ export const Block = ({ checkoutExtensionData }) => {
     </table>);
 };
 
-// Helper function to format price
-function wcPrice(amount) {
-    // Assuming you have access to WooCommerce currency settings
-    const currencySymbol = prDhlGlobals.currencySymbol || '€';
-    const currencyPosition = prDhlGlobals.currencyPosition || 'left';
-    const decimals = prDhlGlobals.currencyDecimals || 2;
-    const decimalSeparator = prDhlGlobals.currencyDecimalSeparator || '.';
-    const thousandSeparator = prDhlGlobals.currencyThousandSeparator || ',';
+/**
+ * Formats an amount with the shop's currency settings.
+ *
+ * @param {number} amount Amount in the shop currency, such as 1.2.
+ * @return {string} The price as WooCommerce shows it, such as "1,20 €".
+ */
+function formatShopPrice(amount) {
+    const currency = getCurrency();
 
-    amount = parseFloat(amount).toFixed(decimals);
+    // toPrecision() drops float noise first, so 1.005 rounds up like PHP's round() instead of to 1.00.
+    const minorUnits = Math.round(parseFloat((amount * 10 ** currency.minorUnit).toPrecision(15)));
 
-    const parts = amount.toString().split('.');
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousandSeparator);
-    const formattedAmount = parts.join(decimalSeparator);
-
-    if (currencyPosition === 'left') {
-        return currencySymbol + formattedAmount;
-    } else {
-        return formattedAmount + currencySymbol;
-    }
+    return formatPrice(minorUnits, currency);
 }
