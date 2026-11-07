@@ -198,11 +198,60 @@ namespace {
 				$this->fees = $fees;
 			}
 
-			public function add_fee( $name, $amount, $taxable = false, $tax_class = '' ) {
-				$this->fees[] = (object) array(
-					'name'   => $name,
-					'amount' => $amount,
+			/**
+			 * Add a fee like WC_Cart::add_fee(), or like WC_Cart_Fees::add_fee() when
+			 * given an array of fee props.
+			 *
+			 * @param string|array $name      Fee name, or the fee props.
+			 * @param float        $amount    Fee amount.
+			 * @param bool         $taxable   Whether the fee is taxable.
+			 * @param string       $tax_class Tax class.
+			 * @return object The fee.
+			 */
+			public function add_fee( $name, $amount = 0, $taxable = false, $tax_class = '' ) {
+				$props = is_array( $name ) ? $name : array(
+					'name'      => $name,
+					'amount'    => $amount,
+					'taxable'   => $taxable,
+					'tax_class' => $tax_class,
 				);
+				$fee   = (object) array_merge(
+					array(
+						'taxable'   => false,
+						'tax_class' => '',
+					),
+					$props
+				);
+
+				$fee->id = strtolower( str_replace( ' ', '-', $fee->name ) );
+
+				if ( isset( $this->fees[ $fee->id ] ) ) {
+					return new WP_Error();
+				}
+
+				$this->fees[ $fee->id ] = $fee;
+
+				return $fee;
+			}
+
+			/**
+			 * The test customer.
+			 *
+			 * @return PR_DHL_Test_Customer
+			 */
+			public function get_customer() {
+				global $pr_dhl_test_no_customer;
+				return empty( $pr_dhl_test_no_customer ) ? new PR_DHL_Test_Customer() : null;
+			}
+
+			/**
+			 * Tax classes of the taxable cart items.
+			 *
+			 * @return array
+			 */
+			public function get_cart_item_tax_classes_for_shipping() {
+				global $pr_dhl_test_tax;
+				return $pr_dhl_test_tax['item_classes'];
 			}
 
 			/**
@@ -226,9 +275,24 @@ namespace {
 			private $name;
 			private $total;
 
-			public function __construct( $name, $total ) {
-				$this->name  = $name;
-				$this->total = $total;
+			/**
+			 * Tax on the fee line.
+			 *
+			 * @var string
+			 */
+			private $total_tax;
+
+			/**
+			 * Create a fee line.
+			 *
+			 * @param string $name      Fee name.
+			 * @param string $total     Net amount.
+			 * @param string $total_tax Tax on the line.
+			 */
+			public function __construct( $name, $total, $total_tax = '0' ) {
+				$this->name      = $name;
+				$this->total     = $total;
+				$this->total_tax = $total_tax;
 			}
 
 			public function get_name() {
@@ -238,6 +302,392 @@ namespace {
 			public function get_total() {
 				return $this->total;
 			}
+
+			/**
+			 * The tax on the fee line.
+			 *
+			 * @return string
+			 */
+			public function get_total_tax() {
+				return $this->total_tax;
+			}
+		}
+	}
+
+	/**
+	 * Shop tax setup for the tax tests: rates per country and tax class in percent.
+	 */
+	$pr_dhl_test_tax = array(
+		'enabled'            => false,
+		'country'            => 'DE',
+		'vat_exempt'         => false,
+		'shipping_tax_class' => 'inherit',
+		'item_classes'       => array( '' ),
+		'not_for_shipping'   => array(),
+		'rates'              => array(
+			'DE' => array(
+				''             => 19,
+				'reduced-rate' => 7,
+			),
+			'AT' => array(
+				''             => 20,
+				'reduced-rate' => 10,
+			),
+		),
+	);
+
+	if ( ! class_exists( 'PR_DHL_Test_Customer' ) ) {
+		/**
+		 * Minimal stand-in for WC_Customer.
+		 */
+		class PR_DHL_Test_Customer {
+			/**
+			 * Whether the customer is VAT exempt.
+			 *
+			 * @return bool
+			 */
+			public function get_is_vat_exempt() {
+				global $pr_dhl_test_tax;
+				return $pr_dhl_test_tax['vat_exempt'];
+			}
+		}
+	}
+
+	if ( ! class_exists( 'WC_Tax' ) ) {
+		/**
+		 * Minimal stand-in for WC_Tax with simple, non-compound rates.
+		 */
+		class WC_Tax {
+			/**
+			 * Rates of a tax class in a country.
+			 *
+			 * @param array $args Country and tax class.
+			 * @return array
+			 */
+			public static function find_rates( $args = array() ) {
+				global $pr_dhl_test_tax;
+				$country   = $args['country'];
+				$tax_class = isset( $args['tax_class'] ) ? $args['tax_class'] : '';
+
+				if ( ! isset( $pr_dhl_test_tax['rates'][ $country ][ $tax_class ] ) ) {
+					return array();
+				}
+
+				$rates = array();
+				foreach ( (array) $pr_dhl_test_tax['rates'][ $country ][ $tax_class ] as $index => $percent ) {
+					$rates[ 7 + $index ] = array(
+						'rate'     => $percent,
+						'label'    => 'VAT',
+						'shipping' => in_array( $tax_class, $pr_dhl_test_tax['not_for_shipping'], true ) ? 'no' : 'yes',
+						'compound' => 'no',
+					);
+				}
+				return $rates;
+			}
+
+			/**
+			 * Rates of a tax class in a country that apply to shipping.
+			 *
+			 * @param array $args Country and tax class.
+			 * @return array
+			 */
+			public static function find_shipping_rates( $args = array() ) {
+				return array_filter(
+					self::find_rates( $args ),
+					function ( $rate ) {
+						return 'yes' === $rate['shipping'];
+					}
+				);
+			}
+
+			/**
+			 * Rates of a tax class for the test customer's country, used by the cart for fees.
+			 *
+			 * @param string $tax_class Tax class.
+			 * @param object $customer  Customer.
+			 * @return array
+			 */
+			public static function get_rates( $tax_class = '', $customer = null ) {
+				global $pr_dhl_test_tax;
+				return self::find_rates(
+					array(
+						'country'   => $pr_dhl_test_tax['country'],
+						'tax_class' => $tax_class,
+					)
+				);
+			}
+
+			/**
+			 * The test customer's taxable address.
+			 *
+			 * @param string $tax_class Tax class.
+			 * @param object $customer  Customer.
+			 * @return array
+			 */
+			public static function get_tax_location( $tax_class = '', $customer = null ) {
+				global $pr_dhl_test_tax;
+				return array( $pr_dhl_test_tax['country'], '', '10115', 'Berlin' );
+			}
+
+			/**
+			 * Tax on a price, keyed by rate ID. Included tax is split over the combined
+			 * rate, as WC_Tax::calc_inclusive_tax() does for non-compound rates.
+			 *
+			 * @param float $price              Price.
+			 * @param array $rates              Rates.
+			 * @param bool  $price_includes_tax Whether the price includes the tax.
+			 * @return array
+			 */
+			public static function calc_tax( $price, $rates, $price_includes_tax = false ) {
+				$combined = 1 + array_sum( array_column( $rates, 'rate' ) ) / 100;
+				$taxes    = array();
+				foreach ( $rates as $id => $rate ) {
+					$taxes[ $id ] = $price_includes_tax ? $price * ( $rate['rate'] / 100 ) / $combined : $price * $rate['rate'] / 100;
+				}
+				return $taxes;
+			}
+
+			/**
+			 * Tax class slugs in settings order.
+			 *
+			 * @return array
+			 */
+			public static function get_tax_class_slugs() {
+				return array( 'reduced-rate', 'zero-rate' );
+			}
+		}
+	}
+	if ( ! function_exists( 'wc_tax_enabled' ) ) {
+		/**
+		 * Whether the test shop charges tax.
+		 *
+		 * @return bool
+		 */
+		function wc_tax_enabled() {
+			global $pr_dhl_test_tax;
+			return $pr_dhl_test_tax['enabled'];
+		}
+	}
+	if ( ! function_exists( 'get_option' ) ) {
+		/**
+		 * Test option values: only the shipping tax class is set.
+		 *
+		 * @param string $option        Option name.
+		 * @param mixed  $default_value Value when the option is not set.
+		 * @return mixed
+		 */
+		function get_option( $option, $default_value = false ) {
+			global $pr_dhl_test_tax;
+			return 'woocommerce_shipping_tax_class' === $option ? $pr_dhl_test_tax['shipping_tax_class'] : $default_value;
+		}
+	}
+	if ( ! function_exists( 'wc_round_tax_total' ) ) {
+		/**
+		 * Round a tax amount to the store's two decimals.
+		 *
+		 * @param float    $value     Tax amount.
+		 * @param int|null $precision Decimals.
+		 * @return float
+		 */
+		function wc_round_tax_total( $value, $precision = null ) {
+			return round( $value, null === $precision ? 2 : $precision );
+		}
+	}
+	if ( ! function_exists( 'wc_add_number_precision_deep' ) ) {
+		/**
+		 * Convert amounts to cents, like WooCommerce does for a two-decimal store.
+		 *
+		 * @param float|array $value Amount or amounts.
+		 * @return float|array
+		 */
+		function wc_add_number_precision_deep( $value ) {
+			return is_array( $value ) ? array_map( 'wc_add_number_precision_deep', $value ) : round( $value * 100, 4 );
+		}
+	}
+	if ( ! function_exists( 'is_wp_error' ) ) {
+		/**
+		 * Whether the value is a WP_Error.
+		 *
+		 * @param mixed $thing Value to check.
+		 * @return bool
+		 */
+		function is_wp_error( $thing ) {
+			return $thing instanceof WP_Error;
+		}
+	}
+	if ( ! class_exists( 'WP_Error' ) ) {
+		/**
+		 * Minimal stand-in for WP_Error.
+		 */
+		class WP_Error {}
+	}
+	if ( ! class_exists( 'WC_Order_Item_Fee' ) ) {
+		/**
+		 * Minimal stand-in for WC_Order_Item_Fee, with WC_Order_Item::calculate_taxes().
+		 */
+		class WC_Order_Item_Fee {
+			/**
+			 * Line props as WooCommerce stores them.
+			 *
+			 * @var array
+			 */
+			public $props = array(
+				'total'      => '0',
+				'taxes'      => array(),
+				'tax_class'  => '',
+				'tax_status' => 'taxable',
+			);
+
+			/**
+			 * Line meta.
+			 *
+			 * @var array
+			 */
+			public $meta = array();
+
+			/**
+			 * Net amount.
+			 *
+			 * @return string
+			 */
+			public function get_total() {
+				return $this->props['total'];
+			}
+
+			/**
+			 * Set the net amount.
+			 *
+			 * @param string $total Net amount.
+			 */
+			public function set_total( $total ) {
+				$this->props['total'] = wc_format_decimal( $total );
+			}
+
+			/**
+			 * Taxes per rate ID.
+			 *
+			 * @return array
+			 */
+			public function get_taxes() {
+				return $this->props['taxes'];
+			}
+
+			/**
+			 * Set the taxes; false removes them.
+			 *
+			 * @param array|false $taxes Taxes with a 'total' key.
+			 */
+			public function set_taxes( $taxes ) {
+				$this->props['taxes'] = false === $taxes ? array() : array_map( 'wc_round_tax_total', $taxes['total'] );
+			}
+
+			/**
+			 * Sum of the taxes.
+			 *
+			 * @return float
+			 */
+			public function get_total_tax() {
+				return round( array_sum( $this->props['taxes'] ), 2 );
+			}
+
+			/**
+			 * Tax class.
+			 *
+			 * @return string
+			 */
+			public function get_tax_class() {
+				return $this->props['tax_class'];
+			}
+
+			/**
+			 * Tax status.
+			 *
+			 * @return string
+			 */
+			public function get_tax_status() {
+				return $this->props['tax_status'];
+			}
+
+			/**
+			 * ID of the order the line belongs to.
+			 *
+			 * @return int
+			 */
+			public function get_order_id() {
+				return 77;
+			}
+
+			/**
+			 * Meta value, or an empty string.
+			 *
+			 * @param string $key Meta key.
+			 * @return mixed
+			 */
+			public function get_meta( $key ) {
+				return isset( $this->meta[ $key ] ) ? $this->meta[ $key ] : '';
+			}
+
+			/**
+			 * Set a meta value.
+			 *
+			 * @param string $key   Meta key.
+			 * @param mixed  $value Meta value.
+			 */
+			public function update_meta_data( $key, $value ) {
+				$this->meta[ $key ] = $value;
+			}
+
+			/**
+			 * Recalculate the tax from the net amount like WC_Order_Item::calculate_taxes().
+			 *
+			 * @param array $calculate_tax_for Location.
+			 */
+			public function calculate_taxes( $calculate_tax_for ) {
+				if ( '0' !== $this->get_tax_class() && 'taxable' === $this->get_tax_status() && wc_tax_enabled() ) {
+					$calculate_tax_for['tax_class'] = $this->get_tax_class();
+					$this->set_taxes( array( 'total' => WC_Tax::calc_tax( $this->get_total(), WC_Tax::find_rates( $calculate_tax_for ), false ) ) );
+				} else {
+					$this->set_taxes( false );
+				}
+
+				do_action( 'woocommerce_order_item_after_calculate_taxes', $this, $calculate_tax_for );
+			}
+		}
+	}
+	if ( ! function_exists( 'add_filter' ) ) {
+		/**
+		 * Record a filter callback.
+		 *
+		 * @param string   $hook          Filter name.
+		 * @param callable $callback      Callback.
+		 * @param int      $priority      Priority.
+		 * @param int      $accepted_args Number of arguments the callback takes.
+		 */
+		function add_filter( $hook, $callback, $priority = 10, $accepted_args = 1 ) {
+			add_action( $hook, $callback, $priority, $accepted_args );
+		}
+	}
+	if ( ! function_exists( 'apply_filters' ) ) {
+		/**
+		 * Run the recorded callbacks of a filter.
+		 *
+		 * @param string $hook    Filter name.
+		 * @param mixed  $value   Value to filter.
+		 * @param mixed  ...$args Extra arguments.
+		 * @return mixed
+		 */
+		function apply_filters( $hook, $value, ...$args ) {
+			global $pr_dhl_test_hooks;
+			if ( empty( $pr_dhl_test_hooks[ $hook ] ) ) {
+				return $value;
+			}
+			ksort( $pr_dhl_test_hooks[ $hook ] );
+			foreach ( $pr_dhl_test_hooks[ $hook ] as $callbacks ) {
+				foreach ( $callbacks as $callback ) {
+					$value = call_user_func_array( $callback[0], array_slice( array_merge( array( $value ), $args ), 0, $callback[1] ) );
+				}
+			}
+			return $value;
 		}
 	}
 
@@ -299,6 +749,83 @@ namespace {
 			public function save() {
 				$this->save_meta_data();
 				return $this->id;
+			}
+
+			/**
+			 * Order total, as WC_Abstract_Order::calculate_totals() sets it.
+			 *
+			 * @var float
+			 */
+			public $total = 0.0;
+
+			/**
+			 * Tax location used by calculate_totals().
+			 *
+			 * @var array
+			 */
+			public $tax_location = array();
+
+			/**
+			 * Order total.
+			 *
+			 * @return float
+			 */
+			public function get_total() {
+				return $this->total;
+			}
+
+			/**
+			 * Set the order total.
+			 *
+			 * @param string|float $total Order total.
+			 */
+			public function set_total( $total ) {
+				$this->total = (float) $total;
+			}
+
+			/**
+			 * Calculate the fee line taxes like WC_Abstract_Order::calculate_taxes().
+			 */
+			public function calculate_taxes() {
+				do_action( 'woocommerce_order_before_calculate_taxes', array(), $this );
+				foreach ( $this->fees as $fee ) {
+					if ( 'yes' === $this->get_meta( 'is_vat_exempt' ) ) {
+						$fee->set_taxes( false );
+					} else {
+						$fee->calculate_taxes( $this->tax_location );
+					}
+				}
+			}
+
+			/**
+			 * Calculate the totals of the fee lines like WC_Abstract_Order::calculate_totals():
+			 * fees are added up first, then taxes are calculated, then the total is set,
+			 * then the after action fires, then the order is saved.
+			 *
+			 * @param bool $and_taxes Whether to calculate taxes.
+			 * @return float
+			 */
+			public function calculate_totals( $and_taxes = true ) {
+				do_action( 'woocommerce_order_before_calculate_totals', $and_taxes, $this );
+
+				$fees_total = 0.0;
+				foreach ( $this->fees as $fee ) {
+					$fees_total += (float) $fee->get_total();
+				}
+
+				if ( $and_taxes ) {
+					$this->calculate_taxes();
+				}
+
+				$taxes = 0.0;
+				foreach ( $this->fees as $fee ) {
+					$taxes += $fee->get_total_tax();
+				}
+				$this->total = round( $fees_total + $taxes, 2 );
+
+				do_action( 'woocommerce_order_after_calculate_totals', $and_taxes, $this );
+
+				return $this->total;
 			}
 		}
 	}
@@ -409,7 +936,9 @@ namespace {
 		}
 	}
 
+	require __DIR__ . '/../includes/class-pr-dhl-preferred-day-fee.php';
 	require __DIR__ . '/../includes/class-pr-dhl-extend-block-core.php';
+	require __DIR__ . '/../includes/front-end/class-pr-dhl-front-end-paket.php';
 	require __DIR__ . '/../includes/class-pr-dhl-blocks-integration.php';
 
 	$failures = 0;
@@ -762,7 +1291,7 @@ namespace {
 		$test_order     = new WC_Order();
 		$test_order->id = ++$next_id;
 		foreach ( $fees as $fee ) {
-			$test_order->fees[] = new PR_DHL_Test_Order_Fee( $fee[0], $fee[1] );
+			$test_order->fees[] = new PR_DHL_Test_Order_Fee( $fee[0], $fee[1], isset( $fee[2] ) ? $fee[2] : '0' );
 		}
 		if ( $label_items ) {
 			$test_order->saved['_pr_shipment_dhl_label_items'] = $label_items;
@@ -842,6 +1371,326 @@ namespace {
 	}
 	$pr_dhl_test_decimal_separator = '.';
 	$pr_dhl_test_settings          = array( 'dhl_preferred_day_cost' => '5' );
+
+	/**
+	 * Calculate the cart fees the way WC_Cart_Totals::get_fees_from_cart() does and
+	 * return each fee as [ name, net, tax, gross ] in the store currency.
+	 *
+	 * @param PR_DHL_Test_Cart $cart The cart.
+	 * @return array
+	 */
+	function pr_dhl_fee_totals( PR_DHL_Test_Cart $cart ) {
+		global $pr_dhl_test_tax;
+
+		PR_DHL_Preferred_Day_Fee::init();
+
+		$calculate_tax = $pr_dhl_test_tax['enabled'] && ! $pr_dhl_test_tax['vat_exempt'];
+		$totals        = array();
+
+		foreach ( $cart->get_fees() as $fee_object ) {
+			$fee = (object) array(
+				'object'    => $fee_object,
+				'tax_class' => $fee_object->tax_class,
+				'taxable'   => $fee_object->taxable,
+				'total'     => wc_add_number_precision_deep( (float) $fee_object->amount ),
+				'taxes'     => array(),
+			);
+
+			if ( $calculate_tax && $fee->taxable ) {
+				$fee->taxes = WC_Tax::calc_tax( $fee->total, WC_Tax::get_rates( $fee->tax_class, $cart->get_customer() ), false );
+			}
+
+			$fee->taxes = apply_filters( 'woocommerce_cart_totals_get_fees_from_cart_taxes', $fee->taxes, $fee, null );
+			$tax        = array_sum( array_map( 'round', $fee->taxes ) );
+
+			$fee_object->total    = $fee->total / 100;
+			$fee_object->tax_data = array_map(
+				function ( $cents ) {
+					return $cents / 100;
+				},
+				$fee->taxes
+			);
+
+			$totals[] = array( $fee_object->name, round( $fee->total / 100, 2 ), round( $tax / 100, 2 ), round( ( $fee->total + $tax ) / 100, 2 ) );
+		}
+
+		return $totals;
+	}
+
+	/**
+	 * Select a day in the block checkout and return the fee totals.
+	 *
+	 * @return array
+	 */
+	function pr_dhl_block_fee_totals() {
+		global $pr_dhl_test_session;
+		$pr_dhl_test_session->data = array( 'pr_dhl_preferred_day_selected' => true );
+
+		$cart = new PR_DHL_Test_Cart();
+		pr_dhl_new_block_core()->add_preferred_day_fee( $cart );
+
+		return pr_dhl_fee_totals( $cart );
+	}
+
+	/**
+	 * Post a day in the classic checkout and return the fee totals.
+	 *
+	 * @return array
+	 */
+	function pr_dhl_classic_fee_totals() {
+		$cart = new PR_DHL_Test_Cart();
+		pr_dhl_classic_add_fee( $cart );
+
+		return pr_dhl_fee_totals( $cart );
+	}
+
+	/**
+	 * Run the classic checkout fee hook with a day posted.
+	 *
+	 * @param PR_DHL_Test_Cart $cart The cart.
+	 */
+	function pr_dhl_classic_add_fee( PR_DHL_Test_Cart $cart ) {
+		global $pr_dhl_test_settings;
+
+		$front_end = ( new \ReflectionClass( \PR_DHL_Front_End_Paket::class ) )->newInstanceWithoutConstructor();
+		$settings  = new \ReflectionProperty( $front_end, 'shipping_dhl_settings' );
+		$settings->setAccessible( true );
+		$settings->setValue( $front_end, $pr_dhl_test_settings );
+
+		$_POST = array( 'post_data' => 'pr_dhl_preferred_day=2026-11-10' );
+		$front_end->add_cart_fees( $cart );
+		$_POST = array();
+	}
+
+	/**
+	 * Place a block checkout order with the fee and return its fee line, created the
+	 * way WC_Checkout::create_order_fee_lines() does.
+	 *
+	 * @return WC_Order_Item_Fee
+	 */
+	function pr_dhl_order_fee_line() {
+		global $pr_dhl_test_session;
+		$pr_dhl_test_session->data = array( 'pr_dhl_preferred_day_selected' => true );
+
+		$cart = new PR_DHL_Test_Cart();
+		pr_dhl_new_block_core()->add_preferred_day_fee( $cart );
+		pr_dhl_fee_totals( $cart );
+
+		$fee  = current( $cart->get_fees() );
+		$item = new WC_Order_Item_Fee();
+		$item->set_total( $fee->total );
+		$item->set_taxes( array( 'total' => $fee->tax_data ) );
+		$item->props['tax_class']  = $fee->tax_class;
+		$item->props['tax_status'] = $fee->taxable ? 'taxable' : 'none';
+		do_action( 'woocommerce_checkout_create_order_fee_item', $item, $fee->id, $fee, null );
+
+		return $item;
+	}
+
+	/**
+	 * The net amount and tax of an order fee line.
+	 *
+	 * @param WC_Order_Item_Fee $item The fee line.
+	 * @return array
+	 */
+	function pr_dhl_line_amounts( WC_Order_Item_Fee $item ) {
+		return array( (float) $item->get_total(), $item->get_total_tax() );
+	}
+
+	/**
+	 * Reset the shop tax setup to German VAT with standard-rate items, then apply changes.
+	 *
+	 * @param array $changes Settings to change.
+	 */
+	function pr_dhl_set_tax( array $changes = array() ) {
+		global $pr_dhl_test_tax;
+		$pr_dhl_test_tax = array_merge(
+			$pr_dhl_test_tax,
+			array(
+				'enabled'            => true,
+				'country'            => 'DE',
+				'vat_exempt'         => false,
+				'shipping_tax_class' => 'inherit',
+				'item_classes'       => array( '' ),
+				'not_for_shipping'   => array(),
+			),
+			$changes
+		);
+	}
+
+	// The cost setting is a gross price: both checkouts charge exactly that amount,
+	// with the VAT of the shipping tax class included in it. Fee amounts do not depend
+	// on whether the shop enters prices incl. or excl. tax.
+	$tax_cases = array(
+		'Taxes disabled'                           => array( array( 'enabled' => false ), '5', array( 5.0, 0.0, 5.0 ) ),
+		'Standard rate 19%'                        => array( array(), '5', array( 4.2, 0.8, 5.0 ) ),
+		'Reduced-rate items only (7%)'             => array( array( 'item_classes' => array( 'reduced-rate' ) ), '5', array( 4.67, 0.33, 5.0 ) ),
+		'Mixed cart follows the standard rate'     => array( array( 'item_classes' => array( 'reduced-rate', '' ) ), '5', array( 4.2, 0.8, 5.0 ) ),
+		'Mixed reduced and zero rate cart'         => array( array( 'item_classes' => array( 'zero-rate', 'reduced-rate' ) ), '5', array( 4.67, 0.33, 5.0 ) ),
+		'Shipping tax class set to reduced rate'   => array( array( 'shipping_tax_class' => 'reduced-rate' ), '5', array( 4.67, 0.33, 5.0 ) ),
+		'Only non-taxable items'                   => array( array( 'item_classes' => array() ), '5', array( 5.0, 0.0, 5.0 ) ),
+		'VAT exempt customer'                      => array( array( 'vat_exempt' => true ), '5', array( 5.0, 0.0, 5.0 ) ),
+		'Customer in Austria (20%)'                => array( array( 'country' => 'AT' ), '5', array( 4.17, 0.83, 5.0 ) ),
+		'Customer in a country without a tax rate' => array( array( 'country' => 'CH' ), '5', array( 5.0, 0.0, 5.0 ) ),
+		'Cost 1.20 at 19%'                         => array( array(), '1.20', array( 1.01, 0.19, 1.2 ) ),
+		'Cost 5.35 at 7%'                          => array( array( 'item_classes' => array( 'reduced-rate' ) ), '5.35', array( 5.0, 0.35, 5.35 ) ),
+	);
+	foreach ( $tax_cases as $label => $tax_case ) {
+		list( $tax_changes, $cost, $want ) = $tax_case;
+
+		pr_dhl_set_tax( $tax_changes );
+		$pr_dhl_test_settings = array( 'dhl_preferred_day_cost' => $cost );
+		$want_fees            = array( array_merge( array( 'DHL Delivery Day' ), $want ) );
+
+		pr_dhl_assert( "Block checkout fee: {$label}", pr_dhl_block_fee_totals(), $want_fees );
+		pr_dhl_assert( "Classic checkout fee: {$label}", pr_dhl_classic_fee_totals(), $want_fees );
+	}
+	$pr_dhl_test_settings = array( 'dhl_preferred_day_cost' => '5' );
+	$five_incl_19         = array( array( 'DHL Delivery Day', 4.2, 0.8, 5.0 ) );
+
+	// A rate not ticked for shipping does not apply to the fee, as it does not to shipping.
+	pr_dhl_set_tax( array( 'not_for_shipping' => array( '' ) ) );
+	pr_dhl_assert( 'Block checkout fee: rate not used for shipping', pr_dhl_block_fee_totals(), array( array( 'DHL Delivery Day', 5.0, 0.0, 5.0 ) ) );
+
+	// The woocommerce_shipping_tax_class filter (WooCommerce 10.5+) changes the class for the fee too.
+	pr_dhl_set_tax();
+	$pr_dhl_test_session->data = array( 'pr_dhl_preferred_day_selected' => true );
+	add_filter(
+		'woocommerce_shipping_tax_class',
+		function () {
+			return 'reduced-rate';
+		}
+	);
+	$cart = new PR_DHL_Test_Cart();
+	pr_dhl_new_block_core()->add_preferred_day_fee( $cart );
+	pr_dhl_assert( 'Shipping tax class filter: fee amounts', pr_dhl_fee_totals( $cart ), array( array( 'DHL Delivery Day', 4.67, 0.33, 5.0 ) ) );
+	pr_dhl_assert( 'Shipping tax class filter: fee tax class', current( $cart->get_fees() )->tax_class, 'reduced-rate' );
+	unset( $pr_dhl_test_hooks['woocommerce_shipping_tax_class'] );
+
+	// The block and the classic hook both add the fee in one calculation: the second add is refused.
+	$cart = new PR_DHL_Test_Cart();
+	pr_dhl_new_block_core()->add_preferred_day_fee( $cart );
+	pr_dhl_classic_add_fee( $cart );
+	pr_dhl_assert( 'Block and classic hooks together charge the fee once', pr_dhl_fee_totals( $cart ), $five_incl_19 );
+
+	// The order fee line keeps the gross amount when an admin recalculates the order's taxes.
+	$germany              = array(
+		'country'  => 'DE',
+		'state'    => '',
+		'postcode' => '10115',
+		'city'     => 'Berlin',
+	);
+	$pr_dhl_test_settings = array( 'dhl_preferred_day_cost' => '2.10' );
+	$line                 = pr_dhl_order_fee_line();
+	pr_dhl_assert( 'Order fee line: 2.10 is saved as net plus tax', pr_dhl_line_amounts( $line ), array( 1.76, 0.34 ) );
+	$line->calculate_taxes( $germany );
+	pr_dhl_assert( 'Recalculate keeps 2.10 as 1.76 + 0.34', pr_dhl_line_amounts( $line ), array( 1.76, 0.34 ) );
+	$line->calculate_taxes( array_merge( $germany, array( 'country' => 'CH' ) ) );
+	pr_dhl_assert( 'Recalculate for an address without tax keeps 2.10', pr_dhl_line_amounts( $line ), array( 2.1, 0.0 ) );
+	$line->calculate_taxes( $germany );
+	pr_dhl_assert( 'Recalculate back in Germany splits 2.10 again', pr_dhl_line_amounts( $line ), array( 1.76, 0.34 ) );
+	$line->set_total( '3.00' );
+	$line->calculate_taxes( $germany );
+	pr_dhl_assert( 'Recalculate leaves a fee line the admin edited to WooCommerce', pr_dhl_line_amounts( $line ), array( 3.0, 0.57 ) );
+
+	$old_line = new WC_Order_Item_Fee();
+	$old_line->set_total( '5' );
+	$old_line->calculate_taxes( $germany );
+	pr_dhl_assert( 'Recalculate on a fee line from before this change is unchanged', pr_dhl_line_amounts( $old_line ), array( 5.0, 0.95 ) );
+
+	pr_dhl_set_tax( array( 'enabled' => false ) );
+	$pr_dhl_test_settings = array( 'dhl_preferred_day_cost' => '5' );
+	$untaxed_line         = pr_dhl_order_fee_line();
+	pr_dhl_set_tax();
+	$untaxed_line->calculate_taxes( $germany );
+	pr_dhl_assert( 'Fee charged while taxes were off stays 5.00 after taxes are turned on', pr_dhl_line_amounts( $untaxed_line ), array( 5.0, 0.0 ) );
+
+	// WooCommerce adds up the fees before it recalculates taxes, so the order total
+	// must follow when the fee's net amount changes, here because the address moved.
+	$pr_dhl_test_settings = array( 'dhl_preferred_day_cost' => '5' );
+	$moved_order          = new WC_Order();
+	$moved_order->id      = 77;
+	$moved_order->fees    = array( pr_dhl_order_fee_line() );
+	PR_DHL_Preferred_Day_Fee::init();
+	$moved_order->tax_location = $germany;
+	pr_dhl_assert( 'Order total with the fee in Germany', $moved_order->calculate_totals(), 5.0 );
+	$moved_order->tax_location = array_merge( $germany, array( 'country' => 'CH' ) );
+	$moved_order->calculate_totals();
+	pr_dhl_assert( 'Order total after the address moved to a country without tax', $moved_order->total, 5.0 );
+	$moved_order->tax_location = $germany;
+	$moved_order->calculate_totals();
+	pr_dhl_assert( 'Order total after the address moved back to Germany', array( $moved_order->total, pr_dhl_line_amounts( $moved_order->fees[0] ) ), array( 5.0, array( 4.2, 0.8 ) ) );
+
+	// An order marked VAT exempt after checkout drops the fee tax without firing the item action.
+	$moved_order->update_meta_data( 'is_vat_exempt', 'yes' );
+	$moved_order->calculate_totals();
+	pr_dhl_assert( 'VAT exempt order keeps the whole fee as net', array( $moved_order->total, pr_dhl_line_amounts( $moved_order->fees[0] ) ), array( 5.0, array( 5.0, 0.0 ) ) );
+	$moved_order->delete_meta_data( 'is_vat_exempt' );
+	$moved_order->calculate_totals();
+
+	// Admin "Recalculate": taxes first, then the totals without taxes. The fees are
+	// added up after the change, so the total must not be corrected a second time.
+	$moved_order->tax_location = array_merge( $germany, array( 'country' => 'CH' ) );
+	$moved_order->calculate_taxes();
+	$moved_order->calculate_totals( false );
+	pr_dhl_assert( 'Admin Recalculate after a move to Switzerland', array( $moved_order->total, pr_dhl_line_amounts( $moved_order->fees[0] ) ), array( 5.0, array( 5.0, 0.0 ) ) );
+	$moved_order->tax_location = $germany;
+	$moved_order->calculate_taxes();
+	$moved_order->calculate_totals( false );
+	pr_dhl_assert( 'Admin Recalculate back in Germany', array( $moved_order->total, pr_dhl_line_amounts( $moved_order->fees[0] ) ), array( 5.0, array( 4.2, 0.8 ) ) );
+
+	// A refund copies the line meta onto a negative line; it must not be split.
+	$refund_line = new WC_Order_Item_Fee();
+	$refund_line->set_total( '-4.20' );
+	$refund_line->meta = array(
+		PR_DHL_Preferred_Day_Fee::GROSS_META => '5',
+		PR_DHL_Preferred_Day_Fee::NET_META   => '4.20',
+	);
+	$refund_line->calculate_taxes( $germany );
+	pr_dhl_assert( 'Refund fee line is left to WooCommerce', (float) $refund_line->get_total(), -4.2 );
+
+	// Two rates on the same class: each is rounded on its own and net + tax still equals the cost.
+	pr_dhl_set_tax();
+	$pr_dhl_test_tax['rates']['DE'][''] = array( 19, 1.5 );
+	pr_dhl_assert( 'Two rates: net plus both taxes is exactly 5.00', pr_dhl_block_fee_totals(), array( array( 'DHL Delivery Day', 4.15, 0.85, 5.0 ) ) );
+	$pr_dhl_test_tax['rates']['DE'][''] = 19;
+
+	// A single item class that is not in the settings list is used as it is, like WooCommerce does.
+	pr_dhl_set_tax( array( 'item_classes' => array( 'custom-class' ) ) );
+	$pr_dhl_test_tax['rates']['DE']['custom-class'] = 10;
+	pr_dhl_assert( 'Single item class outside the settings list', pr_dhl_block_fee_totals(), array( array( 'DHL Delivery Day', 4.55, 0.45, 5.0 ) ) );
+	unset( $pr_dhl_test_tax['rates']['DE']['custom-class'] );
+
+	// Cart totals calculated without a customer (no session) charge the fee without tax.
+	pr_dhl_set_tax();
+	$pr_dhl_test_no_customer = true;
+	pr_dhl_assert( 'No customer: the fee is charged without tax', pr_dhl_block_fee_totals(), array( array( 'DHL Delivery Day', 5.0, 0.0, 5.0 ) ) );
+	$pr_dhl_test_no_customer = false;
+
+	// WooCommerce does not apply the shipping tax class filter when no item is taxable.
+	pr_dhl_set_tax( array( 'item_classes' => array() ) );
+	add_filter(
+		'woocommerce_shipping_tax_class',
+		function () {
+			return 'reduced-rate';
+		}
+	);
+	pr_dhl_assert( 'Shipping tax class filter is not applied without taxable items', pr_dhl_block_fee_totals(), array( array( 'DHL Delivery Day', 5.0, 0.0, 5.0 ) ) );
+	unset( $pr_dhl_test_hooks['woocommerce_shipping_tax_class'] );
+	pr_dhl_set_tax();
+
+	$pr_dhl_test_tax['enabled'] = false;
+	$pr_dhl_test_settings       = array( 'dhl_preferred_day_cost' => '5' );
+
+	// The order fee line holds the net amount and the tax separately.
+	$paid_check = new \ReflectionMethod( \PR_DHL_Extend_Block_core::class, 'order_paid_preferred_day_fee' );
+	$paid_check->setAccessible( true );
+	$taxed_order       = new WC_Order();
+	$taxed_order->fees = array( new PR_DHL_Test_Order_Fee( 'DHL Delivery Day', '4.20', '0.80' ) );
+	pr_dhl_assert( 'Order with the fee as net plus tax paid for the preferred day', $paid_check->invoke( pr_dhl_new_block_core(), $taxed_order ), true );
+	$taxed_order->fees = array( new PR_DHL_Test_Order_Fee( 'DHL Delivery Day', '4.20', '0.00' ) );
+	pr_dhl_assert( 'Order with only the net part of the fee did not pay', $paid_check->invoke( pr_dhl_new_block_core(), $taxed_order ), false );
+	pr_dhl_assert( 'Checkout with the fee as net plus tax saves the requested day', pr_dhl_place_order( pr_dhl_test_order( array( array( 'DHL Delivery Day', '4.20', '0.80' ) ) ), '2026-11-10' ), '2026-11-10' );
 
 	echo $failures ? "\n{$failures} failure(s)\n" : "\nAll tests passed\n";
 	exit( $failures ? 1 : 0 );
