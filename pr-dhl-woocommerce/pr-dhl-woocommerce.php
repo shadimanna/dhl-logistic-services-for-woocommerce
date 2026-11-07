@@ -771,6 +771,24 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			}
 		}
 
+		/**
+		 * Formerly returned an image tag for a barcode rendered by lib/barcode.php.
+		 *
+		 * The script and its bundled font were removed, so no barcode is rendered anymore.
+		 *
+		 * @deprecated 4.1.2
+		 *
+		 * @param string $text Text to encode in the barcode.
+		 * @param int    $size Barcode height in pixels.
+		 *
+		 * @return string Always an empty string.
+		 */
+		public function generate_barcode( $text, $size = 60 ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter -- Signature kept for backward compatibility.
+			_deprecated_function( __METHOD__, '4.1.2' );
+
+			return '';
+		}
+
 		public function get_dhl_preferred_day_time( $postcode ) {
 			try {
 				$shipping_dhl_settings = $this->get_shipping_dhl_settings();
