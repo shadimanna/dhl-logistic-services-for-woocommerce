@@ -77,6 +77,7 @@ export const Block = ({ checkoutExtensionData }) => {
         if (debounceTimer.current) {
             clearTimeout(debounceTimer.current);
         }
+        latestRequest.current++;
         // Check if shippingAddress is valid
         if (
             !shippingAddress ||
@@ -84,7 +85,6 @@ export const Block = ({ checkoutExtensionData }) => {
             !shippingAddress.city ||
             !shippingAddress.postcode
         ) {
-            latestRequest.current++;
             setDisplayPreferred(false);
             setLoading(false);
             return;

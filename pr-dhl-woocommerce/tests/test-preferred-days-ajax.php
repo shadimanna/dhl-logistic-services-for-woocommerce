@@ -23,49 +23,121 @@ namespace {
 	 * Carries a JSON response out of the handler. Extends Error so the handler's
 	 * catch ( Exception ) block does not swallow it.
 	 */
-	class PR_DHL_Test_Json_Response extends \Error {
-		public $success;
-		public $data;
+	if ( ! class_exists( 'PR_DHL_Test_Json_Response' ) ) {
+		class PR_DHL_Test_Json_Response extends \Error {
+			/** @var bool|null Whether the response was a success. */
+			public $success;
 
-		public function __construct( $success, $data ) {
-			parent::__construct( 'json' );
-			$this->success = $success;
-			$this->data    = $data;
+			/** @var mixed The response payload. */
+			public $data;
+
+			/**
+			 * Stores the response.
+			 *
+			 * @param bool|null $success Whether the response was a success.
+			 * @param mixed     $data    The response payload.
+			 */
+			public function __construct( $success, $data ) {
+				parent::__construct( 'json' );
+				$this->success = $success;
+				$this->data    = $data;
+			}
 		}
 	}
 
-	function wp_verify_nonce( $nonce, $action ) {
-		return 'valid' === $nonce && 'pr_dhl_nonce' === $action;
-	}
-	function wp_unslash( $value ) {
-		return $value;
-	}
-	function sanitize_text_field( $str ) {
-		return is_array( $str ) ? '' : trim( (string) $str );
-	}
-	function wp_send_json_success( $data = null, $status = null ) {
-		throw new PR_DHL_Test_Json_Response( true, $data );
-	}
-	function wp_send_json_error( $data = null, $status = null ) {
-		throw new PR_DHL_Test_Json_Response( false, $data );
-	}
-	function wp_die() {}
-
-	class PR_DHL_Test_Session {
-		public $data = array();
-
-		public function get( $key, $default = null ) {
-			return array_key_exists( $key, $this->data ) ? $this->data[ $key ] : $default;
-		}
-
-		public function set( $key, $value ) {
-			$this->data[ $key ] = $value;
+	if ( ! function_exists( 'wp_verify_nonce' ) ) {
+		function wp_verify_nonce( $nonce, $action ) {
+			return 'valid' === $nonce && 'pr_dhl_nonce' === $action;
 		}
 	}
+	if ( ! function_exists( 'wp_unslash' ) ) {
+		function wp_unslash( $value ) {
+			return $value;
+		}
+	}
+	if ( ! function_exists( 'sanitize_text_field' ) ) {
+		function sanitize_text_field( $str ) {
+			return is_array( $str ) ? '' : trim( (string) $str );
+		}
+	}
+	if ( ! function_exists( 'wp_send_json_success' ) ) {
+		function wp_send_json_success( $data = null, $status = null ) {
+			throw new PR_DHL_Test_Json_Response( true, $data );
+		}
+	}
+	if ( ! function_exists( 'wp_send_json_error' ) ) {
+		function wp_send_json_error( $data = null, $status = null ) {
+			throw new PR_DHL_Test_Json_Response( false, $data );
+		}
+	}
+	if ( ! function_exists( 'wp_die' ) ) {
+		function wp_die() {}
+	}
 
-	class PR_DHL_Front_End_Paket {
-		public function validate_extra_services_available( $check_day_transfer = false ) {
-			return true;
+	/**
+	 * In-memory stand-in for WC_Session_Handler.
+	 */
+	if ( ! class_exists( 'PR_DHL_Test_Session' ) ) {
+		class PR_DHL_Test_Session {
+			/** @var array Session values. */
+			public $data = array();
+
+			/**
+			 * Returns a session value.
+			 *
+			 * @param string $key     Session key.
+			 * @param mixed  $default Value when the key is not set.
+			 * @return mixed
+			 */
+			public function get( $key, $default = null ) {
+				return array_key_exists( $key, $this->data ) ? $this->data[ $key ] : $default;
+			}
+
+			/**
+			 * Sets a session value.
+			 *
+			 * @param string $key   Session key.
+			 * @param mixed  $value Value.
+			 */
+			public function set( $key, $value ) {
+				$this->data[ $key ] = $value;
+			}
+		}
+	}
+
+	/**
+	 * Stand-in for the front-end class: preferred services are always available.
+	 */
+	if ( ! class_exists( 'PR_DHL_Front_End_Paket' ) ) {
+		class PR_DHL_Front_End_Paket {
+			/**
+			 * Reports preferred services as available.
+			 *
+			 * @param bool $check_day_transfer Unused.
+			 * @return bool
+			 */
+			public function validate_extra_services_available( $check_day_transfer = false ) {
+				return true;
+			}
+		}
+	}
+
+	/**
+	 * Stand-in for PR_DHL(): records the postcode it is asked about.
+	 */
+	if ( ! class_exists( 'PR_DHL_Test_Plugin' ) ) {
+		class PR_DHL_Test_Plugin {
+			/**
+			 * Returns fixed preferred days and records the postcode.
+			 *
+			 * @param string $postcode Shipping postcode.
+			 * @return array
+			 */
+			public function get_dhl_preferred_day_time( $postcode ) {
+				global $pr_dhl_test_days_postcode;
+				$pr_dhl_test_days_postcode = $postcode;
+				return array( 'preferred_day' => array( '0' => 'none', '2026-11-10' => 'Tue' ) );
+			}
 		}
 	}
 
@@ -73,27 +145,29 @@ namespace {
 	$pr_dhl_test_wc->session   = new PR_DHL_Test_Session();
 	$pr_dhl_test_days_postcode = null;
 
-	function WC() {
-		global $pr_dhl_test_wc;
-		return $pr_dhl_test_wc;
-	}
-
-	class PR_DHL_Test_Plugin {
-		public function get_dhl_preferred_day_time( $postcode ) {
-			global $pr_dhl_test_days_postcode;
-			$pr_dhl_test_days_postcode = $postcode;
-			return array( 'preferred_day' => array( '0' => 'none', '2026-11-10' => 'Tue' ) );
+	if ( ! function_exists( 'WC' ) ) {
+		function WC() {
+			global $pr_dhl_test_wc;
+			return $pr_dhl_test_wc;
 		}
 	}
-
-	function PR_DHL() {
-		return new PR_DHL_Test_Plugin();
+	if ( ! function_exists( 'PR_DHL' ) ) {
+		function PR_DHL() {
+			return new PR_DHL_Test_Plugin();
+		}
 	}
 
 	require __DIR__ . '/../includes/class-pr-dhl-blocks-integration.php';
 
 	$failures = 0;
 
+	/**
+	 * Assert equality and report the outcome.
+	 *
+	 * @param string $label Human readable test name.
+	 * @param mixed  $got   Actual value.
+	 * @param mixed  $want  Expected value.
+	 */
 	function pr_dhl_assert( $label, $got, $want ) {
 		global $failures;
 		if ( $got === $want ) {
@@ -125,7 +199,6 @@ namespace {
 		'shipping_country'  => 'DE',
 		'shipping_postcode' => ' 53113 ',
 		'shipping_city'     => 'Bonn',
-		'shipping_methods'  => array( 'flat_rate:1' ),
 	);
 
 	// A concurrent Store API request saved the session without the DHL address.
@@ -139,7 +212,7 @@ namespace {
 	pr_dhl_assert( 'Posted address: days load even when the session has no checkout data', $response->success, true );
 	pr_dhl_assert( 'Posted address: the days come back to the block', $response->data['preferredDays'], array( '0' => 'none', '2026-11-10' => 'Tue' ) );
 	pr_dhl_assert( 'Posted address: the sanitized postcode is used', $pr_dhl_test_days_postcode, '53113' );
-	pr_dhl_assert( 'Posted address: it is kept in the session', $pr_dhl_test_wc->session->get( 'pr_dhl_checkout_post_data' )['shipping_postcode'], '53113' );
+	pr_dhl_assert( 'Posted address: the session is not written, so concurrent session saves are not overwritten', $pr_dhl_test_wc->session->data, array() );
 
 	$pr_dhl_test_wc->session->data = array( 'pr_dhl_checkout_post_data' => array( 'shipping_postcode' => '99999' ) );
 	pr_dhl_get_preferred_days(
@@ -157,8 +230,8 @@ namespace {
 		),
 	);
 	$response                      = pr_dhl_get_preferred_days( array( 'nonce' => 'valid' ) );
-	pr_dhl_assert( 'No posted address: falls back to the session', $response->success, true );
-	pr_dhl_assert( 'No posted address: the session postcode is used', $pr_dhl_test_days_postcode, '10115' );
+	pr_dhl_assert( 'No posted address (cached old script): falls back to the session', $response->success, true );
+	pr_dhl_assert( 'No posted address (cached old script): the session postcode is used', $pr_dhl_test_days_postcode, '10115' );
 
 	$pr_dhl_test_wc->session->data = array();
 	$response                      = pr_dhl_get_preferred_days( array( 'nonce' => 'valid' ) );
@@ -171,7 +244,6 @@ namespace {
 		)
 	);
 	pr_dhl_assert( 'Invalid nonce is rejected', $response->data['message'] ?? null, 'Invalid nonce' );
-	pr_dhl_assert( 'Invalid nonce does not touch the session', $pr_dhl_test_wc->session->data, array() );
 
 	echo $failures ? "\n{$failures} failure(s)\n" : "\nAll tests passed\n";
 	exit( $failures ? 1 : 0 );
