@@ -781,16 +781,20 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			}
 		}
 
-		public function generate_barcode( $text, $size = 60 ) {
-			if ( empty( $text ) ) {
-				return '';
-			}
+		/**
+		 * Deprecated barcode helper; the barcode script and its bundled font were removed.
+		 *
+		 * @deprecated 4.1.2
+		 *
+		 * @param string $text Text to encode in the barcode.
+		 * @param int    $size Barcode height in pixels.
+		 *
+		 * @return string Always an empty string.
+		 */
+		public function generate_barcode( $text, $size = 60 ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter -- Signature kept for backward compatibility.
+			_deprecated_function( __METHOD__, '4.1.2' );
 
-			ob_start();
-			echo '<img src="' . esc_url( plugin_dir_url( __FILE__ ) . 'lib/barcode.php?text=' . urlencode( $text ) . '&size=' . urlencode( $size ) ) . '" alt="' . esc_attr( 'barcode' ) . '"/>';
-			$view = ob_get_clean();
-
-			return $view;
+			return '';
 		}
 
 		public function get_dhl_preferred_day_time( $postcode ) {
