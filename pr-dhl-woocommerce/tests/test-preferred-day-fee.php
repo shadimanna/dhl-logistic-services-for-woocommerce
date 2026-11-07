@@ -240,7 +240,8 @@ namespace {
 			 * @return PR_DHL_Test_Customer
 			 */
 			public function get_customer() {
-				return new PR_DHL_Test_Customer();
+				global $pr_dhl_test_no_customer;
+				return empty( $pr_dhl_test_no_customer ) ? new PR_DHL_Test_Customer() : null;
 			}
 
 			/**
@@ -281,6 +282,13 @@ namespace {
 			 */
 			private $total_tax;
 
+			/**
+			 * Create a fee line.
+			 *
+			 * @param string $name      Fee name.
+			 * @param string $total     Net amount.
+			 * @param string $total_tax Tax on the line.
+			 */
 			public function __construct( $name, $total, $total_tax = '0' ) {
 				$this->name      = $name;
 				$this->total     = $total;
@@ -365,14 +373,16 @@ namespace {
 					return array();
 				}
 
-				return array(
-					7 => array(
-						'rate'     => $pr_dhl_test_tax['rates'][ $country ][ $tax_class ],
+				$rates = array();
+				foreach ( (array) $pr_dhl_test_tax['rates'][ $country ][ $tax_class ] as $index => $percent ) {
+					$rates[ 7 + $index ] = array(
+						'rate'     => $percent,
 						'label'    => 'VAT',
 						'shipping' => in_array( $tax_class, $pr_dhl_test_tax['not_for_shipping'], true ) ? 'no' : 'yes',
 						'compound' => 'no',
-					),
-				);
+					);
+				}
+				return $rates;
 			}
 
 			/**
@@ -420,7 +430,8 @@ namespace {
 			}
 
 			/**
-			 * Tax on a price, keyed by rate ID.
+			 * Tax on a price, keyed by rate ID. Included tax is split over the combined
+			 * rate, as WC_Tax::calc_inclusive_tax() does for non-compound rates.
 			 *
 			 * @param float $price              Price.
 			 * @param array $rates              Rates.
@@ -428,9 +439,10 @@ namespace {
 			 * @return array
 			 */
 			public static function calc_tax( $price, $rates, $price_includes_tax = false ) {
-				$taxes = array();
+				$combined = 1 + array_sum( array_column( $rates, 'rate' ) ) / 100;
+				$taxes    = array();
 				foreach ( $rates as $id => $rate ) {
-					$taxes[ $id ] = $price_includes_tax ? $price - $price / ( 1 + $rate['rate'] / 100 ) : $price * $rate['rate'] / 100;
+					$taxes[ $id ] = $price_includes_tax ? $price * ( $rate['rate'] / 100 ) / $combined : $price * $rate['rate'] / 100;
 				}
 				return $taxes;
 			}
@@ -494,7 +506,7 @@ namespace {
 	}
 	if ( ! function_exists( 'is_wp_error' ) ) {
 		/**
-		 * The test cart never returns an error.
+		 * Whether the value is a WP_Error.
 		 *
 		 * @param mixed $thing Value to check.
 		 * @return bool
@@ -754,27 +766,55 @@ namespace {
 			public $tax_location = array();
 
 			/**
-			 * Calculate the totals of the fee lines in WooCommerce's order: fees are added
-			 * up first, then taxes are calculated, then the total is set.
+			 * Order total.
+			 *
+			 * @return float
+			 */
+			public function get_total() {
+				return $this->total;
+			}
+
+			/**
+			 * Set the order total.
+			 *
+			 * @param string|float $total Order total.
+			 */
+			public function set_total( $total ) {
+				$this->total = (float) $total;
+			}
+
+			/**
+			 * Calculate the fee line taxes like WC_Abstract_Order::calculate_taxes().
+			 */
+			public function calculate_taxes() {
+				do_action( 'woocommerce_order_before_calculate_taxes', array(), $this );
+				foreach ( $this->fees as $fee ) {
+					if ( 'yes' === $this->get_meta( 'is_vat_exempt' ) ) {
+						$fee->set_taxes( false );
+					} else {
+						$fee->calculate_taxes( $this->tax_location );
+					}
+				}
+			}
+
+			/**
+			 * Calculate the totals of the fee lines like WC_Abstract_Order::calculate_totals():
+			 * fees are added up first, then taxes are calculated, then the total is set,
+			 * then the after action fires, then the order is saved.
 			 *
 			 * @param bool $and_taxes Whether to calculate taxes.
 			 * @return float
 			 */
 			public function calculate_totals( $and_taxes = true ) {
+				do_action( 'woocommerce_order_before_calculate_totals', $and_taxes, $this );
+
 				$fees_total = 0.0;
 				foreach ( $this->fees as $fee ) {
 					$fees_total += (float) $fee->get_total();
 				}
 
 				if ( $and_taxes ) {
-					do_action( 'woocommerce_order_before_calculate_taxes', array(), $this );
-					foreach ( $this->fees as $fee ) {
-						if ( 'yes' === $this->get_meta( 'is_vat_exempt' ) ) {
-							$fee->set_taxes( false );
-						} else {
-							$fee->calculate_taxes( $this->tax_location );
-						}
-					}
+					$this->calculate_taxes();
 				}
 
 				$taxes = 0.0;
@@ -896,9 +936,7 @@ namespace {
 		}
 	}
 
-	if ( file_exists( __DIR__ . '/../includes/class-pr-dhl-preferred-day-fee.php' ) ) {
-		require __DIR__ . '/../includes/class-pr-dhl-preferred-day-fee.php';
-	}
+	require __DIR__ . '/../includes/class-pr-dhl-preferred-day-fee.php';
 	require __DIR__ . '/../includes/class-pr-dhl-extend-block-core.php';
 	require __DIR__ . '/../includes/front-end/class-pr-dhl-front-end-paket.php';
 	require __DIR__ . '/../includes/class-pr-dhl-blocks-integration.php';
@@ -1587,6 +1625,47 @@ namespace {
 	$moved_order->update_meta_data( 'is_vat_exempt', 'yes' );
 	$moved_order->calculate_totals();
 	pr_dhl_assert( 'VAT exempt order keeps the whole fee as net', array( $moved_order->total, pr_dhl_line_amounts( $moved_order->fees[0] ) ), array( 5.0, array( 5.0, 0.0 ) ) );
+	$moved_order->delete_meta_data( 'is_vat_exempt' );
+	$moved_order->calculate_totals();
+
+	// Admin "Recalculate": taxes first, then the totals without taxes. The fees are
+	// added up after the change, so the total must not be corrected a second time.
+	$moved_order->tax_location = array_merge( $germany, array( 'country' => 'CH' ) );
+	$moved_order->calculate_taxes();
+	$moved_order->calculate_totals( false );
+	pr_dhl_assert( 'Admin Recalculate after a move to Switzerland', array( $moved_order->total, pr_dhl_line_amounts( $moved_order->fees[0] ) ), array( 5.0, array( 5.0, 0.0 ) ) );
+	$moved_order->tax_location = $germany;
+	$moved_order->calculate_taxes();
+	$moved_order->calculate_totals( false );
+	pr_dhl_assert( 'Admin Recalculate back in Germany', array( $moved_order->total, pr_dhl_line_amounts( $moved_order->fees[0] ) ), array( 5.0, array( 4.2, 0.8 ) ) );
+
+	// A refund copies the line meta onto a negative line; it must not be split.
+	$refund_line = new WC_Order_Item_Fee();
+	$refund_line->set_total( '-4.20' );
+	$refund_line->meta = array(
+		PR_DHL_Preferred_Day_Fee::GROSS_META => '5',
+		PR_DHL_Preferred_Day_Fee::NET_META   => '4.20',
+	);
+	$refund_line->calculate_taxes( $germany );
+	pr_dhl_assert( 'Refund fee line is left to WooCommerce', (float) $refund_line->get_total(), -4.2 );
+
+	// Two rates on the same class: each is rounded on its own and net + tax still equals the cost.
+	pr_dhl_set_tax();
+	$pr_dhl_test_tax['rates']['DE'][''] = array( 19, 1.5 );
+	pr_dhl_assert( 'Two rates: net plus both taxes is exactly 5.00', pr_dhl_block_fee_totals(), array( array( 'DHL Delivery Day', 4.15, 0.85, 5.0 ) ) );
+	$pr_dhl_test_tax['rates']['DE'][''] = 19;
+
+	// A single item class that is not in the settings list is used as it is, like WooCommerce does.
+	pr_dhl_set_tax( array( 'item_classes' => array( 'custom-class' ) ) );
+	$pr_dhl_test_tax['rates']['DE']['custom-class'] = 10;
+	pr_dhl_assert( 'Single item class outside the settings list', pr_dhl_block_fee_totals(), array( array( 'DHL Delivery Day', 4.55, 0.45, 5.0 ) ) );
+	unset( $pr_dhl_test_tax['rates']['DE']['custom-class'] );
+
+	// Cart totals calculated without a customer (no session) charge the fee without tax.
+	pr_dhl_set_tax();
+	$pr_dhl_test_no_customer = true;
+	pr_dhl_assert( 'No customer: the fee is charged without tax', pr_dhl_block_fee_totals(), array( array( 'DHL Delivery Day', 5.0, 0.0, 5.0 ) ) );
+	$pr_dhl_test_no_customer = false;
 
 	// WooCommerce does not apply the shipping tax class filter when no item is taxable.
 	pr_dhl_set_tax( array( 'item_classes' => array() ) );
