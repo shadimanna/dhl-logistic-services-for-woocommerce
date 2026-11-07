@@ -70,6 +70,53 @@ class API_Utils {
 	}
 
 	/**
+	 * Countries where Paperless Customs is available for DHL Paket International.
+	 *
+	 * Starts with Switzerland only; extend via the filter to add more later.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @return string[] ISO 3166-1 alpha-2 codes.
+	 */
+	public static function paperless_supported_countries() {
+		/**
+		 * Filters the countries where Paperless Customs is available.
+		 *
+		 * @since [*next-version*]
+		 *
+		 * @param string[] $countries ISO 3166-1 alpha-2 country codes.
+		 */
+		return apply_filters( 'pr_dhl_paperless_supported_countries', array( 'CH' ) );
+	}
+
+	/**
+	 * Whether a shipment qualifies for Paperless Customs.
+	 *
+	 * Eligible only for DHL Paket International (V53WPAK) to a supported country,
+	 * and never together with PDDP (DHL: the two are mutually exclusive).
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param string $country_iso2 Destination country, ISO 3166-1 alpha-2.
+	 * @param string $product      DHL product code.
+	 * @param bool   $pddp_enabled Whether PDDP is set on the order.
+	 * @return bool
+	 */
+	public static function is_paperless_customs_eligible( $country_iso2, $product, $pddp_enabled = false ) {
+		if ( $pddp_enabled ) {
+			return false;
+		}
+
+		if ( 'V53WPAK' !== $product ) {
+			return false;
+		}
+
+		$country_iso2 = strtoupper( trim( (string) $country_iso2 ) );
+
+		return in_array( $country_iso2, self::paperless_supported_countries(), true );
+	}
+
+	/**
 	 * The US and its territories, as ISO 3166-1 alpha-2 codes.
 	 *
 	 * Covers the US mainland, Puerto Rico, Guam, US Virgin Islands, American Samoa
