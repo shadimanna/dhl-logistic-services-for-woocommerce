@@ -440,5 +440,8 @@ export const Block = ({ checkoutExtensionData }) => {
 function formatShopPrice(amount) {
     const currency = getCurrency();
 
-    return formatPrice(Math.round(amount * 10 ** currency.minorUnit), currency);
+    // toPrecision() drops float noise first, so 1.005 rounds up like PHP's round() instead of to 1.00.
+    const minorUnits = Math.round(parseFloat((amount * 10 ** currency.minorUnit).toPrecision(15)));
+
+    return formatPrice(minorUnits, currency);
 }
