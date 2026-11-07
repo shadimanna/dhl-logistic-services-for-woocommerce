@@ -771,18 +771,6 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			}
 		}
 
-		public function generate_barcode( $text, $size = 60 ) {
-			if ( empty( $text ) ) {
-				return '';
-			}
-
-			ob_start();
-			echo '<img src="' . esc_url( plugin_dir_url( __FILE__ ) . 'lib/barcode.php?text=' . urlencode( $text ) . '&size=' . urlencode( $size ) ) . '" alt="' . esc_attr( 'barcode' ) . '"/>';
-			$view = ob_get_clean();
-
-			return $view;
-		}
-
 		public function get_dhl_preferred_day_time( $postcode ) {
 			try {
 				$shipping_dhl_settings = $this->get_shipping_dhl_settings();
