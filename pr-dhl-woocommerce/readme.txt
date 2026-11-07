@@ -82,6 +82,7 @@ More detailed instructions on how to set up your store and configure it are cons
 * Fix: The DHL delivery day fee is charged at the price set in the settings, VAT included, in both the block and the classic checkout.
 * Fix: The DHL delivery day picker now loads every time in the block checkout instead of sometimes staying hidden.
 * Fix: The DHL delivery day surcharge in the block checkout now uses the shop's currency format, such as "1,20 €".
+* Fix: Align the checkboxes of the new recipient services in the order DHL box.
 
 = 4.1.1 =
 * Tweak: WordPress 7.1 and WooCommerce 11.1 compatibility.
