@@ -20,6 +20,43 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class API_Utils {
 	/**
+	 * Whether DHL accepts the recipient services One-Time Code, Second Delivery Attempt,
+	 * No Parcel Locker and Immediate Return yet. Set to true once DHL makes them available.
+	 *
+	 * @since 4.1.2
+	 */
+	const RECIPIENT_SERVICES_AVAILABLE = false;
+
+	/**
+	 * The recipient services that stay hidden until DHL makes them available.
+	 *
+	 * @since 4.1.2
+	 *
+	 * @return string[] Service keys, as used after the "dhl_default_" and "pr_dhl_" prefixes.
+	 */
+	public static function recipient_services() {
+		return array( 'one_time_code', 'second_delivery_attempt', 'no_packstation', 'immediate_return' );
+	}
+
+	/**
+	 * Whether the recipient services are shown and sent to DHL.
+	 *
+	 * @since 4.1.2
+	 *
+	 * @return bool
+	 */
+	public static function recipient_services_available() {
+		/**
+		 * Filters whether the recipient services are shown and sent to DHL.
+		 *
+		 * @since 4.1.2
+		 *
+		 * @param bool $available Default API_Utils::RECIPIENT_SERVICES_AVAILABLE.
+		 */
+		return (bool) apply_filters( 'pr_dhl_paket_recipient_services_available', self::RECIPIENT_SERVICES_AVAILABLE );
+	}
+
+	/**
 	 * Check if its a new merchant.
 	 *
 	 * @return bool.
