@@ -362,6 +362,12 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 	}
 
 
+	/**
+	 * Saves the block checkout address to the session.
+	 *
+	 * Kept for block scripts cached from before 4.1.2, which save the address here
+	 * before asking for the preferred days.
+	 */
 	public function handle_set_checkout_post_data() {
 		// Verify nonce
 		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'pr_dhl_nonce' ) ) {
@@ -392,8 +398,13 @@ class PR_DHL_Blocks_Integration implements IntegrationInterface {
 			wp_die();
 		}
 
-		// Retrieve post_data from WooCommerce session
-		$order_data = WC()->session->get( 'pr_dhl_checkout_post_data' );
+		// Posted address first: a session written by an earlier request can be overwritten by a concurrent Store API save.
+		if ( isset( $_POST['data'] ) && is_array( $_POST['data'] ) ) {
+			$order_data = array_map( 'sanitize_text_field', wp_unslash( $_POST['data'] ) );
+		} else {
+			$order_data = WC()->session->get( 'pr_dhl_checkout_post_data' );
+		}
+
 		if ( empty( $order_data ) || ! is_array( $order_data ) ) {
 			wp_send_json_error( array( 'message' => 'No checkout data found.' ), 400 );
 			wp_die();
