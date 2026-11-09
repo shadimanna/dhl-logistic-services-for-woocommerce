@@ -242,7 +242,19 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 					);
 				echo '</div>';
 
+				ob_start();
 				$this->additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj );
+				$additional_fields_html = ob_get_clean();
+
+				echo $additional_fields_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Markup built by the WooCommerce field functions.
+
+				// Browsers do not post unticked checkboxes, so tell save_meta_box() which ones were on screen.
+				woocommerce_wp_hidden_input(
+					array(
+						'id'    => 'pr_dhl_shown_checkboxes',
+						'value' => implode( ',', $this->get_shown_checkbox_ids( $additional_fields_html ) ),
+					)
+				);
 
 				// A label has been generated already, allow to delete
 				if ( empty( $label_tracking_info ) ) {
@@ -269,6 +281,68 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 
 		abstract public function additional_meta_box_fields( $order_id, $is_disabled, $dhl_label_items, $dhl_obj );
 
+		/**
+		 * IDs of the service checkboxes in the DHL meta box that are saved as 'yes' or 'no'.
+		 *
+		 * @since [*next-version*]
+		 *
+		 * @return string[]
+		 */
+		protected function get_checkbox_meta_ids() {
+			return array();
+		}
+
+		/**
+		 * IDs of the service checkboxes rendered in the given meta box markup.
+		 *
+		 * @since [*next-version*]
+		 *
+		 * @param string $html The rendered meta box fields.
+		 *
+		 * @return string[]
+		 */
+		private function get_shown_checkbox_ids( $html ) {
+			$shown = array();
+
+			foreach ( $this->get_checkbox_meta_ids() as $id ) {
+				if ( false !== strpos( $html, 'name="' . $id . '"' ) ) {
+					$shown[] = $id;
+				}
+			}
+
+			return $shown;
+		}
+
+		/**
+		 * IDs of the checkboxes that were on screen, editable and left unticked, read from the posted meta box.
+		 *
+		 * @since [*next-version*]
+		 *
+		 * @param int $order_id The order ID.
+		 *
+		 * @return string[]
+		 */
+		private function get_posted_unticked_checkbox_ids( $order_id ) {
+			// phpcs:disable WordPress.Security.NonceVerification.Missing -- Verified in save_meta_box().
+			if ( empty( $_POST['pr_dhl_shown_checkboxes'] ) || ! empty( $this->get_dhl_label_tracking( $order_id ) ) ) {
+				return array();
+			}
+
+			$shown = array_intersect(
+				explode( ',', sanitize_text_field( wp_unslash( $_POST['pr_dhl_shown_checkboxes'] ) ) ),
+				$this->get_checkbox_meta_ids()
+			);
+
+			$unticked = array();
+			foreach ( $shown as $id ) {
+				if ( ! isset( $_POST[ $id ] ) ) {
+					$unticked[] = $id;
+				}
+			}
+			// phpcs:enable WordPress.Security.NonceVerification.Missing
+
+			return $unticked;
+		}
 
 		public function save_meta_box( $post_id, $post = null ) {
 
@@ -302,6 +376,10 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 				if ( isset( $_POST[ $value ] ) ) {
 					$args[ $value ] = wc_clean( $_POST[ $value ] );
 				}
+			}
+
+			foreach ( $this->get_posted_unticked_checkbox_ids( $post_id ) as $checkbox_id ) {
+				$args[ $checkbox_id ] = 'no';
 			}
 
 			if ( ! empty( $args ) ) {
