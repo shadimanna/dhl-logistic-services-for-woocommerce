@@ -730,6 +730,13 @@ if ( ! class_exists( 'PR_DHL_WC_Method_Paket' ) ) :
 				),
 			);
 
+			// Saved values are kept, so the fields come back as they were once DHL makes the services available.
+			if ( ! API_Utils::recipient_services_available() ) {
+				foreach ( API_Utils::recipient_services() as $service ) {
+					unset( $this->form_fields[ 'dhl_default_' . $service ] );
+				}
+			}
+
 			$base_country_code = PR_DHL()->get_base_country();
 			// Preferred options for Germany only
 			// IF USING PREFERRED OPTIONS AND COD IS ENABLED DISPALY A WARNING MESSAGE OR DON'T ALLOW IT TO BE USED?
