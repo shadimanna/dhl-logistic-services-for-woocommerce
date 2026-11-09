@@ -188,8 +188,18 @@ div#shipment-im-label-form > div:nth-of-type(even) {
 
 
 .pr_dhl_multi_packages_enabled_field input,
-.pr_dhl_PDDP_field input{
+.pr_dhl_PDDP_field input,
+.pr_dhl_paperless_customs_field input{
 	margin: 10px 10px 15px 0;
+}
+
+.pr_dhl_paperless_customs_field {
+	display: flex;
+}
+
+.pr_dhl_paperless_customs_field label {
+	order: 2;
+	margin-left: 4px;
 }
 
 .pr_dhl_preferred_day_field label {
@@ -510,3 +520,13 @@ body.woocommerce_page_wc-settings.pr_dhl_paket .wc-shipping-zone-method-fields p
 	margin-left:0px;
 }
 
+
+
+/* Paperless Customs media picker */
+.dhl-media-field .hidden {
+	display: none;
+}
+
+.dhl-media-field .dhl-media-preview {
+	max-width: 200px;
+}
