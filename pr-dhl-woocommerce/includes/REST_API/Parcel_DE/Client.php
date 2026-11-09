@@ -42,13 +42,15 @@ class Client extends API_Client {
 				'items' => array(),
 			);
 
-			foreach ( $response->body->items as $item ) {
+			$ref_prefix = apply_filters( 'pr_shipping_dhl_paket_label_ref_no_prefix', 'order_' );
+
+			foreach ( $response->body->items as $index => $item ) {
 				if ( 200 === $item->sstatus->statusCode ) {
 					$labels_data['items'][] = $item;
 				} else {
-					$order_id                = isset( $item->shipmentRefNo )
-						? (int) str_replace( apply_filters( 'pr_shipping_dhl_paket_label_ref_no_prefix', 'order_' ), '', $item->shipmentRefNo )
-						: '';
+					// DHL returns the items in request order, so a rejected item without a reference maps to the shipment sent at its position.
+					$ref_no                  = isset( $item->shipmentRefNo ) ? $item->shipmentRefNo : ( $data['shipments'][ $index ]['refNo'] ?? '' );
+					$order_id                = '' !== (string) $ref_no ? (int) str_replace( $ref_prefix, '', $ref_no ) : '';
 					$error_message           = $this->generate_error_message( $this->get_item_error_message( $item ) );
 					$labels_data['errors'][] = array(
 						'order_id' => $order_id,
@@ -576,6 +578,13 @@ class Client extends API_Client {
 
 		if ( isset( $item->sstatus ) && isset( $item->shipmentNo ) ) {
 			$multiple_errors_list[ $item->sstatus->title ][] = $item->shipmentNo . $item->sstatus->detail;
+		} elseif ( ! empty( $item->sstatus->detail ) && empty( $item->validationMessages ) ) {
+			// DHL can reject an item with only a status detail, e.g. an unknown Paperless Customs batch ID.
+			$multiple_errors_list['Error'][] = $item->sstatus->detail;
+		}
+
+		if ( empty( $item->validationMessages ) || ! is_array( $item->validationMessages ) ) {
+			return $multiple_errors_list;
 		}
 
 		foreach ( $item->validationMessages as $message ) {
