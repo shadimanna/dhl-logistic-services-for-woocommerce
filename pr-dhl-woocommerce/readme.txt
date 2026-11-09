@@ -77,6 +77,7 @@ More detailed instructions on how to set up your store and configure it are cons
 
 = 4.1.2 =
 * Fix: Align the checkboxes of the new recipient services in the order DHL box.
+* Fix: Services that are on by default, such as GoGreen Plus, stay off after you untick them on the order and click Update.
 
 = 4.1.1 =
 * Tweak: WordPress 7.1 and WooCommerce 11.1 compatibility.
