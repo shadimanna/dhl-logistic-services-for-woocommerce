@@ -83,7 +83,13 @@ module.exports = {
 				plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
 		),
 		// Add WooCommerce Dependency Extraction Plugin
-		new WooCommerceDependencyExtractionWebpackPlugin(),
+		new WooCommerceDependencyExtractionWebpackPlugin({
+			// Version 2.2.0 of the plugin does not know this package yet.
+			requestToExternal: (request) =>
+				'@woocommerce/price-format' === request ? ['wc', 'priceFormat'] : undefined,
+			requestToHandle: (request) =>
+				'@woocommerce/price-format' === request ? 'wc-price-format' : undefined,
+		}),
 		// MiniCssExtractPlugin for handling the CSS files
 		new MiniCssExtractPlugin({
 			filename: `[name].css`,
