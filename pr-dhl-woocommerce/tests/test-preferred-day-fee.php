@@ -264,6 +264,17 @@ namespace {
 				$this->fees = array();
 				do_action( 'woocommerce_cart_calculate_fees', $this );
 			}
+
+			/**
+			 * Recalculate the fees the way WC_Cart::calculate_totals() does.
+			 *
+			 * @return void
+			 */
+			public function calculate_totals() {
+				++$this->calculations;
+				$this->fees = array();
+				do_action( 'woocommerce_cart_calculate_fees', $this );
+			}
 		}
 	}
 
