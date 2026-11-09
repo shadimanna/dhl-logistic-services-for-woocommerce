@@ -245,6 +245,8 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			add_action( 'init', array( $this, 'init' ), 1 );
 			add_action( 'init', array( $this, 'load_textdomain' ) );
 
+			PR_DHL_Preferred_Day_Fee::init();
+
 			add_action( 'admin_enqueue_scripts', array( $this, 'dhl_enqueue_scripts' ) );
 
 			add_action( 'woocommerce_shipping_init', array( $this, 'includes' ) );

@@ -281,7 +281,7 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 			$label = $this->get_preferred_day_fee_label();
 
 			foreach ( $order->get_fees() as $fee ) {
-				if ( $fee->get_name() === $label && round( (float) $fee->get_total(), $decimals ) >= $cost ) {
+				if ( $fee->get_name() === $label && round( (float) $fee->get_total() + (float) $fee->get_total_tax(), $decimals ) >= $cost ) {
 					return true;
 				}
 			}
@@ -318,8 +318,7 @@ if ( ! class_exists( 'PR_DHL_Extend_Block_core' ) ) :
 			$cart->fees_api()->set_fees( $new_fees );
 
 			if ( $fee_amount > 0 ) {
-				// Add the fee to the cart
-				$cart->add_fee( $fee_label, $fee_amount, true, '' );
+				PR_DHL_Preferred_Day_Fee::add_to_cart( $cart, $fee_label, $fee_amount );
 			}
 		}
 
