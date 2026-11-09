@@ -68,13 +68,15 @@ More detailed instructions on how to set up your store and configure it are cons
 == Changelog ==
 
 = 4.1.2 =
+* Add: Paperless Customs for DHL Paket International to Switzerland: the commercial invoice is uploaded to DHL digitally instead of being attached to the parcel, with a per-order option and a default setting.
+* Fix: Services that are on by default, such as GoGreen Plus, stay off after you untick them on the order and click Update.
 * Fix: The DHL delivery day, drop-off location and neighbour options show again in the block checkout on WooCommerce 11.1 and later.
+* Fix: The DHL delivery day fee in the block checkout is always the amount set in the settings, also in shops that use a decimal comma, and can no longer be changed by the shopper.
 * Fix: Reloading the block checkout no longer keeps charging the DHL delivery day fee when no day is selected.
 * Fix: The DHL delivery day fee is charged at the price set in the settings, VAT included, in both the block and the classic checkout.
 * Fix: The DHL delivery day picker now loads every time in the block checkout instead of sometimes staying hidden.
 * Fix: The DHL delivery day surcharge in the block checkout now uses the shop's currency format, such as "1,20 €".
 * Fix: Align the checkboxes of the new recipient services in the order DHL box.
-* Fix: Services that are on by default, such as GoGreen Plus, stay off after you untick them on the order and click Update.
 * Tweak: Remove the bundled Arial font.
 
 = 4.1.1 =
