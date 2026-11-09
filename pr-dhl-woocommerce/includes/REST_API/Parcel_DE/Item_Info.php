@@ -162,8 +162,16 @@ class Item_Info {
 		$this->contactAddress = Args_Parser::parse_args( $recipient_info, $this->get_contact_address_schema() );
 		$this->shipment       = Args_Parser::parse_args( $shipping_info, $this->get_shipment_info_schema() );
 		$this->shipper        = Args_Parser::parse_args( $shipping_info, $this->get_shipper_info_schema() );
-		$this->services       = Args_Parser::parse_args( $shipping_info, $this->get_services_schema() );
+		$services_schema      = $this->get_services_schema();
+		$this->services       = Args_Parser::parse_args( $shipping_info, $services_schema );
 		$this->returnAddress  = Args_Parser::parse_args( $shipping_info, $this->get_return_address_schema() );
+
+		// Never send the recipient services before DHL accepts them, even if an order or the shop saved them as enabled.
+		if ( ! API_Utils::recipient_services_available() ) {
+			foreach ( API_Utils::recipient_services() as $service ) {
+				unset( $this->services[ $services_schema[ $service ]['rename'] ?? $service ] );
+			}
+		}
 
 		if ( $this->pos_ps ) {
 			$this->packStationAddress = Args_Parser::parse_args( $recipient_info, $this->get_packstation_address_schema() );
@@ -968,8 +976,8 @@ class Item_Info {
 				'default'  => '',
 				'rename'   => 'oneTimeCode',
 				'validate' => function ( $value ) use ( $self ) {
-					// Only validate when One-Time Code is selected for this order.
-					if ( empty( $value ) || 'no' === $value ) {
+					// Only validate when One-Time Code is selected for this order and can be sent.
+					if ( empty( $value ) || 'no' === $value || ! API_Utils::recipient_services_available() ) {
 						return;
 					}
 
