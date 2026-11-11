@@ -425,6 +425,21 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		}
 
 		abstract public function get_additional_meta_ids();
+
+		/**
+		 * End the AJAX request with a 403 error when the current user cannot manage shop orders.
+		 *
+		 * @return void
+		 */
+		protected function verify_label_permission() {
+			if ( ! current_user_can( 'edit_shop_orders' ) ) {
+				wp_send_json_error(
+					array( 'message' => esc_html__( 'You do not have permission to manage DHL labels.', 'dhl-for-woocommerce' ) ),
+					403
+				);
+			}
+		}
+
 		/**
 		 * Order Tracking Save AJAX
 		 *
@@ -432,6 +447,7 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 		 */
 		public function save_meta_box_ajax() {
 			check_ajax_referer( 'create-dhl-label', 'pr_dhl_label_nonce' );
+			$this->verify_label_permission();
 			$order_id = wc_clean( $_POST['order_id'] );
 
 			// Save inputted data first
@@ -479,8 +495,14 @@ if ( ! class_exists( 'PR_DHL_WC_Order' ) ) :
 			wp_die();
 		}
 
+		/**
+		 * AJAX handler that deletes the DHL label of an order.
+		 *
+		 * @return void
+		 */
 		public function delete_label_ajax() {
 			check_ajax_referer( 'create-dhl-label', 'pr_dhl_label_nonce' );
+			$this->verify_label_permission();
 			$order_id = wc_clean( $_POST['order_id'] );
 
 			try {
