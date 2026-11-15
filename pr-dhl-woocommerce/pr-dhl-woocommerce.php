@@ -612,8 +612,28 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			return $dhl_settings;
 		}
 
+		/**
+		 * End the AJAX request with a 403 error when the current user cannot manage WooCommerce settings.
+		 *
+		 * @return void
+		 */
+		protected function verify_settings_permission() {
+			if ( ! current_user_can( 'manage_woocommerce' ) ) {
+				wp_send_json_error(
+					array( 'message' => esc_html__( 'You do not have permission to manage the DHL settings.', 'dhl-for-woocommerce' ) ),
+					403
+				);
+			}
+		}
+
+		/**
+		 * AJAX handler that tests the connection to the DHL API with the saved credentials.
+		 *
+		 * @return void
+		 */
 		public function test_dhl_connection_callback() {
 			check_ajax_referer( 'pr-dhl-test-con', 'test_con_nonce' );
+			$this->verify_settings_permission();
 			try {
 				$shipping_dhl_settings = $this->get_shipping_dhl_settings();
 
@@ -717,8 +737,14 @@ if ( ! class_exists( 'PR_DHL_WC' ) ) :
 			wp_die();
 		}
 
+		/**
+		 * AJAX handler that loads the DHL account details and saves them to the settings.
+		 *
+		 * @return void
+		 */
 		public function dhl_get_myaccount_callback() {
 			check_ajax_referer( 'pr-dhl-myaccount', 'myaccount_nonce' );
+			$this->verify_settings_permission();
 
 			try {
 				$dhl_obj = $this->get_dhl_factory();

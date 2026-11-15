@@ -80,7 +80,6 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 		add_action( 'wp_ajax_wc_shipment_dhl_remove_order_item', array( $this, 'ajax_remove_order_item' ) );
 		add_action( 'wp_ajax_wc_shipment_dhl_create_order', array( $this, 'ajax_create_order' ) );
 		add_action( 'wp_ajax_wc_shipment_dhl_reset_order', array( $this, 'ajax_reset_order' ) );
-		add_action( 'wp_ajax_wc_shipment_dhl_get_awb_label', array( $this, 'ajax_generate_awb_label' ) );
 
 		// The AWB label download endpoint
 		add_action( 'init', array( $this, 'add_download_awb_label_endpoint' ) );
@@ -544,6 +543,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 */
 	public function ajax_get_order_items() {
 		check_ajax_referer( 'pr_dhl_order_ajax', 'pr_dhl_order_nonce' );
+		$this->verify_label_permission();
 
 		wp_send_json(
 			array(
@@ -561,6 +561,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 */
 	public function ajax_add_order_item() {
 		check_ajax_referer( 'pr_dhl_order_ajax', 'pr_dhl_order_nonce' );
+		$this->verify_label_permission();
 		$order_id = wc_clean( $_POST['order_id'] );
 
 		$order        = wc_get_order( $order_id );
@@ -586,6 +587,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 */
 	public function ajax_remove_order_item() {
 		check_ajax_referer( 'pr_dhl_order_ajax', 'pr_dhl_order_nonce' );
+		$this->verify_label_permission();
 
 		$item_barcode = wc_clean( $_POST['item_barcode'] );
 
@@ -609,6 +611,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 */
 	public function ajax_create_order() {
 		check_ajax_referer( 'pr_dhl_order_ajax', 'pr_dhl_order_nonce' );
+		$this->verify_label_permission();
 
 		// Get the WC order
 		$wc_order_id = wc_clean( $_POST['order_id'] );
@@ -653,6 +656,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 */
 	public function ajax_reset_order() {
 		check_ajax_referer( 'pr_dhl_order_ajax', 'pr_dhl_order_nonce' );
+		$this->verify_label_permission();
 
 		// Get the API client and reset the order
 		PR_DHL()->get_dhl_factory()->api_client->reset_current_order();
@@ -671,6 +675,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 */
 	public function save_meta_box_ajax() {
 		check_ajax_referer( 'create-dhl-label', 'pr_dhl_label_nonce' );
+		$this->verify_label_permission();
 		$order_id = wc_clean( $_POST['order_id'] );
 
 		// Save inputted data first
@@ -714,6 +719,7 @@ class PR_DHL_WC_Order_Deutsche_Post extends PR_DHL_WC_Order {
 	 */
 	public function delete_label_ajax() {
 		check_ajax_referer( 'create-dhl-label', 'pr_dhl_label_nonce' );
+		$this->verify_label_permission();
 		$order_id = wc_clean( $_POST['order_id'] );
 
 		$api_client = PR_DHL()->get_dhl_factory()->api_client;

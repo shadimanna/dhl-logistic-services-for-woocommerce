@@ -442,10 +442,17 @@ jQuery( function( $ ) {
 
 						$( document ).trigger( 'pr_dhl_saved_label' );
 					}
-				});
+				}).fail( wc_shipment_dhl_label_items.show_request_error );
 			}
 
 			return false;
+		},
+
+		show_request_error: function ( xhr ) {
+			var message = ( xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message ) ? xhr.responseJSON.data.message : xhr.statusText;
+
+			$( '#shipment-dhl-label-form' ).unblock();
+			$( '#shipment-dhl-label-form' ).append( $( '<p class="wc_dhl_error"></p>' ).text( message ) );
 		},
 
 		delete_dhl_label: function () {
@@ -533,7 +540,7 @@ jQuery( function( $ ) {
 
 					$( document ).trigger( 'pr_dhl_deleted_label' );
 				}
-			});
+			}).fail( wc_shipment_dhl_label_items.show_request_error );
 
 			return false;
 		},

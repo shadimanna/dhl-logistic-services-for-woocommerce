@@ -70,6 +70,12 @@
 			$( '.pr_dhl_order_remove_item').attr( 'disabled', 'disabled' );
 		},
 
+		show_request_error: function ( xhr ) {
+			var message = ( xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message ) ? xhr.responseJSON.data.message : xhr.statusText;
+
+			wc_dhl_dp_order_items.update( { error: message } );
+		},
+
 		get_order_items: function () {
 			var data = {
 				action:				'wc_shipment_dhl_get_order_items',
@@ -80,7 +86,7 @@
 			wc_dhl_dp_order_items.lock_order_controls();
 			$.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
 				wc_dhl_dp_order_items.update( response );
-			} );
+			} ).fail( wc_dhl_dp_order_items.show_request_error );
 		},
 
 		add_item_to_order: function () {
@@ -93,7 +99,7 @@
 			wc_dhl_dp_order_items.lock_order_controls();
 			$.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
 				wc_dhl_dp_order_items.update( response );
-			} );
+			} ).fail( wc_dhl_dp_order_items.show_request_error );
 		},
 
 		remove_item_from_order: function ( event ) {
@@ -110,7 +116,7 @@
 			wc_dhl_dp_order_items.lock_order_controls();
 			$.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
 				wc_dhl_dp_order_items.update( response );
-			} );
+			} ).fail( wc_dhl_dp_order_items.show_request_error );
 		},
 
 		create_order: function () {
@@ -137,7 +143,7 @@
 				if (response.tracking) {
 					$('a#dhl_delete_label').parent().remove();
 				}
-			} );
+			} ).fail( wc_dhl_dp_order_items.show_request_error );
 		},
 
 		reset_order: function () {
@@ -150,7 +156,7 @@
 			wc_dhl_dp_order_items.lock_order_controls();
 			$.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
 				wc_dhl_dp_order_items.update( response );
-			} );
+			} ).fail( wc_dhl_dp_order_items.show_request_error );
 		},
 
 		download_awb_label: function () {

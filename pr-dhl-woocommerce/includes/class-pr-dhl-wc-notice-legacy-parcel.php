@@ -89,8 +89,28 @@ if ( ! class_exists( 'PR_DHL_WC_Notice_Legacy_Parcel' ) ) :
 			}
 		}
 
+		/**
+		 * End the AJAX request with a 403 error when the current user cannot manage WooCommerce.
+		 *
+		 * @return void
+		 */
+		protected function verify_dismiss_permission() {
+			if ( ! current_user_can( 'manage_woocommerce' ) ) {
+				wp_send_json_error(
+					array( 'message' => esc_html__( 'You do not have permission to dismiss this notice.', 'dhl-for-woocommerce' ) ),
+					403
+				);
+			}
+		}
+
+		/**
+		 * AJAX handler that hides the DHL Parcel migration notice for 14 days.
+		 *
+		 * @return void
+		 */
 		public function dismiss_notice() {
 			check_ajax_referer( 'pr-dhl-legacy-parcel-dismiss-notice', 'security' );
+			$this->verify_dismiss_permission();
 
 			// Low level priority
 			$time = 14 * DAY_IN_SECONDS;
@@ -107,8 +127,14 @@ if ( ! class_exists( 'PR_DHL_WC_Notice_Legacy_Parcel' ) ) :
 			);
 		}
 
+		/**
+		 * AJAX handler that hides the DHL Parcel migration notice permanently.
+		 *
+		 * @return void
+		 */
 		public function dismiss_notice_forever() {
 			check_ajax_referer( 'pr-dhl-legacy-parcel-dismiss-notice', 'security' );
+			$this->verify_dismiss_permission();
 
 			update_option( self::NOTICE_TAG_MIGRATE_FOREVER, true );
 			wp_send_json(

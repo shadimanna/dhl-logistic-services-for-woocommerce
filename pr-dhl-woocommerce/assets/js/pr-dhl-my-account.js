@@ -45,5 +45,14 @@ function dhlMyAccount(btn_id) {
       location.reload();
     }
 
+  }).fail(function(xhr) {
+    btn.attr('disabled', false);
+    loaderContainer.remove();
+
+    var message = ( xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message ) ? xhr.responseJSON.data.message : xhr.statusText;
+
+    loaderContainer = $('<span/>', {
+      'class': 'dhl_connection_error'
+    }).text(message).insertAfter(btn);
   });
 }

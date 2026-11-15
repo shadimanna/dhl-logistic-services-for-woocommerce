@@ -67,6 +67,9 @@ More detailed instructions on how to set up your store and configure it are cons
 
 == Changelog ==
 
+= 4.1.3 =
+* Fix: Check user permissions on label actions.
+
 = 4.1.2 =
 * Add: Paperless Customs for DHL Paket International to Switzerland: the commercial invoice is uploaded to DHL digitally instead of being attached to the parcel, with a per-order option and a default setting.
 * Fix: Services that are on by default, such as GoGreen Plus, stay off after you untick them on the order and click Update.

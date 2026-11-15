@@ -4,6 +4,7 @@
 function dhlTestConnection(btn_id) {
   var $ = jQuery;
   var btn = $(btn_id);
+  var btn_txt = btn.text();
 
   // Remove elements after button
   btn.nextAll().remove();
@@ -40,5 +41,15 @@ function dhlTestConnection(btn_id) {
     }).insertAfter(btn);
 
     loaderContainer.append(test_connection_text);
+  }).fail(function(xhr) {
+    btn.attr('disabled', false);
+    btn.text(btn_txt);
+    loaderContainer.remove();
+
+    var message = ( xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message ) ? xhr.responseJSON.data.message : xhr.statusText;
+
+    loaderContainer = $('<span/>', {
+      'class': 'dhl_connection_error'
+    }).text(message).insertAfter(btn);
   });
 }
