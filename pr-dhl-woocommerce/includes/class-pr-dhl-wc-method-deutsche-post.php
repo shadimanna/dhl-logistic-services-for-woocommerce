@@ -191,8 +191,8 @@ class PR_DHL_WC_Method_Deutsche_Post extends WC_Shipping_Method {
 				),
 				'desc_tip'    => true,
 				'options'     => array(
-					'absolute'   => 'Absolute',
-					'percentage' => 'Percentage',
+					'absolute'   => esc_html__( 'Absolute', 'dhl-for-woocommerce' ),
+					'percentage' => esc_html__( 'Percentage', 'dhl-for-woocommerce' ),
 				),
 				'class'       => 'wc-enhanced-select',
 			),
