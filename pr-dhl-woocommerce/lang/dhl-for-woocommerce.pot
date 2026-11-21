@@ -3,13 +3,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: DHL Shipping Germany for WooCommerce 4.1.2\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pr-dhl-woocommerce\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/dhl-for-woocommerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-09T16:15:43+00:00\n"
+"POT-Creation-Date: 2026-11-21T17:39:53+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: dhl-for-woocommerce\n"
@@ -361,6 +361,16 @@ msgstr ""
 #: includes/class-pr-dhl-wc-method-deutsche-post.php:188
 #: includes/class-pr-dhl-wc-method-paket.php:579
 msgid "Select whether to add an absolute weight amount or percentage amount to the total product weight."
+msgstr ""
+
+#: includes/class-pr-dhl-wc-method-deutsche-post.php:194
+#: includes/class-pr-dhl-wc-method-paket.php:582
+msgid "Absolute"
+msgstr ""
+
+#: includes/class-pr-dhl-wc-method-deutsche-post.php:195
+#: includes/class-pr-dhl-wc-method-paket.php:583
+msgid "Percentage"
 msgstr ""
 
 #. Translators: %s represents the weight unit (e.g., kg, lbs, %).
@@ -863,6 +873,42 @@ msgstr ""
 msgid "Select one of the formats to generate the shipping label in."
 msgstr ""
 
+#: includes/class-pr-dhl-wc-method-paket.php:616
+msgid "Laser printer 105 x 205 mm"
+msgstr ""
+
+#: includes/class-pr-dhl-wc-method-paket.php:617
+msgid "Laser printer 105 x 205 mm (no info)"
+msgstr ""
+
+#: includes/class-pr-dhl-wc-method-paket.php:618
+msgid "Thermo printer 103 x 199 mm"
+msgstr ""
+
+#: includes/class-pr-dhl-wc-method-paket.php:619
+msgid "Thermo printer 103 x 202 mm"
+msgstr ""
+
+#: includes/class-pr-dhl-wc-method-paket.php:620
+msgid "Laser printer 105 x 208 mm"
+msgstr ""
+
+#: includes/class-pr-dhl-wc-method-paket.php:621
+msgid "Laser printer 103 x 150 mm"
+msgstr ""
+
+#: includes/class-pr-dhl-wc-method-paket.php:622
+msgid "Laser printer 105 x 148 mm"
+msgstr ""
+
+#: includes/class-pr-dhl-wc-method-paket.php:623
+msgid "Laser printer 105 x 148 mm (without additional labels)"
+msgstr ""
+
+#: includes/class-pr-dhl-wc-method-paket.php:624
+msgid "100 x 70 mm (only for Kleinpaket)"
+msgstr ""
+
 #: includes/class-pr-dhl-wc-method-paket.php:630
 msgid "Separate Return Label"
 msgstr ""
@@ -965,6 +1011,14 @@ msgstr ""
 
 #: includes/class-pr-dhl-wc-method-paket.php:703
 msgid "Select language of the tracking link page."
+msgstr ""
+
+#: includes/class-pr-dhl-wc-method-paket.php:706
+msgid "German"
+msgstr ""
+
+#: includes/class-pr-dhl-wc-method-paket.php:707
+msgid "English"
 msgstr ""
 
 #: includes/class-pr-dhl-wc-method-paket.php:713
